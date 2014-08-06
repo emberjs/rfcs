@@ -1,4 +1,6 @@
-ust RFCs
+# Ember RFCs
+
+> Hat tip to the [Rust RFC process].
 
 Many changes, including bug fixes and documentation improvements can be 
 implemented and reviewed via the normal GitHub pull request workflow.
@@ -101,5 +103,6 @@ Friday team meeting, and reported in the weekly blog post. Every
 accepted feature should have a core team champion, who will represent
 the feature and its progress.
 
+[Rust RFC process]: https://github.com/rust-lang/rfcs
 [core team]: http://emberjs.com/team/
 [feature flag]: http://emberjs.com/guides/contributing/adding-new-features/
