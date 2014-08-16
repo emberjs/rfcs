@@ -17,6 +17,59 @@ Action Objects to Ember. Action Objects are:
   `actions` methods are bound to the Route/Controller/Component they're
   declared on)
 
+Example: (also see this [JSBin](http://emberjs.jsbin.com/ucanam/6070/edit))
+
+    // route
+    import { action } from '...';
+    export default Ember.Route.extend({
+      sendFormDataToServer: action(function(values) {
+        return this.postAjax("/things", values);
+      }),
+
+      postAjax: function() {
+        //...
+      },
+
+      setupController: function(controller) {
+        controller.setProperties({
+          stubbedActionThatRouteOverrides: this.get('sendFormDataToServer')
+        });
+      }
+    });
+
+    // controller
+    import { action } from '...';
+    export default Ember.Controller.extend({
+      form: {}, 
+
+      submitForm: action({
+        // do controller-appropriate validation
+        // ...
+        // then defer to the action passed in from the route:
+        
+        var values = this.get('form');
+        return this.get('stubbedActionThatRouteOverrides').perform();
+      }),
+
+      stubbedActionThatRouteOverrides: action()
+    });
+    
+    // template
+    <form {{action 'submitForm'}} {{bind-attr class="submitForm.state"}}>
+      Action Objects expose bindable from the template (or
+      translated into more meaningul names by the controller
+      via aliasing/CPs/etc).
+
+      Note the bind-attr, which makes it easy to stylize the
+      form/buttons based on the state of the form submit promise.
+
+      {{#if submitForm.pending}}
+        Please wait...
+      {{else}}
+        <input type="submit" value="Submit">
+      {{/if}}
+    </form>
+
 # Motivation
 
 Promises are wonderful primitives for managing asynchrony, but building
