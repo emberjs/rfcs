@@ -79,7 +79,7 @@ promoise, we'd be able to write something like:
 
     // controller
     export Controller.extend({
-      submit: action(function() {
+      submitForm: action(function() {
         return ajax("/url", someData);
       })
     });
