@@ -42,6 +42,19 @@ obj.get('firstInitial');  // Calls the firstInitial function, without need. Retu
 This feels wrong.
 I been told that this idea is in the pipeline, but I wanted to officialize it with this RFC.
 
+### Cavears
+
+For avoid propagating changes when a CP is recomputed, we need to compare the old value with the new value.
+
+This is cool for simple types, but not easy for arrays p.e.
+
+This is totally fine, I would consider an array the same if the object is the same and its length too,
+but probably many people will be confused why [1,2,3] is not equal to [1,2,3], even if its an expected
+result in javascript.
+
+If we are dealing with very big arrays and we still want to get the bennefit of being to compare arrays by its content,
+it could be a good usecase for immutable data structures.
+
 ### Current workarounds
 
 Is a well known issue.
