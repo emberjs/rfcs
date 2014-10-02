@@ -42,7 +42,7 @@ obj.get('firstInitial');  // Calls the firstInitial function, without need. Retu
 This feels wrong.
 I been told that this idea is in the pipeline, but I wanted to officialize it with this RFC.
 
-### Cavears
+### Caveats
 
 For avoid propagating changes when a CP is recomputed, we need to compare the old value with the new value.
 
