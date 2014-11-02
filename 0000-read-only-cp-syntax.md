@@ -30,7 +30,7 @@ firstName: Ember.computed(function() {
 ```js
 firstName: Ember.computed({
   get: function() { },
-  set: function() { },
+  set: function() { }
 }).overridable(); // throw new Error("Overridable cannot be used if a setter already exists....");
 ```
 
