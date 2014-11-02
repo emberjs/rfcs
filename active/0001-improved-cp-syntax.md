@@ -9,7 +9,7 @@ Improve computed property syntax
 # Motivation
 
 Today, the setter variant of CP's is both confusing, and looks scary as sin.
-(To many concepts must be taught and it is to easy to screw it up.)
+(Too many concepts must be taught and it is too easy to screw it up.)
 
 # Detailed design
 
