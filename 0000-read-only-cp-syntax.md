@@ -24,19 +24,21 @@ firstName: Ember.computed(function() {
 ```js
 firstName: Ember.computed(function() {
   
-}).writable(); // writable
+}).overridable(); // writable
 ```
 
 ```js
-firstName: Ember.computed(function(key, value) {
-
-}); // writable
+firstName: Ember.computed({
+  get: function() { },
+  set: function() { },
+}).overridable(); // throw new Error("Overridable cannot be used if a setter already exists....");
 ```
 
 ```js
-firstName: Ember.computed(function(key, value) {
-
-}).readOnly(); // readOnly but why?
+firstName: Ember.computed({
+  get: function() { },
+  set: function() { }
+}).readOnly();    // throw new Error("Cannot mark a CP as readOnly if it has an explicit setter");
 ```
 
 # migration:
