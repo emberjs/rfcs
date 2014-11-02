@@ -41,7 +41,6 @@ firstName: Ember.computed(function(key, value) {
 
 # migration:
 
-* 1.x introduce new syntax
 * 1.x update internals to correctly use `writable` if needed (and runs tests against this)
 * 1.x deprecate writability unless `writable` was explicitly called, or new `set` syntax  was used
 * 2.0 flip the switch to `readOnly` by default and never look back.
