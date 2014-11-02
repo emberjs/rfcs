@@ -44,14 +44,13 @@ firstName: Ember.computed({
 ```js
 
 firstName: Ember.computed({
-  get: function() { },
-  set: function(key, value) { /* is invoked */ }
+  get: function() { }
 }); // on super class
 
 firstName: Ember.computed({
   get: function() { },
   set: function(key, value) { this._super(key, value); }
-}); //
+}); // throw new Error("Overridable cannot be used if a setter already exists....");
 ```
 
 # migration:
