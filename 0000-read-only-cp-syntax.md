@@ -20,10 +20,24 @@ firstName: Ember.computed(function() {
 }); // readOnly
 ```
 
+Is equivalent to:
+
+```js
+firstName: Ember.computed({
+  get: function() {
+}); // readOnly (same as above)
+```
 
 ```js
 firstName: Ember.computed(function() {
   
+}).overridable(); // writable
+```
+Is equivalent to:
+
+```js
+firstName: Ember.computed({
+  get: function() {
 }).overridable(); // writable
 ```
 
