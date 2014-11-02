@@ -12,6 +12,38 @@ Overridable CP's are unexpected, hard to learn, and wanted in the minority of
 cases. When it happens unexpeditly it is nearly always unwanted and the resulting
 choas is hard to debug.
 
+
+```js
+var User = Ember.Object.extend({
+  isOld: Ember.computed('age', function() {
+     return this.get('age') > 30;
+  });
+});
+
+var user = User.create({
+  age: 30
+});
+
+user.get('isOld'); // => false
+
+user.set('age', 31);
+user.get('isOld'); // => true
+
+user.set('isOld', false);
+user.get('isOld'); // => false
+
+user.set('age', 30);
+user.get('isOld'); // => false (EWUT?)
+```
+
+
+What just happened:
+
+* although age > 30 : isOld remains false
+* by explicitly setting isOld, we have diverged the CP to no longer invalidate based on its dependentKey.
+* many bugs and hair loss
+
+
 # Detailed design
 
 ```js
