@@ -40,7 +40,7 @@ fullName: Ember.computed('firstName', 'lastName', {
     return this.get('firstName') + ' ' + this.get('lastName');
   },
 
-  set: function(keyName, fullName) {
+  set: function(keyName, fullName, sometimesOldValue) {
    var names = fullName.split(' ');
 
    this.setProperties({
@@ -77,5 +77,3 @@ N/A
 N/A
 
 # Unresolved questions
-
-* do setters with the new syntax get the 3rd arg of `oldValue` provided?
