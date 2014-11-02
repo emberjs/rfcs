@@ -43,10 +43,10 @@ firstName: Ember.computed({
 
 ```js
 
-/*(super)*/ firstName: Ember.computed({
+firstName: Ember.computed({
   get: function() { },
-  set: function(key, value) { /* is invoke */ }
-}); //
+  set: function(key, value) { /* is invoked */ }
+}); // on super class
 
 firstName: Ember.computed({
   get: function() { },
