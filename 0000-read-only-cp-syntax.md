@@ -28,11 +28,14 @@ firstName: Ember.computed({
 }); // readOnly (same as above)
 ```
 
+---
+
 ```js
 firstName: Ember.computed(function() {
   
 }).overridable(); // writable
 ```
+
 Is equivalent to:
 
 ```js
@@ -41,12 +44,25 @@ firstName: Ember.computed({
 }).overridable(); // writable
 ```
 
+---
+
+
+```js
+firstName: Ember.computed(function(key, value) {
+
+}).overridable(); // throw new Error("Overridable cannot be used if a setter already exists....");
+```
+
+Is equivalent to:
+
 ```js
 firstName: Ember.computed({
   get: function() { },
   set: function() { }
 }).overridable(); // throw new Error("Overridable cannot be used if a setter already exists....");
 ```
+
+---
 
 ```js
 firstName: Ember.computed({
