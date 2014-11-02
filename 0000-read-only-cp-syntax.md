@@ -43,7 +43,7 @@ What just happened:
 * by explicitly setting isOld, we have diverged the CP to no longer invalidate based on its dependentKey.
 * many bugs and hair loss
 * no way to sensibly recover
-* rarely wantedd
+* rarely wanted
 
 
 # Detailed design
