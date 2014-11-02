@@ -40,7 +40,7 @@ fullName: Ember.computed('firstName', 'lastName', {
     return this.get('firstName') + ' ' + this.get('lastName');
   },
 
-  set: function(keyName, fullName, sometimesOldValue) {
+  set: function(keyName, fullName, oldValue) {
    var names = fullName.split(' ');
 
    this.setProperties({
