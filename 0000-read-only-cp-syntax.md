@@ -41,6 +41,19 @@ firstName: Ember.computed({
 }).readOnly();    // throw new Error("Cannot mark a CP as readOnly if it has an explicit setter");
 ```
 
+```js
+
+(super) firstName: Ember.computed({
+  get: function() { },
+  set: function(key, value) { /* is invoke */ }
+}); //
+
+firstName: Ember.computed({
+  get: function() { },
+  set: function(key, value) { this._super(key, value); }
+}); //
+```
+
 # migration:
 
 * 1.x update internals to correctly use `writable` if needed (and runs tests against this)
