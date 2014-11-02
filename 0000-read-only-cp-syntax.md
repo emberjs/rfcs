@@ -50,7 +50,7 @@ firstName: Ember.computed({
 firstName: Ember.computed({
   get: function() { },
   set: function(key, value) { this._super(key, value); }
-}); // throw new Error("Overridable cannot be used if a setter already exists....");
+}); // throw new Error("ReadOnly Error blah blah blah");
 ```
 
 # migration:
