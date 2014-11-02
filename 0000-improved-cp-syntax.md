@@ -36,11 +36,11 @@ Tomorrow:
 
 ```js
 fullName: Ember.computed('firstName', 'lastName', {
-  get(keyName) {
+  get: function(keyName) {
     return this.get('firstName') + ' ' + this.get('lastName');
   },
 
-  set(keyName, fullName) {
+  set: function(keyName, fullName) {
    var names = fullName.split(' ');
 
    this.setProperties({
