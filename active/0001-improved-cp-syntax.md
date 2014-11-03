@@ -65,7 +65,7 @@ Migration
 ---------
 
 * 1.x support both, detect new behaviour by testing if the last arg is not null and typeof object
-* 1.x+1 deprecate if last arg is a function and its arity is greater then 1
+* 1.x+1 deprecate if last arg is a function and its arity is greater than 1
 
 
 # Drawbacks
