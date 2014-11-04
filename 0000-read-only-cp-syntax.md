@@ -10,7 +10,7 @@ Getter only computed properties should be readOnly by default
 
 Overridable CP's are unexpected, hard to learn, and wanted in the minority of
 cases. When it happens unexpeditly it is nearly always unwanted and the resulting
-choas is hard to debug.
+chaos is hard to debug.
 
 
 ```js
