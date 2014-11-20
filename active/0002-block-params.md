@@ -1,6 +1,9 @@
 - Start Date: 2014-08-18
-- RFC PR:
-- Ember Issue:
+- RFC PR: https://github.com/emberjs/rfcs/pull/3
+- Issues:
+  - Ember Stream support: emberjs/ember.js#5522
+  - Handlebars parser support: wycats/handlebars.js#906
+  - HTMLBars compiler support: tildeio/htmlbars#147
 
 # Summary
 
@@ -106,4 +109,4 @@ To my knowledge, no other designs have been considered. Not implementing this fe
 
 # Unresolved questions
 
-- The associated HTML syntax for HTMLBars needs to be finalized.
+The associated HTML syntax for HTMLBars needs to be finalized.
