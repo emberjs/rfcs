@@ -13,7 +13,7 @@ For example, this variable `color` is bound to set a class:
 <div class="{{color}}"></div>
 ```
 
-Though traditional HTML attribute sytnax should be preserved (using
+Though traditional HTML attribute syntax should be preserved (using
 `class` and not `className` for example), the default path will be
 to set attributes as properties on the DOM node.
 
