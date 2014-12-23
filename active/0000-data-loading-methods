@@ -1,0 +1,29 @@
+- Start Date: 12/22/2014
+- RFC PR: 
+- Ember Issue: 
+
+# Summary
+
+The data loading methods in Ember Data should be broken up and grouped by *how* they load the data that they return (local, remote, combination), and we should find good names to describe each of those methods, using the same name for both single object and collection loads so as to avoid confusion and lower mental overhead (`getById` vs `all`)
+
+# Motivation
+
+The current setup of data loading methods is somewhat disorganized and the semantics of each function aren't always clear. A stronger set of names and loading style conventions would be extremely helpful for new developers, and also give more power and flexibility to those more experienced with Ember Data.
+
+# Detailed design
+
+This is the bulk of the RFC. Explain the design in enough detail for somebody familiar
+with the framework to understand, and for somebody familiar with the implementation to implement.
+This should get into specifics and corner-cases, and include examples of how the feature is used.
+
+# Drawbacks
+
+Why should we *not* do this?
+
+# Alternatives
+
+What other designs have been considered? What is the impact of not doing this?
+
+# Unresolved questions
+
+What parts of the design are still TBD?
