@@ -21,9 +21,33 @@ The current scheme for data loading in Ember Data is something like:
 
 Where we have somewhat inconsistent naming, and an incomplete coverage of the possible loading styles. I believe a better scheme would look more like:
 
-This is the bulk of the RFC. Explain the design in enough detail for somebody familiar
-with the framework to understand, and for somebody familiar with the implementation to implement.
-This should get into specifics and corner-cases, and include examples of how the feature is used.
+|multiplicity|local data|fetch if not local|fetch always|load, with new load in background|query server to use its logic|
+|---|---|---|---|---|---|
+|collection|store.grab|store.find|store.fetch|store.find+store.fetch|store.query|
+|single object|store.grab|store.find|store.fetch|store.find+store.fetch|store.query|
+
+There would then be 3 loading styles based on the typical needs above, as well as an extra distinction that I would like to introduce:
+
+1. Load data *ONLY* from the local store.
+2. Load data from the local store if there, otherwise fetch from the server.
+3. Load data from the server, ignoring whatever is currently in the store.
+4. Query the server for it's logic and load whatever models are returned.
+
+# Load data *ONLY* from the local store.
+
+
+
+# Load data from the local store if there, otherwise fetch from the server.
+
+
+
+# Load data from the server, ignoring whatever is currently in the store.
+
+
+
+# Query the server for it's logic and load whatever models are returned.
+
+
 
 # Drawbacks & Alternatives & Unresolved questions
 
