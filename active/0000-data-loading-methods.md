@@ -4,7 +4,7 @@
 
 # Summary
 
-I believe that the data loading methods in Ember Data should be broken down and rearranged based on the methods by which they load and return data, whether it is from a local store, from a remote server, or a combination of both. The names of each of these methods should also be carefully considered (likely using the same name for both single object and collection loads) so as to avoid confusion and reduce the learning curve.
+I believe that the data loading methods in Ember Data should be broken down and rearranged based on the methods by which they load and return data, whether it is from a local store, from a remote server, or a combination of both. The names of each of these methods should also be carefully considered (likely using the same name for both single object and collection loads) so as to avoid confusion and reduce any learning curves.
 
 # Motivation
 
