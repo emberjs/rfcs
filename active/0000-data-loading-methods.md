@@ -4,11 +4,11 @@
 
 # Summary
 
-The data loading methods in Ember Data should be broken down and rearranged based on the methods by which they load and return data, whether it is from a local store, from a remote server, or a combination of both. The names of each of these methods should also be decided carefully, using the same name for both single object and collection loads, so as to avoid confusion and reduce the learning curve.
+I believe that the data loading methods in Ember Data should be broken down and rearranged based on the methods by which they load and return data, whether it is from a local store, from a remote server, or a combination of both. The names of each of these methods should also be decided carefully, using the same name for both single object and collection loads, so as to avoid confusion and reduce the learning curve.
 
 # Motivation
 
-Currently in Ember Data the layout and naming of the data loading functions is somewhat disorganized, which increases the mental overhead of using the library. `.all` and `.getById` return local data, `.find` may look locally, except for when you pass an object (i.e. `.find({minAge: '1'})`) in which case the server is always queried. There's also a new `.fetch` function that will always request new data from the store, and possibly other methods that just aren't coming to mind at the moment.
+Currently in Ember Data the layout and naming of the data loading functions is somewhat disorganized, which increases the mental overhead of using the library. `.all` and `.getById` return local data, `.find` may look locally or remote, except for when you pass an object (i.e. `.find({minAge: '1'})`) in which case the server is always queried. There's also a new `.fetch` function that will always request new data from the store, and possibly other methods that just aren't coming to mind at the moment.
 
 # Detailed design
 
@@ -35,19 +35,19 @@ There would then be 3 loading styles based on the typical needs above, as well a
 
 # Load data *ONLY* from the local store.
 
-
+This function (name could be something like `.grab`) would load data only from the local store. It could be used by passing in either a single ID or a list of IDs. This function would be useful to see what data is already loaded and query the local state of the application.
 
 # Load data from the local store if there, otherwise fetch from the server.
 
-
+This function (`.find` would be the most fitting name) would be responsible for looking for data in the local store, and if it cannot find that data it would request it from the server. It could be used by passing in a type in addition to either a single ID or a list of IDs. This would be the main data loading method for most applications. It should always try to do the minimum amount of work. If an array is passed in it would only query the server for the objects which cannot be found in the local store. If a hash is passed (i.e. the user wants to find all objects with matching properties) it would look to see whether a matching query was previously made, and return the matches from the local store instead of querying the server.
 
 # Load data from the server, ignoring whatever is currently in the store.
 
-
+This is essentially an extension of what `.fetch()` currently does. The method would take in either an ID or a list of IDs, and return the object(s) loaded freshly from the server. This is useful when you aren't sure whether you have an object loaded locally but want to force a new version to load either way.
 
 # Query the server for it's logic and load whatever models are returned.
 
-
+This method would have behaviour similar to the current find method when a hash is passed i.e.  `.find({})`. This differs from any sort of object based `.find()` call as this relies on the servers logic to determine which records match the request (keys in the hash need not match up with properties on the model). This sort of helper can be useful when there are complexities in your domain model that you want to keep on the server and not duplicate on the client.
 
 # Drawbacks & Alternatives & Unresolved questions
 
