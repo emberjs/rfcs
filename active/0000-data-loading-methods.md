@@ -16,7 +16,7 @@ The current scheme for data loading in Ember Data is something like:
 
 |multiplicity|local data|fetch if not local|fetch always|local, with new load in background|
 |---|---|---|---|---|
-|collection|store.all|?|store.find|?|
+|collection|store.all|?|store.find (query)|?|
 |single record|store.getById|store.find|store.fetch|?|
 
 (borrowed from [here](https://gist.github.com/igorT/577a5f27c9bc5a6bf59c#file-ed-md))
