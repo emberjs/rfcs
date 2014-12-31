@@ -21,18 +21,18 @@ The current scheme for data loading in Ember Data is something like:
 
 (borrowed from [here](https://gist.github.com/igorT/577a5f27c9bc5a6bf59c#file-ed-md))
 
-Where we have somewhat inconsistent naming, and an incomplete coverage of the possible loading styles. I believe a better scheme would look more like:
+... where we have somewhat inconsistent naming, and an incomplete coverage of the possible loading styles. I believe a better scheme would look more like:
 
 |multiplicity|local data|fetch if not local|fetch always|load, with new load in background|query server to use its logic|
 |---|---|---|---|---|---|
 |collection|store.grab|store.find|store.fetch|store.find+store.fetch|store.query|
 |single object|store.grab|store.find|store.fetch|store.find+store.fetch|store.query|
 
-There would then be 3 loading styles based on the typical needs above, as well as an extra distinction that I would like to introduce:
+There would then be 3 loading styles based on the typical needs above, as well as an extra distinction that I would suggest making:
 
 1. Load data *ONLY* from the local store.
 2. Load data from the local store if there, otherwise fetch from the server.
-3. Load data from the server, ignoring whatever is currently in the store.
+3. Load data from the server, even if it's already in the local store.
 4. Query the server for it's logic and load whatever models are returned.
 
 # Load data *ONLY* from the local store.
@@ -41,11 +41,11 @@ This function (name could be something like `.grab`) would load data only from t
 
 # Load data from the local store if there, otherwise fetch from the server.
 
-This function (`.find` would be the most fitting name) would be responsible for looking for data in the local store, and if it cannot find that data it would request it from the server. It could be used by passing in a type in addition to either a single ID or a list of IDs. This would be the main data loading method for most applications. It should always try to do the minimum amount of work. If an array is passed in it would only query the server for the objects which cannot be found in the local store. If a hash is passed (i.e. the user wants to find all objects with matching properties) it would look to see whether a matching query was previously made, and return the matches from the local store instead of querying the server.
+This function (`.find` would be the most fitting name) would be responsible for looking for data in the local store, and if it cannot find that data it would request it from the server. It could be used by passing in a type in addition to either a single ID or a list of IDs. This would be the main data loading method for most applications, and it should always try to do the minimum amount of work. If an array is passed in it would only query the server for the objects which cannot be found in the local store. As an extension: if a hash is passed (i.e. the user wants to find all objects with matching properties) it could look to see whether a matching query was previously made, and return the matches from the local store instead of querying the server.
 
-# Load data from the server, ignoring whatever is currently in the store.
+# Load data from the server, even if it's already in the local store.
 
-This is essentially an extension of what `.fetch()` currently does. The method would take in either an ID or a list of IDs, and return the object(s) loaded freshly from the server. This is useful when you aren't sure whether you have an object loaded locally but want to force a new version to load either way.
+This is essentially an extension of what `.fetch()` currently does. The method would take in either an ID or a list of IDs, and return the object(s) loaded freshly from the server. This is useful when you aren't sure whether you have an object loaded locally but want to force a new version to load either way. Similar behaviour can be achieved using other methods, but this function is useful for convenience.
 
 # Query the server for it's logic and load whatever models are returned.
 
