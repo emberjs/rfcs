@@ -17,9 +17,9 @@ The motivation behind this is 2 pronged:
 
 The design for this is rather simple. We would first introduce a command called `ember doctor` that would run some default checks. The default checks would do the following:
 
--Run `ember v --verbose` and complain loudly for incompatible versions
--Run `npm outdated --depth 0` to check on outdated modules
--Run `bower list` and display out of date bower components
+- Run `ember v --verbose` and complain loudly for incompatible versions
+- Run `npm outdated --depth 0` to check on outdated modules
+- Run `bower list` and display out of date bower components
 
 These are what is considered default `checks`.
 
