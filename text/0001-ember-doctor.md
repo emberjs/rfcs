@@ -15,15 +15,13 @@ The motivation behind this is 2 pronged:
 
 # Detailed design
 
-The design for this is rather simple. We would first introduce a command called `ember doctor` that would run some default checks. These default checks would be:
+The design for this is rather simple. We would first introduce a command called `ember doctor` that would run some default checks. The default checks would do the following:
 
-- Node/IO version
-- NPM Version
-- Ember CLI Version
-- Watchman version (if installed)
-- Out of date NPM packages
+-Run `ember v --verbose` and complain loudly for incompatible versions
+-Run `npm outdated --depth 0` to check on outdated modules
+-Run `bower list` and display out of date bower components
 
-In the event that any of these are out of range Ember Doctor should complain loudly.  These are what is considered default `checks`.
+These are what is considered default `checks`.
 
 In your project developers can setup their own Doctor `checks` that get merged in with the default checks. To allow for this Ember CLI will have `ember generate doctor check:service-health`.
 
