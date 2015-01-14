@@ -4,7 +4,7 @@
 
 # Summary
 
-We need a way to run diagnostics on Ember CLI based projects to let developers know about potential system level incompatibilities. Developers should also be able to get a bill of health for their project for things like outdated dependencies.  This bill of health should also be extensible.
+We need a way to run diagnostics on Ember CLI based projects to let developers know about potential system level incompatibilities. Developers should also be able to get a bill of health for their project for things like outdated dependencies.  This bill of health should also be extensible.  Output from running this command should be as consise and only ever log things that don't seem healthy.
 
 # Motivation
 
@@ -20,6 +20,7 @@ The design for this is rather simple. We would first introduce a command called 
 - Run `ember v --verbose` and complain loudly for incompatible versions
 - Run `npm outdated --depth 0` to check on outdated modules
 - Run `bower list` and display out of date bower components
+- Run check to grab OS information
 
 These are what is considered default `checks`.
 
@@ -36,7 +37,7 @@ doctor/
 
 When `ember doctor` is ran we simply will do a merge of the default checks and the ones provided by the application.  
 
-There should also be a way of excluding checks to be ran. Developers should be able to simply pass flags for things they do not care to run e.g. `ember doctor --skip-npm-version`.
+There should also be a way of excluding checks to be ran. Developers should be able to simply pass flags for things they do not care to run e.g. `ember doctor --skip=npm,os`.
 
 # Drawbacks
 
