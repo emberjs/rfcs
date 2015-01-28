@@ -74,7 +74,7 @@ should trigger an update.
 This should handle most of the use cases. For all of the other use cases there
 should be a method to override the default behaviour.
 
-Two cases, which are not covered by a "happy path", are:
+Cases, which are not covered by a "happy path", are:
 
 1. A property is not returned by the API. Some APIs may ommit some properties if
    they're not needed for a given record. This could result in triggering
@@ -88,6 +88,12 @@ Two cases, which are not covered by a "happy path", are:
    `startedAt` and `finishedAt` properties, there's no need to fetch the
    `finishedAt` for builds that are still running. There should be a way to
     specify a conditions for a given field.
+
+3. Saving. If some of the properties are missing, we can't serialize a full
+   record, because missing properties would be overwritten. I think that the
+   default behaviour should be to raise an error if such a situation occurs,
+   that is: someone wants to save an incomplete record. That said, it should be
+   possible to customize this and send only loaded properties.
 
 # Drawbacks
 
