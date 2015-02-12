@@ -50,50 +50,153 @@ build.get('startedAt'); //=> '2014-01-01T10:22:33'
 
 # Detailed design
 
-The simplest algorithm for handling partial records is to run an ajax query to
-fetch a record whenever a property that is not defined is accessed. Given a
-following record definition:
+The basic idea of an implementation of partial record loading is to:
+
+* save a list of loaded attributes when a record is populated
+* mark the record as partially loaded or fully loaded
+* whenever one of the properties that are missing is accessed, a full record
+  reload should be done
+* if a server responded with all of the fields, the record should be marked as
+  fully loaded
+
+## Public API
+
+This feature shouldn't be enabled by default, because it wouldn't be backwards
+compatible and what's more, not every app needs partial record loading.
+As long as an API returns all of the records it shouldn't cause much problems,
+but some APIs may for some reason omit attributes instead of sending an
+attribute with a null value. Such a behvaviour would cause a record to always be
+marked as partially loaded.
+
+Partial loading support could be enabled in serializer, by setting the
+`enablePartialLoading` property:
 
 ```javascript
-var Post = DS.Model.extend({
-  title: DS.attr(),
-  content: DS.attr()
+var Serializer = Ember.RESTSerializer.extend({
+  enablePartialLoading: true
 });
 ```
 
-a partial record could be a post with just a title, for example loaded from
-pusher as follows:
+Setting this property turns on the default implementation of partial records.
+Let's assume that an application is read only. In this case user doesn't have to
+do anything else. If a server returns partial data, record is marked as
+partially loaded and as soon as one of the missing properties is accessed the
+record is refreshed by sending a query for the full record.
 
-```javascript
-store.push('post', { id: 1, title: 'Partial record loading in EmberData' });
+### Omitting properties
+
+In some cases an API may omit one of the properties, even if the intent is not
+to return a partial representation. Imagine an API that returns a key-value
+pairs with an additional info about visibility of them. An example payload could
+like that:
+
+```json
+{
+  settings: [
+    {
+      "key": "username",
+      "value": "drogus",
+      "public": true
+    },
+    {
+      "key": "password",
+      "public": false
+    }
+  ]
 ```
 
-Accessing any property that's not present in a payload, in this case `content`,
-should trigger an update.
+The second element lacks a value property, because the API doesn't exposes the
+value of a private key-value pair and an API implementor decided to drop the
+property in such case.
 
-This should handle most of the use cases. For all of the other use cases there
-should be a method to override the default behaviour.
+In order handle such case properly with partially loaded records enabled, a user
+can add missing fields in the `normalize` method:
 
-Cases, which are not covered by a "happy path", are:
+```javascript
+var Serializer = Ember.RESTSerializer.extend({
+  normalize: function(type, hash, prop) {
+    if(type.typeKey === 'setting') {
+      if(!hash[prop].hasOwnProperty('value')) {
+        hash[prop].value = null;
+      }
+    }
 
-1. A property is not returned by the API. Some APIs may ommit some properties if
-   they're not needed for a given record. This could result in triggering
-   multiple requests to refresh the model. To handle this case we would need to
-   allow specyfing fields that can be potentially missing. We could also add a
-   fallback - if a field is not available even after loading a "full"
-   representation we could mark it to not try to fetch it again.
+    return hash;
+  }
+});
+```
 
-2. A property may not be needed at a given point and should not trigger fetching
-   the full representation. For example given a `Build` model which have a
-   `startedAt` and `finishedAt` properties, there's no need to fetch the
-   `finishedAt` for builds that are still running. There should be a way to
-    specify a conditions for a given field.
+This is, however, not a very elegant way to do it. The intent of this code is
+not clear. In order to make it simpler, we could introduce a simpler method for
+this:
 
-3. Saving. If some of the properties are missing, we can't serialize a full
-   record, because missing properties would be overwritten. I think that the
-   default behaviour should be to raise an error if such a situation occurs,
-   that is: someone wants to save an incomplete record. That said, it should be
-   possible to customize this and send only loaded properties.
+```javascript
+var Serializer = Ember.RESTSerializer.extend({
+  attr: {
+    value: { partialLoadingCheck: false }
+  }
+});
+```
+
+Obviously it needs a better name, but something along the lines would make this
+task very simple.
+
+### Special logic for a partial load
+
+A property may not be needed at a given point and should not trigger fetching
+the full representation. For example given a `Build` model which have a
+`startedAt` and `finishedAt` properties, there's no need to fetch the
+`finishedAt` for builds that are still running.
+
+In order too customise the default behaviour a new method on the Model class
+should be introduced: `loadFullRecord`. Overriding it should allow to avoid
+reloading if needed:
+
+```javascript
+var Build = DS.Model.extend({
+  startedAt: DS.attr(),
+  finishedAt: DS.attr(),
+  state: DS.attr,
+
+  loadFullRecord: function() {
+    if(this.get('state') === 'running') {
+      return false;
+    } else {
+      return this._super.apply(this, arguments);
+    }
+  }
+});
+```
+
+### Special logic for adapter
+
+An API may default to return a partial record and need a special query for a
+full record. In such situation there needs to be an easy way to override a
+default adapter behaviour. A new method should be introduced, similarly to a
+record case: `loadFullRecord`. The default implementation would do a regular
+find. An overrided version could look like so:
+
+```javascript
+var Adapter = DS.Adapter.extend({
+  loadFullRecord: function(store, type, id, record) {
+    var data = { full: true };
+    return this.ajax(this.buildURL(type.typeKey, id, record), 'GET', data);
+  }
+});
+```
+
+### Changing properties on a partially loaded records
+
+Changing properties on a partially loaded record may lead to problems, so we
+throw an error in such case. There should be, however, a way to do it, because
+in some situations it may make sense. I'm not yet sure where should the API for
+this case lay. On the one hand it would make sense to put it in a serializer,
+just like it's enabled, but on the other hand the check will be probably made
+in the model.
+
+## Implementation
+
+TODO
 
 # Drawbacks
 
@@ -106,8 +209,3 @@ Data to provide more hooks to plug into.
 
 This feature can be implemented manually, but currently it needs an internal
 API.
-
-# Unresolved questions
-
-This proposal is a bit vague in its current form, but I hope to refine it if the
-base idea is approved.
