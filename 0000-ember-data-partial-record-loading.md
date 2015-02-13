@@ -50,7 +50,7 @@ build.get('startedAt'); //=> '2014-01-01T10:22:33'
 
 # Detailed design
 
-The basic idea of an implementation of partial record loading is to:
+The basic idea of the implementation of partial record loading is to:
 
 * save a list of loaded attributes when a record is populated
 * mark the record as partially loaded or fully loaded
@@ -62,13 +62,13 @@ The basic idea of an implementation of partial record loading is to:
 ## Public API
 
 This feature shouldn't be enabled by default, because it wouldn't be backwards
-compatible and what's more, not every app needs partial record loading.
-As long as an API returns all of the records it shouldn't cause much problems,
-but some APIs may for some reason omit attributes instead of sending an
-attribute with a null value. Such a behvaviour would cause a record to always be
+compatible and what's more, not every app needs it.
+As long as an API returns all of the properties it shouldn't cause much problems,
+but some APIs may for some reason omit an attribute instead of sending it
+with a null value. Such a behvaviour would cause a record to always be
 marked as partially loaded.
 
-Partial loading support could be enabled in serializer, by setting the
+Partial loading support could be enabled in a serializer, by setting the
 `enablePartialLoading` property:
 
 ```javascript
@@ -77,8 +77,8 @@ var Serializer = Ember.RESTSerializer.extend({
 });
 ```
 
-Setting this property turns on the default implementation of partial records.
-Let's assume that an application is read only. In this case user doesn't have to
+Setting this property turns on the default implementation.
+If an application is read only a user doesn't have to
 do anything else. If a server returns partial data, record is marked as
 partially loaded and as soon as one of the missing properties is accessed the
 record is refreshed by sending a query for the full record.
@@ -87,8 +87,8 @@ record is refreshed by sending a query for the full record.
 
 In some cases an API may omit one of the properties, even if the intent is not
 to return a partial representation. Imagine an API that returns a key-value
-pairs with an additional info about visibility of them. An example payload could
-like that:
+pairs with an additional `public` field that informs if the value is private or
+public. An example payload could like that:
 
 ```json
 {
@@ -105,11 +105,10 @@ like that:
   ]
 ```
 
-The second element lacks a value property, because the API doesn't exposes the
-value of a private key-value pair and an API implementor decided to drop the
-property in such case.
+The second element lacks a value property, because the API doesn't expose a
+value of a private key-value pair.
 
-In order handle such case properly with partially loaded records enabled, a user
+In order to handle such case properly with partially loaded records enabled, a user
 can add missing fields in the `normalize` method:
 
 ```javascript
@@ -148,7 +147,7 @@ the full representation. For example given a `Build` model which have a
 `startedAt` and `finishedAt` properties, there's no need to fetch the
 `finishedAt` for builds that are still running.
 
-In order too customise the default behaviour a new method on the Model class
+In order to customise the default behaviour a new method on the Model class
 should be introduced: `loadFullRecord`. Overriding it should allow to avoid
 reloading if needed:
 
@@ -188,7 +187,7 @@ var Adapter = DS.Adapter.extend({
 ### Changing properties on a partially loaded records
 
 Changing properties on a partially loaded record may lead to problems, so we
-throw an error in such case. There should be, however, a way to do it, because
+should throw an error in such case. There should be, however, a way to do it, because
 in some situations it may make sense. I'm not yet sure where should the API for
 this case lay. On the one hand it would make sense to put it in a serializer,
 just like it's enabled, but on the other hand the check will be probably made
