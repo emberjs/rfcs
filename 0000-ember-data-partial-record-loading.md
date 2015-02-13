@@ -184,6 +184,12 @@ var Adapter = DS.Adapter.extend({
 });
 ```
 
+### Relationships
+
+Relationships should work similarly to attributes. If the relationship is not
+async an error should be thrown. If it's async, it should check whether an
+attribute with id (or ids) exist and if not, it should make a full record load.
+
 ### Changing properties on a partially loaded records
 
 Changing properties on a partially loaded record may lead to problems, so we
