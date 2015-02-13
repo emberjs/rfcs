@@ -201,7 +201,17 @@ in the model.
 
 ## Implementation
 
-TODO
+The most important thing that needs to be implemented is a hook or an event
+sent when an attribute is accessed. `didSetProperty` event is already sent,
+additionaly there should be either `didGetProperty` or `willGetProperty` (or
+maybe both?).
+
+A nice thing to have would be also a list of attributes. This could be
+available as a property such as `attributes` on a model class. Partial loading
+support doesn't require it, because there is also a possibility of looping
+through all properties, but it could be a performance issue.
+
+TODO: finish this section
 
 # Drawbacks
 
