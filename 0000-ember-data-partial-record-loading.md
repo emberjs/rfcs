@@ -92,7 +92,7 @@ like that:
 
 ```json
 {
-  settings: [
+  "settings": [
     {
       "key": "username",
       "value": "drogus",
