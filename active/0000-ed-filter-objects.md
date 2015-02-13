@@ -36,7 +36,7 @@ App.ExampleController = Ember.ObjectController.extend({
 
 In this example, a new `FilteredRecordArray` is created every time the
 `authorQuery` property is updated. This is results in a memory leak
-for tow reasons. First, the `authorQuery` variable is in a closure and
+for two reasons. First, the `authorQuery` variable is in a closure and
 the filter function is unable to track its dependency on that
 property. Second, the store doesn't know when the
 `FilteredRecordArray` created by this function is no longer needed by
@@ -48,7 +48,7 @@ is called in a model hook.
 ```js
 App.ExampleRoute = Ember.ObjectRoute.extend({
     model: function() {
-        this.store.filter('post', {unread: true}, function(post) {
+        return this.store.filter('post', {unread: true}, function(post) {
             return post.get('unread');
         });
     }
@@ -81,7 +81,7 @@ class.
 The `filterProperties` property of a filter object will be used to
 explicitly track the dependent properties of the filter object.
 
-As an optimization a `recordProperties` array can also be specified to
+As an optimization, a `recordProperties` array can also be specified to
 list the properties on the records that this filter is dependent
 on. The Ember Data store can use this information to skip recomputing
 the `FilteredRecordArray` if a property change will have no impact
