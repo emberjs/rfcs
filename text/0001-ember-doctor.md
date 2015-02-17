@@ -35,9 +35,30 @@ doctor/
   index.js
 ```
 
-When `ember doctor` is ran we simply will do a merge of the default checks and the ones provided by the application.  
+When `ember doctor` is ran we simply will do a merge of the default checks and the ones provided by the application.
 
 There should also be a way of excluding checks to be ran. Developers should be able to simply pass flags for things they do not care to run e.g. `ember doctor --skip=npm,os`.
+
+## Expected Output
+Output of running the doctor command should be as concise as possible.
+Unless there are any issues with the project that is being analyzed, the
+output should be something like the following:
+
+```
+Success: All diagnostics checked out fine.
+```
+
+In the event that there is an issue with the project that is being
+analyzed the output will look something like the following:
+
+```
+Warning: NPM modules out of date. Below are the outof date modules.
+╔══════╤═══════╤═════════╗
+║ Name │ Yours │ Current ║
+╟──────┼───────┼─────────╢
+║ glob │ 1.1.2 │ 1.2.3   ║
+╚══════╧═══════╧═════════╝
+```
 
 # Drawbacks
 
