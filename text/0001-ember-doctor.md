@@ -39,7 +39,22 @@ When `ember doctor` is ran we simply will do a merge of the default checks and t
 
 There should also be a way of excluding checks to be ran. Developers should be able to simply pass flags for things they do not care to run e.g. `ember doctor --skip=npm,os`.
 
-## Expected Output
+# Addon Design
+Much like the project addons can add their own diagnostics as projects.
+In the addons main entry point there will be a hook much like
+`includedCommands` that allows Ember CLI to look up the diagnostics and
+role them into the consuming project.
+
+```
+var checks = require('./checks');
+...
+includedChecks: function() {
+  return checks;
+}
+...
+```
+
+# Expected Output
 Output of running the doctor command should be as concise as possible.
 Unless there are any issues with the project that is being analyzed, the
 output should be something like the following:
@@ -52,7 +67,7 @@ In the event that there is an issue with the project that is being
 analyzed the output will look something like the following:
 
 ```
-Warning: NPM modules out of date. Below are the outof date modules.
+Warning: NPM modules out of date. Below are the out of date modules.
 ╔══════╤═══════╤═════════╗
 ║ Name │ Yours │ Current ║
 ╟──────┼───────┼─────────╢
