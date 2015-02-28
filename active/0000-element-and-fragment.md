@@ -34,8 +34,8 @@ template **must** be defined with the `<element>` keyword.
 If you place this template in `my-component.hbs`:
 
 ````handlebars
-<element class="special {{class}}" data-my-id={{id}}>
-  Hello {{name}}.
+<element class="special {{attrs.class}}" data-my-id={{attrs.id}}>
+  Hello {{attrs.name}}.
 </element>
 ````
 
@@ -48,7 +48,7 @@ It can be invoked like this:
 And will result in this output:
 
 ````html
-<div class="special magical" data-my-id="1">
+<div class="special magical" data-my-id="1" id="1" name="Tomster">
   Hello Tomster.
 </div>
 ````
@@ -69,6 +69,57 @@ The output changes to
   Hello Tomster.
 </span>
 ````
+
+## `<element>` HTML Attribute Semantics in Detail
+
+There are three places that may legitimately need to set a component's
+HTML attributes:
+
+ 1. The caller of a component may intend one of more of the provided
+    attributes to go directly onto the HTML element:
+
+        <my-component title="Tomster" model=hamster>
+
+    Every attribute passed into a component in this way gets set on
+    the component's `attrs` object, which is how components receive
+    arguments in general. Any attribute with a primitive value
+    (string, number, boolean) *also* gets set by default as an HTML
+    attribute on the component's element. So in the example above,
+    `title="Tomster"` will appear by default on the component's
+    element, but `model` will not, assuming `model` is an `object`.
+
+ 2. The component itself may set its own HTML attributes:
+
+        <element title="Mr {{attrs.title}}">
+
+    This is logically equivalent to calling `setAttribute` directly on
+    the component's element in the `didInsertElement` hook, and
+    setting up a corresponding observer to keep the value up to
+    date. **It takes precedence over any values set by the caller.**
+
+    It is important to understand that `<element>` only sets HTML
+    attributes, it does not set `attrs`. So the above example leaves
+    the original caller provided `attrs.title` alone, but overrides
+    the `title` HTML attribute to have a modified value.
+
+ 3. The component's parent class may *also* have attribute settings in
+    its `<element>` that should be inherited. A child components takes
+    precedence over its parent component's attributes.
+
+So we can summarize the complete semantics as this series of logical
+steps:
+
+ 1. First, any caller-provided attributes with primitive values are
+    set as HTML attributes.
+
+ 2. Next, the component asks its parent class to set HTML attributes
+    based on what appears in the parent's `<element>`. This recurses
+    back so that the most primitive ancestor is setting first, and
+    descendants have the chance to override their ancestors.
+
+ 3. Finally, the component sets attributes based on its own
+    `<element>`.
+
 
 ## `<fragment>` semantics
 
@@ -107,28 +158,7 @@ with.
 
 ## What happens to `attributeBindings`, `classNames` and `classNameBindings`
 
-In the vast majority of cases, users won't need these anymore, and
-will be able to get the same control directly from their template
-using `<element>`.
-
-However, we will still keep them to handle trickier inheritance
-situations, where a base class or mixin needs to control element
-attributes in all derived classes. Only library authors are likely to
-need to know about them, and most users should be steered toward using
-`<element>` instead.
-
-We can also put:
-
-````js
-  attributeBindings: ['tagName', 'class']
-````
-in the base `Component` implementation so that these properties will
-propagate from the caller to the `<element>` by default.
-
-Any attributes set directly on `<element>` in a component's definition
-**take precedence over** `attributeBindings`. We make a special
-exception for `class`: `classNameBindings` and `classNames` will be
-merged with any value for `class` provided on the `<element>`. 
+They get deprecated.
 
 ## Fragment names
 
@@ -168,11 +198,6 @@ it can define behaviors common to both.
 
 Adds a tiny amount of arguable boilerplate to templates that was not
 there before.
-
-This proposal doesn't eliminate `attributeBindings`,
-`classNameBindings`, and `classNames`. I think it would be a good idea
-to eliminate them, but we need a detailed design for some other way to
-do inheritance -- one idea would be template macro expansion.
 
 # Alternatives
 
