@@ -9,7 +9,7 @@ Eliminates Controllers.
 # Motivation
 
 As Ember has evolved toward a component-centric model, controllers
-have become redundant and vestigal. This unnecessarily burdens
+have become redundant and vestigial. This unnecessarily burdens
 developers with learning an additional concept and forces them to make
 unnecessary choices.
 
@@ -28,7 +28,7 @@ the important things controllers do.
   makes sense to address it while we're redesigning the API between
   routes & components anyway.
 
-- Consider how routeable components relate to asynchronous components,
+- Consider how routable components relate to asynchronous components,
   because they may share concepts or implementation.
 
 - Clarify the distinction between Components and Fragments ("tagless
@@ -36,8 +36,8 @@ the important things controllers do.
 
 # Definitions
 
- - **routeable component** - a component whose identity and attributes
-   are determined from the URL at runtime. Routeable components are
+ - **routable component** - a component whose identity and attributes
+   are determined from the URL at runtime. Routable components are
    what go inside `{{outlet}}`s.
 
  - **asynchronous component** - a component with built-in support for
@@ -211,7 +211,7 @@ substates.
 ### Sending actions from component up to route
 
 Components are deliberately isolated and don't send arbitrary actions
-upward unless you explicitly tell them to. Routeable components
+upward unless you explicitly tell them to. Routable components
 preserve this same behavior.
 
 Therefore, if you want to send an action from a component up to the
@@ -222,7 +222,7 @@ one of your component's attributes.
 
 Today, when you render a template into an outlet, neither the template
 nor the outlet introduces extra DOM elements. We want to be able to do
-the same thing with routeable components, which means we need to
+the same thing with routable components, which means we need to
 officially support "tagless components".
 
 But instead of having two flavors of components (tagged and tagless)
@@ -270,12 +270,12 @@ would look like this on a Route:
   }
 ````
 
-because the Route itself does not a `bar` property.
+because the Route itself does not have a `bar` property.
 
 The second difference is that we no longer need a `scope`
-option. queryParam stickyness is not managed at the Route level, it's
+option. queryParam stickiness is not managed at the Route level, it's
 managed inside components using sessions (which have arbitrarily
-controllable scopes). More on this below under "Stickyness".
+controllable scopes). More on this below under "Stickiness".
 
 ### Data down
 
@@ -301,7 +301,7 @@ can be passed to the component whose setter will trigger the
 `transitionTo`. For example:
 
 ````js
-attributes: (params, queryParams) {
+attributes: function(params, queryParams) {
   model: this.model(params),
   filterBy: mut(queryParams, 'filterBy')
 }
@@ -329,7 +329,7 @@ This can also remain the same. When a Route sets a queryParam it will
 use either pushState or replaceState based on the configuration for
 that parameter.
 
-### Stickyness
+### Stickiness
 
 Sticky query params are a specific case of a more general need for
 statefulness. Without singleton controllers, this kind of state will
@@ -349,7 +349,7 @@ cause a queryParam to be set.
 
 Today we have `beforeModel`, `model`, and `afterModel` hooks on
 `Route`. The distinction between them, and the timing of when they're
-called, is complicated by the original goal of avoiding unnecssary
+called, is complicated by the original goal of avoiding unnecessary
 reloading of models. If you `transitionTo('person', 1)` (or directly
 set the corresponding URL), all three hooks will fire. But you can
 also `transitionTo('person', withThisPersonModel)`, and the `model`
