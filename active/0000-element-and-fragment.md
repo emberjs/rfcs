@@ -65,7 +65,7 @@ template to:
 The output changes to
 
 ````html
-<span clas="special magical" data-my-id="1">
+<span class="special magical" data-my-id="1">
   Hello Tomster.
 </span>
 ````
