@@ -4,30 +4,39 @@
 
 # Summary
 
-Providing a centralised property on components for exposure and definition of properties.
+Aims to provide a centralised property on components for exposure and definition of attributes.
 
 # Motivation
 
-Components currently have the issue of their template usage defining their meaning.
+Components currently have the issue of their template usage defining the meaning of the components attributes. This RFC aims to set out a method of specifying the clear interface of a component.
 
-- Accidental use of an incorrect parameter would be caught as writing the template
-- Knowing the complete set of parameters becomes problematic:
+- Accidental use of an incorrect attribute would be caught whilst writing the template
+- Knowing the complete set of attributes becomes problematic:
   - Components that are extended may add new attributes
-  - Components defined in an addon may receive more attributes in the extended in app/template/components/componentname
+  - Components defined in an Arden may receive more attributes in the extended in app/template/components/componentname
 - Validating a components usage is tricky as there is no list of valid attributes
-- Components become more self documenting by having a simple property to look for which defines the permitted properties
+- Components become more self documenting by having a simple property to look for which defines the permitted attributes
+- Adding typing to a components attributes would provide meaning to each attribute
+  - Reduces the need for computed properties as attributes could be transformed into typed property data
 
 # Detailed design
 
-By adding `allowedProperies` key to a component:
+## Component data types
+Exposed via `Ember.Component.attr` is a function to define the types of the component. By specifying an attribute to be of a certain type Ember will be able to transform the attribute into more useful data.
 
-- Adding a property in the template that is not in the list will trigger an exception.
-- Component template only is passed properties in the array of strings.
+The API should match that of [Ember Data attr](http://emberjs.com/api/data/#method_attr). When data comes into the component via the attribute the data will be transformed by the same transformations used by Ember data.
 
-By omitting `allowedProperties` key to a component:
+## AttrTypes
 
-- Adding any property doesn't cause an exception.
-- Component template is exposed all properties passed in and computed properties.
+By adding `attrTypes` key to a component:
+
+- Adding a attribute in the template that is not in the list will trigger an exception in development mode.
+- Component template is only passed properties that exist in the attrTypes object.
+
+By omitting `attrTypes` key to a component:
+
+- Adding any attribute to the component doesn't cause an exception.
+- Component template is exposed all properties passed and computed properties.
 
 ## Examples
 
@@ -35,31 +44,38 @@ By omitting `allowedProperties` key to a component:
 
 my-component.js
 ```
-App.MyComponent = Ember.Component.extend({
-  allowedProperties: [
-    'other-name'
-  ]
+import Ember from 'ember';
+var attr = Ember.Component.attr;
+ 
+export default Ember.Component.extend({
+  attrTypes: {
+    'other-name': attr('string'),
+    exciting: attr('boolean'),
+  }
 });
 ```
 
 my-template.hbs
 ```
-  {{#my-component other-name="thing"}}
+  {{#my-component other-name="thing" exciting="1" }}
   {{/my-component}}
 ```
 
 my-component.hbs
 ```
   name: {{other-name}}
+  {{#if exciting}} {{!-- exciting === true --}}
+      Wow exciting!
+  {{/if}}
 ```
 ### Invalid use
 
 my-component.js
 ```
 App.MyComponent = Ember.Component.extend({
-  allowedProperties: [
-    'other-name'
-  ]
+  attrTypes: {
+    'other-name': attr('string')
+  }
 });
 ```
 
@@ -68,7 +84,7 @@ my-template.hbs
   {{#my-component the-name="thing"}}
   {{/my-component}}
 ```
-Raises error: 'the-name' is not in the allowedProperty list for the component
+Raises error: 'the-name' is not in the attrTypes for the component
 
 # Drawbacks
 
@@ -84,4 +100,3 @@ Mitigate the issue by triggering an error when the incorrect usage happens, temp
 # Unresolved questions
 
 - If a separate property `exposedProperties` makes sense to separate out the permitted and template exposure.
-- Typing of properties (potentially related to: https://github.com/emberjs/rfcs/pull/29)
