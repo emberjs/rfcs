@@ -4,7 +4,7 @@
 
 ## Summary
 
-`pathTemplate` improves the extesibility of API endpoint urls in `RESTAdapter`.
+`url-templates` improves the extesibility of API endpoint urls in `RESTAdapter`.
 
 ## Motivation
 
@@ -29,29 +29,29 @@ instead of manually assembling parts. Simple usage example:
 ```javascript
 export default DS.RESTAdapter.extend({
   namespace: 'api/v1',
-  pathTemplate: '/:namespace/posts/:id'
+  urlTemplate: '{host}{/namespace}/posts{/id}'
 });
 ```
 
 ### Resolving template segments
 
-Each dynamic path segment will be resolved on a singleton object based on a `pathSegments`
-object provided in the adapter. This `pathSegments` object will feel similar to defining
+Each dynamic path segment will be resolved on a singleton object based on a `urlSegments`
+object provided in the adapter. This `urlSegments` object will feel similar to defining
 actions on routes and controllers.
 
 ```javascript
 // adapter
 export default DS.RESTAdapter.extend({
   namespace: 'api/v1',
-  pathTemplate: '/:namespace/posts/:post_id/:category_name/:id',
+  pathTemplate: '{/:namespace}/posts{/:post_id}{/:category_name}{/:id}',
 
   pathSegments: {
-    category_name: function(record) {
-      return _pathForCategory(record.get('category'));
+    category_name: function(type, id, snapshot, requestType) {
+      return _pathForCategory(snapshot.get('category'));
     }
 
-    post_id: function(record) {
-      return record.get('post.id');
+    post_id: function(type, id, snapshot, requestType) {
+      return snapshot.get('post.id');
     };
   }
 });
@@ -60,40 +60,23 @@ export default DS.RESTAdapter.extend({
 #### Psuedo implementation
 
 ```javascript
-RESTAdapter = Adapter.extend({
-  buildURL: function(type, id, record) {
-    var urlResolver = _lookupURLResolver(type);
-    var template = this.get('pathTemplate')
-    var urlParts = _parseURLTemplate(template, function(name) {
-      var fn = urlResolver.get(name);
-      return fn(record);
+export default Adapter.extend({
+  buildURL: function(type, id, record, requestType) {
+    var template = this.compileTemplate(this.get('urlTemplate'));
+    var templateResolver = this.templateResolverFor(type);
+    var adapter = this;
+
+    return template.fill(function(name) {
+      var result = templateResolver.get(name);
+
+      if (Ember.typeOf(result) === 'function') {
+        return result.call(adapter, type, id, record, requestType);
+      } else {
+        return result;
+      }
     });
-
-    return this.urlPrefix(urlParts.compact().join('/'));
-  }
+  },
 });
-
-function _lookupURLResolver(type) {
-  // a singleton object will be created using pathSegments that includes important
-  // adapter attributes (such as namespace and host) and delegates unknown
-  // properties to the record, with something like:
-  //
-  //  unknownProperty: function(key) {
-  //    return function(record) { return record.get(key); };
-  //  }
-};
-
-// This is the simplest
-function _parseURLTemplate(template, fn) {
-  var parts = template.split('/');
-  return parts.map(function(part) {
-    if (_isDynamicSegment(part)) { // if segment starts with a `:`
-      return fn(_segmentName(part)); // strip off the `:`
-    } else {
-      return part;
-    }
-  });
-};
 ```
 
 ### Different URL templates per action
@@ -106,32 +89,14 @@ system in place:
 ```javascript
 // adapter
 export default DS.RESTAdapter.extend({
-  namespace: 'api/v1',
-  pathTemplate: '/:namespace/posts/:post_id/:id',
-  createPathTemplate: '/:namespace/comments',
-  hasManyTemplate: '/:namespace/posts/:post_id/comments',
+  urlTemplate: '/posts{/:post_id}{/:id}',
+  createUrlTemplate: '/comments',
+  hasManyUrlTemplate: '/posts/{:post_id}/comments',
 
   pathSegments: {
-    post_id: function(record) {
-      return record.get('post.id');
+    post_id: function(snapshot) {
+      return snapshot.get('post.id');
     };
-  }
-});
-```
-
-#### Psuedo implementation
-
-```javascript
-RESTAdapter = Adapter.extend({
-  createRecord: function(store, type, payload) {
-    // ...
-    var url = this.buildURL(type.typeKey, null, record, 'create');
-    return this.ajax(url, "POST", { data: data });
-  },
-
-  buildURL: function(type, id, record, action) {
-    var template = this.get(action + 'PathTemplate') || this.get('pathTemplate');
-    // ...
   }
 });
 ```
@@ -149,8 +114,6 @@ hooks.
 
 ## Unresolved Questions
 
-* How many templates are reasonable? There could be templates for different
-  operations such as `createRecord`, `updateRecord`, but also `findQuery`, etc.
 * How do we handle generating urls for actions that do not have a single
   record? This includes `findAll` and `findQuery`, which have no record, and
   `findMany` and `findHasMany` which have a collection of records.
