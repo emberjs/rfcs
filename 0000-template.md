@@ -13,7 +13,7 @@ Why are we doing this? What use cases does it support? What is the expected outc
 # Detailed design
 
 ### Glossary
-This is where you can definitions of terms used in the underlying detailed design.
+This is where you can find definitions of terms used in the underlying detailed design.
 
 This is the bulk of the RFC. Explain the design in enough detail for somebody familiar
 with the framework to understand, and for somebody familiar with the implementation to implement.
