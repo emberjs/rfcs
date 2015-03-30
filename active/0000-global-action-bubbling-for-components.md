@@ -57,4 +57,6 @@ I can't think of alternatives.
 
 # Unresolved questions
 
-I don't know what this takes internally within Ember, but since event bubbling to the top is the native behavior in Javascript, I don't imagine it's very hard.
+I don't know what this takes internally within Ember and how it sits with the plans for routable components and actions in 2.0 , but since event bubbling to the top is the native behavior in Javascript, I don't imagine it's very hard.
+
+I at least have not heard a clear proposal to make component actions bubble up, so here it is.
