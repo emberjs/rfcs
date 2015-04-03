@@ -48,14 +48,14 @@ app
 │   │   │   │   ├── edit-name.hbs
 │   │   │   │   ├── edit-name.js
 │   │   │   │   └── edit-name.scss
-│   │   │   └── profile-edit.js
-│   │   └── profile.js
+│   │   │   └── profile-edit-route.js
+│   │   └── profile-route.js
 │   └── admin
 │       ├── member-permissions
 │       │   ├── member-permissions.hbs
 │       │   ├── member-permissions.js
 │       │   └── member-permissions.scss
-│       └── admin.js
+│       └── admin-route.js
 ├── helpers
 │   └── format-date.js
 ├── initializers
