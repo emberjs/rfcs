@@ -35,31 +35,26 @@ To address the existing shortcomings of pods, a new default structure needs to b
 app
 ├── routes
 │   ├── profile
-│   │   ├── components
-│   │   │   ├── member-photo.js
-│   │   │   └── member-connections.js
-│   │   ├── styles
-│   │   │   ├── member-photo.scss
-│   │   │   └── member-connections.scss
-│   │   ├── templates
+│   │   ├── member-photo
 │   │   │   ├── member-photo.hbs
-│   │   │   └── member-connections.hbs
+│   │   │   ├── member-photo.js
+│   │   │   └── member-photo.scss
+│   │   ├── member-connections
+│   │   │   ├── member-connections.hbs
+│   │   │   ├── member-connections.js
+│   │   │   └── member-connections.scss
 │   │   ├── edit
-│   │   │   ├── components
-│   │   │   │   └── edit-name.js
-│   │   │   ├── templates
-│   │   │   │   └── edit-name.hbs
-│   │   │   ├── styles
-│   │   │   │   └── edit-name.scss
-│   │   │   └── profile-edit.js
+│   │   │   ├── edit-name
+│   │   │   │   ├── edit-name.hbs
+│   │   │   │   ├── edit-name.js
+│   │   │   │   └── edit-name.scss
+│   │   │   └── profile-edit.js
 │   │   └── profile.js
 │   └── admin
-│       ├── components
-│       │   └── member-permissions.js
-│       ├── templates
-│       │   └── member-permissions.hbs
-│       ├── styles
-│       │   └── member-permissions.scss
+│       ├── member-permissions
+│       │   ├── member-permissions.hbs
+│       │   ├── member-permissions.js
+│       │   └── member-permissions.scss
 │       └── admin.js
 ├── helpers
 │   └── format-date.js
@@ -70,12 +65,10 @@ app
 ├── utils
 │   └── fib.js
 ├── shared
-│   ├── components
-│   │   └── dropdown-menu.js
-│   ├── templates
-│   │   └── dropdown-menu.hbs
-│   └── styles
-│       └── dropdown-menu.scss
+│   ├── dropdown-menu
+│   │   ├── dropdown-menu.js
+|   |   ├── dropdown-menu.scss
+│   └── └── dropdown-menu.hbs
 ├── app.js
 └── router.js
 
@@ -87,6 +80,10 @@ The largest change here is that `routes` is where majority of your application l
    - This can be thought as an intermediate step towards engines.
 - Automatic namespacing of components
 - Discrete workspaces for larger teams
+
+## Resolution
+
+The resolution of components and nested-routes is a tiered/fallback approach much like the current pattern in JJ Abrams Resolver.  Routes take precedence over over components.
 
 
 ## Coarse Bundling
@@ -109,6 +106,8 @@ dist
 In this case `app.js` is everything that is top level sans the `routes` directory.  The reason behind this is that these constructs are application agnostic and no nothing about the overall structure of the application.
 
 In an engines world the directories in the `routes` folder can be looked as mountable entry points to the hosting application.
+
+Since you can have nested components sitting the same level, routes once again take precedence over components.
 
 
 ## Automatic Namespacing
