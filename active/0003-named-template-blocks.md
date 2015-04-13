@@ -109,13 +109,9 @@ The component must be able to determine programmatically if it should consume it
 
 ## Named blocks have block params
 
-Named blocks will have block params and will receive values with a new helper. `{{yield-to}}` will take name of a block as a first parameter and yield properties as `{{yield}}` does. This will allow the component to expose template friendly values to be used in the named blocks.
+Named blocks will have block params and will receive values with a new `{{yield-to}}` helper. `{{yield-to}}` will take name of a block as a first parameter and yield properties as `{{yield}}` does. This will allow the component to expose template friendly values to be used in the named blocks.
 
 ```{{yield-to 'header' headerContent}}``` will yield `headerContent` to `header` block.
-
-## Named blocks must be portable
-
-Under certain circomstances it might be necessary to be able to pass a named block into a nested component. This would make it easier to compose nested components.
 
 # Drawbacks
 
@@ -127,4 +123,4 @@ What other designs have been considered? What is the impact of not doing this?
 
 # Unresolved questions
 
-What parts of the design are still TBD?
+* Should this be added to Handlebars or should we fork Handlebars?
