@@ -79,19 +79,23 @@ Here is an example of what a template with this syntax might look like.
 {{/table-component}}
 ```
 
+`{{^name}}` serve as dividers of the block template.
+
 ## Refactor `{{else}}` helper
 
-One possible implementation would be to refactor `{{^}}` implementation into a more generic implementation that allows the name of the helper to be modified. 
+One possible implementation would be to make `{{^}}` implementation and allow the name of the helper to be specified. 
 
 Handlebars has several built in blocks that are availble on helper's `options` argument,  namely `options.fn` & `options.inverse`. These would be changed to `options.blocks.default` & `options.blocks.inverse` respectively. Every other named template block would be available on `options.blocks` hash. The above example would have `options.blocks.header` & `options.blocks.footer` in addition to it's default blocks.
 
-## Blocks must be available in the template
+The component hook will append named blocks onto the template as it does currently with default block.
+
+## Block are available in the layout
 
 The component must be able to determine programmatically if it should consume it's default block or use the passed in named block. If we consider the above example, then `table-component`'s layout might look something like this.
 
 ```
-{{#if template.blocks.header}}
-	{{template.blocks.header.yield headerContent}}
+{{#if blocks.header}}
+	{{yield-to 'header' headerContent}}
 {{else}}
 	<thead>
 		{{#each headerContent as |name|}}
@@ -101,11 +105,13 @@ The component must be able to determine programmatically if it should consume it
 {{/if}}
 ```
 
-Similar pattern can be followed to specify the ability to customize body and footer.
+`blocks` keyword becomes a reserved keyword and will throw a warning when the component defines a *blocks* property. We already have a reserved `hasBlock` keyword in the template, so this will not be a far stretch.
 
 ## Named blocks have block params
 
-Named template blocks need to be able to receive block params and yield values into the scope in the same way as regular template blocks can. This would allow the component to expose template friendly values to be used in the template block.
+Named blocks will have block params and will receive values with a new helper. `{{yield-to}}` will take name of a block as a first parameter and yield properties as `{{yield}}` does. This will allow the component to expose template friendly values to be used in the named blocks.
+
+```{{yield-to 'header' headerContent}}``` will yield `headerContent` to `header` block.
 
 ## Named blocks must be portable
 
