@@ -57,7 +57,7 @@ export default DS.RESTAdapter.extend({
 });
 ```
 
-#### Psuedo implementation
+#### Pseudo implementation
 
 ```javascript
 export default Adapter.extend({
