@@ -203,7 +203,7 @@ Lastly, closure actions allow for yielding an action to a block. For example:
 
 ```hbs
 {{! app/index/template.hbs }}
-{{my-form save=(action 'submit') as |submit reset|}}}
+{{my-form save=(action 'submit') as |submit reset|}}
   <button {{action submit}}>Save</button>
   {{! ^ goes to my-form's save attr property, which
         is the submit action on the outer scope }}
