@@ -107,7 +107,7 @@ export default Ember.Component.extend({
 With closure actions, the action is available to call directly. The `(action` helper
 wraps the action in the current context and returns a function:
 
-```
+```hbs
 {{my-component action=(action "submit")}}
 ```
 
@@ -203,7 +203,7 @@ Lastly, closure actions allow for yielding an action to a block. For example:
 
 ```hbs
 {{! app/index/template.hbs }}
-{{my-form save=(action 'submit') as |submit reset}}}
+{{my-form save=(action 'submit') as |submit reset|}}}
   <button {{action submit}}>Save</button>
   {{! ^ goes to my-form's save attr property, which
         is the submit action on the outer scope }}
@@ -359,13 +359,13 @@ unexpected behavior.
 Also additionally, some emergent behaviors exist that may not be desired as real APIs. For example,
 an action being a function means it can be passed directly to event handlers:
 
-```
+```hbs
 {{my-component mouseEnter=(action 'didEnter')}}
 ```
 
 The actual API we plan for 2.0 (ideally) is:
 
-```
+```hbs
 {{my-component on-mouse-enter=(action 'didEnter')}}
 ```
 
