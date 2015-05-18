@@ -255,7 +255,7 @@ export default Ember.Helper.extend({
 
 # Drawbacks
 
-Stateful components may superficially appear similar to components, but in
+Stateful helpers may superficially appear similar to components, but in
 practice they have none of the special behavior of components. The intent of
 this RFC is that they remain conceptually very close to function helpers,
 but despite this intent they are a new concept for the framework.
