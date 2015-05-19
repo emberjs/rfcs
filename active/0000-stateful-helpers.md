@@ -16,11 +16,11 @@ Stateful helpers are a class-based way to define helpers. Stateful helpers:
 
 They fill a gap in Ember's current template APIs:
 
- |has positional params|has layout|can yield template|has lifecycle, instance|can control rerender
----|---|---|---|---
-components|Yes|Yes|Yes|Yes|Yes
-stateful helpers|Yes|No|Yes|Yes|Yes
-function helpers|Yes|No|Yes|No|No
+|                  | has positional params | has layout | can yield template | has lifecycle, instance | can control rerender |
+|------------------|-----------------------|------------|--------------------|-------------------------|----------------------|
+| components       | Yes                   | Yes        | Yes                | Yes                     | Yes                  |
+| stateful helpers | Yes                   | No         | Yes                | Yes                     | Yes                  |
+| function helpers | Yes                   | No         | Yes                | No                      | No                   |
 
 Example usage:
 
