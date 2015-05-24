@@ -1,5 +1,5 @@
 - Start Date: 2014-05-06
-- RFC PR: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/50
 - Ember Issue: (leave this empty)
 
 # Summary
