@@ -4,7 +4,7 @@
 
 # Summary
 
-This RFC proposes a new method on the Ember Data store for asynchronously retrieving records where if the record is already found in the store Ember Data will return the cached record then in the background ask the adapter to re-retrieve the record to make sure it has the freshest data. If the record is not in the store Ember Data will make a request like normal and it will not resolve the returned promise until the data is returned from the adapter.
+This RFC proposes new methods on the adapter to signal to the Ember Data store when it should re-request a record that is already cached in the store. It also proposes a new adapter options object that can be used by to provide instructions to the adapter from the place where the store's find method is called.
 
 # Motivation
 
@@ -145,13 +145,61 @@ displaying a loading spinner.
 
 ## Proposal
 
-### Fetch
+### New Adapter Methods.
 
-Going forward, the recommended API for fetching a record in Ember Data
-should be:
+`shouldRefetchRecord` is a new method on the adapter that will be called by the store to make initial decision whether to refetch the record form the adapter or return the cached record from the store. This could method could be used to implement caching logic (e.g. only refetch this record after the time specified in its cache expires token) or for improved offline support (e.g. always refetch unless there is no internet connection then use cached record).
+
+This record would only be called if the record was already found in the store and is in the loaded state. 
+
+This method is only checked by `store.findById` and `store.findAll`. Methods with `fetch` in their name always refetch the record(s) from the adapter.
 
 ```js
-this.store.fetch('person', 1);
+{
+  /**
+   `shouldRefetchRecord` returns true if the adapter determines the record is
+   stale and should be refetch. It should return false if the record
+   is not stale or some other condition indicates that a fetch should
+   not happen at this time (e.g. loss of internet connection). 
+
+   This method is synchronous.
+
+   @method shouldRefetchRecord
+   @param {DS.Store} store
+   @param {DS.Model} record
+   @param {Object} adapterOptions
+   @return {Boolean}
+   */
+  shouldRefetchRecord: function(store, record, adapterOptions),
+}
+```
+
+The method `shouldBackgroundUpdate` would be used by the store to make the decision to re-fetch the record after it has already been returned to the user. This would allow realtime adapter to opt out of the background fetch if the adapter is already subscribing to changes on the record. 
+
+```js
+{
+  /**
+   `shouldBackgroundUpdate` returns true if the store should re fetch a
+   record in the store after returning it to the user to ensure the
+   record has the most up to date data.
+   
+   This method is synchronous.
+
+   @method shouldBackgroundUpdate
+   @param {DS.Store} store
+   @param {DS.Model} record
+   @param {Object} adapterOptions
+   @return {Boolean}
+  */
+  shouldBackgroundUpdate: function(store, record, adapterOptions),
+}
+```
+
+
+In the next major version of Ember Data the recommend way of finding a record 
+will be:
+
+```js
+this.store.findById('person', 1);
 ```
 
 This will return a promise that:
@@ -162,40 +210,21 @@ This will return a promise that:
    requests, but triggers a request to the server for the updated
    version and updates the record in-place if there are changes.
 
-For adapters that use a socket to keep records up-to-date, this
-`fetch()` should also cause the socket to subscribe to change events for
-this record. Subsequent requests should be a no-op since those events
-will keep the record up-to-date.
 
-Whether pushed events or XHR requests are used to keep the record
-up-to-date is an adapter implementation detail. The fundamental
-guarantee of `fetch()` is:
+In terms of the above methods `shouldRefetchRecord` will always return `false` and `shouldBackgroundUpdate` will always return `true` in the default `RESTAdapter`.
+
+The fundamental guarantee of `findById()/findAll()` when using the default `RESTAdapter` is:
 
 > Give me the information you have available locally, then give me the
 > most up-to-date information as soon as possible.
-
-In sockets, that means that the locally available information is _also_
-the most up-to-date information and no further server round-trips are
-necessary.
-
-To tell the fetch to not resolve the promise until the most up-to-date
-information is fetched (i.e., to implement the _New Fetch Every Render_
-approach described above), you can pass a flag that indicates that the
-promise should not be resolved until the adapter has provided refreshed
-information:
-
-```js
-this.store.fetch('person', 1, { waitForUpdate: true });
-```
 
 Currently, the `find()` method takes an optional third parameters that
 is passed to the adapter. In this API, that data structure is moved to
 a field in the new options hash:
 
 ```js
-this.store.fetch('person', 1, {
-  waitForUpdate: true,
-  adapterOptions: { comment_id: 1 }
+this.store.findById('person', 1, {
+  preload: { comment_id: 1 }
 });
 ```
 
@@ -222,6 +251,8 @@ conditionally show a spinner:
 
 Models have an `isReloading` flag. This will be deprecated in favor of the new `isUpdating` flag.
 
+
+
 # Drawbacks
 
 Why should we *not* do this?
@@ -246,6 +277,6 @@ record is stale (this could be configured on the adapter).
 
 # Unresolved questions
 
-The term `fetch` is already used by Ember Data for the behavior of always finding a record from the adapter. Alternately, if we ever decided we wanted to split `fetch` into 2 methods for the single record and multiple record cases we would run into the existing `fetchById`/`fetchAll` methods. 
+
 
 
