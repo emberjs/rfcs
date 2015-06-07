@@ -15,6 +15,7 @@ consistent and controlled path for new features to enter the framework.
 ## Active RFC List
 
 * [0015-the-road-to-ember-2-0.md](text/0015-the-road-to-ember-2-0.md)
+* [0045-internet-explorer.md](text/0045-internet-explorer.md)
 
 ## When you need to follow this process
 
