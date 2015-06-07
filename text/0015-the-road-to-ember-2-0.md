@@ -1,6 +1,6 @@
 - Start Date: 2014-12-03
-- RFC PR: (leave this empty)
-- Ember Issue: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/15
+- Ember Issue: This RFC is implemented over many Ember PRs
 
 # The Road to Ember 2.0
 
