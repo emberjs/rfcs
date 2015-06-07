@@ -51,11 +51,15 @@ is 'active' and may be implemented with the goal of eventual inclusion
 into Ember.
 
 * Fork the RFC repo http://github.com/emberjs/rfcs
-* Copy `0000-template.md` to `active/0000-my-feature.md` (where 
+* Copy `0000-template.md` to `text/0000-my-feature.md` (where 
 'my-feature' is descriptive. don't assign an RFC number yet).
-* Fill in the RFC
-* Submit a pull request. The pull request is the time to get review of 
-the design from the core team and the community.
+* Fill in the RFC. Put care into the details: RFCs that do not
+present convincing motivation, demonstrate understanding of the
+impact of the design, or are disingenuous about the drawbacks or
+alternatives tend to be poorly-received.
+* Submit a pull request. As a pull request the RFC will receive design
+feedback from the larger community, and the author should be prepared
+to revise it in response.
 * Build consensus and integrate feedback. RFCs that have broad support 
 are much more likely to make progress than those that don't receive any 
 comments.
