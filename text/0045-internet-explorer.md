@@ -1,5 +1,5 @@
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
-- RFC PR: (leave this empty)
+- Start Date: 2015-06-07
+- RFC PR: https://github.com/emberjs/rfcs/pull/45
 - Ember Issue: (leave this empty)
 
 # Summary
