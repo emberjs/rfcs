@@ -12,6 +12,10 @@ core team.
 The "RFC" (request for comments) process is intended to provide a
 consistent and controlled path for new features to enter the framework.
 
+## Active RFC List
+
+* [0015-the-road-to-ember-2-0.md](text/0015-the-road-to-ember-2-0.md)
+
 ## When you need to follow this process
 
 You need to follow this process if you intend to make "substantial" 
