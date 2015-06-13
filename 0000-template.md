@@ -4,7 +4,7 @@
 
 # Summary
 
-One para explanation of the feature.
+One paragraph explanation of the feature.
 
 # Motivation
 
