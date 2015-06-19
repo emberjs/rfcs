@@ -118,21 +118,21 @@ The above example would be rewritten as:
 ```js
 var Shape = DS.Model.extend({
   color: DS.attr();
-  abstractBaseClass: true
+});
+Shape.reopenClass({
+  abstract: true
 });
 ```
 
 ```js
 var Circle = Shape.extend({
   radius: DS.attr();
-  abstractBaseClass: 'shape'
 });
 ```
 
 ```js
 var Line = Shape.extend({
   length: DS.attr();
-  abstractBaseClass: 'shape'
 });
 ```
 
