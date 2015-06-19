@@ -141,13 +141,14 @@ This approach has several advantages:
 It would be much easier for `line.save()` to automagically go to /shapes
 
 However, I believe that the drawbacks are more significant:
-1.This approach is much more restrictive, you can either always include or not include subclasses,
-   but cannot decide at invocation time if you want to opt out
-2. In larger teams it might be surprising that one day `store.findAll('comments')` is returning other
+
+  1.This approach is much more restrictive, you can either always include or not include subclasses,
+    but cannot decide at invocation time if you want to opt out
+  2. In larger teams it might be surprising that one day `store.findAll('comments')` is returning other
 random models just because somebody on the team added an abstractBaseClass: true to the `comment` model.
 This is a bigger problem than forgetting to add `{ polymorphic: true }` because errors can happen in a completely
 different part of the app.
-3. This approach is incosistent with our current relationship polymorphism. It would require us to either deprecate
+  3. This approach is incosistent with our current relationship polymorphism. It would require us to either deprecate
 `hasMany({ polymorphic: true })` (and we just released 1.0 :( ) or to use an inconsistent mixed approach.
 
 # Unresolved questions
