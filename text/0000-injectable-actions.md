@@ -80,8 +80,8 @@ Injected actions should desugar to something like:
 
 ```javascript
 {
-	updateCreditCard: function (...args) {
-		let action = this.container.lookup('actions:update-credit-card');
+  updateCreditCard: function (...args) {
+    let action = this.container.lookup('actions:update-credit-card');
     if (action.execute) {
       return action.execute(...args);
     } else {
