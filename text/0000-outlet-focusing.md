@@ -4,7 +4,9 @@
 
 # Summary
 
-Add a `focus(morph)` hook to `Ember.Route` which will enable programmatic setting of focus after a navigation event and a completed transition. This should ship with a default implementation that makes all Ember applications more accessible by default. It can then be overridden by a developer to provide behaviors specific to their application's use case. 
+Add a `focusNode` property to `Ember.Route` which will enable programmatically setting the focus to the specified element after a navigation event and a completed transition. By default this will be `undefined` which will result in the first element associated with the route being focused. There will be a new private API `focus(morph)` function which receives the associated morph node, reads this property, and sets the focus appropriately. The default implementation should make all Ember applications more accessible by default.
+
+For bonus points, add an event that is fired at a `route` on "focus" which allows an additional hook for behavior correlated to focusing a route, such as addressing scroll position. (This is distinct from `enter` and `activate`.)
 
 # Motivation
 
@@ -20,8 +22,8 @@ This is a tremendously bad user experience, and something that we need to fix. E
 ## Technical details
 
 - This attempts to grab the "primary" outlet connection for that particular route. Custom `renderTemplate()` functions with only named outlets can make this not play nicely. It's not configurable in my mock implementation, but it could be assertable that there always be a "main" outlet.
-- It requires that the first node in every template be a grouping element containing the entire template. We could address this by forcing all `{{outlet}}`s to be wrapped in `div`s by default, but that is a breaking change. Maybe find a way to opt in to that behavior. (We know that this is generally safe because of liquid-fire, but it was also decided against making a change to the top level view during the run-up to 2.0.)
-- Currently it relies on the `Ember.Route`'s `enter` hook to tie the route to the transition. This misses no-op transitions.
+- The best experience requires that the first node in every template be a grouping element containing the entire template. I propose that we deprecate non-`div`-wrapped `{{outlet}}`s with a global opt-in to `div`-wrapped outlets which removes that deprecation. This makes the behavior more accessible by default, enforces the concept of "nested routing" and makes it easier for applications to adopt liquid-fire (and guaranteeing an element handle for `.liquid-child`). *I expect this to be the most controversial piece of this RFC and believe the tradeoff to be worth it.*
+- Currently it relies on the `Ember.Route`'s `enter` hook to tie the route to the transition. This misses no-op transitions. The mock implementation is the weak link here, not the concept.
 - It gets clever when you're navigating back to the index route of a route you're presently in and sets the focus to the "outer" route.
 
 ## Accessibility thoughts
@@ -31,10 +33,9 @@ Programmatically setting focus is often done poorly and as a result it is genera
 # Drawbacks
 
 - Changes the focus behavior for all users, not just screen reader users.
-- Setting focus has style and scrolling consequences.
+- Setting focus has style and scrolling consequences. [This is addressable.](http://jsbin.com/faxazedaci/edit?js,output)
 - Dictates outlet markup (wrapping in `div`), reducing their flexibility.
 - Requires more rigidity on named `{{outlet}}`s to require at least one "main" outlet.
-- Makes available the relevant DOM inside of a Route, which could be abused by enterprising developers.
 
 # Alternatives
 
@@ -46,4 +47,4 @@ I don't consider not coming up with a solution an actual possibility.
 
 # Unresolved questions
 
-The design space has been pretty well explored. There are a few more implementation details to make sure that things play nicely with all of the edge cases, but those can be addressed after community feedback on the feature's existence.
+The design space has been pretty well explored. There are a few more implementation details to make sure that things play nicely with all of the edge cases and bikeshedding on API names, but those can be addressed after community feedback on the feature's existence.
