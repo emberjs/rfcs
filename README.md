@@ -43,6 +43,14 @@ If you submit a pull request to implement a new feature without going
 through the RFC process, it may be closed with a polite request to 
 submit an RFC first.
 
+## Gathering feedback before submitting
+
+It's often helpful to get feedback on your concept before diving into the 
+level of API design detail required for an RFC. You can always open an 
+issue on this repo to open up high-level discussion, with the goal of 
+eventually formulating an RFC pull request with the specific implementation
+design.
+
 ## What the process is
 
 In short, to get a major feature added to Ember, one must first get the 
