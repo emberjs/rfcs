@@ -1,6 +1,6 @@
 - Start Date: 2015-04-09
-- RFC PR:
-- Ember Issue:
+- RFC PR: https://github.com/emberjs/rfcs/pull/46
+- Ember Issue: https://github.com/emberjs/ember.js/pull/11440
 
 # Summary
 
@@ -106,4 +106,3 @@ similar to the current `needs` array?
 to worry about semver for deprecations. However, we should be good citizens
 and properly deprecate as much as possible. Some real world use cases in
 initializers will no doubt be a surprise, so we need to tread carefully.
-
