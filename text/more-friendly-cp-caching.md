@@ -85,7 +85,7 @@ In computed properties for case A, after setting the state in a dependent key th
 the way ES5 getters/setters work, think that they're done, because the next time the property is
 accessed the getter will be invoked and the expected result will come out.
 
-And it doesn't because getter cache `undefined` as return value. I dare to affirm that is almost never
+And it doesn't because setters cache `undefined` as return value. I dare to affirm that is almost never
 the indended behaviour.
 
 One radical solution would be not cache at all in setters (getters would cache as usual).
