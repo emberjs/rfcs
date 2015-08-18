@@ -4,26 +4,101 @@
 
 # Summary
 
-One para explanation of the feature.
+Adds command line completion *(tab completion)* to ember-cli that fills in partially typed commands by the user and suggests available sub commands or options. *(from now on i will refer to "commands" as in "strings in the command line" to "cli-commands" and "commands" like "generate" and "new" as unprefixed "commands")*
 
 # Motivation
 
-Why are we doing this? What use cases does it support? What is the expected outcome?
+With all the already existing commands and especially all blueprints, plus the fact that any addon can add even more blueprints to your tool kit, users can get overwhelmed. Currently, when you want to execute a specific task and you don't quite know the correct cli-command you have to invoke `ember help` which is noisy and slow *( especially when you just want to know the spelling of a specific thing)*. This feature will enable the user to chose from all existing cli-commands by pressing __[tab]__ or just to let ember-cli fill partially typed cli-commands for speed.
 
 # Detailed design
 
-This is the bulk of the RFC. Explain the design in enough detail for somebody familiar
-with the tool to understand, and for somebody familiar with the implementation to implement.
-This should get into specifics and corner-cases, and include examples of how the feature is used.
+The two main components of that feature are a __completion function__ that is responsible for the actual tab-completion, and a __generation function__ that will write the cli-command hierarchy together with metadata into a JSON file for fast processing.
 
-# Drawbacks
+## completion function
 
-Why should we *not* do this?
+To enable this feature, a __completion function__ will run at the main entry point of the process *(making use of  [omelette](https://github.com/f/omelettev) for shell completion)*. On every __[tab]__ it will parse the command line and either completes a partially typed, unambiguous cli-command, or suggests possible cli-commands for the current context.
+
+The user interface will work as you would expect it from a shell completion:
+
+- it suggests all commands if none are typed yet
+
+  ```
+    $ ember <tab>
+    > addon     destroy   help      install   serve     version
+      build     generate  init      new       test
+  ```
+- it completes partially typed commands
+
+  ```
+    $ ember gen<tab>
+    $ ember generate
+  ```
+- it completes to suggests commands based on user input (note how it __should__ understand aliases)
+
+  ```
+    $ ember g ad<tab>
+    > adapter       adapter-test  addon
+  ```
+- it, by default, will not suggest options
+
+  ```
+    $ ember g resource <tab>
+  ```
+- it will suggest options on demand (note how it __should__ know when an option needs a value)
+
+  ```
+    $ ember g resource post --<tab>
+    --dry-run         --in-repo-addon=  --verbose
+    --dummy           --pod
+  ```
+
+## generation function
+
+For a good user experience we don't want to figure out those suggestions on runtime or the completion feature would not be substantially faster then the `ember help` command. So there will be a __generation function__ that generates a JSON file once after ember-cli is installed and then during every `ember install some-addon` command to ensure that blueprints added by new addons are recognized aswell.
+
+Here an example snippet of a cli-command with one cli-subcommand:
+```
+  ...
+  {
+    "name": "command-name",
+    "aliases": [
+      "cn",
+      "c"
+    ],
+    "options": [
+    ],
+    "commands": [
+      {
+        "name": "some-subcommand",
+        "aliases": [
+        ],
+        "options": [
+          {
+            "name": "pods",
+            "type": "boolean"
+          }
+        ],
+        "commands": [
+        ]
+      }
+    ]
+  }
+  ...
+```
+The __generation function__ will, as a first step, iterate over all commands and reads the following properties:
+- __name:__ a string, the autocompletion function will suggest
+- __aliases:__ this is what the autocompletion function will accept in the cli-command chain
+- __availableOptions:__ an array of options that need to have a `name` and a `type` property those will be accumulated for every cli-command in the cli-command chain and suggested on `some-command --<tab>`
+- __cliCommands:__ can either be an array or a function that returns an array of objects that themselfs will be parsed for the properties in this list.
+- __skipHelp:__ whenever this property is set to true, the cli-command will also not be suggested by the autocompletion
+
+Whenever an object does not have one of the above properties, a reasonable default is chosen (except for `name`. If it has no name, it will not be shown at all). This way it is easy to extend that feature in the future to handle arbitrary nested cli-commands.
 
 # Alternatives
 
-What other designs have been considered? What is the impact of not doing this?
+- Currently the __completion function__ will just expect certain properties to be on a cli-command, this way most commands and blueprints work out of the box but maybe some architectual pattern, like a cli-command mixin or the like would be more robust and obvious.
+- Someone with more experience with this project could have an idea of how to generate all cli-commands fast enough so that we would not need to store the data in a JSON file.
 
 # Unresolved questions
 
-What parts of the design are still TBD?
+Currently the autocompletion will figure out your default shell and configures it to allow tab-completion for ember. However on first-time usage you would need to resource your config file (or close and open your terminal) and I haven't figured out how to do this programmatically.
