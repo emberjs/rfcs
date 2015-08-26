@@ -104,7 +104,7 @@ components, the current distinction between the `templates` and
 `templates/components` directories becomes unhelpful. We want to put
 all of them into just `templates`. Thanks to the introduction of
 `<element>` and `<fragment>` (see the
-[Element and Fragment RFC](element-and-fragment)), we can make this
+[Element and Fragment RFC][element-and-fragment]), we can make this
 transition gracefully.
 
   - A template in `templates` with an `<element>` or `<fragment>` tag is defining a Component or Fragment.
@@ -240,7 +240,7 @@ mean `Component` *or* `Fragment`.
 
 To distinguish `Component` templates from `Fragment` templates, we
 will introduce the `<element>` and `<fragment>` keywords, which are
-described in a [separate RFC document](element-and-fragment).
+described in a [separate RFC document][element-and-fragment].
 
 ## Query Parameters
 
@@ -486,3 +486,5 @@ renderComponents: function(attributes) {
   });
 }
 ````
+
+[element-and-fragment]: https://github.com/ef4/rfcs/blob/element-and-fragment/active/0000-element-and-fragment.md
