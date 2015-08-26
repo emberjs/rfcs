@@ -49,7 +49,17 @@ I can think of two drawbacks. First and foremost, the array argument type will b
 
 # Alternatives
 
-No real alternatives were considered. The only thing that came to mind as an alternative was adding an additional computed macro for this use case (EG `Ember.computed.readOnlySort`).
+An alternative would be to implement a new computed macro called: `Ember.computed.sortBy`. This would allow for more argument/API flexibility. Here a few examples:
+
+```javascript
+newestPosts: Ember.computed.sortBy('posts', 'createdOn') # default to ascending
+
+newestPosts: Ember.computed.sortBy('posts', 'createdOn:desc')
+
+newestPosts: Ember.computed.sortBy('posts', ['author.name', 'createdOn:desc'])
+```
+
+Credit for this alternative goes to Oliver Searle-Barnes (@opsb).
 
 # Unresolved questions
 
