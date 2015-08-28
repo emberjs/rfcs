@@ -10,7 +10,7 @@ single application from the user's perspective.
 # Motivation
 
 Large companies are increasingly adopting Ember.js to power their entire
-product lines. Often, this means separate teams (sometimes distributed
+product lines. Often this means separate teams (sometimes distributed
 around the world) working on the same app. Typically, responsibility is
 shared by dividing the application into one or more "sections". How this
 division is actually implemented varies from team to team.
@@ -42,9 +42,20 @@ they are included.
 Engines provide an alternative to these approaches that allows for distributed
 development, testing, and packaging, _as well as_ logical run-time separation.
 Because engines are derived from applications, they can be just as
-full-featured. Each has its own namespace, registry, and routing map. Even
-though engines are isolated from the applications that contain them, the
-boundaries between them allow for controlled sharing of resources.
+full-featured. Each has its own namespace and registry. Even though engines are
+isolated from the applications that contain them, the boundaries between them
+allow for controlled sharing of resources.
+
+Engines can be either "routable" or "route-less":
+
+* Routable engines provide a routing map which can be integrated with the
+  routing maps of parent applications or engines. Routing maps are alway eager
+  loaded, which allows for deep linking into an engine's routes regardless of
+  whether the engine itself has been instantiated.
+
+* Route-less engines can isolate complex functionality that is not related to
+  routing (e.g. a chat engine in a sidebar). Route-less engines can be rendered
+  into outlets ad hoc as routes are loaded.
 
 The potential scope of engines is large enough that this feature merits
 development and delivery in multiple phases. A minimum viable version could be
@@ -56,8 +67,11 @@ An initial release of engines could provide the following benefits:
   within their own Ember CLI projects and included by applications or other
   engines. Engines can be packaged and released as addons themselves.
 
-* Integrated routing - Each engine should define a routing map that applications
-  or other engines can mount at any point in their own routing maps.
+* Integrated routing - Support for mounting routable engines in the routing maps
+  of applications or other engines.
+
+* Ad hoc embedding - Support for embedding route-less engines in outlets as
+  needed.
 
 * Clean boundaries - An engine can cooperate with its parents through a few
   explicit interfaces. Beyond these interfaces, engines and applications are
@@ -97,10 +111,14 @@ initializers.
 Engine instances will have access to their parent instances. An engine's parent
 could be either an application or engine.
 
-Engines will define their routes in a new `Ember.Routes` class. This class will
-encapsulate the functionality provided by `Router#map`, and will be used
-internally by `Ember.Router` as well (with no public interface changes of
+#### Routable vs. route-less engines
+
+Routable engines will define their routes in a new `Ember.Routes` class. This
+class will encapsulate the functionality provided by `Router#map`, and will be
+used internally by `Ember.Router` as well (with no public interface changes of
 course).
+
+Route-less engines do not define routing maps nor can they contain routes.
 
 ### Developing engines
 
@@ -150,7 +168,7 @@ directory in a standard ember-cli application, with the following exceptions:
   loads its initializers.
 
 * `routes.js` instead of `router.js` - defines an engine's routing map in a
-  `Routes` class.
+  `Routes` class. This file should be deleted entirely for route-less engines.
 
 ### Installing engines
 
@@ -164,7 +182,7 @@ ember install <engine-name>
 During development, you can use `npm link` to make your engine available in
 another parent engine or application.
 
-### Mounting engines
+### Mounting routable engines
 
 The new `mount()` router DSL method is used to mount an engine at a particular
 "mount-point" in a route map.
@@ -184,6 +202,29 @@ Calls to `mount` can be nested within routes. An engine can be mounted at
 multiple routes, and each will represent a new instance of the engine to be
 created.
 
+### Mounting route-less engines
+
+A `mount()` DSL will also be added to routes, which will enable embedding of
+route-less engines in outlets. This can be called from `renderTemplate` (or
+`renderComponents` once routable components are introduced).
+
+`mount` has a similar signature to `render`, although it is obviously
+engine-specific instead of template-specific. `mount` can be used to specify
+a target template and outlet as follows:
+
+```
+renderTemplate: function() {
+  // Mount the chat engine in the sidebar
+  this.mount('chat', {
+    into: 'main',
+    outlet: 'sidebar'
+  });
+}
+```
+
+As a result, the engine's `application` template will be rendered into the
+`sidebar` outlet in the application's `main` template.
+
 ### Loading phases
 
 Engines can exist in several phases:
@@ -192,14 +233,15 @@ Engines can exist in several phases:
   its dependencies loaded and its (non-instance) initializers invoked when the
   parent application boots.
 
-* Mounted - an engine is considered "mounted" when it has been included by a
-  router at one or more mount-points. The router inspects the engine's route
-  map and is able to form URLs without fully loading the engine. Mounting is
-  done as part of a router's initialization process.
+* Mounted - Routable and route-less engines have slightly different concepts of
+  "mounting". A routable engine is considered mounted when it has been included
+  by a router at one or more mount-points. A route-less engine is considered
+  mounted as soon as a route's `mount` call resolves.
 
-* Instantiated - an engine is instantiated when a route is visited at or beyond
-  its mount-point. An `EngineInstance` is instantiated and an engine's instance
-  initializers are invoked.
+* Instantiated - When an engine is instantiated, an `EngineInstance` is created
+  and an engine's instance initializers are invoked. A routable engine is
+  instantiated when a route is visited at or beyond its mount-point. A
+  route-less engine is instantiated as soon as it is mounted.
 
 Special `before` and `after` hooks could be added to application instance
 initializers that allow them to be ordered relative to engine instance
@@ -210,7 +252,7 @@ initializers.
 Besides its routing map, an engine does not share any other resources with its
 parent by default. Engines maintain their own registries and containers, which
 ensure that they stay isolated. However, some explicit sharing of resources
-between engines and parents should be allowed.
+between engines and parents is allowed.
 
 #### Engine / parent dependencies
 
@@ -247,12 +289,38 @@ var Engine = Ember.Engine.extend({
 export default Engine;
 ```
 
-If necessary, the parent can provide a re-mapping of services from its namespace
-to that of the engine via `mount` options in the route map (e.g. to map a
-`current-user` service to the engine's `session` service).
+The parent application can provide a re-mapping of services from its namespace
+to that of the engine via an `engines` declaration.
 
-When the engine is instantiated, the listed dependencies will be looked up on
+In the following example, the application shares its `store` service directly
+with the `checkout` engine. It also shares its `current-user` service as the
+`session` service requested by the engine.
+
+```
+import Ember from 'ember';
+
+var App = Ember.Application.extend({
+  engines: {
+    checkout: {
+      dependencies: {
+        services: [
+          'store',
+          {session: 'current-user'}
+        ]
+      }
+    }
+  }
+});
+
+export default App;
+```
+
+When engines are instantiated, the listed dependencies will be looked up on
 the parent and made accessible within the engine.
+
+Note that the `engines` declaration provides further space to define
+characteristics about an engine, such as whether it should be eager or
+lazy-loaded, URLs for manifest files, etc.
 
 # Drawbacks
 
@@ -288,6 +356,13 @@ whatever reason can still take advantage of composability.
 The initial scope of declarative dependency sharing is limited in scope to
 services. Should other types of dependencies be declaratively shareable?
 Should addons be the recommended path to share all other dependencies?
+
+## Async mounting of route-less engines
+
+`Route#renderTemplate` is called synchronously, although `Route#mount` should
+surely be async. How async mounting is represented in the route lifecycle is
+TBD. A solution isn't proposed here because the problem is shared by routable
+and async components, and a common solution should be reached.
 
 ## Lazy loading manifests
 
