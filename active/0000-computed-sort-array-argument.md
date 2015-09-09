@@ -4,17 +4,17 @@
 
 # Summary
 
-In Ember 2.x, `Ember.computed.sort` is the one and only computed macro for sorting a list. Its current API is built assuming that the sort order may change at runtime, leaving no way to easily create a declarative sort macro that you know is immutable. This RFC proposes adding an additional argument type for the `sortDefinition` parameter to make it easier to declare and to ensure sort order is immutable.
+In Ember 2.x, `Ember.computed.sort` is the one and only computed macro for sorting a list. Its current API is built assuming that the sort order may change at runtime, leaving no way to easily create a declarative sort macro that you know is immutable. This RFC proposes adding an additional computed macro for declarative and immutable sorting.
 
 # Motivation
 
-I'm hoping to satisfy two primary annoyances with this RFC. First, `Ember.computed.sort` can be used as a singular definition as the sort order will be the value of the second argument, you will not have to look for another definition on the class, thus improving code readability. In our app, we often have the following:
+I'm hoping to satisfy two primary annoyances with this RFC. First, providing a way to declare a computed sort macro as a singular definition (one line of code). As opposed to `Ember.computed.sort` which requires two declarations to use. It's my belief this will improve readability for some use cases. In our app, we often have the following:
 
 ```javascript
 var NewestPostsController = Ember.Controller.extend({
   posts: null,
   newestPosts: Ember.computed.sort('posts', '_newestPostsOrder'),
-  _newestPostsOrder: ['createdOn:desc']
+  _newestPostsOrder: ['createdOn:desc', 'upvoteCount']
 });
 ```
 
@@ -22,14 +22,14 @@ The second annoyance is I know that if `_newestPostsOrder` was inadvertently cha
 
 # Detailed design
 
-Right now the second argument for `Ember.computed.sort`, `sortDefinition`, accepts two values, a string and a function. I'm proposing we add array as a third allowed argument type. The array would expect the exact same sort properties format as it does when using a string as a dependent key. Reusing the above example,
+With this RFC I'm proposing we introduce an additional computed macro, `Ember.computed.sortBy`, to fill the gap. The argument order would be similar to that of `Ember.computed.sort`. Reusing the above example,
 
 Before:
 ```javascript
 var NewestPostsController = Ember.Controller.extend({
   posts: null,
   newestPosts: Ember.computed.sort('posts', '_newestPostsOrder'),
-  _newestPostsOrder: ['createdOn:desc']
+  _newestPostsOrder: ['createdOn:desc', 'upvoteCount']
 });
 ```
 
@@ -37,29 +37,23 @@ After:
 ```javascript
 var NewestPostsController = Ember.Controller.extend({
   posts: null,
-  newestPosts: Ember.computed.sort('posts', ['createdOn:desc'])
+  newestPosts: Ember.computed.sortBy('posts', ['createdOn:desc', 'upvoteCount'])
 });
 ```
 
-This design would not break semver as it's an additional argument type that was previously not supported.
+Additionally, the sort order could be defined as a string instead of a single item array. Eg:
+```javascript
+  newestPosts: Ember.computed.sortBy('posts', 'createdOn:desc')
+```
+
 
 # Drawbacks
 
-I can think of two drawbacks. First and foremost, the array argument type will become reserved for this functionality. It could not easily be reused for a new extension in the future. Second, it's ultimately just a more convenient way of doing something that is already functionally possible.
+The only draw back I could come up with is that this increases the surface of the API and is ultimately just a more convenient way of doing something that is already functionally possible.
 
 # Alternatives
 
-An alternative would be to implement a new computed macro called: `Ember.computed.sortBy`. This would allow for more argument/API flexibility. Here a few examples:
-
-```javascript
-newestPosts: Ember.computed.sortBy('posts', 'createdOn') # default to ascending
-
-newestPosts: Ember.computed.sortBy('posts', 'createdOn:desc')
-
-newestPosts: Ember.computed.sortBy('posts', ['author.name', 'createdOn:desc'])
-```
-
-Credit for this alternative goes to Oliver Searle-Barnes (@opsb).
+When I originally drafted this RFC, `Ember.computed.sortBy` was the alternative, but it's became the clear favorite. So flipping this on it's head, the alternative here is modify the existing `Ember.computed.sort` to have this behavior. Additionally, this could be implemented as an addon or perhaps added to [ember-cpm](https://github.com/cibernox/ember-cpm).
 
 # Unresolved questions
 
