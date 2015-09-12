@@ -34,6 +34,11 @@ listeners/caches/chains/descriptors etc. Unfortunately today, there is no
 public API for apps or addons to utilize this. `Ember.WeakMap` aims to be
 exactly that API.
 
+Some examples:
+
+* https://github.com/offirgolan/ember-cp-validations/blob/master/addon/utils/cycle-breaker.js
+* https://github.com/stefanpenner/ember-state-services/ (will soon utilize the user-land polyfil of this) to prevent common leaks.
+
 # Detailed design
 
 ## Public API
