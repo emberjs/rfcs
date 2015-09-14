@@ -22,7 +22,7 @@ The second annoyance is I know that if `_newestPostsOrder` was inadvertently cha
 
 # Detailed design
 
-With this RFC I'm proposing we introduce an additional computed macro, `Ember.computed.sortBy`, to fill the gap. The argument order would be similar to that of `Ember.computed.sort`. Reusing the above example,
+With this RFC I'm proposing we introduce an additional computed macro, `Ember.computed.sortBy`, to fill the gap. The argument style would be similar to that of `Ember.computed.sort`. However, with `Ember.computed.sortBy` all non-primary sort orders (secondary, tertiary, etc) would be defined as additional arguments. `Ember.Enumerable.sortBy` serves as existing precedence for this pattern. Reusing the above example,
 
 Before:
 ```javascript
@@ -37,13 +37,8 @@ After:
 ```javascript
 var NewestPostsController = Ember.Controller.extend({
   posts: null,
-  newestPosts: Ember.computed.sortBy('posts', ['createdOn:desc', 'upvoteCount'])
+  newestPosts: Ember.computed.sortBy('posts', 'createdOn:desc', 'upvoteCount')
 });
-```
-
-Additionally, the sort order could be defined as a string instead of a single item array. Eg:
-```javascript
-  newestPosts: Ember.computed.sortBy('posts', 'createdOn:desc')
 ```
 
 
