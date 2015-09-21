@@ -266,7 +266,7 @@ exposing jQuery API that users may come to rely on.
 ## Built-in Services
 
 Should built-in services in Ember be namespaced somehow? As we introduce
-new services (`ajax` this case, things like `routing` in the future),
+new services (`network` this case, things like `routing` in the future),
 they may conflict with the names of services in apps or addons.
 Upgrading your app to the new version of Ember that contains the service
 could cause things to break, violating our Semantic Versioning concerns.
@@ -277,9 +277,9 @@ the new system service until they have renamed the existing user-defined
 service.
 
 It is unclear how this would work with addons, however. For example,
-imagine you have an `ajax` service in your app. You upgrade Ember to a
-new version that contains the built-in `ajax` service. You receive a
+imagine you have an `network` service in your app. You upgrade Ember to a
+new version that contains the built-in `network` service. You receive a
 warning about the conflict but choose to temporarily ignore it. Then,
-you install an addon that requires the built-in `ajax`. If it receives
-the user-defined `ajax` service, the app will fail in surprising and
+you install an addon that requires the built-in `network`. If it receives
+the user-defined `network` service, the app will fail in surprising and
 likely hard-to-diagnose ways.
