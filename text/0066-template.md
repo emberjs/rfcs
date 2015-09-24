@@ -80,6 +80,7 @@ in the key objects meta weak bucket. This will allow one object to belong in
 multiple weakMaps without chance of collision.
 
 Concrete Implementation: https://github.com/emberjs/ember.js/pull/12224
+Polyfill: https://www.npmjs.com/package/ember-weakmap
 
 # Drawbacks
 
