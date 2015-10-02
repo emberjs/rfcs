@@ -11,9 +11,9 @@ class citizen in Ember.
 # Motivation
 
 Simplifying the Ember upgrade process is good for everyone. Application developers spend less
-time upgrading their apps and reduce the likelihood of introducing bugs. The Ember can be
-more ambitious with syntax changes and possibly have shorter depreciation timeframes allowing
-for a leaner framework codebase.
+time upgrading their apps and have a reduced likelihood of introducing bugs. New Ember festure 
+can be more ambitious with syntax changes and possibly have shorter depreciation timeframes 
+allowing for a leaner framework codebase.
 
 # Detailed design
 
