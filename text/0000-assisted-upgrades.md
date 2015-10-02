@@ -5,7 +5,7 @@
 # Summary
 
 Manually updating Ember apps to remove depreciated syntax is time consuming and
-troublesome. We should automate this process where possible and make it a first
+error-prone. We should automate this process where possible and make it a first
 class citizen in Ember.
 
 # Motivation
