@@ -5,14 +5,14 @@
 # Summary
 
 Manually updating Ember apps to remove depreciated syntax is time consuming and
-error-prone. We should automate this process where possible and make it a first
+error-prone. We should automate this process where possible, making it a first
 class citizen in Ember.
 
 # Motivation
 
 Simplifying the Ember upgrade process is good for everyone. Application developers spend less
 time upgrading their apps and have a reduced likelihood of introducing bugs. New Ember features 
-can be more ambitious with syntax changes and possibly have shorter depreciation timeframes 
+can be more ambitious with syntax changes and we can have shorter depreciation timeframes 
 allowing for a leaner framework codebase.
 
 # Detailed design
