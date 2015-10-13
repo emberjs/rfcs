@@ -28,10 +28,10 @@ accurate results but that is not always the case.
 # Detailed design
 
 In short, I think it would be useful to allow a `query` object to be provided to
-both `store.findRecord()` and `store.findAll()` inside the already existing
-`options` object. The `query` object would be passed to your adapter and
-serialized into the URL of the request that is made to fetch the resource from a
-server.
+both `store.findRecord()` and `store.findAll()`. The `query` would be set inside
+of `adapterOptions`, which is already available inside the adapter find methods
+as part of the `snapshot` that they receive from the store. This query will be
+serialized into the URL of the request that is made to fetch the resource.
 
 ## Inclusion of Related Resources
 
@@ -45,8 +45,10 @@ Including related resources using `store.findRecord()`:
 // GET /articles/1?include=comments
 
 const article = this.store.findRecord('article', 1, {
-  query: {
-    include: 'comments'
+  adapterOptions: {
+    query: {
+      include: 'comments'
+    }
   }
 });
 ```
@@ -57,8 +59,10 @@ Including related resources using `store.findAll()`:
 // GET /articles?include=comments
 
 const articles = this.store.findAll('article', {
-  query: {
-    include: 'comments'
+  adapterOptions: {
+    query: {
+      include: 'comments'
+    }
   }
 });
 ```
@@ -77,11 +81,13 @@ the name of its author.
 // GET /articles/1?include=author&fields[articles]=title,body&fields[users]=name
 
 const article = this.store.findRecord('article', 1, {
-  query: {
-    include: 'author',
-    fields: {
-      articles: 'title,body',
-      users: 'name'
+  adapterOptions: {
+    query: {
+      include: 'author',
+      fields: {
+        articles: 'title,body',
+        users: 'name'
+      }
     }
   }
 });
@@ -93,11 +99,13 @@ Similarly, this can also be done when requesting all articles:
 // GET /articles?include=author&fields[articles]=title,body&fields[users]=name
 
 const articles = this.store.findAll('article', {
-  query: {
-    include: 'author',
-    fields: {
-      articles: 'title,body',
-      users: 'name'
+  adapterOptions: {
+    query: {
+      include: 'author',
+      fields: {
+        articles: 'title,body',
+        users: 'name'
+      }
     }
   }
 });
@@ -111,15 +119,12 @@ might need for features of their own API.
 
 ## Implementation
 
-Since `store.findRecord()` and `store.findAll` already accept an `options`
-object, their public APIs will not need to be changed. The private finders that
-they use, however, will need to be modified to pass the `query` (or all of
-`options`) through to their corresponding adapter methods. An example of one of
-the places that would require change is
-[here](https://github.com/emberjs/data/blob/8f83fbf27acdd642cb824e3286832acebdac0da1/packages/ember-data/lib/system/store/finders.js#L19).
+Since `store.findRecord()` and `store.findAll` already accept `adapterOptions`
+via the `options` param , their public APIs will not need to be changed. The
+`adapterOptions` are already passed to the adapter's finders as properties of
+`snapshot` and `snapshotRecordArray`.
 
-Additionally, the find methods inside adapters will need to accept another
-parameter. The changes could be something like:
+The changes required could be something like:
 
 ```javascript
 // Old
@@ -128,8 +133,15 @@ findRecord: function(store, type, id, snapshot) {
 }
 
 // New
-findRecord: function(store, type, id, snapshot, query={}) {
+findRecord: function(store, type, id, snapshot) {
   const url = this.buildURL(type.modelName, id, snapshot, 'findRecord');
+  const { adapterOptions } = snapshot;
+
+  let query;
+
+  if (adapterOptions && adapterOptions.query) {
+    query = adapterOptions.query;
+  }
 
   return this.ajax(url, 'GET', { data: query });
 }
@@ -155,12 +167,13 @@ need to provide query parameters.
 ## What is the impact of not doing this?
 
 It remains difficult to fully make use of all of the features provided by JSON
-API or support features that other APIs might allow.
+API or support features that other APIs might allow via query parameters.
 
 ### Related Issues
 
 - https://github.com/emberjs/data/issues/3596
 - https://github.com/emberjs/data/issues/2905
+- https://github.com/emberjs/data/issues/1776
 
 # Unresolved questions
 
