@@ -44,38 +44,9 @@ App.PostCommentsRoute = Ember.Route.extend({
 The default functionality of the `model` hook is modified to return the prefetched data if it exists.
 As such, a route that defines a `prefetch` hook is not required to define a `model` hook.
 
-A `prefetched` method is added to `Route`.
-It is used to provide a route access to a parent route's prefetched data much the way `modelFor` provides access to a parent's model.
-`prefetched` always returns a promise.
-
-```javascript
-App.TwoBlueFishRoute = Ember.Route.extend({
-  prefetch() {
-    return this.prefetched('one-red-fish')
-      .then((fish) => {
-        if (fish.get('isOne')) {
-          return Ember.$.get('/api/twoFish');
-        } else {
-          return Ember.$.get('/api/blueFish');
-        }
-      });
-  }
-});
-```
-
-The syntax is simplified by ES7 async functions.
-
-```javascript
-App.TwoBlueFishRoute = Ember.Route.extend({
-  async prefetch() {
-    if ((await this.prefetched('one-red-fish')).get('isOne')) {
-      return Ember.$.get('/api/twoFish');
-    } else {
-      return Ember.$.get('/api/blueFish');
-    }
-  }
-});
-```
+A `prefetched` property is added to `Route`.
+It is used to pass a route's prefetched data from the `prefetch` hook to the default `model` hook.
+`prefetched` will always be a promise.
 
 `prefetched` can also be used to get a route's own data.
 This is useful for expanding upon the prefetched data in the route's `model` hook.
@@ -89,7 +60,7 @@ App.PostCommentsRoute = Ember.Route.extend({
   async model() {
     return {
       OP: this.modelFor('post')).author,
-      comments: await this.prefetched(this.routeName)
+      comments: await this.prefetched
     };
   }
 });
@@ -101,8 +72,8 @@ App.PostCommentsRoute = Ember.Route.extend({
 
 # Alternatives
 
-- Provide something like `Router#willTransition`, but that is triggered on redirects, so this can be built as an addon. It could be triggered on either all transitions (`Router#willChangeURL`?) or only redirects (`Router#willRedirect`? to supplement `willTransition`).
+- Provide something like `Router#willTransition`, but that is triggered on redirects, so this can be built as an addon. It could be triggered on either all transitions (`Router#willChangeURL`?) or only redirects (`Router#willRedirect`? to supplement `willTransition`). Otherwise, building this as an addon must change the functionality of `Router#willTransition` in order to function properly.
 
 # Unresolved questions
 
-- Should the new method be named `asyncModelFor` instead of `prefetched`?
+- Is there a use case for the API to include a method like `modelFor`, but for `prefetch`? (`prefetchedFor`/`asyncModelFor`)
