@@ -1,5 +1,5 @@
 - Start Date: 2015-11-11
-- RFC PR: (leave this empty)
+- RFC PR: #29
 - ember-cli Issue: (leave this empty)
 
 # Summary
