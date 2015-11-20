@@ -4,8 +4,14 @@
 
 # Summary
 
-The waterfall way in which Ember resolves a transition's model hooks can result in unnecessary blocking.
-Performance wins can be achieved by allowing routes to decouple initiating network requests from waiting for their completion.
+Ember's data fetching is sequential.
+Although this has advantages (one of which being that it presents a simpler programming model), the resulting latency of each request is compounded and can result in a degraded experience.
+The general solution to the "waterfall" problem of sequential requests is to execute independent requests in parallel.
+
+Automaticly inferring which requests can be made in parallel is tricky, and likely impossible to achieve while maintaining a semver compatible public API.
+Although it may not be automatic, developers have sufficient context with which they can decide what requests to make in parallel.
+
+This RFC proposes an approach that allows developers to tune the balance between sequential and parallel requests.
 
 # Motivation
 
@@ -56,7 +62,7 @@ App.PostCommentsRoute = Ember.Route.extend({
   prefetch(params, transition) {
     return Ember.$.get(`/api/posts/${transition.params.post.id}/comments`);
   },
-  
+
   async model() {
     return {
       OP: this.modelFor('post')).author,
