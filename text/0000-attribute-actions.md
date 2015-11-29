@@ -25,13 +25,6 @@ The RFC suggests three phases of implementation:
   will be deprecated.
 * In Ember 3.0, classic actions will be removed.
 
-Additionally it suggests:
-
-* No new APIs (such as glimmer components) will leverage the event manager
-  currently used in Ember. Specifically, it is recomended that glimmer
-  components not implement any support for `click() {` handlers and they
-  instead rely on attaching events via the template: `<root-element onclick={{action 'save'}}>`
-
 # Motivation
 
 Classic actions bubble a string action through handlers, and are used in the
@@ -192,10 +185,14 @@ kind of DOM event attachment:
 * `el.onclick = handlerFn;` add a handler to the bubbling phase.
 
 Attribute actions will be dispatched on the bubbling phase, and attached via
-`addEventListener`. This ensures that if they are multiple handler making
-their way onto an element they do not stomp on each other.
+`addEventListener`. This ensures that if there are multiple handlers making
+their way onto an element they do not stomp on each other. Any attribute named
+`on*` will be attached as such.
 
-Glimmer components may (and this is specilation more than design) permit
+For a webcomponent to dispatch an attached attribute action, it should use
+`dispatchEvent`.
+
+Glimmer components may (and this is speculation more than design) permit
 multiple events to be attached via reflection of invocation attrs to the
 root element. For example:
 
@@ -227,12 +224,8 @@ are not consistent. Events that will still execute via the event manager are:
 
 * Those on `Ember.Component` components
 * Those attached via element space `{{action 'foo' on="click"}}` usage
-
-This RFC schedules the deprecation the second API, however to ensure the
-ordering problems of `Ember.Component` do not continue into glimmer components
-it also recommends that `Ember.GlimmerComponent` have no `save() {` event
-attachment API. Instead attribute actions on the root element should be
-used.
+* Possibly `Ember.GlimmerComponent` components, however these are current
+  still un-designed in this area.
 
 Additionally, Ember's [current event naming schema](http://emberjs.com/api/classes/Ember.View.html#toc_event-names)
 for handlers on components and to the `on=` argument of `{{action}}` does not
@@ -248,7 +241,4 @@ delegating attribute actions from the event manager.
 
 # Unresolved questions
 
-There is some debate over if `Ember.GlimmerComponent` event attachment should
-skip the event manager or not. This has unknown implications to the plan here.
-If it should use the event manager, then what happens to ordering of event
-handler execution? Do we return to all actions being on the event manager?
+None.
