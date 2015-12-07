@@ -17,7 +17,7 @@ In all these cases, attrs passed to the component must be set at the place of
 invocation. Only the `{{component someBoundComponentName` syntax allows for the name
 of the component invoked to be decided elsewhere.
 
-All component names are resovled to components through one global resolution
+All component names are resolved to components through one global resolution
 path.
 
 To improve composition, four changes are proposed:
