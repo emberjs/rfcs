@@ -5,8 +5,12 @@
 # Summary
 
 Ember's `action` helper has two inconsistent forms. The goal of this RFC is to
-allow the deprecation or removal of the classic action helper by adding a new
-DOM event listener API designed for closure actions.
+allow the deprecation or removal of the classic action helper by formalizing
+the DOM event listener API. This API is already seeing adoption with closure
+actions.
+
+Because this API is already seeing informal adoption, the design changes here
+are very minimal.
 
 The RFC suggests three phases of implementation:
 
@@ -19,36 +23,55 @@ The RFC suggests three phases of implementation:
     to attach instead of `element['on'+eventName'] = handler` for attachment.
   * Non-action functions should warn if they are passed to `onclick=`
     APIs.
-  * Non-functions should not be permitted as a bound value for `onclick=`, for
-    example `<button onclick={{someString}}>`. This should assert.
+  * Only functions should be permitted as a bound value for `onclick=`. For
+    example `<button onclick={{someString}}>` should assert.
 * In Ember 2.x+1, classic actions like `<button {{action 'save' on='click'}}>`
   will be deprecated.
 * In Ember 3.0, classic actions will be removed.
 
 # Motivation
 
-Classic actions bubble a string action through handlers, and are used in the
-space of an element. For example: `<button {{action 'save'}}></button>`.
+Classic actions bubble an action name through handlers, and declared in the
+"element space" of an element. For example:
+
+```hbs
+<button {{action 'save'}}></button>
+```
 
 Closure actions pluck a function from the immediate context of a template,
-and return another function closing over that function and arguments. These
-are used where subexpressions are valid in Ember, for example
-`{{my-button onChange=(action 'save')}}` or
-`<button onclick={{action 'save'}}>`.
+and return another function closing over that function and any arguments. These
+are used where subexpressions are valid in Ember, for example:
 
-The differences between these two usages leak into the handler implementation
-as well. While returned values from closure actions are treated as return
-values to the invocation site, classic actions use the return value to continue
-or cancel bubbling.
+```hbs
+{{my-button onChange=(action 'save')}}
+```
 
-Furthermore, even invoking an action can be inconsistent. For example to call an
+or
+
+```hbs
+<button onclick={{action 'save'}}>
+```
+
+Knowing when one style should be used over another confuses Ember developers.
+
+Each of the two styles has a different handler implementation.
+Return values from closure actions are treated as return
+values to the invocation site, but classic actions use the return value to
+continue or cancel bubbling.
+
+Invoking an action in JavaScript differs depending on the object you
+invoke it from. For example to call an
 action from a component `sendAction('actionName')` is called. To call an action
 from a controller (and bubble it to the route), `send('actionName')` is used.
 
-By removing the remaining use-case for classic actions, nearly all these
+By removing the remaining use-cases for classic actions, nearly all these
 confusing discrepancies can be eliminated. Ember is easier to learn and master.
 
 # Detailed design
+
+All attributes of a DOM node named `on*` will be considered attribute actions.
+This will be done as a wildcard match: `onclick=`, `omouseover=`, and `only=`
+would all be considered event listeners.
 
 #### Action Attachment
 
@@ -70,36 +93,31 @@ is used today:
 ```
 
 Attribute actions are more verbose in the above case, but
-have the advantage of a clear and extensible syntax. Consider attaching a
-`mouseover` event:
+have the advantage of a clear and extensible syntax. Consider the simplicty of
+attaching a `mouseover` event with attribute actions:
 
 ```hbs
 <div onmouseover={{action 'save'}}>Save</div>
 ```
 
-vs.
-
-```hbs
-<div {{action 'save' on='mouseOver'}}>Save</div>
-```
-
-The `onmouseover` attribute action is an evolution of the `onclick` usage.
+The `onmouseover` attribute action is an natural evolution of the
+orignal `onclick` usage.
 
 A second advantage this change is its parity with Ember component
 action passing. For example consider these components:
 
 ```hbs
-{{my-button save=(action 'save')}}Save{{/my-button}}
+<button onclick={{action 'save'}}>Save</button>
 <my-button save={{action 'save'}}>Save</my-button>
+{{my-button save=(action 'save')}}Save{{/my-button}}
 ```
 
-This common usage of action passing is visually very similar to the new
+Action passing to a component is visually similar to the new
 attribute attachment syntax. Or course an `on*` attribute passed to an
 `Ember.Component` is simply a function with no special behavior.
 
 Passing non-actions to `on*` attributes will be discouraged.
 
-* Literals should be permitted, such as `onclick="window.alert('foo')"`.
 * Non-function bindings are not permitted, and will throw from an assertion.
   For example `onclick={{someBoundString}}` will cause an assertion to throw.
 * Non-action functions such as `onclick={{someBoundFunction}}` should cause
@@ -189,8 +207,33 @@ Attribute actions will be dispatched on the bubbling phase, and attached via
 their way onto an element they do not stomp on each other. Any attribute named
 `on*` will be attached as such.
 
-For a webcomponent to dispatch an attached attribute action, it should use
-`dispatchEvent`.
+#### Web Components
+
+This RFC suggests official support for actions on Web Components be added to
+Ember.
+
+The web component [best practices](http://webcomponents.org/articles/web-components-best-practices/)
+doc as well as discussion on
+[2ality](http://www.2ality.com/2015/08/web-component-status.html)
+agree that data coming out of a web component should use events.
+
+The syntax for attaching a listener to a web component will be the same as
+any event:
+
+```hbs
+<my-custom oncustomfoo={{action someFunction}}></my-custom>
+```
+
+Merely setting the `oncustomfoo` property on the DOM node is not sufficient
+([this jsbin](http://jsbin.com/vedahareda/1/edit?html,js,output) demonstrates
+custom events not calling functions on properties).
+The implementation of `my-custom` may (and should) dispatch events to send out
+data.
+
+This is partial motivation for using `addEventListener` over setting the
+function on a prop.
+
+#### Glimmer Components
 
 Glimmer components may (and this is speculation more than design) permit
 multiple events to be attached via reflection of invocation attrs to the
@@ -209,9 +252,14 @@ root element. For example:
 ```
 
 The `logClick` handler should be attached prior to the `save` handler being
-attached.
+attached. Using the rules we have thus far for property reflection and
+Glimmer Components, these props would instead smash. The natural merge
+semantics of `addEventListener` are a second
+motivation for using that API over setting a function on a prop.
 
 # Drawbacks
+
+#### Order of execution
 
 Other events managed by Ember use a bespoke solution which delegates to
 handlers from a single listener on the document body. Because this manager
@@ -227,17 +275,33 @@ are not consistent. Events that will still execute via the event manager are:
 * Possibly `Ember.GlimmerComponent` components, however these are current
   still un-designed in this area.
 
-Additionally, Ember's [current event naming schema](http://emberjs.com/api/classes/Ember.View.html#toc_event-names)
+#### Inconsistency with legacy event names
+
+Ember's [current event naming schema](http://emberjs.com/api/classes/Ember.View.html#toc_event-names)
 for handlers on components and to the `on=` argument of `{{action}}` does not
 stay consistantly lowercase as the native attribute names do. This inconsistancy
-is unfortunate.
+is unfortunate, but moving to the native event names is less surprising than
+maintaining the proprietary capitalization.
 
 # Alternatives
+
+#### Wildcard on\*
 
 Considered (and rejected) was the idea of using `on-*` instead of the native
 action attribute name. This option would make clear that native semantics do
 not apply, and we could perhaps opt-in to some consistency features such as
 delegating attribute actions from the event manager.
+
+By treating all DOM attributes with `on*` as attribute actions, we stomp on
+several english language words that would no longer be viable attribute names.
+The [list of words is not terrible](http://www.morewords.com/starts-with/on/).
+
+A whitelist is not appropriate, as web components may emit custom event names
+we have not expected. Some other options to consider:
+
+* Fall back to `on-*` as an official syntax.
+* Use a runtime-configurable whitelist of attribute action event names.
+* Use a runtime-configurable blacklist of attribute action event names.
 
 # Unresolved questions
 
