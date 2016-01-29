@@ -108,16 +108,28 @@ completely retrocompatible in exchange for a bit of computational cost. When the
 intended or not. Not sure if the case of caching `undefined` from a getter is common enough to
 justify this, and how unsafe it is to do that (it can be edge cases with the detection of explicit return).
 
+Another 4th option that might enable this is wait for decorators to land. If there is enough reasons to take
+this approach, the `@computed('foo', 'bar') + <getter> & <setter>` decorator can have slightly different (better) 
+semantics than `computed('foo', 'bar', { get() { }, set(_, v){  }  })`. It's new syntax after all, so it's not
+technically a breaking change.
+
 # Drawbacks
 
 The first approach is not retrocompatible and makes some use cases less straightforward.
 
 The second approach is mostly retrocompatible, but not completely.
 
+The third approach is is probably completely retrocompatible, at the expense of being computationally more expensive.
+
+The forth approach introduced new semantics when using the `@computed` decorator, so it's not technically a breaking 
+change, but both old and new computed properties have to coexist until Ember 3.0 and it has to be very well communicated
+, documented, twitted and blogged so people understand that `@computed` and `computed(fn)` are not entirely equivalent.
+
 # Alternatives
 
 Leave the bahaviour as it is right now and just educate users. This is what I've been doing but people
 still get confused, so clearly we have to try harder.
+
 
 # Unresolved questions
 
