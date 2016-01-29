@@ -73,7 +73,7 @@ developers look for "idempotence" (not sure if it's the better term). When you i
 `set('myProp', 200)` they expect the next time they get the property with `get('myProp')` to
 get the same value they just set.
 
-When someone implements a getter in a computed property, it's because setting state in this
+When someone implements a setter in a computed property, it's because setting state in this
 computed property:
 
 A) Has to set state in another property, like the example above. Typically that other property
