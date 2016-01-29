@@ -37,10 +37,36 @@ The implementation has been spiked out in an addon: [ember-run-callback](https:/
 
 # Alternatives
 
-* Users could continue to use existing solutions, typically custom test helpers which either:
-  * register waiters from the test side which check for some result of the async action, or
-  * reach into the app's running state via private APIs like `__container__` to grab a direct reference to the actual async activity (i.e. a promise)
-* This could stay a userland addon rather than be adopted into the core framework
+This could always stay a userland addon rather than be adopted into the core framework.
+
+## Current solutions
+
+There are two main approaches to dealing with this problem currently:
+
+### Manual waiters
+
+```js
+click('.start-something-async');
+Ember.Test.registerWaiter(function myCustomWaiter() {
+  return find('.some-async-result').text().trim() === 'All done!';
+});
+andThen(function() {
+  Ember.Test.unregisterWaiter(myCustomWaiter);
+  expect(find('.some-async-result').text().trim()).to.equal('All done!');
+});
+```
+
+### Direct referencing
+
+```js
+click('.start-something-async');
+andThen(function() {
+  let promise = app.__container__.lookupFactory('controller:foo').get('promise');
+  promise.then(function() {
+    expect(find('.some-async-result').text().trim()).to.equal('All done!');
+  });
+});
+```
 
 # Unresolved questions
 
