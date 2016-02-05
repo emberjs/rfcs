@@ -77,6 +77,6 @@ App.PostCommentsRoute = Ember.Route.extend({
 # Alternatives
 
 - Implement the functionality as an addon.
-  - Would require Ember to provide something like `Router#willTransition` that is triggered on redirects. It could be triggered on either all transitions (`Router#willChangeURL`?) or only redirects (`Router#willRedirect`? to supplement `willTransition`).
+  - Would require Ember to provide something like `Router#willTransition` that is triggered on redirects. It could be triggered on either all transitions (`Router#willChangeURL`?) or only redirects (`Router#changeTransition`? to supplement `willTransition`).
     - Otherwise, the addon must change the functionality of `Router#willTransition` in order to function properly.
   - Would benefit from guarantees of stability around `Transition#handlerInfos` and `handlerInfo#runSharedModelHook`.
