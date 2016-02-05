@@ -50,12 +50,10 @@ App.PostCommentsRoute = Ember.Route.extend({
 The default functionality of the `model` hook is modified to return the prefetched data if it exists.
 As such, a route that defines a `prefetch` hook is not required to define a `model` hook.
 
-A `prefetched` property is added to `Route`.
-It is used to pass a route's prefetched data from the `prefetch` hook to the default `model` hook.
-`prefetched` will always be a promise.
-
-`prefetched` can also be used to get a route's own data.
-This is useful for expanding upon the prefetched data in the route's `model` hook.
+A `prefetched` method, which takes an optional `name` parameter and always returns a promise, is added to `Route`.
+It is used to access data fetched by the named route's `prefetch` hook.
+If `name` is omitted, the method will return a promise for its own route's prefetched data.
+The default `model` hook utilizes it in this way.
 
 ```javascript
 App.PostCommentsRoute = Ember.Route.extend({
@@ -66,7 +64,7 @@ App.PostCommentsRoute = Ember.Route.extend({
   async model() {
     return {
       OP: this.modelFor('post')).author,
-      comments: await this.prefetched
+      comments: await this.prefetched()
     };
   }
 });
@@ -78,8 +76,7 @@ App.PostCommentsRoute = Ember.Route.extend({
 
 # Alternatives
 
-- Provide something like `Router#willTransition`, but that is triggered on redirects, so this can be built as an addon. It could be triggered on either all transitions (`Router#willChangeURL`?) or only redirects (`Router#willRedirect`? to supplement `willTransition`). Otherwise, building this as an addon must change the functionality of `Router#willTransition` in order to function properly.
-
-# Unresolved questions
-
-- Is there a use case for the API to include a method like `modelFor`, but for `prefetch`? (`prefetchedFor`/`asyncModelFor`)
+- Implement the functionality as an addon.
+  - Would require Ember to provide something like `Router#willTransition` that is triggered on redirects. It could be triggered on either all transitions (`Router#willChangeURL`?) or only redirects (`Router#willRedirect`? to supplement `willTransition`).
+    - Otherwise, the addon must change the functionality of `Router#willTransition` in order to function properly.
+  - Would benefit from guarantees of stability around `Transition#handlerInfos` and `handlerInfo#runSharedModelHook`.
