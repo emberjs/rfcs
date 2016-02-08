@@ -362,7 +362,19 @@ Since this is a fairly large departure from our current testing solution, a dedi
 
 As discussed in the Detailed Design section, I am proposing to introduce new API's that do not currently exist in `ember-test-helpers`, `ember-qunit`, or `ember-mocha`. Once this is done, and the API's have been tested in a number of applications, we will update  the default Ember CLI blueprints to use the new structure and rewrite the guides.emberjs.com testing section. This will allow newly generated tests to use the new API's without immediately breaking existing test suites.
 
-Based on feedback received from the community on the usability of the new structure proposed here, we will deprecate usage of existing Ember API's (`Ember.Test.registerHelper`, `Ember.Test.registerAsyncHelper`, `Ember.Application#setupForTesting`, `Ember.Test.unregisterHelper`, `Ember.Test.onInjectHelpers`, `Ember.Application#injectTestHelpers`, `Ember.Application#removeTestHelpers`, `Ember.Test.registerWaiters`, `Ember.Test.unregisterWaiters`) and existing `ember-qunit` / `ember-mocha` API's.
+Based on feedback received from the community on the usability of the new structure proposed here, we will deprecate usage of existing Ember API's:
+
+* `Ember.Test.registerHelper`
+* `Ember.Test.registerAsyncHelper`
+* `Ember.Application#setupForTesting`
+* `Ember.Test.unregisterHelper`
+* `Ember.Test.onInjectHelpers`
+* `Ember.Application#injectTestHelpers`
+* `Ember.Application#removeTestHelpers`
+* `Ember.Test.registerWaiters`
+* `Ember.Test.unregisterWaiters`
+* `Ember.Test.*`
+* existing `ember-qunit` / `ember-mocha` API's.
 
 It is possible that we can automate some of the migration process, we should continue to investigate migration automation as we progress with implementation.
 
