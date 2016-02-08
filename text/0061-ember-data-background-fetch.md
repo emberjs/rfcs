@@ -1,6 +1,6 @@
-- Start Date: (fill me in with today's date, 2015-06-03)
-- RFC PR: (leave this empty)
-- Ember Issue: (leave this empty)
+- Start Date: 2015-06-03
+- RFC PR: https://github.com/emberjs/rfcs/pull/61
+- Ember Issue: This RFC is implemented over many Ember Data PRs
 
 # Summary
 
