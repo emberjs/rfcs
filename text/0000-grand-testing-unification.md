@@ -1,7 +1,7 @@
 # Grand Testing Unification -- RFC
 
 - Start Date: 2016-02-05
-- RFC PR: (leave this empty)
+- RFC PR: [emberjs/rfcs#119](https://github.com/emberjs/rfcs/pull/119)
 - Ember Issue: N/A
 
 # Summary
