@@ -384,7 +384,7 @@ This is [an existing test](https://github.com/aptible/dashboard.aptible.com/blob
 
 ```js
 import Ember from 'ember';
-import { moduleForIntegration } from 'ember-qunit';
+import { moduleForComponent } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 
 moduleForComponent('primitive-select', {
