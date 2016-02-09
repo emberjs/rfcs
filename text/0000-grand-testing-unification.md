@@ -541,7 +541,8 @@ It is extremely important that as these changes land in the various libararies, 
 
 # Alternatives
 
-The primary alternative to this would be to do nothing...
+* The primary alternative to this would be to do nothing...
+* Add unit/integration async test helpers without unifying their API with todays acceptance testing system, and avoid deprecating any existing API's
 
 # Unresolved questions
 
