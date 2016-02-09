@@ -360,7 +360,7 @@ test('expands when clicked', async function(assert) {
 
 Since this is a fairly large departure from our current testing solution, a dedicated migration plan section seems appropriate.
 
-As discussed in the Detailed Design section, I am proposing to introduce new API's that do not currently exist in `ember-test-helpers`, `ember-qunit`, or `ember-mocha`. Once this is done, and the API's have been tested in a number of applications, we will update  the default Ember CLI blueprints to use the new structure and rewrite the guides.emberjs.com testing section. This will allow newly generated tests to use the new API's without immediately breaking existing test suites.
+As discussed in the Detailed Design section, I am proposing to introduce new API's that do not currently exist in `ember-test-helpers`, `ember-qunit`, or `ember-mocha`. Once this is done, the API's have been tested in a number of applications, and the documentation (both guides and API) are updated, we will update the default Ember CLI blueprints to use the new structure. Both the legacy testing system and the one described here will be usable within the same application for an extended period of time. This will allow newly generated tests to use the new API's without breaking existing test suites.
 
 Based on feedback received from the community on the usability of the new structure proposed here, we will deprecate usage of existing Ember API's:
 
