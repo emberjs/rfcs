@@ -26,7 +26,7 @@ callback is invoked.
 
 By having the application register the waiters itself, we can avoid compromising the "purity" of the acceptance tests which would otherwise need to reach into the application's running state.
 
-The return value of of `Ember.run.callback()` would be the wrapped function, but the waiter would be registered immediately. If the callback is no longer needed, the user could cancel the waiter by passing the callback to `Ember.run.cancel()` (matching the other async `Ember.run.*` methods).
+The return value of `Ember.run.callback()` would be the wrapped function, but the waiter would be registered immediately. If the callback is no longer needed, the user could cancel the waiter by passing the callback to `Ember.run.cancel()` (matching the other async `Ember.run.*` methods).
 
 The implementation has been spiked out in an addon: [ember-run-callback](https://github.com/davewasmer/ember-run-callback).
 
