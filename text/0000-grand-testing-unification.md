@@ -149,6 +149,7 @@ I propose that we address the following common issues that plague today's testin
 - Overriding a factory (service for example).
 - Registering custom test helpers (async and sync).
 - Registering custom waiters to handle foreign async.
+- Automatically registering known helpers/waiters.
 - Accessing singleton objects.
 - Sharing common setup concerns.
 
@@ -265,6 +266,35 @@ test('stuff happens', async function(assert) {
   // all pending transactions are completed here...
 });
 
+```
+
+#### Auto Resolve Test Helpers/Waiters
+
+As a way to reduce extra manual boilerplate and wiring in the various `tests/helpers/module-for-*.js` files, we will automatically detect helpers and waiters in the applications test directory.  This would work similarly to how initializers are loaded (from inside ember-load-initializers).
+
+##### Helpers
+
+Each module that is found that matches `tests/helpers/*.js` and exports a `testHelper` will be automatically registered to the test context.
+
+```js
+// tests/helpers/login-as-admin';
+import { testHelper } from 'ember-qunit';
+
+export default testHelper(function() {
+  // helper code here
+});
+```
+
+##### Waiters
+
+Each module that is found that matches `tests/waiters/*.js` and exports a `testWaiter` will be automatically registered to the test context.
+
+```js
+import { testWaiter } from 'ember-test-helpers';
+
+export default testWaiter(function() {
+  // helper code here
+});
 ```
 
 #### Accessing Singletons
