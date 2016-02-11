@@ -151,6 +151,7 @@ I propose that we address the following common issues that plague today's testin
 - Registering custom waiters to handle foreign async.
 - Automatically registering known helpers/waiters.
 - Accessing singleton objects.
+- General hooks for performing work before/after tests.
 - Sharing common setup concerns.
 
 #### Overriding a Factory
@@ -321,28 +322,83 @@ test('foo', function(assert) {
 });
 ```
 
+#### General Hooks
+
+There are many times when a certain amount of setup for a given type of test is always needed.  It would be unfortunate to force every test to have a bunch of boilerplate (or to break many tests at once by adding an additional common requirement). In order to facilitate this for apps and addons the testing harness will look for specially named modules and execute hook functions on them.
+
+These hooks should generally be used to add things to the test context, common uses would be:
+
+- setup general information for all tests (i.e. resolver setup)
+- registering helpers
+- registering waiters
+- providing custom properties to the test context (I.e. Set up a mirage server)
+
+To be found, the modules must match the following pattern:
+
+```
+*/tests/configuration.js
+```
+
+The format for this file would be:
+
+```
+import { TestConfiguration } from 'ember-test-helpers';
+
+export default class extends TestConfiguration {
+  beforeSuite() {}
+  beforeEach(testType, testContext) {}
+  afterEach(testType, testContext) {}
+}
+```
+
+- `beforeSuite` - Runs once before any tests are ran.
+- `beforeEach` - Runs once before a specific test and its associated module's `beforeEach` is started.
+- `afterEach` - Runs once after a specific test and its associated module's `afterEach` has been completed.
+
+#### Registering Custom Waiters/Helpers from an Addon
+
+```
+// liquid-fire's addon-test-support/configuration.js
+import { TestConfiguration } from 'ember-test-helpers';
+import runningTransitionWaiter from './waiters/running-transition';
+import customHelperHere from './helpers/custom-helper-here';
+
+export default class extends TestConfiguration {
+  beforeEach() {
+    this.registerWaiter(runningTransitionWaiter);
+    this.registerHelper('customHelperHere', customHelperHere);
+  }
+}
+```
+
+#### Custom Test Context Setup
+
+```
+// ember-cli-mirage's addon-test-support/configuration.js
+import { TestConfiguration } from 'ember-test-helpers';
+import setupServer from 'ember-cli-mirage/setup-server';
+
+export default class extends TestConfiguration {
+  beforeEach() {
+    this.server = setupServer(this.owner);
+  }
+}
+```
+
 #### Sharing Common Setup
 
-There are many times when a certain amount of setup for a given type of test is always needed.  It would be unfortunate to force every test to have a bunch of boilerplate (or to break many tests at once by adding an additional common requirement).
-
-To facilitate this, I propose that each application has its own main test module helper for each type of test.  The `tests/helpers/moduleForAcceptance.js` helper would look like:
+In the rare circumstances that a given behavior is not customizable from the `TestConfiguration` class, I propose that each application has its own main test module helper for each type of test.  The `tests/helpers/moduleForAcceptance.js` helper would look like:
 
 ```js
 import { moduleForAcceptance } from 'ember-qunit';
 import fooHelper from './foo';
 
 export default function(name, _options) {
-  let options = Object.assign({
-    helperSetup() {
-      this.registerHelper('foo', fooHelper);
-    }
-  }, _options);
-
   moduleForAcceptance(name, options);
 }
 ```
 
-This file would not be generated in new ember-cli applications (a default module will be provided for you by `ember-cli-qunit` or  `ember-cli-mocha`), but all newly generated tests will use `../helpers/module-for-acceptance`, `../helpers/module-for-integration`, and `../helpers/module-for-unit` to easily allow customization without modifying every test file.
+This file would not be generated in new ember-cli applications (a default module will be provided for you by `ember-cli-qunit` or  `ember-cli-mocha`), but all newly generated tests will use `../helpers/module-for-acceptance`, `../helpers/module-for-integration`, and `../helpers/module-for-unit`.
 
 ### Example of Proposed Syntax - QUnit
 
