@@ -531,7 +531,7 @@ test('when changed fires update action with new value', async function(assert) {
 
 The main changes that this RFC makes to pedagogy is to massively simplify the set of testing special cases that consumers have to manage mentally while developing an application. The divide between acceptance tests and unit/integration tests largely vanishes, and we begin leveraging language features where we previously implemented a custom DSL.
 
-It is extremely important that as these changes land in the various libararies, we ensure the testing guides listed on guides.emberjs.com are kept up to date. A rewrite of large sections of the existing guide are likely needed, but this rewrite should result in a massive improvement due to the conceptual overhead that is being removed.
+It is extremely important that as these changes land in the various libraries, we ensure the testing guides listed on guides.emberjs.com are kept up to date. A rewrite of large sections of the existing guide are likely needed, but this rewrite should result in a massive improvement due to the conceptual overhead that is being removed.
 
 # Drawbacks
 
