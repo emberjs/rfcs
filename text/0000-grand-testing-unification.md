@@ -6,7 +6,7 @@
 
 # Summary
 
-The testing story in Ember today is better than it ever has been. It is now possible to test individual component/template combos, register your own mock components/services/etc, build complex acceptance tests, and most anything else you would like.
+The testing story in Ember today is better than it ever has been. It is now possible to test individual component/template combos, register your own mock components/services/etc, build complex acceptance tests, and most anything else you would like.
 
 Unfortunately, there is a massive disparity between different types of tests.  In acceptance tests, you use well designed global helpers to deal with async related interactions; whereas in integration and unit tests you are forced to manually deal with this asynchrony. The goal of this RFC is to unify the concepts amongst the various types of test (acceptance, integration, and unit) and provide a single common structure to tests.
 
