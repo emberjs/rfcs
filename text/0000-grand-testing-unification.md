@@ -151,6 +151,7 @@ I propose that we address the following common issues that plague today's testin
 - Registering custom waiters to handle foreign async.
 - Automatically registering known helpers/waiters.
 - Accessing singleton objects.
+- Accessing general test information.
 - General hooks for performing work before/after tests.
 - Sharing common setup concerns.
 
@@ -321,6 +322,13 @@ test('foo', function(assert) {
   this.store.push(....);
 });
 ```
+#### Accessing Test Information
+
+From within helper methods or hooks, you may want access to information about the test being ran. This can help the helper do the right thing in different contexts (like acceptance vs integration tests). In order to facilitate that, the test context will have a `testInfo` property present that will include the following information:
+
+* `type` - `acceptance`, `integration`, or `unit`
+* `moduleName` - The module name that the test belongs to.
+* `name` - The name of the test being ran (if made available by the test framework)
 
 #### General Hooks
 
@@ -636,3 +644,4 @@ It is extremely important that as these changes land in the various libraries, w
 - Should `this.find` return a jQuery wrapped element? I would prefer to stick with the main DOM API's here, so that we have a chance to share tests between the Fastboot and Browser.
 - What "oldest" Ember version should be supported?  I'd prefer if we could make this 1.12 and higher (due to the presence of the container/registry split).
 - What browsers do we need to support?  I'd prefer if we matched the Ember 2.x here...
+-
