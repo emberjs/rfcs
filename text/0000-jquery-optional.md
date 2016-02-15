@@ -8,7 +8,7 @@ Make jQuery optional.
 
 # Motivation
 
-Why are we doing this? What use cases does it support? What is the expected outcome?\
+Why are we doing this? What use cases does it support? What is the expected outcome?
 
 I use jQuery heavily and like it! But decoupling it from Ember have some benefits: it's not always needed,
 some people think payload size is important (I don't) and it may have minor performance contributions.
