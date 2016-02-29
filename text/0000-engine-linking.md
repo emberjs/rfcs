@@ -1,52 +1,59 @@
 - Start Date: 2016-02-17
-- RFC PR: (leave this empty)
+- RFC PR: [emberjs/rfcs#122](https://github.com/emberjs/rfcs/pull/122)
 - Ember Issue: (leave this empty)
 
 # Summary
 
-This RFC proposes a method of linking between different contexts, which at this point in time means either an Application or Engine. The main idea presented is introducing `^` (carat) as a symbol to denote traversing contexts in the route DSL. This means that to go from an Engine to its consuming Application you would do something like:
-
-```hbs
-{{#link-to "^"}}Home{{/link-to}}
-```
-
-Or, programmatically, you could do:
+This RFC proposes a method of linking to routes external to an Engine. The main idea presented is introducing a new Engine configuration option, `externalRoutes`, and an associated helper, `{{link-to-external}}`, as the methodology for linking outside of an Engine. A quick example of linking to an external `blog` would look like so:
 
 ```js
-goHome() {
-  this.transitionTo('^');
-}
+// some-engine/engine.js
+import Engine from 'ember-engines/engine';
+export default Engine.extend({
+  // ...
+  dependencies: {
+    externalRoutes: [
+      'blog'
+    ]
+  }
+});
+```
+
+Then, in your template, you do:
+
+```hbs
+{{! some-engine/application.hbs !}}
+{{#link-to-external "blog"}}Blog{{/link-to-external}}
 ```
 
 # Motivation
 
-Engines bring with them the tremendous benefits of encapsulation and code isolation, but there are use cases where it is desirable to break those boundaries by linking into an external context, such as a consuming application or sibling engine.
+Engines bring with them the tremendous benefits of encapsulation and code isolation, but there are use cases where it is desirable to break those boundaries by linking into an external context, such as a consuming Application or sibling Engine.
 
-One prominent use case is by "tabbed applications" that might consist of multiple areas (which can be represented by Engines). Those areas contain separate functionality but will often link into each other for various user flows. This is a pattern frequently seen in ambitious web applications (Facebook, LinkedIn, Twitter, etc.) that could gain significant benefits from the performance optimizations promised by Engines.
+One prominent use case is for "tabbed applications" that might consist of multiple areas which can be represented by Engines. Those areas contain separate functionality but will often link into each other for various user flows. This is a pattern frequently seen in ambitious web applications (Facebook, LinkedIn, Twitter, etc.) that could gain significant benefits from the performance optimizations promised by Engines (especially async Engines).
 
-There are also simple use cases that can benefit from being able to link between contexts. One common example would be linking to the "home page" of an application. Even if your Engine is totally unaware of it's parent, there are still times where it would be reasonable to direct them to the "home" route of that parent context.
+There are also simple use cases that can benefit from being able to link between contexts. One common example would be linking to the "home page" of an application. Even if your Engine is totally unaware of its parent, there are still times where it would be reasonable to direct them to the "home" route of their parent context.
 
 # Terminology
 
-- **Context**: A context, as used in this document, either refers to an Engine or an Application. These constructs are isolated in nature and so we should think of them as being different contextual areas with regards to linking. While linking between these contexts will always require an Engine (since there can't be more than one Application), it could very well be that you're linking from an Engine context to an Application context and so we'll generically use "context" as way to describe both.
+- **Context**: A context, as used in this RFC, either refers to an Engine or an Application. These constructs are isolated in nature and so we should think of them as being different contextual areas with regards to linking. While linking between these contexts will always require an Engine (since there can't be more than one Application), it could very well be that you're linking from an Engine context to an Application context and so we'll generically use "context" as way to describe both.
 
 # Detailed Design
 
 In designing a solution to this problem, we wanted to make sure it:
 
 - preserves isolation by default,
-- does not dramatically affect the API or learning curve, and
-- is flexible enough to account for a multitude of use cases.
+- does not dramatically affect the learning curve,
+- is flexible enough to account for a multitude of use cases, and
+- allows consumers to determine the destination of the links
 
-This led to the development of using `^` as a way to denote context traversal in the route DSL.
-
-_Note: the following examples focus on `{{link-to}}` but they should be easily applied to other routing APIs, such as `transitionTo` or `replaceWith`._
+These constraints and initial feedback led to the development of using `{{link-to-external}}` with an `externalRoutes` configuration.
 
 ## Isolated By Default
 
 Developing in isolated contexts means we can't assume knowledge of the global context in which our code is mounted. This means that we might not be able to use an absolute path for constructing a `{{link-to}}` or other linking mechanism. Instead, links should be constructed relative to their context's boundary (e.g., the mounting point for a routable engine) by default.
 
-This is the default behavior for links in engines currently and makes sense given their isolated nature. In practice this might look like:
+This is the default behavior for links in engines currently and makes sense given their isolated nature. In practice this looks like:
 
 ```hbs
 // in route "foo.bar.baz", where "bar" is
@@ -54,137 +61,174 @@ This is the default behavior for links in engines currently and makes sense give
 {{#link-to "boo"}}Boo!{{/link-to}} => goes to "foo.bar.boo"
 ```
 
-## Linking Between Contexts
+## Linking To An External Context
 
-Assuming the above default behavior for links, we can look at the solution for linking between different contexts (or, links that break isolation). In order to support those use cases, we propose introducing `^` to the route syntax to express routing to a _parent context_.
+Assuming the above default behavior for links, we can look at the solution for linking between different contexts (or, links that break isolation). In order to support those use cases, we propose introducing the concept of `externalRoutes` to Engines.
 
-This syntax would represent the top-level of the current context's parent and start routing from there. Note that this means using `^` takes you to the top of the parent context, _which is not necessarily the parent route_. In practice, this would work like so:
+### Declaring and Defining External Routes
 
-```hbs
-// Assuming we're in route "foo.bar.baz", where "bar" is an
-// engine. This means the default behavior for links will be:
-{{link-to "boo"}}           => foo.bar.boo
+The `externalRoutes` for an Engine will be declared in the Engine's dependencies and later defined by the consumer of the Engine. Here's a simple example:
 
-// If we specify a context switch, the result is relative to
-// the parent context's root, not the direct parent route:
-{{link-to "^.boo"}}         => boo
-
-// We can then use "^" to route anywhere relative to the parent
-// context:
-{{link-to "^.foo.fiz"}}     => foo.fiz
-
-// Even back into the current engine:
-{{link-to "^.foo.bar.baz"}} => foo.bar.baz
+```js
+// some-engine/engine.js
+import Engine from 'ember-engines/engine';
+export default Engine.extend({
+  // ...
+  dependencies: {
+    externalRoutes: [
+      'blog'
+    ]
+  }
+});
 ```
 
-Expanding the route syntax in this way accounts for our first two goals: it preserves isolation by default (by not changing any existing behavior) and it does not dramatically affect any API that users must learn (though it adds one more character to the syntax).
-
-Let's look at the flexibility this approach also gives us.
-
-### Specific Linking Use Cases
-
-#### To Descendants
-
-Linking into a child route will work as it always has, though it will be relative to it's current context (Engine or Application). This technically introduces no change, but users will need to adjust their mental model as they learn Engines since there was previously only ever one context.
-
-##### Example:
-
-```hbs
-// in route "foo", which is an engine
-{{link-to "boo"}}     => foo.boo
-{{link-to "bar.baz"}} => foo.bar.baz
+```js
+// some-app/app.js
+import Ember from 'ember';
+export default Ember.Application.extend({
+  engines: {
+    someEngine: {
+      dependencies: {
+        externalRoutes: {
+          blog: 'path.to.blog'
+        }
+      }
+    }
+  }
+});
 ```
 
-#### To Ancestors
+This API gives us great flexibility in allowing the consumers to define where an Engine should be linking to and allows easy targeting of both ancestor and sibling routes. By allowing the consumer to define the meaning of routes external to the Engine, we decouple the various contexts from each other which makes reuse of Engines in different applications easier, but at the cost of requiring a small amount of additional setup.
 
-Linking to an ancestor will require use of the new `^` syntax. This will be required for any route that has a "pivot" point outside of the Engine's mount point.
+### Using External Routes
 
-##### Example:
-
-```hbs
-// in route "foo.bar", where "bar" is an engine
-{{link-to "^"}}        => application
-{{link-to "^.foo"}}    => foo
-{{link-to "^.^.boo"}}  => ERROR (see below for handling)
-```
-
-#### To Siblings
-
-Linking into a sibling context will simply mean linking into the ancestor and then into its descendants. Since this results in tight coupling between contexts, it is recommended to declare explicit build dependencies between the various contexts whenever a sibling link is introduced.
-
-##### Example:
+Using the external routes will take advantage of new "external routing" APIs, such as `{{link-to-external}}` and `transitionToExternal`. These will be equivalent to the non-external APIs in every way except that the valid route names to use will be those from the `externalRoutes` declaration. This means that if we build on the prior example, we could do the following in our templates:
 
 ```hbs
-// current route is "foo.bar", where "bar" is an engine with
-// a sibling engine "boo"
-{{link-to "^.boo"}} => foo.boo
+{{#link-to-external "blog"}}Blog{{/link-to-external}}
 ```
 
-### Inter-Context Link Errors
+And this in our JavaScript:
 
-If you attempt to link into a non-existent route or context, behavior should be similar to current behavior for linking to non-existent routes (e.g., error on render) but it should also include a note about context.
+```js
+goToBlog() {
+  this.transitionToExternal("blog");
+}
+```
 
-When routing to a non-existent context, the error should be similar to:
+The value passed to these "external" APIs will be used to look up the corresponding route value from the `externalRoutes` definitions.
+
+By keeping the concept of external linking separate from internal (or, normal) linking, we help keep the learning curve down by not muddying the two concepts. Instead, developers will learn how normal linking works and then as they begin to work with Engines they can learn about the concepts of external linking. In fact, these APIs should likely only be avaialable within the context of an Engine.
+
+#### An Alternative To New APIs
+
+One alternative approach here is to introduce an `external-route` helper that could be used with existing routing APIs, something like:
+
+```hbs
+{{#link-to (external-route "blog")}}Blog{{/link-to}}
+```
+
+This would allow us to avoid needing to introduce multiple new routing APIs. However,  since `{{link-to}}` will be scoped to the Engine by default, we will likely need to introduce some way of differentiating between external links and internal links. Two options in this regard are to use special characters in the string, which is brittle, or represent routes as non-strings. There are several drawbacks to both of these approaches:
+
+- any existing routing APIs will still need to change internally (to account for external vs. internal routes),
+- it potentially adds an element of polymorphism into those APIs,
+- the way to define routes has now diverged into two different forms, and
+- it is somewhat magical which risks addons having to work with private APIs to mimic the behavior
+
+For those reasons, and keeping a clear separation of concerns, we think it makes more sense to simply introduce new, separate interfaces.
+
+### Nested Engine Edge Case
+
+When defining an external route for a nested Engine, it is conceivable to want to pass forward a previously defined external route. In order to support this, we would likely want to introduce a helper to lookup the path of external routes:
+
+```js
+// some-engine/engine.js
+import Engine from 'ember-engines/engine';
+import { getExternalRoute } from 'ember-engines/routes';
+export default Engine.extend({
+  dependencies: {
+    externalRoutes: [
+      'adminPanel'
+    ]
+  },
+
+  engines: {
+    someNestedEngine: {
+      dependencies: {
+        externalRoutes: {
+          adminPanel: getExternalRoute('adminPanel')
+        }
+      }
+    }
+  }
+});
+```
+
+### External Link Errors
+
+External routes will be expected to be defined at the time of Engine instantiation, similar to the behavior of Service dependencies. If a route is not defined, an error will be thrown similar to:
 
 ```bash
-ERROR: Attempting to link to parent context, but one could not be found.
+ERROR: Expected an external route 'blog' to be defined for Engine 'editorial'.
 ```
 
-When routing to a non-existent route that lives in a different context, the error should be similar to:
+_Exact wording is up for debate._
 
-```bash
-ERROR: Attempting to link to route 'foo', but no route with that name exists in the context.
-```
-
-Exact wording is up for bikeshedding.
+If the external route is defined, but it is invalid, then a run-time error will occur when the application attempts to reference it. This should be similar to current runtime errors for invalid routes.
 
 ## Implementation and Other Considerations
 
-### Resolving `^`
+Implementation of these new features should be relatively straightforward. When an external route is being used through one of the new APIs, we will simply look it up from the `externalRoutes` definitions and then defer to the original implementations of the methods without any scoping semantics.
 
-Since `^` is defined as a relative path character, we will need to introduce a unified way of resolving it to an absolute route path for use by the various linking constructs in Ember.
-
-We propose introducing a new private method, potentially named `_resolveRouteName`, in the router that can handle this path resolution. Introducing this method at the router level will allow us to leverage the same functionality from `{{link-to}}` as well as programmatic constructs (e.g., `transitionTo`).
-
-Implementation of this function can largely be based on `owner` information, assuming the `owner` has some knowledge of it's parent context. When interpreting the route path syntax, it would require walking the `owner` tree a number of levels equal to the number of `^` present in the route path and using the mount point present at that owner.
+The lookup function for `externalRoutes` will likely be the internals of the `getExternalRoute` helper function proposed in the "Edge Cases" section.
 
 ### Asynchronous Considerations
 
-One primary concern is being able to link to engines that might not have been loaded yet. This design, leveraging the existing `{{link-to}}` functionality, means that those async issues (such as handling query params, loading/transition states, and knowing available, unloaded routes) should mostly "just work".
+One primary concern is being able to link to Engines that might not have been loaded yet. This design, which can leverage much of the existing `{{link-to}}` functionality, means that those async issues (such as handling query params, loading/transition states, and knowing available, unloaded routes) should mostly "just work" by virtue of supporting `{{link-to}}`.
 
-Since knowing available routes and transition information is an issue of the router, those problems can be solved at that level without changing this API. Additionally, [default query params](https://github.com/emberjs/rfcs/pull/113) and [dynamic segments](https://github.com/emberjs/rfcs/pull/120) both have relevant RFCs for handling their usage before the entire engine has loaded.
+Since knowing available routes and transition information is an issue of the router, those problems can be solved at that level without changing this API. Additionally, [default query params](https://github.com/emberjs/rfcs/pull/113) and [dynamic segments](https://github.com/emberjs/rfcs/pull/120) both have relevant RFCs for handling their usage before the entire Engine has loaded.
 
 If, however, there is some need for this API to change to account for async Engines, it will also mean that it needs to be solved for all usages of `{{link-to}}` and is not a specific concern of linking between contexts.
 
 ### Testing
 
-Testing an Engine that expects to link into another context currently would require mocking out those additional contexts for your tests. Even with documentation this process is complicated and can result in a lot of overhead for a potentially simple test. However, given that this would require the development of an entirely separate API from the one being proposed here and there is a working solution in place now, it seems best to handle the design of that API in an independent RFC devoted to mocking dependencies for Engine tests.
-
-There should be no issues with unit and integration tests as those are already setup to not resolve routes since there is no router present.
+Testing an Engine with external links should be relatively straightforward with this design. Since the configuration allows the consuming app to customize the external routing behavior, it would be easy to stub those out with simple routes in your dummy application for any acceptance tests. Additionally, there should be no issues with unit and integration tests as those are already setup to not resolve routes since there is no router present.
 
 # How We Teach This
 
-Implementing this new micro-syntax, would require an addition to the Ember guides to discuss its behavior. However, since it is specific to applications that use engines, it can be introduced with those relevant guides; in fact, the `^` syntax should only be supported from within an Engine as there is no use case for it within an Application.
+This RFC would introduce several new interfaces, each of which will require an addition to the Ember guides to discuss its behavior. However, since these are specific concerns of Engines, they can be introduced with those relevant guides. In fact, as mentioned above, it would make sense to limit the availability of these interfaces to the boundaries of Engines.
 
-This new syntax is not critical to new users, only those that desire to use engines, and since engines themselves are new, we don't anticipate any major hurdles with educating existing users (as they will also need to reference the guides).
+This new syntax is not critical to new users, only those that desire to use Engines, and since Engines themselves are new, we don't anticipate any major hurdles with educating existing users (as they will also need to reference the guides).
 
 # Drawbacks
 
-## Dual-Tree Concept
+## Expanded API Area
 
-Introducing the `^` to routes means that we now need to know information about the context tree (e.g., the tree formed by the Engines in an Application) and the route tree. This adds a bit of conceptual overhead and a small amount of runtime overhead as well, but we anticipate the context tree should be, in almost all cases, small in scope (2 or maybe 3 levels).
+The biggest obvious drawback here is the number of new API surface area introduced. This is obviously undesirable, but as mentioned the alternatives have some substantial drawbacks and would still require new API.
 
-## Expanded Route Micro-Syntax
+Since these interfaces won't be needed by all users and are relatively straightforward to use, we don't anticipate this dramatically affecting the learning curve or usability of Ember.
 
-Expanding the micro-syntax used by routes as a DSL introduces one more thing for developers to learn, but it is comparatively less than learning an entirely new construct for linking. This is explored in more depth in the "Alternatives" section.
+## Favors Configuration
+
+Ember's motto has long been "convention over configuration", but in this case the amount of flexibility given by opting for configuration seems to be the most viable solution to this problem. The configuration approach allows for easier testing and greater consumer control than other convention based approaches.
 
 # Alternatives
 
-Two other approaches were considered for linking between different contexts.
+Several other approaches were considered for linking between different contexts.
+
+## Parent-Traversal Syntax
+
+The first iteration of this RFC proposed using a parent-traversal micro-syntax in the route DSL. Specifically, it advocated using `^` as a way to denote linking relative to a parent context. This approach had many of the benefits that the current approach has, but had several major drawbacks.
+
+First, introducing the `^` to routes would mean that we now need to know information about the context tree (e.g., the tree formed by the Engines in an Application) and the route tree. This adds both conceptual and runtime complexity.
+
+Second, and more importantly, using a parent-traversal approach binds your links to the exact structure of the route tree. While this can be advantagous in some ways, it makes reuse harder. Instead, favoring configuration allows you to decouple from the tree while still being able to link anywhere in the route tree.
+
+Finally, expanding the micro-syntax used by routes introduces one more thing for developers to learn, though it is comparatively less than learning an entirely new construct for linking. This would actually be the one area this approach is more desirable than the one given above.
 
 ## Other Types of Relative Paths
 
-Using another syntax for relative pathing that would be more familiar to users (as opposed to `^`) was definitely a consideration. In particular, we considered using `../` or filesystem style traversals, since this would require little introduction for developers. This had two major issues though:
+Using another syntax for relative pathing that would be more familiar to users (as opposed to `^`) was also a consideration. In particular, we considered using `../` or filesystem style traversals, since this would require little introduction for developers. This had two major issues though (in addition to the ones outlined for `^`):
 
 **First**, this syntax implies _route-relative_ traversal as opposed to _context-relative_ traversal. This would eliminate the "dual-tree drawback" mentioned above, but means that developers would more than likely need to introduce hacks to work around the notion of "one route up".
 
@@ -206,4 +250,4 @@ Another approach to solve flexibility was to allow nested usage of the helper, s
 
 # Unresolved Questions
 
-- ???
+- Does this introduce too much new surface area? Do the benefits of using `external-route` or a similar helper outweigh the drawbacks?
