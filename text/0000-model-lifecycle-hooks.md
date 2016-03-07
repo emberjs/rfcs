@@ -305,7 +305,7 @@ import Model from "ember-data/model";
 import { hasMany } from "ember-data/relationships";
 
 export default Model.extend({
-  comments: hasMany()o,
+  comments: hasMany(),
 
   didReceiveData(/* reference, payload */) {
     this.set('commentIds', this.hasMany('comments').ids());
