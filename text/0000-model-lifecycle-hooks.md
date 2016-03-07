@@ -50,7 +50,7 @@ This RFC proposes the addition of new hooks available in `DS.Model`:
   - `didUpdateRelationship(name, reference)`
   - `didReceiveRelationship(name, reference)`
 
-- [Data hooks](#model-data-hooks) for when the backing data of a model is modified
+- [Data hooks](#data-hooks) for when the backing data of a model is modified
   - `didInitData(reference, payload)`
   - `didUpdateData(reference, payload)`
   - `didReceiveData(reference, payload)`
