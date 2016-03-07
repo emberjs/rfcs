@@ -146,21 +146,98 @@ This RFC proposes the addition of new hooks available in `DS.Model`:
 
 ## Showcase of which hooks are invoked when
 
+The hooks are invoked after the data has been set on the record and all
+relationships are settled; similar to the existing `didUpdate`, `didLoad`, etc.
+hooks.
+
 Consider the following `post` model definition:
 
 ```js
 // app/models/post.js
 import Model from "ember-data/model";
+import attr from "ember-data/attr";
 import { belongsTo, hasMany } from "ember-data/relationships";
 
 export default Model.extend({
+  title: attr(),
   author: belongsTo(),
   category: belongsTo(),
   comments: hasMany()
 });
 ```
 
-Then the following relationship and data hooks are invoked:
+To prevent unecessary materialization of records, the hooks introduced in this
+RFC are only invoked on records (instances of `DS.Model`), which exist at the
+time. Consider the following scenario:
+
+```js
+store.push({
+  data: {
+    id: 'main',
+    type: 'post',
+    attributes: {
+      title: 'first push'
+    }
+  },
+  included: [
+    {
+      id: 'sideloaded',
+      type: 'post',
+      attributes: {
+        title: 'first push'
+      }
+    }
+  ]
+});
+
+store.push({
+  data: {
+    id: 'main',
+    type: 'post',
+    attributes: {
+      title: 'second push'
+    }
+  },
+  included: [
+    {
+      id: 'sideloaded',
+      type: 'post',
+      attributes: {
+        title: 'second push'
+      }
+    }
+  ]
+});
+
+let mainPost = store.peekRecord('post', 'main');
+let sideloadedPost = store.peekRecord('post', 'sideloaded');
+```
+
+The `didInitData` hook on `mainPost` is invoked with the state after the first
+`store.push`, since the record is materialized and return from the first
+`store.push`:
+
+```js
+didInitData: function() {
+  assert.equal(this.get("title"), "first title");
+}
+```
+
+The `didInitData` hook on `sideloadedPost` on the other hand is invoked with
+the state after the second `store.push`, since the record has been materialized
+after that for the first time via `store.peekRecord`:
+
+```js
+didInitData: function() {
+  assert.equal(this.get("title"), "updated title");
+}
+```
+
+
+---
+
+
+The following relationship and data hooks are invoked:
 
 ```js
 var post = store.createRecord('post', {
