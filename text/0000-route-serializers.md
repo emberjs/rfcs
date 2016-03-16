@@ -22,13 +22,12 @@ Since the current API is a simple function, the new hash option will also be a s
 
 ```js
 // app/router.js
+function serializePostRoute(model, params) {
+  // serialize the model into the dynamic paths
+}
+
 export default Router.map(function() {
-  this.route('post', {
-    path: '/post/:id',
-    serialize(model, params) {
-      // serialize the model into the dynamic paths
-    }
-  });
+  this.route('post', { path: '/post/:id', serialize: serializePostRoute });
 });
 ```
 
@@ -70,14 +69,13 @@ export default Ember.Route.extend({
 });
 
 // app/router.js
+function serializePostRoute(model) {
+  // this will make the URL `/posts/12`
+  return { post_id: model.id };
+}
+
 export default Router.map(function() {
-  this.route('post', {
-    path: '/post/:id',
-    serialize(model) {
-      // this will make the URL `/posts/12`
-      return { post_id: model.id };
-    }
-  });
+  this.route('post', { path: '/post/:id', serialize: serializePostRoute });
 });
 ```
 
