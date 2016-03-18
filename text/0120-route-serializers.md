@@ -1,6 +1,6 @@
 - Start Date: 2016-02-11
 - RFC PR: [emberjs/rfcs#120](https://github.com/emberjs/rfcs/pull/120)
-- Ember Issue: (leave this empty)
+- Ember Issue: https://github.com/emberjs/ember.js/pull/13016
 
 # Summary
 
@@ -89,7 +89,7 @@ As noted in the "Motivation" section, there is still work to be done in router.j
 
 # Pedagogy (How We Teach This)
 
-Once the new option is introduced, the Ember guides will need to be updated to reflect this. Those changes should be relatively straightforward as shown in the example above. This will help introduce the feature to new users and those users that haven't used `Route#serialize` before.
+Once the new option is introduced, the Ember guides will need to be updated to reflect this. Those changes should be relatively straightforward as shown in the example above. This will help introduce the feature to new users and those users that haven't used `Route#serialize` before. Since inline serializers in the router map can be distracting to understanding the general layout of a codebase, we should teach them as defined outside the map itself (as in the code example in this RFC).
 
 For existing users, we can introduce this feature through deprecation warnings (as mentioned above). The deprecations should briefly introduce the new option and point to an appropriate deprecation guide that explains how to migrate.
 
