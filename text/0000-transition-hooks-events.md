@@ -24,23 +24,23 @@ Being able to track the entire transition lifecycle allows us the ability to pro
 The `willChangeTransition` event should be fired for every new transition object created between firing `willTransition` and `didTransition`.
 
 ```javascript
-const Router = Ember.Router;
+const Router = Ember.Router.extend({
+  onWillTransition: Ember.on('willTransition', function(transition) {
+    console.log(`transitioning to "${transition.targetName}"`);
+  }),
+
+  onWillChangeTransition: Ember.on('willChangeTransition', function (transition) {
+    console.log(`redirecting to "${transition.targetName}"`);
+  }),
+
+  onDidTransition: Ember.on('didTransition', function() {
+    console.log('transition settled');
+  }),
+});
 
 Router.map(function() {
   this.route('first');
   this.route('second');
-});
-
-Router.on('willTransition', function(transition) {
-  console.log(`transitioning to "${transition.targetName}"`);
-});
-
-Router.on('willChangeTransition', function (transition) {
-  console.log(`redirecting to "${transition.targetName}"`);
-});
-
-Router.on('didTransition', function() {
-  console.log('transition settled');
 });
 
 App.FirstRoute = Ember.Route.extend({
@@ -75,10 +75,10 @@ function callbackForAllTransitions(transition) {
 const Router = Ember.Router.extend({
   willTransition: hookForAllTransitions,
   willChangeTransition: hookForAllTransitions,
-});
 
-Router.on('willTransition', callbackForAllTransitions);
-Router.on('willChangeTransition', callbackForAllTransitions);
+  onWillTransition: Ember.on('willTransition', callbackForAllTransitions),
+  onWillChangeTransition: Ember.on('willChangeTransition', callbackForAllTransitions),
+});
 ```
 
 This will require changes to both Ember and tildeio/router.js.
