@@ -134,4 +134,5 @@ buildQuery(query) {
 }
 ```
 
-This of course would require a little more teaching and a little more change for people that _do_ already have a `sortQueryParams()` implemented.
+This of course would require a little more teaching and a little more change for
+people that _do_ already have a `sortQueryParams()` implemented.
