@@ -109,7 +109,7 @@ sortQueryParams(obj) {
 # Unresolved questions
 
 Should this proposal go one step further and re-implement `sortQueryParams()`?
-if the default behavier were changed to:
+if the default behavior were changed to:
 
 ```js
 sortQueryParams(arrayOfKeys) {
