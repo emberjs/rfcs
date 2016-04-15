@@ -16,13 +16,13 @@ to alphabetize the keys in order.  So, what happens if you want to do more?
 
 One common use case I (and others) have come across is the need to transform, or
 "normalize" the keys from, for example, camelized to underscored. The current
-solution is to override `sortQueryParams()`, but it is hook name is not a semantic
-description of what we want to achieve. Furthermore, there is no simple way of
-overriding the method in this way, without needing to reimplement the entire hook,
-if you also wanted to preserve the sorting behavior.
+solution is to override `sortQueryParams()`, but this hook name is not a semantic
+description of what we really want to achieve. Furthermore, there is no simple way
+of overriding the method in this way, without needing to reimplement the entire hook,
+if you also wanted to preserve the default sorting behavior.
 
 This RFC seeks to break the process down into a couple smaller pieces to make the
-process simpler.
+process overall process simpler.
 
 # Detailed design
 
@@ -30,7 +30,7 @@ Currently the Adapter's `query()` and `queryRecord()` hooks call on
 `sortQueryParams()`, which does its sorting and returns a new, sorted hash.
 
 The proposed new API will instead call `buildQuery()`, which will delegate to
-`sortQueryParams()` and the new `transformParamKeys()` and return the resulting
+`sortQueryParams()` and the new `transformParamKey()` and return the resulting
 hash.
 
 Here is the example of how the new `buildQuery()` might look:
@@ -62,20 +62,20 @@ Here is the example of how the new `transformParamKey()` might look:
 # How We Teach This
 
 The `buildQuery()` hook was written in a way that leaves the original
-`sortQueryParams()` untouched, so in the end a developer that needs to update
+`sortQueryParams()` untouched, so in the end, a developer that needs to update
 their code should only need to worry about replacing `this.sortQueryParams()` with
 `this.buildQuery()` within their `query()` and `queryRecord()` methods.
 
 `transformParamKey()` does nothing but return the key by default, so only an
-API documentation should be needed to describe it's use.
+API documentation should be sufficient to describe it's use.
 
 # Drawbacks
 
 One of drawbacks of this approach is that params must be sorted before the keys can
-be transformed. Once the keys are transformed it becomes trickier to reconstruct
-the final param hash from the original.  This is another reason why I preserved
+be transformed. Once the keys are transformed, it becomes trickier to reconstruct
+the final param hash from the original hash.  This is another reason why I preserved
 the original `sortQueryParams()` method.. as it returns a new hash that we can
-further manipulate.
+further manipulate without any loss of detail.
 
 This of course means that the new "sorted" hash needs to again be deconstructed into
 keys and reduced finally into a finished hash.. this may not be the most efficient
@@ -83,8 +83,8 @@ thing to do.
 
 # Alternatives
 
-An reasonable alternative would be to simply _rename_ `sortQueryParams()` to `buildQuery()`.
-Doing so makes it easier to just pop in then new `transformParamKey()` method in the loop
+A reasonable alternative would be to simply _rename_ `sortQueryParams()` to `buildQuery()`.
+Doing so makes it easier to just pop in the new `transformParamKey()` method in the loop
 that builds the final param hash.
 
 Example:
@@ -108,7 +108,7 @@ sortQueryParams(obj) {
 ```
 # Unresolved questions
 
-Should this proposal go one step further and reimplement `sortQueryParams()`?
+Should this proposal go one step further and re-implement `sortQueryParams()`?
 if the default behavier were changed to:
 
 ```js
