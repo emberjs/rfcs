@@ -30,8 +30,8 @@ Currently the Adapter's `query()` and `queryRecord()` hooks call on
 `sortQueryParams()`, which does its sorting and returns a new, sorted hash.
 
 The proposed new API will instead call `buildQuery()`, which will delegate to
-`sortQueryParams()` and the new `transformParamKey()` and return the resulting
-hash.
+`sortQueryParams()` and the new `transformParamKey()` and return the combined
+hash from both hooks.
 
 Here is the example of how the new `buildQuery()` might look:
 
@@ -84,13 +84,14 @@ thing to do.
 # Alternatives
 
 A reasonable alternative would be to simply _rename_ `sortQueryParams()` to `buildQuery()`.
-Doing so makes it easier to just pop in the new `transformParamKey()` method in the loop
-that builds the final param hash.
+Other proposed method names were perhaps `normalizeQueryParams()` or `transformQueryParams()`.
+Either way, doing so makes it easier to just pop in the new `transformParamKey()` method in
+the loop that builds the final param hash.
 
 Example:
 
 ```js
-sortQueryParams(obj) {
+buildQuery(obj) {
   let keys = Object.keys(obj);
   let len = keys.length;
   if (len < 2) {
