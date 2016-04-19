@@ -57,7 +57,19 @@ visit('/first');
 // => transition settled
 ```
 
-The `willChangeTransition` hook should provide the same API surface as the `willTransition` hook, and the callback for the `willChangeTransition` event should be passed the same parameters as the callback for the `willTransition` event. This grants users wishing to subscribe to all transition events the ability to reuse one function across both hooks or both callbacks.
+`willChangeTransition` should also be available as an action on routes. For a given sequence of transitions, the `willChangeTransition` action is triggered on the origin route, the same route on which `willTransition` is triggered.
+
+```javascript
+App.ApplicationRoute = Ember.Route.extend({
+  actions: {
+    willChangeTransition(transition) {
+      // do stuff...
+    },
+  },
+})
+```
+
+The `willChangeTransition` hook should provide the same API surface as the `willTransition` hook, and the callback for the `willChangeTransition` event/action should be passed the same parameters as the callback for the `willTransition` event/action. This grants users wishing to subscribe to all transition events the ability to reuse one function across both hooks or both callbacks.
 
 ```javascript
 function hookForAllTransitions(oldInfos, newInfos, transition) {
