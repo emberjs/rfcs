@@ -14,8 +14,8 @@ We propose that we adopt a pattern similar to Ember itself in order to align wit
 To begin there will be three separate channels: canary, beta, and release. We intend to investigate an LTS channel after this process has matured.
 
 - **Canary**: represents the latest work in ember-cli, and is synonymous with the `HEAD` of the `master` branch and is the least stable of all channels.
-- **Beta**: branched off of master every six weeks, exact commit decided upon manually. Updated and released weekly with commits that are prefixed `[BUGFIX beta]`. Less stable than `release` as it is a proving ground. No new features will be added once the branch has been created to allow for existing features to mature.
-- **Release**: branched off of Beta every six weeks. Only rarely will this be updated, but possible for security issues and uncaught regressions.
+- **Beta**: branched off of master every six weeks, exact commit decided upon manually. Updated and released weekly with commits that are prefixed `[BUGFIX beta]`. Less stable than `release` as it is a proving ground. No new features will be added once the branch has been created to allow for existing features to mature. Tags will match Ember's patterns, for example `v2.6.0-beta.1`. Branch name: `beta`.
+- **Release**: branched off of Beta every six weeks. Only rarely will this be updated, but possible for security issues and uncaught regressions. Branch name: `release`.
  
 ember-cli will not support daily releases as time-based packaging doesn't make a lot of sense.
 
@@ -25,7 +25,7 @@ New features to ember-cli must be protected by feature flags. Incomplete and WIP
 
 ## Tooling Design
 
-We must create additional tooling and patterns in order to make this efficient. Since ember-cli successfully installs and works from npm without modification we don't need to bundle and publish an asset for each Canary build. We'll publish tags to npm for `beta` and `release` channel releases so that they're not tied to a git remote URL. The `latest` tag (the default when installing via `npm install -g ember-cli`) will track our `release` channel at all times.
+We must create additional tooling and patterns in order to make this efficient. Since ember-cli successfully installs and works from npm without modification we don't need to bundle and publish an asset for each Canary build. We'll publish tags to npm for `beta` and `release` channel releases so that they're not tied to a git remote URL. The `latest` tag for npm (the default when installing via `npm install -g ember-cli`) will track our `release` channel at all times. We will publish tagged releases (i.e. v2.6.0-beta.1) to the npm `beta` tag which is used via `npm install --save-dev ember-cli@beta`.
 
 ## Timeline
 
