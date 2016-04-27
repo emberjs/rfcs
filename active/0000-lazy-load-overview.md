@@ -182,4 +182,6 @@ TODO: fill this in
 
 # Unresolved questions
 
+* Ember Inspector breaks the apps the lazy-load routes because it eagerly resolves them, which results in a default route being generated, taking precedence over the lazy loaded one. We can fix Ember Inspector and even provide information about assets related to each route once we generate the route info at compile time. However, this will require users taking a new version of the extension. Not sure if we can force an update to avoid breakign the apps or if we can avoid that behavior on the app itself. 
+
 TODO: fill this in, but the whole RFC is already full of unresolved questions, some of which deserve their own RFC
