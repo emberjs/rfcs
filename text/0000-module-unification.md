@@ -563,17 +563,25 @@ more simply as `{{power-select}}`.
 
 Module resolution rules must account for the following:
 
-* The requested module's `type`, `name`, and (potentially) `namespace`
-* The "origin" collection and namespace from which the lookup originates
+* The requested module's `type`, `name`, and (potentially) `namespace`.
+* (Optional) A "source" `rootName`, collection, and namespace from which the
+  lookup originates.
+* (Optional) An "associated type" for lookups that should start in a collection
+  that is not definitive for the requested `type`.
 
 Module resolutions occur in the following order:
 
-1. In the current collection and namespace, if the current collection can contain
-   the requested type (note: from a template, the current namespace includes the
-   template's namespace + name)
-2. In the private collection at the local namespace, if available
-3. In the definitive collection for the requested type, defined at its top-level
-4. In the definitive collection for the requested type, defined globally (via addons)
+1. Local - If a source module is specified and the requested type is allowed in
+   the source module's collection, look in a namespace based on the source
+   module's namespace + name.
+2. Private - If a source module is specified, look in a private collection at
+   the source module's namespace, if one exists that is definitive for the
+   requested type.
+3. Associated - If an associated type is specified, look in the definitive
+   collection for that associated type. Only resolve if the collection can
+   contain the requested type.
+4. Top-level - In the definitive collection for the requested type, defined at
+   its top-level.
 
 The resolver must maintain mappings of modules at multiple levels to make these
 resolutions efficient. A lookup tree can be pre-built for production builds.
