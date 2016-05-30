@@ -218,7 +218,7 @@ We could adopt some of the existing broadly used APIs as de-facto public. This a
 
 ## Semver Lawyering
 
-I'm interepreting router.js's public/private documentation as out-of-scope for Ember's semver. The fact that we pass an instance of router.js's Transition as our `transition` argument is not documented. An alternative interpretation is that we need to continue supporting those methods marked as public in router.js's docs.
+I'm interpreting router.js's public/private documentation as out-of-scope for Ember's semver. The fact that we pass an instance of router.js's Transition as our `transition` argument is not documented. An alternative interpretation is that we need to continue supporting those methods marked as public in router.js's docs.
 
 ## Optional Helpers
 
