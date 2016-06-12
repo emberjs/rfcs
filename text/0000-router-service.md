@@ -131,10 +131,6 @@ A `url-for` helper can be implemented almost identically to the `is-active` exam
 `currentURL`: provides the serialized string representing `currentRoute`.
 
 
-### Deprecation
-
-I propose deprecating the publicly extensible `willTransition` and `didTransition` hooks. They are redundant with an observable `currentRoute`, and the arguments they receive leak internal implemetation from router.js.
-
 ## RouteInfo Type
 
 A RouteInfo object has the following properties. They are all read-only.
@@ -155,7 +151,7 @@ router.currentRoute.find(info => info.name === 'people').params
 
 ## Transition Object
 
-A `transition` argument is passed to `Route`'s `beforeModel`, `model`, `afterModel`, and `willTransition` hooks. Today it's public API is only really `abort()` and `retry()`.
+A `transition` argument is passed to `Route#beforeModel`, `Route#model`, `Route#afterModel`, `Route#willTransition`, and `Router#willTransition`. Today `transition`'s public API is only really `abort()` and `retry()`.
 
 ### New Properties: `from` and `to`
 
@@ -206,7 +202,7 @@ This RFC provides public API for doing the things people have become accustomed 
 
 # Drawbacks
 
-This RFC suggests only two small deprecations that are unlikely to effect many apps, so the API-churn burden may appear low. However, we know that use of the private APIs we're deliberately disabling is widespread, so users will experience churn. We can provide our usual deprecation cycle to give them early warning, but it still imposes some cost.
+This RFC doesn't deprecate any public API, so the API-churn burden may appear low. However, we know that use of the private APIs we're deliberately disabling is widespread, so users will experience churn. We can provide our usual deprecation cycle to give them early warning, but it still imposes some cost.
 
 This RFC doesn't attempt to change the existing and fairly rich semantics for initiating transitions. For example, you can pass either models or IDs, and those have subtle semantic differences. I think an ideal rewrite would also change the semantics of the route hooks and transitionTo to simplify that area.
 
