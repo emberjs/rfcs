@@ -94,7 +94,7 @@ export default Helper.extend({
     }
     return this.get('router').isActive(routeName, ...models, hash.queryParams);
   },
-  observer('router.currentRoute', function() {
+  didTransition: observer('router.currentRoute', function() {
     this.recompute();
   });
 });
