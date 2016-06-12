@@ -141,7 +141,7 @@ A RouteInfo object has the following properties. They are all read-only.
 
  - name: the dot-separated, fully-qualified name of this route, like `"people.index"`.
  - localName: the final part of the `name`, like `"index"`.
- - attrs: the attributes provided to this route's component, if any, like `{ model }`. For old-style routes that have a controller/view/template instead of a routable component, the implicit `attrs` shall contain `{ model, controller, view }`.
+ - attrs: the values that were resolved by this `Route`. Today, that means `{ model, controller }`. In the future it may become the attributes passed directly to a "routeable component".
  - params: the values of this route's parameters. Same as the argument to `Route`'s `model` hook. Contains only the parameters valid for this route, if any (params for parent or child routes are not merged).
  - queryParams: the values of any queryParams on this route.
  - parent: another RouteInfo instance, describing this route's parent route, if any.
