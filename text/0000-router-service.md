@@ -121,6 +121,13 @@ This takes the same arguments as `transitionTo`, but instead of initiating the t
 
 A `url-for` helper can be implemented almost identically to the `is-active` example above.
 
+### New Method: URL recognition
+
+`recognize(url)`
+
+Takes a string URL (relative to the application's baseURL) and returns a `RouteInfo` for the leafmost route represented by the URL. Returns `null` if the URL is not recognized.
+
+Example: this feature can replace [this use of private API in ember-href-to](https://github.com/intercom/ember-href-to/blob/b8cf0699eec6a65570b05e4fc22b27d8cea49c42/app/instance-initializers/browser/ember-href-to.js#L34).
 
 ### New Properties
 
