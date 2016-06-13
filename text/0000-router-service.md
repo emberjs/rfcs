@@ -203,7 +203,13 @@ model({ personId }, transition) {
 
 ### Actively discourage use of private API
 
-This RFC provides public API for doing the things people have become accustomed to doing via private properties on `transition`. To eliminate confusion over the correct way, we should hide all the private API away behind symbols, and provide deprecation warnings per our usual release policy around breaking "widely-used private APIs"
+This RFC provides public API for doing the things people have become accustomed to doing via private API. To eliminate confusion over the correct way, we should hide all the private API away behind symbols, and provide deprecation warnings per our usual release policy around breaking "widely-used private APIs".
+
+Some of the private APIs we should mark and warn include:
+
+ - transition.state
+ - transition.params
+ - `lookup('router:main')` (should use `service:router` instead)
 
 
 # Drawbacks
