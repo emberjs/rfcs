@@ -1,0 +1,45 @@
+- Start Date: (fill me in with today's date, 2016-06-14)
+- RFC PR: (leave this empty)
+- ember-cli Issue: (leave this empty)
+
+# Summary
+
+This RFC proposes extending the `app.import` API to consume anonymous AMD modules. It accompanies [ember-cli PR 5976](https://github.com/ember-cli/ember-cli/pull/5976).
+
+# Motivation
+
+AMD modules come in two flavors: named and anonymous. _Anonymous AMD_ is the more portable distribution format, but it typically requires preprocessing into _named AMD_ before it can be included into an application. Today, ember-cli users can add arbitrary third-party _named AMD_ modules into their application via:
+
+    app.import('/path/to/module.js');
+
+But this does not support _anonymous AMD_ modules, which is annoying because _anonymous AMD_ is the better format for library distribution and is widely used.
+
+# Detailed design
+
+In order to de-anonymize AMD, it's necessary to choose a name for the module for use within a given application. So I propose extending the:
+
+    app.import('/path/to/module.js');
+
+API with an additional argument:
+
+    app.import('/path/to/module.js', { amdModule: 'some-dep' });
+
+The exact meaning of `amdModule` is: within this Javascript file, any call(s) to the global `define()` function will be intercepted and the given module name (`some-dep` in the above example) will be prepended to the argument list.
+
+[A complete implementation is available here](https://github.com/ember-cli/ember-cli/pull/5976).
+
+# Drawbacks
+
+I am not attempting to specify static error detection, mostly because doing that well would require fully parsing and understanding the imported module, which is likely to be more expensive and fragile.
+
+Examples of static errors that would theoretically be nice to detect would be the presence of a _named AMD_ module in the file, the lack of any AMD module in the file, or the present of multiple _anonymous AMD_ modules in the file.
+
+# Alternatives
+
+Many libraries fall back to global variables if they cannot detect a valid AMD loader. I suspect this is the most common alternate pattern that's in use in the community.
+
+Some applications include their own manually written shims in `vendor` or elsewhere.
+
+# Unresolved questions
+
+We should confirm that my implementation performs well in apps with very large dependency directories.
