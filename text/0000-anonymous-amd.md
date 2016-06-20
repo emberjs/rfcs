@@ -8,7 +8,44 @@ This RFC proposes extending the `app.import` API to consume anonymous AMD module
 
 # Motivation
 
-AMD modules come in two flavors: named and anonymous. _Anonymous AMD_ is the more portable distribution format, but it typically requires preprocessing into _named AMD_ before it can be included into an application. Today, ember-cli users can add arbitrary third-party _named AMD_ modules into their application via:
+AMD modules come in two flavors: named and anonymous. _Anonymous AMD_ is the more portable distribution format, but it typically requires preprocessing into _named AMD_ before it can be included into an application.
+
+    /* Anonymous AMD Examples */
+
+    // direct value
+    define({ color: 'black' });
+
+    // function returning value
+    define(function() { return { color: 'black' }; });
+
+    // function returning value, with declared dependencies
+    define(["jquery", "moment"], function(jQuery, moment) {
+      return {
+        injectTime: function() {
+          jQuery('#time-box').html(moment().format('HH:MM'));
+        }
+      }
+    });
+
+    /* Named AMD Examples */
+
+    // direct value
+    define('my-config', { color: 'black' });
+
+    // function returning value
+    define('my-config', function() { return { color: 'black' }; });
+
+    // function returning value, with declared dependencies
+    define('time-utils', ["jquery", "moment"], function(jQuery, moment) {
+      return {
+        injectTime: function() {
+          jQuery('#time-box').html(moment().format('HH:MM'));
+        }
+      }
+    });
+
+
+Today, ember-cli users can add arbitrary third-party _named AMD_ modules into their application via:
 
     app.import('/path/to/module.js');
 
