@@ -188,3 +188,4 @@ lazy loaded one. We can fix Ember Inspector and even provide information about a
 related to each route once we generate the route info at compile time. However, this
 will require users taking a new version of the extension. Not sure if we can force an
 update to avoid breakign the apps or if we can avoid that behavior on the app itself.
+* When LOG_RESOLVER is on, ember eagerly resolves all the routes, which breaks lazy-loading.
