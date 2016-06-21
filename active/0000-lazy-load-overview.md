@@ -71,7 +71,7 @@ extended for addons.
 
 This isn't supported out of the box today, but it's possible to do. There are two example,
 [ember-cli-bundle-loader](https://github.com/MiguelMadero/ember-cli-bundle-loader) and
-[ember-lazy-loader](https://github.com/duizendnegen/ember-cli-lazy-load). The first one relies on a different file structure 
+[ember-lazy-loader](https://github.com/duizendnegen/ember-cli-lazy-load). The first one relies on a different file structure
 and uses multiple ember-apps to build each asset. The latter relies on configuration to specify which app files will go to each
 asset.
 
@@ -143,7 +143,7 @@ Router.getHandler = function (routeName) {
 
 ### Route metadata
 
-The code above assumes that we have the routerMetadata available, the definition of this needs further discussion 
+The code above assumes that we have the routerMetadata available, the definition of this needs further discussion
 outside of the scope of this RFC. For the purpose of this overview we simply assume that we have a way to map between routeNames and assetNames.
 
 ## Engines
@@ -170,18 +170,21 @@ the build defaults to oveirrde the output file.
 TODO: fill this in
 
 * Without proper static analysis, it exposes the consumers to errors if there are dependencies in the order things are loaded
-and dependencies between assets aren't correctly specified. 
-* The way to build different assets is inconsistent. 
+and dependencies between assets aren't correctly specified.
+* The way to build different assets is inconsistent.
 
 
 # Alternatives
 
-This section needs further discussion. 
+This section needs further discussion.
 
 TODO: fill this in
 
 # Unresolved questions
 
-* Ember Inspector breaks the apps the lazy-load routes because it eagerly resolves them, which results in a default route being generated, taking precedence over the lazy loaded one. We can fix Ember Inspector and even provide information about assets related to each route once we generate the route info at compile time. However, this will require users taking a new version of the extension. Not sure if we can force an update to avoid breakign the apps or if we can avoid that behavior on the app itself. 
-
-TODO: fill this in, but the whole RFC is already full of unresolved questions, some of which deserve their own RFC
+* Ember Inspector breaks the apps the lazy-load routes because it eagerly resolves
+them, which results in a default route being generated, taking precedence over the
+lazy loaded one. We can fix Ember Inspector and even provide information about assets
+related to each route once we generate the route info at compile time. However, this
+will require users taking a new version of the extension. Not sure if we can force an
+update to avoid breakign the apps or if we can avoid that behavior on the app itself.
