@@ -67,9 +67,21 @@ to revise it in response.
 * Build consensus and integrate feedback. RFCs that have broad support
 are much more likely to make progress than those that don't receive any
 comments.
-* Eventually, somebody on the [core team] will either accept the RFC by
-merging the pull request and assigning the RFC a number, at which point
-the RFC is 'active', or reject it by closing the pull request.
+* Eventually, the [core team] will decide whether the RFC is a candidate
+for inclusion in Ember.
+* RFCs that are candidates for inclusion in Ember will enter a "final comment
+period" lasting 7 days. The beginning of this period will be signaled with a
+comment and tag on the RFC's pull request. Furthermore,
+[Ember's official Twitter account](https://twitter.com/emberjs) will post a
+tweet about the RFC to attract the community's attention.
+* An RFC can be modified based upon feedback from the [core team] and community.
+Significant modifications may trigger a new final comment period.
+* An RFC may be rejected by the [core team] after public discussion has settled
+and comments have been made summarizing the rationale for rejection. A member of
+the [core team] should then close the RFC's associated pull request.
+* An RFC may be accepted at the close of its final comment period. A [core team]
+member will merge the RFC's associated pull request, at which point the RFC will
+become 'active'.
 
 ## The RFC life-cycle
 
