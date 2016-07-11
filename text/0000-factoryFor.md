@@ -16,6 +16,15 @@ provided this support would allow an instance of the factory to be created
 with initial values passed via `create`. For example:
 
 ```js
+// app/logger/main.js
+import Ember from 'ember';
+
+export default Ember.Logger.extend({
+  someService: Ember.inject.service()
+});
+```
+
+```js
 import Ember from 'ember';
 const { Component, getOwner } = Ember;
 
@@ -28,20 +37,28 @@ export default Component.extend(
 });
 ```
 
-In this API, the `Factory` is actually a subclass the main logger class. In
-`_lookupFactory`, there are minimum two class `extend` calls:
+In this API, the `Factory` is actually a subclass the original main logger
+class. When `_lookupFactory` is called, an additional `extend` takes place
+to add any injections (such as `someService` above). The class/object setup
+looks like this:
 
-* `MyClass = Ember.Object.extend(`
-* `MyFactoryWithInjections = MyClass.extend(`
-* `MyFactoryWithInjections.create(`
+* In the module: `MyClass = Ember.Object.extend(`
+* In `_lookupFactory`: `MyFactoryWithInjections = MyClass.extend(`
+* And when used: `MyFactoryWithInjections.create(`
 
-The middle extend only serves to implement dependency injection- merging the
-properties passed to `create` with the injected ones. The double extend
-of classes in Ember takes a toll on performance booting an app. This
-poor design has kept the factory lookup API private.
+The second call to `extend` implements Ember's owner/DI
+framework and permits `someService` to be resolved later. The "owner" object
+is merged into the new `MyFactoryWithInjections` class along with any
+registered injections.
 
-Additionally the middle extend is a cache, and cleared between tests or
-application instances. For example:
+This "double extend" (once at define time, once at `_lookupFactory` time)
+takes a toll on performance booting an app. This design flaw has motivated
+a desire to keep `_lookupFactory` private.
+
+The `MyFactoryWithInjections` class also features as a cache. Because it is
+attached to the owner/container, it is cleared between test runs or
+application instances. To illustrate, this flow-chart shows how
+`MyFactoryWithInjections` diverges between tests:
 
 ```
                +-------------------------------+
@@ -72,20 +89,16 @@ application instances. For example:
 +--------------------------+     +---------------------------+
 ```
 
-However despite these issues being able to instantiate a factory with initial properties is useful for
-a number of scenarios and is a common practice
-in a number of important addons.
+Despite the design flaws in this API, it does fill a meaningful role in
+Ember's DI solution. Use of the private API is common. Some examples:
 
 * [ember-cart](https://github.com/DockYard/ember-cart) uses the functionality to create model objects without
   tying them to the store [example a](https://github.com/DockYard/ember-cart/blob/c01eb22eaf2e97f8c80481c3174d4be917e476a9/tests/dummy/app/controllers/application.js#L16),
   [example b](https://github.com/DockYard/ember-cart/blob/c01eb22eaf2e97f8c80481c3174d4be917e476a9/tests/dummy/app/models/dog.js#L11)
 * Ember-Data's [`modelFactoryFor`](https://github.com/emberjs/data/blob/54ea432b1cbb0d1231d9a0454b09d3b3a0bc2533/addon/-private/system/store.js#L1868)
 
-Many use-cases can be handled with a convention of calling a `setup` method
-on object instances after their creation by the container. However this convention
-would be at odds with common OO patterns (where you use the constructor to
-setup an instance) and performance best practices (which prefer to see
-properties defined on an object during its construction).
+The goal of this RFC is to create a public API for fetching factories with
+better performance characteristics than `_lookupFactory`.
 
 # Detailed design
 
@@ -95,10 +108,10 @@ This feature will be added in three steps.
 2. Deprecate `ApplicationInstance#_lookupFactory` in Ember 2.8, remove in 2.9
 3. Release a polyfill addon for this feature
 
-#### Introduce `ApplicationInstance#factoryFor` in Ember 2.8
+#### Step #1: Introduce `ApplicationInstance#factoryFor` in Ember 2.8
 
 A new API will be introduced. This API will return both the original base
-class resisted (or resolved) by the container, and will also return a function
+class registed into or resolved by the container, and will also return a function
 to generate a dependency-injected instance. For example:
 
 ```js
@@ -134,10 +147,12 @@ let {
 This API should meet two requirements of the use-cases described in
 "Motivation":
 
-* The implementation of `create` can diverge away from double extend. The
+* Because `factoryFor` only returns a `create` method and reference to the
+  original class, its internal implementation can diverge away from the
+  "double extend". A side-effect of this is that the
   class of an object instantiated via `_lookupFactory(name).create()`
-  and `factoryFor(name).create()` may not be the same, even given the
-  same factory being registered into the container.
+  and `factoryFor(name).create()` may not be the same, given the
+  same original factory.
 * The presence of `class` will make it easy to identify the base class of the
   factory at runtime.
 
@@ -176,10 +191,11 @@ the following:
 This means, between test runs 2 instances of `model:foo` will have a common
 shared ancestor the grandparent `Class[model/Foo]`.
 
-We propose is to remove the intermediate subclass and instead have a generic
-factory object, which holds the injections and allows for injected instances
+This implementation of `factoryFor` proposes to remove the intermediate
+subclass and instead have a generic
+factory object which holds the injections and allows for injected instances
 to be created. The resulting object graph would look something like this:
-(between test runs 2 instance of `model:foo` will have a shared ancestor
+(between test runs the 2 instances of `model:foo` will have a shared ancestor
 (parent) `Class[model/Foo]`.
 
 ```
@@ -211,16 +227,38 @@ to be created. The resulting object graph would look something like this:
 +--------------------+ +--------------------+
 ```
 
-This results in `instance` direct `parent` being shared between test runs. More
-specially this means any instance state stored on the `parent` will leak
-between tests.
+With `factoryFor` instances of `model:foo` will share a common constructor.
+Any state stored on the constructor would of course leak between the tests.
 
-#### Deprecate `ApplicationInstance#_lookupFactory` in Ember 2.8, remove in 2.9
+An example implementation of `factoryFor` can be reviewed [on this GitHub
+comment](https://github.com/emberjs/rfcs/issues/125#issuecomment-193827658).
+
+##### Implications for `owner.register`
+
+Currently, factories registered into Ember's DI system are required to
+provide an `extend` method. Removing support for extend-based DI in `_lookupFactory`
+will permit factories without `extend` to be registered. Instead factories
+must only provide a `create` method. For example:
+
+```js
+let factory = {
+  create(options={}) {
+    /* Some implementation of `create` */
+    return Object.create({});
+  }
+};
+owner.register('my-type:a-factory', factory);
+let factoryWithDI = owner.factoryFor('my-type:a-factory');
+
+factoryWithDI.class === factory;
+```
+
+#### Step #2: Deprecate `ApplicationInstance#_lookupFactory` in Ember 2.8, remove in 2.9
 
 In 2.8 (an LTS release) `_lookupFactory` will be deprecated with a message
 suggesting a migration to the new API. In 2.9 the API will be removed.
 
-#### Release a polyfill addon for this feature
+#### Step #3: Release a polyfill addon for this feature
 
 A polyfill addon, similar to [ember-getowner-polyfill](https://github.com/rwjblue/ember-getowner-polyfill)
 will be released for this feature. This polyfill will provide the `factoryFor`
@@ -234,6 +272,131 @@ This feature should be introduced along side `lookup` in the
 The return value of `factoryFor` should be taught as a POJO and not as
 an extended class.
 
+#### Example deprecation guide: Migrating from `_lookupFactory` to `factoryFor`
+
+Ember owner objects have long provided an intimate API used to
+fetch a factory with dependency injections. This API, `_lookupFactory`, is deprecated
+in Ember 2.8 and will be removed in Ember 2.9. To ease the transition to this
+new public API, a polyfill is provided with support back to Ember 2.0.
+
+`_lookupFactory` returned the class of resolved factory extended with
+a mixin containing its injections. For example:
+
+```js
+let factory = Ember.Object.extend();
+owner.register('my-type:a-name', factory);
+let klass = owner._lookupFactory('my-type:a-name');
+klass.constructor.superclass === factory; // true
+let instance = klass.create();
+```
+
+`factoryFor` instead returns an object with two properties: `create` and `class`.
+For example:
+
+```js
+let factory = Ember.Object.extend();
+owner.register('my-type:a-name', factory);
+let klass = owner.factoryFor('my-type:a-name');
+klass.class === factory; // true
+let instance = klass.create();
+```
+
+A common use-case for `_lookupFactory` was to fetch an factory with
+specific needs in mind:
+
+* The factory needs to be created with initial values (which cannot be
+  provided at create-time via `lookup`.
+* The instances of that factory need access to Ember's DI framework (injections,
+  registered dependencies).
+
+For example:
+
+```js
+// app/widgets/slow.js
+import Ember from 'ember';
+
+export default Ember.Object.extend({
+  // this instance requires access to Ember's DI framework
+  store: Ember.inject.service(),
+
+  convertToModel() {
+    this.get('store').createRecord('widget', {
+      widgetType: 'slow',
+      name, canWobble
+    });
+  }
+
+});
+```
+
+```js
+// app/services/widget-manager.js
+import Ember from 'ember';
+
+export default Ember.Service.extend({
+
+  init() {
+    this.set('widgets', []);
+  },
+
+  /*
+   * Create a widget of a type, and add it to the widgets array.
+   */
+  addWidget(type, name, canWobble) {
+    let owner = Ember.getOwner(this);
+    // Use `_lookupFactory` so the `store` is accessible on instances.
+    let WidgetFactory = owner._lookupFactory(`widget:${type}`);
+    let widget = WidgetFactory.create({name, canWobble});
+    this.get('widgets').pushObject(widget);
+    return widget;
+  }
+
+});
+```
+
+For these common cases where only `create` is called on the factory, migration
+to `factoryFor` is mechanical. Change `_lookupFactory` to `factoryFor` in the
+above examples, and the migration would be complete.
+
+##### Migration of static method calls
+
+Factories may have had static methods or properties that were being accessed
+after resolving a factory with `_lookupFactory`. For example:
+
+```js
+// app/widgets/slow.js
+import Ember from 'ember';
+
+const SlowWidget = Ember.Object.extend();
+SlowWidget.reopenClass({
+  SPEEDS: [
+    'slow',
+    'verySlow'
+  ],
+  hasSpeed(speed) {
+    return this.SPEEDS.contains(speed);
+  }
+});
+
+export default SlowWidget;
+```
+
+```js
+let factory = owner._lookupFactory('widget:slow');
+factory.SPEEDS.length; // 2
+factory.hasSpeed('slow'); // true
+```
+
+With `factoryFor`, access to these methods or properties should be done via
+the `class` property:
+
+```js
+let factory = owner.factoryFor('widget:slow');
+let klass = factory.class;
+klass.SPEEDS.length; // 2
+klass.hasSpeed('slow'); // true
+```
+
 # Drawbacks
 
 The main drawback to this solution is the removal of double extend. Double
@@ -243,16 +406,25 @@ that some use-case relying on this behavior would get trolled in the migration
 to `factoryFor`, however it is unlikely.
 
 For example these cases where state is stored on the factory would no
-longer be viable:
+longer be scope to one instance of the owner (like one test). Instead, setting
+a value on the class would set it on the registered class.
+
+Some real-world examples of setting state on the factory class:
 
 - ember-model
-  - https://github.com/ebryn/ember-model/blob/master/packages/ember-model/lib/model.js#L404
-  - https://github.com/ebryn/ember-model/blob/master/packages/ember-model/lib/model.js#L457
+  - https://github.com/ebryn/ember-model/blob/master/packages/ember-model/lib/model.js#L404 and https://github.com/ebryn/ember-model/blob/master/packages/ember-model/lib/model.js#L457
+    with `factoryFor` will increment a shared counter across application and
+    container instances.
   - https://github.com/ebryn/ember-model/blob/master/packages/ember-model/lib/model.js#L723-L725
--  ember-data
-  - As far as I can tell, the big issues have been resolved!
-  - if attrs change between test runs (seems very unlikely) then https://github.com/emberjs/data/blob/387630db5e7daec6aac7ef8c6172358a3bd6394c/addon/-private/system/model/attr.js#L57 would be affected
-- people using:
+    would also set properties on the base `Ember.Model` factory instead of
+    an extension of that class.
+- ember-data
+  - If attrs change between test runs (seems very unlikely) then https://github.com/emberjs/data/blob/387630db5e7daec6aac7ef8c6172358a3bd6394c/addon/-private/system/model/attr.js#L57
+    would be affected. The CP of `attributes` will have a value cached on the
+    factory, and where with `_lookupFactory`'s double-extend the cache would be
+    on the extended class, in `factoryFor` that CP cache will be on the
+    class registered as a factory.
+- Any other of the following:
   - `lookupFactory(x).reopen` / `reopenClass` at runtime (or test time to monkey patch code)
   - `lookupFactory(x).something = value`
 
