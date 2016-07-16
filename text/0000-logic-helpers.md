@@ -16,13 +16,13 @@ Introduce the following HandleBars helpers to Ember.js:
 
 The proposed helpers are some simple helpers that help adding basic logic to
 templates. They are currently already available in an addon called
-`[ember-truth-helpers](https://github.com/jmurphyau/ember-truth-helpers)`, but I
+[ember-truth-helpers](https://github.com/jmurphyau/ember-truth-helpers), but I
 believe these helpers are essential, because the `ember-truth-helpers` addon is
 one of the most downloaded non Ember CLI default addons.
 
 # Detailed design
 
-See `[ember-truth-helpers](https://github.com/jmurphyau/ember-truth-helpers)`
+See [ember-truth-helpers](https://github.com/jmurphyau/ember-truth-helpers)
 repo for the detailed design of the helpers.
 
 # How We Teach This
