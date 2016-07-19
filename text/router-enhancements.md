@@ -81,7 +81,7 @@ any other would cause the route to miss.
 Mimicking rails micro syntax, I propose optional segments to be enclosed between parenthesis. The
 example of the Apple store would be encoded
 
-```
+```js
 Router.map(function() {
   this.route('product', { path: '(/:region)/:productName' });
 });
@@ -158,8 +158,8 @@ router.serialize('/forecast/newton'); // => not recognized route.
 router.serialize('/forecast'); // => routeName='forecast', params: { }
 ```
 
-In all cases the same `forecast` route is invoked, but the scale is not optional but the constraint
-takes care that, if provided, the scale is a supported one.
+On this example `forecast` route is invoked even if the scale is ommited, but if it's not ommited,
+the constraint ensures that it's among a white-list of supported scales.
 
 # How We Teach This
 
@@ -188,7 +188,7 @@ at once? Per example:
 
 ```js
 Router.map(function() {
-  this.route('forecast', {
+  this.route('activities', {
     path: 'activities/from/:from/to/:to',
     constraints: function(from, to) {
       // This constraint takes both dynamic segments and performs an assertion
@@ -199,8 +199,8 @@ Router.map(function() {
 });
 
 
-router.serialize('/activitis/from/2016-04-11/to/2016-05-20'); // => matches
-router.serialize('/activitis/from/2016-06-11/to/2016-05-20'); // => fails to match
+router.serialize('/activities/from/2016-04-11/to/2016-05-20'); // => matches to `activities`
+router.serialize('/activities/from/2016-06-11/to/2016-05-20'); // => fails to match
 ```
 
 - How complex can constraints be? Just pure functions or can they have access to services? I think
