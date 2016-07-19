@@ -7,7 +7,7 @@
 The features of Ember's router have been unchanged since pretty much the initial
 release.
 
-This RFC focuses in twow features:
+This RFC focuses in two features:
 
 - Optional segments
 - Dynamic segment constraints
@@ -19,19 +19,19 @@ These features can enable some usages that right now are cumbersome or require c
 
 ### Dynamic segments
 
-Consider an e-commerce or marketing site nuilt in Ember that wants to leverage server-side rendering
-with fastboot to be indexed in search engines.
+Consider an e-commerce or marketing site built in Ember that wants to leverage server-side rendering
+with Fastboot to be indexed in search engines.
 
 Search engines are smart enough to index information based on the language, but it's common practice
-to namespace content by language and/or country. Sometimes even the items displayed depeds on
+to namespace content by language and/or country. Sometimes even the items displayed depends on
 the region, but the page itself is identical.
 
 One real-world example of this is Apple's page.
 
-The page version for the UK is `https://www.apple.com/uk/mac`, while the spanish version is in
+The page version for the UK is `https://www.apple.com/uk/mac`, while the Spanish version is in
 `https://www.apple.com/es/mac`.
 
-So far, this route can be expressed in the current's version of the router as `/:regionCode/mac`.
+So far, this route can be expressed in the current version of the router as `/:regionCode/mac`.
 
 However, the US/International/Default version of the page is also available in `https://www.apple.com/mac`.
 The content and layout of the page is the same in the three routes and yet as of today, implementing
@@ -40,24 +40,24 @@ places. The template could be reused by overriding the `render` hook in the rout
 is awkward.
 
 Ideally the user should be able to define the initial segment as optional so the router maps all those
-urls to the same route giving.
+urls to the same route.
 
 Regional/Locale is just one usage of optional segments that is particularly common but not the only.
 
 ### Dynamic segments' constraints
 
-Another feature that can ease the development is determine if a pattern matches based on some
-condition that cannot be expressed solely with the microsyntax that the router provides.
+Another feature that can make some usages easier adding runtime constraints that dynamic segments
+must satisfy for the route to match and that cannot be expressed solely with the micro syntax that the router provides.
 
 Consider a weather app that displays the forecast for tomorrow with temperatures, and the user gets
-to choose among a Celcius, Fahrenheit and Kelvin degrees, and that lives in the url.
+to choose among a Celsius, Fahrenheit and Kelvin degrees, and that lives in the URL.
 
 This can be encoded on this string: `/forecast/:scale`. That entry would match `/forecast/celsius`,
-`/forecast/fahrenheit` but also URLs like `/forecast/rankine` which is a unsupported scale.
+`/forecast/fahrenheit` but also URLs like `/forecast/rankine` which is an unsupported scale.
 
-Currently there is two solution for this, either codify these three routes as static routes
+Currently there is two solutions for this. Either to codify these three routes as static routes
 without dynamic segments, which would leave us with a similar duplication problem as the one
-described for optional segments, or guard agains invalid scales in the route and perform a redirect
+described for optional segments, or guard against invalid scales in the route and perform a redirect
 via `replaceWith` to the not-found page. However, taking lazy-loading engines into consideration,
 handling constrains manually in the routes requires the app to load and boot the engine in order to
 determine something that could be done much before and save all this expensive work.
@@ -65,7 +65,7 @@ determine something that could be done much before and save all this expensive w
 Backend fragments like Ruby on Rails get a DRY solution to this allowing to receive an executable
 piece of code that the dynamic segment has to validate in order of that route to match.
 
-In the previous example the constraint would be that the scale is one of our whitelisted values, and
+In the previous example the constraint would be that the scale is one of our white-listed values, and
 any other would cause the route to miss.
 
 
@@ -74,7 +74,7 @@ any other would cause the route to miss.
 
 ### Optional segments.
 
-Mimicking rails microsintax, I propose optional segments to be enclosed between parenthesis. The
+Mimicking rails micro syntax, I propose optional segments to be enclosed between parenthesis. The
 example of the Apple store would be encoded
 
 ```
@@ -140,7 +140,7 @@ It adds some extra complexity to the routes for a feature that we've survived wi
 Particularly the dynamic segment constraints, without considering the case of lazy-loaded engines,
 can be emulated without too much effort by manually by checking the validity of the params in the
 routes, and adds some vector of complexity since it's not clear which approach to use as they
-admitely overlap.
+admittedly overlap.
 
 # Alternatives
 
@@ -150,7 +150,7 @@ What other designs have been considered? What is the impact of not doing this?
 
 - Do optional segments have a default value?
 - What arguments should the constraint function receive apart from the dynamic segment itself?
-- In routes with more than one dynamic segment, can constraints perform checkings on all segments
+- In routes with more than one dynamic segment, can constraints perform checks on all segments
 at once? Per example:
 
 ```js
