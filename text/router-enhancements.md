@@ -94,41 +94,16 @@ router.serialize('/uk/mac'); // => routeName='products', params: { productName: 
 ### Dynamic segment's constraints
 
 Also stealing Ruby on Rails' syntax, the user can provide a constraint using the
-config object passed as second argument.
+config object passed as second argument. On an initial implementation constraints can only be
+regular expressions.
 
 
 ```js
-const allowedScales = ['celsius', 'fahrenheit', 'kelvin'];
-
-function isAllowedScale(scaleName) {
-  return allowedScales.includes(scaleName);
-}
-
 Router.map(function() {
-  this.route('forecast', { path: 'forecast/:scale', constraints: { scale: isAllowedScale } });
-});
-
-
-router.serialize('/forecast/kelvin'); // => routeName='forecast', params: { scale: 'kelvin' }
-router.serialize('/forecast/newton'); // => not recognized route.
-```
-
-Although the generic case of receiving a function that returns a boolean is the most generic one,
-it might worth to add a RegExp support as a convenience.
-
-```js
-Router.map(function() {
-  this.route('forecast', { path: 'forecast/:scale', constraints: { scale: /(celsius|fahrenheit|kelvin)/ } });
-
-  // Equivalent to:
-  // this.route('forecast', {
-  //   path: 'forecast/:scale',
-  //   constraints: {
-  //     scale: function(scale) {
-  //       return /(celsius|fahrenheit|kelvin)/.test(scale);
-  //     }
-  //   }
-  // });
+  this.route('forecast', {
+    path: 'forecast/:scale',
+    constraints: { scale: /(celsius|fahrenheit|kelvin)/ }
+  });
 });
 ```
 
@@ -142,14 +117,11 @@ On that situation, `/forecast` is a valid URL and has to point to the same route
 specific scale.
 
 ```js
-const allowedScales = ['celsius', 'fahrenheit', 'kelvin'];
-
-function isAllowedScale(scaleName) {
-  return allowedScales.includes(scaleName);
-}
-
 Router.map(function() {
-  this.route('forecast', { path: 'forecast(/:scale)', constraints: { scale: isAllowedScale } });
+  this.route('forecast', {
+    path: 'forecast(/:scale)',
+    constraints: { scale: /(celsius|fahrenheit|kelvin)/ }
+  });
 });
 
 
@@ -158,8 +130,9 @@ router.serialize('/forecast/newton'); // => not recognized route.
 router.serialize('/forecast'); // => routeName='forecast', params: { }
 ```
 
-On this example `forecast` route is invoked even if the scale is ommited, but if it's not ommited,
-the constraint ensures that it's among a white-list of supported scales.
+On this example `forecast` route is invoked even if the scale is ommited Further, the scale function
+is invoked if there is any segment following /forecast to identify if it could possibly match
+the optional dynamic path segment.
 
 # How We Teach This
 
@@ -183,29 +156,6 @@ What other designs have been considered? What is the impact of not doing this?
 
 - What arguments should the constraint function receive apart from the dynamic segment itself? The
 route seems a reasonable request.
-- In routes with more than one dynamic segment, can constraints perform checks on all segments
-at once? Per example:
-
-```js
-Router.map(function() {
-  this.route('activities', {
-    path: 'activities/from/:from/to/:to',
-    constraints: function(from, to) {
-      // This constraint takes both dynamic segments and performs an assertion
-      // that takes both segments into consideration.
-      return moment(from).isBefore(moment(to));
-    }
-  });
-});
-
-
-router.serialize('/activities/from/2016-04-11/to/2016-05-20'); // => matches to `activities`
-router.serialize('/activities/from/2016-06-11/to/2016-05-20'); // => fails to match
-```
-
-- How complex can constraints be? Just pure functions or can they have access to services? I think
-that for simplicity they should start as simple as possible, and they could grow to support more
-complex usages.
 - When an optional dynamic segments are combined with constraints on that segment, and the segment
 is not present, does the constraint function run with `undefined` as value or it doesn't run at all?
 I lean towards the second.
