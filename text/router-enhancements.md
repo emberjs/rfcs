@@ -83,7 +83,7 @@ example of the Apple store would be encoded
 
 ```js
 Router.map(function() {
-  this.route('product', { path: '(/:region)/:productName' });
+  this.route('product', { path: '/(:region)/:productName' });
 });
 
 
@@ -119,7 +119,7 @@ specific scale.
 ```js
 Router.map(function() {
   this.route('forecast', {
-    path: 'forecast(/:scale)',
+    path: 'forecast/(:scale)',
     constraints: { scale: /(celsius|fahrenheit|kelvin)/ }
   });
 });
