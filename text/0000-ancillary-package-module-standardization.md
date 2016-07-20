@@ -181,6 +181,12 @@ We use two tools to produce the desired output formats:
 2. Rollup, to package the ES5 source into legacy bundle formats like
    UMD.
 
+## Examples
+
+| Repo                 | Description                                                                                               | PR                                                 |
+|----------------------|-----------------------------------------------------------------------------------------------------------|----------------------------------------------------|
+| [fastboot](https://github.com/ember-fastboot/fastboot) (Node-only) | Uses broccoli-module-alchemist to utilize Node 4's ES2015 syntax features while remaining 0.12 compatible | https://github.com/ember-fastboot/fastboot/pull/74 |
+
 # How We Teach This
 
 Because this is an internal infrastructure concern, it does not have
