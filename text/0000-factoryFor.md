@@ -12,7 +12,7 @@ public API to support use cases long-served by a private API, a new API of
 
 Ember's dependency injection container has long supported fetching a factory
 that will be created with any injections present. Using the private API that
-provided this support would allow an instance of the factory to be created
+provided this support allows an instance of the factory to be created
 with initial values passed via `create`. For example:
 
 ```js
@@ -102,16 +102,28 @@ better performance characteristics than `_lookupFactory`.
 
 # Detailed design
 
-This feature will be added in three steps.
+Throughout this document I reference Ember 2.12 as it is the next LTS at writing. This
+proposal may ship for 2.12-LTS or be bumped to the next LTS.
 
-1. Introduce `ApplicationInstance#factoryFor` in Ember 2.8
-2. Deprecate `ApplicationInstance#_lookupFactory` in Ember 2.8, remove in 2.9
-3. Release a polyfill addon for this feature
+This feature will be added in these steps.
 
-#### Step #1: Introduce `ApplicationInstance#factoryFor` in Ember 2.8
+1. In Ember introduce a `ApplicationInstance#factoryFor` based on
+   `_lookupFactory`. It should be documented that certain behaviors
+   inherent to "double extend" are not supported. In development builds
+   and supporting browsers, wrap return values in a Proxy. The proxy should
+   throw an error when any property besides `create` or `class` is accessed.
+2. In the same release add a deprecation message to usage of `_lookupFactory`.
+   As this API is intimate it must be maintained through at least one LTS
+   release (2.12 at this writing).
+3. In 2.13 drop `_lookupFactory` and migrate the `factoryFor` implementation to avoid
+   "double-extend" entirely.
+
+Additionally, a polyfill will be released for this feature supporting prior version of Ember.
+
+#### Design of `ApplicationInstance#factoryFor`
 
 A new API will be introduced. This API will return both the original base
-class registed into or resolved by the container, and will also return a function
+class registered into or resolved by the container, and will also return a function
 to generate a dependency-injected instance. For example:
 
 ```js
@@ -188,15 +200,13 @@ the following:
 +--------------------+ +--------------------+
 ```
 
-This means, between test runs 2 instances of `model:foo` will have a common
+Between test runs 2 instances of `model:foo` will have a common
 shared ancestor the grandparent `Class[model/Foo]`.
 
 This implementation of `factoryFor` proposes to remove the intermediate
 subclass and instead have a generic
 factory object which holds the injections and allows for injected instances
 to be created. The resulting object graph would look something like this:
-(between test runs the 2 instances of `model:foo` will have a shared ancestor
-(parent) `Class[model/Foo]`.
 
 ```
                   Proposed:
@@ -253,17 +263,21 @@ let factoryWithDI = owner.factoryFor('my-type:a-factory');
 factoryWithDI.class === factory;
 ```
 
-#### Step #2: Deprecate `ApplicationInstance#_lookupFactory` in Ember 2.8, remove in 2.9
+##### Development-mode Proxy
 
-In 2.8 (an LTS release) `_lookupFactory` will be deprecated with a message
-suggesting a migration to the new API. In 2.9 the API will be removed.
+Because many developers will simply re-write `_lookupFactory` to `factoryFor`,
+it is important to provide some aid and ensure they actually complete the
+migration completely (they they avoid setting state on the factory). A proxy
+wrapping the factory and raising assertions when any property besides `create`
+or `class` is accessed will be added in development.
 
-#### Step #3: Release a polyfill addon for this feature
+##### Releasing a polyfill
 
 A polyfill addon, similar to [ember-getowner-polyfill](https://github.com/rwjblue/ember-getowner-polyfill)
 will be released for this feature. This polyfill will provide the `factoryFor`
-API going back to at least 2.4, provide the API and silence the deprecation
-in 2.8, and be a no-op in 2.9+ where Ember provides the `factoryFor` API.
+API going back to at least 2.8, provide the API and silence the deprecation
+in versions before `factoryFor` is available, and be a no-op in versions where
+`factoryFor` is available.
 
 # How We Teach This
 
@@ -276,8 +290,8 @@ an extended class.
 
 Ember owner objects have long provided an intimate API used to
 fetch a factory with dependency injections. This API, `_lookupFactory`, is deprecated
-in Ember 2.8 and will be removed in Ember 2.9. To ease the transition to this
-new public API, a polyfill is provided with support back to Ember 2.0.
+in Ember 2.12 and will be removed in Ember 2.13. To ease the transition to this
+new public API, a polyfill is provided with support back to at least Ember 2.8.
 
 `_lookupFactory` returned the class of resolved factory extended with
 a mixin containing its injections. For example:
@@ -430,22 +444,12 @@ Some real-world examples of setting state on the factory class:
 
 # Alternatives
 
-No other designs have been seriously considered.
+More aggressive timelines have been considered for this change.
 
-We have considered the possibility that removing `_lookupFactory` in 2.9
+However we have considered the possibility that removing `_lookupFactory` in 2.13
 (something LTS technically permits) would be too aggressive for the
 community of addons. Providing a polyfill is part of the strategy to handle
 this change.
-
-However if the removal still proves too difficult, an alternative strategy
-is possible:
-
-* Add `factoryFor` in 2.8
-* Deprecate `_lookupFactory` in 2.8, remove it in 3.0
-* Introduce a polyfill add for `factoryFor` valid w/ 2.4-3.0
-* In 2.9, migrate the implementation of `_lookupFactory` to be based on
-  `factoryFor`. There may be some slight behavior change, or performance
-  regression when using this API.
 
 # Unresolved questions
 
