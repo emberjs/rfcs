@@ -102,6 +102,9 @@ Router.map(function() {
   this.route('sample1', { path: '/foo/bar' });
   this.route('sample2', { path: '/foo/(:param)' });
   this.route('sample3', { path: '/foo/*path' });
+  this.route('sample4', { path: '/foo' } ,function() {
+    this.route('opt', { path: '/(:param)' });
+  });
 });
 ```
 
@@ -110,7 +113,8 @@ The resolution order stays as it is currently. That is
 - Greater number of segments means more specific.
 - On the same number of segments, static is more specific than dynamic, and dynamic is more specific
   than globs.
-- In case of tie, the first defined route wins
+- In case of tie in the number and type of segments, the route with more handlers wins.
+- If all the previous fail, the first defined route wins
 
 Examples:
 
@@ -118,7 +122,7 @@ Examples:
 /foo/bar            => 'sample1' (two segments, both static)
 /foo/dynamic        => 'sample2' (two segments, one static, one dynamic)
 /foo/something/else => 'sample3' (two segments, one static, one glob)
-/foo                => 'sample2' (one static segment)
+/foo                => 'sample4' (one static segment, but wins over sample 2 because has more handlers)
 ```
 
 ### Dynamic Segment Constraints
