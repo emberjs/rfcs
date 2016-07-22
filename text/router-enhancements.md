@@ -102,8 +102,10 @@ Router.map(function() {
   this.route('sample1', { path: '/foo/bar' });
   this.route('sample2', { path: '/foo/(:param)' });
   this.route('sample3', { path: '/foo/*path' });
-  this.route('sample4', { path: '/foo' } ,function() {
-    this.route('opt', { path: '/(:param)' });
+
+  this.route('sample4' { path: '/bar/(:optional)' })
+  this.route('sample5', { path: '/bar' } ,function() {
+    this.route('opt', { path: '/(:optional)' });
   });
 });
 ```
@@ -119,10 +121,12 @@ The resolution order stays as it is currently. That is
 Examples:
 
 ```
-/foo/bar            => 'sample1' (two segments, both static)
-/foo/dynamic        => 'sample2' (two segments, one static, one dynamic)
-/foo/something/else => 'sample3' (two segments, one static, one glob)
-/foo                => 'sample4' (one static segment, but wins over sample 2 because has more handlers)
+/foo/bar            => 'sample1'      (two segments, both static)
+/foo/dynamic        => 'sample2'      (two segments, one static, one dynamic)
+/foo/something/else => 'sample3'      (two segments, one static, one glob)
+/foo                => 'sample2'      (one static segment)
+/bar/baz            => 'sample5.opt'  (two segments, one static, one dynamic, but wins over `sample4` because has more handlers)
+/bar                => 'sample4'      (one static segment, and wins over `sample5` because it's defined before)
 ```
 
 ### Dynamic Segment Constraints
