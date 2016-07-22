@@ -75,6 +75,9 @@ any other would cause the route to miss.
 
 ### Optional Segments
 
+
+#### Syntax
+
 Mimicking the Rails microsyntax, I propose optional segments to be enclosed between parentheses. The
 example of the Apple site would be encoded:
 
@@ -90,8 +93,37 @@ router.serialize('/uk/mac'); // => routeName='products', params: { productName: 
 
 All segments can be optional, no matter globs, static or dynamic.
 
+#### Specificity compared to static and glob segments
+
+Given the following routers with conflicting route definitions:
+
+```js
+Router.map(function() {
+  this.route('sample1', { path: '/foo/bar' });
+  this.route('sample2', { path: '/foo/(:param)' });
+  this.route('sample3', { path: '/foo/*path' });
+});
+```
+
+The resolution order stays as it is currently. That is
+
+- Greater number of segments means more specific.
+- On the same number of segments, static is more specific than dynamic, and dynamic is more specific
+  than globs.
+- In case of tie, the first defined route wins
+
+Examples:
+
+```
+/foo/bar            => 'sample1' (two segments, both static)
+/foo/dynamic        => 'sample2' (two segments, one static, one dynamic)
+/foo/something/else => 'sample3' (two segments, one static, one glob)
+/foo                => 'sample2' (one static segment)
+```
 
 ### Dynamic Segment Constraints
+
+#### Syntax
 
 Also borrowing from Rails' microsyntax, the user can provide a constraint using the
 config object passed as second argument. For this proposal constraints may only be
