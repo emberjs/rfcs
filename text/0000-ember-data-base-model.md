@@ -13,7 +13,7 @@ available for models as well.
 
 # Motivation
 
-Currently if the models of your app have common functionality, a commong `attr`
+Currently if the models of your app have common functionality, a common `attr`
 or something similar, you need to create custom base model and make sure you
 extend all existing models from it and update all models generated via the
 `ember generate model` blueprint, so they extend from the same base model.
