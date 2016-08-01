@@ -280,8 +280,7 @@ serializer; with the following upgrade path:
 The new `serializer#normalizePayload` is another `normalize` hook which needs
 to be implemented by ember data addon authors and app developers. The
 difference to the `normalizeXXXResponse` hooks might not be immediately clear.
-As pointed out [in
-#3838](https://github.com/emberjs/data/pull/3838#issuecomment-147706227) and
+As pointed out [in #3838](https://github.com/emberjs/data/pull/3838#issuecomment-147706227) and
 [in #3676](https://github.com/emberjs/data/issues/3676), there was a
 `serializer#normalizePayload` in `1.13` which has been renamed to
 `normalizeResponse` instead. Re-adding a `normalizePayload` is confusing.
