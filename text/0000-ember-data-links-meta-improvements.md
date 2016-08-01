@@ -177,7 +177,8 @@ class RecordArrayReference {
 
 The `RecordReference` gets a new `meta()` method, which returns the last
 associated meta for the record pushed into the store via `findRecord()`,
-`queryRecord()`, `store.push()` or `store.pushPayload()`.
+`queryRecord()`, `store.push()` or `store.pushPayload()` and `createRecord()`
+and `updateRecord()`.
 
 ```js
 // GET /books/1
