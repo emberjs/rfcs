@@ -338,3 +338,5 @@ store.pushRef({
 - materialization mentioned in the added docs might be the first time this is
   mentioned in public (internal model might be unknown to most ember data
   users, with good reason)
+- should `store.pushPayload` be deprecated in favor of `store.normalizePayload`
+  and `store.push` or `store.pushRef`, depending on the use case?
