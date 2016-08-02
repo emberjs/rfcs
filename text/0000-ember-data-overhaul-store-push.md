@@ -294,7 +294,7 @@ use cases are supported with this.
 introduces those type of reference to the public
 ([`store.getReference`](http://emberjs.com/api/data/classes/DS.Store.html#method_getReference)
 is not really helpful at the moment). It is questionable if returning
-references is needed here and in general, if references are intented for this
+references is needed here and in general, if references are intended for this
 kind of usage. This might suggest storing references (controller, component)
 for later use - which is not the intended use for references...
 
