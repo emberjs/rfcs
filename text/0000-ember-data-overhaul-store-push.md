@@ -294,7 +294,11 @@ use cases are supported with this.
 introduces those type of reference to the public
 ([`store.getReference`](http://emberjs.com/api/data/classes/DS.Store.html#method_getReference)
 is not really helpful at the moment). It is questionable if returning
-references is needed here. Since we have a `store.normalizePayload` now, it is
+references is needed here and in general, if references are intented for this
+kind of usage. This might suggest storing references (controller, component)
+for later use - which is not the intended use for references...
+
+Since we have a `store.normalizePayload` now, it is
 possible to normalize a payload and get the corresponding models via
 `store.push`. There is no immediate need for `store.pushRef`. But if a pushing
 data into the store without materializing records should be possible, having a
