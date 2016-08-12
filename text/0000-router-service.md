@@ -115,7 +115,7 @@ export default Helper.extend({
 
 ### New Method: URL generation
 
-`url(routeName, ...models, queryParams)`
+`urlFor(routeName, ...models, queryParams)`
 
 This takes the same arguments as `transitionTo`, but instead of initiating the transition it returns the resulting URL as a string.
 
