@@ -83,7 +83,7 @@ I am not attempting to specify static error detection, mostly because doing that
 
 Examples of static errors that would theoretically be nice to detect would be the presence of a _named AMD_ module in the file, the lack of any AMD module in the file, or the present of multiple _anonymous AMD_ modules in the file.
 
-The current implmentation causes any sourcemap information inside the imported file to be discarded (you don't get an invalid sourcemap, but you lose detail).
+The current implementation causes any sourcemap information inside the imported file to be discarded (you don't get an invalid sourcemap, but you lose detail).
 
 I have not specified a pluggable way to add additional transformations. My intent is to reserve space in our public API so that future extraction and pluggability is fully backward compatible.
 
