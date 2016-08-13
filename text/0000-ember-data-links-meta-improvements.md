@@ -8,7 +8,7 @@ Ember Data uses JSON-API internally: this RFC aims to provide a public API for
 accessing and interacting with the already available data.
 
 Meta and links are made available via references for record, belongs-to,
-has-many and record-arrays (using the new `RecordArrayReference`). All those
+has-many and JSON-API documents (using the new `DocumentReference`). All those
 references will expose their corresponding meta and links via – surprise –
 `meta()` and `links()` methods. Since meta is only a plain JavaScript object,
 there is no need for further abstraction. A link on the other hand is
@@ -28,8 +28,8 @@ once a use case is flushed out and it's reasonable to being in core.
 
 - Add `LinkReference` which is an abstraction for a single link and its
   properties (meta, name, href) and action (load)
-- Add a `RecordArrayReference` which abstracts a collection of records for its
-  properties (meta, links) and action (reload)
+- Add a `DocumentReference` which describes a JSON-API document and its
+  properties (meta, links, data)
 - A new `links()` method is added to record, belongs-to, has-many and
   record-array references which returns all associated links
 - Hooks which allow to react to changes when the backing data of references
@@ -39,6 +39,18 @@ once a use case is flushed out and it's reasonable to being in core.
 # Motivation
 
 ## Status quo
+
+### Links
+
+In terms of links currently only `related` is handled on relationships. Though
+the [`ds-links-in-record-array`
+feature](https://github.com/emberjs/data/pull/4263) makes links available on
+the `AdapterPopulatedRecordArray` of a `store.query`, Ember Data doesn't offer
+a dedicated API to load the `next` link for example to support pagination.
+Also, according to JSON-API specification, links can have `meta` too, which is
+also not supported in core Ember Data.
+
+### Meta
 
 Currently meta is only available on relationships via the `belongs-to` and
 `has-many` references. Record level meta data is not available as `meta` on the
@@ -52,18 +64,103 @@ Meta is available on the `ManyArray` of a has many relationship. It is also set
 on the `AdapterPopulatedRecordArray`s of `store.query`. It is however currently
 not possible to get the `meta` for a `store.findAll`.
 
-In terms of links currently only `related` is handled on relationships. Though
-the [`ds-links-in-record-array`
-feature](https://github.com/emberjs/data/pull/4263) makes links available on
-the `AdapterPopulatedRecordArray` of a `store.query`, Ember Data doesn't offer
-a dedicated API to load the `next` link for example to support pagination.
-Also, according to JSON-API specification, links can have `meta` too, which is
-also not supported in core Ember Data.
+The JSON-API specification states that meta information can be present in
+various locations on a JSON-API document.
+
+#### Single resource
+
+```js
+{
+  data: {
+    id: 1,
+    type: "book",
+    relationships: {
+      author: {
+        data: { … },
+
+        // relationship level meta
+        meta: {
+          lastUpdatedAt: "2016-08-13T12:34:56Z"
+        }
+      }
+    },
+
+    // resource level meta
+    meta: {
+      lastUpdatedAt: "2016-08-13T12:34:56Z"
+    },
+
+    links: {
+      self: {
+        href: "…",
+
+        // link level meta
+        meta: {
+          canBeCached: false
+        }
+      }
+    }
+  },
+
+  // document level meta
+  meta: {
+    apiRateLimitRemaining: 35
+  }
+}
+```
+
+#### Resource collection
+
+```js
+{
+  data: [{
+    id: 1,
+    type: "book",
+    relationships: {
+      author: {
+        data: { … },
+
+        // relationship level meta
+        meta: {
+          lastUpdatedAt: "2016-08-13T12:34:56Z"
+        }
+      }
+    },
+
+    // resource level meta
+    meta: {
+      lastUpdatedAt: "2016-08-13T12:34:56Z"
+    },
+
+    links: {
+      self: {
+        href: "…",
+
+        // link level meta
+        meta: {
+          canBeCached: false
+        }
+      }
+    }
+  }],
+
+  // document level meta
+  meta: {
+    total: 123,
+    apiRateLimitRemaining: 34
+  }
+}
+```
+
+While a resource collection has its meta on the document level, a single
+resource might have resource specific meta data under `data.meta`, where the
+response specific meta data is located in the root level `meta`. Both meta data
+need to be accesible for a record.
 
 ## Proposal
 
 - allow to interact with links for single resource and resource collections
-- make references consistent, so they are available for record arrays and links
+- make references consistent, so they are available for links and documents
 - provide low level API for internally used JSON-API
 - provide hooks to react to changes in references
   ([RFC#123](https://github.com/emberjs/rfcs/pull/123))
@@ -117,7 +214,7 @@ class LinkReference {
     Get the reference to which this link is connected to.
 
     This can either be a `RecordReference`, `BelongsToReference`,
-    `HasManyReference` or `RecordArrayReference`.
+    `HasManyReference` or `DocumentReference`.
 
     @return {DS.Reference} reference to which this link
                            is connected to
@@ -127,65 +224,55 @@ class LinkReference {
 }
 ```
 
-### `DS.RecordArrayReference`
+### `DS.DocumentReference`
 
-This new type references an array of records, returned for example by
-`store.query` or `store.findAll`.
+This new type represents a JSON-API document:
 
 ```js
-class RecordArrayReference {
+class DocumentReference {
 
   /**
-    Get the `DS.RecordArray` which holds all the `DS.Model`s.
+    Get all document level links.
 
-    This can either be the result for a `store.query` or a
-    `store.findAll`.
-
-    @return {DS.RecordArray}
-  */
-  value()
-
-  /**
-    Reload the underlying `RecordArray`.
-
-    This will re-fetch the `self` link.
-
-    @return {Promsise} resolving with the reloaded `DS.RecordArray`
-  */
-  reload()
-
-  /**
-    Get all links associated with this `DS.RecordArray`.
-
-    This is useful for pagination for example.
+    This is useful for pagination of resource collections for example.
 
     @return {Array<DS.LinkReference>}
   */
   links()
 
   /**
-    Get the meta associated with the underlying `DS.RecordArray`
+    Get the document level meta.
 
     @return {Object}
   */
   meta()
+
+  /**
+    Get the references, associated with the data for the document.
+
+    @return {DS.RecordReference|Array<DS.RecordReference>}
+  */
+  data()
 
 }
 ```
 
 ### `RecordReference.meta()`
 
-The `RecordReference` gets a new `meta()` method, which returns the last
-associated meta for the record pushed into the store via `findRecord()`,
-`queryRecord()`, `store.push()` or `store.pushPayload()` and `createRecord()`
-and `updateRecord()`.
+The `RecordReference` gets a new `meta()` method, which returns the *last
+associated record level meta* for the record pushed into the store:
 
 ```js
 // GET /books/1
 // {
-//   data: { … },
-//   meta: {
-//     isThriller: true
+//   data: {
+//     id: 1,
+//     type: "book",
+//     attributes: { … },
+//     relationships: { … },
+//     meta: {
+//       lastUpdatedAt: "2016-08-13T12:34:56Z"
+//     }
 //   }
 // }
 store.findRecord("book", 1).then(function(book) {
@@ -193,11 +280,29 @@ store.findRecord("book", 1).then(function(book) {
   let bookRef = book.ref();
 
   let meta = bookRef.meta();
-  assert.equal(meta.isThriller, true);
+  assert.ok(meta.lastUpdatedAt);
+});
+
+// GET /books
+// {
+//   data: [{
+//     id: 1,
+//     type: "book",
+//     meta: {
+//       isPublished: true
+//     }
+//   }]
+// }
+store.query("book", {}).then(function(books) {
+  // get the RecordReference of first book in result
+  let bookRef = books.objectAt(0).ref();
+
+  let meta = bookRef.meta();
+  assert.ok(meta.isPublished);
 });
 ```
 
-### `[Record|BelongsTo|HasMany|RecordArray]Reference.links()`
+### `[Record|BelongsTo|HasMany|Document]Reference.links()`
 
 The `links()` method on those references allows to get all link references
 associated with the reference, or the specific `LinkReference`, if the name of
@@ -234,7 +339,9 @@ To fully complete the circle of references, the existing classes are modified
 as follows:
 
 - `RecordReference`
+  - add `meta()`
   - add `links()`
+  - add `documentRef()`
 - `Model`
   - add `ref()` to get the corresponding `RecordReference`
 - `BelongsToReference`
@@ -246,7 +353,7 @@ as follows:
 - `ManyArray`
   - add `ref()` to get the corresponding `HasManyReference`
 - `AdapterPopulatedRecordArray` and `RecordArray`
-  - add `ref()` to get the corresponding `RecordArrayReference`
+  - add `documentRef()`
 
 ### Hooks
 
@@ -289,6 +396,14 @@ export default Book;
 let allPages = Ember.A();
 
 // GET /books?page=1
+// {
+//   data: […],
+//   links: {
+//     next: {
+//       href: "…"
+//     }
+//   }
+// }
 store.query("book", { page: 1 }).then(function(books) {
   allPages.addObjects(books.toArray());
 
@@ -306,11 +421,45 @@ store.query("book", { page: 1 }).then(function(books) {
 
 ```js
 // GET /books
+// {
+//   data: […],
+//   meta: {
+//     total: 123
+//   }
+// }
 store.findAll("book").then(function(books) {
-  // DS.RecordArrayReference
+  // DS.DocumentReference
   let booksRef = books.ref();
 
   let meta = booksRef.meta();
+  assert.ok(meta.total);
+});
+```
+
+### Meta for record (record and document level)
+
+```js
+// GET /books/1
+// {
+//   data: {
+//     id: 1,
+//     type: "book",
+//     meta: {
+//       lastUpdatedAt: "2016-08-13T12:34:56Z"
+//     }
+//   },
+//   meta: {
+//     apiRateLimitRemaining: 33
+//   }
+// }
+store.findRecord("book", 1).then(function(book) {
+  let bookRef = book.ref();
+  let bookMeta = bookRef.meta();
+  assert.ok(bookMeta.lastUpdatedAt);
+
+  let docRef = bookRef.documentRef();
+  let docMeta = docRef.meta();
+  assert.ok(docMeta.apiRateLimitRemaining > 0);
 });
 ```
 
@@ -339,3 +488,7 @@ store.findAll("book").then(function(books) {
 - should `books.hasMany("chapters").links("next").load()` update the content of
   the relationship? Should there be a dedicated API for this, e.g.
   `books.hasMany("chapters").loadLink("next")`?
+- since multiple "locations" of meta will be supported, there needs to be a new
+  hook within the `RESTSerializer` to extract record/document level meta,
+  additionally to the `extractMeta` hook, which is invoked with the whole
+  payload
