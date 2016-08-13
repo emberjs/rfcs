@@ -167,6 +167,8 @@ need to be accesible for a record.
 
 # Detailed design
 
+## Links
+
 ### `DS.LinkReference`
 
 This new reference is added and represents the reference to a single link entry
@@ -223,6 +225,39 @@ class LinkReference {
 
 }
 ```
+
+### `[Record|BelongsTo|HasMany|Document]Reference.links()`
+
+The `links()` method on those references allows to get all link references
+associated with the reference, or the specific `LinkReference`, if the name of
+the link is passed:
+
+```js
+// {
+//   data: {
+//     type: "book",
+//     id: 1,
+//     relationships: {
+//       chapters: {
+//         data: [ … ],
+//         links: {
+//           "next": { … },
+//           "prev": { … }
+//         }
+//       }
+//     }
+//   }
+// }
+let chaptersRef = store.peekRecord("book", 1).hasMany("chapters");
+
+// [<DS.LinkReference>, <DS.LinkReference>]
+let links = chaptersRef.links();
+
+// DS.LinkReference
+let nextLink = chaptersRef.links("next");
+```
+
+## Meta
 
 ### `DS.DocumentReference`
 
@@ -302,38 +337,7 @@ store.query("book", {}).then(function(books) {
 });
 ```
 
-### `[Record|BelongsTo|HasMany|Document]Reference.links()`
-
-The `links()` method on those references allows to get all link references
-associated with the reference, or the specific `LinkReference`, if the name of
-the link is passed:
-
-```js
-// {
-//   data: {
-//     type: "book",
-//     id: 1,
-//     relationships: {
-//       chapters: {
-//         data: [ … ],
-//         links: {
-//           "next": { … },
-//           "prev": { … }
-//         }
-//       }
-//     }
-//   }
-// }
-let chaptersRef = store.peekRecord("book", 1).hasMany("chapters");
-
-// [<DS.LinkReference>, <DS.LinkReference>]
-let links = chaptersRef.links();
-
-// DS.LinkReference
-let nextLink = chaptersRef.links("next");
-```
-
-### Adaptions to current references / models
+## Adaptions to current references / models
 
 To fully complete the circle of references, the existing classes are modified
 as follows:
@@ -355,7 +359,7 @@ as follows:
 - `AdapterPopulatedRecordArray` and `RecordArray`
   - add `documentRef()`
 
-### Hooks
+## Hooks
 
 Additionally to the new types of references and the extension of the existing
 ones, the Model Lifecycle Hooks proposed in
