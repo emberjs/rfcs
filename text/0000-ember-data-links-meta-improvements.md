@@ -411,7 +411,7 @@ let allPages = Ember.A();
 store.query("book", { page: 1 }).then(function(books) {
   allPages.addObjects(books.toArray());
 
-  let booksRef = books.ref();
+  let booksRef = books.documentRef();
   let nextPage = booksRef.links("next");
 
   // GET /books?page=2
@@ -433,7 +433,7 @@ store.query("book", { page: 1 }).then(function(books) {
 // }
 store.findAll("book").then(function(books) {
   // DS.DocumentReference
-  let booksRef = books.ref();
+  let booksRef = books.documentRef();
 
   let meta = booksRef.meta();
   assert.ok(meta.total);
