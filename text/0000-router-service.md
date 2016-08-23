@@ -10,6 +10,8 @@ This RFC proposes:
  
  - codifying and expanding the supported public API for the `transition` object that is currently passed to `Route` hooks.
 
+ - introducing the concept of dynamically-scoped routing info.
+
 These topics are closely related because they share a unified `RouteInfo` type, which will be described in detail.
 
 # Motivation
@@ -19,6 +21,16 @@ Given the modern Ember concepts of Components and Services, it is clear that rou
 The immediate benefit of having a `RouterService` is that you can inject it into components, giving them a friendly way to initiate transitions and ask questions about the current global router state.
 
 A second benefit is that we have the opportunity to add new capabilities to the `RouterService` to replace several common patterns in the wild that dive into private internals in order to get things done. There are several places where we leak internals from router.js, and we can plug those leaks.
+
+A `RouterService` is great for asking global questions, but some questions are not global and today we incur complexity by treating them as if they are. For example:
+
+ - `{{link-to}}` can use implicit models from its context, but that breaks when you're trying to animate to or from a state where those models are not present.
+
+ - `{{link-to}}` has a lot of complexity and performance cost that deals with changing its active state, and the precise timing of when that should happen.
+
+ - there is no way to ask the router what it would do to handle a given URL without actually visting that URL.
+
+All of the above can be addressed by embracing what is already internally true: "the current route" is not a single global, it's a dynamically-scoped variable that can have different values in different parts of the application simultaneously.
 
 # Detailed design
 
@@ -67,7 +79,7 @@ That API will be carried over verbatim to `RouterService`, and the publicly acce
 
 ```js
 transitionTo(routeName, ...models, queryParams)
-replaceWith(routeName, ...models, queryParms)
+replaceWith(routeName, ...models, queryParams)
 ```
 
 These two have the same semantics as the existing methods on `Ember.Route`:
@@ -112,12 +124,11 @@ export default Helper.extend({
 
 ```
 
-
 ### New Method: URL generation
 
 `urlFor(routeName, ...models, queryParams)`
 
-This takes the same arguments as `transitionTo`, but instead of initiating the transition it returns the resulting URL as a string.
+This takes the same arguments as `transitionTo`, but instead of initiating the transition it returns the resulting root-relative URL as a string (which will include the application's `rootUrl`).
 
 A `url-for` helper can be implemented almost identically to the `is-active` example above.
 
@@ -125,9 +136,23 @@ A `url-for` helper can be implemented almost identically to the `is-active` exam
 
 `recognize(url)`
 
-Takes a string URL (relative to the application's baseURL) and returns a `RouteInfo` for the leafmost route represented by the URL. Returns `null` if the URL is not recognized.
+Takes a string URL and returns a `RouteInfo` for the leafmost route represented by the URL. Returns `null` if the URL is not recognized. This method expects to receive the actual URL as seen by the browser _including_ the app's `rootURL`.
+
 
 Example: this feature can replace [this use of private API in ember-href-to](https://github.com/intercom/ember-href-to/blob/b8cf0699eec6a65570b05e4fc22b27d8cea49c42/app/instance-initializers/browser/ember-href-to.js#L34).
+
+
+### New Method: Recognize and load models
+
+`recognizeAndLoad(url)`
+
+Takes a string URL and returns a promise that resolves to a `RouteInfoWithAttributes` for the leafmost route represented by the URL. The promise rejects if the URL is not recognized or an unhandled exception is encountered. This method expects to receive the actual URL as seen by the browser _including_ the app's `rootURL`.
+
+### Improved Event Coverage
+
+Application-wide transition monitoring events belong on the Router service, not spread throughout the Route classes. That is the reason for the existing `willTransition` and `didTransition` hooks/events on the Router. But they are not sufficient to capture all the detail people need. See for example, https://github.com/nickiaconis/rfcs/blob/1bd98ec534441a38f62a48599ffa8a63551b785f/text/0000-transition-hooks-events.md
+
+I do not believe an additional event is needed, we just need to ensure that the existing two events fire at every appropriate time. `willTransition` should fire _whenever_ the destination route changes, and that includes redirects, error handling, and loading states. A long chain of redirects should cause a sequence of `willTransition` events and then a final `didTransition` event.
 
 ### New Properties
 
@@ -136,6 +161,19 @@ Example: this feature can replace [this use of private API in ember-href-to](htt
 `currentRouteName`:  a convenient alias for `currentRoute.name`.
 
 `currentURL`: provides the serialized string representing `currentRoute`.
+
+### Query Parameter Semantics
+
+Today, `queryParams` impose unnecessarily high cost because we cannot generate URLs or determine if a link is active without taking into account the default values of query parameters. Determining their default values is expensive, because it involves instantiating the corresponding controller, even in cases where we will never visit its route.
+
+Therefore, the `queryParams` argument to the new `urlFor`, `transitionTo`, `replaceWith`, and `isActive` methods defined in this document will behave differently.
+
+ - default values will not be stripped from generated URLs. For example, `urlFor('my-route', { sortBy: 'title' })` will always include `?sortBy=title`, whether or not `title` is the default value of `sortBy`.
+
+ - to explicitly unset a query parameter, you can pass the symbol `Ember.DEFAULT_VALUE` as its value. For example, `transitionTo('my-route', { sortBy: Ember.DEFAULT_VALUE })` will result in a URL that does not contain any `?sortBy=`.
+
+(Sticky parameters are still allowed, because they only apply when the destination controller has already been instantiated anyway.)
+
 
 
 ## RouteInfo Type
@@ -154,6 +192,10 @@ Notice that the `parent` and `child` properties cause `RouteInfos` to form a lin
 ```js
 router.currentRoute.find(info => info.name === 'people').params
 ```
+
+## RouteInfoWithAttributes
+
+This type is almost identical to `RouteInfo`, except it has one additional proprty named `attributes`. The attributes contain the data that was loaded for this route, which is typically just `{ model }`.
 
 ## Transition Object
 
@@ -212,6 +254,98 @@ Some of the private APIs we should mark and warn include:
  - `lookup('router:main')` (should use `service:router` instead)
 
 
+## Dynamically-Scoped Variables
+
+The next section introduces general-purpose, dynamically-scoped variables. Why am I doing this in "The Router Service RFC"? Because dynamically-scoped RouteInfo has several nice capabilities that will be introduced in the subsequent section. And once we have one dynamically-scoped variable, we have the option of exposing that capability for other uses.
+
+### In the general case
+
+A [dynamically-scoped variable](https://en.wikipedia.org/wiki/Scope_(computer_science)#Dynamic_scoping) takes its value from its calling context, as opposed to its lexical context. Since dynamically-scoped variables are powerful to the point of potential danger, their syntax is intended to be appropriately verbose.
+
+Reading a dynamically-scoped variable in handlebars:
+
+ ```hbs
+ {{!- retrieve the value of a dynamically scoped variable }}
+ (get-dynamic-variable "myVariableName")
+ ```
+
+Defining a component that reads a dynamically-scoped variable:
+
+```js
+let MyComponent = Ember.Component.extend({
+  didInsertElement() {
+    // Access to the variable here is intended to be indistinguishable
+    // from a normal, explicitly-passed input argument. 
+    doSomethingWith(this.get('myDynamicVariable'));
+  }
+});
+MyComponent.reopenClass({
+  // This is where the specialness happens.
+  getDynamicVariables: [ 'myDynamicVariable' ]
+});
+```
+
+Defining a helper that reads a dynamically-scoped variable:
+
+```js
+let MyHelper = Ember.Helper.extend({
+  compute(params, hash) {
+    return doSomethingWith(hash.myDynamicVariable);
+  }
+});
+MyHelper.reopenClass({
+  getDynamicVariables: [ 'myDynamicVariable' ]
+});
+```
+
+Setting a dynamically-scoped variable:
+
+```hbs
+{{#with-dynamic-variable "myVariableName" someValue}}
+  {{!-
+    within this block AND ALL ITS DESCENDANTS until
+    otherwise overridden by another with-dynamic-variable statement, 
+    `get-dynamic-variable "myVariableName"` returns someValue.
+  -}}
+{{/with-dynamic-variable}}
+```
+
+Note that there is no `set-dynamic-variable`. You can only introduce new scopes, not mutate your containing scope. There is also no way to set a dynamically-scoped variable directly from Javascript -- your component must use a `with-dynamic-variable` block within its handlebars template.
+
+User-defined, dynamically-scoped variables must be pre-declared before first render via `Ember.declareDynamicVariable("myVariableName")`. Attempting to set one that wasn't declared is an error. Attempting to read one that doesn't exist returns `undefined`. Predeclaration is an optimization that allows us to maintain consistent performance within Glimmer.
+
+### The specific case of routeInfo
+
+`routeInfo` is a dynamically-scoped variable provided by Ember as public API. Its value is always a `RouteInfoWithAttributes` object that is correct for the given route context. This enables several nice things, which I will illustrate with examples:
+
+1. Here is a simplified `is-active` helper that will always update at the appropriate time to match exactly what is rendered in the current outlet. It will maintain the correct state even during animations. Instead of injecting the router service, it consumes the `routeInfo` from its containing environment:
+
+```js
+Ember.Helper.extend({
+  compute([routeName], { routeInfo }) {
+    return !!routeInfo.find(info => info.name === routeName);
+  }
+}).reopenClass({
+  getDynamicVariables: ['routeInfo']
+});
+```
+
+A more complete version that also matches models and queryParams can be written in the same way. 
+
+2. We can improve `link-to` so that it always finds implicit model arguments from the local context, rather than trying to locate them on the global router service. This will fix longstanding bugs like https://github.com/ember-animation/liquid-fire/issues/347 and it will make it easier to test components that contain `{{link-to}}`. This would also open the door to relative link-tos.
+
+3. `liquid-outlet` can be implemented entirely via public API. It would become:
+
+```hbs
+{{#liquid-bind (get-dynamic-variable "routeInfo") as |currentRouteInfo|}}
+  {{#with-dynamic-variable "routeInfo" currentRouteInfo}}
+    {{outlet}}
+  {{/with-dynamic-variable}}
+{{/liquid-bind}}
+
+4. Prerendering of non-current routes becomes possible. You can use `recognizeAndLoad` to obtain a `RouteInfoWithAttributes` and then use `{{#with-dynamic-variable "routeInfo" myRouteInfo}} {{outlet}} {{/with-dynamic-variable}}` to render it.
+
+
 # Drawbacks
 
 This RFC doesn't deprecate any public API, so the API-churn burden may appear low. However, we know that use of the private APIs we're deliberately disabling is widespread, so users will experience churn. We can provide our usual deprecation cycle to give them early warning, but it still imposes some cost.
@@ -256,5 +390,16 @@ beforeModel(transition) {
 ```
 Possibly we *want* this to feel awkward because it's a weird thing to do.
 
+## Naming of Ember.DEFAULT_VALUE Symbol
 
+Should we introduce new API via the `Ember` global and switch to a module export once all the rest of Ember does, or should we just start with a module export right now? If so, what module?
 
+    import { DEFAULT_VALUE } from 'ember-routing';
+
+## Generic dynamically-scoped variables may be too powerful
+
+They let you do spooky-action-at-a-distance stuff. We could instad choose to implement single-purpose methods like `(get-route-info)` and `{{#with-route-info someValue}}` that would solve the routing case without opening the door to arbitrary user-defined ones.
+
+## Possible semantic breakage of willTransition
+
+I proposed fixing willTransition to ensure that it fires during redirects. I see that as a clear bugfix, but if there is reason to believe it will break people's apps then we should deprecate `willTransition` and introduce a new event with the correct semantics.
