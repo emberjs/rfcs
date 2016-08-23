@@ -148,11 +148,48 @@ Example: this feature can replace [this use of private API in ember-href-to](htt
 
 Takes a string URL and returns a promise that resolves to a `RouteInfoWithAttributes` for the leafmost route represented by the URL. The promise rejects if the URL is not recognized or an unhandled exception is encountered. This method expects to receive the actual URL as seen by the browser _including_ the app's `rootURL`.
 
-### Improved Event Coverage
+### Deprecating willTransition and didTransition
 
 Application-wide transition monitoring events belong on the Router service, not spread throughout the Route classes. That is the reason for the existing `willTransition` and `didTransition` hooks/events on the Router. But they are not sufficient to capture all the detail people need. See for example, https://github.com/nickiaconis/rfcs/blob/1bd98ec534441a38f62a48599ffa8a63551b785f/text/0000-transition-hooks-events.md
 
-I do not believe an additional event is needed, we just need to ensure that the existing two events fire at every appropriate time. `willTransition` should fire _whenever_ the destination route changes, and that includes redirects, error handling, and loading states. A long chain of redirects should cause a sequence of `willTransition` events and then a final `didTransition` event.
+In addition, they receive handlerInfos in their arguments, which are an undocumented internal implementation detail of router.js that doesn't belong in Ember's public API. Everything you can do with handlerInfos can be done with the RouteInfo type that is proposed in this RFC, with the benefit of sticking to supported public API.
+
+So we should deprecate willTransition and didTransition in favor of the following new events.
+
+### New Events: routeWillChange & routeDidChange
+
+The `routeWillChange` event fires whenever a new route is chosen as the desired target of a transition. This includes `transitionTo`, `replaceWith`, all redirection for any reason including error handling, and abort. Aborting implies changing the desired target back to where you already were. Once a transition has completed, `routeDidChange` fires. 
+
+Both events receive a single `transition` argument as described in the "Transition Object" section below, which explains the meaning of `from` and `to` in more detail.
+
+Redirection example:
+
+ 1. current route is A
+ 2. user initiates a transition to B
+ 3. routeWillChange fires `from` A `to` B.
+ 4. B redirects to C
+ 5. routeWillChange fires `from` A `to` C.
+ 6. routeDidChange fires `from` A `to` C.
+
+Abort example:
+
+ 1. current route is A
+ 2. user initiates a transition to B
+ 3. routeWillChange fires `from` A `to` B.
+ 4. in response to the previous routeWillChange event, the transition is aborted.
+ 5. routeWillChange fires `from` A `to` A.
+ 8. routeDidChange fires `from` A `to` A.
+
+Error example:
+
+ 1. current route is A
+ 2. user initiates a transition to B.index
+ 3. routeWillChange fires `from` A `to` B.
+ 4. B throws an exception, and the router discovers a "B-error" template.
+ 5. routeWillChange fires `from` A `to` B-error
+ 6. routeDidChange fires `from` A `to` B-error
+
+These are events, not extension hooks -- now that we are exposing a Service, it makes more sense to subscribe to its events than extend it.
 
 ### New Properties
 
@@ -348,7 +385,7 @@ A more complete version that also matches models and queryParams can be written 
 
 # Drawbacks
 
-This RFC doesn't deprecate any public API, so the API-churn burden may appear low. However, we know that use of the private APIs we're deliberately disabling is widespread, so users will experience churn. We can provide our usual deprecation cycle to give them early warning, but it still imposes some cost.
+This RFC deprecates only two public extension hooks API, so the API-churn burden may appear low. However, we know that use of the private APIs we're deliberately disabling is widespread, so users will experience churn. We can provide our usual deprecation cycle to give them early warning, but it still imposes some cost.
 
 This RFC doesn't attempt to change the existing and fairly rich semantics for initiating transitions. For example, you can pass either models or IDs, and those have subtle semantic differences. I think an ideal rewrite would also change the semantics of the route hooks and transitionTo to simplify that area.
 
@@ -400,6 +437,3 @@ Should we introduce new API via the `Ember` global and switch to a module export
 
 They let you do spooky-action-at-a-distance stuff. We could instad choose to implement single-purpose methods like `(get-route-info)` and `{{#with-route-info someValue}}` that would solve the routing case without opening the door to arbitrary user-defined ones.
 
-## Possible semantic breakage of willTransition
-
-I proposed fixing willTransition to ensure that it fires during redirects. I see that as a clear bugfix, but if there is reason to believe it will break people's apps then we should deprecate `willTransition` and introduce a new event with the correct semantics.
