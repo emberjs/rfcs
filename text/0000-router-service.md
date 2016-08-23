@@ -379,6 +379,7 @@ A more complete version that also matches models and queryParams can be written 
     {{outlet}}
   {{/with-dynamic-variable}}
 {{/liquid-bind}}
+```
 
 4. Prerendering of non-current routes becomes possible. You can use `recognizeAndLoad` to obtain a `RouteInfoWithAttributes` and then use `{{#with-dynamic-variable "routeInfo" myRouteInfo}} {{outlet}} {{/with-dynamic-variable}}` to render it.
 
