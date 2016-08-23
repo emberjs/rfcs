@@ -435,5 +435,5 @@ Should we introduce new API via the `Ember` global and switch to a module export
 
 ## Generic dynamically-scoped variables may be too powerful
 
-They let you do spooky-action-at-a-distance stuff. We could instad choose to implement single-purpose methods like `(get-route-info)` and `{{#with-route-info someValue}}` that would solve the routing case without opening the door to arbitrary user-defined ones.
+They let you do spooky-action-at-a-distance stuff. We could instead choose to implement single-purpose methods like `(get-route-info)` and `{{#with-route-info someValue}}` that would solve the routing case without opening the door to arbitrary user-defined ones.
 
