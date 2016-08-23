@@ -28,7 +28,7 @@ A `RouterService` is great for asking global questions, but some questions are n
 
  - `{{link-to}}` has a lot of complexity and performance cost that deals with changing its active state, and the precise timing of when that should happen.
 
- - there is no way to ask the router what it would do to handle a given URL without actually visting that URL.
+ - there is no way to ask the router what it would do to handle a given URL without actually visiting that URL.
 
 All of the above can be addressed by embracing what is already internally true: "the current route" is not a single global, it's a dynamically-scoped variable that can have different values in different parts of the application simultaneously.
 
@@ -232,7 +232,7 @@ router.currentRoute.find(info => info.name === 'people').params
 
 ## RouteInfoWithAttributes
 
-This type is almost identical to `RouteInfo`, except it has one additional proprty named `attributes`. The attributes contain the data that was loaded for this route, which is typically just `{ model }`.
+This type is almost identical to `RouteInfo`, except it has one additional property named `attributes`. The attributes contain the data that was loaded for this route, which is typically just `{ model }`.
 
 ## Transition Object
 
