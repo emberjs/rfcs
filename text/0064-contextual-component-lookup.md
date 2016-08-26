@@ -72,7 +72,7 @@ is a syntax similar to DSLs in Ruby:
 {{#great-toolbar role=user.role as |toolbar|}}
   {{toolbar.button}}
   {{toolbar.button orWith=additionalProperties}}
-{{/great-toolbar
+{{/great-toolbar}}
 ```
 
 As laid out in this proposal, the `great-toolbar` implementation would look
