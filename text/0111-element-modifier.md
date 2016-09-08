@@ -121,15 +121,15 @@ export default Ember.ElementModifier.extend({
   },
 
   didRender() {
-    document.addEventListener(this.attrs.mouseover, this._logMouseover);
+    document.addEventListener(this.attrs.logEvent, this._logMouseover);
   },
 
   didUpdateAttrs(newAttrs, oldAttrs) {
-    document.removeEventListener(oldAttrs.mouseover, this._logMouseover);
+    document.removeEventListener(oldAttrs.logEvent, this._logMouseover);
   },
 
   willDestroyElement() {
-    document.removeEventListener(this.attrs.mouseover, this._logMouseover);
+    document.removeEventListener(this.attrs.logEvent, this._logMouseover);
   }
 
 });
