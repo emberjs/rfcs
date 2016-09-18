@@ -112,13 +112,15 @@ This feature will be added in these steps.
    inherent to "double extend" are not supported. In development builds
    and supporting browsers, wrap return values in a Proxy. The proxy should
    throw an error when any property besides `create` or `class` is accessed.
+   `class` must return the registered factory, not the double extended factory.
 2. In the same release add a deprecation message to usage of `_lookupFactory`.
    As this API is intimate it must be maintained through at least one LTS
    release (2.12 at this writing).
 3. In 2.13 drop `_lookupFactory` and migrate the `factoryFor` implementation to avoid
    "double-extend" entirely.
 
-Additionally, a polyfill will be released for this feature supporting prior version of Ember.
+Additionally, a polyfill will be released for this feature supporting prior
+versions of Ember.
 
 #### Design of `ApplicationInstance#factoryFor`
 
@@ -268,8 +270,14 @@ factoryWithDI.class === factory;
 Because many developers will simply re-write `_lookupFactory` to `factoryFor`,
 it is important to provide some aid and ensure they actually complete the
 migration completely (they they avoid setting state on the factory). A proxy
-wrapping the factory and raising assertions when any property besides `create`
-or `class` is accessed will be added in development.
+wrapping the return value of `factoryFor` and raising assertions when any
+property besides `create` or `class` is accessed will be added in development.
+
+Additionally, using `instanceof` on the result of `factoryFor` should be
+disallowed, causing an exception to be raised.
+
+A good rule of thumb is that, in development, using anything besides `class` or
+`create` on the return value of `factoryFor` should fail with a helpful message.
 
 ##### Releasing a polyfill
 
