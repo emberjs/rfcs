@@ -121,15 +121,15 @@ export default Ember.ElementModifier.extend({
   },
 
   didRender() {
-    document.addEventListener(this.attrs.mouseover, this._logMouseover);
+    document.addEventListener(this.attrs.logEvent, this._logMouseover);
   },
 
   didUpdateAttrs(newAttrs, oldAttrs) {
-    document.removeEventListener(oldAttrs.mouseover, this._logMouseover);
+    document.removeEventListener(oldAttrs.logEvent, this._logMouseover);
   },
 
   willDestroyElement() {
-    document.removeEventListener(this.attrs.mouseover, this._logMouseover);
+    document.removeEventListener(this.attrs.logEvent, this._logMouseover);
   }
 
 });
@@ -156,21 +156,21 @@ const Noodle = Ember.ElementModifier.extend({
   },
 
   didRender() {
-    document.addEventListener(this.attrs.mouseover, this._logMouseover);
+    document.addEventListener(this.attrs.logEvent, this._logMouseover);
   },
 
   didUpdateAttrs(newAttrs, oldAttrs) {
-    document.removeEventListener(oldAttrs.mouseover, this._logMouseover);
+    document.removeEventListener(oldAttrs.logEvent, this._logMouseover);
   },
 
   willDestroyElement() {
-    document.removeEventListener(this.attrs.mouseover, this._logMouseover);
+    document.removeEventListener(this.attrs.logEvent, this._logMouseover);
   }
 
 });
 
 Noodle.reopenClass({
-  positionalParams: ['mouseover']
+  positionalParams: ['logEvent']
 });
 
 export default Noodle;
@@ -205,7 +205,7 @@ value of an HTML element-space string for example) without namespace conflicts.
 to scenario-solve event listeners across native elements, Ember component root elements, and
 web components. It failed to reach a unified design that could serve all three
 options. Since there does not appear to be an ideal unified solution, kicking
-the challenge to use-space for a few cycles seems ideal.
+the challenge to user-space for a few cycles seems ideal.
 
 Additionally, there are other uses for element modifiers beyond event listener
 attachment. These may also have specific, narrow fixes.
