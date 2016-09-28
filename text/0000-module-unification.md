@@ -538,6 +538,12 @@ and a top-level `main` component declared in `src/ui/components/main.js`. An
 app could invoke this component in a template as `{{power-select::main}}` or
 more simply as `{{power-select}}`.
 
+Addons should use the same namespacing that will be used by consuming apps when
+invoking their own components and helpers from templates. For instance, if the
+`ember-power-select` addon has a `date-picker` component that invokes multiple
+`main` components, it should also invoke them in a template as
+`{{power-select::main}}` or more simply as `{{power-select}}`.
+
 ### Module Resolutions
 
 Module resolution rules must account for the following:
