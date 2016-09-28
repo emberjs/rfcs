@@ -258,27 +258,6 @@ For example, the file `src/ui/components/date-picker.js` in the
 `my-calendar` app will be exported with the module path
 `my-calendar/src/ui/components/date-picker`.
 
-Within any package, you'll be able to access the package's root with `$root`
-and the project's `src` dir with `$src`.
-
-These aliases will make the following module paths equivalent:
-
-* `my-calendar/src/ui/components/date-picker`
-* `$root/src/ui/components/date-picker`
-* `$src/ui/components/date-picker`
-
-Let's say that you want to create a new component, `date-time-picker`, which is
-based on `date-picker`. You'll be able to import the base component from any of
-the paths above. For example:
-
-```
-import DatePicker from '$src/ui/components/date-picker';
-```
-
-> Note: The above example could also use a relative path, like
-`'./date-picker'`, which would be appropriate if the extended
-`date-time-picker` is located close to the base `date-picker`.
-
 An application and its associated addons and engines will all be merged into the
 same ES module space, as is done today. Any module can import from any other
 module within this space, although cross-package imports should be done with
