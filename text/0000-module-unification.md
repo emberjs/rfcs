@@ -106,83 +106,83 @@ according to the proposed conventions.
 ### Example Application
 
 A simple blogging application could be structured as follows:
-
 ```
 src
-  data
-    models
-      author.js
-      comment
-        adapter.js
-        model.js
-        serializer.js
-      post
-        adapter.js
-        model.js
-        serializer.js
-    transforms
-      date.js
-  init
-    initializers
-      i18n.js
-    instance-initializers
-      auth.js
-  services
-    auth.js
-  ui
-    components
-      capitalize.js
-      date-picker
-        component.js
-        template.hbs
-      list-paginator
-        component.js
-        template.hbs
-        paginator-control
-          component.js
-          template.hbs
-    partials
-      footer.hbs
-    routes
-      application
-        template.hbs
-      index
-        template.hbs
-        route.js
-        controller.js
-      posts
-        -components
-          capitalize.js
-          titleize.js
-          -utils
-            strings.js
-        post
-          -components
-            post-viewer
-              component.js
-              template.hbs
-          edit
-            -components
-              post-editor
-                post-editor-button
-                  component.js
-                  template.hbs
-                calculate-post-title.js
-                component.js
-                template.hbs
-            route.js
-            template.hbs
-          route.js
-          template.hbs
-        route.js
-        template.hbs
-    styles
-      app.scss
-    index.html
-  utils
-    md5.js
-  main.js
-  router.js
+├── data
+│   ├── models
+│   │   ├── comment
+│   │   │   ├── adapter.js
+│   │   │   ├── model.js
+│   │   │   └── serializer.js
+│   │   ├── post
+│   │   │   ├── adapter.js
+│   │   │   ├── model.js
+│   │   │   └── serializer.js
+│   │   └── author.js
+│   └── transforms
+│       └── date.js
+├── init
+│   ├── initializers
+│   │   └── i18n.js
+│   └── instance-initializers
+│       └── auth.js
+├── services
+│   └── auth.js
+├── ui
+│   ├── components
+│   │   ├── date-picker
+│   │   │   ├── component.js
+│   │   │   └── template.hbs
+│   │   └── list-paginator
+│   │       ├── paginator-control
+│   │       │   ├── component.js
+│   │       │   └── template.hbs
+│   │       ├── component.js
+│   │       └── template.js
+│   ├── partials
+│   │   └── footer.hbs
+│   ├── routes
+│   │   ├── application
+│   │   │   └── template.hbs
+│   │   ├── index
+│   │   │   ├── controller.js
+│   │   │   ├── route.js
+│   │   │   └── template.hbs
+│   │   └── posts
+│   │       ├── -components
+│   │       │   ├── -utils
+│   │       │   │   └── strings.js
+│   │       │   ├── capitalize.js
+│   │       │   └── titleize.js
+│   │       ├── post
+│   │       │   ├── -components
+│   │       │   │   └── post-viewer
+│   │       │   │       ├── component.js
+│   │       │   │       └── template.hbs
+│   │       │   ├── edit
+│   │       │   │   ├── -components
+│   │       │   │   │   ├── post-editor
+│   │       │   │   │   │   ├── post-editor-button
+│   │       │   │   │   │   │   ├── component.js
+│   │       │   │   │   │   │   └── template.hbs
+│   │       │   │   │   │   ├── calculate-post-title.js
+│   │       │   │   │   │   ├── component.js
+│   │       │   │   │   │   └── template.hbs
+│   │       │   │   │   ├── route.js
+│   │       │   │   │   └── template.hbs
+│   │       │   │   ├── route.js
+│   │       │   │   └── template.hbs
+│   │       │   ├── route.js
+│   │       │   └── template.hbs
+│   │       ├── route.js
+│   │       └── template.hbs
+│   ├── styles
+│   │   └── app.scss
+│   └── index.html
+├── utils
+│   └── md5.js
+├── main.js
+└── router.js
 ```
 
 ### Example Engine
@@ -203,30 +203,30 @@ be restructured:
 
 ```
 src
-  styles
-    ember-power-select.scss
-  ui
-    components
-      is-selected.js
-      main
-        before-options
-          component.js
-          template.hbs
-        options
-          component.js
-          template.hbs
-        trigger
-          component.js
-          template.hbs
-        component.js
-        template.hbs
-      multiple
-        trigger
-          component.js
-          template.hbs
-        component.js
-        template.hbs
-  main.js
+├── styles
+│   └── ember-power-select.scss
+├── ui
+│   └── components
+│       ├── main
+│       │   ├── before-options
+│       │   │   ├── component.js
+│       │   │   └── template.hbs
+│       │   ├── options
+│       │   │   ├── component.js
+│       │   │   └── template.hbs
+│       │   ├── trigger
+│       │   │   ├── component.js
+│       │   │   └── template.hbs
+│       │   ├── component.js
+│       │   └── template.hbs
+│       ├── multiple
+│       │   ├── trigger
+│       │   │   ├── component.js
+│       │   │   └── template.hbs
+│       │   ├── component.js
+│       │   └── template.hbs
+│       └── is-selected.js
+└── main.js
 ```
 
 ### Migration Tool
