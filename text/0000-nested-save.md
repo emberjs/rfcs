@@ -20,7 +20,6 @@ The update case is achieved today using EmbeddedRecordsMixin, but the child
 objects will not go through the normal save lifecycle, and so miss out on
 correctly dirty tracking &c.
 
-
 # Detailed design
 
 ## Overview
@@ -45,7 +44,26 @@ an array of snapshots of the saved nested objects, so that it can find their
 client ids and add them to their respective structures within the `included`
 portion of the payload.
 
-## Example Usage with API Server Echoing clientId
+## APIs
+
+This RFC introduces the following changes:
+
+- Add the method `DS.Model#savedWith`
+- Add the parameter `snapshot` to `DS.Serializer#normalizePaylaod`
+- Add the property `savedWith` to `DS.Snapshot`
+
+`DS.Model#savedWith(promise)` is passed the `promise` for an ancestor object's
+save.  It indicates that this record is being saved within the same promise.
+When invoked, it will transition the record to `inFlight`.
+
+If `promise` rejects, the record will transition to an error state, depending on
+what type of error the promise rejects with.
+
+If `promise` fulfills and the 
+
+## Examples
+
+### Example Usage with API Server Echoing clientId
 
 Here is an example of nested saving new objects:
 
@@ -66,7 +84,7 @@ Ember.Route.extend({
 });
 ```
 
-## Example Usage with API Server Not Echoing clientId
+### Example Usage with API Server Not Echoing clientId
 
 
 ```js
@@ -83,11 +101,10 @@ JsonApiSerializer.extend({
                     payload,
                     id,
                     requestType,
-                    snapshot,
-                    nestedSaves) {
+                    snapshot) {
 
     let jsonApiPayload = this.super(...arguments);
-    nestedSaves.forEach((childSnapshot) => {
+    snapshot.get('savedWith').forEach((childSnapshot) => {
       let nestedSavePayload =
         jsonApiPayload.included.find((childPayload) => {
           /*
@@ -136,18 +153,6 @@ For consistency, `snapshot` and `nestedSaves` will also be passed to
 
 # How We Teach This
 
-What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
-
-Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
-
-How should this feature be introduced and taught to existing Ember
-users?
-
-
 The additional functionality proposed in this rfc is quite limited in scope.
 All that should be needed is a guide exploring how to support nested saves, and
 the additional API added to any discussion of implementing a custom serializer.
@@ -171,8 +176,16 @@ Other possibilities include:
     similar to existing find coalescing and
   - Making the state transition API public.
 
+Related work:
+
+- [Discarding nested saved objects](https://github.com/emberjs/data/pull/4441)
+- [ember-data-save-relationships](https://github.com/frank06/ember-data-save-relationships)
+  (handles only the case where the server echoes the client id)
+
 # Unresolved questions
 
 Are there issues with transitioning nested saved objects to an invalid state
 even in cases where the nested object itself did not have errors?
+
+TODO: Improve names.
 
