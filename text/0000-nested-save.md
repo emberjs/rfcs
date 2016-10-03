@@ -4,7 +4,21 @@
 
 # Summary
 
-Add support for saving a record and nested records within the same request.
+Support accurate state tracking and record matching when
+saving a record and nested records within the same request.
+
+This rfc proposes two main API changes:
+
+  1. Add a `record.savedWith` method
+  To be used like:
+  ```js
+    let promise = parentRecord.save();
+    childRecord.savedWith(promise):
+  ```
+  where the childRecord will now follow the state transitions of the parent record.
+
+  2. Allow the `store.push` method to receive an optional client id, which it will
+  use as a fallback to avoid creating duplicate records.
 
 # Motivation
 
@@ -20,6 +34,19 @@ The update case is achieved today using EmbeddedRecordsMixin, but the child
 objects will not go through the normal save lifecycle, and so miss out on
 correctly dirty tracking &c.
 
+There have been several issues and PRs filed to address this problem,
+some are:
+https://github.com/emberjs/data/pull/4441
+https://github.com/emberjs/data/issues/1829
+
+There is also an Ember Data addon which attempts to solve this problem:
+https://www.npmjs.com/package/ember-data-save-relationships
+
+In general, the existing addons and PRs tend to hack & scenario solve the
+problem without presenting a cohesive story for managing nested saves.
+
+--Maybe add duplicate records as a reason to use clientIds--
+
 # Detailed design
 
 ## Overview
@@ -29,8 +56,13 @@ There are two main things the implementation needs to concern itself with.
   1. Handling the save lifecycle for saved nested objects and
   2. Assigning ids to saved nested objects during create.
 
+## 1. Handling the save lifecycle for saved nested objects
+
+Currently, evif your serializer saves multiple records
 The nested object lifecycle is managed by entangling the nested object with the
 promise for saving the parent object.
+
+
 
 Assigning ids from the server is handled by having the store generate client ids
 when the child objects are entangled with their parent object's save promise,
