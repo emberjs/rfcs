@@ -10,8 +10,8 @@ accessing and interacting with the already available data.
 Meta and links are made available via references for record, belongs-to,
 has-many and JSON-API documents (using the new `DocumentReference`). All those
 references will expose their corresponding meta and links via – surprise –
-`meta()` and `links()` methods. Since meta is only a plain JavaScript object,
-there is no need for further abstraction.
+`meta()` and `links()` methods. Since meta and links are only a plain
+JavaScript objects, there is no need for further abstraction.
 
 Since references are not observable by design, hooks are proposed in the
 accompanying [RFC #123](https://github.com/emberjs/rfcs/pull/123) which allow
@@ -25,7 +25,7 @@ once a use case is flushed out and it's reasonable to being in core.
 #### In short
 
 - A new `links()` method is added to record, belongs-to, has-many and
-  record-array references which returns all associated links
+  document references which returns all associated links
 - Add `LinkObject` which is an abstraction for a single link and its
   properties (meta, href)
 - Add a `DocumentReference` which describes a JSON-API document and its
@@ -169,13 +169,6 @@ need to be accesible for a record.
 
 Links are exposed in an object, with each link exposed with the following
 properties:
-
-- `href`
-- `meta`: optional meta for the link, or `null` if there is none
-
-```js
-let links = post.hasMany('authors');
-```
 
 ```js
 /**
@@ -366,6 +359,8 @@ export default Book;
 
 ## Sample code
 
+/*
+
 ### Pagination
 
 ```js
@@ -384,7 +379,7 @@ store.query("book", { page: 1 }).then(function(books) {
   allPages.addObjects(books.toArray());
 
   let booksRef = books.documentRef();
-  let nextPage = booksRef.links("next");
+  let nextPage = booksRef.links().next;
 
   // GET /books?page=2
   nextPage.load().then(function(nextBooks) {
@@ -392,6 +387,8 @@ store.query("book", { page: 1 }).then(function(books) {
   });
 });
 ```
+
+*/
 
 ### Meta for `findAll`
 
@@ -447,7 +444,7 @@ store.findRecord("book", 1).then(function(book) {
 
 # Drawbacks
 
--  increase of low level, public API
+- increase of low level, public API
 - though it extends the concept of references, it's a significant increase of
   API surface
 
@@ -457,6 +454,7 @@ store.findRecord("book", 1).then(function(book) {
 
 # Unresolved questions
 
+- what is the API to load a link?
 - since multiple "locations" of meta will be supported, there needs to be a new
   hook only within the `RESTSerializer` to extract record/document level meta,
   additionally to the `extractMeta` hook, which is invoked with the whole
