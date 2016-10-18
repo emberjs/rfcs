@@ -220,6 +220,7 @@ A RouteInfo object has the following properties. They are all read-only.
  - name: the dot-separated, fully-qualified name of this route, like `"people.index"`.
  - localName: the final part of the `name`, like `"index"`.
  - params: the values of this route's parameters. Same as the argument to `Route`'s `model` hook. Contains only the parameters valid for this route, if any (params for parent or child routes are not merged).
+ - paramNames: ordered list of the names of the params required for this route. It will contain the same strings as `Object.keys(params)`, but here the order is significant. This allows users to correctly pass params into routes programmatically.
  - queryParams: the values of any queryParams on this route.
  - parent: another RouteInfo instance, describing this route's parent route, if any.
  - child: another RouteInfo instance, describing this route's active child route, if any.
