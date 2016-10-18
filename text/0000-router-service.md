@@ -10,7 +10,9 @@ This RFC proposes:
  
  - codifying and expanding the supported public API for the `transition` object that is currently passed to `Route` hooks.
 
- - introducing the concept of dynamically-scoped routing info.
+ - introducing the `get-route-info` template helper
+ - introducing the `#with-route-info` template keyword
+ - introducing the `readsRouteInfo` static property on `Component` and `Helper`.
 
 These topics are closely related because they share a unified `RouteInfo` type, which will be described in detail.
 
@@ -292,69 +294,64 @@ Some of the private APIs we should mark and warn include:
  - `lookup('router:main')` (should use `service:router` instead)
 
 
-## Dynamically-Scoped Variables
+## Dynamically-Scoped Route Info
 
-The next section introduces general-purpose, dynamically-scoped variables. Why am I doing this in "The Router Service RFC"? Because dynamically-scoped RouteInfo has several nice capabilities that will be introduced in the subsequent section. And once we have one dynamically-scoped variable, we have the option of exposing that capability for other uses.
+"The current route" is not a global value -- it varies from place to place within an application. Internally, Ember already models route info as a dynamically-scoped variable (currently named `outletState`). This RFC proposes publicly exposing that value in order to make things like `link-to` easier to implement directly on public primitives, and in order to enable stable public API for addons usage like `{{liquid-outlet}}`.
 
-### In the general case
-
-A [dynamically-scoped variable](https://en.wikipedia.org/wiki/Scope_(computer_science)#Dynamic_scoping) takes its value from its calling context, as opposed to its lexical context. Since dynamically-scoped variables are powerful to the point of potential danger, their syntax is intended to be appropriately verbose.
-
-Reading a dynamically-scoped variable in handlebars:
+We propose `get-route-info` for reading the current route info in handlebars:
 
  ```hbs
  {{!- retrieve the value of a dynamically scoped variable }}
- (get-dynamic-variable "myVariableName")
+ {{some-component currentRoute=(get-route-info)}}
  ```
 
-Defining a component that reads a dynamically-scoped variable:
+We propose `readsRouteInfo` for defining a component that reads route info:
 
 ```js
 let MyComponent = Ember.Component.extend({
   didInsertElement() {
-    // Access to the variable here is intended to be indistinguishable
+    // Accessing routInfo here is intended to be indistinguishable
     // from a normal, explicitly-passed input argument. 
-    doSomethingWith(this.get('myDynamicVariable'));
+    doSomethingWith(this.get('routeInfo'));
   }
 });
 MyComponent.reopenClass({
-  // This is where the specialness happens.
-  getDynamicVariables: [ 'myDynamicVariable' ]
+  // This is where we declare that we need access to routeInfo
+  readsRouteInfo: true
 });
 ```
 
-Defining a helper that reads a dynamically-scoped variable:
+And `readsRouteInfo` also works on `Helper`:
 
 ```js
 let MyHelper = Ember.Helper.extend({
   compute(params, hash) {
-    return doSomethingWith(hash.myDynamicVariable);
+    // routeInfo is indistinguishable from a normally-passed hash argument
+    return doSomethingWith(hash.routeInfo);
   }
 });
 MyHelper.reopenClass({
-  getDynamicVariables: [ 'myDynamicVariable' ]
+  readsRouteInfo: true
 });
 ```
 
-Setting a dynamically-scoped variable:
+We propose the `#with-route-info` keyword for setting a new route info:
 
 ```hbs
-{{#with-dynamic-variable "myVariableName" someValue}}
+{{#with-route-info someValue}}
   {{!-
     within this block AND ALL ITS DESCENDANTS until
-    otherwise overridden by another with-dynamic-variable statement, 
-    `get-dynamic-variable "myVariableName"` returns someValue.
+    otherwise overridden by another set-route-info statement, 
+    `get-route-info` returns someValue.
   -}}
-{{/with-dynamic-variable}}
+{{/with-route-info}}
 ```
 
-Note that there is no `set-dynamic-variable`. You can only introduce new scopes, not mutate your containing scope. There is also no way to set a dynamically-scoped variable directly from Javascript -- your component must use a `with-dynamic-variable` block within its handlebars template.
+Note that there is no `set-route-info`. You can only introduce new scopes, not mutate your containing scope. There is also no way to set routeInfo directly from Javascript -- your component must use a `with-route-info` block within its handlebars template.
 
-User-defined, dynamically-scoped variables must be pre-declared before first render via `Ember.declareDynamicVariable("myVariableName")`. Attempting to set one that wasn't declared is an error. Attempting to read one that doesn't exist returns `undefined`. Predeclaration is an optimization that allows us to maintain consistent performance within Glimmer.
+### routeInfo's type, and examples
 
-### The specific case of routeInfo
-
-`routeInfo` is a dynamically-scoped variable provided by Ember as public API. Its value is always a `RouteInfoWithAttributes` object that is correct for the given route context. This enables several nice things, which I will illustrate with examples:
+The value returned from `get-route-info` and acceptd by `with-route-info` is always a `RouteInfoWithAttributes` object. This enables several nice things, which I will illustrate with examples:
 
 1. Here is a simplified `is-active` helper that will always update at the appropriate time to match exactly what is rendered in the current outlet. It will maintain the correct state even during animations. Instead of injecting the router service, it consumes the `routeInfo` from its containing environment:
 
@@ -364,7 +361,7 @@ Ember.Helper.extend({
     return !!routeInfo.find(info => info.name === routeName);
   }
 }).reopenClass({
-  getDynamicVariables: ['routeInfo']
+  readsRouteInfo: true
 });
 ```
 
@@ -375,14 +372,14 @@ A more complete version that also matches models and queryParams can be written 
 3. `liquid-outlet` can be implemented entirely via public API. It would become:
 
 ```hbs
-{{#liquid-bind (get-dynamic-variable "routeInfo") as |currentRouteInfo|}}
-  {{#with-dynamic-variable "routeInfo" currentRouteInfo}}
+{{#liquid-bind (get-route-info) as |currentRouteInfo|}}
+  {{#with-route-info currentRouteInfo}}
     {{outlet}}
-  {{/with-dynamic-variable}}
+  {{/with-route-info}}
 {{/liquid-bind}}
 ```
 
-4. Prerendering of non-current routes becomes possible. You can use `recognizeAndLoad` to obtain a `RouteInfoWithAttributes` and then use `{{#with-dynamic-variable "routeInfo" myRouteInfo}} {{outlet}} {{/with-dynamic-variable}}` to render it.
+4. Prerendering of non-current routes becomes possible. You can use `recognizeAndLoad` to obtain a `RouteInfoWithAttributes` and then use `{{#with-route-info myRouteInfo}} {{outlet}} {{/with-route-info}}` to render it.
 
 
 # Drawbacks
@@ -434,8 +431,4 @@ Possibly we *want* this to feel awkward because it's a weird thing to do.
 Should we introduce new API via the `Ember` global and switch to a module export once all the rest of Ember does, or should we just start with a module export right now? If so, what module?
 
     import { DEFAULT_VALUE } from 'ember-routing';
-
-## Generic dynamically-scoped variables may be too powerful
-
-They let you do spooky-action-at-a-distance stuff. We could instead choose to implement single-purpose methods like `(get-route-info)` and `{{#with-route-info someValue}}` that would solve the routing case without opening the door to arbitrary user-defined ones.
 
