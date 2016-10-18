@@ -30,7 +30,7 @@ customize a request with only public API.
 An adapter operation is split up into 2 steps
 
 - 1) collecting the properties for the request, i.e. `_requestFor`
-- 2) executing the request, i.e. `_makeRequest`
+- 2) executing the request, i.e. `makeRequest`
 
 So for a `findRecord` it would look like this:
 
@@ -41,7 +41,7 @@ findRecord(store, type, id, snapshot) {
     requestType: "findRecord"
   });
 
-  return RSVP.resolve(requestOptions).then(this._makeRequest);
+  return RSVP.resolve(requestOptions).then((options) => this.makeRequest(options) );
 }
 ```
 ### `_requestFor`
@@ -51,7 +51,8 @@ corresponding adapter method. Additionally `requestType` is set so the hooks
 know for which specific adapter operation they are invoked. To allow for
 asynchronous configurations (e.g. pre-flight request to refresh an
 authentication token), `_requestFor` returns a promise which resolves with an
-object describing the request to make.
+object describing the request to make. The `_requestFor` method is private and
+calls the new public hooks.
 
 ``` js
 _requestFor(params) {
@@ -73,7 +74,7 @@ Invoked to get the HTTP method for the request. Should return one of `"GET"`,
 Get the URL for the request. This hook returns the URL for the request which
 should be made, e.g. `/users/1` or `api.example.com:4321/users?name=abc`
 
-This hook uses 2 new sub-hooks to construct the URL:
+This hook uses 2 new public sub-hooks to construct the URL:
 
 - `pathForRequest` - re-uses the existing `urlForXXX` hooks
 - `queryForRequest` - get an object for all query params for the request
@@ -112,6 +113,7 @@ queryForRequest({ requestType, query }) {
   }
 }
 ```
+
 ##### `bodyForRequest` (currently `dataForRequest` in `ds-improved-ajax`)
 
 Body for the HTTP request which should be made.
@@ -127,13 +129,19 @@ All HTTP headers for this request. By default it returns the value for the
 `headers` computed property which can be set on the adapter. This hooks allows
 to add custom headers for each request individually.
 
-### `_makeRequest`
+### `makeRequest`
 
-The `_makeRequest` is invoked with all the properties that describe the request
-which should be made.
+The public `makeRequest` method is invoked with all the properties that
+describe the request which should be made.
 
 ``` js
-_makeRequest(request) {
+/**
+  @method
+  @public
+  @param request Object containing all properties for the request which should be made
+  @return Promise
+ */
+makeRequest(request) {
   // convert request to jQuery hash
   // invoke Ember.$.ajax and make it runloop aware
   // return Promise which resolves/rejects with made request
