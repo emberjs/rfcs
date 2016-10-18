@@ -1,5 +1,5 @@
 - Start Date: 2016-05-09
-- RFC PR:
+- RFC PR: https://github.com/emberjs/rfcs/pull/143
 - Ember Issue:
 
 > Note: This RFC replaces the closely related RFC for [Module
