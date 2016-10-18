@@ -11,9 +11,7 @@ Meta and links are made available via references for record, belongs-to,
 has-many and JSON-API documents (using the new `DocumentReference`). All those
 references will expose their corresponding meta and links via – surprise –
 `meta()` and `links()` methods. Since meta is only a plain JavaScript object,
-there is no need for further abstraction. A link on the other hand is
-represented as a `LinkReference`, which allows to get the related meta and to
-load the link via `load()`.
+there is no need for further abstraction.
 
 Since references are not observable by design, hooks are proposed in the
 accompanying [RFC #123](https://github.com/emberjs/rfcs/pull/123) which allow
@@ -26,12 +24,12 @@ once a use case is flushed out and it's reasonable to being in core.
 
 #### In short
 
-- Add `LinkReference` which is an abstraction for a single link and its
-  properties (meta, name, href) and action (load)
-- Add a `DocumentReference` which describes a JSON-API document and its
-  properties (meta, links, data)
 - A new `links()` method is added to record, belongs-to, has-many and
   record-array references which returns all associated links
+- Add `LinkObject` which is an abstraction for a single link and its
+  properties (meta, href)
+- Add a `DocumentReference` which describes a JSON-API document and its
+  properties (meta, links, data)
 - Hooks which allow to react to changes when the backing data of references
   changes (hooks might not be part of this RFC, but are already somewhat
   addressed in [RFC#123](https://github.com/emberjs/rfcs/pull/123))
@@ -169,25 +167,21 @@ need to be accesible for a record.
 
 ## Links
 
-### `DS.LinkReference`
+Links are exposed in an object, with each link exposed with the following
+properties:
 
-This new reference is added and represents the reference to a single link entry
-of the JSON-API `links: {}` object:
+- `href`
+- `meta`: optional meta for the link, or `null` if there is none
+
+```js
+let links = post.hasMany('authors');
+```
 
 ```js
 /**
-  Reference to a single link of a JSON-API links object.
+  Link
 */
-class LinkReference {
-
-  /**
-    Get the name of the link.
-
-    E.g. "related", "self" or "next"
-
-    @return {String} name of the link
-  */
-  name()
+{
 
   /**
     Get the href of the link.
@@ -203,34 +197,12 @@ class LinkReference {
   */
   meta()
 
-  /**
-    Load the link.
-
-    Returned promise resolves with a `DS.RecordArray`.
-
-    @return {Promise}
-  */
-  load()
-
-  /**
-    Get the reference to which this link is connected to.
-
-    This can either be a `RecordReference`, `BelongsToReference`,
-    `HasManyReference` or `DocumentReference`.
-
-    @return {DS.Reference} reference to which this link
-                           is connected to
-  */
-  parentRef()
-
 }
 ```
 
 ### `[Record|BelongsTo|HasMany|Document]Reference.links()`
 
-The `links()` method on those references allows to get all link references
-associated with the reference, or the specific `LinkReference`, if the name of
-the link is passed:
+The `links` method on those references allows us to get the links object.
 
 ```js
 // {
@@ -250,11 +222,11 @@ the link is passed:
 // }
 let chaptersRef = store.peekRecord("book", 1).hasMany("chapters");
 
-// [<DS.LinkReference>, <DS.LinkReference>]
+// Object containing links
 let links = chaptersRef.links();
 
-// DS.LinkReference
-let nextLink = chaptersRef.links("next");
+// LinkObject
+let nextLink = chaptersRef.links().next;
 ```
 
 ## Meta
@@ -475,7 +447,7 @@ store.findRecord("book", 1).then(function(book) {
 
 # Drawbacks
 
-- massive increase of low level, public API
+-  increase of low level, public API
 - though it extends the concept of references, it's a significant increase of
   API surface
 
@@ -485,14 +457,7 @@ store.findRecord("book", 1).then(function(book) {
 
 # Unresolved questions
 
-- is `DS.LinkReference` actually a `DS.Link` and not really a reference?
-- rename `name()` of `LinkReference`? What is the official terminology for it?
-- what type of `RecordArray` does `LinkReference#load()` resolve with? Do we
-  need a new type or is `DS.AdapterPopulatedRecordArray` sufficient?
-- should `books.hasMany("chapters").links("next").load()` update the content of
-  the relationship? Should there be a dedicated API for this, e.g.
-  `books.hasMany("chapters").loadLink("next")`?
 - since multiple "locations" of meta will be supported, there needs to be a new
-  hook within the `RESTSerializer` to extract record/document level meta,
+  hook only within the `RESTSerializer` to extract record/document level meta,
   additionally to the `extractMeta` hook, which is invoked with the whole
   payload
