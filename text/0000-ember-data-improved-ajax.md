@@ -7,6 +7,19 @@
 Add public hooks on `rest`-adapter which can be used to customize the
 properties of an AJAX request being made for an adapter operation.
 
+1) hooks to get properties for an request which should be made
+  - `methodForRequest`
+  - `headersForRequest`
+  - `urlForRequest`
+    - `host`
+    - `namespace`
+    - `pathForRequest`
+    - `queryForRequest`
+  - `bodyForRequest`
+
+2) hook for making the request
+  - `makeRequest`
+
 # Motivation
 
 Currently `host`, `namespace`, `urlForXXX()` and `headers` is the only public
@@ -44,6 +57,7 @@ findRecord(store, type, id, snapshot) {
   return RSVP.resolve(requestOptions).then((options) => this.makeRequest(options) );
 }
 ```
+
 ### `_requestFor`
 
 Each hook for step 1) is invoked with all the arguments which are passed to the
@@ -176,10 +190,12 @@ headersForRequest(options) {
 
 # Unresolved questions
 
-- the currently propose API doesn't allow to only use public API to
+- the currently proposed API doesn't allow to only use public API to
   [customize](https://github.com/emberjs/data/blob/2926c47453d50d6b75590d2ff447a4d0da66833a/addon/adapters/json-api.js#L226-L234)
   the `json-api`-adapter, though the current implementation could be changed to
-  set the `Content-Type` header instead (which would be more agnostic anyway)
+  set the `Content-Type` header instead (which would be more agnostic anyway).
+  This might be an indicator that the proposed API still needs some
+  adjustments so `json-api` adapter uses only public API.
 - currently `requestType` is used to indicate the specific adapter operation,
   but that name might not be to expressive. Should this be renamed to the more
   verbose, like `adapterOperation`?
