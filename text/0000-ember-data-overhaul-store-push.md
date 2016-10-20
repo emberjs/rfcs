@@ -12,10 +12,8 @@ payload into JSON-API format. This normalized payload can then be used with
 references.
 
 Add a `store.pushRef()` which takes a JSON-API document and returns a
-`RecordReference` or `RecordArrayReference` (proposed in
-[RFC#160](https://github.com/emberjs/rfcs/pull/160)), depending on if the
-primary data is a single resource or an array. References are returned here,
-because they give access to `meta` and `links`.
+`DocumentReference` (proposed in
+[RFC#160](https://github.com/emberjs/rfcs/pull/160)).
 
 # Motivation
 
@@ -68,8 +66,8 @@ some issues:
 ## Proposed solution
 
 - add `store.normalizePayload` which normalizes a payload into JSON-API format
-- add `store.pushRef` which pushes records into the store without
-  materialization
+- add `store.pushDocument` which pushes data and included of a JSON-API
+  document into the store without materialization of the pushed records
 
 # Detailed design
 
@@ -181,18 +179,17 @@ The documentation for `DS.Serializer` is updated as follows:
 normalizePayload(store, modelName, payload)
 ```
 
-## `store.pushRef`
+## `store.pushDocument`
 
-Add a `store.pushRef` which takes a JSON-API document and returns a
-`RecordReference` or `RecordArrayReference`, depending on if the primary data
-is a single resource or an array:
+Add a `store.pushDocument` which takes a JSON-API document and returns a
+`DocumentReference`:
 
 ``` js
 DS.Store.reopen({
 
   /**
     Push given JSON-API document into the store, and get the
-    reference(s) to the pushed primary data.
+    reference to the pushed document.
 
     Use this method if data should be pushed into the store,
     without the need for getting the pushed records. This is
@@ -200,9 +197,9 @@ DS.Store.reopen({
     materialization of records is avoided.
 
     @param payload {Object} JSON-API document
-    @return {DS.RecordReference|DS.RecordArrayReference} pushed primary data
+    @return {DS.DocumentReference} pushed document
   */
-  pushRef(payload)
+  pushDocument(payload)
 
 });
 ```
@@ -234,9 +231,8 @@ Or using references instead to get the associated `meta`:
 //   }
 // }
 let normalized = store.normalizePayload("book", payload);
-let bookRef = store.pushRef(normalized); // DS.RecordReference
-let book = bookRef.value(); // DS.Model
-let meta = bookRef.meta();
+let docRef = store.pushDocument(normalized); // DS.DocumentReference
+let meta = docRef.meta();
 ```
 
 And pushing array data:
@@ -255,10 +251,7 @@ And pushing array data:
 //   }
 // }
 let normalized = store.normalizePayload("person", payload);
-let peopleRef = store.pushRef(normalized); // DS.RecordArrayReference
-let people = peopleRef.value(); // DS.RecordArray
-let ids = peopleRef.ids();
-let meta = peopleRef.meta();
+let docRef = store.pushDocument(normalized); // DS.DocumentReference
 ```
 # How We Teach This
 
@@ -290,22 +283,14 @@ As mentioned already, the patch re-using `serializer.pushPayload` only works if
 within `serializer.pushPayload` can be added, it is not 100% certain that all
 use cases are supported with this.
 
-`store.pushRef` returning `RecordReference`(s) is the first method which
-introduces those type of reference to the public
-([`store.getReference`](http://emberjs.com/api/data/classes/DS.Store.html#method_getReference)
-is not really helpful at the moment). It is questionable if returning
-references is needed here and in general, if references are intended for this
-kind of usage. This might suggest storing references (controller, component)
-for later use - which is not the intended use for references...
-
-Since we have a `store.normalizePayload` now, it is
-possible to normalize a payload and get the corresponding models via
-`store.push`. There is no immediate need for `store.pushRef`. But if a pushing
-data into the store without materializing records should be possible, having a
-`pushRef` is needed. So it basically it would boil down to this:
+Since we have a `store.normalizePayload` now, it is possible to normalize a
+payload and get the corresponding models via `store.push`. There is no
+immediate need for `store.pushDocument`. But if a pushing data into the store
+without materializing records should be possible, having a `pushDocument` is
+needed. So it basically it would boil down to this:
 
 - use `store.push` if you want the `DS.Model`s
-- use `store.pushRef` if you don't need the materialized `DS.Model`s
+- use `store.pushDocument` if you don't need the materialized `DS.Model`s
 
 # Alternatives
 
