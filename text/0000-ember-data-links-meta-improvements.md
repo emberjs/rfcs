@@ -236,7 +236,7 @@ class DocumentReference {
 
     This is useful for pagination of resource collections for example.
 
-    @return {Array<DS.LinkReference>}
+    @return {Object}
   */
   links()
 
