@@ -359,7 +359,7 @@ export default Book;
 
 ## Sample code
 
-/*
+/**
 
 ### Pagination
 
@@ -388,7 +388,7 @@ store.query("book", { page: 1 }).then(function(books) {
 });
 ```
 
-*/
+**/
 
 ### Meta for `findAll`
 
