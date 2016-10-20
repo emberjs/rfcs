@@ -7,7 +7,7 @@
 Add public hooks on `rest`-adapter which can be used to customize the
 properties of an AJAX request being made for an adapter operation.
 
-1) hooks to get properties for an request which should be made
+1) hooks to get properties for a request which should be made
   - `methodForRequest`
   - `headersForRequest`
   - `urlForRequest`
