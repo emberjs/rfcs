@@ -359,37 +359,6 @@ export default Book;
 
 ## Sample code
 
-/**
-
-### Pagination
-
-```js
-let allPages = Ember.A();
-
-// GET /books?page=1
-// {
-//   data: […],
-//   links: {
-//     next: {
-//       href: "…"
-//     }
-//   }
-// }
-store.query("book", { page: 1 }).then(function(books) {
-  allPages.addObjects(books.toArray());
-
-  let booksRef = books.documentRef();
-  let nextPage = booksRef.links().next;
-
-  // GET /books?page=2
-  nextPage.load().then(function(nextBooks) {
-    allPages.addObjects(nextBooks.toArray());
-  });
-});
-```
-
-**/
-
 ### Meta for `findAll`
 
 ```js
