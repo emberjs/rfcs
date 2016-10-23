@@ -11,9 +11,9 @@ payload into JSON-API format. This normalized payload can then be used with
 `store.push()` or the `push()` methods on the `BelongsTo` and `HasMany`
 references.
 
-Add a `store.pushRef()` which takes a JSON-API document and returns a
+Add a `store.pushDocument()` which takes a JSON-API document and returns a
 `DocumentReference` (proposed in
-[RFC#160](https://github.com/emberjs/rfcs/pull/160)).
+[RFC#160](https://github.com/pangratz/rfcs/blob/ember-data-links-meta-improvements/text/0000-ember-data-links-meta-improvements.md#dsdocumentreference)).
 
 # Motivation
 
@@ -182,7 +182,7 @@ normalizePayload(store, modelName, payload)
 ## `store.pushDocument`
 
 Add a `store.pushDocument` which takes a JSON-API document and returns a
-`DocumentReference`:
+[`DocumentReference`](https://github.com/pangratz/rfcs/blob/ember-data-links-meta-improvements/text/0000-ember-data-links-meta-improvements.md#dsdocumentreference)):
 
 ``` js
 DS.Store.reopen({
