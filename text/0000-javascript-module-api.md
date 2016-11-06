@@ -379,8 +379,8 @@ export default Ember.Component.extend({
 Into this:
 
 ```js
-import Component from "ember-component";
-import { or } from "ember-object/computed"
+import Component from "@ember/component";
+import { or } from "@ember/object/computed"
 
 export default Component.extend({
   isAnimal: or('isDog', 'isCat')
