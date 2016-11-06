@@ -114,9 +114,9 @@ An oft-cited example of this verbosity is that implementing an object and using
 `Ember.get` and `Ember.set` requires three different imports:
 
 ```js
-import EmberObject from "@ember/object";
-import get from "@ember/metal/get";
-import set from "@ember/metal/set";
+import EmberObject from "ember-object";
+import get from "ember-metal/get";
+import set from "ember-metal/set";
 ```
 
 In fact, one of the principles outlined in this RFC is designed to correct this
