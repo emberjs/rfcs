@@ -104,7 +104,7 @@ The obvious drawback of this alternative is having two new keywords in ember ins
 #### Wrap in parameters to force imediate execution
 
 This leaves ember with only on `helper` helper that by default is a closure creator but when wrapped in an extra pair or parens
-behavies like `invoke-helper` did on the previous section.
+behaves like `invoke-helper` did on the previous section.
 
 Examples:
 
