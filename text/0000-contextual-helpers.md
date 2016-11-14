@@ -80,7 +80,7 @@ There is three possible options
 
 #### Use a different helper for creating closure helpers and to evaluate helpers
 
-This is the most evident aternative. To remove the ambiguity, there is two different helpers for the two different
+**This is the most evident aternative and the one I prefer**. To remove the ambiguity, there is two different helpers for the two different
 features.
 
 Ideas include `helper` to create the closure helper and `invoke-helper` to invoke it.
@@ -98,6 +98,8 @@ Examples:
 {{my-component format-date=(helper "moment-format")}} <!-- Creates closure helper -->
 {{my-component format-date=(invoke-helper "moment-format")}} <!-- Invokes helper -->
 ```
+
+The obvious drawback of this alternative is having two new keywords in ember instead of only one.
 
 #### Wrap in parameters to force imediate execution
 
@@ -137,34 +139,6 @@ helper (`closure=true`).
 {{my-component format-date=(helper "moment-format"))}} <!-- Invokes helper -->
 ```
 
-#### Static code or runtime analysis?
-
-I'm unsure if this is feasible, but with glimmer's cross-template optimizations it might be possible to
-detect how the passed component is used in the context where it is passed and the desambiguation is done
-by the engine.
-
-Examples:
-
-```hbs
-<strong>My name is {{helper 'capitalize-str' user.name}}</strong>
-<button title={{helper 'capitalize-str' user.name}}></button>
-
-{{my-component-a format-date=(helper "moment-format")}} <!-- We don't know yet -->
-{{my-component-b format-date=(helper "moment-format")}} <!-- We don't know yet -->
-{{yield (hash format-date=(helper "moment-format"))}} <!-- We don't know yet -->
-
-<!-- Inside my-component-a.hbs -->
-<strong>My name is {{format-date}}</strong> <!-- The engine detects that is used in html-context and therefore it is considered an evaluation -->
-
-<!-- Inside my-component-b.hbs -->
-<strong>My name is {{helper format-date date locale="fr"}}</strong> <!-- The engine detects that is used as a closure helper-->
-
-<!-- On the yielded context -->
-{{#my-yielder as |api|}}
-  {{api.format-date}} <!-- Invocation with dot-syntax means it's still ambiguous??-->
-{{/my-yielder}}
-```
-
 # How We Teach This
 
 Given the parallelism with closure components it's not going to be hard to teach. It will follow the usual
@@ -174,7 +148,7 @@ process of documentation in the API and in the guides.
 
 Every dynamic feature has some runtime cost. I've heard about some proposals to limit the possible
 components that the `{{component}}` helper can invoke so the dependency resolution can be done statically.
-Whatever solution is designed for the component helper must also be take into consideration for the `{{helper`}} helper.
+Whatever solution is designed for the component helper must also be take into consideration for the `{{helper}}` helper.
 
 # Alternatives
 
