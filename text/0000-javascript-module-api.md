@@ -847,55 +847,57 @@ _(Ed. note: These tables are automatically generated from the scripts in the [co
 
 ## Addendum 2 - Table of Module Names and Exports by Package
 
+Each package is sorted by module name, then export name.
+
 ### `@ember/application`
 | Module                                                              | Global                  |
 | ---                                                                 | ---                     |
 | `import Application from "@ember/application"`                      | `Ember.Application`     |
-| `import { deprecateFunc } from "@ember/application/deprecations"`   | `Ember.deprecateFunc`   |
 | `import { getOwner } from "@ember/application"`                     | `Ember.getOwner`        |
-| `import { setOwner } from "@ember/application"`                     | `Ember.setOwner`        |
-| `import GlobalsResolver from "@ember/application/globals-resolver"` | `Ember.DefaultResolver` |
-| `import Resolver from "@ember/application/resolver"`                | `Ember.Resolver`        |
-| `import { deprecate } from "@ember/application/deprecations"`       | `Ember.deprecate`       |
 | `import { onLoad } from "@ember/application"`                       | `Ember.onLoad`          |
 | `import { runLoadHooks } from "@ember/application"`                 | `Ember.runLoadHooks`    |
+| `import { setOwner } from "@ember/application"`                     | `Ember.setOwner`        |
+| `import { deprecate } from "@ember/application/deprecations"`       | `Ember.deprecate`       |
+| `import { deprecateFunc } from "@ember/application/deprecations"`   | `Ember.deprecateFunc`   |
+| `import GlobalsResolver from "@ember/application/globals-resolver"` | `Ember.DefaultResolver` |
+| `import Resolver from "@ember/application/resolver"`                | `Ember.Resolver`        |
 
 ### `@ember/array`
 | Module                                            | Global               |
 | ---                                               | ---                  |
+| `import EmberArray from "@ember/array"`           | `Ember.Array`        |
+| `import { A } from "@ember/array"`                | `Ember.A`            |
 | `import { isArray } from "@ember/array"`          | `Ember.isArray`      |
 | `import { makeArray } from "@ember/array"`        | `Ember.makeArray`    |
 | `import MutableArray from "@ember/array/mutable"` | `Ember.MutableArray` |
 | `import ArrayProxy from "@ember/array/proxy"`     | `Ember.ArrayProxy`   |
-| `import EmberArray from "@ember/array"`           | `Ember.Array`        |
-| `import { A } from "@ember/array"`                | `Ember.A`            |
 
 ### `@ember/component`
 | Module                                                | Global                |
 | ---                                                   | ---                   |
-| `import Checkbox from "@ember/component/checkbox"`    | `Ember.Checkbox`      |
-| `import TextArea from "@ember/component/text-area"`   | `Ember.TextArea`      |
-| `import TextField from "@ember/component/text-field"` | `Ember.TextField`     |
 | `import Component from "@ember/component"`            | `Ember.Component`     |
+| `import Checkbox from "@ember/component/checkbox"`    | `Ember.Checkbox`      |
 | `import Helper from "@ember/component/helper"`        | `Ember.Helper`        |
 | `import { helper } from "@ember/component/helper"`    | `Ember.Helper.helper` |
+| `import TextArea from "@ember/component/text-area"`   | `Ember.TextArea`      |
+| `import TextField from "@ember/component/text-field"` | `Ember.TextField`     |
 
 ### `@ember/controller`
 | Module                                       | Global                    |
 | ---                                          | ---                       |
-| `import { inject } from "@ember/controller"` | `Ember.inject.controller` |
 | `import Controller from "@ember/controller"` | `Ember.Controller`        |
+| `import { inject } from "@ember/controller"` | `Ember.inject.controller` |
 
 ### `@ember/debug`
 | Module                                                                     | Global                        |
 | ---                                                                        | ---                           |
 | `import { assert } from "@ember/debug"`                                    | `Ember.assert`                |
-| `import ContainerDebugAdapter from "@ember/debug/container-debug-adapter"` | `Ember.ContainerDebugAdapter` |
-| `import DataAdapter from "@ember/debug/data-adapter"`                      | `Ember.DataAdapter`           |
 | `import { debug } from "@ember/debug"`                                     | `Ember.debug`                 |
 | `import { inspect } from "@ember/debug"`                                   | `Ember.inspect`               |
 | `import { runInDebug } from "@ember/debug"`                                | `Ember.runInDebug`            |
 | `import { warn } from "@ember/debug"`                                      | `Ember.warn`                  |
+| `import ContainerDebugAdapter from "@ember/debug/container-debug-adapter"` | `Ember.ContainerDebugAdapter` |
+| `import DataAdapter from "@ember/debug/data-adapter"`                      | `Ember.DataAdapter`           |
 
 ### `@ember/enumerable`
 | Module                                       | Global             |
@@ -913,90 +915,89 @@ _(Ed. note: These tables are automatically generated from the scripts in the [co
 ### `@ember/map`
 | Module                                                 | Global                 |
 | ---                                                    | ---                    |
-| `import MapWithDefault from "@ember/map/with-default"` | `Ember.MapWithDefault` |
 | `import EmberMap from "@ember/map"`                    | `Ember.Map`            |
+| `import MapWithDefault from "@ember/map/with-default"` | `Ember.MapWithDefault` |
 
 ### `@ember/object`
 | Module                                                      | Global                            |
 | ---                                                         | ---                               |
-| `import { reads } from "@ember/object/computed"`            | `Ember.computed.reads`            |
-| `import { readOnly } from "@ember/object/computed"`         | `Ember.computed.readOnly`         |
-| `import { deprecatingAlias } from "@ember/object/computed"` | `Ember.computed.deprecatingAlias` |
+| `import EmberObject from "@ember/object"`                   | `Ember.Object`                    |
+| `import { aliasMethod } from "@ember/object"`               | `Ember.aliasMethod`               |
+| `import { computed } from "@ember/object"`                  | `Ember.computed`                  |
+| `import { get } from "@ember/object"`                       | `Ember.get`                       |
+| `import { getProperties } from "@ember/object"`             | `Ember.getProperties`             |
+| `import { observer } from "@ember/object"`                  | `Ember.observer`                  |
+| `import { set } from "@ember/object"`                       | `Ember.set`                       |
+| `import { setProperties } from "@ember/object"`             | `Ember.setProperties`             |
+| `import { trySet } from "@ember/object"`                    | `Ember.trySet`                    |
+| `import { alias } from "@ember/object/computed"`            | `Ember.computed.alias`            |
 | `import { and } from "@ember/object/computed"`              | `Ember.computed.and`              |
-| `import { or } from "@ember/object/computed"`               | `Ember.computed.or`               |
+| `import { bool } from "@ember/object/computed"`             | `Ember.computed.bool`             |
 | `import { collect } from "@ember/object/computed"`          | `Ember.computed.collect`          |
-| `import { sum } from "@ember/object/computed"`              | `Ember.computed.sum`              |
-| `import { min } from "@ember/object/computed"`              | `Ember.computed.min`              |
-| `import { max } from "@ember/object/computed"`              | `Ember.computed.max`              |
-| `import { map } from "@ember/object/computed"`              | `Ember.computed.map`              |
-| `import { sort } from "@ember/object/computed"`             | `Ember.computed.sort`             |
-| `import { setDiff } from "@ember/object/computed"`          | `Ember.computed.setDiff`          |
-| `import { mapBy } from "@ember/object/computed"`            | `Ember.computed.mapBy`            |
-| `import { mapProperty } from "@ember/object/computed"`      | `Ember.computed.mapProperty`      |
+| `import { deprecatingAlias } from "@ember/object/computed"` | `Ember.computed.deprecatingAlias` |
+| `import { empty } from "@ember/object/computed"`            | `Ember.computed.empty`            |
+| `import { equal } from "@ember/object/computed"`            | `Ember.computed.equal`            |
 | `import { filter } from "@ember/object/computed"`           | `Ember.computed.filter`           |
 | `import { filterBy } from "@ember/object/computed"`         | `Ember.computed.filterBy`         |
 | `import { filterProperty } from "@ember/object/computed"`   | `Ember.computed.filterProperty`   |
-| `import { uniq } from "@ember/object/computed"`             | `Ember.computed.uniq`             |
-| `import { union } from "@ember/object/computed"`            | `Ember.computed.union`            |
+| `import { gt } from "@ember/object/computed"`               | `Ember.computed.gt`               |
+| `import { gte } from "@ember/object/computed"`              | `Ember.computed.gte`              |
 | `import { intersect } from "@ember/object/computed"`        | `Ember.computed.intersect`        |
+| `import { lt } from "@ember/object/computed"`               | `Ember.computed.lt`               |
+| `import { lte } from "@ember/object/computed"`              | `Ember.computed.lte`              |
+| `import { map } from "@ember/object/computed"`              | `Ember.computed.map`              |
+| `import { mapBy } from "@ember/object/computed"`            | `Ember.computed.mapBy`            |
+| `import { mapProperty } from "@ember/object/computed"`      | `Ember.computed.mapProperty`      |
+| `import { match } from "@ember/object/computed"`            | `Ember.computed.match`            |
+| `import { max } from "@ember/object/computed"`              | `Ember.computed.max`              |
+| `import { min } from "@ember/object/computed"`              | `Ember.computed.min`              |
+| `import { none } from "@ember/object/computed"`             | `Ember.computed.none`             |
+| `import { not } from "@ember/object/computed"`              | `Ember.computed.not`              |
+| `import { notEmpty } from "@ember/object/computed"`         | `Ember.computed.notEmpty`         |
+| `import { oneWay } from "@ember/object/computed"`           | `Ember.computed.oneWay`           |
+| `import { or } from "@ember/object/computed"`               | `Ember.computed.or`               |
+| `import { readOnly } from "@ember/object/computed"`         | `Ember.computed.readOnly`         |
+| `import { reads } from "@ember/object/computed"`            | `Ember.computed.reads`            |
+| `import { setDiff } from "@ember/object/computed"`          | `Ember.computed.setDiff`          |
+| `import { sort } from "@ember/object/computed"`             | `Ember.computed.sort`             |
+| `import { sum } from "@ember/object/computed"`              | `Ember.computed.sum`              |
+| `import { union } from "@ember/object/computed"`            | `Ember.computed.union`            |
+| `import { uniq } from "@ember/object/computed"`             | `Ember.computed.uniq`             |
 | `import Evented from "@ember/object/evented"`               | `Ember.Evented`                   |
 | `import { on } from "@ember/object/evented"`                | `Ember.on`                        |
 | `import { addListener } from "@ember/object/events"`        | `Ember.addListener`               |
 | `import { removeListener } from "@ember/object/events"`     | `Ember.removeListener`            |
 | `import { sendEvent } from "@ember/object/events"`          | `Ember.sendEvent`                 |
+| `import { cacheFor } from "@ember/object/internals"`        | `Ember.cacheFor`                  |
+| `import { copy } from "@ember/object/internals"`            | `Ember.copy`                      |
+| `import { guidFor } from "@ember/object/internals"`         | `Ember.guidFor`                   |
 | `import Mixin from "@ember/object/mixin"`                   | `Ember.Mixin`                     |
 | `import { addObserver } from "@ember/object/observers"`     | `Ember.addObserver`               |
 | `import { removeObserver } from "@ember/object/observers"`  | `Ember.removeObserver`            |
-| `import { copy } from "@ember/object/internals"`            | `Ember.copy`                      |
-| `import { guidFor } from "@ember/object/internals"`         | `Ember.guidFor`                   |
-| `import { cacheFor } from "@ember/object/internals"`        | `Ember.cacheFor`                  |
-| `import EmberObject from "@ember/object"`                   | `Ember.Object`                    |
-| `import { get } from "@ember/object"`                       | `Ember.get`                       |
-| `import { set } from "@ember/object"`                       | `Ember.set`                       |
-| `import { getProperties } from "@ember/object"`             | `Ember.getProperties`             |
-| `import { setProperties } from "@ember/object"`             | `Ember.setProperties`             |
-| `import { observer } from "@ember/object"`                  | `Ember.observer`                  |
-| `import { computed } from "@ember/object"`                  | `Ember.computed`                  |
-| `import { trySet } from "@ember/object"`                    | `Ember.trySet`                    |
-| `import { aliasMethod } from "@ember/object"`               | `Ember.aliasMethod`               |
-| `import { empty } from "@ember/object/computed"`            | `Ember.computed.empty`            |
-| `import { notEmpty } from "@ember/object/computed"`         | `Ember.computed.notEmpty`         |
-| `import { none } from "@ember/object/computed"`             | `Ember.computed.none`             |
-| `import { not } from "@ember/object/computed"`              | `Ember.computed.not`              |
-| `import { bool } from "@ember/object/computed"`             | `Ember.computed.bool`             |
-| `import { match } from "@ember/object/computed"`            | `Ember.computed.match`            |
-| `import { equal } from "@ember/object/computed"`            | `Ember.computed.equal`            |
-| `import { gt } from "@ember/object/computed"`               | `Ember.computed.gt`               |
-| `import { gte } from "@ember/object/computed"`              | `Ember.computed.gte`              |
-| `import { lt } from "@ember/object/computed"`               | `Ember.computed.lt`               |
-| `import { lte } from "@ember/object/computed"`              | `Ember.computed.lte`              |
-| `import { alias } from "@ember/object/computed"`            | `Ember.computed.alias`            |
-| `import { oneWay } from "@ember/object/computed"`           | `Ember.computed.oneWay`           |
 
 ### `@ember/polyfills`
 | Module                                                    | Global                                |
 | ---                                                       | ---                                   |
-| `import { keys } from "@ember/polyfills"`                 | `Ember.keys`                          |
 | `import { assign } from "@ember/polyfills"`               | `Ember.assign`                        |
 | `import { create } from "@ember/polyfills"`               | `Ember.create`                        |
 | `import { defineProperty } from "@ember/polyfills"`       | `Ember.platform.defineProperty`       |
 | `import { hasPropertyAccessors } from "@ember/polyfills"` | `Ember.platform.hasPropertyAccessors` |
+| `import { keys } from "@ember/polyfills"`                 | `Ember.keys`                          |
 
 ### `@ember/routing`
 | Module                                                          | Global                  |
 | ---                                                             | ---                     |
 | `import AutoLocation from "@ember/routing/auto-location"`       | `Ember.AutoLocation`    |
 | `import HashLocation from "@ember/routing/hash-location"`       | `Ember.HashLocation`    |
-| `import Location from "@ember/routing/location"`                | `Ember.Location`        |
 | `import HistoryLocation from "@ember/routing/history-location"` | `Ember.HistoryLocation` |
+| `import Location from "@ember/routing/location"`                | `Ember.Location`        |
+| `import NoneLocation from "@ember/routing/none-location"`       | `Ember.NoneLocation`    |
 | `import Route from "@ember/routing/route"`                      | `Ember.Route`           |
 | `import Router from "@ember/routing/router"`                    | `Ember.Router`          |
-| `import NoneLocation from "@ember/routing/none-location"`       | `Ember.NoneLocation`    |
 
 ### `@ember/runloop`
 | Module                                          | Global                   |
 | ---                                             | ---                      |
-| `import { run } from "@ember/runloop"`          | `Ember.run`              |
 | `import { begin } from "@ember/runloop"`        | `Ember.run.begin`        |
 | `import { bind } from "@ember/runloop"`         | `Ember.run.bind`         |
 | `import { cancel } from "@ember/runloop"`       | `Ember.run.cancel`       |
@@ -1006,6 +1007,7 @@ _(Ed. note: These tables are automatically generated from the scripts in the [co
 | `import { later } from "@ember/runloop"`        | `Ember.run.later`        |
 | `import { next } from "@ember/runloop"`         | `Ember.run.next`         |
 | `import { once } from "@ember/runloop"`         | `Ember.run.once`         |
+| `import { run } from "@ember/runloop"`          | `Ember.run`              |
 | `import { schedule } from "@ember/runloop"`     | `Ember.run.schedule`     |
 | `import { scheduleOnce } from "@ember/runloop"` | `Ember.run.scheduleOnce` |
 | `import { throttle } from "@ember/runloop"`     | `Ember.run.throttle`     |
