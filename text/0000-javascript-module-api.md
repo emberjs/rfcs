@@ -42,16 +42,9 @@ reasons:
   2. Increased parsing/evaluation cost, which still must be paid even when
      assets are cached. On some browsers/devices, this can far exceed the cost of the
      download itself.
-* Running multiple versions of Ember on the same page is error-prone.
 
 Defining a public API for importing parts of Ember via JavaScript modules helps
 us lay the groundwork for solving all of these problems.
-
-#### Multiple Apps on a Page
-
-Because modules do not export a global, there is no risk of a conflict running
-two or more Ember apps on the same page; each app can provide its own version
-without the risk of clobbering another.
 
 #### Reducing Load Time
 
