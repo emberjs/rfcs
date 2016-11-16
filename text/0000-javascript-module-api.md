@@ -343,6 +343,24 @@ Export alternative](#everything-is-a-named-export).
 
 [decorators]: http://tc39.github.io/proposal-decorators/
 
+### One Level Deep
+
+To avoid deep directory hierarchies with mostly-empty directories, this proposal
+limits nesting inside a top-level package to a single level. Deep nesting like
+this can add additional time to navigating the hierarchy without adding much
+benefit.
+
+Java packages often have this problem due to their URL-based namespacing; see
+e.g. [this Java
+library](https://github.com/elvishew/xLog/tree/fbfb60f9472e32723436b3d6bdd6c1878a5afb37/library/src)
+where you end up with deeply nested directories, like
+`xLog/library/src/test/java/com/elvishew/xlog/printer/AndroidPrinterTest.java`.
+
+This rule leads to including the type in the name of the module in some cases
+where it might otherwise be grouped instead. For example, instead of
+`@ember/routing/locations/none`, we prefer `@ember/routing/none-location` to
+avoid the second level of nesting.
+
 ## Migration
 
 To assist in assessing this RFC in real-world applications, and to help upgrade
