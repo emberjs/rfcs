@@ -415,7 +415,7 @@ and any teaching we do has the benefit of being transferable and not an
 
 ## Documentation Examples
 
-Examples in the  Getting Started tutorial, guides and API docs will need to be
+Examples in the Getting Started tutorial, guides and API docs will need to be
 updated to the new module syntax.
 
 Probably the most efficient and least painful way to do this would be to write a
@@ -430,6 +430,15 @@ attempt to update everything by hand, the duration and tediousness of that
 process will likely take out an effective "lock" on the documentation code base,
 where people will put off making big changes because of the potential for merge
 conflicts.
+
+## Generators
+
+Generators are used by new users to help them get a handle on the framework, and
+by experienced users to avoid typing repetitive boilerplate. We need to ensure
+that the generators that ship with Ember are updated to use modules as soon as
+they are ready. The recent work by the Ember CLI team to ship generators with
+the Ember package itself, rather than Ember CLI, should make this relatively
+painless.
 
 ## API Documentation
 
