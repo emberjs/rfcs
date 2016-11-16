@@ -797,7 +797,7 @@ _(Ed. note: These tables are automatically generated from the scripts in the [co
 | `Ember.deprecate`                     | `import { deprecate } from "@ember/application/deprecations"`              |
 | `Ember.deprecateFunc`                 | `import { deprecateFunc } from "@ember/application/deprecations"`          |
 | `Ember.get`                           | `import { get } from "@ember/object"`                                      |
-| `Ember.getOwner`                      | `import { getOwner } from "@ember/object/internals"`                       |
+| `Ember.getOwner`                      | `import { getOwner } from "@ember/application"`                            |
 | `Ember.getProperties`                 | `import { getProperties } from "@ember/object"`                            |
 | `Ember.guidFor`                       | `import { guidFor } from "@ember/object/internals"`                        |
 | `Ember.inject.controller`             | `import { inject } from "@ember/controller"`                               |
@@ -836,7 +836,7 @@ _(Ed. note: These tables are automatically generated from the scripts in the [co
 | `Ember.runLoadHooks`                  | `import { runLoadHooks } from "@ember/application"`                        |
 | `Ember.sendEvent`                     | `import { sendEvent } from "@ember/object/events"`                         |
 | `Ember.set`                           | `import { set } from "@ember/object"`                                      |
-| `Ember.setOwner`                      | `import { setOwner } from "@ember/object/internals"`                       |
+| `Ember.setOwner`                      | `import { setOwner } from "@ember/application"`                            |
 | `Ember.setProperties`                 | `import { setProperties } from "@ember/object"`                            |
 | `Ember.subscribe`                     | `import { subscribe } from "@ember/instrumentation"`                       |
 | `Ember.tryInvoke`                     | `import { tryInvoke } from "@ember/utils"`                                 |
@@ -852,6 +852,8 @@ _(Ed. note: These tables are automatically generated from the scripts in the [co
 | ---                                                                 | ---                     |
 | `import Application from "@ember/application"`                      | `Ember.Application`     |
 | `import { deprecateFunc } from "@ember/application/deprecations"`   | `Ember.deprecateFunc`   |
+| `import { getOwner } from "@ember/application"`                     | `Ember.getOwner`        |
+| `import { setOwner } from "@ember/application"`                     | `Ember.setOwner`        |
 | `import GlobalsResolver from "@ember/application/globals-resolver"` | `Ember.DefaultResolver` |
 | `import Resolver from "@ember/application/resolver"`                | `Ember.Resolver`        |
 | `import { deprecate } from "@ember/application/deprecations"`       | `Ember.deprecate`       |
@@ -948,8 +950,6 @@ _(Ed. note: These tables are automatically generated from the scripts in the [co
 | `import { copy } from "@ember/object/internals"`            | `Ember.copy`                      |
 | `import { guidFor } from "@ember/object/internals"`         | `Ember.guidFor`                   |
 | `import { cacheFor } from "@ember/object/internals"`        | `Ember.cacheFor`                  |
-| `import { getOwner } from "@ember/object/internals"`        | `Ember.getOwner`                  |
-| `import { setOwner } from "@ember/object/internals"`        | `Ember.setOwner`                  |
 | `import EmberObject from "@ember/object"`                   | `Ember.Object`                    |
 | `import { get } from "@ember/object"`                       | `Ember.get`                       |
 | `import { set } from "@ember/object"`                       | `Ember.set`                       |
