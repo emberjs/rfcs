@@ -129,6 +129,10 @@ The static nature of the import syntax makes this even easier and more reliable
 than migrating globals-based apps. The upgrade process should take no more than
 a few minutes (see [Migration](#migration)).
 
+This RFC also builds significantly on [@zeppelin's](https://github.com/zeppelin)
+previous [ES6 modules RFC](https://github.com/emberjs/rfcs/pull/68), which drove
+initial discussion, including the idea to use scoped packages.
+
 # Detailed Design
 
 ## Terminology
