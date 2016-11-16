@@ -714,6 +714,7 @@ _(Ed. note: These tables are automatically generated from the scripts in the [co
 | `Ember.Application`                   | `import Application from "@ember/application"`                             |
 | `Ember.Array`                         | `import EmberArray from "@ember/array"`                                    |
 | `Ember.ArrayProxy`                    | `import ArrayProxy from "@ember/array/proxy"`                              |
+| `Ember.AutoLocation`                  | `import AutoLocation from "@ember/routing/auto-location"`                  |
 | `Ember.Checkbox`                      | `import Checkbox from "@ember/component/checkbox"`                         |
 | `Ember.Component`                     | `import Component from "@ember/component"`                                 |
 | `Ember.ContainerDebugAdapter`         | `import ContainerDebugAdapter from "@ember/debug/container-debug-adapter"` |
@@ -984,12 +985,13 @@ _(Ed. note: These tables are automatically generated from the scripts in the [co
 ### `@ember/routing`
 | Module                                                          | Global                  |
 | ---                                                             | ---                     |
+| `import AutoLocation from "@ember/routing/auto-location"`       | `Ember.AutoLocation`    |
 | `import HashLocation from "@ember/routing/hash-location"`       | `Ember.HashLocation`    |
-| `import NoneLocation from "@ember/routing/none-location"`       | `Ember.NoneLocation`    |
 | `import Location from "@ember/routing/location"`                | `Ember.Location`        |
+| `import HistoryLocation from "@ember/routing/history-location"` | `Ember.HistoryLocation` |
 | `import Route from "@ember/routing/route"`                      | `Ember.Route`           |
 | `import Router from "@ember/routing/router"`                    | `Ember.Router`          |
-| `import HistoryLocation from "@ember/routing/history-location"` | `Ember.HistoryLocation` |
+| `import NoneLocation from "@ember/routing/none-location"`       | `Ember.NoneLocation`    |
 
 ### `@ember/runloop`
 | Module                                          | Global                   |
