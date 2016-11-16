@@ -149,6 +149,8 @@ initial discussion, including the idea to use scoped packages.
 * **Nested Module** - a module provided at a path _inside_ a package, like
   `import { addObserver } from "@ember/object/observers"`.
 
+## Module Naming & Organization
+
 Because our goal is to eliminate the `Ember` global object, any public classes,
 functions or properties that currently exist on the global need an equivalent
 module that can be imported.
@@ -360,6 +362,45 @@ This rule leads to including the type in the name of the module in some cases
 where it might otherwise be grouped instead. For example, instead of
 `@ember/routing/locations/none`, we prefer `@ember/routing/none-location` to
 avoid the second level of nesting.
+
+## No Non-Module Namespaces
+
+The global version of Ember includes several functions that also act as a
+namespace to group related functionality.
+
+For example, `Ember.run` can be used to run some code inside a run loop, while
+`Ember.run.scheduleOnce` is used to schedule a function onto the run loop once.
+
+Similarly, `Ember.computed` can be used to indicate a method should be treated as
+a computed property, but computed property macros also live on `Ember.computed`, like
+`Ember.computed.alias`.
+
+When consumed via modules, these functions no longer act as a namespace. That's
+because tacking these secondary functions on to the main function requires us to
+eagerly evaluate them (not to mention the potential deoptimizations in
+JavaScript VMs by adding properties to a function object).
+
+In practice, that means that this won't work:
+
+```js
+// Won't work!
+import { run } from "@ember/runloop";
+run.scheduleOnce(function() {
+  // ...
+});
+```
+
+Instead, you'd have to do this:
+
+```js
+import { scheduleOnce } from "@ember/runloop";
+scheduleOnce(function() {
+  // ...
+});
+```
+
+The [migration tool](#migration), described below, is designed to detect these
+cases and migrate them correctly.
 
 ## Migration
 
