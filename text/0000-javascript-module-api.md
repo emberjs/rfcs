@@ -696,8 +696,12 @@ APIs"—technically private, but in widespread use?
 
 How do we provide an API for addons to use modules but fall back to globals mode
 in older versions of Ember? We should ensure that, at minimum, addons can
-continue to support LTS releases. At the same time, it's critical that adding an addon doesn't
-opt your entire application back in to the entire framework.
+continue to support LTS releases. At the same time, it's critical that adding an
+addon doesn't opt your entire application back in to the entire framework.
+
+Because there is a lot of implementation-specific detail to get right here, and
+because it doesn't otherwise block landing this module naming RFC, the final
+design of API for addon authors should be broken out into a separate RFC.
 
 ### Distribution
 
