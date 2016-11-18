@@ -4,13 +4,14 @@
 
 # Summary
 
-The `Ember.K` utility function was a low level utility that has lost most of its value today.
+The `Ember.K` utility function is a low level utility that has lost most of its value today,
+like the wisdom tooth of the frameworks were we only think of it when it gives us problems.
 
 # Motivation
 
-Let's start with what is `Ember.K`.
+Let's start explaining what is `Ember.K`.
 
-It is this:
+It is this function:
 
 ```js
 Ember.K = function() {
@@ -18,7 +19,7 @@ Ember.K = function() {
 }
 ```
 
-The purpose of this function was to avoid some amount of boilerplate code
+The purpose of this utility was to avoid some amount of boilerplate code
 and limit the creation of function instances in Ember's internals.
 
 In a world of globals, effectively writing `somefn: Ember.K` was shorter
@@ -29,11 +30,12 @@ someFn: function() {
   return this;
 }
 ```
+and generated less function alocations.
 
 However with the introduction of ES6 modules and the modularization of Ember
-in process, keeping this feature would require to design an import path for it.
+in process (#176), keeping this feature would require to design an import path for it.
 
-While doable, any possible benefit in size or allocations obtained by reusing
+While doable, any possible benefit in code size or allocations obtained by reusing
 the exact same Function instance everywhere would be greatly smashed by the
 overhead both in space and CPU cycles of importing it in AMD-transpiled modules.
 It's worth noting that ES6 shorthand method syntax has made writing functions
@@ -53,16 +55,16 @@ let derp = {
   baz: Ember.K
 }
 
-derp.foo().bar().baz();
+derp.foo().bar().baz(); // O_o
 ```
 
 # Transition Path
 
 The obvious first step is to make sure Ember, Ember-data and other pieces of the
-ecosystem don't use `Ember.K.`.
+ecosystem don't use `Ember.K.` internally.
 
-The suggested path is intentionally not give `Ember.K` an import path in the new JS modules
-being discussed in #176, or give it a import path that is clearly privated.
+The suggested transition is to *intentionally* not give `Ember.K` an import path in the new JS modules
+being discussed in #176 or give it a import path that is clearly private.
 
 Part of that RFC states that some sort of shim mode will allow people to keep using
 `import Ember from 'ember';` for a while. Is in that shim where we could put a deprecation:
@@ -75,7 +77,7 @@ Ember.K = deprecatedVersionOfEmberK.
 ```
 
 As people migrate to the ES6 modules they will have to update their code since `Ember.K`
-cannot be imported without using the shim.
+cannot be used without using the shim.
 
 Perhaps the codemod that will perform this transition should be aware of this case so usages of `Ember.K`
 are replaced by the import from a private path or maybe go one step beyond and replace
