@@ -21,7 +21,7 @@ Ember.K = function() {
 The purpose of this utility was to avoid some amount of boilerplate code
 and limit the creation of function instances in Ember's internals.
 
-In a world of globals, effectively writing `somefn: Ember.K` was shorter
+In a world of globals, writing `somefn: Ember.K` was effectively shorter
 than writing
 
 ```js
@@ -29,7 +29,8 @@ someFn: function() {
   return this;
 }
 ```
-and generated less function allocations.
+
+and generated fewer function allocations.
 
 However with the introduction of ES6 modules and the modularization of Ember
 in process (#176), keeping this feature would require to design an import path for it.
