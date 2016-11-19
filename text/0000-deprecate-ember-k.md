@@ -82,13 +82,15 @@ it by an empty function.
 
 # How We Teach This
 
-Since it is a very low-level utility the amount of people that will have to
-update their code to stop using it is rather small, and probably only include
-seasoned Ember developers, so with deprecating the feature in the guides.
+Since it is a very low-level utility,
+the amount of people that will have to update their code should be a limited set of developers, working mostly on addons.
+This allows us to cover most use cases with the following strategy:
+* Improve the current documentation to help developers finding the API for the first time in the future;
+* Introduce the mandatory entry in the deprecations guide
+* Provide an automated path forward through tooling such as [ember-watson](https://github.com/abuiles/ember-watson).
 
-If this is done, as suggested, as part of #176, it will be mentioned in the
-document or blog post announcing the final transition to modules.
-
+If this RFC is done as part of #176 as suggested,
+it will be in the document or blog post announcing the final transition to modules.
 
 # Drawbacks
 
