@@ -8,18 +8,16 @@ The `Ember.K` utility function is a low level utility that has lost most of its 
 
 # Motivation
 
-Let's start explaining what is `Ember.K`.
+Let's start explaining what `Ember.K` is.
 
-It is this function:
+It is an utility function to avoid boilerplace code and limit the creation of function instances
+in Ember's internals. The source code for this API is the following:
 
 ```js
 Ember.K = function() {
   return this;
 }
 ```
-
-The purpose of this utility was to avoid some amount of boilerplate code
-and limit the creation of function instances in Ember's internals.
 
 In a world of globals, writing `somefn: Ember.K` was effectively shorter
 than writing
