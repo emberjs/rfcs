@@ -4,8 +4,7 @@
 
 # Summary
 
-The `Ember.K` utility function is a low level utility that has lost most of its value today,
-like the wisdom tooth of the frameworks were we only think of it when it gives us problems.
+The `Ember.K` utility function is a low level utility that has lost most of its value today.
 
 # Motivation
 
@@ -30,17 +29,14 @@ someFn: function() {
   return this;
 }
 ```
-and generated less function alocations.
+and generated less function allocations.
 
 However with the introduction of ES6 modules and the modularization of Ember
 in process (#176), keeping this feature would require to design an import path for it.
 
-While doable, any possible benefit in code size or allocations obtained by reusing
-the exact same Function instance everywhere would be greatly smashed by the
-overhead both in space and CPU cycles of importing it in AMD-transpiled modules.
-It's worth noting that ES6 shorthand method syntax has made writing functions
-less verbose and those functions gain an internal name property that shows in
-stack traces making debugging easier.
+While doable, the transpiled output is actually bigger then defining the functions
+inline, specially with the ES6 shorthand method syntax, and the perf difference
+of saving a few function allocations is despicable.
 
 The second downside of reusing the same instance in many places is that if for
 some reason the VM deoptimizes that function, that deoptimization is spreaded
@@ -95,7 +91,7 @@ document or blog post announcing the final transition to modules.
 
 # Drawbacks
 
-Althoug this utility is not very used, there is a chance that is used by some
+Although this utility is not very used, there is a chance that is used by some
 addons and as a placeholder of a hook that is called a lot and would trigger
 hundreds of deprecation warnings.
 
