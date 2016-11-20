@@ -55,28 +55,14 @@ derp.foo().bar().baz(); // O_o
 
 # Transition Path
 
-The obvious first step is to make sure Ember, Ember-data and other pieces of the
-ecosystem don't use `Ember.K.` internally.
+The necessary first step is to make sure Ember, Ember Data and other pieces of the
+ecosystem don't use `Ember.K` internally.
 
-The suggested transition is to *intentionally* not give `Ember.K` an import path in the new JS modules
-being discussed in #176 or give it a import path that is clearly private.
-
-Part of that RFC states that some sort of shim mode will allow people to keep using
-`import Ember from 'ember';` for a while. Is in that shim where we could put a deprecation:
-
-```js
-Ember = {};
-Ember.computed = ...
-// more shims ...
-Ember.K = deprecatedVersionOfEmberK.
-```
-
-As people migrate to the ES6 modules they will have to update their code since `Ember.K`
-cannot be used without using the shim.
-
-Perhaps the codemod that will perform this transition should be aware of this case so usages of `Ember.K`
-are replaced by the import from a private path or maybe go one step beyond and replace
-it by an empty function.
+Phased approach:
+* Deprecate `Ember.K`: Use the deprecation API to signal the deprecation, and deprecation guide entry.
+* Add rule to ember-watson
+* Extract to addon. Precedence: `active-model-adapter`, `store.filter`
+* Do not include in #176.
 
 # How We Teach This
 
