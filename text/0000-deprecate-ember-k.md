@@ -41,7 +41,7 @@ The second downside of reusing the same instance in many places is that if for
 some reason the VM deoptimizes that function, that deoptimization is spreaded
 across all the usages of `Ember.K`.
 
-Lastly, the chainable nature of `Ember.K` tends to surprise the users:
+Third, the chainable nature of `Ember.K` tends to surprise the users:
 
 ```js
 let derp = {
@@ -53,6 +53,27 @@ let derp = {
 derp.foo().bar().baz(); // O_o
 ```
 
+And lastly but more importantly for simplicity. Consider the following code:
+
+```js
+export default Component.extend({
+  onSubmit() {}
+});
+```
+
+Any JS developer will understand that this is an empty function and will probably understand
+that is a placeholder to provide your own function instead. However, JS developers that come
+across `Ember.K` for the first time will se this:
+
+
+```js
+export default Component.extend({
+  onSubmit: Ember.K
+});
+```
+
+and will think that it is some cryptic Ember magic that they have to learn.
+
 # Transition Path
 
 The necessary first step is to make sure Ember, Ember Data and other pieces of the
@@ -61,8 +82,7 @@ ecosystem don't use `Ember.K` internally.
 Phased approach:
 * Deprecate `Ember.K`: Use the deprecation API to signal the deprecation, and deprecation guide entry.
 * Add rule to ember-watson
-* Extract to addon. Precedence: `active-model-adapter`, `store.filter`
-* Do not include in #176.
+* Do not include export path in #176.
 
 # How We Teach This
 
