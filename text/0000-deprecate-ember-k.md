@@ -81,8 +81,9 @@ ecosystem don't use `Ember.K` internally.
 
 Phased approach:
 * Deprecate `Ember.K`: Use the deprecation API to signal the deprecation, and deprecation guide entry.
+  Target version will be 3.0, as usual.
 * Add rule to ember-watson
-* Do not include export path in #176.
+* Do not include export path in #176, but include it until 3.0 in the "globals" build.
 
 # How We Teach This
 
