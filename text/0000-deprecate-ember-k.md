@@ -109,7 +109,17 @@ The feature could continue to exist.
 
 # Addenda
 
-## Addendum 1 - `Ember.K` usage across published addons
+## Addendum 1 - Codemod to automatically remove all usages of `Ember.K` on any project.
+
+https://github.com/cibernox/ember-k-codemod
+
+To use it you can install it globally and invoke the command on any app or addon.
+
+```
+npm install -g ember-k-codemod && ember-k-codemod
+```
+
+## Addendum 2 - `Ember.K` usage across published addons
 
 ```
 ae-select/addon/components/ae-select.js:  action: Ember.K, // action to fire on change
