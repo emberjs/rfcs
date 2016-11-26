@@ -83,7 +83,7 @@ Phased approach:
 * Deprecate `Ember.K`: Use the deprecation API to signal the deprecation, and deprecation guide entry.
   Target version will be 3.0, as usual.
 * Add rule to ember-watson
-* Do not include export path in #176, but include it until 3.0 in the "globals" build.
+* Do not include export path in https://github.com/emberjs/rfcs/pull/176, but include it until 3.0 in the "globals" build.
 
 # How We Teach This
 
@@ -91,10 +91,10 @@ Since it is a very low-level utility,
 the amount of people that will have to update their code should be a limited set of developers, working mostly on addons.
 This allows us to cover most use cases with the following strategy:
 * Improve the current documentation to help developers finding the API for the first time in the future;
-* Introduce the mandatory entry in the deprecations guide
-* Provide an automated path forward through tooling such as [ember-watson](https://github.com/abuiles/ember-watson).
+* Provide an automated path forward through tooling such as [ember-watson](https://github.com/abuiles/ember-watson). (see Addendum 1)
+* Introduce the mandatory entry in the deprecations guide referencing the automated tooling.
 
-If this RFC is done as part of #176 as suggested,
+If this RFC is done as part of https://github.com/emberjs/rfcs/pull/176 as suggested,
 it will be in the document or blog post announcing the final transition to modules.
 
 # Drawbacks
@@ -353,7 +353,7 @@ torii/tests/unit/services/popup-test.js:    focus: Ember.K,
 torii/tests/unit/services/popup-test.js:    close: Ember.K
 ```
 
-## Addendum 2 - `Ember.K` usage via destructuring across published addons
+## Addendum 3 - `Ember.K` usage via destructuring across published addons
 
 ```
 CogAuth/tests/helpers/flash-message.js:const { K } = Ember;
