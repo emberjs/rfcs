@@ -35,7 +35,7 @@ in process (#176), keeping this feature would require to design an import path f
 
 While doable, the transpiled output is actually bigger then defining the functions
 inline, specially with the ES6 shorthand method syntax, and the perf difference
-of saving a few function allocations is despicable.
+of saving a few function allocations is negligible.
 
 The second downside of reusing the same instance in many places is that if for
 some reason the VM deoptimizes that function, that deoptimization is spreaded
