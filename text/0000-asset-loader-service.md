@@ -16,9 +16,9 @@ In particular this will help enable lazily loaded Engines which need a standard 
 
 ## Goals
 
+- Supports the Asset Manifest specification.
 - Simple API for loading assets and bundles of assets.
 - Prevent duplicate requests for the same asset.
-- Supports the Asset Manifest specification.
 - Integrates with Router.js to enable routing-based loading of assets.
 - Pluggable interface for specifying how to load assets of a given type.
 
@@ -75,9 +75,9 @@ The `LoadError` classes will be discussed in-depth in a later section.
 
 The `pushManifest` method allows configuration of the Asset Loader service by providing an object that conforms to the Asset Manifest specification. This will allow the loader to know what assets are available to load and where to find them.
 
-Additional invocations will add manifests into an internal data structure for later reference. When attempting to load bundles or perform a task that require referencing the manifest, the `bundles` property in all the manifest will be merged. In the case of merge conflicts, an error will be thrown to avoid inconsistent and unintuitive loading behavior.
+Additional invocations will add manifests into an internal data structure for later reference. When attempting to load bundles or perform tasks that require referencing the manifests, the `bundles` property in each manifest will be merged. In the case of merge conflicts, an error will be thrown to avoid inconsistent and unintuitive loading behavior.
 
-Since the Asset Loader will be integrated with Ember itself and the Asset Manifests will be Ember CLI output, this method is the interface through which to explicitly provide the external manifest to the service.
+Since the Asset Loader will not generate a manifest itself, this method is the interface through which to explicitly provide the external manifest to the service.
 
 Note: This method _must_ be called at least once prior to using `loadBundle` in order to provide the information needed to load any bundles. This should likely be done in an instance-initializer.
 
@@ -85,7 +85,7 @@ Note: This method _must_ be called at least once prior to using `loadBundle` in 
 
 ```js
 // instance-initializers/asset-loader-manifest.js
-import manifest from 'asset-manifest';
+import manifest from '../config/asset-manifest';
 
 export function initialize(instance) {
   const loader = instance.lookup('service:asset-loader');
@@ -146,7 +146,7 @@ The `defineLoader` method allows additional or replacement loading methods to be
 
 The first parameter is a string representing the type of asset this loader is responsible for (e.g., `'png'` or `'json'`). If a loader has already been defined for assets of the specified type, then that loader will be replaced with your newly defined loader.
 
-The second parameter is the loader function. A loader function accepts a `uri` string as an argument and returns a `Promise` that represents the loading status of the asset.
+The second parameter is the loader function. A loader function accepts a `uri` string as an argument and must return a `Promise` that represents the loading status of the asset.
 
 #### Example
 
@@ -175,21 +175,22 @@ Additionally, for `BundleLoadErrors` an `errors` property will contain all the e
 
 ### Provide A Way To Attempt Recovery
 
-When an asset fails we want a way to allow users to retry the load in case the failure was intermittent. However, we also want to guarantee that we aren't duplicate loading assets.
+When an asset fails we want a way to allow users to retry the load in case the failure was intermittent. However, we also want to guarantee that we aren't duplicating asset loads.
 
 To enable both of these, the `LoadError` classes specify a `retryLoad` method that is highly similar to the `loadAsset` and `loadBundle` methods.
 
-`retryLoad` will defer to either `loadAsset` or `loadBundle` depending on the specific type of load being retried. However, since those results are cached, the method will first evict the previous results from cache. The new load Promise will then be set as the cached value for the return of both `loadAsset`/`loadBundle` and `retryLoad`, this will guarantee we only ever have a single request for a given asset at one time.
+`retryLoad` will defer to either `loadAsset` or `loadBundle` depending on the specific type of load being retried. However, since those results are cached, the method will first evict the previous results from cache. The new load Promise will then be set as the cached value for the return of both `loadAsset`/`loadBundle` and `retryLoad`, this will guarantee we only ever have a single request for a given asset at a given time.
 
 # How We Teach This
 
-Asset loading should be considered an advanced topic and initially should be introduced alongside Engines. That documentation can likely live in the `ember-engines` addon until the time at which all behavior has been upstreamed into Ember core.
+Asset loading should be considered an advanced topic and should initially be introduced alongside Engines. That documentation can likely live in the `ember-engines` addon until the time at which all behavior has been upstreamed into Ember core.
 
 In the future, if additional use cases are uncovered then the documentation should be a standalone section, though it should likely continue to be considered an advanced use case that does not affect new users.
 
 # Drawbacks
 
-This introduces another concept for advanced Ember users to understand and process. It also locks us into a new standard for loading assets which will need to be maintained.
+- Introduces another concept for advanced Ember users to understand and process.
+- Locks us into a new standard for loading assets which will need to be maintained.
 
 # Alternatives
 
@@ -203,3 +204,5 @@ The other primary design considered is to use asset loading utility functions, a
   - Could return the combined manifest, but that could lead to abuse and I don't see a use case for it.
   - Specify merge/assign behavior shallow vs. deep. Maybe throw on collision? Review again once we have the implementation.
   - Could return a value to later evict a manifest, but we would need to define how that interplays with the caching.
+- Where will this Service live? In an addon or Ember core?
+- Does a public API need to be introduced in the Router for easier integration?
