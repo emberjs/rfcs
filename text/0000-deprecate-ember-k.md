@@ -132,6 +132,17 @@ Example usage:
 npm install -g ember-k-codemod && ember-k-codemod --empty
 ```
 
+Versions of [ember-watson](https://github.com/abuiles/ember-watson) starting in `0.8.5` wrap this
+codemod so you can achieve the same transformation with it:
+
+```
+ember-watson remove-ember-k --empty
+
+// or if installed as an addon
+
+ember watson:remove-ember-k --empty
+```
+
 ## Addendum 2 - `Ember.K` usage across published addons
 
 ```
