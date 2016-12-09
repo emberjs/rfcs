@@ -115,8 +115,21 @@ https://github.com/cibernox/ember-k-codemod
 
 To use it you can install it globally and invoke the command on any app or addon.
 
+The commands **requires** the user to decide the approach to replace occurenced of `Ember.K`. The
+possible flags are `--empty` and `--return-this`.
+
+- `--empty` replaces `Ember.K` with an empty function. This leads to the most idiomatic and
+  intention-revealing code, but does not allow chaining, like the original `Ember.K` did.
+  Despite of that, chaining `Ember.K` was such an uncommon patterns that we thing virtually
+  everybody can use this option.
+- `--return-this` replaces `Ember.K` with a function that just returns `this`. This allows chaining
+  like the original one.
+
+
+Example usage:
+
 ```
-npm install -g ember-k-codemod && ember-k-codemod
+npm install -g ember-k-codemod && ember-k-codemod --empty
 ```
 
 ## Addendum 2 - `Ember.K` usage across published addons
