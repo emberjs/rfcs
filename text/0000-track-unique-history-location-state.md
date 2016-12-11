@@ -15,13 +15,6 @@ Each of those nodes in the history should have their own unique scroll
 position. In order to record this position we need an ID that is unique
 for each node in the history.
 
-# Detailed design
-
-Code: [PR#14011](https://github.com/emberjs/ember.js/pull/14011)
-
-We simply add a `stateCounter` so we can track uniqueness on two
-dimesions. Both `path` and the generated `id`.
-
 This API will allow other libraries to reflect upon each location to
 determine unique state. For example,
 [ember-router-scroll](https://github.com/dollarshaveclub/ember-router-scroll)
@@ -31,6 +24,13 @@ behavior](https://github.com/dollarshaveclub/ember-router-scroll/blob/master/add
 Tracking unique state is required when setting the scroll position
 properly based upon where you are in the history stack, as described in
 [Motivation](#motivation)
+
+# Detailed design
+
+Code: [PR#14011](https://github.com/emberjs/ember.js/pull/14011)
+
+We simply add a `stateCounter` so we can track uniqueness on two
+dimensions. Both `path` and the generated `id`.
 
 # How We Teach This
 
@@ -69,7 +69,7 @@ history stack. For example, it could look like:
 
 # Drawbacks
 
-None that I'm aware of
+* The property access is writable
 
 # Alternatives
 
@@ -89,5 +89,4 @@ of the same page in the stack.
 
 # Unresolved questions
 
-Is this public API? If so, would this be considered additive or
-breaking?
+None at this time.
