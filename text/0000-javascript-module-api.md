@@ -397,6 +397,24 @@ scheduleOnce(function() {
 The [migration tool](#migration), described below, is designed to detect these
 cases and migrate them correctly.
 
+### Prototype Extensions and Other Code with Side Effects
+
+Some parts of Ember change global objects rather than exporting classes or
+functions. For example, Ember (by default) installs additional methods on
+`String.prototype`, like the `camelize()` method.
+
+Any code that has side effects lives in a module without any exports; importing
+the module is enough to produce the desired side effects. For example, if I
+wanted to make the string extensions available to the application, I could
+write:
+
+```js
+import "@ember/extensions/string"
+```
+
+Generally speaking, modules that have side effects are harder to debug and can
+cause compatibility issues, and should be avoided if possible.
+
 ## Migration
 
 To assist in assessing this RFC in real-world applications, and to help upgrade
