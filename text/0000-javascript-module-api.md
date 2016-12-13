@@ -358,7 +358,7 @@ where it might otherwise be grouped instead. For example, instead of
 `@ember/routing/locations/none`, we prefer `@ember/routing/none-location` to
 avoid the second level of nesting.
 
-## No Non-Module Namespaces
+### No Non-Module Namespaces
 
 The global version of Ember includes several functions that also act as a
 namespace to group related functionality.
