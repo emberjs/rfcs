@@ -174,7 +174,9 @@ extensions), there is also [Addendum 3 - Table of Modules with Side
 Effects](#addendum-3---table-of-modules-with-side-effects).
 
 Before diving in to these tables, however, it may be helpful to understand some
-of the thinking that guided this proposal.
+of the thinking that guided this proposal. And keep in mind, this RFC specifies
+a _baseline_ module API. Nothing here precludes adding additional models in the
+future, as we discover missing pieces.
 
 ### Use Scoped Packages
 
