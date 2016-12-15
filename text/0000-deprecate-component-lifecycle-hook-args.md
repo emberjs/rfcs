@@ -122,7 +122,7 @@ Additionally, the usage patterns present in the deprecation guide could also be 
 
 One immediate drawback of this proposal is that due to references to the arguments in community resources, there are uses of them in the wild. Updating deprecated code will have to be done mostly manually, as automation might prove difficult.
 
-Another drawback is that by the very nature of publishing this RFC, attention will be drawn to the arguments. It is our hope that this increase of awareness will be a net positive due to the clear guidance gained by users of the framework.
+Another drawback is that by the very nature of publishing this RFC, attention will be drawn to the arguments. It is our hope that the increased awareness will be a net positive due to the clear guidance gained by users of the framework.
 
 It is then our assessment that these drawbacks are outweighed by the benefits of the change.
 
