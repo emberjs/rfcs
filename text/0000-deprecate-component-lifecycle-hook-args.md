@@ -67,7 +67,7 @@ After:
 
 ``` javascript
 Ember.Component.extend({
-  didReceiveeAttrs() {
+  didReceiveAttrs() {
     let oldCoordinates = this.get('_previousCoordinates');
     let newCoordinates = this.get('coordinates');
 
