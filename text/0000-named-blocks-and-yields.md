@@ -16,8 +16,9 @@ since it was always well-liked but just happened to never come up at the right t
 ### Why ever?
 
 Components in Ember are meant to abstract away meaningfully atomic chunks of UI behavior,
-e.g. a drop down menu element (cf. [ember-power-select](https://github.com/cibernox/ember-power-select)). However, currently the interface
-to the components abstraction consists of:
+e.g. a drop down menu element (cf. [ember-power-select](https://github.com/cibernox/ember-power-select)). Currently, the interface
+to the component abstraction consists of:
+
   * any number of attributes (and optionally many positional params)
   * a single passed block (and optionally a single passed inverse block)
 
@@ -42,9 +43,9 @@ Flexibility, in high-level Ember UI components, is determined by the variability
 that can be achieved by a single component. Limiting block passing to a single, un-named block means
 we can only *wrap* the passed block in content, rather than arbitrarily compose content with multiple
 passed blocks of content. This leads to things like conditionally rendering some content based on
-passed attributes or parameters or conditionally yielding different block parameters. Yielding to
+passed attributes/parameters or conditionally yielding different block parameters. Yielding to
 multiple named blocks would make the use of a lot of the configuration that's currently happening
-unnecessary and in turn encourage composition of components instead.
+unnecessary and, in turn, encourage composition of components instead.
 
 # Detailed design
 
@@ -103,7 +104,7 @@ additional syntax:
 # How We Teach This
 
 The proposed syntax and semantics is a logical continuation of the current Ember syntax
-and semantics relating to blocks and yielding blocks. "Block" sections (`:block-b` in the example above)
+and semantics relating to blocks and yielding to blocks. "Block" sections (`:block-b` in the example above)
 of components can be directly analogized to `else` sections in the current syntax for inverse blocks.
 
 The proposed syntax can be easily taught by simply extending the current Ember guides on components,
@@ -194,10 +195,8 @@ invoke the named blocks within the main block. Something like this is described 
 in response to [the unresolved RFC](https://github.com/emberjs/rfcs/pull/72) for named yields.
 
 The primary alternative for this is to just forgo named blocks completely and rely on contextual components
-for composability. However, I feel there are problems with flexibility in content composability that that named
-blocks/yields solve contextual components just can't. Another way to achieve [something like named yields](https://github.com/emberjs/rfcs/pull/72#issuecomment-219174876)
-wihtout actually implementing it was suggested by [@foxnewsnetwork](https://github.com/foxnewsnetwork). However, the
-simulation of named yields is arguably hard to teach/understand.
+for composability. However, I feel that named blocks/yields solve problems with flexibility in content composability
+that contextual components just cannot. Another way to achieve [something like named yields](https://github.com/emberjs/rfcs/pull/72#issuecomment-219174876) wihtout actually implementing it was suggested by [@foxnewsnetwork](https://github.com/foxnewsnetwork). However, this simulation of named yields is arguably hard to teach/understand.
 
 # Unresolved questions
 
