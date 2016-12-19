@@ -16,7 +16,7 @@ since it was always a well-liked idea that just happened to never come up at the
 ### Why ever?
 
 Components in Ember are meant to abstract away meaningfully atomic chunks of UI behavior,
-e.g. a drop down menu element (cf. `ember-power-select`). However, currently the interface
+e.g. a drop down menu element (cf. [ember-power-select](https://github.com/cibernox/ember-power-select)). However, currently the interface
 to the components abstraction consists of:
   * any number of attributes (and optionally many positional params)
   * a single passed block (and optionally a single passed inverse block)
@@ -50,6 +50,13 @@ unnecessary and in turn encourage composition of components instead.
 To achieve yielding to more than one named block I propose adding the following built-in syntax
 and semantics to components:
 
+**some-component.hbs**
+```
+{{yield:block-b 'B'}}
+{{yield}}
+{{yield:block-a 'A'}}
+```
+
 **sample-invocation.hbs**
 ```
 {{#some-component}}
@@ -61,13 +68,6 @@ and semantics to components:
 {{/some-component}}
 ```
 
-**some-component.hbs**
-```
-{{yield:block-b 'B'}}
-{{yield}}
-{{yield:block-a 'A'}}
-```
-
 **Result**
 ```
 This is block B
@@ -77,7 +77,6 @@ This is block A
 
 If the default block is omitted, to ease developer ergonomics I propose the following
 additional syntax:
-
 
 **some-component.hbs**
 ```
@@ -99,7 +98,6 @@ additional syntax:
 This is block B
 This is block A
 ```
-
 
 # How We Teach This
 
@@ -125,6 +123,12 @@ Ultimately there was no consensus on a syntax that was both clear and easy to te
 The main criticism of the closed RFC was that the proposed syntax was dynamic and not statically analyzable.
 A dynamic version of this RFC would also be possible, looking something like this:
 
+**some-component.hbs**
+```
+{{yield to="block-b" 'B'}}
+{{yield to="block-a" 'A'}}
+```
+
 **sample-invocation.hbs**
 ```
 {{#some-component:block 'block-a' as |block|}}
@@ -132,12 +136,6 @@ A dynamic version of this RFC would also be possible, looking something like thi
 {{block 'block-b' as |block|}}
   This is block {{block}}
 {{/some-component}}
-```
-
-**some-component.hbs**
-```
-{{yield to="block-b" 'B'}}
-{{yield to="block-a" 'A'}}
 ```
 
 **Result**
@@ -157,7 +155,7 @@ in response to [the unresolved RFC](https://github.com/emberjs/rfcs/pull/72) for
 The primary alternative for this is to just forgo named blocks completely and rely on contextual components
 for composability. However, I feel there are problems with flexibility in content composability that that named 
 blocks/yields solve contextual components just can't. Another way to achieve [something like named yields](https://github.com/emberjs/rfcs/pull/72#issuecomment-219174876) 
-wihtout actually implementing it was suggested by [foxnewsnetwork](https://github.com/foxnewsnetwork). However, the
+wihtout actually implementing it was suggested by [@foxnewsnetwork](https://github.com/foxnewsnetwork). However, the
 simulation of named yields is arguably hard to teach/understand.
 
 # Unresolved questions
