@@ -11,7 +11,7 @@ Allow yielding to multiple named blocks in an Ember component.
 ### Why now?
 
 Glimmer is stable and Ember 2.x has been around for a while. It's about time to get back to this idea
-since it was always a well-liked idea that just happened to never come up at the right time.
+since it was always a well-liked that just happened to never come up at the right time.
 
 ### Why ever?
 
@@ -20,6 +20,7 @@ e.g. a drop down menu element (cf. [ember-power-select](https://github.com/ciber
 to the components abstraction consists of:
   * any number of attributes (and optionally many positional params)
   * a single passed block (and optionally a single passed inverse block)
+
 You will note that you can pass many attributes or params through a component's interface,
 but only a single block. I think this has led to a trend in how we design high-level, complex
 components which have to be flexible to fit many use cases. We've started building components
@@ -111,9 +112,43 @@ as this is merely the addition of syntax that adds opt-in functionality.
 
 The proposal adds more syntax to component invocation so it increases general learning curve.
 The proposed syntax also might face some implementation challenges since it probably goes deep
-into glimmer internals of how yields work. It also sort of duplicates the limited functionality
+into glimmer internals of how yields work.
+
+The proposal conflicts with the current behavior of `else` inverse blocks. It sort of duplicates the limited functionality
 provided by the current `yield` helper when called with the `to` attribute for yielding to the
-inverse block.
+inverse block. If implemented it could create some ambiguity around yielding to a block named "else", for example:
+
+> **some-component.hbs**
+> ```hbs
+> {{yield "default"}}
+> {{yield:else "inverse"}}
+> ```
+>
+> **sample-invocation.hbs**
+> ```hbs
+> {{#some-component as |block|}}
+>   This is block {{block}}
+> {{:else as |block|}}
+>   This is block {{block}}
+> {{/some-component}}
+> ```
+
+Compared to the current syntax:
+
+> **some-component.hbs**
+> ```hbs
+> {{yield "default"}}
+> {{yield to="inverse" "inverse"}}
+> ```
+>
+> **sample-invocation.hbs**
+> ```hbs
+> {{#some-component as |block|}}
+>   This is block {{block}}
+> {{else as |block|}}
+>   This is block {{block}}
+> {{/some-component}}
+> ```
 
 # Alternatives
 
@@ -125,7 +160,7 @@ Ultimately there was no consensus on a syntax that was both clear and easy to te
 
 ### Other alternatives
 
-The main criticism of [the closed RFC]([this closed RFC](https://github.com/emberjs/rfcs/pull/43)) was that the proposed syntax was dynamic and not statically analyzable.
+The main criticism of [the closed RFC](https://github.com/emberjs/rfcs/pull/43) was that the proposed syntax was dynamic and not statically analyzable.
 A dynamic version of this proposal would also be possible, looking something like this:
 
 > **some-component.hbs**
