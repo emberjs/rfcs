@@ -200,8 +200,8 @@ simulation of named yields is arguably hard to teach/understand.
 
 # Unresolved questions
 
-Is the colon syntax readable? I tried pretty much every delimiter character and settled on colon.
-What is the technical feasibility as far as changes to Glimmer that would have to be made?
-As [@mmun](https://github.com/mmun) mentioned in [the closed RFC](https://github.com/emberjs/rfcs/pull/43) for multiple yields, could this be better
+* Is the colon syntax readable? I tried pretty much every delimiter character and settled on colon.
+* What is the technical feasibility as far as changes to Glimmer that would have to be made?
+* As [@mmun](https://github.com/mmun) mentioned in [the closed RFC](https://github.com/emberjs/rfcs/pull/43) for multiple yields, could this be better
 implemented as a handlebars language feature that implements passing blocks around, foregoing semantic/syntactic
 interactions with yield altogether? What are the pros and cons to that route?
