@@ -10,7 +10,7 @@ Allow yielding to multiple named blocks in an Ember component.
 
 ### Why now?
 
-Glimmer is stable and Ember 2.x has been around for a while. It's about time to get back to this idea 
+Glimmer is stable and Ember 2.x has been around for a while. It's about time to get back to this idea
 since it was always a well-liked idea that just happened to never come up at the right time.
 
 ### Why ever?
@@ -50,61 +50,61 @@ unnecessary and in turn encourage composition of components instead.
 To achieve yielding to more than one named block I propose adding the following built-in syntax
 and semantics to components:
 
-**some-component.hbs**
-```
-{{yield:block-b 'B'}}
-{{yield}}
-{{yield:block-a 'A'}}
-```
-
-**sample-invocation.hbs**
-```
-{{#some-component}}
-  This is the default, un-named block
-{{:block-a as |block|}}
-  This is block {{block}}
-{{:block-b as |block|}}
-  This is block {{block}}
-{{/some-component}}
-```
-
-**Result**
-```
-This is block B
-This is the default, un-named block
-This is block A
-```
+> **some-component.hbs**
+> ```hbs
+> {{yield:block-b 'B'}}
+> {{yield}}
+> {{yield:block-a 'A'}}
+> ```
+>
+> **sample-invocation.hbs**
+> ```hbs
+> {{#some-component}}
+>   This is the default, un-named block
+> {{:block-a as |block|}}
+>   This is block {{block}}
+> {{:block-b as |block|}}
+>   This is block {{block}}
+> {{/some-component}}
+> ```
+>
+> **Result**
+> ```
+> This is block B
+> This is the default, un-named block
+> This is block A
+> ```
 
 If the default block is omitted, to ease developer ergonomics I propose the following
 additional syntax:
 
-**some-component.hbs**
-```
-{{yield:block-b 'B'}}
-{{yield:block-a 'A'}}
-```
-
-**sample-invocation.hbs**
-```
-{{#some-component:block-a as |block|}}
-  This is block {{block}}
-{{:block-b as |block|}}
-  This is block {{block}}
-{{/some-component}}
-```
-
-**Result**
-```
-This is block B
-This is block A
-```
+> **some-component.hbs**
+> ```hbs
+> {{yield:block-b 'B'}}
+> {{yield:block-a 'A'}}
+> ```
+>
+> **sample-invocation.hbs**
+> ```hbs
+> {{#some-component:block-a as |block|}}
+>   This is block {{block}}
+> {{:block-b as |block|}}
+>   This is block {{block}}
+> {{/some-component}}
+> ```
+>
+> **Result**
+> ```
+> This is block B
+> This is block A
+> ```
 
 # How We Teach This
 
 The proposed syntax and semantics is a logical continuation of the current Ember syntax
-and semantics relating to blocks and yielding blocks. The "block" sections (`:block-b` in the example above) 
+and semantics relating to blocks and yielding blocks. The "block" sections (`:block-b` in the example above)
 of components can directly analogized to `else` sections in the current syntax for inverse blocks.
-The proposed syntax can be easily taught by simply extending the current Ember guides on components, 
+The proposed syntax can be easily taught by simply extending the current Ember guides on components,
 as this is merely the addition of syntax that adds opt-in functionality.
 
 # Drawbacks
@@ -117,32 +117,37 @@ inverse block.
 
 # Alternatives
 
-This RFC was inspired by and draws knowledge from [this unresolved RFC](https://github.com/emberjs/rfcs/pull/72)
-for named yields and [this closed RFC](https://github.com/emberjs/rfcs/pull/43) for a similar feature ask.
+### Past RFCs
+
+This proposal was inspired by and draws knowledge from [this unresolved RFC](https://github.com/emberjs/rfcs/pull/72)
+for named yields and [this closed RFC](https://github.com/emberjs/rfcs/pull/43) for multiple yields.
 Ultimately there was no consensus on a syntax that was both clear and easy to teach but also technically desirable.
-The main criticism of the closed RFC was that the proposed syntax was dynamic and not statically analyzable.
-A dynamic version of this RFC would also be possible, looking something like this:
 
-**some-component.hbs**
-```
-{{yield to="block-b" 'B'}}
-{{yield to="block-a" 'A'}}
-```
+### Other alternatives
 
-**sample-invocation.hbs**
-```
-{{#some-component:block 'block-a' as |block|}}
-  This is block {{block}}
-{{block 'block-b' as |block|}}
-  This is block {{block}}
-{{/some-component}}
-```
+The main criticism of [the closed RFC]([this closed RFC](https://github.com/emberjs/rfcs/pull/43)) was that the proposed syntax was dynamic and not statically analyzable.
+A dynamic version of this proposal would also be possible, looking something like this:
 
-**Result**
-```
-This is block B
-This is block A
-```
+> **some-component.hbs**
+> ```hbs
+> {{yield to="block-b" 'B'}}
+> {{yield to="block-a" 'A'}}
+> ```
+>
+> **sample-invocation.hbs**
+> ```hbs
+> {{#some-component:block 'block-a' as |block|}}
+>   This is block {{block}}
+> {{block 'block-b' as |block|}}
+>   This is block {{block}}
+> {{/some-component}}
+> ```
+>
+> **Result**
+> ```
+> This is block B
+> This is block A
+> ```
 
 The dynamic alternative follows the current syntax and semantics around inverse blocks more closely, but since
 yielding to inverse blocks is not even very well documented, that may not be as salient as the benefits
@@ -153,8 +158,8 @@ invoke the named blocks within the main block. Something like this is described 
 in response to [the unresolved RFC](https://github.com/emberjs/rfcs/pull/72) for named yields.
 
 The primary alternative for this is to just forgo named blocks completely and rely on contextual components
-for composability. However, I feel there are problems with flexibility in content composability that that named 
-blocks/yields solve contextual components just can't. Another way to achieve [something like named yields](https://github.com/emberjs/rfcs/pull/72#issuecomment-219174876) 
+for composability. However, I feel there are problems with flexibility in content composability that that named
+blocks/yields solve contextual components just can't. Another way to achieve [something like named yields](https://github.com/emberjs/rfcs/pull/72#issuecomment-219174876)
 wihtout actually implementing it was suggested by [@foxnewsnetwork](https://github.com/foxnewsnetwork). However, the
 simulation of named yields is arguably hard to teach/understand.
 
