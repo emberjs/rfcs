@@ -8,6 +8,13 @@ Allow yielding to multiple named blocks in an Ember component.
 
 # Motivation
 
+### Why now?
+
+Glimmer is stable and Ember 2.x has been around for a while. It's about time to get back to this idea 
+since it was always a well-liked idea that just happened to never come up at the right time.
+
+### Why ever?
+
 Components in Ember are meant to abstract away meaningfully atomic chunks of UI behavior,
 e.g. a drop down menu element (cf. `ember-power-select`). However, currently the interface
 to the components abstraction consits of:
@@ -61,7 +68,7 @@ and semantics to components:
 {{yield:block-a 'A'}}
 ```
 
-**result**
+**Result**
 ```
 This is block B
 This is the default, un-named block
@@ -87,7 +94,7 @@ additional syntax:
 {{/some-component}}
 ```
 
-**result**
+**Result**
 ```
 This is block B
 This is block A
@@ -97,10 +104,10 @@ This is block A
 # How We Teach This
 
 The proposed syntax and semantics is a logical continuation of the current Ember syntax
-and semantics relating to blocks and yielding blocks. The `block` sections of components
-can directly analgized to `else` sections in the existing syntax. The proposed syntax can
-also easily be taught by simply extending the current Ember guides on components, as this
-is merely the addition of syntax that adds opt-in functionality.
+and semantics relating to blocks and yielding blocks. The "block" sections (`:block-b` in the example above) 
+of components can directly analgized to `else` sections in the current syntax for inverse blocks.
+The proposed syntax can be easily taught by simply extending the current Ember guides on components, 
+as this is merely the addition of syntax that adds opt-in functionality.
 
 # Drawbacks
 
@@ -133,7 +140,7 @@ A dynamic version of this RFC would also be possible, looking something like thi
 {{yield to="block-a" 'A'}}
 ```
 
-**result**
+**Result**
 ```
 This is block B
 This is block A
@@ -149,8 +156,8 @@ contextual components can't solve that named blocks/yields do.
 
 # Unresolved questions
 
-Is the colon syntax readable? I tried pretty much every delimiter character, and settled on colon.
+Is the colon syntax readable? I tried pretty much every delimiter character and settled on colon.
 What is the technical feasibility as far as changes to Glimmer that would have to be made?
-As [@mmun](https://github.com/mmun) mentioned in [the closed RFC](https://github.com/emberjs/rfcs/pull/43) multiple yields, could this be better
+As [@mmun](https://github.com/mmun) mentioned in [the closed RFC](https://github.com/emberjs/rfcs/pull/43) for multiple yields, could this be better
 implemented as a handlebars language feature that implements passing blocks around, foregoing semantic/syntactic
-interactions with yield altogether?
+interactions with yield altogether? What are the pros and cons to that route?
