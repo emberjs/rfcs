@@ -36,9 +36,9 @@ or you can break the logic into multiple functions that call each other. Logic w
 function with many configuration parameters will always be less flexible, maintainable, and reusable
 than logic contained in many atomic functions.
 
-In Ember components we achieve composability by passing blocks that call other components.
+In Ember components, we achieve composability by passing blocks that call other components.
 Configurability, on the other hand, is achieved by passing attributes and positional parameters.
-Flexibility in high-level Ember UI components is determined by the variability of rendered content
+Flexibility, in high-level Ember UI components, is determined by the variability of rendered content
 that can be achieved by a single component. Limiting block passing to a single, un-named block means
 we can only *wrap* the passed block in content, rather than arbitrarily compose content with multiple
 passed blocks of content. This leads to things like conditionally rendering some content based on
