@@ -13,20 +13,22 @@ ember-cli using `ember init`.
 
 # Detailed design
 
-We'd like a declarative API for blueprints to delete files instead of only
+We'd like an API for blueprints to delete files instead of only
 create. It would be essentially syntactic sugar for removing the file yourself
-in an `afterInstall` hook. It would be an array on the blueprint's `index.js`.
+in an `afterInstall` hook. It would be a returned array on the blueprint's `index.js`.
 
 ```js
 // ember-cli/bluprints/blah/index.js
 module.exports = {
   // ...
 
-  oldFilesToRemove: [
-    'brocfile.js',
-    'LICENSE.MD',
-    'testem.json'
-  ]
+  get oldFilesToRemove() {
+    return [
+      'brocfile.js',
+      'LICENSE.MD',
+      'testem.json'
+    ];
+  }
 };
 ```
 
