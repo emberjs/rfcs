@@ -11,7 +11,7 @@ Allow yielding to multiple named blocks in an Ember component.
 ### Why now?
 
 Glimmer is stable and Ember 2.x has been around for a while. It's about time to get back to this idea
-since it was always a well-liked that just happened to never come up at the right time.
+since it was always well-liked but just happened to never come up at the right time.
 
 ### Why ever?
 
