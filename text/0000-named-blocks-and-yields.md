@@ -103,10 +103,11 @@ additional syntax:
 # How We Teach This
 
 The proposed syntax and semantics is a logical continuation of the current Ember syntax
-and semantics relating to blocks and yielding blocks. The "block" sections (`:block-b` in the example above)
-of components can directly analogized to `else` sections in the current syntax for inverse blocks.
+and semantics relating to blocks and yielding blocks. "Block" sections (`:block-b` in the example above)
+of components can be directly analogized to `else` sections in the current syntax for inverse blocks.
+
 The proposed syntax can be easily taught by simply extending the current Ember guides on components,
-as this is merely the addition of syntax that adds opt-in functionality.
+as it is merely the addition of syntax that provides opt-in functionality.
 
 # Drawbacks
 
