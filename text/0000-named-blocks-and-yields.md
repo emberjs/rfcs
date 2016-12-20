@@ -8,9 +8,15 @@ Allow yielding to multiple named blocks in an Ember component.
 
 # Motivation
 
-**Why now?**
-
-Glimmer is stable and Ember 2.x has been around for a while. It's about time to get back to this idea since it was always well-liked but just happened to never come up at the right time.
+<details open=true>
+ <summary>
+  **Why now?**
+ </summary>
+ <p></p>
+ <p>
+  Glimmer is stable and Ember 2.x has been around for a while. It's about time to get back to this idea since it was always well-liked but just happened to never come up at the right time.
+ </p>
+</details>
 
 <details>
  <summary>
