@@ -47,6 +47,19 @@ Allow yielding to multiple named blocks in an Ember component.
 
 To achieve yielding to more than one named block I propose adding the following built-in syntax and semantics to components:
 
+```
+{{yield:<block-name> ...blockParams}}
+```
+```
+{{#<component-name> as |...blockParams|}}
+  ...stuff
+{{:<block-name> as |...blockParams|}}
+ ...other stuff
+{{/<component-name>}}
+```
+
+The following is a concrete example of this:
+
 > **some-component.hbs**
 > ```hbs
 > {{yield:block-b 'B'}}
@@ -75,6 +88,16 @@ To achieve yielding to more than one named block I propose adding the following 
 If the default block is omitted, to ease developer ergonomics I propose the following
 additional syntax:
 
+```
+{{#<component-name>:<block-name> as |...blockParams|}}
+  ...stuff
+{{:<block-name>}}
+ ...other stuff
+{{/<component-name>}}
+```
+
+The following is a concrete example of this:
+
 > **some-component.hbs**
 > ```hbs
 > {{yield:block-b 'B'}}
@@ -96,7 +119,7 @@ additional syntax:
 > This is block A
 > ```
 
-We would also need to include a corresponding continuation of the `hasBlock` property syntax currently available in component templates (credit goes to [@bendemboski](https://github.com/bendemboski) for this addition):
+We would also need to include a corresponding continuation of the `hasBlock` property syntax currently available in component templates, namely just `hasBlock:<block-name>` (credit goes to [@bendemboski](https://github.com/bendemboski) for this addition):
 
 > **some-component.hbs**
 > ```hbs
