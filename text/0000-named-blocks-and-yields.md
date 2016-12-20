@@ -16,18 +16,25 @@ Glimmer is stable and Ember 2.x has been around for a while. It's about time to 
  <summary>
   **Why ever?**
  </summary>
+ <p></p>
  <p>
    Components in Ember are meant to abstract away meaningfully atomic chunks of UI behavior, e.g. a drop down menu element (cf. [ember-power-select](https://github.com/cibernox/ember-power-select)). Currently, the interface to the component abstraction consists of:
-
-   * any number of attributes (and optionally many positional params)
-   * a single passed block (and optionally a single passed inverse block)
-
-   You will note that you can pass many attributes or params through a component's interface, but only a single block. I think this has led to a trend in how we design high-level, complex components which have to be flexible to fit many use cases. We've started building components that are more configurable than they are composable.
-
-   The goal of both configurability and composability is to provide flexibility in how you go from input to output over a collection of interfaces in a system. Gaining this desired flexibility via configurability tends to lead to fewer interfaces but more parameters to those interfaces. Composability usually means many, more atomic interfaces that fit together with less parameters. Take the example of JS functions: you can perform complex logic on input by calling a single functions that takes in the input plus a giant config object telling you how to handle the input, or you can break the logic into multiple functions that call each other. Logic written in a single function with many configuration parameters will always be less flexible, maintainable, and reusable than logic contained in many atomic functions.
-
-   In Ember components, we achieve composability by passing blocks that call other components. Configurability, on the other hand, is achieved by passing attributes and positional parameters. Flexibility, in high-level Ember UI components, is determined by the variability of rendered content that can be achieved by a single component. Limiting block passing to a single, un-named block means we can only *wrap* the passed block in content, rather than arbitrarily compose content with multiple passed blocks of content. This leads to things like conditionally rendering some content based on passed attributes/parameters or conditionally yielding different block parameters. Yielding to multiple named blocks would make the use of a lot of the configuration that's currently happening unnecessary and, in turn, encourage composition of components instead.
  </p>
+ 
+ <ul>
+  <li>any number of attributes (and optionally many positional params)</li>
+  <li>a single passed block (and optionally a single passed inverse block)</li>
+ </ul>
+ 
+ <p>
+   You will note that you can pass many attributes or params through a component's interface, but only a single block. I think this has led to a trend in how we design high-level, complex components which have to be flexible to fit many use cases. We've started building components that are more configurable than they are composable.
+ </p>
+ <p>
+   The goal of both configurability and composability is to provide flexibility in how you go from input to output over a collection of interfaces in a system. Gaining this desired flexibility via configurability tends to lead to fewer interfaces but more parameters to those interfaces. Composability usually means many, more atomic interfaces that fit together with less parameters. Take the example of JS functions: you can perform complex logic on input by calling a single functions that takes in the input plus a giant config object telling you how to handle the input, or you can break the logic into multiple functions that call each other. Logic written in a single function with many configuration parameters will always be less flexible, maintainable, and reusable than logic contained in many atomic functions.
+  </p>
+  <p>
+   In Ember components, we achieve composability by passing blocks that call other components. Configurability, on the other hand, is achieved by passing attributes and positional parameters. Flexibility, in high-level Ember UI components, is determined by the variability of rendered content that can be achieved by a single component. Limiting block passing to a single, un-named block means we can only *wrap* the passed block in content, rather than arbitrarily compose content with multiple passed blocks of content. This leads to things like conditionally rendering some content based on passed attributes/parameters or conditionally yielding different block parameters. Yielding to multiple named blocks would make the use of a lot of the configuration that's currently happening unnecessary and, in turn, encourage composition of components instead.
+  </p>
 </details>
 
 # Detailed design
