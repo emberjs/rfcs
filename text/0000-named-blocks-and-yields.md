@@ -8,22 +8,27 @@ Allow yielding to multiple named blocks in an Ember component.
 
 # Motivation
 
-### Why now?
+**Why now?**
 
 Glimmer is stable and Ember 2.x has been around for a while. It's about time to get back to this idea since it was always well-liked but just happened to never come up at the right time.
 
-### Why ever?
+<details>
+ <summary>
+  **Why ever?**
+ </summary>
+ <p>
+   Components in Ember are meant to abstract away meaningfully atomic chunks of UI behavior, e.g. a drop down menu element (cf. [ember-power-select](https://github.com/cibernox/ember-power-select)). Currently, the interface to the component abstraction consists of:
 
-Components in Ember are meant to abstract away meaningfully atomic chunks of UI behavior, e.g. a drop down menu element (cf. [ember-power-select](https://github.com/cibernox/ember-power-select)). Currently, the interface to the component abstraction consists of:
+   * any number of attributes (and optionally many positional params)
+   * a single passed block (and optionally a single passed inverse block)
 
-  * any number of attributes (and optionally many positional params)
-  * a single passed block (and optionally a single passed inverse block)
+   You will note that you can pass many attributes or params through a component's interface, but only a single block. I think this has led to a trend in how we design high-level, complex components which have to be flexible to fit many use cases. We've started building components that are more configurable than they are composable.
 
-You will note that you can pass many attributes or params through a component's interface, but only a single block. I think this has led to a trend in how we design high-level, complex components which have to be flexible to fit many use cases. We've started building components that are more configurable than they are composable.
+   The goal of both configurability and composability is to provide flexibility in how you go from input to output over a collection of interfaces in a system. Gaining this desired flexibility via configurability tends to lead to fewer interfaces but more parameters to those interfaces. Composability usually means many, more atomic interfaces that fit together with less parameters. Take the example of JS functions: you can perform complex logic on input by calling a single functions that takes in the input plus a giant config object telling you how to handle the input, or you can break the logic into multiple functions that call each other. Logic written in a single function with many configuration parameters will always be less flexible, maintainable, and reusable than logic contained in many atomic functions.
 
-The goal of both configurability and composability is to provide flexibility in how you go from input to output over a collection of interfaces in a system. Gaining this desired flexibility via configurability tends to lead to fewer interfaces but more parameters to those interfaces. Composability usually means many, more atomic interfaces that fit together with less parameters. Take the example of JS functions: you can perform complex logic on input by calling a single functions that takes in the input plus a giant config object telling you how to handle the input, or you can break the logic into multiple functions that call each other. Logic written in a single function with many configuration parameters will always be less flexible, maintainable, and reusable than logic contained in many atomic functions.
-
-In Ember components, we achieve composability by passing blocks that call other components. Configurability, on the other hand, is achieved by passing attributes and positional parameters. Flexibility, in high-level Ember UI components, is determined by the variability of rendered content that can be achieved by a single component. Limiting block passing to a single, un-named block means we can only *wrap* the passed block in content, rather than arbitrarily compose content with multiple passed blocks of content. This leads to things like conditionally rendering some content based on passed attributes/parameters or conditionally yielding different block parameters. Yielding to multiple named blocks would make the use of a lot of the configuration that's currently happening unnecessary and, in turn, encourage composition of components instead.
+   In Ember components, we achieve composability by passing blocks that call other components. Configurability, on the other hand, is achieved by passing attributes and positional parameters. Flexibility, in high-level Ember UI components, is determined by the variability of rendered content that can be achieved by a single component. Limiting block passing to a single, un-named block means we can only *wrap* the passed block in content, rather than arbitrarily compose content with multiple passed blocks of content. This leads to things like conditionally rendering some content based on passed attributes/parameters or conditionally yielding different block parameters. Yielding to multiple named blocks would make the use of a lot of the configuration that's currently happening unnecessary and, in turn, encourage composition of components instead.
+ </p>
+</details>
 
 # Detailed design
 
@@ -130,70 +135,89 @@ The proposed syntax can be easily taught by simply extending the current Ember g
 
 The proposal adds more syntax to component invocation so it increases general learning curve. The proposed syntax also might face some implementation challenges since it probably goes deep into glimmer internals of how yields work.
 
-The proposal conflicts with the current behavior of `else` inverse blocks. It sort of duplicates the limited functionality provided by the current `yield` helper when called with the `to` attribute for yielding to the inverse block. If implemented it could create some ambiguity around yielding to a block named "else", for example:
+The proposal conflicts with the current behavior of `else` inverse blocks. It sort of duplicates the limited functionality provided by the current `yield` helper when called with the `to` attribute for yielding to the inverse block. If implemented it could create some ambiguity around yielding to a block named "else", as illustrated below.
 
-> **some-component.hbs**
-> ```hbs
-> {{yield "default"}}
-> {{yield:else "inverse"}}
-> ```
->
-> **sample-invocation.hbs**
-> ```hbs
-> {{#some-component as |block|}}
->   This is block {{block}}
-> {{:else as |block|}}
->   This is block {{block}}
-> {{/some-component}}
-> ```
+<details>
+ <summary>
+  Alternative to inverse blocks introduced by this proposal
+ </summary>
+ <p>
+  > **some-component.hbs**
+  > ```hbs
+  > {{yield "default"}}
+  > {{yield:else "inverse"}}
+  > ```
+  >
+  > **sample-invocation.hbs**
+  > ```hbs
+  > {{#some-component as |block|}}
+  >   This is block {{block}}
+  > {{:else as |block|}}
+  >   This is block {{block}}
+  > {{/some-component}}
+  > ```
+ </p>
+</details>
 
-Compared to the current syntax:
-
-> **some-component.hbs**
-> ```hbs
-> {{yield "default"}}
-> {{yield to="inverse" "inverse"}}
-> ```
->
-> **sample-invocation.hbs**
-> ```hbs
-> {{#some-component as |block|}}
->   This is block {{block}}
-> {{else as |block|}}
->   This is block {{block}}
-> {{/some-component}}
-> ```
+<details>
+ <summary>
+  Compared to the current syntax
+ </summary>
+ <p>
+  > **some-component.hbs**
+  > ```hbs
+  > {{yield "default"}}
+  > {{yield to="inverse" "inverse"}}
+  > ```
+  >
+  > **sample-invocation.hbs**
+  > ```hbs
+  > {{#some-component as |block|}}
+  >   This is block {{block}}
+  > {{else as |block|}}
+  >   This is block {{block}}
+  > {{/some-component}}
+  > ```
+ </p>
+</details>
 
 # Alternatives
 
-### Past RFCs
+**Past RFCs**
 
 This proposal was inspired by and draws knowledge from [this unresolved RFC](https://github.com/emberjs/rfcs/pull/72) for named yields and [this closed RFC](https://github.com/emberjs/rfcs/pull/43) for multiple yields. Ultimately there was no consensus on a syntax that was both clear and easy to teach but also technically desirable.
 
-### Implementation alternatives
+**Implementation alternatives**
 
-The main criticism of [the closed RFC](https://github.com/emberjs/rfcs/pull/43) was that the proposed syntax was dynamic and not statically analyzable. A dynamic version of this proposal would also be possible, looking something like this:
+The main criticism of [the closed RFC](https://github.com/emberjs/rfcs/pull/43) was that the proposed syntax was dynamic and not statically analyzable. A dynamic version of this proposal would also be possible, as illustrated below.
 
-> **some-component.hbs**
-> ```hbs
-> {{yield to="block-b" 'B'}}
-> {{yield to="block-a" 'A'}}
-> ```
->
-> **sample-invocation.hbs**
-> ```hbs
-> {{#some-component:block 'block-a' as |block|}}
->   This is block {{block}}
-> {{block 'block-b' as |block|}}
->   This is block {{block}}
-> {{/some-component}}
-> ```
->
-> **Result**
-> ```
-> This is block B
-> This is block A
-> ```
+<details>
+ <summary>
+  Dynamic named block/yields implementation
+ </summary>
+ <p>
+  > **some-component.hbs**
+  > ```hbs
+  > {{yield to="block-b" 'B'}}
+  > {{yield to="block-a" 'A'}}
+  > ```
+  >
+  > **sample-invocation.hbs**
+  > ```hbs
+  > {{#some-component:block 'block-a' as |block|}}
+  >   This is block {{block}}
+  > {{block 'block-b' as |block|}}
+  >   This is block {{block}}
+  > {{/some-component}}
+  > ```
+  >
+  > **Result**
+  > ```
+  > This is block B
+  > This is block A
+  > ```
+ </p>
+</details>
 
 The dynamic alternative follows the current syntax and semantics around inverse blocks more closely, but since yielding to inverse blocks is not even very well documented, that may not be as salient as the benefits of static analyzability.
 
@@ -201,42 +225,53 @@ Another alternative is to automagically yield some sort of hash of named blocks 
 
 The primary alternative for this is to just forgo named blocks completely and rely on contextual components for composability. However, I feel that named blocks/yields solve problems with flexibility in content composability that contextual components just cannot. Another way to achieve [something like named yields](https://github.com/emberjs/rfcs/pull/72#issuecomment-219174876) wihtout actually implementing it was suggested by [@foxnewsnetwork](https://github.com/foxnewsnetwork). However, this simulation of named yields is arguably hard to teach/understand.
 
-### Syntax alternatives
+**Syntax alternatives**
 
 Some people (including me) are having doubts about the `:` delimiter syntax for named block and yield invocation. I was also considering `@` or `::`, as previewed below.
 
-With `@`:
-> **some-component-at.hbs**
-> ```hbs
-> {{yield@block-b 'B'}}
-> {{yield@block-a 'A'}}
-> ```
->
-> **sample-invocation-at-syntax.hbs**
-> ```hbs
-> {{#some-component-at@block-a as |block|}}
->   This is block {{block}}
-> {{@block-b as |block|}}
->   This is block {{block}}
-> {{/some-component-at}}
-> ```
->
+<details>
+ <summary>
+  With `@`
+ </summary>
+ <p>
+  > **some-component-at.hbs**
+  > ```hbs
+  > {{yield@block-b 'B'}}
+  > {{yield@block-a 'A'}}
+  > ```
+  >
+  > **sample-invocation-at-syntax.hbs**
+  > ```hbs
+  > {{#some-component-at@block-a as |block|}}
+  >   This is block {{block}}
+  > {{@block-b as |block|}}
+  >   This is block {{block}}
+  > {{/some-component-at}}
+  > ```
+ </p>
+</details>
 
-With `::`:
-> **some-component-double.hbs**
-> ```hbs
-> {{yield::block-b 'B'}}
-> {{yield::block-a 'A'}}
-> ```
->
-> **sample-invocation-double-syntax.hbs**
-> ```hbs
-> {{#some-component-double::block-a as |block|}}
->   This is block {{block}}
-> {{::block-b as |block|}}
->   This is block {{block}}
-> {{/some-component-double}}
-> ```
+<details>
+ <summary>
+  With `::`
+ </summary>
+ <p>
+  > **some-component-double.hbs**
+  > ```hbs
+  > {{yield::block-b 'B'}}
+  > {{yield::block-a 'A'}}
+  > ```
+  >
+  > **sample-invocation-double-syntax.hbs**
+  > ```hbs
+  > {{#some-component-double::block-a as |block|}}
+  >   This is block {{block}}
+  > {{::block-b as |block|}}
+  >   This is block {{block}}
+  > {{/some-component-double}}
+  > ```
+ </p>
+</details>
 
 # Unresolved questions
 
