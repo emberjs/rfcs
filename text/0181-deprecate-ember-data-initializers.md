@@ -6,7 +6,7 @@
 
 The goal of this RFC is to remove the `data-adapter`, `injectStore`,
 `transforms`, and `store` Ember application initializers that Ember Data injects
-into apps.  The `ember-data` initializer not be changed and any code
+into apps.  The `ember-data` initializer will not be changed and any code
 that previously depended on the ordering of these initializers (via
 the `before` or `after` properties on an initalizer) can be
 changed to use the `ember-data` initializers for ordering.
