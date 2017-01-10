@@ -816,6 +816,7 @@ _(Ed. note: These tables are automatically generated from the scripts in the [co
 | `Ember.Helper`                        | `import Helper from "@ember/component/helper"`                             |
 | `Ember.Helper.helper`                 | `import { helper } from "@ember/component/helper"`                         |
 | `Ember.HistoryLocation`               | `import HistoryLocation from "@ember/routing/history-location"`            |
+| `Ember.LinkComponent`                 | `import LinkComponent from "@ember/routing/link-component"`                |
 | `Ember.Location`                      | `import Location from "@ember/routing/location"`                           |
 | `Ember.Map`                           | `import EmberMap from "@ember/map"`                                        |
 | `Ember.MapWithDefault`                | `import MapWithDefault from "@ember/map/with-default"`                     |
@@ -1079,6 +1080,7 @@ Each package is sorted by module name, then export name.
 | `import AutoLocation from "@ember/routing/auto-location"`       | `Ember.AutoLocation`    |
 | `import HashLocation from "@ember/routing/hash-location"`       | `Ember.HashLocation`    |
 | `import HistoryLocation from "@ember/routing/history-location"` | `Ember.HistoryLocation` |
+| `import LinkComponent from "@ember/routing/link-component"`     | `Ember.LinkComponent`   |
 | `import Location from "@ember/routing/location"`                | `Ember.Location`        |
 | `import NoneLocation from "@ember/routing/none-location"`       | `Ember.NoneLocation`    |
 | `import Route from "@ember/routing/route"`                      | `Ember.Route`           |
