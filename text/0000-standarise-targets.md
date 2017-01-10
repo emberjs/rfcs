@@ -33,6 +33,9 @@ advantage of some DOM API (`node.classList`?) deep in Glimmer's internals.
 
 ### Detailed implementation
 
+
+### Browser support
+
 What seems to be the most popular tool and the state of the art on this is the [browserlist](https://github.com/ai/browserslist)
 npm package.
 
@@ -48,12 +51,14 @@ Example usage:
 
 ```js
 var app = new EmberApp(defaults, {
-  targets: ['>2%', 'last 3 iOS versions', 'not ie <= 8']
+  targets: {
+    browsers: ['>2%', 'last 3 iOS versions', 'not ie <= 8']
+  }
 });
 ```
 
 This configuration must be made available to addons. It's up to the addons to use it.
-I suggest to make it available in `this.project.targets`
+I suggest to make it available in `app.targets`
 
 ```js
 module.exports = {
@@ -62,10 +67,46 @@ module.exports = {
   included(app) {
     this._super.included.apply(this, arguments);
 
-    console.log(app.targets); // ['>2%', 'last 3 iOS versions', 'not ie <= 8']
+    console.log(app.targets.browsers); // ['>2%', 'last 3 iOS versions', 'not ie <= 8']
   }
 };
 ```
+
+### Node support
+
+In addition to browsers, Ember apps can run in node using ember-fastboot. If that is the
+case, we need to cover node as a target, but it deserves a different entry on `targets.node`.
+
+The sintax for for this configuration option is even simpler, since apps will only run in a single
+version of node and developers are in control of it, so the only thing users must specify is the
+minimum supported version of node.
+
+Example usage:
+
+```js
+var app = new EmberApp(defaults, {
+  targets: {
+    browsers: ['>2%', 'last 3 iOS versions', 'not ie <= 8'],
+    node: "6"
+  }
+});
+```
+
+This configuration is also available to addons in `app.targets.node`;
+
+```js
+module.exports = {
+  name: 'ember-data',
+
+  included(app) {
+    this._super.included.apply(this, arguments);
+
+    console.log(app.targets.node); // "6"
+  }
+};
+```
+
+If this property is not provided, addons can assume that this app does not target node.
 
 # How We Teach This
 
@@ -107,9 +148,5 @@ var app = new EmberApp(defaults, {
 
 # Unresolved questions
 
-As of today, seems that the database used by [browserlist](https://github.com/ai/browserslist) does
-not cover Node.js versions.
-With Ember apps running in fastboot this might be a gap in functionality that we have to
-fill in a different way, although since this RFC just specifies the syntax, not the tool
-that understands it, it is possible that specifying `targets: ['>2%', 'node 4']` becomes
-supported and this wouldn't contradict this RFC.
+The proposed syntax for node only supports a single version of node. Is it reasonable to
+make this property an array of versions? P.e. `["4.4", "6", "7"]`
