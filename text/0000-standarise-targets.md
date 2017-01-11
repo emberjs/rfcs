@@ -4,7 +4,7 @@
 
 # Summary
 
-This RFC proposes the introdution of a official convention to specify the targets of an
+This RFC proposes the introduction of a official convention to specify the targets of an
 application.
 
 ### Motivation
