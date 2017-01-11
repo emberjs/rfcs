@@ -10,21 +10,21 @@ application.
 ### Motivation
 
 Javascript and the platforms it runs on are moving targets. NodeJS and browsers release new
-versions every few weeks. Browsers auto update and each update bings new language features
+versions every few weeks. Browsers auto update and each update brings new language features
 and APIs.
 
-Developers need an easy way to express intention that abstracts them from the everchanging
+Developers need an easy way to express intention that abstracts them from the ever-changing
 landscape of versions and feature matrices, so this RFC proposes to introduce a universal
 configuration option to let developers express they intended targets
 
 This configuration should be easily available to addons, but this RFC doesn't impose
-any mandatory behaviour on addons. All addons that want to get customize their behaviour
+any mandatory behavior on addons. All addons that want to get customize their behavior
 depending on the target platforms will have a single source of truth to get that
 information but it's up to them to do it.
 
 The advantage of having a single source of truth for the targets compared to having several
 configurations, each one with its own `targets` is mostly for better ergonomics and across-the-board
-consitency.
+consistency.
 
 Addons that would benefit from this conventions are `babel-preset-env`, `autoprefixer`,
 `stylelint` and `eslint` (vía `eslint-plugin-compat`), but not only those. Even Ember itself could,
@@ -77,7 +77,7 @@ module.exports = {
 In addition to browsers, Ember apps can run in node using ember-fastboot. If that is the
 case, we need to cover node as a target, but it deserves a different entry on `targets.node`.
 
-The sintax for for this configuration option is even simpler, since apps will only run in a single
+The syntax for for this configuration option is even simpler, since apps will only run in a single
 version of node and developers are in control of it, so the only thing users must specify is the
 minimum supported version of node.
 
@@ -119,14 +119,14 @@ default to a predefined matrix of browsers that matches the browsers officially 
 
 # Drawbacks
 
-While this RFC standarizes a concept that will open the door to better and more comprehensive tooling,
+While this RFC standardizes a concept that will open the door to better and more comprehensive tooling,
 it makes us choose one syntax (the one used by [browserlist](https://github.com/ai/browserslist)) over
-any other perhaps supperior choice that may exist or appear in the future.
+any other perhaps superior choice that may exist or appear in the future.
 
 # Alternatives
 
 Let every addon that wants to deal with targets to have a `targets`-like option in its configuration
-instead of standarizing a single configuration option, which effectively leaves things as they are
+instead of standardizing a single configuration option, which effectively leaves things as they are
 right now.
 
 Example:
@@ -134,7 +134,7 @@ Example:
 ```
 var app = new EmberApp(defaults, {
   'ember-cli-autoprefixer': {
-    browers: ...
+    browsers: ...
   },
   'ember-cli-babel': {
     targets: ...
