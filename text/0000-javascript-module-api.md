@@ -847,6 +847,7 @@ _(Ed. note: These tables are automatically generated from the scripts in the [co
 | `Ember.assert`                        | `import { assert } from "@ember/debug"`                                    |
 | `Ember.assign`                        | `import { assign } from "@ember/polyfills"`                                |
 | `Ember.cacheFor`                      | `import { cacheFor } from "@ember/object/internals"`                       |
+| `Ember.compare`                       | `import { compare } from "@ember/utils"`                                   |
 | `Ember.computed`                      | `import { computed } from "@ember/object"`                                 |
 | `Ember.computed.alias`                | `import { alias } from "@ember/object/computed"`                           |
 | `Ember.computed.and`                  | `import { and } from "@ember/object/computed"`                             |
@@ -1126,6 +1127,7 @@ Each package is sorted by module name, then export name.
 ### `@ember/utils`
 | Module                                     | Global            |
 | ---                                        | ---               |
+| `import { compare } from "@ember/utils"`   | `Ember.compare`   |
 | `import { isBlank } from "@ember/utils"`   | `Ember.isBlank`   |
 | `import { isEmpty } from "@ember/utils"`   | `Ember.isEmpty`   |
 | `import { isNone } from "@ember/utils"`    | `Ember.isNone`    |
