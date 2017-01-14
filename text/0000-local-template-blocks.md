@@ -10,6 +10,7 @@ There is strong demand for the ability to pass in template blocks into higher co
 
 The need/demand for "named yields"/"block slots" is well-established:
 
+- https://github.com/emberjs/rfcs/pull/43
 - https://github.com/emberjs/rfcs/pull/72
 - https://github.com/emberjs/rfcs/pull/193
 - https://github.com/ciena-blueplanet/ember-block-slots
