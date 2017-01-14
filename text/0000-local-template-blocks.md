@@ -15,6 +15,7 @@ The need/demand for "named yields"/"block slots" is well-established:
 - https://github.com/emberjs/rfcs/pull/193
 - https://github.com/ciena-blueplanet/ember-block-slots
 - https://github.com/ryanto/ember-content-for
+- https://github.com/knownasilya/ember-named-yields
 
 In short, people want a way to pass in more than just the default/inverse template blocks, an unfortunate limitation to the flexibility/power of higher order components, and which generally speaking hurts the composability story of Ember components.
 
