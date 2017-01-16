@@ -44,6 +44,8 @@ There are tradeoffs to choosing any path, please attempt to identify them here.
 
 What other designs have been considered? What is the impact of not doing this?
 
+This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
+
 # Unresolved questions
 
 Optional, but suggested for first drafts. What parts of the design are still
