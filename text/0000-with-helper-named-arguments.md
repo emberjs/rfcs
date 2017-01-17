@@ -51,8 +51,7 @@ The common workaround is to pass a hash instead:
   bottomRight = (some-math c a b)
   center      = (some-other-math d d)
   focus       = (some-other-math d a b)
-  as |locals|
-)}}
+) as |locals|}}
   <p>Top left corner is: {{locals.topLeft}}</p>
 {{/with}}
 ```
