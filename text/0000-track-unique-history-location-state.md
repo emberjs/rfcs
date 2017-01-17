@@ -12,7 +12,7 @@ The path alone does not provide enough information. For example, if you
 visit page A, scroll down, then click on a link to page B, then click on
 a link back to page A. Your actual browser history stack is [A, B, A].
 Each of those nodes in the history should have their own unique scroll
-position. In order to record this position we need an ID that is unique
+position. In order to record this position we need a UUID 
 for each node in the history.
 
 This API will allow other libraries to reflect upon each location to
@@ -29,8 +29,11 @@ properly based upon where you are in the history stack, as described in
 
 Code: [PR#14011](https://github.com/emberjs/ember.js/pull/14011)
 
-We simply add a `stateCounter` so we can track uniqueness on two
-dimensions. Both `path` and the generated `id`.
+We simply unique identifier (UUID) so we can track uniqueness on two
+dimensions. Both `path` and the generated `uuid`. A simple UUID
+generator such as
+https://gist.github.com/lukemelia/9daf074b1b2dfebc0bd87552d0f6a537
+should suffice.
 
 # How We Teach This
 
@@ -41,29 +44,29 @@ history stack. For example, it could look like:
 // visit page A
 
 [
-  { path: '/', id: 1 }
+  { path: '/', uuid: 1 }
 ]
 
 // visit page B
 
 [
-  { path: '/about', id: 2 },
-  { path: '/', id: 1 }
+  { path: '/about', uuid: 2 },
+  { path: '/', uuid: 1 }
 ]
 
 // visit page A
 
 [
-  { path: '/', id: 3 },
-  { path: '/about', id: 2 },
-  { path: '/', id: 1 }
+  { path: '/', uuid: 3 },
+  { path: '/about', uuid: 2 },
+  { path: '/', uuid: 1 }
 ]
 
 // click back button
 
 [
-  { path: '/about', id: 2 },
-  { path: '/', id: 1 }
+  { path: '/about', uuid: 2 },
+  { path: '/', uuid: 1 }
 ]
 ```
 
