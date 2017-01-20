@@ -244,6 +244,87 @@ The features in this RFC, in conjunction with something like [inline-let](https:
 
 This usage of `{{component}}` definitely strikes me as super weird at first, and only starts to make more sense if we gradually migrate our terminology to mean "a chunk of DOM and maybe code". But perhaps this is an argument in favor if still making it possible to use `{{yield}}` in controlled cases?
 
+# Appendix: Examples
+
+## Example: Recursive Nesting
+
+```
+{{x-foo
+    header=(|a|
+      I am a fragment {{a.title}}
+      <span>Woot</span>
+    )
+    body=(|a|
+      I am a fragment {{a.title}}
+      <span>Woot</span>
+
+      {{x-foo
+          header=(|b|
+            I am a fragment {{b.title}}
+            <span>Woot</span>
+          )
+          body=(|b|
+            I am a fragment {{b.title}}
+            <span>Woot</span>
+          )
+          footer=(|b|
+            I am a fragment {{b.title}}
+            <span>Woot</span>
+          )
+      }}
+    )
+    footer=(|a|
+      I am a fragment {{a.title}}
+      <span>Woot</span>
+    )
+}}
+```
+
+## Example: Addon `app/` tree override patterns
+
+This example demonstrates how the `{{component}}`-centric approach fits in nicely with established ember-cli addon conventions for overrides (where as the `yield`-centric approach would need new/additional conventions for such a thing):
+
+Consider the following layout template for an `x-calendar` component that ships with an Ember addon:
+
+```
+{{component 
+   (or header 'x-calendar-default-header')
+   headerText=headerTextFromXFoo}}
+
+{{#each days as |day|}}
+  {{component 
+      (or dayCell 'x-calendar-default-day-cell')
+      day=day otherData=otherData}}
+{{/each}}
+
+{{component 
+   (or footer 'x-calendar-default-footer')
+      footerText=footerTextFromXFoo}}
+```
+
+One nice thing thing here is you're provided with two ways of overriding the default appearance of `x-calendar`:
+
+- The `x-calendar` addon presumably ships default components .js and .hbs files in the `app/` tree, so if you want to override a component for the whole app, you can just do the typical ember-cli approach of overriding that hbs/js file in your `app/` folder
+- If you plan to render multiple `x-calendar`s that each have their own appearance/overrides, you can pass in those overrides as attrs, e.g:
+
+```
+{{x-calendar events=events
+     header=(component 'my-header-override-1' style='tomato')}}
+```
+
+or using the nested template style in this RFC:
+
+```
+{{x-calendar events=events
+     header=(|d|
+       <h1 class="tomato-header">{{d.title}}</h1>
+     )
+}}
+```
+
+
+
+
 
 
 
