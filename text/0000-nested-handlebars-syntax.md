@@ -202,8 +202,10 @@ Also, (and I think this has come up in the past), we might want to consider gene
 
 # Drawbacks
 
-- A lot of people will hate the nested syntax (hopefully only at first)
-- We'd have to stop using `{{yield}}` even though that's the established pattern for rendering a template block passed into a component
+- Syntax
+	- The recursively nestable syntax will be a surprise/shock to some/many.
+	- The changes will likely require nontrivial updates to syntax highlighters. [Here's how my Vim setup parses the strawman syntax](http://machty.s3.amazonaws.com/to_s3_uploads/Pasted%20image%20at%202017_01_20%2012_48%20PM.png)
+- We'd effectively be putting the brakes on `{{yield}}` as the favored pattern for rendering passed-in chunks of DOM
 - The fact that the single block param passed to a template block is a hash of attrs means that given block param `|v|` all references to the values passed will need to be prefixed with `v.`, which is uglier than just using positional params and referring to those params by name. (Though perhaps some day this might be alleviated by some future destructuring syntax).
 
 # Alternatives
