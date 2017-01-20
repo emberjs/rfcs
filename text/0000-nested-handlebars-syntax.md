@@ -322,7 +322,29 @@ or using the nested template style in this RFC:
 }}
 ```
 
+## Using in conjunction with `let` RFC
 
+I'd proposed  a [`let-block` RFC](https://github.com/emberjs/rfcs/pull/199) (that has been superseded by this one) as a means to define/declare a template block in the current lexical scope so that it might be passed around to (possibly multiple) components.
+
+`let-block` could be approximated by combining the features proposed in this RFC with those of the [`let` RFC](https://github.com/emberjs/rfcs/pull/200).
+
+Instead of
+
+```
+{{#let-block fooBlock as |a b c|}}
+  Hello {{a}}, {{b}}, and {{c}}!
+{{/let-block}}
+```
+
+you would do
+
+```
+{{let foo=(|d|
+  Hello {{d.a}}, {{d.b}}, and {{d.c}}!
+)}}
+```
+
+Technically you could also use the `with` helper but the resulting syntax is pretty ugly and I wouldn't recommend it for anything other than lib/addon code.
 
 
 
