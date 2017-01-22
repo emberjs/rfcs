@@ -355,27 +355,27 @@ This example demonstrates a use case where it's handy to be able to pass in an a
     columns=(array
       (hash
          headerTitle="ID"
-         cellTemplate=(|data|
+         cell=(|data|
            {{data.item.id}}
          )
       )
       (hash
          headerTitle="Username"
-         cellTemplate=(|data|
+         cell=(|data|
            {{data.item.username}}
          )
       )
       (hash
-         headerTemplate=(||
+         header=(||
            Last Active {{clock-emoji}}
          )
-         cellTemplate=(|data|
+         cell=(|data|
            {{moment data.item.last_active}}
          )
       )
       (hash
          name="Actions"
-         cellTemplate=(|data|
+         cell=(|data|
            {{link-to 'Edit' 'user.edit' data.item.id}}
            {{link-to 'View' 'user.show' data.item.id}}
            {{link-to 'Delete' 'delete-user' data.item.id}}
@@ -385,7 +385,7 @@ This example demonstrates a use case where it's handy to be able to pass in an a
 }}
 ```
 
-Of note; the `last_active` column, in addition to supplying a `cellTemplate`, supplies a `headerTemplate` rather than just a simple `headerTitle` string so that it's possible to render `{{clock-emoji}}`.
+Of note; the `last_active` column, in addition to supplying a `cell` template, supplies a `header` template rather than just a simple `headerTitle` string so that it's possible to render `{{clock-emoji}}`.
 
 `{{x-table}}`'s layout would look something like this:
 
@@ -394,26 +394,26 @@ Of note; the `last_active` column, in addition to supplying a `cellTemplate`, su
   <tr>
     {{#each columns as |c|}}
       <td>
-        {{#if c.headerTemplate}}
-           {{component c.headerTemplate}}
+        {{#if c.header}}
+           {{component c.header}}
         {{else}}
            {{c.headerTitle}}
         {{/if}}
       </td>
     {{/each}}
   </tr>
-  <tr>
-    {{#each items as |it|}}
+  {{#each items as |it|}}
+     <tr>
         {{#each columns as |c|}}
           <td>
-            {{component c.cellTemplate
+            {{component c.cell
                 item=it
                 anythingElse=otherTableStuff
             }}
           </td>
         {{/each}}
-    {{/each}}
-  </tr>  
+     </tr>  
+  {{/each}}
 </table>
 ```
 
@@ -427,7 +427,7 @@ There is definitely a tradeoff here:
 - Slot syntax requires fewer advanced templating features like using an `(array)` of `(hash)`s, but it forces you to provide a top level unique name for everything where from a programming standpoint it's less repetition and indirection to just use an anonymous closure in an array.
 - This RFC's approach suffers from the fact that it wouldn't even be possible to move the `columns` array to JavaScript (unless `x-table` API kept the `cellSlotName` approach from the slot syntax version), due to the fact that you can't put lambda template blocks in JS.
 
-
+On a separate note: I made both examples under the "component-centric" model, where 1) the block templates are passed in as attrs and renderable with `{{component attr}}`, and 2) the templates are rendered with a single block param which is a hash of all the attrs passed `{{component attr}}`. As I mentioned in the Drawbacks section, there are definitely some cases where being able to pass positional block params would be nicer than having to pass a single POJO, and in this case it's particular bad since all the templates need to render `{{data.item.PROPERTY}}`. Again, the reason it's this way is so that any of the template blocks could be replaced with a `(component 'x-foo')` that lives in a separate file, which is (in my opinion) would be a huge win for the Ember ecosystem. But in this particular use case, I can't imagine why anyone would move their `x-table` column definitions to a bunch of separate files.
 
 
 
