@@ -287,24 +287,24 @@ This example demonstrates how the `{{component}}`-centric approach fits in nicel
 Consider the following layout template for an `x-calendar` component that ships with an Ember addon:
 
 ```
-{{component 
+{{component
    (or header 'x-calendar-default-header')
    headerText=headerTextFromXFoo}}
 
 {{#each days as |day|}}
-  {{component 
+  {{component
       (or dayCell 'x-calendar-default-day-cell')
       day=day otherData=otherData}}
 {{/each}}
 
-{{component 
+{{component
    (or footer 'x-calendar-default-footer')
       footerText=footerTextFromXFoo}}
 ```
 
 One nice thing thing here is you're provided with two ways of overriding the default appearance of `x-calendar`:
 
-- The `x-calendar` addon presumably ships default components .js and .hbs files in the `app/` tree, so if you want to override a component for the whole app, you can just do the typical ember-cli approach of overriding that hbs/js file in your `app/` folder
+- The `x-calendar` addon presumably ships default component .js and .hbs files in the `app/` tree, so if you want to override a component for the whole app, you can just do the typical ember-cli approach of overriding that hbs/js file in your `app/` folder
 - If you plan to render multiple `x-calendar`s that each have their own appearance/overrides, you can pass in those overrides as attrs, e.g:
 
 ```
@@ -322,7 +322,7 @@ or using the nested template style in this RFC:
 }}
 ```
 
-## Using in conjunction with `let` RFC
+## Example: Using in conjunction with `let` RFC
 
 I'd proposed  a [`let-block` RFC](https://github.com/emberjs/rfcs/pull/199) (that has been superseded by this one) as a means to define/declare a template block in the current lexical scope so that it might be passed around to (possibly multiple) components.
 
@@ -345,6 +345,97 @@ you would do
 ```
 
 Technically you could also use the `with` helper but the resulting syntax is pretty ugly and I wouldn't recommend it for anything other than lib/addon code.
+
+## Example: Table
+
+This example demonstrates a use case where it's handy to be able to pass in an array of block templates (technically an array of config objects which each contain a template).
+
+```
+{{x-table items=users
+    columns=(array
+      (hash
+         headerTitle="ID"
+         cellTemplate=(|data|
+           {{data.item.id}}
+         )
+      )
+      (hash
+         headerTitle="Username"
+         cellTemplate=(|data|
+           {{data.item.username}}
+         )
+      )
+      (hash
+         headerTemplate=(||
+           Last Active {{clock-emoji}}
+         )
+         cellTemplate=(|data|
+           {{moment data.item.last_active}}
+         )
+      )
+      (hash
+         name="Actions"
+         cellTemplate=(|data|
+           {{link-to 'Edit' 'user.edit' data.item.id}}
+           {{link-to 'View' 'user.show' data.item.id}}
+           {{link-to 'Delete' 'delete-user' data.item.id}}
+         )
+      )
+    )
+}}
+```
+
+Of note; the `last_active` column, in addition to supplying a `cellTemplate`, supplies a `headerTemplate` rather than just a simple `headerTitle` string so that it's possible to render `{{clock-emoji}}`.
+
+`{{x-table}}`'s layout would look something like this:
+
+```
+<table>
+  <tr>
+    {{#each columns as |c|}}
+      <td>
+        {{#if c.headerTemplate}}
+           {{component c.headerTemplate}}
+        {{else}}
+           {{c.headerTitle}}
+        {{/if}}
+      </td>
+    {{/each}}
+  </tr>
+  <tr>
+    {{#each items as |it|}}
+        {{#each columns as |c|}}
+          <td>
+            {{component c.cellTemplate
+                item=it
+                anythingElse=otherTableStuff
+            }}
+          </td>
+        {{/each}}
+    {{/each}}
+  </tr>  
+</table>
+```
+
+If we were to try and write the above using a slot syntax (instead of the syntax proposed in this RFC), it would look like one of the following (depending on whether you want to put your config in Handlebars):
+
+- [Hbs+JS](https://gist.github.com/machty/092a689f7d4f2b62764ac6471409f0f5)
+- [Hbs only](https://gist.github.com/machty/1aa7c6ee2664f5d2dd7337a3525c10ae)
+
+There is definitely a tradeoff here:
+
+- Slot syntax requires fewer advanced templating features like using an `(array)` of `(hash)`s, but it forces you to provide a top level unique name for everything where from a programming standpoint it's less repetition and indirection to just use an anonymous closure in an array.
+- This RFC's approach suffers from the fact that it wouldn't even be possible to move the `columns` array to JavaScript (unless `x-table` API kept the `cellSlotName` approach from the slot syntax version), due to the fact that you can't put lambda template blocks in JS.
+
+
+
+
+
+
+
+
+
+
 
 
 
