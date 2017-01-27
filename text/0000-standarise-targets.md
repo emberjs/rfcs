@@ -18,12 +18,12 @@ landscape of versions and feature matrices, so this RFC proposes to introduce a 
 configuration option to let developers express they intended targets
 
 This configuration should be easily available to addons, but this RFC doesn't impose
-any mandatory behavior on addons. All addons that want to get customize their behavior
+any mandatory behavior on addons. All addons that want to customize their behavior
 depending on the target platforms will have a single source of truth to get that
-information but it's up to them to do it.
+information but it's up to them how to use it.
 
-The advantage of having a single source of truth for the targets compared to having several
-configurations, each one with its own `targets` is mostly for better ergonomics and across-the-board
+The advantage of having a single source of truth for the targets compared to configure this
+on a per-addon basis like we do today is mostly for better ergonomics and across-the-board
 consistency.
 
 Addons that would benefit from this conventions are `babel-preset-env`, `autoprefixer`,
