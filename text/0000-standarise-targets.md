@@ -7,7 +7,7 @@
 This RFC proposes the introduction of a official convention to specify the targets of an
 application.
 
-### Motivation
+# Motivation
 
 Javascript and the platforms it runs on are moving targets. NodeJS and browsers release new
 versions every few weeks. Browsers auto update and each update brings new language features
@@ -15,7 +15,7 @@ and APIs.
 
 Developers need an easy way to express intention that abstracts them from the ever-changing
 landscape of versions and feature matrices, so this RFC proposes to introduce a universal
-configuration option to let developers express they intended targets
+configuration option to let developers express their intended targets
 
 This configuration should be easily available to addons, but this RFC doesn't impose
 any mandatory behavior on addons. All addons that want to customize their behavior
@@ -31,8 +31,7 @@ Addons that would benefit from this conventions are `babel-preset-env`, `autopre
 once converted into an addon, take advantage of that to avoid polyfilling or even taking
 advantage of some DOM API (`node.classList`?) deep in Glimmer's internals.
 
-### Detailed implementation
-
+# Detailed design
 
 ### Browser support
 
@@ -74,39 +73,8 @@ module.exports = {
 
 ### Node support
 
-In addition to browsers, Ember apps can run in node using ember-fastboot. If that is the
-case, we need to cover node as a target, but it deserves a different entry on `targets.node`.
-
-The syntax for for this configuration option is even simpler, since apps will only run in a single
-version of node and developers are in control of it, so the only thing users must specify is the
-minimum supported version of node.
-
-Example usage:
-
-```js
-var app = new EmberApp(defaults, {
-  targets: {
-    browsers: ['>2%', 'last 3 iOS versions', 'not ie <= 8'],
-    node: "6"
-  }
-});
-```
-
-This configuration is also available to addons in `app.targets.node`;
-
-```js
-module.exports = {
-  name: 'ember-data',
-
-  included(app) {
-    this._super.included.apply(this, arguments);
-
-    console.log(app.targets.node); // "6"
-  }
-};
-```
-
-If this property is not provided, addons can assume that this app does not target node.
+In addition to browsers, Ember apps can run in node using ember-fastboot, but this is already covered implicitly 
+by the `engines` property in the package.json of the app (or the host app in the case of engines), so no new syntax needed.
 
 # How We Teach This
 
