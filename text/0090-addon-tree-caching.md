@@ -1,7 +1,7 @@
 # Ember CLI Addon Deduplication
 
 - Start Date: 2016-12-11
-- RFC PR: (leave this empty)
+- RFC PR: https://github.com/ember-cli/rfcs/pull/90
 - Ember CLI Issue: (leave this empty)
  
 # Summary
