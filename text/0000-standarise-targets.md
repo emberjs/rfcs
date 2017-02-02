@@ -33,8 +33,6 @@ advantage of some DOM API (`node.classList`?) deep in Glimmer's internals.
 
 # Detailed design
 
-### Browser support
-
 What seems to be the most popular tool and the state of the art on this is the [browserlist](https://github.com/ai/browserslist)
 npm package.
 
@@ -46,13 +44,19 @@ The syntax is also pretty flexible as it allows all sort of complex queries like
 
 Using this syntax would allow us to integrate easily with other tools.
 
-This configuration should be placed in a file that allows javascript execution and exports an object
-with the configuration. `.ember-cli` could suffice. A new dedicated file under `/config` could also 
+This configuration must be made available to addons. It's up to the addons to use honor it.
+
+### Browser support
+
+The configution of target browsers must in a file that allows javascript execution and exports an object
+with the configuration. Putting the configuration in a file with javascript execution is important because
+allows us to have different config in development and production without having to different keys per 
+environment or any other environment variable.
+
+One option is the `.ember-cli` file. A new dedicated file under `/config` could also 
 be a good option, much like `config/ember-try.js`.
 
-This configuration must be made available to addons. It's up to the addons to use it.
-I suggest to make it available in `this.project.targets.browsers`. This getter will return 
-the specified config or the default matrix of supported browsers.
+To addons this list of target browsers will be available in `this.project.targets.browsers`. E.g:
 
 ```js
 module.exports = {
