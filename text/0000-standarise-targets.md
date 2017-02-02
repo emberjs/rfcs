@@ -46,18 +46,13 @@ The syntax is also pretty flexible as it allows all sort of complex queries like
 
 Using this syntax would allow us to integrate easily with other tools.
 
-Example usage:
-
-```js
-var app = new EmberApp(defaults, {
-  targets: {
-    browsers: ['>2%', 'last 3 iOS versions', 'not ie <= 8']
-  }
-});
-```
+This configuration should be placed in a file that allows javascript execution and exports an object
+with the configuration. `.ember-cli` could suffice. A new dedicated file under `/config` could also 
+be a good option, much like `config/ember-try.js`.
 
 This configuration must be made available to addons. It's up to the addons to use it.
-I suggest to make it available in `app.targets`
+I suggest to make it available in `this.project.targets.browsers`. This getter will return 
+the specified config or the default matrix of supported browsers.
 
 ```js
 module.exports = {
@@ -66,7 +61,7 @@ module.exports = {
   included(app) {
     this._super.included.apply(this, arguments);
 
-    console.log(app.targets.browsers); // ['>2%', 'last 3 iOS versions', 'not ie <= 8']
+    console.log(this.project.targets.browsers); // ['>2%', 'last 3 iOS versions', 'not ie <= 8']
   }
 };
 ```
@@ -74,7 +69,22 @@ module.exports = {
 ### Node support
 
 In addition to browsers, Ember apps can run in node using ember-fastboot, but this is already covered implicitly 
-by the `engines` property in the package.json of the app (or the host app in the case of engines), so no new syntax needed.
+by the `engines` property in the package.json of the app (or the host app in the case of engines), so no new syntax needed
+for defining the support.
+
+The minimum supported version of node will be available in `this.project.targets.node`. 
+
+```js
+module.exports = {
+  name: 'ember-data',
+
+  included(app) {
+    this._super.included.apply(this, arguments);
+
+    console.log(this.project.targets.node); // '>= 4'
+  }
+};
+```
 
 # How We Teach This
 
