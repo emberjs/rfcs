@@ -99,6 +99,12 @@ traditionally enforced only with peer reviews.
 To ease the transition Ember CLI can also, in the absence of a specific value provided by the user,
 default to a predefined matrix of browsers that matches the browsers officially supported by the framework.
 
+As of today, the supported browser list for Ember.js, according to the platforms we test in saucelabs, is:
+
+`['IE9', 'Chrome current', 'Safari current', 'Firefox current']`
+
+There is no mention to IOS/Android, so this must be validated still.
+
 # Drawbacks
 
 While this RFC standardizes a concept that will open the door to better and more comprehensive tooling,
