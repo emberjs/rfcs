@@ -42,9 +42,18 @@ That package is the one behind `babel-preset-env`, `autoprefixer` and others, an
 The syntax is also pretty flexible as it allows all sort of complex queries like `Firefox >= 20`,
 `>2.5% in CA` (browsers with a market share over 2.5% in Canada) and logical combinations.
 
-Using this syntax would allow us to integrate easily with other tools.
+The way this library works is calculating the minimum common denominator on a per-feature basis.
 
-This configuration must be made available to addons. It's up to the addons to use honor it.
+Per example, if the support matrix for an app is `['IE11', 'Firefox latest']` and we have a linter
+that warns us when we use an unsupported browser API, it would warn us if we try to use
+pointer events (supported in IE11 but not in Firefox), would warn us also when using `fetch` (supported
+in firefox but not in IE) and would not warn us when using `MutationObserver` because it is supported by both.
+
+This library is very powerful and popular, making relatively easy to integrate with a good amount of
+tools that use it in little time.
+
+This configuration must be made available to addons but we it's up to the addon authors to take advantage
+of it.
 
 ### Browser support
 
