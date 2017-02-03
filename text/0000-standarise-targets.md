@@ -4,8 +4,8 @@
 
 # Summary
 
-This RFC proposes the introduction of a official convention to specify the targets of an
-application.
+This RFC proposes the introduction of a official convention to specify the target browsers
+and node versions of an application.
 
 # Motivation
 
@@ -14,35 +14,38 @@ versions every few weeks. Browsers auto update and each update brings new langua
 and APIs.
 
 Developers need an easy way to express intention that abstracts them from the ever-changing
-landscape of versions and feature matrices, so this RFC proposes to introduce a universal
-configuration option to let developers express their intended targets
+landscape of versions and feature matrices, so this RFC proposes the introduction of a unique
+place and syntax to let developers express their intended targets that all addons can use,
+instead of having each addon define it in a different way.
 
 This configuration should be easily available to addons, but this RFC doesn't impose
-any mandatory behavior on addons. All addons that want to customize their behavior
-depending on the target platforms will have a single source of truth to get that
+any mandatory behavior on those addons. All addons that want to customize their behavior
+depending on the target browsers will have a single source of truth to get that
 information but it's up to them how to use it.
 
 The advantage of having a single source of truth for the targets compared to configure this
 on a per-addon basis like we do today is mostly for better ergonomics and across-the-board
 consistency.
 
-Addons that would benefit from this conventions are `babel-preset-env`, `autoprefixer`,
-`stylelint` and `eslint` (vía `eslint-plugin-compat`), but not only those. Even Ember itself could,
+Examples of addons that would benefit from this conventions are `babel-preset-env`, `autoprefixer`,
+`stylelint` and `eslint` (vía `eslint-plugin-compat`) and more. Even Ember itself could,
 once converted into an addon, take advantage of that to avoid polyfilling or even taking
-advantage of some DOM API (`node.classList`?) deep in Glimmer's internals.
+advantage of some DOM API (`node.classList`?) deep in Glimmer's internals, helping the goal
+of Svelte Builds.
 
 # Detailed design
 
-What seems to be the most popular tool and the state of the art on this is the [browserlist](https://github.com/ai/browserslist)
-npm package.
+What seems to be the most popular tool and the state of the art on building suport matrices 
+for browser targets is the [browserlist](https://github.com/ai/browserslist) npm package.
 
 That package is the one behind `babel-preset-env`, `autoprefixer` and others, and uses the data from
 [Can I Use](http://caniuse.com/) for knowing the JS, CSS and other APIs available on every browser.
 
-The syntax is also pretty flexible as it allows all sort of complex queries like `Firefox >= 20`,
-`>2.5% in CA` (browsers with a market share over 2.5% in Canada) and logical combinations.
+The syntax of this package is natural but also pretty flexible, allowing complex 
+queries like `Firefox >= 20`, `>2.5% in CA` (browsers with a market share over 2.5% in Canada) 
+and logical combinations of the previous.
 
-The way this library works is calculating the minimum common denominator on a per-feature basis.
+The way this library work is by calculating the minimum common denominator support on a per-feature basis.
 
 Per example, if the support matrix for an app is `['IE11', 'Firefox latest']` and we have a linter
 that warns us when we use an unsupported browser API, it would warn us if we try to use
@@ -50,22 +53,29 @@ pointer events (supported in IE11 but not in Firefox), would warn us also when u
 in firefox but not in IE) and would not warn us when using `MutationObserver` because it is supported by both.
 
 This library is very powerful and popular, making relatively easy to integrate with a good amount of
-tools that use it in little time.
+tools that already use it with low effort.
 
-This configuration must be made available to addons but we it's up to the addon authors to take advantage
+This configuration must be made available to addons but it's up to the addon authors to take advantage
 of it.
 
 ### Browser support
 
-The configution of target browsers must in a file that allows javascript execution and exports an object
-with the configuration. Putting the configuration in a file with javascript execution is important because
-allows us to have different config in development and production without having to different keys per 
-environment or any other environment variable.
+The configution of target browsers must be placed in a file that allows javascript execution and exports an object
+with the configuration. The reason to prefer a javascript file over a JSON one is to allow users to 
+dinamically generate different config depending on things like the environment they are building the app in or
+any other environment variable.
 
-One option is the `.ember-cli` file. A new dedicated file under `/config` could also 
-be a good option, much like `config/ember-try.js`.
+One possible location for this configuration is the `.ember-cli` file. 
+A new dedicated named `/config/targets.js` also seems a good option, similar way how addons use `config/ember-try.js`
+to configure the test version matrix.
 
-To addons this list of target browsers will be available in `this.project.targets.browsers`. E.g:
+Ember CLI will require this file when building the app and make the configuration available to addons
+in a `this.project.targets` property. 
+
+This `targets` object contains a getter named `browsers` that returns the provided configuration or the default
+one if the user didn't provide any.
+
+Example usage:
 
 ```js
 module.exports = {
@@ -85,7 +95,7 @@ In addition to browsers, Ember apps can run in node using ember-fastboot, but th
 by the `engines` property in the package.json of the app (or the host app in the case of engines), so no new syntax needed
 for defining the support.
 
-The minimum supported version of node will be available in `this.project.targets.node`. 
+This configuration will be available in the same `this.project.targets` object, but on the `node` property.
 
 ```js
 module.exports = {
