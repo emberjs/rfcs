@@ -30,7 +30,7 @@ None.
 
 # Alternatives
 
-Continue with npm.
+Do nothing.
 
 # Unresolved questions
 
