@@ -1,16 +1,16 @@
-- Start Date: 2016-10-14
+- Start Date: 2016-02-7
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
 # Summary
 
-The goal of this RFC is to allow for better helper composition by allowing helpers
+The goal of this RFC is to increase composability oportunities in ember by allowing helpers
 to be invoked and curried in a similar way as how actions and components can be dynamically
 be invoked now.
 
 # Motivation
 
-Since Ember 2.3, released in January of 2016, the framework has enjoyed a feature commonly
+Since Ember 2.3, released over a year ago, the framework has enjoyed a feature commonly
 referred a **contextual components** that allows components to be dynamically invoked by name
 and also to be wrapped along with arguments and passed as regular values to later on be invoked.
 
@@ -29,11 +29,10 @@ Examples from the blog post of the 2.3 release:
 
 This features allows to create very nice domain-specific APIs in components. Some examples
 of this in the wild can be found in [ember-basic-dropdown](https://github.com/cibernox/ember-basic-dropdown),
-[ember-form-for](https://github.com/martndemus/ember-form-for) and [ember-form-for](https://github.com/cibernox/ember-power-calendar).
+[ember-form-for](https://github.com/martndemus/ember-form-for) and [ember-power-calendar](https://github.com/cibernox/ember-power-calendar).
 
 However, the same feature is not yet supported for helpers and it would be equally useful for
 exposing helpers with prepopulated arguments or options to provide better APIs.
-
 
 # Detailed design
 
@@ -43,15 +42,15 @@ possible so users feel confortable with it immediatly.
 Therefore the natural option would be the creation of a `helper` helper that depending on the context
 invokes a helper by its name or creates a closure helper to pass it around.
 
-However there is an ambiguity with this approach that is not present with components. I'm going to explose
+However there is an ambiguity with this approach that is not present with components. I'm going to expose
 the problem first since it's going to drive the entire design of the feature.
 
 ```hbs
 {{my-component format-date=(helper "moment-format")}}
 ```
 
-In the example above it's not clear the intention of the developer. The developer might be
-trying:
+In the example above it's not clear the intention of the developer. The developer's intention
+can be a few things:
 
 - Immediatly evaluate the helper and pass the value of its evaludation to the component
 - Create a closure helper and pass it to the component, so it can be called later.
@@ -76,16 +75,12 @@ but it does when passing properties:
 
 How is this problem solved?
 
-There is three possible options
-
 #### Use a different helper for creating closure helpers and to evaluate helpers
 
-**This is the most evident aternative and the one I prefer**. To remove the ambiguity, there is two different helpers for the two different
-features.
+To remove the ambiguity, there is two different keywords for the two different features.
 
 Ideas include `helper` to create the closure helper and `invoke-helper` to invoke it.
 Another possible names borrowed from ruby conventions can be `helper` (closure creator) and `helper!` (invocation).
-
 
 Examples:
 
@@ -101,43 +96,10 @@ Examples:
 
 The obvious drawback of this alternative is having two new keywords in ember instead of only one.
 
-#### Wrap in parameters to force imediate execution
-
-This leaves ember with only on `helper` helper that by default is a closure creator but when wrapped in an extra pair or parens
-behaves like `invoke-helper` did on the previous section.
-
-Examples:
-
-```hbs
-<strong>My name is {{(helper 'capitalize-str' user.name)}}</strong>
-<button title={{(helper 'capitalize-str' user.name)}}></button>
-<strong>My name is {{helper 'capitalize-str' user.name}}</strong> <!-- Invalid invocation -->
-<button title={{helper 'capitalize-str' user.name}}></button> <!-- Invalid invocation -->
-
-{{my-component format-date=(helper "moment-format")}} <!-- Creates closure helper -->
-{{my-component format-date=((helper "moment-format"))}} <!-- Invokes helper -->
-```
-
-This is dryer but probably too subtle, and double paranthesis have been historycally a syntax error in Ember.
-
-#### Use an option to disambiguate
-
-This is not very different from the first strategy but instead of using a different helper it passes a special option
-to change the default behaviour.
-
-For the next example the default behaviour will be immediate-execition helper and the opt-in will be creating a closure
-helper (`closure=true`).
-
-
-```hbs
-<strong>My name is {{helper 'capitalize-str' user.name}}</strong>
-<button title={{helper 'capitalize-str' user.name}}></button>
-<strong>My name is {{helper 'capitalize-str' user.name closure=true}}</strong> <!-- Invalid invocation -->
-<button title={{helper 'capitalize-str' user.name closure=true}}></button> <!-- Invalid invocation -->
-
-{{my-component format-date=(helper "moment-format" closure=true)}} <!-- Creates closure helper -->
-{{my-component format-date=(helper "moment-format"))}} <!-- Invokes helper -->
-```
+Ideally since the idea of wrapping a component and a helper is very similar, I think that 
+this keyword should be used for both components and helpers and replace the existing 
+overloaded `component` keyword.
+Perhaps the transition to glimmer-components will open an oportunity window for this.
 
 # How We Teach This
 
