@@ -4,17 +4,17 @@
 
 # Summary
 
-The goal of this RFC is to increase composability oportunities in ember by allowing helpers
+The goal of this RFC is to increase composability opportunities in Ember by allowing helpers
 to be invoked and curried in a similar way as how actions and components can be dynamically
 be invoked now.
 
 # Motivation
 
 Since Ember 2.3, released over a year ago, the framework has enjoyed a feature commonly
-referred a **contextual components** that allows components to be dynamically invoked by name
+referred to as **contextual components** that allows components to be dynamically invoked by name
 and also to be wrapped along with arguments and passed as regular values to later on be invoked.
 
-Examples from the blog post of the 2.3 release:
+Example from the blog post of the 2.3 release:
 
 ```hbs
 {{#alert-box as |box|}}
@@ -27,7 +27,7 @@ Examples from the blog post of the 2.3 release:
 {{/alert-box}}
 ```
 
-This features allows to create very nice domain-specific APIs in components. Some examples
+This features allows the creation of very nice domain-specific APIs in components. Some examples
 of this in the wild can be found in [ember-basic-dropdown](https://github.com/cibernox/ember-basic-dropdown),
 [ember-form-for](https://github.com/martndemus/ember-form-for) and [ember-power-calendar](https://github.com/cibernox/ember-power-calendar).
 
@@ -36,14 +36,14 @@ exposing helpers with prepopulated arguments or options to provide better APIs.
 
 # Detailed design
 
-The design of this feature should be as similar to the **contextual components** feature as
-possible so users feel confortable with it immediatly.
+The design of this feature should be as similar as possible to the **contextual components** feature,
+so users feel confortable with it immediatly.
 
-Therefore the natural option would be the creation of a `helper` helper that depending on the context
+Therefore, the natural option would be the creation of a `helper` helper that, depending on the context,
 invokes a helper by its name or creates a closure helper to pass it around.
 
-However there is an ambiguity with this approach that is not present with components. I'm going to expose
-the problem first since it's going to drive the entire design of the feature.
+However, there is an ambiguity with this approach that is not present with components. I'm going to expose
+the problem first, since it's going to drive the entire design of the feature.
 
 ```hbs
 {{my-component format-date=(helper "moment-format")}}
@@ -65,22 +65,14 @@ context of html. By example
 
 In those examples above the only option can be immediatly evaluate.
 
-In the proposed syntax of glimmer-components the ambiguity doesn't exists when passing attributes
-but it does when passing properties:
-
-```hbs
-<my-component class={{helper 'dasherize-str' className}}></my-component> <!-- Immediate evaluation -->
-<my-component @class={{helper 'dasherize-str' className}}></my-component> <!-- Unclear. Can be evaluation or closure components-->
-```
-
 How is this problem solved?
 
 #### Use a different helper for creating closure helpers and to evaluate helpers
 
-To remove the ambiguity, there is two different keywords for the two different features.
+To remove the ambiguity, there are two different keywords for the two different features.
 
 Ideas include `helper` to create the closure helper and `invoke-helper` to invoke it.
-Another possible names borrowed from ruby conventions can be `helper` (closure creator) and `helper!` (invocation).
+Another possible names borrowed from Ruby conventions can be `helper` (closure creator) and `helper!` (invocation).
 
 Examples:
 
@@ -94,12 +86,11 @@ Examples:
 {{my-component format-date=(invoke-helper "moment-format")}} <!-- Invokes helper -->
 ```
 
-The obvious drawback of this alternative is having two new keywords in ember instead of only one.
+The obvious drawback of this alternative is having two new keywords in Ember instead of one.
 
-Ideally since the idea of wrapping a component and a helper is very similar, I think that 
+Ideally, since the idea of wrapping a component and a helper is very similar, I think that 
 this keyword should be used for both components and helpers and replace the existing 
 overloaded `component` keyword.
-Perhaps the transition to glimmer-components will open an oportunity window for this.
 
 # How We Teach This
 
@@ -114,9 +105,8 @@ Whatever solution is designed for the component helper must also be take into co
 
 # Alternatives
 
-The RFC already discusses the alterniative paths since they are the main subject of the proposal.
+The RFC already discusses the alternative paths since they are the main subject of the proposal.
 
 # Unresolved questions
 
-Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+To be determined.
