@@ -89,25 +89,9 @@ module.exports = {
 };
 ```
 
-### Node support
-
-In addition to browsers, Ember apps can run in node using ember-fastboot, but this is already covered implicitly 
-by the `engines` property in the package.json of the app (or the host app in the case of engines), so no new syntax needed
-for defining the support.
-
-This configuration will be available in the same `this.project.targets` object, but on the `node` property.
-
-```js
-module.exports = {
-  name: 'ember-data',
-
-  included(app) {
-    this._super.included.apply(this, arguments);
-
-    console.log(this.project.targets.node); // '>= 4'
-  }
-};
-```
+This `targets` object can, and probably will, be expanded in the future with new properties
+for different kind of targets, like cordoba apps or fastboot, but that will be
+done in a different RFC.
 
 # How We Teach This
 
