@@ -1,6 +1,5 @@
 - Start Date: 2017-02-02
-- RFC PR: (leave this empty)
-- Ember CLI Issue: (leave this empty)
+- RFC PR: [#96](https://github.com/ember-cli/rfcs/pull/96)
 
 # Summary
 

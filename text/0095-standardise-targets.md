@@ -1,6 +1,5 @@
 - Start Date: 2017-01-03
-- RFC PR: https://github.com/ember-cli/rfcs/pull/95
-- Ember CLI Issue: (leave this empty)
+- RFC PR: [#95](https://github.com/ember-cli/rfcs/pull/95)
 
 # Summary
 
@@ -35,14 +34,14 @@ of Svelte Builds.
 
 # Detailed design
 
-What seems to be the most popular tool and the state of the art on building suport matrices 
+What seems to be the most popular tool and the state of the art on building suport matrices
 for browser targets is the [browserlist](https://github.com/ai/browserslist) npm package.
 
 That package is the one behind `babel-preset-env`, `autoprefixer` and others, and uses the data from
 [Can I Use](http://caniuse.com/) for knowing the JS, CSS and other APIs available on every browser.
 
-The syntax of this package is natural but also pretty flexible, allowing complex 
-queries like `Firefox >= 20`, `>2.5% in CA` (browsers with a market share over 2.5% in Canada) 
+The syntax of this package is natural but also pretty flexible, allowing complex
+queries like `Firefox >= 20`, `>2.5% in CA` (browsers with a market share over 2.5% in Canada)
 and logical combinations of the previous.
 
 The way this library work is by calculating the minimum common denominator support on a per-feature basis.
@@ -61,16 +60,16 @@ of it.
 ### Browser support
 
 The configution of target browsers must be placed in a file that allows javascript execution and exports an object
-with the configuration. The reason to prefer a javascript file over a JSON one is to allow users to 
+with the configuration. The reason to prefer a javascript file over a JSON one is to allow users to
 dinamically generate different config depending on things like the environment they are building the app in or
 any other environment variable.
 
-One possible location for this configuration is the `.ember-cli` file. 
+One possible location for this configuration is the `.ember-cli` file.
 A new dedicated named `/config/targets.js` also seems a good option, similar way how addons use `config/ember-try.js`
 to configure the test version matrix.
 
 Ember CLI will require this file when building the app and make the configuration available to addons
-in a `this.project.targets` property. 
+in a `this.project.targets` property.
 
 This `targets` object contains a getter named `browsers` that returns the provided configuration or the default
 one if the user didn't provide any.

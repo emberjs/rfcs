@@ -1,6 +1,5 @@
-- Start Date: Wednesday, 14 December 2016
-- RFC PR: 
-- Ember CLI Issue: 
+- Start Date: 2016-12-14
+- RFC PR: [#91](https://github.com/ember-cli/rfcs/pull/91)
 
 # Summary
 
@@ -373,7 +372,7 @@ Returns an iterator that yields `[name, value]` pairs of stat names and values.
 
 Example:
 ```js
-  //  for a typical broccoli node 
+  //  for a typical broccoli node
   for ([statName, statValue] of node.statsIterator()) {
     console.log(statName, statValue);
   }

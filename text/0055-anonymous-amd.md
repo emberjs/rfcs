@@ -1,6 +1,5 @@
-- Start Date: (fill me in with today's date, 2016-06-14)
-- RFC PR: (leave this empty)
-- ember-cli Issue: (leave this empty)
+- Start Date: 2016-06-14
+- RFC PR: [#55](https://github.com/ember-cli/rfcs/pull/55)
 
 # Summary
 
