@@ -398,7 +398,7 @@ with individual features PAYGO (pay-as-you-go). The Glimmer architecture makes
 it possible to break down the work of component invocation into small pieces.
 
 For example, a "template-only component" doesn't need Glimmer to invoke any
-the hooks related to lifecycle management of the *component instance*.
+of the hooks related to the lifecycle management of the *component instance*.
 Therefore, in an ideal world, they should not pay the cost associated with
 invoking those hooks.
 
