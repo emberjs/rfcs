@@ -48,7 +48,7 @@ Since those proposals, we have rewritten Ember's rendering engine from the groun
 up (the "Glimmer 2" project). One of the goals of the Glimmer 2 effort was to
 build first-class primitives for our view-layer features in the rendering engine.
 As part of the process, we worked to rationalize these features and to re-think
-the role of components in Ember.js. This execrise has brought plenty of new ideas
+the role of components in Ember.js. This exercise has brought plenty of new ideas
 and constraints to the table.
 
 The initial Glimmer 2 integration was completed in [November](http://emberjs.com/blog/2016/11/30/ember-2-10-released.html).
@@ -330,7 +330,7 @@ class MyManager implements ComponentManager<MyStateBucket> {
 
     instance.setProperties(args.named);
 
-    return { secret, instance };
+    return { immutable, instance };
   }
 
   // expose the component instance (but not the internal details) as
@@ -383,7 +383,7 @@ class PooledManager implements ComponentManager<Object> {
     return instance;
   }
 
-  ...
+  //...
 
 }
 ```
@@ -427,7 +427,7 @@ const { capabilities, definition } from Ember.Component;
 export default definition({
   name: "foo-bar",
   capabilities: capabilities("2.13"),
-  ...
+  //...
 });
 ```
 
@@ -474,7 +474,7 @@ export default definition({
     someFeature: true,
     anotherFeature: true
   }),
-  ...
+  //...
 });
 ```
 
