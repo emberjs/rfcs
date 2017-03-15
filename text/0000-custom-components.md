@@ -422,7 +422,7 @@ specify the following:
 ```js
 import Ember from 'ember';
 
-const { capabilities, definition } from Ember.Component;
+const { capabilities, definition } = Ember.Component;
 
 export default definition({
   name: "foo-bar",
@@ -466,7 +466,7 @@ not enabled by default:
 ```js
 import Ember from 'ember';
 
-const { capabilities, definition } from Ember.Component;
+const { capabilities, definition } = Ember.Component;
 
 export default definition({
   name: "foo-bar",
