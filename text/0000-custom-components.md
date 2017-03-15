@@ -159,7 +159,7 @@ with this component. For example, if "foo" is specified here, Ember will lookup
 the component manager `component-manager:foo`. This will be described in more
 detail in the sections below.
 
-> **Note**: Specifying the manager as a lookup key allows the component manger
+> **Note**: Specifying the manager as a lookup key allows the component manager
 to receive injections.
 
 The *capabilities* property specifies the optional features required by this
