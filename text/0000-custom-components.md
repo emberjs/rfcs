@@ -293,7 +293,7 @@ template is revalidated, therefore any updates to the context object performed
 here will be reflected in the template.
 
 Ember does not provide a fine-grained change tracking system, so there is no
-guarantee on how often *update* will be called. More precisely, if on of the
+guarantee on how often *update* will be called. More precisely, if one of the
 *component arguments* have changed to a different value, *update* _will_ be
 called at least once; however, the reverse is not true – when *update* is
 called, it does not guarantee that at least one of the *component arguments*
