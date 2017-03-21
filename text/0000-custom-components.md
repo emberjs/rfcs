@@ -353,7 +353,7 @@ While each invocable component needs its own `ComponentDefinition`, a single
 `ComponentManager` instance can create and manage many *component instances*
 (and this is why all of the hooks takes the *component instance* as the first
 parameter). In fact, all classic components in Ember today share the same
-component manger. Therefore, it is important to follow the pattern of keeping
+component manager. Therefore, it is important to follow the pattern of keeping
 your component's state in the state bucket, rather than storing it on the
 manager itself.
 
@@ -481,7 +481,7 @@ export default definition({
 Under the hood, this will likely be implemented as a bit mask, but component
 authors should treat it as an opaque value intended for internal use by the
 framework only. There will not be any public APIs to introspect its value (e.g.
-`isEnabled()`), so component mangers should not rely on this to alter its
+`isEnabled()`), so component managers should not rely on this to alter its
 runtime behavior.
 
 All features are additive. The default set of functionality for a particular
