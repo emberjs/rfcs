@@ -369,7 +369,7 @@ class PooledManager implements ComponentManager<Object> {
   private pools = {};
 
   create({ metadata }: ComponentDefinition, args: ComponentArguments): Object {
-    let pool = this.pools[meatadata.name];
+    let pool = this.pools[metadata.name];
     let instance;
 
     if (pool && pool.length) {
