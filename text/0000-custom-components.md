@@ -771,6 +771,7 @@ Given the following `ComponentDefinition`s:
 // component-manager:pooled
 
 interface PoolEntry {
+  name: string;
   instance: Ember.Component;
   expiresAt: number;
 }
@@ -788,7 +789,8 @@ class ComponentPool {
     }
   }
 
-  checkin(name: string, entry: PoolEntry) {
+  checkin(entry: PoolEntry) {
+    let { name } = entry;
     let pool = this.pools[name];
 
     if (!pool) {
@@ -827,16 +829,17 @@ class PooledManager extends ComponentManager<PoolEntry> {
   private pool = new ComponentPool();
 
   create({ metadata }: ComponentDefinition, args: ComponentArguments) {
-    let entry = pool.checkout(metadata.class);
+    let name = metadata.class;
+    let entry = pool.checkout(name);
     let instance, isRecycled;
 
     if (entry) {
       instance = entry.instance;
       isRecycled = true;
     } else {
-      instance = getOwner(this).lookup(`component:${metadata.class}`);
+      instance = getOwner(this).lookup(`component:${name}`);
       isRecycled = false;
-      entry = { instace, expiresAt: NaN };
+      entry = { name, instace, expiresAt: NaN };
     }
 
     instance.setProperties(args.named);
@@ -849,7 +852,7 @@ class PooledManager extends ComponentManager<PoolEntry> {
 
     instance.didReceiveAttrs();
 
-    return instance;
+    return entry;
   }
 
   getContext({ instance }: PoolEntry): Ember.Component {
@@ -867,7 +870,7 @@ class PooledManager extends ComponentManager<PoolEntry> {
   }
 
   destroy(entry: PoolEntry) {
-    this.pool.checkin(instance);
+    this.pool.checkin(entry);
   }
 }
 ```
