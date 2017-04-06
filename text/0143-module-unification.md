@@ -1,6 +1,6 @@
 - Start Date: 2016-05-09
 - RFC PR: https://github.com/emberjs/rfcs/pull/143
-- Ember Issue:
+- Ember Issue: https://github.com/emberjs/ember.js/issues/14882
 
 > Note: This RFC replaces the closely related RFC for [Module
 Normalization](https://github.com/emberjs/rfcs/pull/124). As discussed in the
