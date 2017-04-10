@@ -60,8 +60,8 @@ Extending functionality of existing `transitionTo()` and `replaceWith()` methods
 developers from making a bug using an url which isn't handled by th application.
 Although it still can be a valid approach as Guides suggest using `routeName` 
 instead of URL.
-1. Add `allowExternal` flag as a new parameter in both methods. This solution breaks
-backwards compatibility - `transitionTo()` method accepts multiple model objects.
+1. Add `allowExternal` flag in `options` parameter for existing `transitionTo()` 
+and `replaceWith()` methods. 
 
 # Unresolved questions
 
