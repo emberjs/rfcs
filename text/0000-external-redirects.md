@@ -9,7 +9,7 @@ by current Ember application.
 
 # Motivation
 
-Our use-case is an Ember application is connected with another service 
+Our use-case is an Ember application that is connected with another service 
 or module that can't be easily integrated into Ember application. Basic example 
 use-case is an Ember application with an external login page. User should be 
 redirected to that page when he enters a page with restricted access.
