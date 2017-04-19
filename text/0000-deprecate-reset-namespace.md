@@ -13,7 +13,7 @@ This little known feature is mostly used to have shorter route names on nested r
 It can be used to move a route hierarchy to a more nested location without having to rename
 all places where that route was referenced by its name (mostly `{{link-to}}`, but not exclusively).
 
-However reseting the namespace of a route prevents developers to intuitively understand
+However, reseting the namespace of a route prevents developers to intuitively understand
 the placement of a route in the nesting hierarchy of the app by simply reading its name,
 making the mental model and the task of finding a a route in the file system more complex.
 This issue is going to be amplificated by the deeply nested file structure of the
@@ -25,9 +25,9 @@ much like it happened with the already deprecated `route.resource` method.
 
 # Detailed design
 
-Follow the usual process for other deprecations. Add the deprecation and targetEmber 3.0
-for its complete removal. That deprecation will take developers to an entry in the
-deprecations guide explaining how to stop using it.
+Follow the usual process for other deprecations.
+Add the deprecation and target Ember 3.0 for its complete removal.
+That deprecation will take developers to an entry in the deprecations guide explaining how to stop using it.
 
 # How We Teach This
 
@@ -43,4 +43,3 @@ some churn. The older the project is, the highest the chance of the app using th
 # Alternatives
 
 Keep the feature and commit to maintain it in the 3.0 cycle.
-
