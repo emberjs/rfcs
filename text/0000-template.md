@@ -40,4 +40,4 @@ The guides can mention this as a way to include addons in optionalDependencies, 
 
 # Alternatives
 
-Add a unified way for the developer to have a control over which dependencies he wants to include/exclude in the build process, to prevent it asserting `missing dependency` also making it available in the consuming application tree depending on the environmental requirements.(development/production).
+Add a unified way for the developer to have a control over which dependencies he wants to include/exclude in the build process, to prevent `ember-cli` asserting `missing dependency` also making it available in the consuming application tree depending on the environmental requirements.(development/production).
