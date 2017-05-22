@@ -5,7 +5,7 @@
 # Summary
 
 It is currently possible to create single file Ember components with component
-templates declared inline using a tagged template string assinged to the `layout`
+templates declared inline using a tagged template string assigned to the `layout`
 property. However, this pattern is not documented and support is unknown. This RFC
 proposes documenting support for this pattern.
 
