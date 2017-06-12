@@ -1,6 +1,6 @@
-- Start Date: (2017-06-12)
-- RFC PR: (leave this empty)
-- Ember Issue: (leave this empty)
+- Start Date: 2017-06-12
+- RFC PR:
+- Ember Issue:
 
 # Summary
 
