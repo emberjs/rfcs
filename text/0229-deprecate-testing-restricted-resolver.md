@@ -53,7 +53,7 @@ The migration path for `moduleFor`, `moduleForModel`, `setupTest`, and
 // ember-qunit
 
 // before
-moduleFor('service:session);
+moduleFor('service:session');
 
 moduleFor('service:session', {
   unit: true
