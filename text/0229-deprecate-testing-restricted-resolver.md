@@ -179,10 +179,28 @@ valid usages.
 
 # Drawbacks
 
-The primary drawback to this is the churn associated with modifying the 
-options passed for each test. This can almost certainly be mitigated by
-providing a codemod to enable automated updating.
+## Churn
+
+One drawback to this deprecation proposal is the churn associated with
+modifying the options passed for each test. This can almost certainly
+be mitigated by providing a codemod to enable automated updating.
 
 There are additional changes being entertained that would require changes
 for the default testing blueprints, we should ensure that these RFCs do not
 conflict or cause undue churn/pain.
+
+## `integration: true` Confusion
+
+Prior to this deprecation we had essentially 4 options for testing components:
+
+* `moduleFor(..., { unit: true })`
+* `moduleFor(..., { integration: true })`
+* `moduleForComponent(..., { unit: true })`
+* `moduleForComponent(..., { integatrion: true })`
+
+With this RFC the option `integration` no longer provides value (we aren't talking
+about "unit" vs "integration" tests), and may be seen as confusing.
+
+I believe that this concern is mitigated by the ultimate removal of the `integration`
+(it is only required in order to allow us a path forward that is compatible with
+todays ember-qunit/ember-mocha versions).
