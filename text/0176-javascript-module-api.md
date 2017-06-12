@@ -898,6 +898,7 @@ _(Ed. note: These tables are automatically generated from the scripts in the [co
 | `Ember.isArray`                       | `import { isArray } from "@ember/array"`                                   |
 | `Ember.isBlank`                       | `import { isBlank } from "@ember/utils"`                                   |
 | `Ember.isEmpty`                       | `import { isEmpty } from "@ember/utils"`                                   |
+| `Ember.isEqual`                       | `import { isEqual } from "@ember/utils"`                                   |
 | `Ember.isNone`                        | `import { isNone } from "@ember/utils"`                                    |
 | `Ember.isPresent`                     | `import { isPresent } from "@ember/utils"`                                 |
 | `Ember.keys`                          | `import { keys } from "@ember/polyfills"`                                  |
