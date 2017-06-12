@@ -171,6 +171,17 @@ This includes:
 * `ember-cli-legacy-blueprints`
 * Others?
 
+## Remove Deprecated `unit` / `needs` Options
+
+Once the changes from this RFC are made, we will be able to remove
+support for `unit` and `needs` options from `ember-test-helpers`,
+`ember-qunit`, and `ember-mocha`. This would be a "semver major"
+version bump for all of the related libraries to properly signal that
+functionality was removed.
+
+We can then update the blueprints to remove the extraneous `integration`
+option.
+
 # How We Teach This
 
 This RFC would require an audit of the main Ember.js guides to ensure
