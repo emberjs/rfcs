@@ -353,7 +353,7 @@ pin to a version of `ember-qunit` / `ember-test-helpers` that support its own
 usage. This is a large benefit of migrating these testing features away from 
 `Ember`'s internals, and into the addon space.
 
-## Relationship to "Grant Testing Unification"
+## Relationship to "Grand Testing Unification"
 
 This RFC is a small stepping stone towards the future where all types of tests
 share a similar API. The API proposed here is much easier to extend to provide
