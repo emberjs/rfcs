@@ -30,9 +30,18 @@ of responsiblity much harder to understand, and leads folks to believe that ther
 is much more going on in `ember-qunit` than there is. It should be much clearer
 what `ember-qunit` is responsible for and what we rely on QUnit for.
 
+This RFC also aims to remove a number of custom testing only APIs that exist today
+(largely because the container/registry system was completely private when the
+current tools were authored). Instead of things like `this.subject`, `this.register`,
+`this.inject`, or `this.lookup` we can rely on the standard way of performing these
+functions in Ember via the owner API.
+
 When this RFC has been implemented and rolled out, these questions should all be
 addressed and our testing system will both: embrace QUnit much more **and** 
-be much more framework agnostic. Sounds like a neat trick, huh?
+be much more framework agnostic, all the while dropping custom testing only APIs
+in favor of public APIs that work across tests and app code.
+
+Sounds like a neat trick, huh?
 
 # Detailed design
 
