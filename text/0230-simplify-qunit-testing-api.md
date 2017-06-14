@@ -183,6 +183,7 @@ promise that resolves when rendering is completed.
 Here is a brief list of the more important but possibly understated changes
 being proposed here:
 
+* the various setup methods no longer need to know the name of the object under test
 * `this.subject` is removed in favor of using the standard public API for looking up
   and creating instances (`this.owner.lookup` and `this.owner.factoryFor`)
 * `this.render` will begin being asynchronous to allow for further iteration in the
