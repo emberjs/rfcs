@@ -195,6 +195,8 @@ being proposed here:
 * the various setup methods no longer need to know the name of the object under test
 * `this.subject` is removed in favor of using the standard public API for looking up
   and creating instances (`this.owner.lookup` and `this.owner.factoryFor`)
+* `this.inject` is removed in favor of using `this.owner.lookup` directly
+* `this.register` is removed in favor of using `this.owner.register` directly
 * `this.render` will begin being asynchronous to allow for further iteration in the
   underlying rendering engines ability to speed up render times (by yielding back
   to the browser and not blocking the main thread)
