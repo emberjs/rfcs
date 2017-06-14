@@ -25,7 +25,7 @@ are very common:
 * Where are the lines between QUnit and ember-qunit? 
 * How can I use QUnit for plain JS objects? 
 
-The way that `ember-qunit` uses to wrap QUnit functionality makes the division
+The way that `ember-qunit` wraps QUnit functionality makes the division
 of responsiblity much harder to understand, and leads folks to believe that there
 is much more going on in `ember-qunit` than there is. It should be much clearer
 what `ember-qunit` is responsible for and what we rely on QUnit for.
@@ -155,7 +155,7 @@ declare module 'ember-qunit' {
 
 This function will:
 
-* invoking `ember-test-helper`s `setContext` with the tests context
+* invoke `ember-test-helper`s `setContext` with the tests context
 * create an owner object and set it on the test context (e.g. `this.owner`)
 * setup `this.set`, `this.setProperties`, `this.get`, and `this.getProperties` to
   the test context
@@ -185,7 +185,7 @@ promise that resolves when rendering is completed.
 The migration can likely be largely automated (following the 
 [excellent codemod](https://github.com/Turbo87/ember-mocha-codemods) that 
 [Tobias Bieniek](https://github.com/turbo87) wrote for a similar `ember-mocha`
-the transition), for folks but it is still useful to review concrete scenarios
+the transition), but it is still useful to review concrete scenarios
 of tests before and after this RFC is implemented.
 
 ### Component / Helper Integration Test
