@@ -377,6 +377,18 @@ This RFC should be implemented in conjunction with
 [emberjs/rfcs#229](https://github.com/emberjs/rfcs/pull/229) so that we can avoid
 multiple back to back changes in the blueprints.
 
+## [qunitjs/qunit#977](https://github.com/qunitjs/qunit/issues/977)
+
+Until very recently, the QUnit nested module API was only able to allow a single
+callback for each of the hooks per-nesting level. This means that the proposal in
+this RFC (which requires the hooks to be setup by `ember-qunit`) would disallow
+user-land `beforeEach`/`afterEach` hooks to be setup.
+
+The work around is "simple" (if somewhat annoying), which is to "just nest another
+level". The good news is that [Trent Willis](https://github.com/trentwillis) fixed
+the underlying problem in [qunitjs/qunit#1188](https://github.com/qunitjs/qunit/pull/1188),
+which should be released as 2.3.4 well before this RFC is merged.
+
 # Alternatives
 
 The simplest alternative is to do nothing. This would loose all of the positive
