@@ -125,8 +125,7 @@ QUnit.module('some description', function(hooks) {
 ```
 
 This makes it much simpler to support multiple `before`, `beforeEach`, `afterEach`,
-and `after` callbacks, and it also allows for arbitrary nesting of modules (though
-this RFC is not advocating for arbitrary levels of nesting).
+and `after` callbacks, and it also allows for arbitrary nesting of modules.
 
 You can read more about QUnit nested modules
 [here](http://api.qunitjs.com/QUnit/module#nested-module-nested-hooks-). The new APIs
