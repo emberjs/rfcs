@@ -179,6 +179,22 @@ This function will:
 When invoked, `this.render` will render the provided template and return a
 promise that resolves when rendering is completed.
 
+## Changes from Current System
+
+Here is a brief list of the more important but possibly understated changes
+being proposed here:
+
+* `this.subject` is removed in favor of using the standard public API for looking up
+  and creating instances (`this.owner.lookup` and `this.owner.factoryFor`)
+* `this.render` will begin being asynchronous to allow for further iteration in the
+  underlying rendering engines ability to speed up render times (by yielding back
+  to the browser and not blocking the main thread)
+* `this.pauseTest` and `this.resumeTest` are being added
+* `this.element` is being introduced as a public API for DOM assertions in a jQuery-less
+  environment
+* QUnit nested modules are required
+
+These changes generally do not affect our ability to write a codemod to aide in the migration.
 
 ## Migration Examples
 
