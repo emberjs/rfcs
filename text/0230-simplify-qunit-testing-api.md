@@ -334,6 +334,9 @@ This includes:
 * ember-cli-legacy-blueprints
 * others?
 
+This exact process was done for `ember-mocha`'s migration, making this a well
+trodden path.
+
 ## Update Guides
 
 The guides includes a section for testing, this section needs to be reviewed
