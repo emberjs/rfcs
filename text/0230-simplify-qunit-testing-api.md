@@ -423,3 +423,40 @@ which should be released as 2.3.4 well before this RFC is merged.
 
 The simplest alternative is to do nothing. This would loose all of the positive
 benefits mentioned in this RFC, but should still be considered a possibility...
+
+# Unanswered Questions
+
+## `hooks` argument
+
+A few folks (e.g. [@ebryn](https://github.com/ebryn) and [@stefanpenner](https://github.com/stefanpenner))
+have approached me with concerns around the `hooks` argument I have mentioned/used here. The concerns
+are generally an initial reaction to the QUnit nested modules API in general and not directly related
+to this RFC (other than it highlighting a new feature that they haven't used before).
+
+The main concerns are:
+
+* Teaching folks what `hooks` means is a bit more difficult because it does not represent the "test
+  environment", but rather just a way to invoke the callbacks for `before` / `beforeEach` / `after` /
+  `afterEach`.
+* Passing only `hooks` to the helper functions proposed in the RFC means that if we ever need to thread
+  more information through, we either have to use `hooks` as a transport or change our API to add more
+  arguments.
+* It seems somewhat impossible to communicate across multiple helpers (again without using `hooks`
+  as a state/transport mechanism).
+
+I've kicked off a conversation over with the QUnit folks in https://github.com/qunitjs/qunit/issues/1200.
+If that PR were merged this proposal would be modified to the following syntax:
+
+```js
+// current proposal
+module('x-foo', function(hooks) {
+  setupRenderingTest(hooks);
+  // ....snip....
+});
+
+// after qunitjs/qunit#1200
+module('x-foo', function(hooks) {
+  setupRenderingTest(this);
+  // ....snip....
+});
+```
