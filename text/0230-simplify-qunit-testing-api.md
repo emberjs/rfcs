@@ -460,3 +460,7 @@ module('x-foo', function(hooks) {
   // ....snip....
 });
 ```
+
+Another possible solution is to rename the argument (here and in the blueprints) to `module`.
+This is more in line with what the QUnit folks view it as: the "module context" that
+is being created for that specific `QUnit.module` invocation.
