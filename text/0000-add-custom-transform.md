@@ -15,7 +15,7 @@ In order to expose better semantics to allow apps and addon authors to easily im
 
 # Detailed design
 
-Today, `ember-cli` supports transforming anonymous AMD modules imported via `app.import` into named AMD modules:
+Today, Ember CLI supports transforming anonymous AMD modules imported via `app.import` into named AMD modules:
 
 ```js
 app.import('/path/to/module.js', {
@@ -25,14 +25,14 @@ app.import('/path/to/module.js', {
 });
 ```
 
-The `amd` transform is hardcoded in `ember-cli`. However, it is not possible for addon authors to provide any additional transformation that other addons can use when importing third-party modules. Addons like, FastBoot would like to provide custom transformation for other addons to use so that they can wrap their third party libraries in Node environments.
+The `amd` transform is hardcoded in Ember CLI. However, it is not possible for addon authors to provide any additional transformation that other addons can use when importing third-party modules. Addons like, FastBoot would like to provide custom transformation for other addons to use so that they can wrap their third party libraries in Node environments.
 
 In order to do this, we would like to expose an API that allows addons to register a custom transformation. This API will be an advanced API and will only be used by addons that want to provide custom transformation. Other addons can chose to use that custom transformation using its name.
 
-The API to register a custom transformation in `ember-cli` will be defined in `index.js` of the addon and will be an advanced API:
+The API to register a custom transformation in Ember CLI will be defined in `index.js` of the addon and will be an advanced API:
 
 ```js
-addCustomTransform() {
+importTransforms() {
   return {
     'fastboot-shim': function(tree, options) {
 
@@ -44,12 +44,12 @@ addCustomTransform() {
 }
 ```
 
-`addCustomTransform` returns a map of the name of the transform and a callback function that will be run on every module that uses the transform. The callback function takes the `tree` as broccoli tree contain all the files that want to run this transform and `options` map (optional) that contains the additional key value pairs that a consumer transformer provides. The later argument would be used by transformations like `amd` (explained below).
+`importTransforms` returns a map of the name of the transform and a callback function that will be run on every module that uses the transform. The callback function takes the `tree` as broccoli tree contain all the files that want to run this transform and `options` map (optional) that contains the additional key value pairs that a consumer transformer provides. The later argument would be used by transformations like `amd` (explained below).
 
-With this, we also should move the hard coded `amd` transform into an in-repo addon in `ember-cli`. This would allow other addons that define their own transformation to also control the order of their transformation (using `before` or `after` hooks of addon initialization). The registeration of `amd` transform would be:
+With this, we also should move the hard coded `amd` transform into an in-repo addon in Ember CLI. This would allow other addons that define their own transformation to also control the order of their transformation (using `before` or `after` hooks of addon initialization). The registeration of `amd` transform would be:
 
 ```js
-addCustomTransform() {
+importTransforms() {
   return {
     'amd': function(tree, options) {
 
@@ -74,7 +74,7 @@ addCustomTransform() {
 
 As seen above, `options` contains the optional AMD module ID that the consumer of `amd` transform can provide. If registered transforms want to depend on any other user provided values, those can easily be available during the transforms.
 
-When the addons are initialized, we will check if `addCustomTransform` is defined and store these callbacks and transform names in an array.
+When the addons are initialized, we will check if `importTransforms` is defined and store these callbacks and transform names in an array.
 
 Now, if addon authors would like to use these transforms when importing libraries, they would simply do the following:
 
@@ -87,12 +87,16 @@ app.import('/path/to/module.js', {
 });
 ```
 
-As seen above, an addon author could provide the list of transformations to run and `ember-cli` would run them in the order of when the transformations were registered.
-Internally, for every transform we will maintain an array of file paths that need to run this transform. When the transformations need to run, we will read the registeration order, run the transformation on those files. The output of the transformation will then be merged back and then the next transformation would run. This will ensure that more than one transformation can be correctly applied to a module.
+As seen above, an addon author could provide the list of transformations to run and Ember CLI would run them in the order of when the transformations were registered.
+Internally, for every transform we will maintain an array of file paths that need to run this transform. When the transformations need to run, we will read the registration order, run the transformation on those files. The output of the transformation will then be merged back and then the next transformation would run. This will ensure that more than one transformation can be correctly applied to a module.
+
+## Same name conflict
+
+Allowing addons to define custom transform could lead to naming conflicts where more than two addons may provide transform functions with the same name but slightly or totally different functionality. Therefore, if more than one addon provides a same name for a transform by default the last addon in the order that registered its transform will win. In addition, we will also warn the users of the name conflicts and which addon's registered transformation is going to run.
 
 # How We Teach This
 
-The registeration of transform is an advanced API of `ember-cli` that very few addons would use. We will be updating the guides [here](https://ember-cli.com/user-guide/#standard-anonymous-amd-asset).
+The registeration of transform is an advanced API of Ember CLI that very few addons would use. We will be updating the guides [here](https://ember-cli.com/user-guide/#standard-anonymous-amd-asset).
 
 # Drawbacks
 
