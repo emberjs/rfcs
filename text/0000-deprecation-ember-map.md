@@ -4,7 +4,7 @@
 
 # Summary
 
-This PR proposes the deprecation of the following classes:
+This RFC proposes the deprecation of the following classes:
 
 - `Ember.OrderedSet`
 - `Ember.Map`
@@ -14,7 +14,7 @@ These classes need to be moved to an external addon given they are private class
 
 # Motivation
 
-Theseclasses has not been used in Ember itself for a while now. They have always been private but they are used in a few addons, and in particular Ember Data is using them.
+These classes have not been used in Ember itself for a while now. They have always been private but they are used in a few addons, and in particular Ember Data is using them.
 
 # Transition Path
 
