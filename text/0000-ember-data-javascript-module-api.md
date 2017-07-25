@@ -65,66 +65,66 @@ byt theyhave their own name and namespace in the Ember container.
 ### `@ember-data/store`
 | Global                                | Module                                                                      |
 |---                                    | ---  |
-| `DS.Store` | `import Store from 'ember-data/store'` |
-| `DS.AdapterPopulatedRecordArray` | `import AdapterPopulatedRecordArray from 'ember-data/store/adapter-populated-record-array'` |
-| `DS.DebugAdapter` | `import DebugAdapter from 'ember-data/store/debug-adapter'` |
-| `DS.FilteredRecordArray` | `import FilteredRecordArray from 'ember-data/store/filterd-record-array'` |
-| `DS.ManyArray` | `import ManyArray from 'ember-data/store/many-array'` |
-| `DS.RecordArray` | `import RecordArray from 'ember-data/store/record-array'` |
-| `DS.RecordArrayManager` | `import RecordArrayManager from 'ember-data/store/record-array-manager'` |
-| `DS._initializeStoreService` | `import { initializeStoreService } from 'ember-data/store'` |
-| `DS.normalizeModelName` | `import { normalizeModelName } from 'ember-data/store'` |
-| `DS._setupContainer` | `import { setupContainer } from 'ember-data/store'`
+| `DS.Store` | `import Store from '@ember-data/store'` |
+| `DS.AdapterPopulatedRecordArray` | `import AdapterPopulatedRecordArray from '@ember-data/store/src/src/adapter-populated-record-array'` |
+| `DS.DebugAdapter` | `import DebugAdapter from '@ember-data/store/src/src/debug-adapter'` |
+| `DS.FilteredRecordArray` | `import FilteredRecordArray from '@ember-data/store/src/filterd-record-array'` |
+| `DS.ManyArray` | `import ManyArray from '@ember-data/store/src/many-array'` |
+| `DS.RecordArray` | `import RecordArray from '@ember-data/store/src/record-array'` |
+| `DS.RecordArrayManager` | `import RecordArrayManager from '@ember-data/store/src/record-array-manager'` |
+| `DS._initializeStoreService` | `import { initializeStoreService } from '@ember-data/store'` |
+| `DS.normalizeModelName` | `import { normalizeModelName } from '@ember-data/store'` |
+| `DS._setupContainer` | `import { setupContainer } from '@ember-data/store'`
 
 ### `@ember-data/model`
 | Global                                | Module                                                                      |
 |---                                    | ---  |
-| `DS.Model` | `import Model from 'ember-data/model'` |
-| `DS.Errors` | `import Errors from 'ember-data/model/errors'` |
-| `DS.InternalModel` | `import InternalModel from 'ember-data/model/internal-model'` |
-| `DS.Relationship` | `import Relationship from 'ember-data/model'` |
-| `DS.RootState` | `import RootState from 'ember-data/model/root-state'` |
-| `DS.Shapshot` | `import Snapshot from 'ember-data/model/snapshot'` |
-| `DS.attr` | `import { attr } from 'ember-data/model'`|
-| `DS.belongsTo` | `import { belongsTo } from 'ember-data/model'`|
-| `DS.hasMany` | `import { hasMany } from 'ember-data/model'` |
+| `DS.Model` | `import Model from '@ember-data/model'` |
+| `DS.Errors` | `import Errors from '@ember-data/model/src/errors'` |
+| `DS.InternalModel` | `import InternalModel from '@ember-data/model/src/internal-model'` |
+| `DS.Relationship` | `import Relationship from '@ember-data/model'` |
+| `DS.RootState` | `import RootState from '@ember-data/model/src/root-state'` |
+| `DS.Shapshot` | `import Snapshot from '@ember-data/model/src/snapshot'` |
+| `DS.attr` | `import { attr } from '@ember-data/model'`|
+| `DS.belongsTo` | `import { belongsTo } from '@ember-data/model'`|
+| `DS.hasMany` | `import { hasMany } from '@ember-data/model'` |
 
 
 ### `@ember-data/adapter`
 | Global                                | Module                                                                      |
 |---                                    | ---  |
-| `DS.Adapter` | `import Adapter from 'ember-data/adapter'` |
-| `DS.AbortError` | `import AbortError from 'ember-data/adapter/abort-error'` |
-| `DS.AdapterError` | `import AdapterError from 'ember-data/adapter/adapter-error'` |
-| `DS.BuildURLMixin` | `import BuildURLMixin from 'ember-data/adapter/build-url-mixin'` |
-| `DS.InvalidError` | `import InvalidError from 'ember-data/adapter/invalid-error'` |
-| `DS.JSONAPIAdapter` | `import JSONAPIAdapter from 'ember-data/adapter/json-api'` |
-| `DS.RESTAdapter` | `import RESTAdapter from 'ember-data/adapter/rest'` |
-| `DS.TimeoutError` | `import TimeoutError from 'ember-data/adapter/timeout-error'` |
-| `DS.errorsHashToArray` | `import { errorsHashToArray } from 'ember-data/adapters'` |
-| `DS.errorsArrayToHash` | `import { errorsArrayToHash } from 'ember-data/adapters'` |
+| `DS.Adapter` | `import Adapter from '@ember-data/adapter'` |
+| `DS.AbortError` | `import AbortError from '@ember-data/adapter/src/abort-error'` |
+| `DS.AdapterError` | `import AdapterError from '@ember-data/adapter/src/adapter-error'` |
+| `DS.BuildURLMixin` | `import BuildURLMixin from '@ember-data/adapter/src/build-url-mixin'` |
+| `DS.InvalidError` | `import InvalidError from '@ember-data/adapter/src/invalid-error'` |
+| `DS.JSONAPIAdapter` | `import JSONAPIAdapter from '@ember-data/adapter/src/json-api'` |
+| `DS.RESTAdapter` | `import RESTAdapter from '@ember-data/adapter/src/rest'` |
+| `DS.TimeoutError` | `import TimeoutError from '@ember-data/adapter/src/timeout-error'` |
+| `DS.errorsHashToArray` | `import { errorsHashToArray } from '@ember-data/adapters'` |
+| `DS.errorsArrayToHash` | `import { errorsArrayToHash } from '@ember-data/adapters'` |
 
 ### `@ember-data/serializer`
 | Global                                | Module                                                                      |
 |---                                    | ---  |
-| `DS.Serializer` | `import Serializer from 'ember-data/serializer'` |
-| `DS.EmbeddedRecordsMixin` | `import EmbeddedRecordsMixin from 'ember-data/serializer/embedded-record-mixin'` |
-| `DS.JSONAPISerializer` | `import JSONAPISerializer from 'ember-data/serializer/json-api'` |
-| `DS.JSONSerializer` | `import JSONSerializer from 'ember-data/serializer/json'` |
-| `DS.RESTSerializer` | `import RESTSerializer from 'ember-data/serializer/rest'` |
+| `DS.Serializer` | `import Serializer from '@ember-data/serializer'` |
+| `DS.EmbeddedRecordsMixin` | `import EmbeddedRecordsMixin from '@ember-data/serializer/src/embedded-record-mixin'` |
+| `DS.JSONAPISerializer` | `import JSONAPISerializer from '@ember-data/serializer/src/json-api'` |
+| `DS.JSONSerializer` | `import JSONSerializer from '@ember-data/serializer/src/json'` |
+| `DS.RESTSerializer` | `import RESTSerializer from '@ember-data/serializer/src/rest'` |
 
 ### `@ember-data/transform`
 | Global                                | Module                                                                      |
 |---                                    | ---  |
-| `DS.Transform` | `import Transform from 'ember-data/transform'` |
-| `DS.BooleanTransform` | `import BooleanTransform from 'ember-data/transform/boolean'` |
-| `DS.DateTransform` | `import DateTransform from 'ember-data/transform/date'` |
-| `DS.NumberTransform` | `import NumberTransform from 'ember-data/transform/number'` |
-| `DS.StringTransform` | `import StringTransform from 'ember-data/transform/string'` |
+| `DS.Transform` | `import Transform from '@ember-data/transform'` |
+| `DS.BooleanTransform` | `import BooleanTransform from '@ember-data/transform/src/boolean'` |
+| `DS.DateTransform` | `import DateTransform from '@ember-data/transform/src/date'` |
+| `DS.NumberTransform` | `import NumberTransform from '@ember-data/transform/src/number'` |
+| `DS.StringTransform` | `import StringTransform from '@ember-data/transform/src/string'` |
 
 ### `@ember-data/promise-proxy`
 | Global                                | Module                                                                      |
 |---                                    | ---  |
-| `DS.PromiseArray` | `import PromiseArray from 'ember-data/promise-proxies/array'` |
-| `DS.PromiseManyArray` | `import PromiseManyArray from 'ember-data/promise-proxies/many-array'`|
-| `DS.PromiseObject` | `import PromiseObject from 'ember-data/promise-proxies/object'` |
+| `DS.PromiseArray` | `import PromiseArray from '@ember-data/promise-proxies/src/array'` |
+| `DS.PromiseManyArray` | `import PromiseManyArray from '@ember-data/promise-proxies/src/many-array'`|
+| `DS.PromiseObject` | `import PromiseObject from '@ember-data/promise-proxies/src/object'` |
