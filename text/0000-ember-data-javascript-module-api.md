@@ -66,8 +66,8 @@ byt theyhave their own name and namespace in the Ember container.
 | Global                                | Module                                                                      |
 |---                                    | ---  |
 | `DS.Store` | `import Store from '@ember-data/store'` |
-| `DS.AdapterPopulatedRecordArray` | `import AdapterPopulatedRecordArray from '@ember-data/store/src/src/adapter-populated-record-array'` |
-| `DS.DebugAdapter` | `import DebugAdapter from '@ember-data/store/src/src/debug-adapter'` |
+| `DS.AdapterPopulatedRecordArray` | `import AdapterPopulatedRecordArray from '@ember-data/store/src/adapter-populated-record-array'` |
+| `DS.DebugAdapter` | `import DebugAdapter from '@ember-data/store/src/debug-adapter'` |
 | `DS.FilteredRecordArray` | `import FilteredRecordArray from '@ember-data/store/src/filterd-record-array'` |
 | `DS.ManyArray` | `import ManyArray from '@ember-data/store/src/many-array'` |
 | `DS.RecordArray` | `import RecordArray from '@ember-data/store/src/record-array'` |
