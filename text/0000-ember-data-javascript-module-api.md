@@ -12,12 +12,18 @@ This document proposes changes to the modules exported by Ember Data to make it 
 
 # Detailed design
 
-The 
-
-Ember Data will stick with 1 top level namespace of `ember-data`.
-Under it there are 6 nested module  namespaces where exposed components could live.
-Someday these namespaces could be moved into their own top level scoped package (for example `ember-data/serializer` could become `@ember-data/serializer`) however,
+Ember Data will stick with 1 top level namespace of `@ember-data`. Under it there are 6 nested module 
+namespaces where exposed components could live. Someday these namespaces could be moved into their own 
+top level scoped package (for example `@ember-data/serializer` could become `@ember-data/serializer`) however,
 that is not being proposed at this time. 
+
+
+- `@ember-data/store` - Store related concers with storing records inside ember data's identity map.
+- `@ember-data/model` - Classes and utilities related to modeling data
+- `@ember-data/adapter` - Classes and utilities related to communicating with external backends
+- `@ember-data/serializer` - Classes for serializing and extracting data from outside Ember Data
+- `@ember-data/transform` - Classes for transforming individual values
+- `@ember-data/promise-proxies` - Classes for allowing promises to show up in ember templates.
 
 # How We Teach This
 
