@@ -12,11 +12,8 @@ This document proposes changes to the modules exported by Ember Data to make it 
 
 # Detailed design
 
-Ember Data will stick with 1 top level namespace of `@ember-data`. Under it there are 6 nested module 
-namespaces where exposed components could live. Someday these namespaces could be moved into their own 
-top level scoped package (for example `@ember-data/serializer` could become `@ember-data/serializer`) however,
-that is not being proposed at this time. 
-
+Ember Data will stick with 1 top level namespace of `@ember-data`.
+Under it there are 6 nested module namespaces where exposed components could live.
 
 - `@ember-data/store` - Store related concers with storing records inside ember data's identity map.
 - `@ember-data/model` - Classes and utilities related to modeling data
@@ -108,7 +105,7 @@ byt theyhave their own name and namespace in the Ember container.
 | Global                                | Module                                                                      |
 |---                                    | ---  |
 | `DS.Serializer` | `import Serializer from '@ember-data/serializer'` |
-| `DS.EmbeddedRecordsMixin` | `import EmbeddedRecordsMixin from '@ember-data/serializer/src/embedded-record-mixin'` |
+| `DS.EmbeddedRecordsMixin` | `import EmbeddedRecordsMixin from '@ember-data/serializer/src/embedded-records-mixin'` |
 | `DS.JSONAPISerializer` | `import JSONAPISerializer from '@ember-data/serializer/src/json-api'` |
 | `DS.JSONSerializer` | `import JSONSerializer from '@ember-data/serializer/src/json'` |
 | `DS.RESTSerializer` | `import RESTSerializer from '@ember-data/serializer/src/rest'` |
