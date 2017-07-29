@@ -251,7 +251,7 @@ today, the following is supported:
 
 ```hbs
 <!-- invocation -->
-{{x-foo header=(coponent 'x-header')}}
+{{x-foo header=(component 'x-header')}}
 ```
 
 ```hbs
