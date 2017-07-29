@@ -197,7 +197,7 @@ console.log(bar.get('bar')); // 'baz'
 ## Observers and Events
 
 Observers and events both fail to work properly when using ES Class syntax. The root
-of the issue here is how `Ember.Objec`t works at a fundamental level, and will require
+of the issue here is how `Ember.Object` works at a fundamental level, and will require
 some refactoring to fix.
 
 Currently, each time `Ember.Object.extend` is used, it stores the list of mixins and
