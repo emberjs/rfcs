@@ -9,7 +9,7 @@ that users can begin building on them, and projects like `ember-decorators` can
 continue to push forward with experimental Javascript features. This includes:
 
 * Making the class `constructor` function a public API
-* Modifying some of the internals of Ember.Object to support existing features
+* Modifying some of the internals of `Ember.Object` to support existing features
 
 It does _not_ propose additions in the form of helpers or decorators, which should
 continue to be iterated on in the community as the spec itself is finalized.
@@ -63,7 +63,7 @@ new Javascript features and build on a stable API.
 
 # Detailed Design
 
-Many of the standard features of Ember classes work OOTB today, either with
+Many of the standard features of Ember classes work out of the box today, either with
 vanilla ES Classes or through `ember-decorators`, including:
 
 * Inheritance
@@ -73,14 +73,14 @@ vanilla ES Classes or through `ember-decorators`, including:
 * Actions
 
 However, the following features either do not exist or do not work as a
-user familiar with Ember Objects would expect:
+user familiar with `Ember.Object` would expect:
 
 * Class properties
 * Mixins
 * Observers and events
 * Merged and concatenated properties
 
-Some of these can and should be supported by changes to Ember.Object, whereas
+Some of these can and should be supported by changes to `Ember.Object`, whereas
 others can be addressed by community solutions. We will address each one
 individually below.
 
@@ -146,7 +146,7 @@ console.log(bar.get('testProp')); // 'default value'
 
 This behavior makes sense when you consider that it is equivalent to assigning
 values in `init` rather than on the object when it is defined. Rather than modify
-Ember.Object to treat class properties as default values, this RFC proposes that
+`Ember.Object` to treat class properties as default values, this RFC proposes that
 we accept the difference in behavior and utilize the constructor to allow users
 to set default values, as in the following example:
 
@@ -197,10 +197,10 @@ console.log(bar.get('bar')); // 'baz'
 ## Observers and Events
 
 Observers and events both fail to work properly when using ES Class syntax. The root
-of the issue here is how Ember.Object works at a fundamental level, and will require
+of the issue here is how `Ember.Objec`t works at a fundamental level, and will require
 some refactoring to fix.
 
-Currently, each time Ember.Object.extend is used, it stores the list of mixins and
+Currently, each time `Ember.Object.extend` is used, it stores the list of mixins and
 objects passed in on a list which also contains the superclass's properties and mixins,
 and so on. A class is then returned which has access to a closure variable, `wasApplied`:
 
