@@ -10,9 +10,11 @@ continue to push forward with experimental Javascript features. This includes:
 
 * Making the class `constructor` function a public API
 * Modifying some of the internals of `Ember.Object` to support existing features
+and make the usage of ES Classes cross-compatible with `Ember.Object`
 
 It does _not_ propose additions in the form of helpers or decorators, which should
-continue to be iterated on in the community as the spec itself is finalized.
+continue to be iterated on in the community as the spec itself is finalized. It also
+does not propose deprecating or removing existing functionality in `Ember.Object`.
 
 # Motivation
 
@@ -75,14 +77,35 @@ vanilla ES Classes or through `ember-decorators`, including:
 However, the following features either do not exist or do not work as a
 user familiar with `Ember.Object` would expect:
 
+* Extending from ES Classes using `extend`
 * Class properties
 * Mixins
 * Observers and events
 * Merged and concatenated properties
 
-Some of these can and should be supported by changes to `Ember.Object`, whereas
-others can be addressed by community solutions. We will address each one
-individually below.
+These features will require changes to `Ember.Object`
+
+## Extend
+
+Currently, once a class is defined using ES Classes it is not possible for users
+to extend it using the previous CoreObject style of writing and extending classes.
+This can limit the rate of adoption because ES Classes would become a trapdoor -
+once you begin using them, you must continue to use them. It would be a particularly
+thorny issue for addon developers, who may design components which their users
+expect to be able to extend and modify.
+
+This RFC proposes that `extend` be fixed on ES Classes to make them fully
+cross-compatible with the existing syntax. There are two general approaches to
+making this work:
+
+1. Modify CoreObject to use prototypes/ES Classes internally. This would bring
+CoreObject more inline with ES Classes, but would be a significant internal change.
+
+2. Modify CoreObject to have different behavior if it is extending an ES Class
+using `extend`.
+
+Both approaches should be explored and benchmarked to determine if there are an
+significant advantages to one over the other.
 
 ## Class Properties
 
@@ -283,65 +306,89 @@ not update, etc.)
 * Class property initialization can be changed such that properties are initialized
 after the constructor runs entirely, allowing them to be overwritten by values
 passed to `create`
-* Instead of fixing merged and concatenated properties, we can leave the behavior
-as is and allow community solutions to add it back in. Simple, general purpose
-decorators can be made which accomplish the same thing:
 
-  ```javascript
-  class FooComponent extends Ember.Component {
-    @concatenated classNameBindings = ['foo']
+# Topics for Future RFCs
 
-    @computed
-    get foo() { /* ... */ }
+While working on this RFC, some issues were brought into focus regarding existing
+features in CoreObject that are seen as problematic or unintuitive. In order to
+avoid bikeshedding these have been slated for discussion in future RFCs, but the
+discussion points have been included below.
 
-    @merged actions = {
-      bar() { /* ... */ }
-    }
-  }
-  ```
+## Merged and Concatenated Properties
 
-  They could also be accomplished more ergonomically with specialized decorators:
+Merged and concatenated properties are pain points for new Ember developers,
+specifically because they give no lexical hint that they are special in any way.
+Developers must know that these particular properties will be merged with the
+superclass, and there is no way to opt out of this behavior.
 
-  ```javascript
-  class FooComponent extends Ember.Component {
-    @className
-    @computed
-    get foo() { /* ... */ }
+With decorators, this same behavior can be accomplished in a much clearer and
+more straightforward way:
 
-    @action
+```javascript
+class FooComponent extends Ember.Component {
+  @concatenated classNameBindings = ['foo']
+
+  @computed
+  get foo() { /* ... */ }
+
+  @merged actions = {
     bar() { /* ... */ }
   }
-  ```
+}
+```
 
-  These approaches give us two distinct advantages over the previous behavior:
+They could also be accomplished more ergonomically with specialized decorators:
 
-  1. They are less magical. They indicate to new users that the properties are
-  special in some way, and ultimately they are just plain decorators, which are
-  compatible with ES Classes as a whole and can be reused anywhere.
-  2. They provide a way to opt out of their behavior. Currently, there is no easy
-  way to prevent properties which were marked to be merged from being merged,
-  meaning subclasses are stuck with the values that their superclass provided.
+```javascript
+class FooComponent extends Ember.Component {
+  @className
+  @computed
+  get foo() { /* ... */ }
 
-  In addition this approach is backwards compatible without a polyfill to at least Ember 1.11.
+  @action
+  bar() { /* ... */ }
+}
+```
 
-* Instead of fixing Observers and Listeners, we can leave the behavior as is and
-allow community solutions to add it back in. Class decorators can be used to modify
-the constructors at definition time and add the proto squashing:
+This approach has two distinct advantages over the existing behavior:
 
-  ```javascript
-  @evented
-  class Foo extends Ember.Object {
-    @on('init')
-    onInit() {
-      // do something
-    }
+1. It is less magical. The decorators indicate to new users that the properties are
+special in some way, and ultimately they are just plain decorators, which are
+compatible with ES Classes as a whole and can be reused anywhere.
+2. It provides a way to opt out of the behavior. Currently, there is no easy
+way to prevent properties which were marked to be merged from being merged,
+meaning subclasses are stuck with the values that their superclass provided.
+
+## Observers and Listeners
+
+Observers and event listeners are a powerful pattern that saw a lot of usage in Ember 1.
+However, it is now widely accepted that they are problematic when overused, and using
+computed properties and lifecycle hooks are better patterns in most cases.
+
+As such, rather than having events and observers turned on by default it may make
+more sense to have them be opt-in APIs. This could be accomplished by making new
+class decorators like so:
+
+```javascript
+@evented
+class Foo extends Ember.Object {
+  @on('init')
+  onInit() {
+    // do something
   }
-  ```
+}
+```
 
-  A proof of concept of this approach has been spiked out [on the ember-decorators repo](https://github.com/rwjblue/ember-decorators/tree/feature/observer-evented-class-decorators).
+Or it could be accomplished with new base classes that include the functionality:
 
-  This approach allows users to opt-in to eventing, and is backwards compatible without
-  a polyfill to at least Ember 1.11.
+```javascript
+class Foo extends EventedObject {
+  @on('init')
+  onInit() {
+    // do something
+  }
+}
+```
 
 # Unresolved questions
 
