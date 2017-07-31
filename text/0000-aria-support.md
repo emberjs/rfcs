@@ -17,6 +17,9 @@ In the same way that ariaRole is included in Ember.component, it would be useful
 * ariaLabelledBy = aria-labelledby
 * ariaDescribedBy = aria-describedby
 
+## Note
+This RFC is specifically requesting only these three, because the most common accessibility API mapping for a label is the accessible name property (covered with aria-label and aria-labelledby), and aria-describedby is the most typical accompaniament. 
+
 # How We Teach This
 
 It could be integrated into the API and presented in the same way that ariaRole is now. It gives a basic definition, links to the WAI-ARIA specification, and generally leaves it up to the developer to determine how to use it in a conformant way. 
@@ -27,16 +30,17 @@ It could be integrated into the API and presented in the same way that ariaRole 
 See https://www.w3.org/TR/wai-aria/states_and_properties#aria-label and https://www.w3.org/TR/WCAG20-TECHS/ARIA6.html
 
 ## ariaLabelledBy
-aria-labelledby identifies the element(s) that labels the current element. It provides the user with a (machine) recognizable name of the object. The value should be the ID(s) of the element(s) that provide a label text. 
+```aria-labelledby``` identifies the element(s) that labels the current element. It provides the user with a (machine) recognizable name of the object. The value should be the ID(s) of the element(s) that provide a label text. 
 
 See https://www.w3.org/TR/wai-aria/states_and_properties#aria-labelledby and https://www.w3.org/TR/WCAG20-TECHS/ARIA13.html 
 
-## ariaDescribedBy: 
-aria-describedby identifies the element(or elements) that describe the object. It is generally intended to provide more verbose information. The value should be the ID(s) of the element(s) that provide this descriptive text. 
+## ariaDescribedBy
+```aria-describedby``` identifies the element(or elements) that describe the object. It is generally intended to provide more verbose information. The value should be the ID(s) of the element(s) that provide this descriptive text. 
 
 See https://www.w3.org/TR/wai-aria/states_and_properties#aria-describedby and https://www.w3.org/TR/WCAG20-TECHS/ARIA1.html
 
-While I would like to see some basic accessibility concepts included in the Ember guides, that is beyond the scope of this RFC. 
+## Note
+While I would like to see basic accessibility concepts included in the Ember guides, that is beyond the scope of this RFC.  
 
 # Drawbacks
 
