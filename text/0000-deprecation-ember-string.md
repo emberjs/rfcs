@@ -4,7 +4,7 @@
 
 # Summary
 
-This PR proposes the deprecation of `Ember.String`. The following methods will be moved to an addon:
+This PR proposes the deprecation of extending `String` with the methods in `Ember.String` and accessing those directly. Furthermore, the following methods will be moved to a new `ember-string` addon.
 
 - `camelize`
 - `capitalize`
@@ -18,13 +18,11 @@ This PR proposes the deprecation of `Ember.String`. The following methods will b
 
 The remaining methods (`htmlSafe` and `isHTMLSafe`) will be moved to `@ember/component`.
 
-In both cases, the String prototype won't be extended anymore.
-
 # Motivation
 
 `Ember.String` was introduced long ago, even before 1.0 was released. It was a time without the current ecosystem of addons. There were no ES6 modules, no Ember CLI and no Ember addons. Global mode was the way to go and prototypes of classes like `String`, `Array` and `Function` were being extended.
 
-A lot of nice-to-have functionality was added at that time but now Ember is lifting weight. These functions belong in an addon, where it can be maintained and evolve without being tied to the core of the framework.
+A lot of nice-to-have functionality was added at that time but now Ember has a better ecosystem. These functions belong in an addon, where it can be maintained and evolve without being tied to the core of the framework.
 
 Also, this would let people swap the function for similar implementations but different behaviour in edge cases.
 
@@ -43,8 +41,6 @@ Ember guides' section on _disabling prototype extension_ would need to remove re
 
 Main usage of these functions are in blueprints or connecting to APIs where converting the type of case of keys was needed. It is also used in Ember Data.
 
-Furthermore, when people have moved to the new shims, moving to an addon would be as easy as to change the import path.
-
 For `htmlSafe` and `isHTMLSafe`, the move is easier since the methods are easier related to components than to strings.
 
 In any case, a basic Ember Watson recipe would be easy to provide.
@@ -53,7 +49,7 @@ In any case, a basic Ember Watson recipe would be easy to provide.
 
 A lot of addons that deal with names depend on this behaviour, so they will need to install the addon. Also, Ember Data and some external serializers require these functions.
 
-`htmlSafe` and `isHTMLSafe` would need to change packages as well, thus the reason to try and provide an Ember Watson recipe.
+`htmlSafe` and `isHTMLSafe` would need to change packages, thus the reason to try and provide an Ember Watson recipe.
 
 # Alternatives
 
