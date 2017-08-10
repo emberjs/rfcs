@@ -447,6 +447,8 @@ useful for assessing how this proposal looks in real-world applications.**
 For example, it will rewrite code that looks like this:
 
 ```js
+import Ember from 'ember';
+
 export default Ember.Component.extend({
   isAnimal: Ember.computed.or('isDog', 'isCat')
 });
