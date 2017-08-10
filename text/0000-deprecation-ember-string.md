@@ -4,7 +4,7 @@
 
 # Summary
 
-This PR proposes the deprecation of extending `String` with the methods in `Ember.String` and accessing those directly. Furthermore, the following methods will be moved to a new `ember-string` addon.
+This PR proposes the deprecation of extending `String` with the methods in `Ember.String` and accessing those directly. Furthermore, the following methods will be moved to a new `@ember/string` addon.
 
 - `camelize`
 - `capitalize`
