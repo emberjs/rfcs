@@ -70,7 +70,7 @@ and get all the Lines and Circles.
 
 # Detailed design
 
-##FindAll and PeekAll
+## FindAll and PeekAll
 `store.findAll('shape', { polymorphic: true })` would return a live array that would have all the shapes and all of the
 shape subclasses.
 
@@ -85,9 +85,9 @@ We would implement a private method, `store._subclassesFor`:
 `store.findAll('shape', { polymorphic: true })` would listen to live arrays of 'shape' and of all the classes and concat them.
 `store.peekAll('shape', { polymorphic: true })` would behave in the same way.
 
-##FindRecord and PeekRecord
+## FindRecord and PeekRecord
 
-###Fetching case
+### Fetching case
 In current Ember Data, requesting `store.findRecord('shape', 1, { reload: true })` and getting back `{ data: { id:1, type: 'line' } }` is an error
 condition.
 
@@ -95,11 +95,11 @@ condition.
 rather check if there exists a different shape with `id:1` in the identity map, and if it does Error out. If it does not, it would
 return the Line DS.Model from the findRecord promise.
 
-###Caching case
+### Caching case
 `store.findRecord('shape', id)` currently checks the identity map for existence of the shape record with `id:1` with `type:'shape'`
 `store.findRecord('shape', id, { polymorphic: true })` would also check the identity map of it's subclasses.
 '
-##URLs
+## URLs
 We would make no assumptions about URL structure with regards to polymorphism. In particular `line.save()` would go to `/lines` by default.
 It is very easy for the user to override this and in the LineAdapter.
 
@@ -150,6 +150,99 @@ This is a bigger problem than forgetting to add `{ polymorphic: true }` because 
 different part of the app.
   3. This approach is incosistent with our current relationship polymorphism. It would require us to either deprecate
 `hasMany({ polymorphic: true })` (and we just released 1.0 :( ) or to use an inconsistent mixed approach.
+
+
+## Auto discovery of heirarchy
+
+The above would be much improved with auto discovery of heirarchy. This would remove the need for `abstractBaseClass` and the `polymorphic` flag on `find` etc could be inferred from whether a class has any descendants.
+
+```
+\\ auto discovery that works in ED 2.8.0
+import Ember from 'ember';
+
+const { Service, computed, getOwner, get } = Ember;
+
+export default Service.extend({
+	_derivedTypes: null,
+	_ancestorTypes: null,
+
+	_dataAdapter: computed({
+		get () {
+			return getOwner(this).lookup('data-adapter:main');
+		}
+	}),
+
+	_buildModelHierarchy () {
+		const modelTypes = get(this, '_dataAdapter').getModelTypes();
+		const modelNames = modelTypes.mapBy('name');
+		const modelClasses = modelTypes.mapBy('klass.superclass'); // not sure why but apparently what we're given is derived from the model classes, rather than being the actual model class
+		const derivedTypes = {};
+		const ancestorTypes = {};
+
+		for (let i = 0; i < modelNames.length; i++) {
+			const baseModelClass = modelClasses[i];
+			const baseModelName = modelNames[i];
+
+			if (!derivedTypes[baseModelName]) {
+				derivedTypes[baseModelName] = [];
+			}
+
+			for (let j = 0; j < modelNames.length; j++) {
+				const derivedModelName = modelNames[j];
+				if (!ancestorTypes[derivedModelName]) {
+					ancestorTypes[derivedModelName] = [];
+				}
+
+				if (i !== j && baseModelClass.detect(modelClasses[j])) {
+					derivedTypes[baseModelName].push(derivedModelName);
+					ancestorTypes[derivedModelName].push(baseModelName);
+				}
+			}
+		}
+
+		this.setProperties({
+			_derivedTypes: derivedTypes,
+			_ancestorTypes: ancestorTypes
+		});
+	},
+
+	derivedTypes: computed({
+		get () {
+			if (!get(this, '_derivedTypes')) {
+				this._buildModelHierarchy();
+			}
+
+			return get(this, '_derivedTypes');
+		}
+	}),
+
+	ancestorTypes: computed({
+		get () {
+			if (!get(this, '_ancestorTypes')) {
+				this._buildModelHierarchy();
+			}
+
+			return get(this, '_ancestorTypes');
+		}
+	}),
+
+	getDerivedTypes (baseTypeName) {
+		const derivedTypes = get(this, 'derivedTypes');
+		if (!derivedTypes) {
+			return null;
+		}
+		return baseTypeName ? derivedTypes[baseTypeName] : derivedTypes;
+	},
+
+	getAncestorTypes (typeName) {
+		const ancestorTypes = get(this, 'ancestorTypes');
+		if (!ancestorTypes) {
+			return null;
+		}
+		return typeName ? ancestorTypes[typeName] : ancestorTypes;
+	}
+});
+```
 
 # Unresolved questions
 
