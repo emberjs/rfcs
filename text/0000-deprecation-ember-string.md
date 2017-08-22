@@ -4,30 +4,15 @@
 
 # Summary
 
-This PR proposes the deprecation of extending `String` with the methods in `Ember.String` and accessing those directly. Furthermore, the following methods will be moved to a new `@ember/string` addon.
-
-- `camelize`
-- `capitalize`
-- `classify`
-- `dasherize`
-- `decamelize`
-- `fmt`
-- `loc`
-- `underscore`
-- `w`
-
-The remaining methods (`htmlSafe` and `isHTMLSafe`) will be moved to `@ember/component`.
+This RFC proposes to deprecate the prototype extensions done by `Ember.String` and the `loc` method, and moving `htmlSafe` and `isHTMLSafe` to `@ember/component`.
 
 # Motivation
 
-`Ember.String` was introduced long ago, even before 1.0 was released. It was a time without the current ecosystem of addons. There were no ES6 modules, no Ember CLI and no Ember addons. Global mode was the way to go and prototypes of classes like `String`, `Array` and `Function` were being extended.
+Much of the public API of Ember was designed and published some time ago, when the client-side landscape looked much different. It was a time without without many utilities and methods that have been introduced to JavaScript since, without the current rich npm ecosystem, and without ES6 modules. On the Ember side, Ember CLI the subsequent addons were still to be introduced. Global mode was the way to go, and extending native prototypes like Ember does for `String`, `Array` and `Function` was a common practice.
 
-A lot of nice-to-have functionality was added at that time but now Ember has a better ecosystem. These functions belong in an addon, where it can be maintained and evolve without being tied to the core of the framework.
+With the introduction of [RFC #176](https://github.com/emberjs/rfcs/blob/master/text/0176-javascript-module-api.md), an opportunity to reduce the API that is shipped by default with an Ember application appears. A lot of nice-to-have functionality that was added at that time can now be moved to optional packages and addons, where they can be maintained and evolved without being tied to the core of the framework.
 
-Also, this would let people swap the function for similar implementations but different behaviour in edge cases.
-
-Once most of the methods are moved to an addon and `String` is no longer being extended, makes more sense to move `htmlSafe` and `isHTMLSafe` methods to the component layer.
-
+In the specific case of `Ember.String`, our goal is that users that need it will include `@ember/string` in their dependencies, or rely on common utility packages like [`lodash.camelcase`](https://lodash.com/docs/#camelCase).
 
 # Transition Path
 
