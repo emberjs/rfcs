@@ -23,15 +23,15 @@ As this will likely be first of many packages to be extracted from the Ember sou
 
 The order of operations will be as follows:
 
-* Move `htmlSafe` and `isHTMLSafe` to `@ember/component`
-  * Update https://github.com/ember-cli/ember-rfc176-data
-* Create an `@ember/string` package with the remaining public API
-* Create an `ember-string-prototype-extensions` package that introduces `String` prototype extensions to aid in transitioning
-* Make `ember-cli-babel` aware of the `@ember/string` package so it tells `babel-plugin-ember-modules-api-polyfill` not to convert those imports to the global `Ember` namespace
-* Update usages in Ember and Ember Data codebases so that the projects do not trigger deprecations
-* Deprecate `Ember.String`
-  * Write deprecation guide which mentions minimum version of `ember-cli-babel`, and how/when to use `@ember/string` and `ember-string-prototype-extensions` packages
-* Deprecate `loc` in `@ember/string`
+1. Move `htmlSafe` and `isHTMLSafe` to `@ember/component`
+   * Update https://github.com/ember-cli/ember-rfc176-data
+2. Create an `@ember/string` package with the remaining public API
+3. Create an `ember-string-prototype-extensions` package that introduces `String` prototype extensions to aid in transitioning
+4. Make `ember-cli-babel` aware of the `@ember/string` package so it tells `babel-plugin-ember-modules-api-polyfill` not to convert those imports to the global `Ember` namespace
+5. Update usages in Ember and Ember Data codebases so that the projects do not trigger deprecations
+6. Deprecate `Ember.String`
+   * Write deprecation guide which mentions minimum version of `ember-cli-babel`, and how/when to use `@ember/string` and `ember-string-prototype-extensions` packages
+7. Deprecate `loc` in `@ember/string`
 
 ## What is happening for framework users?
 
@@ -60,7 +60,7 @@ If you are using the `String` prototype extensions, like `'myString'.dasherize()
 
 ## Official code bases and documentation
 
-The official documentation–website, Guides, API documentation–should be updated not to use `String` prototype extensions.
+The official documentation –website, Guides, API documentation– should be updated not to use `String` prototype extensions.
 This documentation should already use the new modules API from an effort to update it for Ember 2.16.
 
 The Guides section on _disabling prototype extension_ will need to be updated when `String` prototype extensions are removed from Ember.
