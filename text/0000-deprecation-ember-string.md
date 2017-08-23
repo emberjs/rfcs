@@ -41,7 +41,7 @@ If you are using `Ember.String.htmlSafe` or `Ember.String.isHTMLSafe`, you will 
 
 If you are using one of the other `Ember.String` methods, like `Ember.String.dasherize`, you will receive a deprecation warning to inform you that you should run the [`ember-modules-codemod`](https://github.com/ember-cli/ember-modules-codemod), update `ember-cli-babel` to a specific minor version, and add `@ember/string` to your application's or addon's dependencies.
 
-If you are using the `String` prototype extensions, like `"myString".dasherize()`, on top of the previous instructions you will be instructed to install `ember-string-prototype-extensions` in case updating the code to `dasherize("myString")` is not trivial.
+If you are using the `String` prototype extensions, like `'myString'.dasherize()`, on top of the previous instructions you will be instructed to install `ember-string-prototype-extensions` in case updating the code to `dasherize('myString')` is not trivial.
 
 ## Timeline
 
@@ -58,19 +58,48 @@ If you are using the `String` prototype extensions, like `"myString".dasherize()
 
 # How We Teach This
 
-Ember guides' section on _disabling prototype extension_ would need to remove references to these methods. `camelize` is also used in the services tutorial.
+## Official code bases and documentation
 
-Main usage of these functions are in blueprints or connecting to APIs where converting the type of case of keys was needed. It is also used in Ember Data.
+The official documentation–website, Guides, API documentation–should be updated not to use `String` prototype extensions.
+This documentation should already use the new modules API from an effort to update it for Ember 2.16.
 
-For `htmlSafe` and `isHTMLSafe`, the move is easier since the methods are easier related to components than to strings.
+The Guides section on _disabling prototype extension_ will need to be updated when `String` prototype extensions are removed from Ember.
 
-In any case, a basic Ember Watson recipe would be easy to provide.
+Resources owned by the Ember teams, such and Ember and Ember Data code bases, the Super Rentals repository, or the builds app for the website, will be updated accordingly.
+
+## `Ember.String.htmlSafe` and `Ember.String.isHTMLSafe`
+
+The move of `htmlSafe` and `isHTMLSafe` from `Ember.String` to `@ember/component` should be documented as part of the [ember-rfc176-data](https://github.com/ember-cli/ember-rfc176-data) and related codemods efforts, as that project is the source of truth for the mappings between the `Ember` global namespace and `@ember`-scoped modules.
+
+## `Ember.String.loc` and `import { loc } from '@ember/string';`, `Ember.String` to `@ember/string`, `String` prototype extensions
+
+An entry to the [Deprecation Guides](https://emberjs.com/deprecations/) will be added outlining the different recommended transition strategies.
+
+### `Ember.String.loc`, `import { loc } from '@ember/string';`
+
+As this function is deprecated, users will be recommended to use a [dedicated localization solution](https://emberobserver.com/categories/internationalization).
+
+### `Ember.String` to `@ember/string`
+
+The way that `@ember`-scoped modules will work in 2.16 is that `ember-cli-babel` will convert something like `import { dasherize } from '@ember/string';` to `import Ember from 'Ember'; const dasherize = Ember.String.dasherize;`.
+What this means is that `import { dasherize } from '@ember/string';` will trigger a deprecation if you do not have the `@ember/string` package in your dependencies.
+
+To address the above deprecation you will need to update `ember-cli-babel` to a a specific minor version or higher, to make sure it has the logic to detect `@ember/string`. The specific minor version will be known at the time the deprecation guide is written.
+You will also need to add `@ember/string` to your application's development dependencies, or your addon's dependencies.
+
+### `String` prototype extensions
+
+If you are using `'myString'.dasherize()` or one of the other functions added to `String`, you will be instructed to replace that usage with `import { dasherize } from '@ember/string'; dasherize('myString')`, in addition to the changes on the previous section.
+
+In case your code base is complicated enough that migrating all these usages at the same time is not convenient, you will be able to add `ember-string-prototype-extensions` to your dependencies, which will bring back extensions, without deprecations.
 
 # Drawbacks
 
 A lot of addons that deal with names depend on this behaviour, so they will need to install the addon. Also, Ember Data and some external serializers require these functions.
 
 `htmlSafe` and `isHTMLSafe` would need to change packages, thus the reason to try and provide an Ember Watson recipe.
+
+Another side-effect of this change is that certain users might be shipping duplicated code between `Ember.String` and `@ember/string`, but it is a necessary stepping stone and might be able to be addressed via svelting.
 
 # Alternatives
 
