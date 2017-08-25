@@ -20,8 +20,9 @@ For convenience and symmetry with [`find`][ember-array-find] and
 [`findBy`][ember-array-findBy], this RFC also proposes that an
 accompanying `findIndexBy` method be added.
 
-Why this is useful should be obvious. For current alternatives, refer to the
-*Alternatives* section.
+Finding the index instead of the element itself is sometimes preferable when
+mangling data structures or calling actions. Currently there's no easy and
+efficient way to do that, as shown in the *Alternatives* section.
 
 # Detailed design
 
