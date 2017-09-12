@@ -11,16 +11,14 @@ The [Packager RFC](https://github.com/chadhietala/rfcs/blob/packager/active/0002
 
 The current application build process merges and concatenates input broccoli trees. This behaviour is not well documented and is a tribal knowledge. While the simplicity of this approach is nice, it doesn't allow for extension. We can refactor our build process and provide more flexibility when desired.
 
-Most importantly, it helps us achieve:
+Most importantly, the approach described below helps us achieve:
 
 + defining and developing a common language around the subject
-+ removing highly coupled code and streamline technical implementation (Ember Engines)
++ removing highly coupled code and streamline technical implementation (Ember Engines and Fastboot)
 + unlock a whole different set of plugins we couldn't have before:
   + ability to create custom bundles (i.e per-engine and per-route bundles)
   + take advantage of [HTTP2 multiplexing](https://http2.github.io/faq/#why-is-http2-multiplexed) and [cache pushing](https://www.mnot.net/blog/2014/01/30/http2_expectations#4-cache-pushing)
   + optimising plugins (Javascript and CSS treeshaking)
-
-
 
 # Scope
 
@@ -54,7 +52,7 @@ interface Assembler {
 
 ## Strategies
 
-Strategy is an extensibility primitive. It gives you granular control over the final output. It could be used in many different ways (we are going to go over use cases below). 
+Strategy is an extensibility primitive. It gives you granular control over the final output. It could be used in many different ways (we are going to go over use cases below).
 
 Strategy must have the following interface:
 
@@ -91,7 +89,7 @@ class ConcatenationStrategy {
     this.options = options;
   }
 
-  toTree(assembler, inputTree) {  
+  toTree(assembler, inputTree) {
     return concat(inputTree, this.options);
   }
 }
@@ -131,7 +129,7 @@ Yet another application of strategies would be to run different analysis on the 
 
 #### Engine Strategy
 
-Introducing `Strategy` as a concept allows us to re-think the way we approach Ember Engines as well. We can start thinking about engines as a strategy of certain type. In fact, it's very similar to `ConcatenationStrategy` described above. 
+Introducing `Strategy` as a concept allows us to re-think the way we approach Ember Engines as well. We can start thinking about engines as a strategy of certain type. In fact, it's very similar to `ConcatenationStrategy` described above.
 
 + reduces the API surface (as opposed to `ember-engines` and `ember-asset-loader`, only one strategy)
 + makes things explicit, meaning that you have to register a strategy
@@ -154,7 +152,7 @@ module.exports = function(defaults) {
   const stragies = defaultStrategies.concat(firstStrategy, secondStrategy);
 
   const app = new EmberApp(defaults, { strategies });
-    
+
   return app.toTree();
 }
 ```
@@ -182,7 +180,7 @@ However, there are still several things that are missing:
 
 `Linker` would be responsible for:
 
-+ building a minimal dependency graph as well as check for redundant edges in the graph (more on the topic, [Transitive reduction of a directed graph](https://en.wikipedia.org/wiki/Transitive_reduction#Graph_algorithms_for_transitive_reduction)); 
++ building a minimal dependency graph as well as check for redundant edges in the graph (more on the topic, [Transitive reduction of a directed graph](https://en.wikipedia.org/wiki/Transitive_reduction#Graph_algorithms_for_transitive_reduction));
 + producing an application tree with only used modules
 
 Dependency graph represents dependencies using module names, there is a need to be able to convert module name to file path. This is where `File System Resolver` comes in. Here's couple of examples:
@@ -202,7 +200,7 @@ This effort could be broken down into several phases:
   + removing unused initializers/services (this likely entails work on dependency injection layer as we would need access to a resolver resolution map)
 + treeshaking (Rollup-like treeshaking where we include *only* the code that is used)
 
-`Linker` would be able to take an `exclude` list of modules as a parameter. Although, valuable in some situations, it should be clearly marked as advanced API. It should be used as a last resort and serve as an "escape hatch". 
+`Linker` would be able to take an `exclude` list of modules as a parameter. Although, valuable in some situations, it should be clearly marked as advanced API. It should be used as a last resort and serve as an "escape hatch".
 
 It would make sense to implement `Linker` as a strategy. Developers would be able to "opt in"/"opt out" of optimising behaviour.
 
@@ -239,9 +237,10 @@ This is a backward compatible change to the existing Ember CLI eco system. In or
 + Will there be an ordering problem (strategies)?
 + Will it increase build time?
 + Which strategies are going to be supported out-of-the-box?
-+ Should we introduce the same API on add-on level? 
++ Should we introduce the same API on add-on level?
 + Will simple extension strategy “just work”?
 + Communication between strategies
++ Debugging strategies and output validation
 
 # Thanks
 
