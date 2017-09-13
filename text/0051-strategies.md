@@ -65,21 +65,26 @@ interface Strategy {
 
 `inputTree` will have the following structure:
 
-```sh
+```ruby
 bundler:js:input/
-├── addon-modules
-├── the-app-name-folder
-├── node_modules
-└── vendor
+├── addon-modules/
+├── the-app-name-folder/
+├── node_modules/
+└── vendor/
 ```
 
-where `addon-modules` contains dependencies from Ember add-ons; `the-app-name-folder` contains Ember application code; `node_modules` contains node dependencies and `vendor` contains other dependencies.
+where:
+
++ `addon-modules` is a folder that contains dependencies from Ember add-ons
++ `the-app-name-folder` is a folder that contains Ember application code
++ `node_modules` is a folder that contains node dependencies
++ `vendor` is a folder that contains other dependencies.
 
 Note, that  `toTree` method must return a broccoli tree.
 
 ### Concatenation Strategy
 
-One of the strategies that we already use now to produce `assets/app-name.js` and `assets/vendor.js`. It takes a broccoli tree and returns a new concatenated broccoli tree.
+It is used by Ember CLI privately in the latest `canary` version to produce `assets/app-name.js` and `assets/vendor.js`. It takes a broccoli tree and returns a new concatenated broccoli tree.
 
 ```javascript
 const concat = require('broccoli-concat');
@@ -103,7 +108,9 @@ Below are some of the strategies that could be implemented.
 
 #### Assets Split Strategy
 
-Other strategy that proved very useful is an ability to separate assets. One of the applications would be to separate "static" assets from application code. They are called "static" because they don't change very often and could stay cached by CDN throughout several deployments (`ember.js`, `jQuery` or third party dependencies). That way performance is less effected by deployments.
+One of the techniques for improving site speed is isolating changes throughout application deployments. Assuming  the application assets are uploaded to CDN, the reasoning is very simple: if `ember.js` or `jQuery` (possibly along with other third party libraries) don't change with every deployment, why bust CDN cache for them?
+
+This strategy could be provided out of the box by Ember CLI as a part of site speed improvement story.
 
 ```javascript
 class AssetsSplitStrategy {
@@ -140,7 +147,9 @@ Ember applications would be able to register custom strategies via `ember-cli-bu
 
 Passing `strategies` as an option to the constructor will clobber default strategies that Ember CLI provides out of the box (they mimic existing behaviour of creating `dist` folder with final assets).
 
-However, Ember CLI will expose a list of default strategies that people can take advantage of. For example:
+However, Ember CLI will expose an array of default strategies that people can take advantage of. Note, that `defaultStrategies` will be freezed so you can't push directly onto it. One would need to create a new array.
+
+For example:
 
 ```javascript
 // ember-cli-build.js
@@ -157,7 +166,7 @@ module.exports = function(defaults) {
 }
 ```
 
-Note, that `strategies` is an optional property. If you don't pass it to the constructor or `strategies` is an empty array, you effectively "opting out" of the feature and using the default behaviour.
+Note, that `strategies` is an optional property. If you don't pass it to the constructor or `strategies` is an empty array, you're effectively "opting out" of the feature and using the default behaviour.
 
 This change should be behind an experiment flag, `STRATEGIES`. This will allow us to start experimenting with different strategies right away and not being tied to a particular release cycle.
 
@@ -225,12 +234,19 @@ This is a backward compatible change to the existing Ember CLI eco system. In or
 
 # Drawbacks
 
-- More libraries to maintain
-- Increasing public API surface
+There are several potential drawbacks that are worth noting.
+
+_Build performance_. There is minimal overhead in instantiating strategies and calling methods on them and I believe this approach shouldn't degrade build performance.
+
+_Coupling with Broccoli_. The idea of having a more generic cli was discussed during last Ember CLI core face to face meeting and it was agreed that it was a sizeable amount of work. That kind of refactoring CLI would require a lot of code changes and is a large body of work. At the moment, Broccoli is a de facto Ember CLI build tool. We don't introduce any extra coupling, not more than it is right now.
+
+_A note on add-ons_. Add-ons don't rely on the way Ember CLI does bundling. That means existing build system continues to work as expected and add-ons won't have to change their implementation.
+
+_A note on non-javascript bundles_. Strategies could be used to create non-javascript bundles as well. For example, we could create a separate bundle for Handlebars templates if need be. I'm going to leave technical details out as they are out of the scope of this RFC.
 
 # Alternatives
 
-[Webpack](https://webpack.js.org) has become very popular in solving this similar problem. However it is unclear how WebPack could be used with Ember as Ember has both explicit and implicit dependencies. This is why we feel we need something that is aware of how Ember apps are assembled and take advantage of existing tools when it is makes sense. Since we have an opinionated way of structuring our apps, we can avoid the "wall of configuration" that other asset packaging systems are susceptible to.
+This RFC allows us to introduce _any_ bundling strategy when needed. [Webpack](https://webpack.js.org) has become very popular in solving this similar problem. We could implement a `WebpackStrategy` that would take care of the bundling. Ultimately, we need something that is aware of how Ember apps are assembled and how Ember apps utilize dependency injection that takes advantage of existing tools. The long term plan is to have a dependency graph that is aware of application structure so can avoid the "wall of configuration" that other asset packaging systems are susceptible to.
 
 # Unresolved questions
 
