@@ -4,7 +4,7 @@
 
 # Summary
 
-This RFC proposes to deprecate the prototype extensions done by `Ember.String`, deprecate the `loc` method, and moving `htmlSafe` and `isHTMLSafe` to `@ember/templating`.
+This RFC proposes to deprecate the prototype extensions done by `Ember.String`, deprecate the `loc` method, and moving `htmlSafe` and `isHTMLSafe` to `@ember/template`.
 
 # Motivation
 
@@ -17,7 +17,7 @@ In the specific case of `Ember.String`, our goal is that users that need these u
 To achieve the above goal we will move the `isHTMLSafe`/`htmlSafe` pair into a new package, deprecate `String.prototype` extensions, and deprecate the utility functions under the `Ember.String` namespace.
 
 The ["Organize by Mental Model"](https://github.com/emberjs/rfcs/blob/master/text/0176-javascript-module-api.md#organize-by-mental-model) section of RFC #176 mentions the concept of chunking. In the current setup, `isHTMLSafe`/`htmlSafe` make sense in the `Ember.String` namespace because they operate on strings, and they are available on the prototype, `"myString".htmlSafe()`.
-However, once prototype extensions are removed it becomes clearer that while this pair operates on strings, they don't transform them in the same way as `capitalize` or `dasherize`. They are instead a way for the user to communicate to the templating engine that this string should be safe to render. For this reason, moving to `@ember/templating` seems appropriate.
+However, once prototype extensions are removed it becomes clearer that while this pair operates on strings, they don't transform them in the same way as `capitalize` or `dasherize`. They are instead a way for the user to communicate to the templating engine that this string should be safe to render. For this reason, moving to `@ember/template` seems appropriate.
 
 Extending native prototypes, like we do for `String` with `"myString".dasherize()` and the rest of the API, has been falling out of favour more as time goes by.
 While the tradeoff might have been positive at the beginning, as it allowed users access to a richer API, prototype extensions blur the line between what is the framework and what is the language in a way that is not benefitial in the current module-driven and package-rich ecosystem.
@@ -34,7 +34,7 @@ As this will likely be first of many packages to be extracted from the Ember sou
 
 The order of operations will be as follows:
 
-1. Move `htmlSafe` and `isHTMLSafe` to `@ember/templating`
+1. Move `htmlSafe` and `isHTMLSafe` to `@ember/template`
    * Update https://github.com/ember-cli/ember-rfc176-data
 2. Create an `@ember/string` package with the remaining public API
 3. Create an `ember-string-prototype-extensions` package that introduces `String` prototype extensions to aid in transitioning
@@ -60,7 +60,7 @@ If you are using the `String` prototype extensions, like `'myString'.dasherize()
   * `String` protoype extensions are deprecated
   * `Ember.String` functions are deprecated
   * `loc` is completely deprecated
-  * `isHTMLSafe` and `htmlSafe` are moved to `@ember/templating`
+  * `isHTMLSafe` and `htmlSafe` are moved to `@ember/template`
 * Transition packages are introduced - Ember 2.x
   * `@ember/string`, which replaced `Ember.String`
   * `ember-string-prototype-extensions`, which brings `String` prototype extensions back
@@ -81,7 +81,7 @@ Resources owned by the Ember teams, such and Ember and Ember Data code bases, th
 
 ## `Ember.String.htmlSafe` and `Ember.String.isHTMLSafe`
 
-The move of `htmlSafe` and `isHTMLSafe` from `Ember.String` to `@ember/templating` should be documented as part of the [ember-rfc176-data](https://github.com/ember-cli/ember-rfc176-data) and related codemods efforts, as that project is the source of truth for the mappings between the `Ember` global namespace and `@ember`-scoped modules.
+The move of `htmlSafe` and `isHTMLSafe` from `Ember.String` to `@ember/template` should be documented as part of the [ember-rfc176-data](https://github.com/ember-cli/ember-rfc176-data) and related codemods efforts, as that project is the source of truth for the mappings between the `Ember` global namespace and `@ember`-scoped modules.
 
 ## `Ember.String.loc` and `import { loc } from '@ember/string';`, `Ember.String` to `@ember/string`, `String` prototype extensions
 
