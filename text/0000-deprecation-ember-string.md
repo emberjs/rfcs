@@ -4,7 +4,7 @@
 
 # Summary
 
-This RFC proposes to deprecate the prototype extensions done by `Ember.String`, deprecate the `loc` method, and moving `htmlSafe` and `isHTMLSafe` to `@ember/component`.
+This RFC proposes to deprecate the prototype extensions done by `Ember.String`, deprecate the `loc` method, and moving `htmlSafe` and `isHTMLSafe` to `@ember/templating`.
 
 # Motivation
 
