@@ -16,9 +16,8 @@ In the specific case of `Ember.String`, our goal is that users that need who the
 
 To achieve the above goal we will move the `isHTMLSafe`/`htmlSafe` pair into a new package, deprecate `String.prototype` extensions, and deprecate the utility functions under the `Ember.String` namespace.
 
-Thehe ["Organize by Mental Model"](https://github.com/emberjs/rfcs/blob/master/text/0176-javascript-module-api.md#organize-by-mental-model) section of RFC #176 mentions the concept of chunking. In the current setup, `isHTMLSafe`/`htmlSafe` make sense in the `Ember.String` namespace because they operate on strings, and they are available on the prototype, `"myString".htmlSafe()`.
-However, once prototype extensions are removed, it becomes clearer that while this pair operates on strings, they don't transform them in the same way as `capitalize` or `dasherize`, but are instead a templating concern.
-For this reason, we are moving them to `@ember/templating`.
+The ["Organize by Mental Model"](https://github.com/emberjs/rfcs/blob/master/text/0176-javascript-module-api.md#organize-by-mental-model) section of RFC #176 mentions the concept of chunking. In the current setup, `isHTMLSafe`/`htmlSafe` make sense in the `Ember.String` namespace because they operate on strings, and they are available on the prototype, `"myString".htmlSafe()`.
+However, once prototype extensions are removed it becomes clearer that while this pair operates on strings, they don't transform them in the same way as `capitalize` or `dasherize`. They are instead a way for the user to communicate to the templating engine that this string should be safe to render. For this reason, moving to `@ember/templating` seems appropriate.
 
 Extending native prototypes, like we do for `String` with `"myString".dasherize()` and the rest of the API, has been falling out of favour more as time goes by.
 While the tradeoff might have been positive at the beginning, as it allowed users access to a richer API, prototype extensions blur the line between what is the framework and what is the language in a way that is not benefitial in the current module-driven and package-rich ecosystem.
