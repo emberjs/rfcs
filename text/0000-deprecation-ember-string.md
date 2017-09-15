@@ -8,11 +8,11 @@ This RFC proposes to deprecate the prototype extensions done by `Ember.String`, 
 
 # Motivation
 
-Much of the public API of Ember was designed and published some time ago, when the client-side landscape looked much different. It was a time without many utilities and methods that have been introduced to JavaScript since, without the current rich npm ecosystem, and without ES6 modules. On the Ember side, Ember CLI the subsequent addons were still to be introduced. Global mode was the way to go, and extending native prototypes like Ember does for `String`, `Array` and `Function` was a common practice.
+Much of the public API of Ember was designed and published some time ago, when the client-side landscape looked much different. It was a time without many utilities and methods that have been introduced to JavaScript since, without the current rich npm ecosystem, and without ES6 modules. On the Ember side, Ember CLI and the subsequent addons were still to be introduced. Global mode was the way to go, and extending native prototypes like Ember does for `String`, `Array` and `Function` was a common practice.
 
 With the introduction of [RFC #176](https://github.com/emberjs/rfcs/blob/master/text/0176-javascript-module-api.md), an opportunity to reduce and reorganize the API that is shipped by default with an Ember application appears. A lot of nice-to-have functionality that was added at that time can now be moved to optional packages and addons, where they can be maintained and evolved without being tied to the core of the framework.
 
-In the specific case of `Ember.String`, our goal is that users that need who these utility functions will include `@ember/string` in their dependencies, or rely on common utility packages like [`lodash.camelcase`](https://lodash.com/docs/#camelCase).
+In the specific case of `Ember.String`, our goal is that users that need these utility functions will include `@ember/string` in their dependencies, or rely on common utility packages like [`lodash.camelcase`](https://lodash.com/docs/#camelCase).
 
 To achieve the above goal we will move the `isHTMLSafe`/`htmlSafe` pair into a new package, deprecate `String.prototype` extensions, and deprecate the utility functions under the `Ember.String` namespace.
 
