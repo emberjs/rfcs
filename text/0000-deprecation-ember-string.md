@@ -48,7 +48,7 @@ The order of operations will be as follows:
 
 If you are using `Ember.String.loc`, you will be instructed to move to a dedicated localization solution, as this method will be completely deprecated.
 
-If you are using `Ember.String.htmlSafe` or `Ember.String.isHTMLSafe`, you will be instructed to run the [`ember-modules-codemod`](https://github.com/ember-cli/ember-modules-codemod) and it will update to the correct imports from the `@ember/component` package.
+If you are using `Ember.String.htmlSafe` or `Ember.String.isHTMLSafe`, you will be instructed to run the [`ember-modules-codemod`](https://github.com/ember-cli/ember-modules-codemod) and it will update to the correct imports from the `@ember/template` package.
 
 If you are using one of the other `Ember.String` methods, like `Ember.String.dasherize`, you will receive a deprecation warning to inform you that you should run the [`ember-modules-codemod`](https://github.com/ember-cli/ember-modules-codemod), update `ember-cli-babel` to a specific minor version, and add `@ember/string` to your application's or addon's dependencies.
 
