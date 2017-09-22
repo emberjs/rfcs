@@ -39,10 +39,10 @@ Most importantly, the approach described below helps us achieve:
 
 # Terminology
 
-+ **Strategy** - A strategy is responsible for returning a build pipeline that
-  can emit a specific set of output assets given an input tree.
-+ **Assembler** - Responsible for taking the resolved tree and applying –
-  default or user provided – strategies to the tree.
++ **Strategy** - A strategy represents a transformation. Speaking in Broccoli
+  terms, it returns a transformed tree given an input tree.
++ **Assembler** - Responsible for applying strategies (transforms) - default or user
+  provided - to an input tree.
 
 # Detailed design
 
@@ -58,15 +58,6 @@ It does not make any assumptions about how the final output should be
 constructed. Instead, it relies on strategies to tell it what the final output
 should look like. This is rather important as it enforces clear separation of
 concerns.
-
-Assembler must have the following interface:
-
-```typescript
-interface Assembler {
-  constructor(inputTree: BroccoliTree,
-  strategies: Strategy[]); toTree(): BroccoliTree;
-}
-```
 
 `toTree` method would gather all the trees from the passed in `strategies`, and
 merge them into one final broccoli tree.
