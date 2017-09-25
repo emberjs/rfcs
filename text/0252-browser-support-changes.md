@@ -13,14 +13,13 @@ Solicit feedback on dropping support for IE9, IE10, and PhantomJS.
 As Ember heads towards version 3.0, it is a good time to evaluate our browser support matrix. Ember follows Semantic Versioning, and we consider browser compatibility to be under the umbrella of those guarantees. In other words, we will continue to support whatever browsers we officially support in Ember 3.0 until Ember 4.0.
 
 We want to make this decision on the basis of the browsers that our community still needs to support, while weighing that against the costs we bear as a community to support older browsers. This RFC will lay out some of those costs, so we can decide what tradeoff is most appropriate.
-Members of the core team maintain many different kinds of apps across many different kinds of companies. Some of us work on applications with small, agile teams, while others work inside of large corporations with many engineers. When this topic came up amongst the team, we discovered that, across all these different companies and Ember apps, we did not generally support these legacy browsers.
+Members of the core team maintain many different kinds of apps across many different kinds of companies. Some of us work on applications with small, agile teams, while others work inside of large corporations with many engineers. When this topic came up amongst the team, we discovered that, across all these different companies and Ember apps, we did not generally support IE9, IE10, and PhantomJS.
 
 Because of this, the core team's impression is that the costs support now far exceed the benefits, and we are considering dropping support for them in Ember 3.0. Before we make the decision, we want to hear from the rest of the community. Supporting IE9, IE10, and PhantomJS incurs significant cost, both in terms of features and maintenance, and we want the community to help us think through the cost-benefit analysis.
 
-Ember is more than just the framework's code. When people use Ember, they expect to be able to use Ember's tooling, read Ember's documentation, find solutions to problems on Stack Overflow, and read tutorials produced by community members. **All of these****, including addons that follow Ember’s lead,** **are shackled to the limitations of these legacy browsers****.** By dropping support for them, people can begin to rely on the improved baseline of features.
+Ember is more than just the framework's code. When people use Ember, they expect to be able to use Ember's tooling, read Ember's documentation, find solutions to problems on Stack Overflow, and read tutorials produced by community members. **All of these, including addons that follow Ember’s lead, are shackled to the limitations of these legacy browsers.** By dropping support for them, people can begin to rely on the improved baseline of features.
 
 Some of the features (unavailable in IE9, IE10, or PhantomJS) that addons will be able to freely take advantage of include:
-
 
 - requestAnimationFrame ([caniuse](http://caniuse.com/#feat=requestanimationframe), [MDN](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame))
 - CSS flexbox ([caniuse](http://caniuse.com/#search=flexbox), [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Using_CSS_flexible_boxes))
@@ -46,7 +45,7 @@ Below, we’ve outlined several specific features we’re interested in using to
 
 Microsoft dropped most support and maintenance for IE9 and IE10 on 2016-01-16 (IE9 on Vista SP2 [expired in April 2017](http://www.allyncs.com/docs/lifecyclesupport.html)).
 
-With the advent of headless Chrome and Firefox, PhantomJS is now [effectively unmaintained](https://groups.google.com/forum/#!topic/phantomjs/9aI5d-LDuNE). The default testing boilerplate for Ember-CLI-generated applications was changed to headless Chrome in Ember-CLI 2.15.
+With the advent of headless Chrome and Firefox, PhantomJS is now [effectively unmaintained](https://groups.google.com/forum/#!topic/phantomjs/9aI5d-LDuNE). The default testing boilerplate for Ember CLI-generated applications was changed to headless Chrome in Ember CLI 2.15.
 
 ## WeakMap, Map, Set
 
@@ -54,28 +53,27 @@ From a framework perspective, being able to rely on native `WeakMap` support wil
 
 ## Better ES Class Support
 
-In order to support static class methods (with inheritance) transpilers (e.g. Babel) need to leverage the `Object.setPrototypeOf` / `Object.getPrototypeOf` API's. Without the ability to rely on `Object.setPrototypeOf` we will not be able to continue iterating slowly towards leveraging ES classes as a replacement for the custom object model functionality that we have known and loved for so many years. Specifically, there is no replacement / capability to support proper inheritance with `.reopenClass`. There are several lower-fidelity hacks you might opt into, but none that we think satisfy the needs of the Ember community.
+In order to support static class methods (with inheritance) transpilers (e.g. Babel) need to leverage the `Object.setPrototypeOf` / `Object.getPrototypeOf` APIs. Without the ability to rely on `Object.setPrototypeOf` we will not be able to continue iterating slowly towards leveraging ES classes as a replacement for the custom object model functionality that we have known and loved for so many years. Specifically, there is no replacement / capability to support proper inheritance with `.reopenClass`. There are several lower-fidelity hacks you might opt into, but none that we think satisfy the needs of the Ember community.
 
 Generally this means IE11 is the oldest browser we can reliably transpile ES classes for reliably.
 
 ## Typed Arrays
 
-Typed arrays are not currently used in Ember, but experimentation is underway deep in the internals of glimmer-vm to be able to further reduce template size *and* the costs associated with expanding the wire format (currently a JSON structure) into a runnable program. Leveraging typed arrays would allow Ember and Glimmer apps to completely avoid the wire format to opcode compilation that currently happens before initial render, it also significantly reduces the resulting memory footprint for the same runnable program.
+Typed arrays are not currently used in Ember, but experimentation is underway deep in the internals of Glimmer VM to be able to further reduce template size *and* the costs associated with expanding the wire format (currently a JSON structure) into a runnable program. Leveraging typed arrays would allow Ember and Glimmer apps to completely avoid the wire format to opcode compilation that currently happens before initial render. It also significantly reduces the resulting memory footprint for the same runnable program.
 
 ## DOM API Improvements
 
-Although IE9 introduced JavaScript engine with support for much of ES5, it was not until IE10 that the browser began to support much of what developers consider modern web platform APIs. Littered throughout the Ember and Glimmer-VM codebase are [many](https://github.com/glimmerjs/glimmer-vm/blob/1759c16defc546b034b97e37141187652ed93859/packages/%40glimmer/runtime/lib/dom/props.ts#L54) [examples](https://github.com/glimmerjs/glimmer-vm/blob/9ecc88504c81469ba20dba3ed3f37d373a998355/packages/%40glimmer/test-helpers/lib/helpers.ts#L170) [of](https://github.com/glimmerjs/glimmer-vm/blob/bfed16af6a5ecce4fbe9f27783245fe0f8b03480/build/broccoli/transpile-to-es5.js#L25) IE9 workarounds (and [PhantomJS workarounds](https://github.com/glimmerjs/glimmer-vm/blob/1759c16defc546b034b97e37141187652ed93859/packages/%40glimmer/runtime/lib/dom/props.ts#L49), in fact). We’ve worked hard to make these fixes free at runtime for modern browsers, but some cost is unavoidable.
+Although IE9 introduced JavaScript engine with support for much of ES5, it was not until IE10 that the browser began to support much of what developers consider modern web platform APIs. Littered throughout the Ember and Glimmer VM codebase are [many](https://github.com/glimmerjs/glimmer-vm/blob/1759c16defc546b034b97e37141187652ed93859/packages/%40glimmer/runtime/lib/dom/props.ts#L54) [examples](https://github.com/glimmerjs/glimmer-vm/blob/9ecc88504c81469ba20dba3ed3f37d373a998355/packages/%40glimmer/test-helpers/lib/helpers.ts#L170) [of](https://github.com/glimmerjs/glimmer-vm/blob/bfed16af6a5ecce4fbe9f27783245fe0f8b03480/build/broccoli/transpile-to-es5.js#L25) IE9 workarounds (and [PhantomJS workarounds](https://github.com/glimmerjs/glimmer-vm/blob/1759c16defc546b034b97e37141187652ed93859/packages/%40glimmer/runtime/lib/dom/props.ts#L49), in fact). We’ve worked hard to make these fixes free at runtime for modern browsers, but some cost is unavoidable.
 
 PhantomJS in particular is a weird environment. Users must often fix Phantom-specific browser bugs, which is wasted effort since real users never run your app in Phantom. And "how to debug in Phantom" is an entire extra skill people are forced to learn. Testing your app in PhantomJS is generally a form of “testing theater”, since it fails to execute your code in a realistic environment.
 
-## requestAnimationFrame
+## `requestAnimationFrame`
 
 IE10 introduced support for `requestAnimationFrame`, an efficient way to schedule work in the browser environment. We’re interested in using this API to explore incremental rendering strategies, and as a way to improve Ember’s coordination with the browser when native promises are used in application code.
 
 # Detailed Design
 
-When using Ember applications in IE9, IE10, or PhantomJS Ember will cause an appropriate deprecation to be issued. The deprecation will be “until 3.0” and will reference an entry in the deprecation guide. The guide entry will describe For example:
-
+When using Ember applications in IE9, IE10, or PhantomJS, Ember will cause an appropriate deprecation to be issued. The deprecation will be “until 3.0” and will reference an entry in the deprecation guide. The guide entry will describe For example:
 
 > Using Ember.js in IE9, IE10, or PhantomJS is deprecated and will be unsupported in Ember.js 3.0. We recommend using Ember’s 2.x LTS releases if your applications must support those browsers.
 > 
