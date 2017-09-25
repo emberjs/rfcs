@@ -4,17 +4,17 @@
 
 # Summary
 
+Deprecate `Enumerable#any` and introduce `Enumerable#some`.
+
+# Motivation
+
 [`any`](https://emberjs.com/api/classes/Ember.Array.html#method_any) has been
 implemented on `Ember.Enumerable` for years, however native javascript arrays have
 `Array.prototype.some` to perform the same task.
 
 This RFC proposes the addition of `Ember.Enumerable#some`, the aliasing of the old `Ember.Enumerable#any` to it,
 and encourage the usage of the first either in the docs or with deprecation to be as aligned as possible
-with native javascript arrays.
-
-# Motivation
-
-Motivation is to stay in line with web standard.
+with native JavaScript arrays.
 
 # Detailed design
 
@@ -26,7 +26,7 @@ over `any`.
 
 `Ember.Enumerable` is a mixin part of `Ember.NativeArray`, which is applied to `Array.prototype`
 if the user doesn't disable prototype extensions. We do not want to replace the native `Array.prototype.some`
-with ours, possibly slower, javascript version so it has to be implemented on a way that respects the native
+with ours, possibly slower, JavaScript version so it has to be implemented on a way that respects the native
 implementation.
 
 # How We Teach This
