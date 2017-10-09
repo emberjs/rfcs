@@ -195,7 +195,7 @@ const { defaultStrategies } = require('ember-cli/lib/strategies');
 module.exports = function(defaults) {
   const firstStrategy = new MyCustomStrategy();
   const secondStrategy = new MyCustomStrategy();
-  const stragies = defaultStrategies.concat(firstStrategy, secondStrategy);
+  const strategies = defaultStrategies.concat(firstStrategy, secondStrategy);
 
   const app = new EmberApp(defaults, { strategies });
 
