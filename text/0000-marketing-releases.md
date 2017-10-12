@@ -4,11 +4,11 @@
 
 # Summary
 
-Add "named releases" to allow for easier marketing efforts while simultaneously maintaining Ember's strong semver guarantees.
+Add "named releases" to allow for easier marketing efforts while simultaneously maintaining Ember's strong semantic versioning guarantees.
 
 # Motivation
 
-Ember's commitment to semver is valuable. The practice of introducing new features in minor versions and major versions only removing deprecated functionality makes for a straightforward and predictable upgrade path.
+Ember's commitment to [semantic versioning (semver)](http://semver.org/) is valuable. The practice of introducing new features in minor versions and major versions only removing deprecated functionality makes for a straightforward and predictable upgrade path.
 
 Unfortunately, this is not the norm throughout the JavaScript community, despite the wide usage of semver version numbering via tooling like npm. This leads to a marketing problem, as evidenced by some of the reaction to the Ember 3.0 announcement.
 
