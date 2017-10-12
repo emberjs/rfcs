@@ -14,7 +14,7 @@ Unfortunately, this is not the norm throughout the JavaScript community, despite
 
 For most other projects, a semver major bump is a big marketing event. Culturally, the expectations are to see great new features. For Ember, semver major bumps are comparatively lackluster - simply removing functionality that you probably have stopped using anyway.
 
-This may lead developers who may not fully understand our semver practices to assume that the apparently lackluster 3.0 announcement is indicative of a lackluster project (when in reality, it's the opposite).
+This can lead developers who don't fully understand our semver practices to assume that the apparently lackluster 3.0 announcement is indicative of a lackluster project (when in reality, it's the opposite).
 
 This RFC proposes that we attempt to decouple semver version numbers from our marketing efforts, and adopt a different set of "marketing releases" which can be used to generate interest around new features. The goal is to find a solution that allows us to keep our strong semver guarantees while also allowing for effective marketing of Ember's new features and advancements.
 
