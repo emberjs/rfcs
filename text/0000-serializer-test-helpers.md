@@ -36,7 +36,7 @@ I think would be useful.
        id: '10',
        type: 'user',
        attributes: {
-         name: 'Bobby Shaftoe',
+         name: 'Tomster',
        },
      }],
    };
@@ -49,7 +49,7 @@ I think would be useful.
          id: '10',
          type: 'user',
          attributes: {
-           name: 'Bobby Shaftoe',
+           name: 'Tomster',
          },
        },
      });
@@ -71,7 +71,7 @@ I think would be useful.
        id: '10',
        type: 'user',
        attributes: {
-         name: 'Bobby Shaftoe',
+         name: 'Zoey',
        },
      }],
    };
@@ -79,7 +79,7 @@ I think would be useful.
    test('normalizeQueryRecord - it can turn the array we get back from the server into the single record that ember-data expects', function(assert) {
      const record = pushPayload(this.store(), 'user', EXAMPLE_QUERY_RECORD_RESPONSE, 'queryRecord');
 
-     assert.deepEqual(record.get('name'), 'Bobby Shaftoe');
+     assert.deepEqual(record.get('name'), 'Zoey');
    });
 
    ```
