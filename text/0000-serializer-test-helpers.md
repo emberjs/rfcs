@@ -4,7 +4,7 @@
 
 # Summary
 
-Easier unit testing of serializers.
+Unit testing `serialize()` is fairly straightforward; however, unit testing `normalize*` functions is not so obvious, despite the fact they’re often great candidates for unit tests.
 
 # Motivation
 
@@ -22,8 +22,8 @@ test.
 
 # Detailed design
 
-I'd like to propose simply adding some test helper functions. These are some
-that I think would be useful.
+I'd like to propose adding some test helper functions. These are some that
+I think would be useful.
 
 1. `normalizePayload` - Given an example response, return the JSONAPI that
    would be pushed in to the store.
@@ -41,7 +41,7 @@ that I think would be useful.
      }],
    };
 
-   test('normalizeQueryRecord - it can turn the array we get back from the server to the single record that ember-data expects', function(assert) {
+   test('normalizeQueryRecord - it can turn the array we get back from the server into the single record that ember-data expects', function(assert) {
      const normalizedHash = normalizePayload(this.store(), 'user', EXAMPLE_QUERY_RECORD_RESPONSE, 'queryRecord');
 
      assert.deepEqual(normalizedHash, {
@@ -76,7 +76,7 @@ that I think would be useful.
      }],
    };
 
-   test('normalizeQueryRecord - it can turn the array we get back from the server to the single record that ember-data expects', function(assert) {
+   test('normalizeQueryRecord - it can turn the array we get back from the server into the single record that ember-data expects', function(assert) {
      const record = pushPayload(this.store(), 'user', EXAMPLE_QUERY_RECORD_RESPONSE, 'queryRecord');
 
      assert.deepEqual(record.get('name'), 'Bobby Shaftoe');
