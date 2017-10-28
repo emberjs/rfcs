@@ -129,7 +129,7 @@ we will issue a deprecation warning suggesting the user to switch to the new
 invocation style.
 
 While the named arguments can be used as an opt-in for cases where external data
-are needed, the `{{partial "foo"}}` inovocation is actually ambigious. In this
+are needed, the `{{partial "foo"}}` invocation is actually ambigious. In this
 case, there are three possibilities:
 
 1. This is an existing "old-style" ("context-shifting") partial where the "foo"
@@ -161,7 +161,7 @@ Glimmer VM) with a combination of AST-transform and using Glimmer's component sy
 
 2. Implement `{{-internal-new-partial}}` as a new kind of light-weight component
    using the component manager API. This light-weight component will simply capture
-   any named arguemnts and return it as the "self" reference and does not have any
+   any named arguments and return it as the "self" reference and does not have any
    template wrapper or lifecycle-hooks.
 
 The only exception is the deprecation message. Since the actual triage for `{{foo}}`
@@ -174,7 +174,7 @@ warning.
 # How We Teach This
 
 For new users, we can teach the new-style `{{partial}}` as if it is just a light-weight
-(template-only) component that does not have/need any behavior assocaited with it.
+(template-only) component that does not have/need any behavior associated with it.
 Since they are actually implemented as components under-the-hood, it will be a completely
 leak-free analogy.
 
@@ -210,7 +210,7 @@ them.
 * "How is it different from a component?"
 
   The new-style component is, in fact, a component. The point of this proposal is to
-  (overtime) eliminate a special construct (partials) and unify them with an existing
+  (over time) eliminate a special construct (partials) and unify them with an existing
   one (components).
 
   It might have been nice if we could just remove it and replace it directly with Just
@@ -237,12 +237,12 @@ them.
   upgrade them into Glimmer components with an automatic code mod (assuming [Module
   Unification][module-unification]). The hard part in the transition is to figure out
   the implicit data dependency from the "context-shifting partials", which needs to
-  happen no matter what. Therefore, in aggregrate there are very little wasted effort,
+  happen no matter what. Therefore, in aggregrate there is very little wasted effort
   and this feature will serve as an important intermediate step in the transition.
 
   Furthermore, since "new-style partials" does not have any of the downsides of
   "context-shifting partials", it becomes much less urgent to deprecate and remove
-  the feature, as the only motivation would be to reduce an redundant concept (as
+  the feature, as the only motivation would be to reduce a redundant concept (as
   opposed to discourage a hazardous programming model). Therefore, we can choose to
   phase out the feature more slowly ("soft-deprecation").
 
@@ -257,7 +257,7 @@ them.
 
 # Alternatives
 
-The ultimate goal of this proposal is to depreacte "context-shifting partials" as
+The ultimate goal of this proposal is to deprecate "context-shifting partials" as
 they exist today. The "new-style partials" propose exists merely to provide a
 transition path to satisfy the requirements to deprecate the feature. Here are some
 alternative transition paths:
@@ -270,7 +270,7 @@ alternative transition paths:
 
   The problem with curly components is that they will introduce a wrapper element by
   default, which might break the page's layout/CSS. To work around that, they would
-  have to either add a JavaScript class for the compoment to write `tagName: ''` or
+  have to either add a JavaScript class for the component to write `tagName: ''` or
   to supply that on the invocation side.
 
   The current consensus is that this is "too much of a lift" that makes an otherwise
@@ -283,7 +283,7 @@ alternative transition paths:
   is the status quo. In my opinion, this has been the status quo for too long. It is
   quite unfortunate that we were not able to actively discourage new partials from
   being written when the majority of the core team and a large part of the community
-  are already aware of the harzards. In general, we should also decouple feature
+  are already aware of the hazards. In general, we should also decouple feature
   dependencies as much as possible.
 
   As mentioned above, it should be possible to automatically migrate all "new-style
@@ -295,13 +295,13 @@ alternative transition paths:
   semantics with "template-only Glimmer components" to make our job easier in the future.
 
   For the codemod to work, there are two sides to the equation – the invocation sites
-  and the partial tempaltes.
+  and the partial templates.
 
   On the invocation side, as long as they all go through the `{{partial ...}}` keyword
   (which would argue for disallowing invoking a new-style partial with the component
   helper), they should be trivial to discover and rewrite.
 
-  On the template side, as far as I am aware, the only deviation from "tempalte-only
+  On the template side, as far as I am aware, the only deviation from "template-only
   Glimmer components" is instead of assigning and accessing the passed arguments via
   `this`, they will likely be accessed through the `@foo` syntax (which is similar to
   `attrs.foo` in curly components today).
