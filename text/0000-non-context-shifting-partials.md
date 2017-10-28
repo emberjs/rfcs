@@ -119,7 +119,7 @@ Specifically:
   template.
 
 Users who are familiar with how component invocations work today should find the
-second form quite familar and easy to understand (which further highlights the
+second form quite familiar and easy to understand (which further highlights the
 oddities of the first/current form).
 
 In addition, we will pair this change with a deprecation. When a partial template
@@ -189,7 +189,7 @@ It is also probably the case that for someone who is completely new to Ember, th
 have no reason to expect partials to work the way they do today – after all, it is quite
 normal to have to explicitly pass in any data you need in every other context (component
 invocation, function calls, etc). So, arguably, this is actually one *fewer* thing to
-teach and might actually align better with everyone's metal model of how programming
+teach and might actually align better with everyone's mental model of how programming
 works.
 
 For existing users who are already familiar with how components work, this should also
