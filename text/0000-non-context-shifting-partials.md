@@ -20,7 +20,7 @@ calling context) and deprecate the current form.
       {{!-- This partial will only have access to the explicitly passed
       `post` and `author` (via the name `contributor`) variables, but not
       `url`, `model` and everything else on `this` --}}
-      {{partial "contributor-card" post=post contirbutor=author}}
+      {{partial "contributor-card" post=post contributor=author}}
     {{/each}}
   {{/with}}
 {{/each}}
@@ -166,7 +166,7 @@ Glimmer VM) with a combination of AST-transform and using Glimmer's component sy
 
 The only exception is the deprecation message. Since the actual triage for `{{foo}}`
 happens [deep inside the VM internals][resolve-maybe-local], we would probably have
-to expose additional hooks (or other mechanisms) for Ember to issue to deprecation
+to expose additional hooks (or other mechanisms) for Ember to issue the deprecation
 warning.
 
 [resolve-maybe-local]: https://github.com/glimmerjs/glimmer-vm/blob/f78e91b47af9195d2ab063cb24e12ae5f1e5c9be/packages/%40glimmer/opcode-compiler/lib/syntax.ts#L272
@@ -227,7 +227,7 @@ them.
 
 * Creating extra churn when adding Glimmer components
 
-  When "Glimmer components" land, the "new-style partial" functionailty will be rendered
+  When "Glimmer components" land, the "new-style partial" functionality will be rendered
   obsolete as "template-only Glimmer components" will offer a superset of its features
   and be just as easy to use. Presumably, when that happens, the partial feature will be
   phased out and removed from core. Therefore, landing this feature now might introduce
