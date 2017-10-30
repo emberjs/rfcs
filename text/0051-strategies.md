@@ -66,7 +66,7 @@ merge them into one final broccoli tree.
 
 Strategy is an extensibility primitive. It gives you granular control over the
 final output. It could be used in many different ways (we are going to go over
-use cases below). Note, that aren't meant to be used for "postprocess"
+use cases below). Note, they aren't meant to be used for "postprocess"
 transformations. In fact, they are solutions to different problems. The mental
 model here would be: "postprocess" is called after `strategies` have been
 processed.
@@ -160,7 +160,7 @@ class AssetsSplitStrategy {
 Yet another application of strategies would be to run different analysis on the
 Ember applications. Take
 [broccoli-concat-analyser](https://github.com/stefanpenner/broccoli-concat-analyser),
-for example. This could be a strategy and easily encorporated into the build.
+for example. This could be a strategy and easily incorporated into the build.
 
 #### Engine Strategy
 
@@ -183,7 +183,7 @@ strategies that Ember CLI provides out of the box (they mimic existing behaviour
 of creating `dist` folder with final assets).
 
 However, Ember CLI will expose an array of default strategies that people can
-take advantage of. Note, that `defaultStrategies` will be freezed so you can't
+take advantage of. Note, that `defaultStrategies` will be frozen so you can't
 push directly onto it. One would need to create a new array.
 
 For example:
