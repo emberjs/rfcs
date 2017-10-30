@@ -4,15 +4,43 @@
 
 # Summary
 
-Provide a simple way to load a relationship even if the server payload does not contain `links` or `data` for that relationship
+Provide a simple way to load a relationship even if the server payload does not contain `links` or `data` for that relationship.
 
 # Motivation
+
+### Background
 
 When loading async relationships, Ember Data calls different adapter hooks depending on whether this are `links` or `data` in the normalized payload.
 
 However, there is currently no adapter hook called if neither `links` or `data` are present in the normalized payload. It is possible to get Ember Data to call `findBelongsTo` or `findHasMany` by inserting `links` in the serializer, but this is not ideal.
 
 The issue is described with a little more detail in [this Ember Data issue by @tomdale][], and in even more detail in [my blog post about how get around this][].
+
+### Why would you want/need to load relationships when there are no `links` or `data`?
+
+There are a few scenarios that I have run in to:
+
+1. Sometimes the server does not provide `links` and you want to define the relationship url in the adapter
+
+   [ember-data-url-templates has a new feature][] that makes this simple, and I think makes a good example:
+
+   ```js
+   // app/models/post.js
+   reactions: hasMany('reactions', { urlTemplate: 'reactions' }),
+
+   // app/adapters/post.js
+   reactionsUrlTemplate: "/posts/{id}/reactions",
+   ```
+
+2. > where the relationship should be populated by fetching a URL, but the URL is derived from information contained in the record, rather than being provided in the payload, hypermedia-style. - @tomdale
+
+   This is basically true for the previous example, but the only state that is derived from the record is the id.
+
+   In an application I work on, we have a model that represents a report query. The same query parameters can be used to query many different reports. Each report is a relationship on the query model. We use the appropriate attributes on the query model in the query params for each relationship url.
+
+3. Building on the previous example, sometimes you want to load relationships for branch new records that haven't been persisted to the server
+
+   In order to get the previous example with the query model to work, the query is saved to the server so that the response gets normalized through the serializer, which can then inject `relationships.links.related`.
 
 # Detailed design
 
@@ -111,3 +139,4 @@ TBD
 
 [emberjs/data#2162]: https://github.com/emberjs/data/issues/2162
 
+[ember-data-url-templates has a new feature]: https://github.com/amiel/ember-data-url-templates/pull/36
