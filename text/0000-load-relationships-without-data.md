@@ -95,7 +95,9 @@ I think this is basically the solution proposed by @tomdale in [emberjs/data#216
 
 # How We Teach This
 
-TBD
+This change should be completely backwards compatible, so there wouldn't need to be any change to existing applications. The new adapter hooks should be documented.
+
+One thing to note is that some people are already confused about the difference between `findHasMany` and `findMany`, and so adding a `findHasManyRelationship` could add to this confusion. I think that having a specific section somewhere in documentation about the difference between these hooks might be a good idea. I'm not sure if this would belong in the guides or in the adapter API documentation, but it could be something like [my blog post](http://www.amielmartin.com/blog/2017/05/05/how-ember-data-loads-relationships-part-1/), but shorter.
 
 # Drawbacks
 
