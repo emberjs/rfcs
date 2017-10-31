@@ -10,7 +10,7 @@ Provide a simple way to load a relationship even if the server payload does not 
 
 ### Background
 
-When loading async relationships, Ember Data calls different adapter hooks depending on whether this are `links` or `data` in the normalized payload.
+When loading async relationships, Ember Data calls different adapter hooks depending on whether these are `links` or `data` in the normalized payload.
 
 However, there is currently no adapter hook called if neither `links` or `data` are present in the normalized payload. It is possible to get Ember Data to call `findBelongsTo` or `findHasMany` by inserting `links` in the serializer, but this is not ideal.
 
@@ -18,7 +18,7 @@ The issue is described with a little more detail in [this Ember Data issue by @t
 
 ### Why would you want/need to load relationships when there are no `links` or `data`?
 
-There are a few scenarios that I have run in to:
+There are a few scenarios that I have run in to. Usually the base issue is that not everyone has control over the API.
 
 1. Sometimes the server does not provide `links` and you want to define the relationship url in the adapter
 
@@ -34,11 +34,11 @@ There are a few scenarios that I have run in to:
 
 2. > where the relationship should be populated by fetching a URL, but the URL is derived from information contained in the record, rather than being provided in the payload, hypermedia-style. - @tomdale
 
-   This is basically true for the previous example, but the only state that is derived from the record is the id.
+   This is basically true for the previous example, but the only state derived from the record is the id.
 
    In an application I work on, we have a model that represents a report query. The same query parameters can be used to query many different reports. Each report is a relationship on the query model. We use the appropriate attributes on the query model in the query params for each relationship url.
 
-3. Building on the previous example, sometimes you want to load relationships for branch new records that haven't been persisted to the server
+3. Building on the previous example, sometimes you want to load relationships for brand new records that haven't been persisted to the server
 
    In order to get the previous example with the query model to work, the query is saved to the server so that the response gets normalized through the serializer, which can then inject `relationships.links.related`.
 
@@ -46,12 +46,12 @@ There are a few scenarios that I have run in to:
 
 Two major changes will need to happen in order to support this.
 
-1. Invert the logic for deciding when to load a relationship by `link` vs by `data`.
-2. Add a new adapter hook to be called when there is no `data`.
+1. Invert the logic for deciding when to load a relationship by `link` vs by `data`
+2. Add a new adapter hook to be called when there is no `data`
 
 ### Inverting the decision logic
 
-Currently, Ember Data's relationship code only calls `findHasMany` or `findBelongsTo` if there is a `link` and `this.hasLoaded` is falsy.
+Currently, Ember Data's relationship code only calls `findHasMany` or `findBelongsTo` if there is a `link` and `this.hasLoaded` is falsey.
 
 Here are links to the [`belongs-to` `getRecord()` logic][] and the [`has-many` `getRecords()` logic][]. Note that `findHasMany` and `findBelongsTo` are called via `findLink`, which calls `fetchLink`. There is similar logic in [`belongs-to` `reload()`][] and [`has-many` `reload()`][].
 
@@ -59,9 +59,9 @@ This logic will need to change so that it calls `findRecord` or `findRecords` on
 
 ### New Hooks
 
-The new hook I would like to propose be called when there is no `data`, is `findRelationship`. I have frequently written the exact same logic in `findHasMany` and `findBelongsTo`, so it would be nice to have a common hook with a default implementation that delegates to the more specific hooks.
+When there is no `data`, I'd like to propose that a new `findRelationship` hook be called. I have frequently written the exact same logic in `findHasMany` and `findBelongsTo`, so it would be nice to have a common hook with a default implementation that delegates to the more specific hooks.
 
-The default implementation of `findRelationship` would then call one of two new other new hooks: `findBelongsToRelationship` and `findHasManyRelationship`. Like `findRelationship`, these would be designed to be called with or without a link and the default implementation would call the existing `findBelongsTo` and `findHasMany` when a link _is present. This would provide backwards compatibility.
+The default implementation of `findRelationship` would then call one of two new other new hooks: `findBelongsToRelationship` and `findHasManyRelationship`. Like `findRelationship`, these would be designed to be called with or without a link and the default implementation would call the existing `findBelongsTo` and `findHasMany` when a link _is_ present. This would provide backwards compatibility.
 
 NOTE: In order to find the link, it would need to be added to `relationshipMeta`, or the entire relationship object would need to be passed to `findRelationship`.
 
@@ -93,37 +93,37 @@ findHasManyRelationship(store, snapshot, relationship) {
 
 I think this is basically the solution proposed by @tomdale in [emberjs/data#2162][].
 
-# How We Teach This
+# How we teach this
 
-This change should be completely backwards compatible, so there wouldn't need to be any change to existing applications. The new adapter hooks should be documented.
+This change should be completely backwards compatible, so there wouldn't need to be any modifications to existing applications. The new adapter hooks should be documented.
 
 One thing to note is that some people are already confused about the difference between `findHasMany` and `findMany`, and so adding a `findHasManyRelationship` could add to this confusion. I think that having a specific section somewhere in documentation about the difference between these hooks might be a good idea. I'm not sure if this would belong in the guides or in the adapter API documentation, but it could be something like [my blog post](http://www.amielmartin.com/blog/2017/05/05/how-ember-data-loads-relationships-part-1/), but shorter.
 
 # Drawbacks
 
-* `findBelongsToRelationship` and `findHasManyRelationship` are pretty long
-  names.
+`findBelongsToRelationship` and `findHasManyRelationship` are pretty long
+names.
 
-  It would be nice to call them `findBelongsTo` and `findHasMany`, but we need to keep them for backwards compatability. We could check the arity of existing implementations of `findBelongsTo` and `findHasMany`, but I would worry that they have been implemented with exactly three arguments `(store, snapshot, link)`, which would be impossible to distingish from `(store, snapshot, relationship)`.
+It would be nice to call them `findBelongsTo` and `findHasMany`, but we need to keep them for backwards compatability. We could check the arity of existing implementations of `findBelongsTo` and `findHasMany`, but I would worry that they have been implemented with exactly three arguments `(store, snapshot, link)`, which would be impossible to distingish from `(store, snapshot, relationship)`.
 
 # Alternatives
 
-* The same approach could be written without adding so many hooks `findBelongsToRelationship` and `findHasManyRelationship`.
+The same approach could be written without adding the hooks `findBelongsToRelationship` and `findHasManyRelationship`.
 
-  ```js
-  findRelationship(store, snapshot, relationship) {
-    let link = getLinkFromRelationship(relationship);
-    if (link) {
-      if (relationship.kind === 'hasMany') {
-        return this.findBelongsTo(store, snapshot, link, relationship.relationshipMeta);
-      } else if (relationship.kind === 'belongsTo') {
-        return this.findHasMany(store, snapshot, link, relationship.relationshipMeta);
-      }
+```js
+findRelationship(store, snapshot, relationship) {
+  let link = getLinkFromRelationship(relationship);
+  if (link) {
+    if (relationship.kind === 'hasMany') {
+      return this.findBelongsTo(store, snapshot, link, relationship.relationshipMeta);
+    } else if (relationship.kind === 'belongsTo') {
+      return this.findHasMany(store, snapshot, link, relationship.relationshipMeta);
     }
-  },
-  ```
+  }
+},
+```
 
-  This would limit the size of the API and still provide the necessary hook, but requires a bit more boilerplate if there needs to be different logic between `hasMany` and `belongsTo`.
+While it requires a bit more boilerplate to add different logic between `hasMany` or `belongsTo` relationships, this would limit the expansion of the current API.
 
 # Unresolved questions
 
