@@ -79,10 +79,12 @@ Not only does this make partials difficult for humans to understand, all of
 these problems apply to machines as well. In fact, the "function" vs "eval"
 analogy is more than just a illustration of how to reason about their difference,
 it actually closely matches the way these two features are modelled/implemented
-in the Glimmer VM. This makes it really complicated and [error-prone][partial-bug]
-to implement `{{partial}}`.
+in the Glimmer VM. This makes it really complicated and [really][partial-bug-1]
+[error][partial-bug-2]-[prone][partial-bug-3] to implement `{{partial}}`.
 
-[partial-bug]: https://github.com/glimmerjs/glimmer-vm/pull/707
+[partial-bug-1]: https://github.com/glimmerjs/glimmer-vm/pull/707
+[partial-bug-2]: https://github.com/glimmerjs/glimmer-vm/pull/730
+[partial-bug-3]: https://github.com/emberjs/ember.js/pull/15777
 
 Futhermore, the extra book keeping to enable what amounts to an `eval()` also
 means they are much slower than regular components. (The opposite used to be true
