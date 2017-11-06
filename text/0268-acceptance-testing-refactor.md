@@ -232,7 +232,13 @@ Once implemented, `setupRenderingTest` and `setupAcceptanceTest` will diverge fr
 Since the design of this system relies on both the test helpers being applied
 to the test context **and** the usage of `async` / `await`, a few importable
 helpers are being introduced to help avoid extra noise (e.g. "rightward shift")
-in tests.
+in tests. In most cases the imported helpers will be used, but should be
+considered to "de-sugar" into using the local methods on the test context.
+
+Having both mechanisms allow us to have both a clear and concise API in the
+simple case (by reducing rightward shift, and clarifying _where_ a given helper
+method is coming from), but still have the available helpers be discoverable
+while debugging.
 
 This means that users will be able to use either of the following interchangably:
 
