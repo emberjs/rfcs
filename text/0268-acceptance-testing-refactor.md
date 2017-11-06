@@ -220,4 +220,4 @@ confusion, making it easier to teach and understand testing in Ember.
 
 # Alternatives
 
-* The primary alternative to this would be to do nothing...
+* Do nothing?
