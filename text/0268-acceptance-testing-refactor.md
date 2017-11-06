@@ -187,8 +187,6 @@ This function will:
 
 * invoke `ember-test-helper`s `setupContext` with the tests context (which does the following):
   * create an owner object and set it on the test context (e.g. `this.owner`)
-  * setup `this.set`, `this.setProperties`, `this.get`, and `this.getProperties` to
-    the test context
   * setup `this.pauseTest` and `this.resumeTest` methods to allow easy pausing/resuming
     of tests
 * add routing related helpers
