@@ -237,9 +237,13 @@ being proposed here:
   well as importable helpers.
 * `this.owner` will now be present and allow (for the first time 🎉) overriding
   items in the container/registry.
-* The new system will leverage the `Ember.Application` / `Ember.ApplicationInstance` split so that
-  we can avoid creating an `Ember.Application` instance per-test, and instead leverage the same system
-  that FastBoot itself uses to avoid running initializers for each acceptance test.
+* The new system will leverage the `Ember.Application` /
+  `Ember.ApplicationInstance` split so that we can avoid creating an
+  `Ember.Application` instance per-test, and instead leverage the same system
+  that FastBoot itself uses to avoid running initializers for each acceptance
+  test.
+* Implicit promise chaining will no longer be present. If your test needs to
+  wait for a given promise, it should use `await`.
 
 ## Migration
 
