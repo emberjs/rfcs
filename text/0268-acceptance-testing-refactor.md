@@ -119,21 +119,23 @@ already adopted will have very minimal changes to make).
 The specific DOM helpers to be added are:
 
 ```
-interface DOMInteractionHelpers {
+declare module 'ember-test-helpers' {
+  // ...snip existing exports...
+
   /**
     Clicks on the specified selector.
   */
-  click(selector: string | HTMLElement): Promise<void>;
+  export function click(selector: string | HTMLElement): Promise<void>;
 
   /**
     Taps on the specified selector.
   */
-  tap(selector: string | HTMLElement): Promise<void>;
+  export function tap(selector: string | HTMLElement): Promise<void>;
 
   /**
     Triggers a keyboad event on the specified selector.
   */
-  triggerKeyEvent(
+  export function triggerKeyEvent(
     selector: string | HTMLElement,
     eventType: 'keydown' | 'keypress' | 'keyup',
     keyCode: string,
@@ -148,7 +150,7 @@ interface DOMInteractionHelpers {
   /**
     Triggers an event on the specified selector.
   */
-  triggerEvent(
+  export function triggerEvent(
     selector: string | HTMLElement,
     eventType: string,
     eventOptions: any
@@ -157,27 +159,27 @@ interface DOMInteractionHelpers {
   /**
     Fill in the specified selector's `value` property with the provided text.
   */
-  fillIn(selector: string | HTMLElement, text: string): Promise<void>;
+  export function fillIn(selector: string | HTMLElement, text: string): Promise<void>;
 
   /**
     Focus the specified selector.
   */
-  focus(selector: string | HTMLElement): Promise<void>;
+  export function focus(selector: string | HTMLElement): Promise<void>;
 
   /**
     Unfocus the specified selector.
   */
-  blur(selector: string | HTMLElement): Promise<void>;
+  export function blur(selector: string | HTMLElement): Promise<void>;
 
   /**
     Returns a promise which resolves when the provided callback returns a truthy value.
   */
-  waitUntil(() => boolean): Promise<void>;
+  export function waitUntil(() => boolean): Promise<void>;
 
   /**
     Returns a promise which resolves when the provided selector (and count) becomes present.
   */
-  waitFor(selector: string, count?: number): Promise<void>;
+  export function waitFor(selector: string, count?: number): Promise<void>;
 }
 ```
 
@@ -196,15 +198,15 @@ This function will:
 * add DOM interaction helpers (heavily influenced by @cibernox's lovely addon [ember-native-dom-helpers](https://github.com/cibernox/ember-native-dom-helpers))
   * setup a getter for `this.element` which returns the DOM element representing
     the applications root element
-  * setup `this.click` helper method
-  * setup `this.tap` helper method
-  * setup `this.triggerKeyEvent` helper method
-  * setup `this.triggerEvent` helper method
-  * setup `this.fillIn` helper method
-  * setup `this.focus` helper method
-  * setup `this.blur` helper method
-  * setup `this.waitUntil` helper method
-  * setup `this.waitFor` helper method
+  * setup importable `click` helper method
+  * setup importable `tap` helper method
+  * setup importable `triggerKeyEvent` helper method
+  * setup importable `triggerEvent` helper method
+  * setup importable `fillIn` helper method
+  * setup importable `focus` helper method
+  * setup importable `blur` helper method
+  * setup importable `waitUntil` helper method
+  * setup importable `waitFor` helper method
 
 ### `setupRenderingTest`
 
@@ -213,53 +215,17 @@ The `setupRenderingTest` function proposed in
 (and implemented in
 [ember-qunit](https://github.com/emberjs/ember-qunit)@3.0.0) will be modified to add the same DOM interaction helpers mentioned above:
 
-* setup `this.click` helper method
-* setup `this.tap` helper method
-* setup `this.triggerKeyEvent` helper method
-* setup `this.triggerEvent` helper method
-* setup `this.fillIn` helper method
-* setup `this.focus` helper method
-* setup `this.blur` helper method
-* setup `this.waitUntil` helper method
-* setup `this.waitFor` helper method
+* setup importable `click` helper method
+* setup importable `tap` helper method
+* setup importable `triggerKeyEvent` helper method
+* setup importable `triggerEvent` helper method
+* setup importable `fillIn` helper method
+* setup importable `focus` helper method
+* setup importable `blur` helper method
+* setup importable `waitUntil` helper method
+* setup importable `waitFor` helper method
 
 Once implemented, `setupRenderingTest` and `setupAcceptanceTest` will diverge from each other in very few ways.
-
-### Importable helpers
-
-Since the design of this system relies on both the test helpers being applied
-to the test context **and** the usage of `async` / `await`, a few importable
-helpers are being introduced to help avoid extra noise (e.g. "rightward shift")
-in tests. In most cases the imported helpers will be used, but should be
-considered to "de-sugar" into using the local methods on the test context.
-
-Having both mechanisms allow us to have both a clear and concise API in the
-simple case (by reducing rightward shift, and clarifying _where_ a given helper
-method is coming from), but still have the available helpers be discoverable
-while debugging.
-
-This means that users will be able to use either of the following interchangably:
-
-```js
-// ***** importable helper *****
-import { click } from 'ember-test-helpers';
-
-// ...snip...
-test('does something', async function(assert) {
-  // ...snip...
-  await click('.selector-here');
-  // ...snip...
-});
-
-// ***** test context helper *****
-
-// ...snip...
-test('does something', async function(assert) {
-  // ...snip...
-  await this.click('.selector-here');
-  // ...snip...
-});
-```
 
 ## Changes from Current System
 
