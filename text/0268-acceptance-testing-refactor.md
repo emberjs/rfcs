@@ -103,6 +103,84 @@ declare module 'ember-qunit' {
 }
 ```
 
+### DOM Interaction Helpers
+
+New native DOM interaction helpers will be added to both `setupRenderingTest`
+and (proposed below) `setupAcceptanceTest`. The implementation for these
+helpers has been iterated on and is quite stable in the
+[ember-native-dom-helpers](https://github.com/cibernox/ember-native-dom-helpers)
+addon.
+
+The helpers will be migrated to `ember-test-helpers` and eventually
+(once "the dust settles") `ember-native-dom-helpers` will be able to reexport
+the versions from `ember-test-helpers` directly (which means apps that have
+already adopted will have very minimal changes to make).
+
+The specific DOM helpers to be added are:
+
+```
+interface DOMInteractionHelpers {
+  /**
+    Clicks on the specified selector.
+  */
+  click(selector: string | HTMLElement): Promise<void>;
+
+  /**
+    Taps on the specified selector.
+  */
+  tap(selector: string | HTMLElement): Promise<void>;
+
+  /**
+    Triggers a keyboad event on the specified selector.
+  */
+  triggerKeyEvent(
+    selector: string | HTMLElement,
+    eventType: 'keydown' | 'keypress' | 'keyup',
+    keyCode: string,
+    modifiers?: {
+      ctrlKey: false,
+      altKey: false,
+      shiftKey: false,
+      metaKey: false
+    }
+  ): Promise<void>;
+
+  /**
+    Triggers an event on the specified selector.
+  */
+  triggerEvent(
+    selector: string | HTMLElement,
+    eventType: string,
+    eventOptions: any
+  ): Promise<void>;
+
+  /**
+    Fill in the specified selector's `value` property with the provided text.
+  */
+  fillIn(selector: string | HTMLElement, text: string): Promise<void>;
+
+  /**
+    Focus the specified selector.
+  */
+  focus(selector: string | HTMLElement): Promise<void>;
+
+  /**
+    Unfocus the specified selector.
+  */
+  blur(selector: string | HTMLElement): Promise<void>;
+
+  /**
+    Returns a promise which resolves when the provided callback returns a truthy value.
+  */
+  waitUntil(() => boolean): Promise<void>;
+
+  /**
+    Returns a promise which resolves when the provided selector (and count) becomes present.
+  */
+  waitFor(selector: string, count?: number): Promise<void>;
+}
+```
+
 ### `setupAcceptanceTest`
 
 This function will:
@@ -119,37 +197,39 @@ This function will:
   * setup getter for `this.currentURL` which returns the current URL
 * add DOM interaction helpers (heavily influenced by @cibernox's lovely addon [ember-native-dom-helpers](https://github.com/cibernox/ember-native-dom-helpers))
   * setup a getter for `this.element` which returns the DOM element representing
-    the root element
+    the root element 
   * if `jQuery` is present in the application sets up `this.$` method to run
     jQuery selectors rooted to `this.element`
-  * setup `this.click` as an async helper to click on the specified selector
-  * setup `this.tap` as an async helper to tap on the specified selector
-  * setup `this.triggerKeyEvent` as an async helper to trigger a `KeyEvent` on the specified selector
-  * setup `this.triggerEvent` as an async helper to trigger an event on the specified selector
-  * setup `this.fillIn` as an async helper to enter text on the specified selector
-  * setup `this.waitUntil` as an async helper returning a promise which resolves when the provided callback returns a truthy value
-  * setup `this.focus` as an async helper which focuses the specified element
-  * setup `this.blur` as an async helper which unfocuses the specified element
+  * setup `this.click` helper method
+  * setup `this.tap` helper method
+  * setup `this.triggerKeyEvent` helper method
+  * setup `this.triggerEvent` helper method
+  * setup `this.fillIn` helper method
+  * setup `this.focus` helper method
+  * setup `this.blur` helper method
+  * setup `this.waitUntil` helper method
+  * setup `this.waitFor` helper method
 
 ### `setupRenderingTest`
 
 The `setupRenderingTest` function proposed in
 [emberjs/rfcs#232](https://github.com/emberjs/rfcs/blob/master/text/0232-simplify-qunit-testing-api.md)
 (and implemented in
-[ember-qunit](https://github.com/emberjs/ember-qunit)@3.0.0) will be modified to add the same DOM interaction helpers:
+[ember-qunit](https://github.com/emberjs/ember-qunit)@3.0.0) will be modified to add the same DOM interaction helpers mentioned above:
 
 * setup a getter for `this.element` which returns the DOM element representing
   the root element
 * if `jQuery` is present in the application sets up `this.$` method to run
   jQuery selectors rooted to `this.element`
-* setup `this.click` as an async helper to click on the specified selector
-* setup `this.tap` as an async helper to tap on the specified selector
-* setup `this.triggerKeyEvent` as an async helper to trigger a `KeyEvent` on the specified selector
-* setup `this.triggerEvent` as an async helper to trigger an event on the specified selector
-* setup `this.fillIn` as an async helper to enter text on the specified selector
-* setup `this.waitUntil` as an async helper returning a promise which resolves when the provided callback returns a truthy value
-* setup `this.focus` as an async helper which focuses the specified element
-* setup `this.blur` as an async helper which unfocuses the specified element
+* setup `this.click` helper method
+* setup `this.tap` helper method
+* setup `this.triggerKeyEvent` helper method
+* setup `this.triggerEvent` helper method
+* setup `this.fillIn` helper method
+* setup `this.focus` helper method
+* setup `this.blur` helper method
+* setup `this.waitUntil` helper method
+* setup `this.waitFor` helper method
 
 Once implemented, `setupRenderingTest` and `setupAcceptanceTest` will diverge from each other in very few ways.
 
