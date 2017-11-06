@@ -192,9 +192,9 @@ This function will:
   * setup `this.pauseTest` and `this.resumeTest` methods to allow easy pausing/resuming
     of tests
 * add routing related helpers
-  * setup `this.visit` method to visit the given url
-  * setup getter for `this.currentRouteName` which returns the current route name
-  * setup getter for `this.currentURL` which returns the current URL
+  * setup importable `visit` method to visit the given url
+  * setup importable `currentRouteName` method which returns the current route name
+  * setup importable `currentURL` method which returns the current URL
 * add DOM interaction helpers (heavily influenced by @cibernox's lovely addon [ember-native-dom-helpers](https://github.com/cibernox/ember-native-dom-helpers))
   * setup a getter for `this.element` which returns the DOM element representing
     the applications root element
