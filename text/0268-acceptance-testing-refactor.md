@@ -198,8 +198,6 @@ This function will:
 * add DOM interaction helpers (heavily influenced by @cibernox's lovely addon [ember-native-dom-helpers](https://github.com/cibernox/ember-native-dom-helpers))
   * setup a getter for `this.element` which returns the DOM element representing
     the applications root element
-  * if `jQuery` is present in the application sets up `this.$` method to run
-    jQuery selectors rooted to `this.element`
   * setup `this.click` helper method
   * setup `this.tap` helper method
   * setup `this.triggerKeyEvent` helper method
@@ -217,10 +215,6 @@ The `setupRenderingTest` function proposed in
 (and implemented in
 [ember-qunit](https://github.com/emberjs/ember-qunit)@3.0.0) will be modified to add the same DOM interaction helpers mentioned above:
 
-* setup a getter for `this.element` which returns the DOM element representing
-  the root element
-* if `jQuery` is present in the application sets up `this.$` method to run
-  jQuery selectors rooted to `this.element`
 * setup `this.click` helper method
 * setup `this.tap` helper method
 * setup `this.triggerKeyEvent` helper method
