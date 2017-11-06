@@ -89,7 +89,7 @@ module('Acceptance | login', function(hooks) {
 });
 ```
 
-As you can see, this proposal is unifies on Qunit's nested module syntax following
+As you can see, this proposal unifies on Qunit's nested module syntax following
 in emberjs/rfcs#232's footsteps.
 
 ## New APIs Proposed
