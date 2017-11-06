@@ -301,3 +301,4 @@ confusion, making it easier to teach and understand testing in Ember.
 # Alternatives
 
 * Do nothing?
+* Make `ember-native-dom-helpers` a default addon (removing the need for DOM interaction helpers proposed here).
