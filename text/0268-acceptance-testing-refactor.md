@@ -197,7 +197,7 @@ This function will:
   * setup getter for `this.currentURL` which returns the current URL
 * add DOM interaction helpers (heavily influenced by @cibernox's lovely addon [ember-native-dom-helpers](https://github.com/cibernox/ember-native-dom-helpers))
   * setup a getter for `this.element` which returns the DOM element representing
-    the root element 
+    the applications root element
   * if `jQuery` is present in the application sets up `this.$` method to run
     jQuery selectors rooted to `this.element`
   * setup `this.click` helper method
