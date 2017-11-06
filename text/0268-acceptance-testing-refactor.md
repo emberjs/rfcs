@@ -20,7 +20,7 @@ structure to tests.
 # Motivation
 
 Usage of rendering tests is becoming more and more common, but these tests
-often still include manual event delegation (`this.$('.foo').click()` for
+often include manual event delegation (`this.$('.foo').click()` for
 example), and assumes most (if not all) interactions are synchronous.  This is
 a major issue due to the fact that the vast majority of interactions will
 actually be asynchronous. There have been a few recent additions to
@@ -193,14 +193,17 @@ being proposed here:
   well as importable helpers.
 * `this.owner` will now be present and allow (for the first time 🎉) overriding
   items in the container/registry.
+* The new system will leverage the `Ember.Application` / `Ember.ApplicationInstance` split so that
+  we can avoid creating an `Ember.Application` instance per-test, and instead leverage the same system
+  that FastBoot itself uses to avoid running initializers for each acceptance test.
 
 ## Migration
 
-It is quite important that both the existing acceptance testing system, and the
+It is important that both the existing acceptance testing system, and the
 newly proposed system can co-exist together. This means that new tests can be generated
 in the new style while existing tests remain untouched.
 
-However, it is quite likely that
+However, it is likely that
 [ember-qunit-codemod](https://github.com/rwjblue/ember-qunit-codemod) will be
 able to accurately rewrite acceptance tests into the new format.
 
@@ -213,12 +216,8 @@ confusion, making it easier to teach and understand testing in Ember.
 # Drawbacks
 
 * This is a relatively large set of changes that are arguably not needed (things mostly work today).
-* One of the major pains in upgrading larger applications to newer Ember versions, is updating their tests to follow "new" patterns.  This RFC introduces yet another "new" thing (and proposes to deprecate the old thing), and could therefore be considered "just more churn".
+* One of the major hurdles in upgrading larger applications to newer Ember versions, is updating their tests to follow "new" patterns.  This RFC introduces yet another "new" thing (and proposes to deprecate the old thing), and could therefore be considered "just more churn".
 
 # Alternatives
 
 * The primary alternative to this would be to do nothing...
-
-# Unresolved questions
-
-TBD?
