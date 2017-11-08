@@ -119,71 +119,67 @@ The helpers will be migrated to `@ember/test-helpers` and eventually
 the versions from `@ember/test-helpers` directly (which means apps that have
 already adopted will have very minimal changes to make).
 
-The specific DOM helpers to be added are:
+The specific DOM helpers to be added to the `@ember/test-helpers` module are:
 
 ```
-declare module '@ember/test-helpers' {
-  // ...snip existing exports...
+/**
+  Clicks on the specified selector.
+*/
+export function click(selector: string | HTMLElement): Promise<void>;
 
-  /**
-    Clicks on the specified selector.
-  */
-  export function click(selector: string | HTMLElement): Promise<void>;
+/**
+  Taps on the specified selector.
+*/
+export function tap(selector: string | HTMLElement): Promise<void>;
 
-  /**
-    Taps on the specified selector.
-  */
-  export function tap(selector: string | HTMLElement): Promise<void>;
+/**
+  Triggers a keyboad event on the specified selector.
+*/
+export function triggerKeyEvent(
+  selector: string | HTMLElement,
+  eventType: 'keydown' | 'keypress' | 'keyup',
+  keyCode: string,
+  modifiers?: {
+    ctrlKey: false,
+    altKey: false,
+    shiftKey: false,
+    metaKey: false
+  }
+): Promise<void>;
 
-  /**
-    Triggers a keyboad event on the specified selector.
-  */
-  export function triggerKeyEvent(
-    selector: string | HTMLElement,
-    eventType: 'keydown' | 'keypress' | 'keyup',
-    keyCode: string,
-    modifiers?: {
-      ctrlKey: false,
-      altKey: false,
-      shiftKey: false,
-      metaKey: false
-    }
-  ): Promise<void>;
+/**
+  Triggers an event on the specified selector.
+*/
+export function triggerEvent(
+  selector: string | HTMLElement,
+  eventType: string,
+  eventOptions: any
+): Promise<void>;
 
-  /**
-    Triggers an event on the specified selector.
-  */
-  export function triggerEvent(
-    selector: string | HTMLElement,
-    eventType: string,
-    eventOptions: any
-  ): Promise<void>;
+/**
+  Fill in the specified selector's `value` property with the provided text.
+*/
+export function fillIn(selector: string | HTMLElement, text: string): Promise<void>;
 
-  /**
-    Fill in the specified selector's `value` property with the provided text.
-  */
-  export function fillIn(selector: string | HTMLElement, text: string): Promise<void>;
+/**
+  Focus the specified selector.
+*/
+export function focus(selector: string | HTMLElement): Promise<void>;
 
-  /**
-    Focus the specified selector.
-  */
-  export function focus(selector: string | HTMLElement): Promise<void>;
+/**
+  Unfocus the specified selector.
+*/
+export function blur(selector: string | HTMLElement): Promise<void>;
 
-  /**
-    Unfocus the specified selector.
-  */
-  export function blur(selector: string | HTMLElement): Promise<void>;
+/**
+  Returns a promise which resolves when the provided callback returns a truthy value.
+*/
+export function waitUntil(() => boolean): Promise<void>;
 
-  /**
-    Returns a promise which resolves when the provided callback returns a truthy value.
-  */
-  export function waitUntil(() => boolean): Promise<void>;
-
-  /**
-    Returns a promise which resolves when the provided selector (and count) becomes present.
-  */
-  export function waitFor(selector: string, count?: number): Promise<void>;
-}
+/**
+  Returns a promise which resolves when the provided selector (and count) becomes present.
+*/
+export function waitFor(selector: string, count?: number): Promise<void>;
 ```
 
 ### `setupAcceptanceTest`
