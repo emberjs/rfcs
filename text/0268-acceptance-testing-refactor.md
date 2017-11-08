@@ -12,10 +12,13 @@ you would like.
 Unfortunately, there is a massive disparity between different types of tests.
 In acceptance tests, you use well designed global helpers to deal with async
 related interactions; whereas in integration and unit tests you are forced to
-manually deal with this asynchrony. The goal of this RFC is to unify the
-concepts amongst the various types of test and provide a single common
-structure to tests.
-
+manually deal with this asynchrony.
+[emberjs/rfcs#232](https://github.com/emberjs/rfcs/blob/master/text/0232-simplify-qunit-testing-api.md)
+introduced us to QUnit's nested modules API, made integration and unit testing
+modular, and greatly simplified the concepts needed to learn how to write unit
+and integration tests. The goal of this RFC is to leverage what we have learned
+in prior RFCs and apply that knowledge to acceptance testing. Once this RFC has
+been implemented all test types in Ember will have a unified cohesive structure.
 
 # Motivation
 
@@ -25,7 +28,7 @@ example), and assumes most (if not all) interactions are synchronous.  This is
 a major issue due to the fact that the vast majority of interactions will
 actually be asynchronous. There have been a few recent additions to
 `ember-test-helpers` that have made dealing with asynchrony better (namely
-[emberjs/rfcs#232](https://github.com/emberjs/rfcs/blob/master/text/0232-simplify-qunit-testing-api.md)
+[emberjs/rfcs#232](https://github.com/emberjs/rfcs/blob/master/text/0232-simplify-qunit-testing-api.md))
 but forcing users to manually manage all interaction based async is a recipe
 for disaster.
 
