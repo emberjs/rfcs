@@ -27,7 +27,7 @@ often include manual event delegation (`this.$('.foo').click()` for
 example), and assumes most (if not all) interactions are synchronous.  This is
 a major issue due to the fact that the vast majority of interactions will
 actually be asynchronous. There have been a few recent additions to
-`ember-test-helpers` that have made dealing with asynchrony better (namely
+`@ember/test-helpers` that have made dealing with asynchrony better (namely
 [emberjs/rfcs#232](https://github.com/emberjs/rfcs/blob/master/text/0232-simplify-qunit-testing-api.md))
 but forcing users to manually manage all interaction based async is a recipe
 for disaster.
@@ -51,10 +51,10 @@ The goal of this RFC is to introduce new system for acceptance tests that follow
 and continues to enhance the system created in that RFC to share the same structure and helper system.
 
 This new system for acceptance tests will be implemented in the
-[ember-test-helpers](https://github.com/emberjs/ember-test-helpers/) library so
+[@ember/test-helpers](https://github.com/emberjs/ember-test-helpers/) library so
 that we can iterate faster while supporting multiple Ember versions
 independently and easily support multiple testing frameworks build on top of
-the primitives in `ember-test-helpers`. Ultimately, the existing [ember-testing](https://github.com/emberjs/ember.js/tree/master/packages/ember-testing) system
+the primitives in `@ember/test-helpers`. Ultimately, the existing [ember-testing](https://github.com/emberjs/ember.js/tree/master/packages/ember-testing) system
 will be deprecated but that deprecation will be added well after the new system has been
 released and adopted by the community. 
 
@@ -77,7 +77,7 @@ test('should add new post', function(assert) {
 // **** after ****
 import { module, test } from 'qunit';
 import { setupAcceptanceTest } from 'ember-qunit';
-import { visit, fillIn, click } from 'ember-test-helpers';
+import { visit, fillIn, click } from '@ember/test-helpers';
 
 module('Acceptance | login', function(hooks) {
   setupAcceptanceTest(hooks);
@@ -114,15 +114,15 @@ helpers has been iterated on and is quite stable in the
 [ember-native-dom-helpers](https://github.com/cibernox/ember-native-dom-helpers)
 addon.
 
-The helpers will be migrated to `ember-test-helpers` and eventually
+The helpers will be migrated to `@ember/test-helpers` and eventually
 (once "the dust settles") `ember-native-dom-helpers` will be able to reexport
-the versions from `ember-test-helpers` directly (which means apps that have
+the versions from `@ember/test-helpers` directly (which means apps that have
 already adopted will have very minimal changes to make).
 
 The specific DOM helpers to be added are:
 
 ```
-declare module 'ember-test-helpers' {
+declare module '@ember/test-helpers' {
   // ...snip existing exports...
 
   /**
