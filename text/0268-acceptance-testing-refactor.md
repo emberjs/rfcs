@@ -243,6 +243,13 @@ being proposed here:
   test.
 * Implicit promise chaining will no longer be present. If your test needs to
   wait for a given promise, it should use `await`.
+* The test helpers that are included by a new default ember-cli app will be no
+  longer needed and will be removed from the new application blueprint. This
+  includes:
+  * `tests/helpers/resolver.js`
+  * `tests/helpers/start-app.js`
+  * `tests/helpers/destroy-app.js`
+  * `tests/helpers/module-for-acceptance.js`
 
 ## Migration
 
