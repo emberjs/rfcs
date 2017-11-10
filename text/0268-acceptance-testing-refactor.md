@@ -251,6 +251,75 @@ being proposed here:
   * `tests/helpers/destroy-app.js`
   * `tests/helpers/module-for-acceptance.js`
 
+## Examples
+
+### Test Helper
+
+Assuming the following input:
+
+```js
+import Ember from 'ember';
+
+export function withFeature(app, featureName) {
+  let featuresService = app.__container__.lookup('service:features');
+  featuresService.enable(featureName);
+}
+
+Ember.Test.registerHelper('withFeature', withFeature);
+```
+
+In order for an addon to support both the existing acceptance testing system, and the new system it could replace that helper with the following:
+
+```js
+import { registerAsyncHelper } from '@ember/test';
+
+export function enableFeature(owner, featureName) {
+  let featuresService = this.owner.lookup('service:features');
+  featuresService.enable(featureName);
+}
+
+export default function setupFeatures(hooks, featureName) {
+  hooks.beforeEach(function() {
+    setupFeature(this.owner, featureName);
+  })
+}
+
+registerAsyncHelper('withFeature', function(app, featureName) {
+  setupFeature(app.__container__, featureName);
+});
+```
+
+This allows both the prior API (without modification) and the following:
+
+```js
+// Option 1:
+import { module, test } from 'qunit';
+import { setupAcceptanceTest } from 'ember-qunit';
+import { setupFeature } from 'addon-name-here/test-support';
+
+module('asdf', function(hooks) {
+  setupAcceptanceTest(hooks);
+  setupFeature(hooks, 'feature-name-here');
+
+  test(...);
+});
+
+// Option 2:
+import { module, test } from 'qunit';
+import { setupAcceptanceTest } from 'ember-qunit';
+import { enableFeature } from 'addon-name-here/test-support';
+
+module('asdf', function(hooks) {
+  setupAcceptanceTest(hooks);
+
+  test('awesome test title here', function(assert) {
+    enableFeature(this.owner, 'feature-name-here');
+
+    // ...snip...
+  });
+});
+```
+
 ## Migration
 
 It is important that both the existing acceptance testing system, and the
