@@ -279,12 +279,6 @@ export function enableFeature(owner, featureName) {
   featuresService.enable(featureName);
 }
 
-export default function setupFeature(hooks, featureName) {
-  hooks.beforeEach(function() {
-    enableFeature(this.owner, featureName);
-  })
-}
-
 registerAsyncHelper('withFeature', function(app, featureName) {
   enableFeature(app.__container__, featureName);
 });
@@ -293,18 +287,6 @@ registerAsyncHelper('withFeature', function(app, featureName) {
 This allows both the prior API (without modification) and the following:
 
 ```js
-// Option 1:
-import { module, test } from 'qunit';
-import { setupAcceptanceTest } from 'ember-qunit';
-import { setupFeature } from 'addon-name-here/test-support';
-
-module('asdf', function(hooks) {
-  setupAcceptanceTest(hooks);
-  setupFeature(hooks, 'feature-name-here');
-
-  test(...);
-});
-
 // Option 2:
 import { module, test } from 'qunit';
 import { setupAcceptanceTest } from 'ember-qunit';
