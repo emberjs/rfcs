@@ -87,7 +87,7 @@ module('Acceptance | login', function(hooks) {
     await fillIn('input.title', 'My new post');
     await click('button.submit');
 
-    assert.equal(find('ul.posts li')[0].textContent, 'My new post');
+    assert.equal(this.element.querySelectorAll('ul.posts li')[0].textContent, 'My new post');
   });
 });
 ```
