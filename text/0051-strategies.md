@@ -31,7 +31,7 @@ Most importantly, the approach described below helps us achieve:
     multiplexing](https://http2.github.io/faq/#why-is-http2-multiplexed) and
     [cache
     pushing](https://www.mnot.net/blog/2014/01/30/http2_expectations#4-cache-pushing)
-  + optimising plugins (Javascript and CSS treeshaking)
+  + optimising plugins (JavaScript and CSS tree-shaking)
 
 # Scope
 
@@ -41,26 +41,11 @@ Most importantly, the approach described below helps us achieve:
 
 + **Strategy** - A strategy represents a transformation. Speaking in Broccoli
   terms, it returns a transformed tree given an input tree.
-+ **Assembler** - Responsible for applying strategies (transforms) - default or user
-  provided - to an input tree.
 
 # Detailed design
 
 The detailed design is separated in various sections so that it is easier for a
 reader to understand.
-
-## Assembler
-
-`Assembler` is similar to a car service shop, where the whole car gets
-"decorated" (repaint, change rims/wheels, turbocharge the engine).
-
-It does not make any assumptions about how the final output should be
-constructed. Instead, it relies on strategies to tell it what the final output
-should look like. This is rather important as it enforces clear separation of
-concerns.
-
-`toTree` method would gather all the trees from the passed in `strategies`, and
-merge them into one final broccoli tree.
 
 ## Strategies
 
@@ -76,7 +61,7 @@ Strategy must have the following interface:
 ```typescript
 interface Strategy {
   constructor(options: any);
-  toTree(assember: Assembler, inputTree: BroccoliTree): BroccoliTree;
+  toTree(inputTree: BroccoliTree): BroccoliTree;
 }
 ```
 
@@ -97,10 +82,20 @@ where:
 + `node_modules` is a folder that contains node dependencies
 + `vendor` is a folder that contains other dependencies.
 
-Note, that  `toTree` method must return a broccoli tree.
+Note, that `toTree` method must return a broccoli tree.
 
 Strategies get access to the same input tree, they are not chained off of each
 other and they don't run in parallel.
+
+
+### `app.import` API
+
+`app.import` API has limited application which allows you to import and
+rename files as well as specify a transformation to be applied (AMD).
+
+One could easily implement the same behaviour with strategies. In fact,
+strategies give you much more control over whole application tree, not
+just separate files.
 
 ### Concatenation Strategy
 
@@ -112,9 +107,11 @@ returns a new concatenated broccoli tree.
 const concat = require('broccoli-concat');
 
 class ConcatenationStrategy {
-  constructor(options) { this.options = options; }
+  constructor(options) {
+    this.options = options;
+  }
 
-  toTree(assembler, inputTree) {
+  toTree(inputTree) {
     return concat(inputTree, this.options);
   }
 }
@@ -144,10 +141,11 @@ class AssetsSplitStrategy {
     this.options = options;
   }
 
-  toTree(assembler, inputTree) {
+  toTree(inputTree) {
     return concat(inputTree, {
       headerFiles: [
-        jQueryPath, emberPath
+        jQueryPath,
+        emberPath
       ],
       outputFile: 'vendor-static.js'
     });
@@ -182,22 +180,39 @@ Passing `strategies` as an option to the constructor will clobber default
 strategies that Ember CLI provides out of the box (they mimic existing behaviour
 of creating `dist` folder with final assets).
 
-However, Ember CLI will expose an array of default strategies that people can
-take advantage of. Note, that `defaultStrategies` will be frozen so you can't
-push directly onto it. One would need to create a new array.
+Ember CLI will provide a way to use default strategies that people can
+take advantage of.
 
 For example:
 
 ```javascript
 // ember-cli-build.js
-const { defaultStrategies } = require('ember-cli/lib/strategies');
+const {
+  createDefaultApplicationStrategy,
+  createDefaultVendorStrategy
+} = require('ember-cli/lib/broccoli/strategies');
+const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+
+// no operation strategy that puts app/add-ons tree inside of
+// `noop-output` folder
+class Noop {
+  constructor(options) {
+    this.options = options;
+  }
+
+  toTree(inputTree) {
+    return inputTree;
+  }
+}
 
 module.exports = function(defaults) {
-  const firstStrategy = new MyCustomStrategy();
-  const secondStrategy = new MyCustomStrategy();
-  const strategies = defaultStrategies.concat(firstStrategy, secondStrategy);
+  const app = new EmberApp(defaults, { });
 
-  const app = new EmberApp(defaults, { strategies });
+  app.strategies = [
+    new Noop(),
+    createDefaultApplicationStrategy(app),
+    ...createDefaultVendorStrategy(app)
+  ];
 
   return app.toTree();
 }
@@ -207,9 +222,42 @@ Note, that `strategies` is an optional property. If you don't pass it to the
 constructor or `strategies` is an empty array, you're effectively "opting out"
 of the feature and using the default behaviour.
 
+Another thing to note is that the order of strategies matter. They will
+be processed in the order they are received.
+
 This change should be behind an experiment flag, `STRATEGIES`. This will allow
 us to start experimenting with different strategies right away and not being
 tied to a particular release cycle.
+
+### Note on add-ons
+
+Strategies "registration" are manual and explicit, not as "magical" as
+Ember CLI add-ons. In the future, we want to optimise for the patterns that
+emerge in the community and make it more ergonomic.
+
+If the add-on wants to expose a strategy, it could be done via exposing
+it through Node.js `require`.
+
+```javascript
+const {
+  createDefaultApplicationStrategy,
+  createDefaultVendorStrategy
+} = require('ember-cli/lib/broccoli/strategies');
+const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+const FastbootStrategy = require('ember-fastboot/strategies/fastboot');
+
+module.exports = function(defaults) {
+  const app = new EmberApp(defaults, { });
+
+  app.strategies = [
+    new FastbootStrategy(),
+    createDefaultApplicationStrategy(app),
+    ...createDefaultVendorStrategy(app)
+  ];
+
+  return app.toTree();
+}
+```
 
 #  Topics for Future RFCs
 
@@ -217,7 +265,7 @@ While working on this RFC, some ideas were brought into focus regarding existing
 and new features in Ember CLI. They all likely require separate discussions in
 future RFCs, but the discussion points have been included below.
 
-## Treeshaking
+## Tree-shaking
 
 Firstly, what's _tree-shaking_? AFAIK, the term
 [originated](https://groups.google.com/forum/#!msg/comp.lang.lisp/6zpZsWFFW18/-z_8hHRAIf4J)
@@ -230,11 +278,10 @@ Harris](https://twitter.com/Rich_Harris)
 [offers](https://medium.com/@Rich_Harris/tree-shaking-versus-dead-code-elimination-d3765df85c80)
 a pretty good explanation in the context of [Rollup](https://rollupjs.org/). The
 gist is dead code elimination happens on a final product by removing bits that
-are unused. Treeshaking is not about excluding the code but about including the
-code that's used.
+are unused. Tree-shaking is quite different - given an object we want to construct, what is the exact set of dependencies we need?.
 
 With this RFC, we lay out the foundation and create a framework by which both
-dead code elimination and treeshaking code be implemented.
+dead code elimination and tree-shaking code be implemented.
 
 However, there are still several things that are missing:
 
@@ -270,7 +317,7 @@ This effort could be broken down into several phases:
   + removing unused initializers/services (this likely entails work on
     dependency injection layer as we would need access to a resolver resolution
     map)
-+ treeshaking (Rollup-like treeshaking where we include *only* the code that is
++ tree-shaking (Rollup-like tree-shaking where we include *only* the code that is
   used)
 
 `Linker` would be able to take an `exclude` list of modules as a parameter.
