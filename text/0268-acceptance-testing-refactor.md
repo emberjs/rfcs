@@ -174,12 +174,12 @@ export function blur(selector: string | HTMLElement): Promise<void>;
 /**
   Returns a promise which resolves when the provided callback returns a truthy value.
 */
-export function waitUntil(() => boolean): Promise<void>;
+export function waitUntil(() => boolean, { timeout = 1000 }): Promise<void>;
 
 /**
   Returns a promise which resolves when the provided selector (and count) becomes present.
 */
-export function waitFor(selector: string, count?: number): Promise<void>;
+export function waitFor(selector: string, { count?: number, timeout = 1000 }): Promise<void>;
 ```
 
 ### `setupAcceptanceTest`
