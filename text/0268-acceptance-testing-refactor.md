@@ -275,18 +275,18 @@ In order for an addon to support both the existing acceptance testing system, an
 import { registerAsyncHelper } from '@ember/test';
 
 export function enableFeature(owner, featureName) {
-  let featuresService = this.owner.lookup('service:features');
+  let featuresService = owner.lookup('service:features');
   featuresService.enable(featureName);
 }
 
-export default function setupFeatures(hooks, featureName) {
+export default function setupFeature(hooks, featureName) {
   hooks.beforeEach(function() {
-    setupFeature(this.owner, featureName);
+    enableFeature(this.owner, featureName);
   })
 }
 
 registerAsyncHelper('withFeature', function(app, featureName) {
-  setupFeature(app.__container__, featureName);
+  enableFeature(app.__container__, featureName);
 });
 ```
 
