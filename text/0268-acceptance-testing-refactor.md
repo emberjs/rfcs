@@ -320,6 +320,28 @@ module('asdf', function(hooks) {
 });
 ```
 
+### Registering Factory Overrides
+
+Overriding a factory is generally done to allow the test to have more control
+over the thing being tested. This is sometimes used to prevent side effects
+that are not related to the test (i.e. to prevent network calls), other times
+it is used to allow the test to inject some known state to make asserting the
+results much easier.
+
+It is currently possible to register custom factories in integration and unit
+tests, but not in acceptance tests (without using private API's that is).
+
+As of [emberjs/rfcs#232](https://github.com/emberjs/rfcs/pull/232) the
+integration/unit test API for this registration is:
+
+```js
+this.owner.register('service:stripe', MockService);
+```
+
+This RFC will allow this invocation syntax to work in all test types
+(acceptance, integration, and unit).
+
+
 ## Migration
 
 It is important that both the existing acceptance testing system, and the
