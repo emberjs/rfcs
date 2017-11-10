@@ -242,7 +242,8 @@ being proposed here:
   that FastBoot itself uses to avoid running initializers for each acceptance
   test.
 * Implicit promise chaining will no longer be present. If your test needs to
-  wait for a given promise, it should use `await`.
+  wait for a given promise, it should use `await` (which will wait for the
+  system to "settle" in similar semantics to today's `wait()` helper).
 * The test helpers that are included by a new default ember-cli app will be no
   longer needed and will be removed from the new application blueprint. This
   includes:
