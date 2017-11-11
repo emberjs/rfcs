@@ -229,6 +229,31 @@ This change should be behind an experiment flag, `STRATEGIES`. This will allow
 us to start experimenting with different strategies right away and not being
 tied to a particular release cycle.
 
+There might be a case in the future when two different strategies need to
+communicate with each other to work properly. For example, we want to
+make sure strategies don't clobber each other if they happen to modify
+the same files or if one strategy removes a file and the other one still
+operates on it.
+
+As opposed to implementing a message passing mechanism (which would be
+rather complex), we should allow for "an escape hatch" to implement the
+needed behaviour.
+
+```javascript
+const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+
+module.exports = function(defaults) {
+  const app = new EmberApp(defaults, { });
+
+  app.createOverrideStrategy = function(looseModulesTree) {
+    // `looseModulesTree` is a broccoli tree with application and add-on
+    // files in non-transpiled state
+  }
+
+  return app.toTree();
+}
+```
+
 ### Note on add-ons
 
 Strategies "registration" are manual and explicit, not as "magical" as
@@ -253,11 +278,13 @@ module.exports = function(defaults) {
     new FastbootStrategy(),
     createDefaultApplicationStrategy(app),
     ...createDefaultVendorStrategy(app)
-  ];
 
+  ];
   return app.toTree();
 }
 ```
+
+Final API will be fleshed out later.
 
 #  Topics for Future RFCs
 
