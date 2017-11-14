@@ -210,8 +210,9 @@ module.exports = function(defaults) {
 
   app.strategies = [
     new Noop(),
-    createDefaultApplicationStrategy(app)
-  ].concat(createDefaultVendorStrategy(app));
+    createDefaultApplicationStrategy(app),
+    createDefaultVendorStrategy(app)
+  ];
 
   return app.toTree();
 }
@@ -275,8 +276,9 @@ module.exports = function(defaults) {
 
   app.strategies = [
     new FastbootStrategy(),
-    createDefaultApplicationStrategy(app)
-  ].concat(createDefaultVendorStrategy(app));
+    createDefaultApplicationStrategy(app),
+    createDefaultVendorStrategy(app)
+  ];
 
   return app.toTree();
 }
