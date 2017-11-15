@@ -121,7 +121,7 @@ already adopted will have very minimal changes to make).
 
 The specific DOM helpers to be added to the `@ember/test-helpers` module are:
 
-```
+```ts
 /**
   Clicks on the specified selector.
 */
