@@ -76,11 +76,11 @@ test('should add new post', function(assert) {
 
 // **** after ****
 import { module, test } from 'qunit';
-import { setupAcceptanceTest } from 'ember-qunit';
+import { setupApplicationTest } from 'ember-qunit';
 import { visit, fillIn, click } from '@ember/test-helpers';
 
 module('Acceptance | login', function(hooks) {
-  setupAcceptanceTest(hooks);
+  setupApplicationTest(hooks);
 
   test('should add new post', async function(assert) {
     await visit('/posts/new');
@@ -102,14 +102,14 @@ The following new methods will be exposed from `ember-qunit`:
 ```ts
 declare module 'ember-qunit' {
   // ...snip... 
-  export function setupAcceptanceTest(hooks: QUnitModuleHooks): void;
+  export function setupApplicationTest(hooks: QUnitModuleHooks): void;
 }
 ```
 
 ### DOM Interaction Helpers
 
 New native DOM interaction helpers will be added to both `setupRenderingTest`
-and (proposed below) `setupAcceptanceTest`. The implementation for these
+and (proposed below) `setupApplicationTest`. The implementation for these
 helpers has been iterated on and is quite stable in the
 [ember-native-dom-helpers](https://github.com/cibernox/ember-native-dom-helpers)
 addon.
@@ -182,7 +182,7 @@ export function waitUntil<T>(Function: Promise<T>, { timeout = 1000 }): Promise<
 export function waitFor(selector: string, { count?: number, timeout = 1000 }): Promise<HTMLElement | HTMLElement[]>;
 ```
 
-### `setupAcceptanceTest`
+### `setupApplicationTest`
 
 This function will:
 
@@ -224,7 +224,7 @@ The `setupRenderingTest` function proposed in
 * setup importable `waitUntil` helper method
 * setup importable `waitFor` helper method
 
-Once implemented, `setupRenderingTest` and `setupAcceptanceTest` will diverge from each other in very few ways.
+Once implemented, `setupRenderingTest` and `setupApplicationTest` will diverge from each other in very few ways.
 
 ## Changes from Current System
 
@@ -289,11 +289,11 @@ This allows both the prior API (without modification) and the following:
 ```js
 // Option 2:
 import { module, test } from 'qunit';
-import { setupAcceptanceTest } from 'ember-qunit';
+import { setupApplicationTest } from 'ember-qunit';
 import { enableFeature } from 'addon-name-here/test-support';
 
 module('asdf', function(hooks) {
-  setupAcceptanceTest(hooks);
+  setupApplicationTest(hooks);
 
   test('awesome test title here', function(assert) {
     enableFeature(this.owner, 'feature-name-here');
