@@ -35,37 +35,78 @@ Most importantly, the approach described below helps us achieve:
 
 # Scope
 
-+ New public API for registering strategies
++ New public API for customising build process and giving more granular control over
+the final build output
 
 # Terminology
 
-+ **Strategy** - A strategy represents a transformation. Speaking in Broccoli
-  terms, it returns a transformed tree given an input tree.
++ **Packaging** - A process during of designing, evaluating, and producing final build assets.
 
 # Detailed design
 
 The detailed design is separated in various sections so that it is easier for a
 reader to understand.
 
-## Strategies
+## Packaging
 
-Strategy is an extensibility primitive. It gives you granular control over the
-final output. It could be used in many different ways (we are going to go over
-use cases below). Note, they aren't meant to be used for "postprocess"
-transformations. In fact, they are solutions to different problems. The mental
-model here would be: "postprocess" is called after `strategies` have been
-processed.
+It gives you granular control over the final build output. It could be used in many
+different ways (we are going to go over use cases below). Note, it isn't meant to be
+used for "postprocess" transformations; "postprocess" is called after packaging is
+finished.
 
-Strategy must have the following interface:
+Currently, Ember.js application and all of its depedencies get assembled under one
+directory with the following structure:
 
-```typescript
-interface Strategy {
-  constructor(options: any);
-  toTree(inputTree: BroccoliTree): BroccoliTree;
+```ruby
+bundler:js:input/
+├── addon-tree-output/
+├── the-app-name-folder/
+├── node_modules/
+└── vendor/
+```
+
+where:
+
++ `addon-tree-output` is a folder that contains dependencies from Ember add-ons
++ `the-app-name-folder` is a folder that contains Ember application code
++ `node_modules` is a folder that contains node dependencies
++ `vendor` is a folder that contains other dependencies.
+
+Note, for clarity purposes we should rename `addon-tree-output` to `addon-modules` as
+both `tree` and `output` don't communicate well about the contents of the folder.
+
+During packaging process the final output will be generated (everything that currently
+resides under `dist/` folder when a developer runs `ember build`).
+
+### `package` API
+
+A new public `package` method will be introduced to open up a way to customise packaging process:
+
+```javascript
+// ember-cli-build.js
+const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+
+module.exports = function(defaults) {
+  const app = new EmberApp(defaults, { });
+
+  app.package = function(inputTree) {
+    // customise `inputTree`
+    // and return customised `inputTree`
+  }
+
+  return app.toTree();
 }
 ```
 
-`inputTree` will have the following structure:
+`package` function has the following signature:
+
+```typescript
+interface EmberApp {
+  package(inputTree: BroccoliTree): BroccoliTree;
+}
+```
+
+where `inputTree` will have the following structure:
 
 ```ruby
 bundler:js:input/
@@ -75,56 +116,82 @@ bundler:js:input/
 └── vendor/
 ```
 
-where:
+Note, that `package` method must return a broccoli tree.
 
-+ `addon-modules` is a folder that contains dependencies from Ember add-ons
-+ `the-app-name-folder` is a folder that contains Ember application code
-+ `node_modules` is a folder that contains node dependencies
-+ `vendor` is a folder that contains other dependencies.
+This change should be behind an experiment flag, `PACKAGING`.
+This will allow us to start experimenting right away and not being
+tied to a particular release cycle.
 
-Note, that `toTree` method must return a broccoli tree.
+Note, that `package` is optional. If you don't define it, you're
+effectively "opting out" of the feature and using the default
+behaviour.
 
-Strategies get access to the same input tree, they are not chained off of each
-other and they don't run in parallel.
+### `packagerFor` API
 
+It's important to make it easy for users to still use default Ember CLI
+packaging.
 
-### `app.import` API
-
-`app.import` API has limited application which allows you to import and
-rename files as well as specify a transformation to be applied (AMD).
-
-One could easily implement the same behaviour with strategies. In fact,
-strategies give you much more control over whole application tree, not
-just separate files.
-
-### Concatenation Strategy
-
-It is used by Ember CLI privately in the latest `canary` version to produce
-`assets/app-name.js` and `assets/vendor.js`. It takes a broccoli tree and
-returns a new concatenated broccoli tree.
+`packagerFor` is a way for the users to access out-of-the-box packaging while
+still be able to customise the final build output.
 
 ```javascript
-const concat = require('broccoli-concat');
+// ember-cli-build.js
+const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+const packagerFor = require('ember-cli/lib/broccoli/packager-for');
 
-class ConcatenationStrategy {
-  constructor(options) {
-    this.options = options;
+module.exports = function(defaults) {
+  const app = new EmberApp(defaults, { });
+
+  const defaultPackager = packagerFor(app);
+  app.package = function(inputTree) {
+    // customise `inputTree`
+
+    return defaultPackager(inputTree);
   }
 
-  toTree(inputTree) {
-    return concat(inputTree, this.options);
-  }
+  return app.toTree();
 }
 ```
 
-Where `this.options` mimics [`broccoli-concat`
-options](https://github.com/broccolijs/broccoli-concat#advanced-usage).
+`packageFor` has the following signature:
 
-### Example of possible strategies
+```typescript
+type Packager: (inputTree: BroccoliTree): BroccoliTree;
 
-Below are some of the strategies that could be implemented.
+function packagerFor(app: EmberApp): Packager;
+```
 
-#### Assets Split Strategy
+`packagerFor` must return a function that returns a `BroccoliTree`.
+
+### Possible usages
+
+#### Debug/Analyse
+
+One of the applications of `package` API would be to run different analysis on the
+Ember applications. Take
+[broccoli-concat-analyser](https://github.com/stefanpenner/broccoli-concat-analyser),
+for example. This could be easily incorporated into the build.
+
+```javascript
+// ember-cli-build.js
+const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+const packagerFor = require('ember-cli/lib/broccoli/packager-for');
+
+module.exports = function(defaults) {
+  const app = new EmberApp(defaults, { });
+
+  const defaultPackager = packagerFor(app);
+  app.package = function(inputTree) {
+    const analysedTree = new BroccoliConcatAnalyser(inputTree);
+
+    return defaultPackager(analysedTree);
+  }
+
+  return app.toTree();
+}
+```
+
+#### Static Assets Split
 
 One of the techniques for improving site speed is isolating changes throughout
 application deployments. Assuming  the application assets are uploaded to CDN,
@@ -132,161 +199,17 @@ the reasoning is very simple: if `ember.js` or `jQuery` (possibly along with
 other third party libraries) don't change with every deployment, why bust CDN
 cache for them?
 
-This strategy could be provided out of the box by Ember CLI as a part of site
-speed improvement story.
+#### ES6 Modules
 
-```javascript
-class AssetsSplitStrategy {
-  constructor(options) {
-    this.options = options;
-  }
+ES6 modules are [starting](https://caniuse.com/#feat=es6-module) to land in browsers.
+This means that you can use `<script type="module" src="/my/app.js"></script>`.
 
-  toTree(inputTree) {
-    return concat(inputTree, {
-      headerFiles: [
-        jQueryPath,
-        emberPath
-      ],
-      outputFile: 'vendor-static.js'
-    });
-  }
-}
-```
+This [article](https://philipwalton.com/articles/deploying-es2015-code-in-production-today/) [explains](https://philipwalton.com/articles/deploying-es2015-code-in-production-today/#is-this-really-worth-the-extra-effort) the benefits of using ES6 modules over ES2015 (smaller total file sizes, faster to parse and evaluate).
 
-#### Debug/Analyse Strategy
+`package` API will make it possible to package your application for both ES2015 only browsers as well
+the ones with ES6 modules support.
 
-Yet another application of strategies would be to run different analysis on the
-Ember applications. Take
-[broccoli-concat-analyser](https://github.com/stefanpenner/broccoli-concat-analyser),
-for example. This could be a strategy and easily incorporated into the build.
-
-#### Engine Strategy
-
-Introducing `Strategy` as a concept allows us to re-think the way we approach
-Ember Engines as well. We can start thinking about engines as a strategy of
-certain type. In fact, it's very similar to `ConcatenationStrategy` described
-above.
-
-+ reduces the API surface (as opposed to `ember-engines` and
-  `ember-asset-loader`, only one strategy)
-+ makes things explicit, meaning that you have to register a strategy
-
-## Registering custom strategies
-
-Ember applications would be able to register custom strategies via
-`ember-cli-build.js` file by passing a `strategies` property to the constructor.
-
-Passing `strategies` as an option to the constructor will clobber default
-strategies that Ember CLI provides out of the box (they mimic existing behaviour
-of creating `dist` folder with final assets).
-
-Ember CLI will provide a way to use default strategies that people can
-take advantage of.
-
-For example:
-
-```javascript
-// ember-cli-build.js
-const {
-  createDefaultApplicationStrategy,
-  createDefaultVendorStrategy
-} = require('ember-cli/lib/broccoli/strategies');
-const EmberApp = require('ember-cli/lib/broccoli/ember-app');
-
-// no operation strategy that puts app/add-ons tree inside of
-// `noop-output` folder
-class Noop {
-  constructor(options) {
-    this.options = options;
-  }
-
-  toTree(inputTree) {
-    return inputTree;
-  }
-}
-
-module.exports = function(defaults) {
-  const app = new EmberApp(defaults, { });
-
-  app.strategies = [
-    new Noop(),
-    createDefaultApplicationStrategy(app),
-    createDefaultVendorStrategy(app)
-  ];
-
-  return app.toTree();
-}
-```
-
-Note, that `strategies` is an optional property. If you don't pass it to the
-constructor or `strategies` is an empty array, you're effectively "opting out"
-of the feature and using the default behaviour.
-
-Another thing to note is that the order of strategies matter. They will
-be processed in the order they are received.
-
-This change should be behind an experiment flag, `STRATEGIES`. This will allow
-us to start experimenting with different strategies right away and not being
-tied to a particular release cycle.
-
-There might be a case in the future when two different strategies need to
-communicate with each other to work properly. For example, we want to
-make sure strategies don't clobber each other if they happen to modify
-the same files or if one strategy removes a file and the other one still
-operates on it.
-
-As opposed to implementing a message passing mechanism (which would be
-rather complex), we should allow for "an escape hatch" to implement the
-needed behaviour.
-
-```javascript
-const EmberApp = require('ember-cli/lib/broccoli/ember-app');
-
-module.exports = function(defaults) {
-  const app = new EmberApp(defaults, { });
-
-  app.createOverrideStrategy = function(looseModulesTree) {
-    // `looseModulesTree` is a broccoli tree with application and add-on
-    // files in non-transpiled state
-  }
-
-  return app.toTree();
-}
-```
-
-### Note on add-ons
-
-Strategies "registration" are manual and explicit, not as "magical" as
-Ember CLI add-ons. In the future, we want to optimise for the patterns that
-emerge in the community and make it more ergonomic.
-
-If the add-on wants to expose a strategy, it could be done via exposing
-it through Node.js `require`.
-
-```javascript
-const {
-  createDefaultApplicationStrategy,
-  createDefaultVendorStrategy
-} = require('ember-cli/lib/broccoli/strategies');
-const EmberApp = require('ember-cli/lib/broccoli/ember-app');
-const FastbootStrategy = require('ember-fastboot/strategies/fastboot');
-
-module.exports = function(defaults) {
-  const app = new EmberApp(defaults, { });
-
-  app.strategies = [
-    new FastbootStrategy(),
-    createDefaultApplicationStrategy(app),
-    createDefaultVendorStrategy(app)
-  ];
-
-  return app.toTree();
-}
-```
-
-Final API will be fleshed out later.
-
-#  Topics for Future RFCs
+# Topics for Future RFCs
 
 While working on this RFC, some ideas were brought into focus regarding existing
 and new features in Ember CLI. They all likely require separate discussions in
@@ -374,10 +297,10 @@ Main goals are:
 
 # How We Teach This
 
-This is a backward compatible change to the existing Ember CLI eco system. In
-order to teach users how to use strategies, we need to update the API docs with
-a section for this and the best practices of when to use this. A more general
-purpose blog post could be beneficial as well.
+This is a backward compatible change to the existing Ember CLI ecosystem. In
+order to teach users how to use `package` API, we need to update the API docs
+with a section for this and the best practices of when to use this. A more
+general purpose blog post could be beneficial as well.
 
 # Drawbacks
 
@@ -387,52 +310,25 @@ _Build performance_. There is minimal overhead in instantiating strategies and
 calling methods on them and I believe this approach shouldn't degrade build
 performance.
 
-_Coupling with Broccoli_. The idea of having a more generic cli was discussed
-during last Ember CLI core face to face meeting and it was agreed that it was a
-sizeable amount of work. That kind of refactoring CLI would require a lot of
-code changes and is a large body of work. At the moment, Broccoli is a de facto
-Ember CLI build tool. We don't introduce any extra coupling, not more than it is
-right now.
-
 _A note on add-ons_. Add-ons don't rely on the way Ember CLI does bundling. That
 means existing build system continues to work as expected and add-ons won't have
 to change their implementation.
 
-_A note on non-javascript bundles_. Strategies could be used to create
-non-javascript bundles as well. For example, we could create a separate bundle
-for Handlebars templates if need be. I'm going to leave technical details out as
-  they are out of the scope of this RFC.
-
 # Alternatives
 
-_How is `Strategy` different from `BroccoliPlugin`?_ The underlying primitive is
-still be a broccoli plugin (it has nothing to do with `strategies`, that's how
-broccoli works). `Strategies` will likely end up being wrappers around broccoli
-plugins. Going down the "everything is a broccoli plugin" path would lead to
-even further coupling of Ember CLI and Broccoli which actually doesn't have to
-be so. `Strategy` is more of a build pipeline primitive that can hide the build
-tool completely; "register a transform and it will happen" kind of thing. That
-way we could theoretically abstract "common" parts of CLI and make it less ember
-specific but keep interfaces between components in place.
-
-This RFC allows us to introduce _any_ bundling strategy when needed.
+This RFC allows us to customise packaging when needed.
 [Webpack](https://webpack.js.org) has become very popular in solving this
-similar problem. We could implement a `WebpackStrategy` that would take care of
-the bundling. Ultimately, we need something that is aware of how Ember apps are
-assembled and how Ember apps utilize dependency injection that takes advantage
+similar problem. One could implement a `package` function that would use Webpack
+for packaging. Ultimately, we need something that is aware of how Ember apps are
+assembled and how Ember apps utilise dependency injection that takes advantage
 of existing tools. The long term plan is to have a dependency graph that is
 aware of application structure so can avoid the "wall of configuration" that
 other asset packaging systems are susceptible to.
 
 # Unresolved questions
 
-+ Will there be an ordering problem (strategies)?
 + Will it increase build time?
-+ Which strategies are going to be supported out-of-the-box?
 + Should we introduce the same API on add-on level?
-+ Will simple extension strategy “just work”?
-+ Communication between strategies
-+ Debugging strategies and output validation
 
 # Thanks
 
