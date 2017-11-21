@@ -40,7 +40,7 @@ the final build output
 
 # Terminology
 
-+ **Packaging** - A process during of designing, evaluating, and producing final build assets.
++ **Packaging** - The process of designing, evaluating, and producing final build assets.
 
 # Detailed design
 
@@ -87,12 +87,12 @@ A new public `package` method will be introduced to open up a way to customise p
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function(defaults) {
-  const app = new EmberApp(defaults, { });
-
-  app.package = function(inputTree) {
-    // customise `inputTree`
-    // and return customised `inputTree`
-  }
+  const app = new EmberApp(defaults, {
+    package(inputTree) {
+      // customise `inputTree`
+      // and return customised `inputTree`
+    }
+  });
 
   return app.toTree();
 }
@@ -140,14 +140,14 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 const packagerFor = require('ember-cli/lib/broccoli/packager-for');
 
 module.exports = function(defaults) {
-  const app = new EmberApp(defaults, { });
+  const app = new EmberApp(defaults, {
+    package(inputTree) {
+      const defaultPackager = packagerFor(app);
+      // customise `inputTree`
 
-  const defaultPackager = packagerFor(app);
-  app.package = function(inputTree) {
-    // customise `inputTree`
-
-    return defaultPackager(inputTree);
-  }
+      return defaultPackager(inputTree);
+    }
+  });
 
   return app.toTree();
 }
