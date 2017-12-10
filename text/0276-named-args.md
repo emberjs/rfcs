@@ -1,5 +1,5 @@
 - Start Date: 2017-12-10
-- RFC PR: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/276
 - Ember Issue: (leave this empty)
 
 # Summary
@@ -48,7 +48,7 @@ resolving this ambiguity also helps the rendering system. Currently, the
 "runtime" tempalte compiler has to perform a helper lookup for every `{{name}}`
 in each template. It will be able to skip this resolution process and perform
 other optimizations (such as reusing the internal [reference](https://github.com/glimmerjs/glimmer-vm/blob/master/guides/04-references.md)
-object and caches).
+object and caches) with this addition.
 
 Another problem with the current approach of automatically "reflecting" named
 arguments on the instance is that they can unexpectedly overwrite other
