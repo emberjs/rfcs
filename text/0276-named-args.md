@@ -35,7 +35,9 @@ these places: first you need to scan the surrounding lines for block
 params with that name; next you check in the helpers folder to see it there
 is a helper with that name (it could also be coming from an addon!); then you
 check if it is an argument provided by the caller; finally, you check the
-component's JavaScript class to look for a (computed) property.
+component's JavaScript class to look for a (computed) property. If you _still_
+did not find it, maybe it is a named arguments that is passed only sometimes,
+or perhaps it is just a leftover reference from a previous refactor?
 
 Providing a dedicated syntax for referring to named arguments will resolve the
 ambiguity and greatly improve clarity, especially in big projects with a lot
