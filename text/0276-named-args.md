@@ -89,7 +89,7 @@ Since the `{{foo}}` syntax still works on `Ember.Component` (which is the
 only kind of components available today) via the auto-reflection mechanism,
 we are not really in a rush to migrate the community (and the guides, etc)
 to using the new syntax. In the meantime, this could be viewed as a tool to
-improve clearity in templates, similar to how the optional "explicit `this`"
+improve clarity in templates, similar to how the optional "explicit `this`"
 syntax (`{{this.foo}}`).
 
 While we think writing `{{@foo}}` would be a best practice for new code
@@ -105,7 +105,7 @@ This introduces a new piece of syntax that one would need to learn in order to
 understand Ember templates.
 
 This mostly affects "casual" readers (as this should be very easy for an Ember
-deverloper to learn, understand and remember after encounting/learning it for
+developer to learn, understand and remember after encounting/learning it for
 the first time). However, since these casual readers are also among those
 who are most acutely affected by the ambiguity, we believe this is still a
 net improvement over the status-quo.
