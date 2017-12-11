@@ -91,7 +91,7 @@ abstract the flag with a "privileged addon" whose only purpose is to enable
 the flag. Applications will enable the flag by installing this addon. This
 will allow for more flexibility in changing the flag's implementation (the
 location, naming, value, or even the existence of it) in the future. From the
-user's perspective, it is the _addon_ that provides thisfunctionality. The
+user's perspective, it is the _addon_ that provides this functionality. The
 flag is simply an internal implementation detail.
 
 We have done this before in other cases (such as the legacy view addon during
@@ -116,7 +116,7 @@ necessitates a JavaScript class. Addon authors would create the component
 (with or without a JavaScript class) in the `/addon` folder, but exposing
 it for consumption in apps requires creating a corresponding JavaScript class
 in the `/app` folder to "re-export" the component. Therefore, in practice,
-it is not actually possible for addons to have a truely template-only
+it is not actually possible for addons to have a truly template-only
 component today (something to address in a future RFC).
 
 ## Leakage Of `Ember.Component` Semantics
@@ -159,7 +159,7 @@ in a few limited ways:
 
 ## Migration Path
 
-Given the subtle semantics differences enumerated above, it is therefore
+Given the subtle semantics differences enumerated above, it is
 not necessarily safe to simply turn on the flag in bigger applications
 as it is quite likely that some of the template-only components might be
 relying on one or more of these features. Further, removing the wrapper
@@ -178,7 +178,7 @@ The user can also audit the components we identified and decide to
 delete the JavaScript and migrate them on a case-by-case basis.
 
 The codemod can also come with a more aggressive (and unsound) mode that
-simply wrap each template in a `<div>` (to avoid breaking layout in most
+simply wraps each template in a `<div>` (to avoid breaking layout in most
 cases). This might be acceptable for smaller apps.
 
 For what it's worth, the Ember CLI component blueprint always generate a
@@ -188,7 +188,7 @@ existing template-only components in an average app.
 ## Implementation Plan
 
 Finally, for the actual implementation, this would be implemented using
-the internal Component Manager API that is already available for a long
+the internal Component Manager API that has already been available for a long
 time (and how Curly Components, outlets etc are implemented internally).
 
 It should be very straightforward implementation – essentially just a
@@ -208,13 +208,13 @@ In the mean time, we still have to deal with the consequence that
 existing `Ember.Component` comes with a wrapper element by default. The
 mental model for users to understand this is that the `Ember.Component`
 class is what is giving you the wrapper element (therefore, template-only
-components, which is not a `Ember.Component`, does not get one of those).
+components, which is not an `Ember.Component` does not get one of those).
 
 This should feel quite natual, as the component class is where you
 configure the wrapper element (and where you would lookup the API
 documentation). You could imagine that the `Ember.Component` is doing
 something like this under-the-hood as a convenience feature (which turned
-out to be not very convenient afterall, but that's a different story):
+out to be not very convenient after all, but that's a different story):
 
 ```js
 export const Component = Object.extend({
@@ -244,6 +244,6 @@ as Glimmer Components and friends adopt the "Outer HTML" semantics.
 
 Alternatively, we can make this opt-in per template using a pragma or magic
 comment. However, this would be needed for a lot of templates and become
-very noisy, and the alternative strategry proposed here (by keeping around
+very noisy, and the alternative strategy proposed here (by keeping around
 the `Ember.Component` JavaScript file as needed) would be able to accomplish
 the same goal with less noise.
