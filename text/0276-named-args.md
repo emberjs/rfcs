@@ -47,7 +47,7 @@ already be used to disambiguate component properties from helpers.)
 As an aside, the ambiguity that causes confusion for human readers is also a
 problem for the compiler. While it is not the main goal of this proposal,
 resolving this ambiguity also helps the rendering system. Currently, the
-"runtime" tempalte compiler has to perform a helper lookup for every `{{name}}`
+"runtime" template compiler has to perform a helper lookup for every `{{name}}`
 in each template. It will be able to skip this resolution process and perform
 other optimizations (such as reusing the internal [reference](https://github.com/glimmerjs/glimmer-vm/blob/master/guides/04-references.md)
 object and caches) with this addition.
@@ -65,7 +65,7 @@ paves the way for a future world where components can work without them.
 
 Notably, the current iteration of the [Glimmer Components](https://glimmerjs.com/guides/templates-and-helpers)
 have adopted this design for over a year now and the experience has been very
-positive. This would be one of the first piece (admittedly, only a tiny piece)
+positive. This would be one of the first pieces (admittedly, only a tiny piece)
 of the Glimmer.js experiment to make its way into Ember. We think this feature
 is small, self-contained but useful enough to be the ideal candidate to kick
 off this process.
