@@ -21,7 +21,7 @@ export default Ember.Application.extend({
 ```
 
 However, whatever the root is, the application adds another `<div>` wrapper
-that it's not requited anymore. It's just a vestigial reminder of some implementation
+that it's not required anymore. It's just a vestigial reminder of some implementation
 detail of how views worked in Ember 1.x. Some sort of wisdom tooth of the original
 rendering system that it serves no purpose today.
 
