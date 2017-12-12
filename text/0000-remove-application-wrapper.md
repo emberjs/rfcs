@@ -89,7 +89,7 @@ with regular handlebars.
 
 There is a possibility that removing the wrapper can break styles for some apps,
 but since adding the wrapper back is just of editing the `application.hbs` template,
-that is probably a despicable drawback.
+that is probably a minor drawback.
 
 There is also a non-zero chance that some testing addon is relying on the `#ember-testing > .ember-view`
 html hierarchy for some reason, and those addons would have to be updated.
