@@ -21,11 +21,11 @@ export default Ember.Application.extend({
 ```
 
 However, whatever the root is, the application adds another `<div>` wrapper
-that it's not required anymore. It's just a vestigial reminder of some implementation
+that it's not required anymore. It's just a vestigial remainder of some implementation
 detail of how views worked in Ember 1.x. Some sort of wisdom tooth of the original
-rendering system that it serves no purpose today.
+rendering system that serves no purpose today.
 
-Furthermore, much like a wisdom tooth, it can gives us problems. In the past this element
+Furthermore, much like a wisdom tooth, it can give us problems. In the past, this element
 was configurable using the `ApplicationView`, but when views were removed we lost that
 ability. Right now we are stuck with a wrapper element we can't remove and we also can't
 customize, which is why some apps target the selector `body > .ember-view` to style this
@@ -47,7 +47,7 @@ container.
 ## API Surface
 
 The proposed approach is identical to the one proposed in #278, that I reproduce
-pristine below in italic:
+pristine below in italics:
 
 *We should not expose the flag directly as a public API. Instead, we should
 abstract the flag with a "privileged addon" whose only purpose is to enable
@@ -78,7 +78,7 @@ any class or id they want.
 # How We Teach This
 
 This addon will be an opt in, but at some point it will become part of
-the default blueprint. This change, rather than introducing a new concept, it *removes*
+the default blueprint. This change, rather than introducing a new concept, *removes*
 an old one. Users won't have to google what is the way to remove or customize
 the implicit application wrapper of the app (to sadly discover that is not
 even possible), but instead they will just add a wrapper only if they want,
