@@ -175,6 +175,6 @@ the two seems overwhemlingly positive.
 * Hold off until we also remove `set`
 * Hold off until we transition to something like [Glimmer's `@tracked`](https://glimmerjs.com/guides/tracked-properties)
 
-In my opinion, these alternatives does not make a lot of sense, as neither
+In my opinion, these alternatives do not make a lot of sense, as neither
 of these hypothetical systems appear to require (or would benefit from)
 having a user-land getter system.
