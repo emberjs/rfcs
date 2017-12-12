@@ -135,7 +135,7 @@ let foo = {
 foo.bar; // => 'bar'
 ```
 
-# ~~How We Teach This~~
+# How We Teach This
 
 For the most part, this RFC _removes_ a thing that we need to teach new
 users.
