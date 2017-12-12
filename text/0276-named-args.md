@@ -81,6 +81,14 @@ Additionally, the legacy `{{attrs.foo}}` syntax (which more or less tries to
 accomplish the same thing) has actually been [implemented using `{{@foo}}`](https://github.com/emberjs/ember.js/blob/87be17d8e69f83b2abed8c0695f8fa5e4bcae473/packages/ember-template-compiler/lib/plugins/transform-attrs-into-args.js)
 under-the-hood since Ember 2.10.
 
+## Reserved Names
+
+We will reserve `{{@args}}`, `{{@arguments}}` and anything that does not
+start with a lowercase letter (such as `@Foo`, `@0`, `@!` etc) in the first
+version. This is purely speculative and the goal is to carve out some space
+for future features. If we don't end up needing them, we can always relax
+the restrictions down the road.
+
 # How We Teach This
 
 `{{@foo}}` is the way to access the named arguments passed from the caller.
