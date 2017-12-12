@@ -9,7 +9,7 @@ Ember apps and tests.
 
 # Motivation
 
-In Ember applications today, applications are anchored to some existing html
+In Ember applications today, applications are anchored to some existing HTML
 element in the page. Usually, this element is the `<body>` of the document, but it
 can be configured to be a different one when the application is defined,
 passing a CSS selector to the `rootElement` property:
@@ -21,23 +21,22 @@ export default Ember.Application.extend({
 ```
 
 However, whatever the root is, the application adds another `<div>` wrapper
-that it's not required anymore. It's just a vestigial remainder of some implementation
+that is not required anymore. It's a vestigial remainder of some implementation
 detail of how views worked in Ember 1.x. Some sort of wisdom tooth of the original
 rendering system that serves no purpose today.
 
 Furthermore, much like a wisdom tooth, it can give us problems. In the past, this element
 was configurable using the `ApplicationView`, but when views were removed we lost that
-ability. Right now we are stuck with a wrapper element we can't remove and we also can't
-customize, which is why some apps target the selector `body > .ember-view` to style this
-element.
+ability. Right now we are stuck with a wrapper element we can't remove nor customize,
+which is why some apps target the selector `body > .ember-view` to style this element.
 
 Similarly, in testing there is another `.ember-view` wrapper inside the
 `#ember-testing` container for no good reason.
 
 This RFC proposes to add a global flag to remove those wrapper elements,
 effectively making the `application.hbs` template have "Outer HTML" semantics, which aligns
-well with [the changes proposed recently](#278) for template-only components and the way glimmer
-apps work.
+well with [the changes recently proposed](#278) for template-only components,
+as well as the way Glimmer apps work.
 
 The same flag will also remove the unnecessary extra wrapper inside the testing
 container.
@@ -46,26 +45,25 @@ container.
 
 ## API Surface
 
-The proposed approach is identical to the one proposed in #278, that I reproduce
-pristine below in italics:
+The proposed approach is identical to the one proposed in #278, quoted below:
 
-*We should not expose the flag directly as a public API. Instead, we should
+> We should not expose the flag directly as a public API. Instead, we should
 abstract the flag with a "privileged addon" whose only purpose is to enable
 the flag. Applications will enable the flag by installing this addon. This
 will allow for more flexibility in changing the flag's implementation (the
 location, naming, value, or even the existence of it) in the future. From the
 user's perspective, it is the addon that provides this functionality. The
-flag is simply an internal implementation detail.*
+flag is simply an internal implementation detail.
 
-*We have done this before in other cases (such as the legacy view addon during
-the 2.0 transition period), and it has generally worked well.*
+> We have done this before in other cases (such as the legacy view addon during
+the 2.0 transition period), and it has generally worked well.
 
-*When landing this feature, it will be entirely opt-in for existing apps, but
+> When landing this feature, it will be entirely opt-in for existing apps, but
 the Ember CLI application blueprint should be updated to include the addon by
 default. At a later time, we should provide another addon that _disables_ the
 flag explicitly (installing both addons would be an install-time error). At
 that time, we will issue a deprecation warning if the flag is *not set*, with
-a message that directs the user to install one of the two addons.*
+a message that directs the user to install one of the two addons.
 
 ## Migration Path
 
@@ -77,22 +75,22 @@ any class or id they want.
 
 # How We Teach This
 
-This addon will be an opt in, but at some point it will become part of
+This addon will be opt-in, but at some point it will become part of
 the default blueprint. This change, rather than introducing a new concept, *removes*
 an old one. Users won't have to google what is the way to remove or customize
 the implicit application wrapper of the app (to sadly discover that is not
-even possible), but instead they will just add a wrapper only if they want,
+even possible), but instead they will add a wrapper only if they want,
 and in the same way they would add a wrapper in any other point of their application,
-with regular handlebars.
+with regular Handlebars.
 
 # Drawbacks
 
 There is a possibility that removing the wrapper can break styles for some apps,
-but since adding the wrapper back is just of editing the `application.hbs` template,
+but since adding the wrapper back is just editing the `application.hbs` template,
 that is probably a minor drawback.
 
 There is also a non-zero chance that some testing addon is relying on the `#ember-testing > .ember-view`
-html hierarchy for some reason, and those addons would have to be updated.
+HTML hierarchy for some reason, and those addons would have to be updated.
 
 # Alternatives
 
