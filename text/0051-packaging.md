@@ -67,9 +67,10 @@ bundler:js:input/
 
 where:
 
-+ `addon-tree-output` is a folder that contains dependencies from Ember add-ons
-+ `the-app-name-folder` is a folder that contains Ember application code
-+ `node_modules` is a folder that contains node dependencies
++ `addon-tree-output` is a folder that contains dependencies from Ember add-ons.
++ `the-app-name-folder` is a folder that contains Ember application code.
++ `node_modules` is a folder that contains node dependencies.
++ `tests` is a folder that contains test code.
 + `vendor` is a folder that contains other dependencies.
 
 Note, for clarity purposes we should rename `addon-tree-output` to `addon-modules` as
@@ -137,15 +138,14 @@ still be able to customise the final build output.
 ```javascript
 // ember-cli-build.js
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
-const packagerFor = require('ember-cli/lib/broccoli/packager-for');
+const defaultPackager = require('ember-cli-default-packager');
 
 module.exports = function(defaults) {
   const app = new EmberApp(defaults, {
     package(inputTree) {
-      const defaultPackager = packagerFor(app);
       // customise `inputTree`
 
-      return defaultPackager(inputTree);
+      return defaultPackager(app, inputTree);
     }
   });
 
@@ -153,15 +153,13 @@ module.exports = function(defaults) {
 }
 ```
 
-`packageFor` has the following signature:
+`defaultPackager` has the following signature:
 
 ```typescript
-type Packager: (inputTree: BroccoliTree): BroccoliTree;
-
-function packagerFor(app: EmberApp): Packager;
+function defaultPackager(app: EmberApp, inputTree: BroccoliTreel): BroccoliTree;
 ```
 
-`packagerFor` must return a function that returns a `BroccoliTree`.
+`packagerFor` must return a `BroccoliTree`.
 
 ### Possible usages
 
@@ -175,16 +173,15 @@ for example. This could be easily incorporated into the build.
 ```javascript
 // ember-cli-build.js
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
-const packagerFor = require('ember-cli/lib/broccoli/packager-for');
+const defaultPackager = require('ember-cli-default-packager');
 
 module.exports = function(defaults) {
   const app = new EmberApp(defaults, { });
 
-  const defaultPackager = packagerFor(app);
   app.package = function(inputTree) {
     const analysedTree = new BroccoliConcatAnalyser(inputTree);
 
-    return defaultPackager(analysedTree);
+    return defaultPackager(app, analysedTree);
   }
 
   return app.toTree();
