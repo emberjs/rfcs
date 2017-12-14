@@ -2,7 +2,7 @@
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
-# [Template]
+# (fill me with the RFC title)
 
 ## Summary
 
