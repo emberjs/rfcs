@@ -24,9 +24,16 @@ As of Ember 3.0, the only supported way to depend on Ember is to depend on the `
 
 We propose adding an *additional* supported way to depend on Ember. You can choose to run `ember explode`, and we will remove `ember-source` from your dependencies and replace it with `@ember/core` *plus the current complete set of already-extracted Ember packages*. `ember explode` is intended to not change the set of Ember features in your app. It just splats them out into a form that comes from separate packages.
 
-Critically, `@ember/core` includes an extra rule in its semver policy: the only supported way to upgrade to a newer `@ember/core` is to run the `ember-cli-update` command. The update command will be aware of any additional packages have been split off from `@ember/core` since your last version, and it will add them automatically to your app.
+`@ember/core` and all of the packages split out from it will share a lockstep version number. We will manage releases of these packages in two phases:
 
-This special upgrade requirement gives us the freedom to split off more packages *in any release*, without breaking anybody's app.
+ - initial phase: while we are still establishing the package boundaries, we will start at 0.1.0 and signal breaking releases each time we split out a new package.
+ - stabilization: once we have created a complete set of packages and stabilized their boundaries, we will update the version number to match `ember-source`, after which the split-up family of packages and the aggregated `ember-source` packages will stay in lock-step.
+
+## Release Cadence
+
+This proposal doesn't change Ember's release cadence. The new packages should be released on the same schedule as `ember-source` (and of course they contain the same code -- as long as you install the full set of them).
+
+Even though we expect to have many "breaking" releases of `@ember/core` during the initial phase, they will only "break" in the sense of requiring apps to add additional dependencies on new split-out packages. We can extend the `ember-cli-update` tool to handle this case automatically, making it easier for early adopters of the new package format to follow along.
 
 ## Inter-package dependencies
 
@@ -42,7 +49,7 @@ Therefore, we propose new metadata in the `ember-addon` section of `package.json
 
 ```js
   "ember-addon": {
-    "required-core-features": "3.1.0",
+    "required-core-features": "0.4.0",
     "required-additional-features": ["@ember/routing", "@ember/prototype-etxensions", "@ember/string"]
   }
 ```
@@ -64,35 +71,31 @@ For example, consider an addon with:
 
 ```js
   "ember-addon": {
-    "required-core-features": "3.1.0",
+    "required-core-features": "0.4.0",
     "required-additional-features": ["@ember/routing"]
   }
 ```
 
 If you use this addon in an app with `ember-source` 2.18.0, there's no problems, the metadata isn't affecting anything.
 
-If you use this addon in an app with `@ember/core` 3.6.0, there's still no problems, but we will be able to warn the user that they need to install `@ember/routing` plus whatever future packages happen to get split out of `@ember/core` between 3.1 and 3.6.
+If you use this addon in an app with `@ember/core` 0.6.0, there's still no problems, but we will be able to warn the user that they need to install `@ember/routing` plus whatever future packages happen to get split out of `@ember/core` between 0.4.0 and 0.6.0.
 
 In contrast, if there was a peerDependency on `@ember/core` we would break usage with `ember-source`, and *vice versa*. And if there was a peerDependency on `@ember/routing` it would break usage with any Ember version earlier than the one that split out that package.
 
 The "pure NPM" way of solving this problem is to release new versions of your addon to support new versions of Ember, but this creates a much more fragmented ecosystem than we want. We are careful not to break things very often, such that many addons really don't need to be released just to keep working with newer Ember releases.
 
 
-## Local Dependency Overrides
+## Local and Crowd-sourced Dependency Overrides
 
 We have already proposed making missing dependencies a hard build error. This is important so that weird and frustrating bugs don't crop up unexpectedly. But it needs to be possible to get oneself unstuck without being blocked by third-party code.
 
 Therefore, we propose a `config/dependency-overrides.js` file that allows you to make declarations on behalf of any addon:
 
-
 ```js
-/* 
-  If you need to edit this file, please file PRs to share these 
-  changes with the addon's authors! 
-*/
-module.exports = {
-  "liquid-fire@^0.29.0": {
-    "required-core-features": "3.4.0",
+const Overrides = require('ember-addon-dependency-overrides');
+module.exports = Object.assign({}, Overrides, {
+  "liquid-fire@0.29.0": {
+    "required-core-features": "0.4.0",
     "required-additional-features": [
       "@ember/component"
     ]
@@ -102,7 +105,11 @@ module.exports = {
 
 The point of this file is purely to suppress the build errors you would otherwise receive. 
 
-Each override is scoped to exactly the package *and* version constraint that you're using. If you change the version of the addon that you're using, the override will no longer apply. This is deliberate -- there's no way to safely know what overrides to apply to a new version of the addon.
+Each override is scoped to exactly the package *and* version that you're using. If you change the version of the addon that you're using, the override will no longer apply. This is deliberate -- there's no way to safely know what overrides to apply to a new version of the addon.
+
+The `ember-addon-dependency-overrides` module in the above example can be a community-curated configuration that tracks which popular addons really require which Ember features. This is intended to allow early adopters to help each other without a lot of duplicate work and without requiring every addon to rapidly track all the unstable `@ember/core` releases.
+
+After `@ember/core` and family have been stabilized, the expectation is that most addons will begin publishing their own dependency information and the need for overrides should taper off.
 
 ## Package Dependency Example Scenario
 
@@ -117,9 +124,9 @@ Each override is scoped to exactly the package *and* version constraint that you
     ```diff
     <     "ember-source": "3.2.0",
     ---
-    >     "@ember/core": "3.2.0",
-    >     "@ember/partial": "3.2.0",
-    >     "@ember/prototype-extensions": "3.2.0",
+    >     "@ember/core": "0.6.0",
+    >     "@ember/partial": "0.6.0",
+    >     "@ember/prototype-extensions": "0.6.0",
     ```
 
 3. Your app is expected to work exactly the same at this point.
@@ -129,18 +136,18 @@ Each override is scoped to exactly the package *and* version constraint that you
 5. `ember serve` gives you an error report that includes a message like:
 
     ```
-    Addon liquid-fire 0.29.0 may depend on `@ember/partial` to function correctly. You should either add `@ember/partial` to your app or update to a version of liquid-fire that declares `required-base-features` >= 3.1.0. If you want to test whether it actually works, you can override this warning, see https://...
+    Addon liquid-fire 0.29.0 may depend on `@ember/partial` to function correctly. You should either add `@ember/partial` to your app or update to a version of liquid-fire that declares `required-base-features` >= 0.4.0. If you want to test whether it actually works, you can override this warning, see https://...
     ```
 
-    In the above example, the message said we need to get liquid-fire to declare a required-base-features of at least 3.1.0 because (in this hypothetical example), that is the first version of `@ember/core` that doesn't include the features in `@ember/partial`.
+    In the above example, the message said we need to get liquid-fire to declare a required-base-features of at least 0.4.0 because (in this hypothetical example), that is the first version of `@ember/core` that doesn't include the features in `@ember/partial`.
     
 6. You update liquid-fire and your app is running happily now without the feature. 
 
 ### Scenario: Addon author declaring dependencies
 
-1. Ember 3.2.0 is released, and it splits out `@ember/partial` and `@ember/prototype-extensions` as their own packages.
+1. `@ember/core` 0.6.0 is released, and it splits out `@ember/partial` and `@ember/prototype-extensions` as their own packages.
 
-2. You want to update your `mega-button` addon to take advantage of this new capability. You test your addon against `@ember/core` 3.2.0 and get a test failure:
+2. You want to update your `mega-button` addon to take advantage of this new capability. You test your addon against `@ember/core` 0.6.0 and get a test failure:
 
     ```
     You're trying to use a feature that was moved out of `@ember/core` and into `@ember/partial`
@@ -148,14 +155,14 @@ Each override is scoped to exactly the package *and* version constraint that you
 
     In this case, you got a pleasant error message because we were able to leave a development-mode-only assertion in place of the removed feature. It looks like your mega-button is actually using partials after all.
     
-3. You update your addon's test scenario to use both `@ember/core` and `@ember/partial` 3.2.0. Now tests pass. This confirms that those are the only packages you depend on.
+3. You update your addon's test scenario to use both `@ember/core` and `@ember/partial` 0.6.0. Now tests pass. This confirms that those are the only packages you depend on.
     
 4. You update your package.json to include:
 
     ```
     "ember-addon": { 
       ...
-      "required-base-features": "3.2.0"
+      "required-base-features": "0.6.0"
       ...
     }
     ```
@@ -200,7 +207,6 @@ However, we are also free to create additional packages that are not in that RFC
 
 It will sometimes be convenient to leave development-mode-only stubs in place of removed code so that we can provide helpful guidance. This should be pursued whenever possible, and it can be done automatically wherever we are doing block-level code stripping.
 
-
 ## New App Blueprint
 
 We should create a new app blueprint that allows people to start with just `@ember/core`. There is no plan at this time to replace the default app blueprint -- this would be a new choice for people who want to start with a very barebones Ember, similar to what you'd get with GlimmerJS.
@@ -209,9 +215,7 @@ We should create a new app blueprint that allows people to start with just `@emb
 
 # How We Teach This
 
-The most important message we need to teach app developers is: use `ember-cli-update` whenever you're changing your Ember version. As long as we can spread that message, we can provide direct guidance the rest of the way. For example, when we reach a sufficient level of confidence in the `@ember/core` packaging, we can begin making `ember-cli-update` offer to automatically explode `ember-source` into `@ember/core` *et al*. This would be a simple code mod that should not alter any app semantics.
-
-As people begin to experiment with removing Ember packages, our best teaching opportunities are very clear and helpful feedback from `ember-cli` whenever they have a dependency issue, as illustrated in some of the example messages in this document.
+The most important message we need to teach app developers is: if you want to use `@ember/core` during the initial phase, you should use `ember-cli-update` whenever you're changing your Ember version. As long as apps follow that advice, they should experience the same level of stability they would get from `ember-source`. As people begin to experiment with removing Ember packages, our best teaching opportunities are very clear and helpful feedback from `ember-cli` whenever they have a dependency issue, as illustrated in some of the example messages in this document.
 
 The mental model for "which Ember packages am I using?" should ultimately reduce to simple rules:
 
@@ -233,4 +237,4 @@ In the case of code we want to remove, splitting it into separate packages doesn
 
 We could continue to ship Ember as a single package, and do our own Ember-specific built-time shenanigans to decide how much of it to include in the app's build. This greatly simplifies the management of user's package.json files, but it is increasingly out-of-step with wider NPM-based Javascript toolchains.
 
-We could choose to only split out new packages at major releases. This would eliminate the need for mandatory `ember-cli-update`, at the cost of either shipping many more breaking releases or waiting much longer to benefit from package splitting. I think `ember-cli-update` is the superior option because it gives us a way to refactor Ember without doing breaking changes.
+An earlier version of this document proposed having `@ember/core` and `ember-source` share version numbers even during the initial phase. In this case the `ember-cli-update` tool would be a mandatory part of `@ember/core`'s public API, allowing us to split out more packages even on minor releases. This has the benefit of making the connection between a version of `ember-source` and `@ember/core` clearer, but it has the downside of imposing weirder requirements that are out-of-step with NPM community expectations.
