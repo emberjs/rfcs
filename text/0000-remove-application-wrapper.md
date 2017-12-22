@@ -35,8 +35,8 @@ Similarly, in testing there is another `.ember-view` wrapper inside the
 
 This RFC proposes to add a global flag to remove those wrapper elements,
 effectively making the `application.hbs` template have "Outer HTML" semantics, which aligns
-well with [the changes recently proposed](#278) for template-only components,
-as well as the way Glimmer apps work.
+well with [the changes recently proposed](https://github.com/emberjs/rfcs/pull/278)
+for template-only components, as well as the way Glimmer apps work.
 
 The same flag will also remove the unnecessary extra wrapper inside the testing
 container.
