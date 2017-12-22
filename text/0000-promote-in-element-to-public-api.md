@@ -19,7 +19,8 @@ time to make it public.
 
 Create a new `{{in-element}}` as simple alias of `{{-in-element}}` with the exact same signature
 and semantics and deprecate the private one.
-The deprecated private API will continue to exist until the first LTS release of the 3.X cycle (3.4)
+Although the API is technically private, there I believe there is enough people using it to deserve
+a deprecation. The deprecated private API will continue to exist until the first LTS release of the 3.X cycle (3.4)
 to be finally removed in the next one (3.5).
 
 # How We Teach This
