@@ -8,20 +8,38 @@ Promote the private API `{{-in-element}}` to public API as `{{in-element}}`.
 
 # Motivation
 
-Developers need to render content out of the regular HTML flow, and `{{-in-element}}` for
-that purpose, but it remains private (or _intimate_) API. People is usually wary of using
-private APIs (and for good reason) as they may get removed at any time.
+Sometimes developers need to render content out of the regular HTML flow. This concept is often also
+called "portals". Some components like dropdowns and modals use this technique to render stuff close
+to the root of the page to bypass CSS overflow rules. Some apps that are embedded into static pages
+even use this technique to update parts of the page **outside** the app itself.
+
+This need need has been covered by solutions developed in the user space but it was so common that
+glimmer baked it into the VM in the form of `{{-in-element}}`, but it remains private (or _intimate_) API.
+People is usually wary of using private APIs (and for good reason) as they may get removed at any time.
 
 If the core team and the community is happy with the current behavior of `{{-in-element}}` it's
 time to make it public.
 
 # Detailed design
 
-Create a new `{{in-element}}` as simple alias of `{{-in-element}}` with the exact same signature
-and semantics and deprecate the private one.
-Although the API is technically private, there I believe there is enough people using it to deserve
-a deprecation. The deprecated private API will continue to exist until the first LTS release of the 3.X cycle (3.4)
-to be finally removed in the next one (3.5).
+The existing API of `{{-in-element}}` is very simple and I do not suggest making any change to it.
+It takes a DOM element as the only positional param and a block, and renders that block _inside_ the
+given element instead of where it would normally go.
+
+P.e.
+
+```hbs
+{{#-in-element destinationElement}}
+  <div>Some content</div>
+{{/-in-element}}
+```
+
+The current implementation only suggests creating a new `{{in-element}}` construct that is a simple
+alias of `{{-in-element}}` with the exact same params and behavior, and then, after a while, remove
+the private one.
+Although `{{-in-element}}` is technically private, there there is enough people using it to deserve
+a deprecation. I suggest keeping the deprecated private API will until the first LTS release of the
+3.X cycle (3.4) to be finally removed in the next one (3.5).
 
 # How We Teach This
 
