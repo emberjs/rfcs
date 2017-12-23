@@ -23,10 +23,13 @@ time to make it public.
 # Detailed design
 
 The existing API of `{{-in-element}}` is very simple and I do not suggest making any change to it.
-It takes a DOM element as the only positional param and a block, and renders that block _inside_ the
-given element instead of where it would normally go.
 
-P.e.
+* It takes a single positional param `destinationElement` that is a DOM element, and a block
+* The given block is rendered not where it is located, but inside the given `destination` element.
+* If `destinationElement` is false/null/undefined then it doesn't render anything but it doesn't error.
+* If `destinationElement` changes the block is removed from the previous destination and added to the new one.
+
+Example usage:
 
 ```hbs
 {{#-in-element destinationElement}}
@@ -37,6 +40,7 @@ P.e.
 The current implementation only suggests creating a new `{{in-element}}` construct that is a simple
 alias of `{{-in-element}}` with the exact same params and behavior, and then, after a while, remove
 the private one.
+
 Although `{{-in-element}}` is technically private, there there is enough people using it to deserve
 a deprecation. I suggest keeping the deprecated private API will until the first LTS release of the
 3.X cycle (3.4) to be finally removed in the next one (3.5).
