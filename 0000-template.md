@@ -2,7 +2,7 @@
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
-# (fill me with the RFC title)
+# (RFC title goes here)
 
 ## Summary
 
@@ -23,7 +23,7 @@ implementation to implement. This should get into specifics and corner-cases,
 and include examples of how the feature is used. Any new terminology should be
 defined here.
 
-## How We Teach This
+## How we teach this
 
 > What names and terminology work best for these concepts and why? How is this
 idea best presented? As a continuation of existing Ember patterns, or as a
