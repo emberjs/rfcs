@@ -106,5 +106,5 @@ There are a few alternative module consumption designs:
 
 ## Unresolved questions
 
-Teaching
-What to do about ember add-ons
+* Teaching
+* What to do about ember add-ons
