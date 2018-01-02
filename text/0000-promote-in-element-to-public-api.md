@@ -24,18 +24,23 @@ time to make it public.
 
 The existing API of `{{-in-element}}` is very simple and I do not suggest making any change to it.
 
-* It takes a single positional param `destinationElement` that is a DOM element, and a block
+* It takes a single positional param `destinationElement` that is a DOM element, and a block.
 * The given block is rendered not where it is located, but inside the given `destination` element, at
 the end of it if there is any other content on the destination element.
-* If `destinationElement` is false/null/undefined then it doesn't render anything but it doesn't error.
+* If `destinationElement` is null/undefined then it doesn't render anything but it doesn't error.
+* If `destinationElement` is false/0/"" it raises an assertion in development but fails silently in production.
 * If `destinationElement` changes the block is removed from the previous destination and added to the new one. This
 process tears down the rendered content on the initial destination and renders it again on the new one, meaning
-that any component withing the block will be destroyed and instantiated again, so transient HTML state
-like the value of an input will be lost unless manually preserved somewhere else, like a service.
+that any component withing the block will be destroyed and instantiated again (calling the appropiate lifecycle hooks),
+so transient HTML state like the value of an input will be lost unless manually preserved somewhere else, like a service.
 * If the destination element is an invalid value (a string, a number ...) it throws an `parent.insertBefore is not a function` error. I think
 that throwing an error is correct but the error message could be improved.
-* If the destination element has a different context than the origin (SVG) the content respects the
-context of the parent.
+* If the destination element has a different context (like SVG) the content will be appended normally by the glimmer VM,
+which doesn't try to validate the correctness of the generated HTML. This is normal behavior in Glimmer, not
+an exception, and users must be aware that rendering invalid markup might be interpreted or auto-corrected in
+unexpected ways by the browser when in SSR mode.
+* Rendering into a foreign object (an element within an `<iframe>`) should be disallowed initially. If someone
+asks for this feature it would require an RFC to explore the consequences.
 
 Example usage:
 
