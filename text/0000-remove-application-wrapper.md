@@ -1,6 +1,6 @@
 - Start Date: 2017-12-11
 - RFC PR: https://github.com/emberjs/rfcs/pull/280
-- Ember Issue: (leave this empty)
+- Ember Issue: https://github.com/emberjs/ember.js/pull/15981
 
 # Summary
 
