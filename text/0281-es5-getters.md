@@ -60,7 +60,7 @@ were widely available. This necessitated using a special function such as
 
 Since all of our [target browsers](https://github.com/emberjs/rfcs/pull/252)
 support ES5 getters now, we can drop the need of this special function,
-improving developer egornomics and interoperability between other libraries
+improving developer ergonomics and interoperability between other libraries
 and tooling (such as TypeScript).
 
 Note that at present, using `this.set()` or `Ember.set()` is still mandatory
@@ -70,13 +70,13 @@ would require more design and is out-of-scope for this RFC.
 
 `this.get()` and `Ember.get()` will still work. This RFC does not propose
 removing or deprecating them in the near term. They support other use cases
-that ES5 getters does not, such as "safe" path chaining (`get('foo.bar.baz')`)
+that ES5 getters do not, such as "safe" path chaining (`get('foo.bar.baz')`)
 and `unknownProperty` (and Proxies by extension), so any future plans to
 deprecate them would have to take these features into account.
 
 Addon authors would likely need to continue using `Ember.get()` for at least
-another two LTS cycle (8 releases) to support older versions of Ember (and
-possibly longer to support proxies). It is however very unlikely that the
+another two LTS cycles (8 releases) to support older versions of Ember (and
+possibly longer to support proxies). It is, however, very unlikely that the
 everyday user would need to use this.
 
 # Detailed design
@@ -88,11 +88,11 @@ compute the value.
 One caveat is that the computed property function is currently stored on the
 instances for implementation reasons that are no longer relevant. However,
 it is possible that some developers have observed their existance and have
-accidentaly relied on these private semantics (e.g. `chancancode.fullName.get()`
+accidentally relied on these private semantics (e.g. `chancancode.fullName.get()`
 or `chancancode.fullName.isDescriptor`).
 
 Before landing this change, we should turn the property into an assertion
-for so that in these unlikely scenarios the developers will at least receive
+so that in these unlikely scenarios, developers will at least receive
 some warning.
 
 Another thing to consider is that there is this Little Known Trick™ to add
@@ -141,8 +141,8 @@ For the most part, this RFC _removes_ a thing that we need to teach new
 users.
 
 It might, however, come across as slightly strange that `set()` is still
-required. However, many other libraries share the same model and
-empricially this does not appear to be an issue. For example, in React,
+required. However, many other libraries share the same model, and
+empricially, this does not appear to be an issue. For example, in React,
 you can freely access `this.state.foo` but must use `this.setState('foo', ...)`
 to update it. Even Vue has [the same API](https://vuejs.org/v2/api/#Vue-set)
 for some cases.
@@ -154,9 +154,9 @@ things on the screen, etc.
 As for users who already learned to use `get()` everywhere, that would
 continue to work. Ideally, this would be a Cool Trick™ they pick up some day
 (as in "Oh, I don't have to do _that_ anymore? Cool."), at which point the
-old habbit would quickly die. If this turned out to be too confusing, we
-could always explore deprecating `this.get()`; we will just have to weight
-the cost-benefits of the confusion (if any) vs churn.
+old habit would quickly die. If this turned out to be too confusing, we
+could always explore deprecating `this.get()`; we will just have to weigh
+the cost-benefits of the confusion (if any) versus churn.
 
 # Drawbacks
 
