@@ -13,7 +13,7 @@ Linting and security in templates would help not only individual developers writ
 
 1. Move ember-cli-template-lint to the ember-cli org (better for contributing and getting work off one person, @rwjblue)
 2. Add the dependency to the app blueprint here: https://github.com/ember-cli/ember-cli/blob/master/blueprints/app/files/package.json#L19
-3. Also add it to the addon blueprint, liek the eslint addon here: https://github.com/ember-cli/ember-cli/blob/master/blueprints/addon/index.js#L66
+3. Also add it to the addon blueprint, like the eslint addon here: https://github.com/ember-cli/ember-cli/blob/master/blueprints/addon/index.js#L66
 
 # How We Teach This
 
@@ -27,7 +27,7 @@ The same way that we teach ESLint being on by default.
 
 # Alternatives
 
-Do nothing and have people write sub part template code.
+Do nothing and have people write sub par template code.
 
 # Unresolved questions
 
