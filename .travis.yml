@@ -1,0 +1,17 @@
+language: rust
+script:
+  - rev=$(git rev-parse --short HEAD)
+  - (cargo install mdbook --vers 0.0.26 --force || true)
+  - ./generate-book.sh
+
+branches:
+  only:
+    - master
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  local_dir: ./book/
+  on:
+    branch: master
