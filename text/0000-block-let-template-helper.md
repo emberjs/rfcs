@@ -34,7 +34,7 @@ errors might be introduced if we forget to do it when adding the name somewhere 
 Using the `let` helper, this could be done like so:
 
 ```handlebars
-{{#let (capizalize person.firstName) (capitalize person.lastName)
+{{#let (capitalize person.firstName) (capitalize person.lastName)
   as |firstName lastName|
 }}
   Welcome back {{concat firstName ' ' lastName}}
