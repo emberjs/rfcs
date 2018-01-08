@@ -122,7 +122,7 @@ Using the names example from the RFC, it would look like the following in inline
 
 ```handlebars
 {{let
-  firstName=(capizalize person.firstName)
+  firstName=(capitalize person.firstName)
   lastName=(capitalize person.lastName)
 }}
 
