@@ -114,6 +114,7 @@ bundler:js:input/
 ├── addon-modules/
 ├── the-app-name-folder/
 ├── node_modules/
+├── tests/
 └── vendor/
 ```
 
@@ -127,12 +128,12 @@ Note, that `package` is optional. If you don't define it, you're
 effectively "opting out" of the feature and using the default
 behaviour.
 
-### `packagerFor` API
+### `defaultPackager` API
 
 It's important to make it easy for users to still use default Ember CLI
 packaging.
 
-`packagerFor` is a way for the users to access out-of-the-box packaging while
+`defaultPackager` is a way for the users to access out-of-the-box packaging while
 still be able to customise the final build output.
 
 ```javascript
@@ -159,7 +160,7 @@ module.exports = function(defaults) {
 function defaultPackager(app: EmberApp, inputTree: BroccoliTreel): BroccoliTree;
 ```
 
-`packagerFor` must return a `BroccoliTree`.
+`defaultPackager` must return a `BroccoliTree`.
 
 ### Possible usages
 
