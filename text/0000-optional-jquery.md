@@ -84,11 +84,12 @@ to allow for some better flexibility in the future, the responsibility for impor
 
 To not create any breaking changes, Ember CLI will have to check the app's dependencies for the presence of this addon. 
 If it is not present, it will continue importing jQuery *unless* the jQuery integration flag is disabled.
-In the other case, it will stop importing jQuery at all, and delegate this responsibility to the addon.
+If it is present, it will stop importing jQuery at all, and delegate this responsibility to the addon.
 
 To nudge users to install `@ember/jquery` when they need jQuery, some warning/deprecation messages should be issued when
-the addon is *not* installed and the integration flag is either not specified or is set to true. Only in the case the 
-app is actively opting out of jQuery integration the addon is not needed.
+the addon is *not* installed and the integration flag is either not specified or is set to true. To ease 
+migration the addon should be placed in the default blueprint (until an eventual more aggressive deprecation of 
+jQuery). Only in the case the app is actively opting out of jQuery integration the addon is not needed.
 
 The addon itself has to make sure the Ember CLI version in use is at least the one that introduced the above mentioned
 logic, to prevent importing jQuery twice.
@@ -156,7 +157,8 @@ opt-out of importing jQuery when this file is present and the flag is set to `fa
 ### Guides
 
 The existing "Managing Dependencies" chapters in the Ember Guides as well as on ember-cli.com provide a good place to 
-explain users how to set the jQuery integration flag by means of the mentioned addon that handles this flag. 
+explain users how to set the jQuery integration flag by means of the mentioned [privileged addon](#add-an-opt-out-flag) 
+that handles this flag. 
 
 The section on components should be updated to remove any eventually remaining references to `this.$`, to not let users 
 fall into the trap of creating an implicit dependency on jQuery by "accidental" use of it. These should be changed to 
@@ -241,7 +243,7 @@ would have to stay around basically forever
 accessed. However this can be misleading, as it may be required to use these jQuery specifics if a jQuery event is 
 passed, so there is technically no other way to prevent the deprecation warning to be triggered. 
 * is there a way to start passing *only* native events, which are augmented by jQuery specific properties like
-`originalEvent` (e.g. `event.originalEvenet = event`) to not break things, thus following SemVer while still 
+`originalEvent` (e.g. `event.originalEvent = event`) to not break things, thus following SemVer while still 
 transitioning to native events only. This would allow all addons to assume native events without any type checks. 
 Something similar seems to have been discussed for the 
 [jQuery 4.0 Event Design](https://github.com/jquery/jquery/wiki/jQuery-4.0-Event-Design#avoid-the-need-for-a-jqueryevent-wrapper),
