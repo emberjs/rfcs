@@ -106,6 +106,56 @@ production), that provide some useful error messages for the developer:
   should throw an assertion stating that jQuery is not available and that `this.element` and native DOM APIs should be
   used instead.
 
+### Introducing `ember-jquery-legacy` and deprecating `jQuery.Event` usage
+
+Event handler methods in components will usually receive an instance of [`jquery.Event`](http://api.jquery.com/category/events/event-object/) as an argument, which is very
+similar to native event objects, but not exactly the same. To name a few differences, not all properties of the native 
+event are mapped to the jQuery event, on the other hand a jquery event has a `originalEvent` property referencing the
+native event. 
+
+The updated event dispatcher in Ember 3.0 is capable of working without jQuery (similar to what 
+`ember-native-dom-event-dispatcher` provided for Ember 2.x). When jQuery is not available, it will naturally not be 
+able to pass a `jquery.Event` instance but a native event instead. This creates some ambiguity for addons, as they 
+cannot know in advance how the consuming app is built (with or without jQuery).
+
+For code that does not rely on any `jQuery.Event` specific API, there is no need to change anything as it will continue
+to work with native DOM events. 
+
+But there are cases where jQuery specific properties have to be used (when jQuery events are passed). This is especially
+true for the `originalEvent` property, for example to access `TouchEvent` properties that are not exposed on the 
+`jQuery.Event` instance itself. So there has to be a way to make the code work with either jQuery events or native 
+events being passed to the event handler (especially important for addons). Moreover this should be done in a way that 
+uses native DOM APIs only, to support the migration away from jQuery coupled code.
+
+To solve this issue another addon `ember-jquery-legacy` will be introduced, which for now will only expose a single
+`normalizeEvent` function. This function will accept a native event as well as a jQuery event (possibly distinguishing
+between those two modes at build time, based on the jQuery integration flag), but will always return a native event 
+only. 
+
+This will allow addon authors to work with both event types, but start to only use native DOM APIs:
+
+```js
+import Component from '@ember/component';
+import { normalizeEvent } from 'ember-jquery-legacy';
+
+export default Component.extend({
+  click(event) {
+    let nativeEvent = normalizeEvent(event);
+    // from here on use only native DOM APIs...
+  }
+})
+```
+
+To encourage addon authors to refactor their jQuery coupled event code, the use of `jQuery.Event` specific APIs used for
+jQuery events passed to component event handlers should be deprecated and a deprecation message be shown when accessing 
+them (e.g. `event.originalEvent`). Care must be taken though that this warning will not be issued when `normalizeEvent` 
+has to access `originalEvent`. 
+
+Also for apps that do not want to transition away from jQuery and would be overloaded with unnecessary warnings, the 
+deprecations should be silenced when the jQuery integration flag is explicitly set to true (and not just true by 
+default). By doing so users effectively state their desire to continue using jQuery, thus any needless churn should
+be avoided for them.
+
 ### Testing
 
 Ember's test harness has been based on jQuery for a long time. Most global acceptance test helpers like `find` or 
@@ -171,6 +221,12 @@ The section on component tests should not use `this.$()` anymore as well, and in
 use `this.element` to refer to the component's root element, and use the new DOM interaction helpers instead of jQuery 
 events triggered through `this.$()`. 
 
+### Deprecation guide
+
+The deprecation warnings introduced for using `jQuery.Event` specific APIs should explain the use of the 
+`normalizeEvent` helper function to migrate towards native DOM APIs on the one side, and on the other side the effect of 
+setting the jQuery integration flag to explicitly opt into jQuery usage thus suppressing the warnings.
+
 ### Addon migration
 
 One of the biggest problems to easily opt-out of jQuery is that many addons still depend on it. Many of these usages 
@@ -221,30 +277,4 @@ Continue to depend on jQuery.
 
 ## Unresolved questions
 
-### jquery.Event vs. native events
-
-Event handler methods in components will usually receive an instance of `jquery.Event` as an argument, which is very
-similar to native event objects, but not exactly the same. To name a few differences, not all properties of the native 
-event are mapped to the jQuery event, on the other hand a jquery event has a `originalEvent` property referencing the
-native event. 
-
-The updated event dispatcher in Ember 3.0 is capable of working without jQuery (similar to what 
-`ember-native-dom-event-dispatcher` provided for Ember 2.x). When jQuery is not available, it will naturally not be 
-able to pass a `jquery.Event` instance but a native event instead. This creates some ambiguity for addons, as they 
-cannot know in advance how the consuming app is built (with or without jQuery).
-
-* should addon authors be encouraged to add checks for the type of event (like `event instanceof jQuery.Event`) if 
-they rely on jQuery event specifics? (which is already the case when they just need access to the native event 
-`originalEvent`)
-* should we aim to remove that ambiguity and pass only native events at some time, regardless of jQuery being available
-or not? This would be a breaking change, so can be done for Ember 4.0 only. If not, the type checks mentioned above 
-would have to stay around basically forever
-* for the above case, one *could* add deprecation warnings when jQuery specific properties like `originalEvent` are 
-accessed. However this can be misleading, as it may be required to use these jQuery specifics if a jQuery event is 
-passed, so there is technically no other way to prevent the deprecation warning to be triggered. 
-* is there a way to start passing *only* native events, which are augmented by jQuery specific properties like
-`originalEvent` (e.g. `event.originalEvent = event`) to not break things, thus following SemVer while still 
-transitioning to native events only. This would allow all addons to assume native events without any type checks. 
-Something similar seems to have been discussed for the 
-[jQuery 4.0 Event Design](https://github.com/jquery/jquery/wiki/jQuery-4.0-Event-Design#avoid-the-need-for-a-jqueryevent-wrapper),
-but seems to be controversial and possibly error prone.
+None so far.
