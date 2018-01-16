@@ -106,7 +106,7 @@ export default Helper.extend({
     } else {
       allModels = models;
     }
-    return this.get('router').isActive(routeName, ...models, hash.queryParams);
+    return this.get('router').isActive(routeName, ...allModels, hash.queryParams);
   },
   didTransition: observer('router.currentRoute', function() {
     this.recompute();
