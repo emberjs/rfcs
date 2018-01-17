@@ -110,7 +110,7 @@ export default Helper.extend({
   },
   didTransition: observer('router.currentRoute', function() {
     this.recompute();
-  });
+  })
 });
 ```
 
