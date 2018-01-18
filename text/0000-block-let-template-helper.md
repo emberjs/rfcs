@@ -1,6 +1,6 @@
 * Start Date: 2017-12-21
 * RFC PR: https://github.com/emberjs/rfcs/pull/286
-* Ember Issue: (leave this empty)
+* Ember Issue: https://github.com/emberjs/ember.js/pull/16076
 
 # Block `let` template helper
 
