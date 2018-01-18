@@ -24,14 +24,25 @@ lighter.
 
 ## Detailed design
 
-For the most part, this is a 1:1 substitution of the global console object 
+For the most part, this is a 1:1 substitution of the global `console` object 
 for `Ember.Logger`. However, Node only added support for `console.debug` in 
 Node version 9. To support earlier versions of Node, our codemod will need to 
 use `console.log`, rather than `console.debug`, as the replacement for 
 `Logger.debug`, except for add-ons that specify that they only support Node 
 version 9 and beyond.
 
-### For framework developers
+When a project is built for production, `Ember.Logger` calls become a no-op. 
+Replacing `Ember.Logger` calls with console calls will require some other 
+mechanism to suppress logging in production builds. Fortunately, there are 
+Babel plugins to suppress console interaction. Using a Babel plugin is 
+a far more comprehensive solution than relying upon `Ember.logger`, as it 
+will catch those places where the developer directly used a `console.log` 
+call, or - worse - a `debugger` statement. As a part of implementing this 
+RFC, we will need to ensure it is easy for a developer to incorporate that 
+support into the `ember-cli` Broccoli pipeline.
+
+
+### Within the framework
 
 Remove the following direct uses of `Ember.Logger` from the ember.js and 
 ember-data projects: 
@@ -65,16 +76,17 @@ Bear in mind that the deprecation mechanism currently calls `Logger.warn`, so
 that code should be changed _first_ or this change will be very difficult 
 to debug.
 
-### Codemod
+### Codemod 
 
 Provide a codemod that developers can use to switch references to the methods 
-of `Ember.Logger` to use `console` instead. I will definitely need help here.
+of `Ember.Logger` to use the corresponding `console` methods instead. I 
+will definitely need help here.
 
-### For Add-On Developers
+### Add-On Developers
 
-The following high-impact packages (9 or 10 or a * on EmberObserver) use 
+The following high-impact add-ons (9 or 10 or a * on EmberObserver) use 
 `Ember.Logger` and should probably be given an early heads-up to adjust 
-their code to use `console` before this change is released. This will limit 
+their code to use `console` before this RFC is implemented. This will limit 
 the level of pain that their users experience when the deprecation is released.
 
 In the order of their number of references to `Ember.Logger`:
@@ -121,7 +133,7 @@ calls in production builds with any special instructions for how to use them in
 
 ## Drawbacks
 
-191 projects in Ember Inspector are using `Ember.Logger`. It has been there and 
+191 add-ons in Ember Inspector are using `Ember.Logger`. It has been there and 
 documented for a long time. So this deprecation will cause some level of change 
 on many projects. 
 
@@ -129,8 +141,9 @@ This, of course, can be said for almost any deprecation, and Ember's
 disciplined approach to deprecation has been repeatedly shown to ease things. 
 Providing a codemod to replace `Ember.Logger` calls with the corresponding 
 console calls should make this transition relatively painless. Also, only 
-twenty of those packages have more than six references to `Ember.Logger`, 
-so the level of effort to make the change, even by hand, will be very small.
+twenty of those add-ons have more than six references to `Ember.Logger`. 
+If this is characteristic of the user base, the level of effort to make 
+the change, even by hand, should be very small for most users.
 
 Those using `Logger.debug` as something different from `Logger.log`may have at 
 least a theoretical concern. Under the covers `Logger.debug` only calls 
