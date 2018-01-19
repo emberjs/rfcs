@@ -61,15 +61,16 @@ Note: None of the uses of `Ember.Logger` in `ember.js` or `ember-data` involve
 `Ember.debug`, so that issue doesn't affect the Ember.js code directly.
 
 Add deprecation warnings to the implementation: `ember-console\lib\index.js`.
-Bear in mind that the deprecation mechanism in `ember-debug` currently calls 
+Bear in mind that `Ember.deprecate` in `ember-debug` currently calls 
 `Logger.warn`, so the `ember-debug` code should be changed _first_ or adding 
 the deprecation warning will create a deep recursion.
 
-The log and debug messages emitted by Ember for deprecations and assertions 
-are not emitted on production. However, this is because they are suppressed 
-by the ember-debug module, which currently consumes `Ember.Logger`, _not_ 
-by `Ember.Logger` itself. Hence, replacing calls to `Ember.Logger` with 
-direct calls to the console will not affect this behavior. 
+The `Ember.assert`, `Ember.warn`, `Ember.info`, `Ember.debug`, and 
+`Ember.deprecate` methods suppress their output on production builds. 
+However, they are suppressing them in the `ember-debug` module, which 
+currently consumes `Ember.Logger`, _not_ by `Ember.Logger` itself. Hence, 
+replacing calls to `Ember.Logger` with direct calls to the console will not 
+affect this behavior. 
 
 ### Codemod 
 
@@ -143,8 +144,8 @@ twenty of those add-ons have more than six references to `Ember.Logger`.
 If this is characteristic of the user base, the level of effort to make 
 the change, even by hand, should be very small for most users.
 
-Those using `Logger.debug` as something different from `Logger.log`may have at 
-least a theoretical concern. Under the covers `Logger.debug` only calls 
+Those using `Logger.debug` as something different from `Logger.log` may have 
+at least a theoretical concern. Under the covers `Logger.debug` only calls 
 `console.debug` if it exists, calling `console.log` otherwise. The only 
 platform where the difference between the two is visible in the console is on 
 Safari. We can encourage folks with a tangible, practical concern about this to
@@ -161,24 +162,29 @@ a shim for users.
 
 ## Unresolved questions
 
-How do we deal with `Logger.debug` in the codemod? 
-* Do we provide separate options for those who might use Node versions 
+### How do we deal with `Logger.debug` in the codemod? 
+
+Do we provide separate options for those who might use Node versions 
 earlier than 9 and those who are confident they will only use Node 
 version 9 or later? 
-* Do we have the codemod inject a polyfill for `console.debug` that calls 
+
+Do we have the codemod inject a polyfill for `console.debug` that calls 
 `console.log`? 
-* Do we provide one separately for the user to apply? 
-* Or does that become a fastboot concern, since that's the primary driver 
+
+Do we provide one separately for the user to apply? 
+
+Or does that become a fastboot concern, since that's the primary driver 
 for running ember projects in node?
 
-What do we do about the eslint `no-console` flag? 
+### What do we do about the eslint `no-console` flag? 
 
-* Some developers are using `Ember.Logger` right now to work around it, 
-  while others are providing their own logging service, and others are just
-  providing override comments. 
-* Currently, `no-console` is in the default set of flags set with eslint, 
+Some developers are using `Ember.Logger` right now to work around it, while 
+others are providing their own logging service, and others are just providing 
+override comments. 
+
+Currently, `no-console` is in the default set of flags set with eslint, 
 and ember-cli doesn't override the defaults in its set of flags to turn it off. 
-* Should we turn it off in the ember-cli settings? 
-* Or should that be left as a user decision? 
+
+Should we turn it off in the ember-cli settings? Or should that be left as a user decision? 
 
 I'm inclined toward the latter. 
