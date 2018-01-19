@@ -62,6 +62,7 @@ myHandler: on('didRender', () => {
 After:
 ```js
 didRender() {
+  this._super(...arguments);
   console.log('didRender!');
 }
 ```
