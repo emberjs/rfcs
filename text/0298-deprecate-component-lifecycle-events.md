@@ -1,5 +1,5 @@
 - Start Date: 2018-01-19
-- RFC PR: (leave this empty)
+- RFC PR: 0298
 - Ember Issue: (leave this empty)
 
 # Deprecate Component Lifecycle Events
