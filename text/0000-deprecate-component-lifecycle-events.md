@@ -1,4 +1,4 @@
-- Start Date: (fill me in with today's date, 2018-01-19)
+- Start Date: 2018-01-19
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
@@ -27,6 +27,17 @@ The exact deprecation message will be decided later, but something along the lin
 Using `Ember.on` event listeners for component lifecycle hooks is deprecated.
 Please move your code from `myHandler: Ember.on('didRender'` into the `didRender(){}` method.
 ```
+
+Ember does not appear to rely on these events internally, however there are at least a couple of mentions of 
+these events in the comments, referring specifically to `on('didInsertElement')` 
+[here](https://github.com/emberjs/ember.js/blob/master/packages/ember-metal/lib/run_loop.js#L140) 
+and [here](https://github.com/emberjs/ember.js/blob/master/packages/ember-runtime/lib/ext/function.js#L149) 
+We will want to update those, and any other comments to reflect the new way of doing things.
+
+We will also likely want to add some new tests, that ensure that deprecation messages are logged, when someone attempts to use the events.
+
+We would likely want to implement this in the same way the `didInitAttrs` deprecation was implemented. i.e. we should maintain an array of
+component lifecycle hooks, and check if `hooks.includes(eventName)` and issue a deprecation if it does.
 
 ## How we teach this
 
