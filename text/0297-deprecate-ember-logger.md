@@ -26,19 +26,10 @@ lighter.
 
 For the most part, this is a 1:1 substitution of the global `console` object 
 for `Ember.Logger`. However, Node only added support for `console.debug` in 
-Node version 9. To support earlier versions of Node, our codemod will need to 
-use `console.log`, rather than `console.debug`, as the replacement for 
-`Logger.debug`, except for add-ons that specify that they only support Node 
-version 9 and beyond.
-
-When a project is built for production, `Ember.Logger` calls become a no-op. 
-Replacing `Ember.Logger` calls with console calls will require some other 
-mechanism to suppress logging in production builds. Fortunately, the 
-`babel-plugin-transform-remove-console` will suppress console 
-interaction, a far more comprehensive solution than relying upon
-`Ember.logger`. We will need to supply instructions for setting this up (for
-production builds only) in the `ember-cli` Broccoli pipeline.
-
+Node version 9. If we wish to support earlier versions of Node, our codemod 
+will need to use `console.log`, rather than `console.debug`, as the 
+replacement for `Logger.debug`. For users who don't care about Node or are 
+specifying Node version 9 as their minimum, we could use `console.debug`.
 
 ### Within the framework
 
@@ -70,9 +61,15 @@ Note: None of the uses of `Ember.Logger` in `ember.js` or `ember-data` involve
 `Ember.debug`, so that issue doesn't affect the Ember.js code directly.
 
 Add deprecation warnings to the implementation: `ember-console\lib\index.js`.
-Bear in mind that the deprecation mechanism currently calls `Logger.warn`, so 
-that code should be changed _first_ or this change will be very difficult 
-to debug.
+Bear in mind that the deprecation mechanism in `ember-debug` currently calls 
+`Logger.warn`, so the `ember-debug` code should be changed _first_ or adding 
+the deprecation warning will create a deep recursion.
+
+The log and debug messages emitted by Ember for deprecations and assertions 
+are not emitted on production. However, this is because they are suppressed 
+by the ember-debug module, which currently consumes `Ember.Logger`, _not_ 
+by `Ember.Logger` itself. Hence, replacing calls to `Ember.Logger` with 
+direct calls to the console will not affect this behavior. 
 
 ### Codemod 
 
@@ -125,15 +122,9 @@ from the Super Rentals tutorial, and anywhere else it appears on the website.
 Once it is gone from the code, we also need to verify it no longer appears in 
 the API listings. 
 
-We must supply instructions for using `babel-plugin-transform-remove-console`
-in `ember-cli` so it is only applied in production builds.
-
 We must provide an entry in the deprecation guide for this change:
 * offering instruction for using the codemod to perform the change automatically
 with before and after code samples.
-* documenting the use of `babel-plugin-transform-remove-console` in the 
-`ember-cli` build to suppress console calls in production.
-the console calls in production code. 
 * describing the issue with using console.debug on node versions 
 earlier than Node 9 and what provision the codemod has made to deal with it.
 * describing alternative ways of dealing with eslint's `no-console` messages.
@@ -170,15 +161,24 @@ a shim for users.
 
 ## Unresolved questions
 
-How do we deal with `Logger.debug` in the codemod? Do we provide separate 
-options for those who might use Node versions earlier than 9 and those who 
-are confident they will only use Node version 9 or later? Do we have the 
-codemod inject a polyfill for console.debug that calls console.log? Do we
-provide one separately for the user to apply? Or does that become a fastboot 
-concern, since that's the primary driver for running ember projects in node.
+How do we deal with `Logger.debug` in the codemod? 
+* Do we provide separate options for those who might use Node versions 
+earlier than 9 and those who are confident they will only use Node 
+version 9 or later? 
+* Do we have the codemod inject a polyfill for `console.debug` that calls 
+`console.log`? 
+* Do we provide one separately for the user to apply? 
+* Or does that become a fastboot concern, since that's the primary driver 
+for running ember projects in node?
 
-What do we do about the eslint `no-console` flag? Some developers are 
-using `Ember.Logger` right now to work around it. Others are providing 
-their own logging service. If we encourage the use of a Babel plugin 
-to strip console calls, should we remove `no-console` from the default 
-flags that `ember-cli` ships?
+What do we do about the eslint `no-console` flag? 
+
+* Some developers are using `Ember.Logger` right now to work around it, 
+  while others are providing their own logging service, and others are just
+  providing override comments. 
+* Currently, `no-console` is in the default set of flags set with eslint, 
+and ember-cli doesn't override the defaults in its set of flags to turn it off. 
+* Should we turn it off in the ember-cli settings? 
+* Or should that be left as a user decision? 
+
+I'm inclined toward the latter. 
