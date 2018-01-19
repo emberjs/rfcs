@@ -43,8 +43,37 @@ We will want to update the docs to either not mention using `on()` at all or to 
 Other than updating the docs, the deprecation messages should be explanatory enough that people understand the path
 forward and convert all their `on()` style lifecycle hooks to the actual methods.
 
+### Deprecation Guide
+
+An entry to the [Deprecation Guides](https://emberjs.com/deprecations/) will be added outlining the conversion from
+events to lifecycle hook methods directly.
+
+Developers could historically use component lifecycle hooks directly or write `on()` listeners to fire when those hooks
+fire. This proved to be unreliable, and tricky to debug, as the order of execution was not guaranteed. To fix this, we
+are now recommending using the lifecycle hook methods directly.
+
+Before:
+```js
+myHandler: on('didRender', () => {
+  console.log('didRender!');
+})
+```
+
+After:
+```js
+didRender() {
+  console.log('didRender!');
+}
+```
+
+### Enforcing with ESLint
+
 eslint-plugin-ember, which is also now used in the default ember-cli blueprints, enforces this rule as well with
 [https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-on-calls-in-components.md](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-on-calls-in-components.md).
+
+### Codemod
+
+A codemod will be provided to allow automatic conversion of event listeners to use the lifecycle hook methods directly.
 
 ## Drawbacks
 
@@ -54,9 +83,9 @@ codemod, if we think this will be problematic.
 
 ## Alternatives
 
-This decision seems to be fairly universally supported, and I am not aware of any proposed alternatives.
+We could continue to support events and methods and just continue to enforce not using `on()` via ESLint.
 
 ## Unresolved questions
 
-The only potential uncertainty is the exact deprecation message we want to issue when people use the
-deprecated events.
+* The exact deprecation message we want to issue when people use the deprecated events is uncertain.
+* Should we provide an addon to enable legacy support of events?
