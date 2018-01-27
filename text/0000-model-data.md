@@ -93,7 +93,7 @@ The interface for ModelData is:
 
 ```js
 export default class ModelData {
-  constructor(modelName, id, storeApisWrapper) {
+  constructor(modelName: string, clientId?: string, id?: string, storeApisWrapper: StoreApisWrapper) {
     /*
       Exposing the entire store api to the ModelData seems very risky and would 
       limit the kind of refactors we can do in the future. We would provide a wrapper
@@ -108,10 +108,10 @@ export default class ModelData {
     record will need to update
   */
 
-  pushData(data, shouldCalculateChanges /* if false, don't need to return changed keys*/) {
+  pushData(data: JsonApi, shouldCalculateChanges: boolean/* if false, don't need to return changed keys*/) {
   }
 
-  adapterDidCommit(data) {
+  adapterDidCommit(data: JsonApi) {
   }
 
   didCreateLocally(properties) {
@@ -122,16 +122,16 @@ export default class ModelData {
     allowing it to keep track of dirtyness
   */
 
-  adapterWillCommit() {
+  adapterWillCommit(modelName: string, id?: string, clientId?: string) {
   }
 
-  saveWasRejected() {
+  saveWasRejected(modelName: string, id?: string, clientId?: string) {
   }
 
-  adapterDidDelete() {
+  adapterDidDelete(modelName: string, id?: string, clientId?: string) {
   }
 
-  ? recordUnloaded() {
+  recordUnloaded(modelName: string, id?: string, clientId?: string) {
   }
 
 
@@ -139,16 +139,16 @@ export default class ModelData {
    Rollback handling
   */
 
-  rollbackAttributes() {
+  rollbackAttributes(modelName: string, id?: string, clientId?: string) {
   }
 
-  rollbackAttribute() {
+  rollbackAttribute(modelName: string, id?: string, clientId?: string, attribute: string) {
   }
 
-  changedAttributes() {
+  changedAttributes(modelName: string, id?: string, clientId?: string) {
   }
 
-  hasChangedAttributes() {
+  hasChangedAttributes(modelName: string, id?: string, clientId?: string) {
   }
 
 
@@ -156,13 +156,13 @@ export default class ModelData {
     Methods through which DS.Model interacts with ModelData, by setting and getting local state
   */
 
-  setAttr(key, value) {
+  setAttr(modelName: string, id?: string, clientId?: string, key: string, value: string) {
   }
 
-  getAttr(key) {
+  getAttr(modelName: string, id?: string, clientId?: string, key: string) {
   }
 
-  hasAttr(key) {
+  hasAttr(modelName: string, id?: string, clientId?: string, key: string) {
   }
 
   /*
@@ -171,22 +171,22 @@ export default class ModelData {
     it can serve them from the cache
   */
 
-  getHasMany(key) {
+  getHasMany(modelName: string, id?: string, clientId?: string, key: string) {
   }
   
-  addToHasMany(key, jsonApiResources, idx) {
+  addToHasMany(modelName: string, id?: string, clientId?: string, key: string, jsonApiResources, idx: number) {
   }
 
-  removeFromHasMany(key, jsonApiResources) {
+  removeFromHasMany(modelName: string, id?: string, clientId?: string, key: string, jsonApiResources) {
   }
 
-  setHasMany(key, jsonApiResources) {
+  setHasMany(modelName: string, id?: string, clientId?: string, key: string, jsonApiResources) {
   }
 
-  getBelongsTo(key) {
+  getBelongsTo(modelName: string, id?: string, clientId?: string, key: string) {
   }
 
-  setBelongsTo(key, jsonApiResource) {
+  setBelongsTo(modelName: string, id?: string, clientId?: string, key: string, jsonApiResource) {
   }
 
 ```
