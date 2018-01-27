@@ -30,8 +30,8 @@ Please move your code from `myHandler: Ember.on('didRender'` into the `didRender
 
 Ember does not appear to rely on these events internally, however there are at least a couple of mentions of 
 these events in the comments, referring specifically to `on('didInsertElement')` 
-[here](https://github.com/emberjs/ember.js/blob/master/packages/ember-metal/lib/run_loop.js#L140) 
-and [here](https://github.com/emberjs/ember.js/blob/master/packages/ember-runtime/lib/ext/function.js#L149) 
+[here](https://github.com/emberjs/ember.js/blob/58b7fa9293578167f1d7210d63167694fe8f273c/packages/ember-metal/lib/run_loop.js#L140) 
+and [here](https://github.com/emberjs/ember.js/blob/58b7fa9293578167f1d7210d63167694fe8f273c/packages/ember-runtime/lib/ext/function.js#L149) 
 We will want to update those, and any other comments to reflect the new way of doing things.
 
 We will also likely want to add some new tests, that ensure that deprecation messages are logged, when someone attempts to use the events.
