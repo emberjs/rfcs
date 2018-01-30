@@ -1,5 +1,5 @@
 - Start Date: 2018-01-11
-- RFC PR: (leave this empty)
+- RFC PR: github.com/emberjs/rfcs/pull/294
 - Ember Issue: (leave this empty)
 
 # Make jQuery optional
