@@ -22,7 +22,7 @@ time to make it public.
 
 # Detailed design
 
-The existing API of `{{-in-element}}` is very simple and I do not suggest making any change to it.
+The existing API of `{{-in-element}}` is very simple:
 
 * It takes a single positional param `destinationElement` that is a DOM element, and a block.
 * The given block is rendered not where it is located, but inside the given `destination` element, at
@@ -57,6 +57,19 @@ the private one.
 Although `{{-in-element}}` is technically private, there there is enough people using it to deserve
 a deprecation. I suggest keeping the deprecated private API will until the first LTS release of the
 3.X cycle (3.4) to be finally removed in the next one (3.5).
+
+### Small proposed changes
+
+There is however one part of the behaviour that the core team wants to make explicit before promoting
+the private API to public, and that is how the content is added to the destination when there is other
+content already there.
+
+The desired behavior is that, by default, the rendered content will **replace all the content of the destination**,
+effectively becoming the its `innerHTML`.
+In the current behaviour the rendered content is appended as the end of any existing content. This will still
+be supported by passing `nextSibling=null`, but it will not be the default anymore.
+Any other value passed to `nextSibling` must produce an error.
+
 
 # How We Teach This
 
