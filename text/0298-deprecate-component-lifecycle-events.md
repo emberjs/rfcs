@@ -18,6 +18,19 @@ lifecycle hooks.
 
 ## Detailed design
 
+The complete list of component specific events that will be deprecated is:
+
+* `willRender`
+* `willInsertElement`
+* `didInsertElement`
+* `didRender`
+* `didUpdateAttrs`
+* `didReceiveAttrs`
+* `willUpdate`
+* `willRender`
+* `didUpdate`
+* `didRender`
+
 Ember will start logging deprecation messages that state which event you used and which
 method it should be converted to.
 
