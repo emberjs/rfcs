@@ -75,8 +75,13 @@ affect this behavior.
 ### Codemod 
 
 Provide a codemod that developers can use to switch references to the methods 
-of `Ember.Logger` to use the corresponding `console` methods instead. I 
-will definitely need help here.
+of `Ember.Logger` to use the corresponding `console` methods instead. 
+
+The codemod will need to replace `Ember.Logger.debug` calls with `(console.debug || 
+console.log)(<arguments>)` or something similar to take in stride the situation 
+where console.debug isn't defined.
+
+I will definitely need help here.
 
 ### Add-On Developers
 
@@ -162,29 +167,4 @@ a shim for users.
 
 ## Unresolved questions
 
-### How do we deal with `Logger.debug` in the codemod? 
-
-Do we provide separate options for those who might use Node versions 
-earlier than 9 and those who are confident they will only use Node 
-version 9 or later? 
-
-Do we have the codemod inject a polyfill for `console.debug` that calls 
-`console.log`? 
-
-Do we provide one separately for the user to apply? 
-
-Or does that become a fastboot concern, since that's the primary driver 
-for running ember projects in node?
-
-### What do we do about the eslint `no-console` flag? 
-
-Some developers are using `Ember.Logger` right now to work around it, while 
-others are providing their own logging service, and others are just providing 
-override comments. 
-
-Currently, `no-console` is in the default set of flags set with eslint, 
-and ember-cli doesn't override the defaults in its set of flags to turn it off. 
-
-Should we turn it off in the ember-cli settings? Or should that be left as a user decision? 
-
-I'm inclined toward the latter. 
+None at this point. The answers from prior drafts have been promoted into the text. 
