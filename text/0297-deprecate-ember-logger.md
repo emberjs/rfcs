@@ -1,6 +1,6 @@
 - 2018-01-17
 - RFC PR: 0297
-- Ember Issue: (leave this empty)
+- Ember Issue: https://github.com/emberjs/ember.js/issues/16231
 
 # Deprecation of Ember.Logger
 
