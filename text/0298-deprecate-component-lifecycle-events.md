@@ -99,6 +99,7 @@ eslint-plugin-ember, which is also now used in the default ember-cli blueprints,
 ### Codemod
 
 A codemod will be provided to allow automatic conversion of event listeners to use the lifecycle hook methods directly.
+It will also ensure that `this._super` is called in all of the methods.
 
 ## Drawbacks
 
