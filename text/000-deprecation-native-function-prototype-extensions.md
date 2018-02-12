@@ -4,12 +4,12 @@
 
 # Deprecate Function.prototype.on, Function.prototype.observes and Function.prototype.property
 
-# Summary
+## Summary
 
 This RFC proposes to deprecate `Function.prototype.on`,
 `Function.prototype.observes` and `Function.prototype.property`
 
-# Motivation
+## Motivation
 
 Ember has been moving away from extending native prototypes due to the confusion
 that this causes users: is it specifically part of Ember, or JavaScript?
@@ -21,7 +21,7 @@ We go from two ways to do something, to one.
 
 [`eslint-plugin-ember` already provides this as a rule](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-function-prototype-extensions.md).
 
-# Transition Path
+## Transition Path
 
 The replacement functionality already exists in the form of `on`, `observer`, and `computed`.
 We don't need to build anything new specifically, however, the bulk of the transition will be
@@ -49,7 +49,7 @@ export default Component.extend({
 We need to create a codemod that will transform code from the `current` form to the
 `proposed` form.
 
-# How We Teach This
+## How We Teach This
 
 On the deprecation guide, we showcase the same example as above. We can explain why
 the proposal was necessary, followed by deprecated to current code examples.
@@ -60,6 +60,6 @@ For example, from the [disabling prototype extensions page](https://guides.ember
 After the deprecated code is removed from Ember, the same page needs to remove the section
 about `Function` prototypes altogether.
 
-# Alternatives
+## Alternatives
 
 None.
