@@ -61,6 +61,11 @@ Once we decide that this is the right way to go, we should update the official
 Ember.js testing guides to use `qunit-dom` assertions by default. This has the
 nice side effect of making the testing code in the guides easier to read too.
 
+At the same time (same minor release) we should update the relevant blueprints
+in the `ember-source` package to use `qunit-dom` by default. This should be a
+relatively small change as only the `component` and `helper` tests use
+DOM assertions.
+
 > How should this feature be introduced and taught to existing Ember
 > users?
 
@@ -102,4 +107,5 @@ to our users to discover `qunit-dom` by themselves.
 
 # Unresolved questions
 
-None
+- Should the `ember-source` blueprints detect `qunit-dom` usage and fallback
+  to raw QUnit assertions if the dependency can't be found?
