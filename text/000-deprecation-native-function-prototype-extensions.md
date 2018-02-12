@@ -2,10 +2,12 @@
 - RFC PR: https://github.com/emberjs/rfcs/pull/272
 - Ember Issue:
 
+# Deprecate Function.prototype.on, Function.prototype.observes and Function.prototype.property
+
 # Summary
 
 This RFC proposes to deprecate `Function.prototype.on`,
-`Function.proptotype.observes` and `Function.prototype.property`
+`Function.prototype.observes` and `Function.prototype.property`
 
 # Motivation
 
