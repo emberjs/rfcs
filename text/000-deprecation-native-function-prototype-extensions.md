@@ -27,6 +27,15 @@ The replacement functionality already exists in the form of `on`, `observer`, an
 We don't need to build anything new specifically, however, the bulk of the transition will be
 focused on deprecating the native prototype extensions.
 
+We need to create a codemod that will transform code from the `deprecated` form to the
+`proposed` form. 
+
+## How We Teach This
+
+On the deprecation guide, we can showcase the same example as above. We can explain why
+the proposal was necessary, followed by a set of examples highlighting the deprecated
+vs current style.
+
 Borrowing from the [ESLint plugin example](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-function-prototype-extensions.md):
 
 ```js
@@ -34,30 +43,25 @@ import { computed, observer } from '@ember/object';
 import { on } from '@ember/object/evented';
 
 export default Component.extend({
-  // current
+  // deprecated
   abc: function() { /* custom logic */ }.property('xyz'),
   def: function() { /* custom logic */ }.observe('xyz'),
   ghi: function() { /* custom logic */ }.on('didInsertElement'),
 
-  // proposed
+  // current
   abc: computed('xyz', function() { /* custom logic */ }),
   def: observer('xyz', function() { /* custom logic */ }),
   ghi: on('didInsertElement', function() { /* custom logic */ }),
 });
 ```
 
-We need to create a codemod that will transform code from the `current` form to the
-`proposed` form.
+[The Guides currently discourage the use of `Function` prototype extensions](https://guides.emberjs.com/v2.17.0/configuring-ember/disabling-prototype-extensions/):
 
-## How We Teach This
+> Function is extended with methods to annotate functions as computed properties,
+> via the property() method, and as observers, via the observes() method. Use of
+> these methods is now discouraged and not covered in recent versions of the Guides.
 
-On the deprecation guide, we showcase the same example as above. We can explain why
-the proposal was necessary, followed by deprecated to current code examples.
-
-The Guides currently discourage the use of `Function` prototype extensions.
-For example, from the [disabling prototype extensions page](https://guides.emberjs.com/v2.17.0/configuring-ember/disabling-prototype-extensions/):
-
-After the deprecated code is removed from Ember, the same page needs to remove the section
+After the deprecated code is removed from Ember, we need to remove the section
 about `Function` prototypes altogether.
 
 ## Alternatives
