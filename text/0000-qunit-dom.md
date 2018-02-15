@@ -11,13 +11,22 @@ Introduce [`qunit-dom`] as a dependency by default in the `app` and `addon` blue
 
 > Why are we doing this?
 
-QUnit assertions are quite verbose and can look like this:
+In a modern Ember application making assertions around the state of the DOM is
+fundamental to confirming your applications functionality. These assertions are
+often quite verbose:
 
 ```js
 assert.equal(this.element.querySelector('.title').textContent.trim(), 'Hello World!');
 ```
 
-with `qunit-dom` we can write much more readable assertion for DOM elements:
+Using the `find()` helper of `@ember/test-helpers` we can simplify the DOM
+element lookup, but the signal-to-noise ratio of the code is still not great:
+
+```js
+assert.equal(find('.title').textContent.trim(), 'Hello World!');
+```
+
+With `qunit-dom` we can write much more readable assertions for DOM elements:
 
 ```js
 assert.dom('.title').hasText('Hello World!');
@@ -97,12 +106,16 @@ migrate their existing tests to `qunit-dom` a basic codemod exists at
 
 > What other designs have been considered?
 
-None
+- Using the `find()` helper functions can be considered an alternative, but
+  as mentioned above they still result in more verbose code than using
+  `qunit-dom`. Another advantage is that `qunit-dom` generates a useful
+  assertion description by default, while `assert.equal()` will just show
+  something like "A does not match B". 
 
 > What is the impact of not doing this?
 
-We will keep using ugly, hard-to-read assertions by default and leave it up
-to our users to discover `qunit-dom` by themselves.
+We will keep using hard-to-read assertions by default and leave it up to our
+users to discover `qunit-dom` by themselves.
 
 
 # Unresolved questions
