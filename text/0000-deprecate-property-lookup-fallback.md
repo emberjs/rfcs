@@ -32,7 +32,47 @@ Currently, the way to access properties on a components class is `{{greeting}}` 
 
 The first problem with this approach is that the `{{greeting}}` syntax is ambiguous, as it could be referring to a local variable (block param), a helper with no arguments, a closed over component, or a property on the component class.
 
-This can often lead to confusion for readers of the template. Upon encountering `{{greeting}}` in a component's template, the reader has to check all of these places: first you need to scan the surrounding lines for block params with that name; next you check in the helpers folder to see it there is a helper with that name (it could also be coming from an addon!); finally, you check the component's JavaScript class to look for a (computed) property.
+## Exemplar
+Consider the following example where the ambiguity can cause issues:
+
+You have a component class that looks like the following component and template:
+
+```js
+import Component from '@ember/component';
+import computed from '@ember/computed';
+
+export default Component.extend({
+  formatName: computed('firstName', 'lastName', function() {
+    return `${this.firstName} ${this.lastName}`;
+  });
+});
+```
+
+```hbs
+<h1>Hello {{formatName}}!</h1>
+```
+
+Given `{ firstName: 'Chad', lastName: 'Hietala' }` Ember will render the following:
+
+```html
+<h1>Hello Chad Hietala!</h1>
+```
+
+Now some time goes on and someone adds a `formatName` helper that looks like the following:
+
+```js
+export default function formatName([firstName, lastName]) {
+  return `${this.firstName} ${this.lastName}`;
+}
+```
+
+Due to the fact helpers take precedence over property lookups our `{{formatName}}` now resolves to a helper. When the helper runs it doesn't have any arguments so our template now renders the following:
+
+```html
+<h1>Hello !</h1>
+```
+
+This can be a refactoring hazord and can often lead to confusion for readers of the template. Upon encountering `{{greeting}}` in a component's template, the reader has to check all of these places: first you need to scan the surrounding lines for block params with that name; next you check in the helpers folder to see it there is a helper with that name (it could also be coming from an addon!); finally, you check the component's JavaScript class to look for a (computed) property.
 
 Like [RFC#0276](https://github.com/emberjs/rfcs/blob/68812bf2d439c6bb77ad491e0159b371b68c5c35/text/0276-named-args.md) made argument usage explicit through the `@` prefix, the `this` prefix will resolve the ambiguity and greatly improve clarity, especially in big projects with a lot of files (and uses a lot of addons).
 
@@ -44,6 +84,8 @@ Furthermore, by enforcing the `this` prefix tooling like the [Ember Language Ser
 # Transition Path
 The `{{this.foo}}` syntax has always been supported Handlebars and thus can be used in every version of Ember, however no guides or documentation promote its usage. While applications can start migrating today to this more explicit syntax, we can surface information about what properties on the class were accessed allowing developers to get a concise list of expressions that should be migrated. This can be surfaced because we are already disambiguate the syntax at runtime.
 
+Using this information, we will also have the ability to create a codemod that will help migrate templates.
+
 # How We Teach This
 
 `{{this.foo}}` is the way to access the properties on the component class. This also aligns to property access in JavaScript.
@@ -51,8 +93,6 @@ The `{{this.foo}}` syntax has always been supported Handlebars and thus can be u
 Since the `{{this.foo}}` syntax has worked in Ember.Component (which is the only kind of components available today) since the 1.0 series, we are not really in a rush to migrate the community (and the guides, etc) to using the new syntax. In the meantime, this could be viewed as a tool to improve clarity in templates.
 
 While we think writing {{this.foo}} would be a best practice for new code going forward, the community can migrate at its own pace one component at a time. However, once the fallback functionality is eventually removed this will result in a "Helper not found" error.
-
-We can also encourage the community to supplement this effort by wiring linting tools and code mods.
 
 ## Syntax Breakdown
 The follow is a breakdown of the different forms and what they mean.
