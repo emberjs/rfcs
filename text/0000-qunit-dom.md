@@ -100,6 +100,11 @@ migrate their existing tests to `qunit-dom` a basic codemod exists at
 
 - `qunit-dom` is another abstraction layer on top of the raw QUnit assertions
   which adds to the existing learning curve.
+  
+- Adding `qunit-dom` to the default blueprint could make it look even more like
+  `ember-mocha` is only a second-class citizen. Since we add it to the default
+  `package.json` file it is easy to opt-out though and can be replaced with
+  `chai-jquery` or `chai-dom` for a roughly similar API.
 
 
 # Alternatives
