@@ -72,7 +72,7 @@ Due to the fact helpers take precedence over property lookups our `{{formatName}
 <h1>Hello !</h1>
 ```
 
-This can be a refactoring hazord and can often lead to confusion for readers of the template. Upon encountering `{{greeting}}` in a component's template, the reader has to check all of these places: first you need to scan the surrounding lines for block params with that name; next you check in the helpers folder to see it there is a helper with that name (it could also be coming from an addon!); finally, you check the component's JavaScript class to look for a (computed) property.
+This can be a refactoring hazard and can often lead to confusion for readers of the template. Upon encountering `{{greeting}}` in a component's template, the reader has to check all of these places: first you need to scan the surrounding lines for block params with that name; next you check in the helpers folder to see it there is a helper with that name (it could also be coming from an addon!); finally, you check the component's JavaScript class to look for a (computed) property.
 
 Like [RFC#0276](https://github.com/emberjs/rfcs/blob/68812bf2d439c6bb77ad491e0159b371b68c5c35/text/0276-named-args.md) made argument usage explicit through the `@` prefix, the `this` prefix will resolve the ambiguity and greatly improve clarity, especially in big projects with a lot of files (and uses a lot of addons).
 
