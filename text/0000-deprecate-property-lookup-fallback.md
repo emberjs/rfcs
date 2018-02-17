@@ -62,7 +62,7 @@ Now some time goes on and someone adds a `formatName` helper that looks like the
 
 ```js
 export default function formatName([firstName, lastName]) {
-  return `${this.firstName} ${this.lastName}`;
+  return `${firstName} ${lastName}`;
 }
 ```
 
