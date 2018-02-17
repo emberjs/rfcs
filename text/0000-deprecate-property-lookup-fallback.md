@@ -111,7 +111,7 @@ The largest downside of this proposal is that it makes templates more verbose, c
 
 # Alternatives
 
-This pattern of having programming model constructs to distinguish between of the backing class and arguments passed to the component is not unique to Ember.
+This pattern of having programming model constructs to distinguish between the backing class and arguments passed to the component is not unique to Ember.
 
 ## What Other Frameworks Do
 
