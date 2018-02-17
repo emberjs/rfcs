@@ -127,11 +127,14 @@ Angular relies heavily on the dependency injection e.g. `@Input` to enumerate th
 
 We could introduce another sigil to remove ambiguity. This would address the concern about verbosity, however it is now another thing we would have to teach.
 
+## Change Resolution Order
+
+The other option is to reverse the resolution order to prefer properties over helpers. However this has the reverse problem as described in the exemplar.
+
 ## Do Nothing
 
 I personally don't think this is an option, since the goal is to provide clarity for applications as they evolve over time and to provide a more concise mental model.
 
 # Unresolved questions
-
-Soon…
+TBD
 
