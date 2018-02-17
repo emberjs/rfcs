@@ -26,6 +26,8 @@ One would refer to the `greeting` property as such:
 
 Ember will render "Hello, Chad".
 
+To make this deprecation tractable, we will provide a codemod for migrating templates.
+
 # Motivation
 
 Currently, the way to access properties on a components class is `{{greeting}}` from a template. This works because the component class is one of the objects we resolve against during the evaluation of the expression.
