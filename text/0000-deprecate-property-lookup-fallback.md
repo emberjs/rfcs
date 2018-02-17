@@ -59,7 +59,7 @@ Given `{ firstName: 'Chad', lastName: 'Hietala' }`, Ember will render the follow
 <h1>Hello Chad Hietala!</h1>
 ```
 
-Now some time goes on and someone adds a `formatName` helper that looks like the following:
+Now some time goes on and someone adds a `formatName` helper at `app/helpers/fortmatName.js` that looks like the following:
 
 ```js
 export default function formatName([firstName, lastName]) {
