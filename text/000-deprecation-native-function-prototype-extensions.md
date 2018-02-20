@@ -24,11 +24,11 @@ We go from two ways to do something, to one.
 ## Transition Path
 
 The replacement functionality already exists in the form of `on`, `observer`, and `computed`.
+
 We don't need to build anything new specifically, however, the bulk of the transition will be
 focused on deprecating the native prototype extensions.
 
-We need to create a codemod that will transform code from the `deprecated` form to the
-`proposed` form. 
+A codemod for this deprecation has to take into consideration that while `foo: function() { /* custom logic */ }.property('bar')` is a `Function.prototype` extension, `foo: observer(function () { /* some custom logic */ }).on('customEvent')` is not.
 
 ## How We Teach This
 
@@ -46,16 +46,18 @@ export default Component.extend({
   // deprecated
   abc: function() { /* custom logic */ }.property('xyz'),
   def: function() { /* custom logic */ }.observe('xyz'),
-  ghi: function() { /* custom logic */ }.on('didInsertElement'),
+  ghi: function() { /* custom logic */ }.on('didInsertElement'),
+  jkl: function() { /* custom logic */ }.on('customEvent'),
 
   // current
   abc: computed('xyz', function() { /* custom logic */ }),
   def: observer('xyz', function() { /* custom logic */ }),
-  ghi: on('didInsertElement', function() { /* custom logic */ }),
+  didInsertElement() { /* custom logic */ }),
+  jkl: on('customEvent', function() { /* custom logic */ }),
 });
 ```
 
-[The Guides currently discourage the use of `Function` prototype extensions](https://guides.emberjs.com/v2.17.0/configuring-ember/disabling-prototype-extensions/):
+The official Guides currently [discourage the use of `Function.prototype` extensions](https://guides.emberjs.com/v2.17.0/configuring-ember/disabling-prototype-extensions/):
 
 > Function is extended with methods to annotate functions as computed properties,
 > via the property() method, and as observers, via the observes() method. Use of
