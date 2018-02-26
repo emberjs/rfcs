@@ -4,7 +4,7 @@
 
 # Summary
 
-I'd like to propose this change: The model hook will always run, even for dynamic segments that already have their models loaded.
+The model hook will always run, even for dynamic segments that already have their models loaded.
 
 # Motivation
 
@@ -55,39 +55,27 @@ As an aside, I posted [this poll](https://twitter.com/ryantotweets/status/938446
 
 # Detailed design
 
-The fix I would like to propose is to always run the model hook when entering a route. The params would resolve to the model's ID. To be more specific, the params arguments would be generated from the route's serialize function if passed a model or object.
+We would introduce a new route base class which would default to always running the model hook. In order to avoid confusion, this new route class would have a new hook called `findModel` that would always run.
 
-The model hook can then make a decision if it needs to refetch the model. This seems to be the approach Ember-data has taken with `findRecord`, it's aware if the model has already been loaded, and if it is it will do a background reload. I like this thinking because the it leaves the data fetching decision up to the model layer.
+In addition to always running the `findModel` hook when transitioning, this new route class would:
 
-Also, always running the model hook simplifies some complexity since dynamic and non-dynamic routes will now have the same behavior.
+* Return a POJO, allowing you to pass arbitrary names to the template. Template rendering will wait for all promises in the POJO to fulfill.
+* Parent/child routes would not waterfall. Child routes would fire their `findModel` hooks before parent routes have resolved. This would cause `modelFor` to return a promise.
 
-# How We Teach This
-
-The guides would need to be updated. I think a blog post would help explain the change to behavior.
+The new route base class would allow us to implement these new ideas without worrying about the API of the existing route class. Developers can swap out their route classes when they are ready to adapt this new behavior.
 
 # Drawbacks
 
-This is a breaking change. It could introduce un-intended side effects if model hooks suddenly start running when they previously were not.
-
-If applications are currently linking to string IDs we can't pass that through the route's `serialize` function.  Would those get turned into params based off the order of the dynamic segments in the route's path?
+If applications are currently linking to string IDs how do we pass them through the route's `serialize` function.
 
 # Alternatives
 
-I'd love to make an addon that can proof-of-concepts this. I would need some help though.
+### Always run model hook
 
-Another alternative is that this could be something that's done when calling `link-to` or `transitionTo`, similar to how folks are linking to IDs today.
+Always run the model hook on the current route class when entering a route. The params arguments would be generated from the route's serialize function if passed a model or object.
 
-```hbs
-{{! run-model-hook takes a model and returns an id, which causes
-    the model hook to run when the link is clicked }}
-{{link-to "post.show" (run-model-hook post)}}
-```
-
-```js
-// options for the transition.
-this.transitionTo('post.show', model, { reload: true });
-```
-
-My gut says these are bad because they putting model loading knowledge outside of the route.
+The model hook can then make a decision if it needs to refetch the model. This seems to be the approach Ember-data has taken with `findRecord`, it's aware if the model has already been loaded, and if it is it will do a background reload. This leaves the data fetching decision up to the model layer.
 
 # Unresolved questions
+
+I'd love to make an addon that can proof-of-concepts this. I would need some help though.
