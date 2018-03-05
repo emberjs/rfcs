@@ -5,22 +5,20 @@
 # Summary
 
 This RFC aims to expose a _low-level primitive_ for defining _custom
-components_. This API will allow addon authors to implement special-purpose
-component-based APIs (such as LiquidFire's animation helpers or low-overhead
-components for performance hotspots).
+components_.
 
-In the medium term, this API and expected future enhancements will enable the
-Ember community to experiment with alternative component APIs outside of the
-core framework, for example enabling the community to prototype "angle bracket
-components" using public APIs outside of the core framework.
+This API will allow addon authors to provide special-purpose component base
+classes that their users can subclass from in the apps. These components are
+invokable in templates just like any other Ember components (decendents of
+`Ember.Component`) today.
 
 # Motivation
 
 The ability to author reusable, composable components is a core features of
-the Ember.js framework. Despite being a [last-minute addition](http://emberjs.com/blog/2013/06/23/ember-1-0-rc6.html)
-to Ember.js 1.0, the `Ember.Component` API has proven itself to be an extremely
-powerful programming model and has aged well over time into the primary unit of
-composition in the Ember view layer.
+Ember.js. Despite being a [last-minute addition](http://emberjs.com/blog/2013/06/23/ember-1-0-rc6.html)
+to Ember 1.0, the `Ember.Component` API and programming mode has proven itself
+to be an extremely versatile tool and has aged well over time into the primary
+unit of composition in Ember's view layer.
 
 That being said, the current component API (hereinafter "classic components")
 does have some noticeable shortcomings. Over time, classic components have also
@@ -33,184 +31,269 @@ these problems via the angle bracket invocation opt-in (i.e. `<foo-bar ...>`
 instead of `{{foo-bar ...}}`).
 
 Since the transition to the angle bracket invocation syntax was seen as a rare,
-once-in-a-lifetime opportunity, it became very tempting for the Ember core team
-and the wider community to debate all the problems, shortcomings and desirable
-features in the classic components API and attempt to design solutions for all
-of them.
+once-in-a-lifetime opportunity, it became very tempting to debate every single
+shortcomings and missing features in the classic components API in the process
+and attempt to design solutions for all of them.
 
 While that discussion was very helpful in capturing constraints and guiding the
 overall direction, designing that One True API™ in the abstract turned out to
-be extremely difficult and ultimately undesirable. It also went against the
-Ember philosophy that framework features should be extracted from applications
-and designed iteratively with feedback from real-world usage.
+be extremely difficult. It also went against our philosophy that framework
+features should be extracted from applications and designed iteratively with
+feedback from real-world usage.
 
-Since those proposals, we have rewritten Ember's rendering engine from the ground
-up (the "Glimmer 2" project). One of the goals of the Glimmer 2 effort was to
-build first-class primitives for our view-layer features in the rendering engine.
-As part of the process, we worked to rationalize these features and to re-think
-the role of components in Ember.js. This exercise has brought plenty of new ideas
-and constraints to the table.
+Since that original proposal, we have rewritten Ember's rendering engine from
+the ground up (the "Glimmer 2" project). One of the goals of the Glimmer 2
+effort was to build first-class support for Ember's view-layer features into
+the rendering engine. As part of the process, we worked to rationalize these
+features and to re-think the role of components in Ember.js. This exercise has
+brought plenty of new ideas and constraints to the table.
 
-The initial Glimmer 2 integration was completed in [November](http://emberjs.com/blog/2016/11/30/ember-2-10-released.html).
-Since Ember.js 2.10, classic components have been re-implemented on top of the
-Glimmer 2 primitives, and we are very happy with the results.
+The initial Glimmer 2 integration was completed in [Ember 2.10](http://emberjs.com/blog/2016/11/30/ember-2-10-released.html).
+As of that version, classic components have been re-implemented using the new
+primitives provided by the rendering engine, and we are very happy with the
+results.
 
 This approach yielded a number of very powerful and flexible primitives:
-in addition to classic components, we were able to implement the `{{mount}}`,
-`{{outlet}}` and `{{render}}` helpers from Ember as "components" under the hood.
+in addition to classic components, we were able to implement Ember's
+`{{mount}}`, `{{outlet}}` and `{{render}}` helpers as "components" under the
+hood.
 
 Based on our experience, we believe it would be beneficial to open up these new
 primitives to the wider community. Specifically, there are at least two clear
 benefits that comes to mind:
 
-First, this would unlock new capabilities for addon authors, allowing them to
-build custom components tailored to specific scenarios that are underserved by
-the general-purpose component APIs (e.g. Liquid Fire's animation helpers,
-low-overhead components for performance hotspots). Having an escape valve
-for these scenarios also allows us to focus primarily on the mainstream use cases
-when designing the new component API ("angle bracket components").
+First, it provides addon authors fine-grained control over the exact behavior
+and semantics of their components in cases where the general-purpose components
+are a poor fit. For example, a low-overhead component designed to be used in
+performance hotspot can opt-out of certain convinence features using this API.
 
-Second, this API and expected future enhancements will enable the Ember community
-to experiment with alternative component APIs, and allow us to prototype "angle
-bracket components" outside of the core framework purely on top of exposed public
-APIs.
-
-Following the success of FastBoot and Engines, we believe the best way to design
-angle bracket components is to first stablize the underlying primitives in the
-core framework and then experiment with the surface API through an addon.
+Second, it allows the community to experiment with and iterate on alternative
+component APIs outside of the core framework. Following the success of FastBoot
+and Engines, we believe the best way to design the new "Glimmer Components" API
+is to first stablize the underlying primitives in the core framework and
+experiment with the surface API through an addon.
 
 # Detailed design
 
-## What is a component?
+This RFC introduces the concept of *component managers*. A component manager is
+an object that is responsible for coordinating the lifecycle events that occurs
+when invoking, rendering and re-rendering a component.
 
-In today's programming model, a component is often viewed narrowly as a device
-for handling and managing user-interactions ("UI widgets").
+## Registering component managers
 
-While components are indeed very useful for building widgets, it doesn't just
-stop there. In front-end development, they serve a much broader role, allowing
-you to break up large templates into smaller, well-encapsulated units.
+Component managers are registered with the `component-manger` type in the
+application's registry. Similar to services, component managers are singleton
+objects (i.e. `{ singleton: true, instantiate: true }`), meaning that Ember
+will create and maintain (at most) one instance of each unique component
+manager for every application instance.
 
-For example, you might break up a blog post into a headline, byline, body,
-and a list of comments. Each comment might be further broken down into
-a headline, author card and contents.
+To register a component manager, an addon will typically put it inside its
+`app` tree:
 
-From Glimmer's perspective, components are analogous to functions in
-other programming languages. Some components are designed to be reusable
-in many contexts, but it's also perfect normal to use them to break apart
-large chunks of logic.
+```js
+// ember-basic-component/app/component-managers/basic.js
 
-In the most general sense, a component takes inputs (positional arguments,
-named arguments, blocks, etc.), can be invoked, may render some content,
-and knows how to keep its content up to date as its inputs change. From
-the outside, you don't need to know how these details are managed, you
-just need to know its API (i.e. what inputs it expects).
+import EmberObject from '@ember/object';
 
-When looking at components expansively, it's no surprise that things that
-are not usually thought of as components are implemented as components
-in the template layer (input and link helpers, engines, outlets). Similarly,
-we expect that this API to be useful far beyond just "UI widgets".
+export default EmberObject.extend({
+  // ...
+});
+```
 
-## `ComponentDefinition`
+This allows the component manager to participate in the DI system – receiving
+injections, using services, etc. Alternatively, component managers can also
+be registered with imperative API. This could be useful for testing or opt-ing
+out of the DI system. For example:
 
-This RFC introduces a new type of object in Ember.js, `ComponentDefinition`,
-which defines a component that can be invoked from a template.
+```js
+// ember-basic-component/app/initializers/register-basic-component-manager.js
 
-Like classic components, a `ComponentDefinition` must be registered with a
-dasherized name (with at least one dash in the name). This allows them to be
-easily distinguishable from regular property lookups and HTML elements. Once
-registered, the component can be invoked by name like a regular classic
-component (i.e. `{{foo-bar}}`, `{{foo-bar "positional" "and" named="args"}}`,
-`{{#foo-bar with or without=args}}...{{/foo-bar}}` etc).
+const MANAGER = {
+  // ...
+};
 
-> **Open Question**: How should these objects be registered? (see the last
-  section of this RFC)
+export function initialize(application) {
+  // We want to use a POJO here, so we are opt-ing out of instantiation
+  application.register('component-manager:basic', MANAGER, { instantiate: false });
+}
 
-> **Open Question**: How does this interact with the `{{component}}` helper
-and the `(component)` feature? (see the last section of this RFC)
+export default {
+  name: 'register-basic-component-manager',
+  initialize
+};
+```
 
-A `ComponentDefinition` object should satisfy the following interface:
+## Determining which component manager to use
 
-```typescript
-interface ComponentDefinition {
-  name: string;
-  layout: string;
-  manager: string;
-  capabilities: ComponentCapabilitiesMask;
-  metadata?: any;
+For the purpose of this section, we will assume components with a JavaScript
+file (such as `app/components/foo-bar.js` or the equivilant in "pods" and
+[Module Unification](https://github.com/emberjs/rfcs/blob/master/text/0143-module-unification.md)
+apps) and optionally a template file (`app/templates/components/foo-bar.hbs`
+or equivilant). The example section has additional information about how this
+relates to [template-only components](https://github.com/emberjs/rfcs/blob/master/text/0278-template-only-components.md).
+
+When invoking the component `{{foo-bar ...}}`, Ember will first resolve the
+component class (`component:foo-bar`, usually the `default` export from
+`app/components/foo-bar.js`). Next, it will determine the appropiate component
+manager to use based on the resolved component class.
+
+Ember will provide a new API to assign the component manager for a component
+class:
+
+```js
+// my-app/app/components/foo-bar.js
+
+import EmberObject from '@ember/object';
+import { setComponentManager } from '@ember/component';
+
+const MyComponent = EmberObject.extend({
+  // ...
+});
+
+setComponentManager(MyComponent, 'awesome');
+
+export default MyComponent;
+```
+
+This tells Ember to use the `awesome` manager (`component-manager:awesome`) for
+the `foo-bar` component. Since the `setComponentManager` function also returns
+the class, this can also be simplified as:
+
+```js
+// my-app/app/components/foo-bar.js
+
+import EmberObject from '@ember/object';
+import { setComponentManager } from '@ember/component';
+
+export default setComponentManager(EmberObject.extend({
+  // ...
+}), 'awesome');
+```
+
+In the future, this function can also be invoked as a decorator:
+
+```js
+// my-app/app/components/foo-bar.js
+
+import EmberObject from '@ember/object';
+import { componentManager } from '@ember/component';
+
+@componentManager('awesome')
+export default EmberObject.extend({
+  // ...
+});
+```
+
+In reality, app developer would never have to write this in their apps, since
+the component manager would already be assigned on a super-class provided by
+the framework or an addon. The `setComponentManager` function is essentially a
+low-level API designed for addon authors and not intended to be used by app
+developers.
+
+For example, the `Ember.Component` class would have the `classic` component
+manager pre-assigned, therefore the following code will continue to work as
+intended:
+
+```js
+// my-app/app/components/foo-bar.js
+
+import Component from '@ember/component';
+
+export default Component.extend({
+  // ...
+});
+```
+
+Similarly, an addon can provided the following super-class:
+
+```js
+// ember-basic-component/addon/index.js
+
+import EmberObject from '@ember/object';
+import { componentManager } from '@ember/component';
+
+@componentManager('basic')
+export default EmberObject.extend({
+  // ...
+});
+```
+
+With this, app developers can simply inherit from this in their app:
+
+```js
+// my-app/app/components/foo-bar.js
+
+import TurboComponent from 'ember-basic-component';
+
+export default TurboComponent.extend({
+  // ...
+});
+```
+
+Here, the `foo-bar` component would automatically inherit the `basic` component
+manager from its super-class.
+
+It is not advisable to override the component manager assigned by the framework
+or an addon. Attempting to reassign the component manager when one is already
+assinged on a super-class will be an error. If no component manager is set, it
+will also result in a runtime error when invoking the component.
+
+## Component Lifecycle
+
+Back to the `{{foo-bar ...}}` example.
+
+Once Ember has determined the component manager to use, it will be used to
+manage the component's lifecycle.
+
+### `createComponent`
+
+The first step is to create an instance of the component. Ember will invoke the
+component manager's `createComponent` method:
+
+```javascript
+// ember-basic-component/app/component-managers/basic.js
+
+import EmberObject from '@ember/object';
+
+export default EmberObject.extend({
+  createComponent(factory, args) {
+    return factory.create(args.named);
+  },
+
+  // ...
+});
+```
+
+The `createComponent` method on the component manager is responsible for taking
+the component's factory and the arguments passed to the component (the `...` in
+`{{foo-bar ...}}`) and return an instantiated component.
+
+The first argument passed to `createComponent` is the result returned from the
+[`factoryFor`](https://github.com/emberjs/rfcs/blob/master/text/0150-factory-for.md)
+API. It contains a `class` property, which gives you the the raw class (the
+`default` export from `app/components/foo-bar.js`) and a `create` function that
+can be used to instantiate the class with any registered injections, merging
+them with any additional properties that are passed.
+
+The second argument is a snapshot of the arguments passed to the component in
+the template invocation, given in the following format:
+
+```js
+{
+  positional: [ ... ],
+  named: { ... }
 }
 ```
 
-> **Open Question**: Should we require `ComponentDefinition` to inherit from a
-provided super class (`Ember.ComponentDefinition.extend({ ... }`) or otherwise
-be wrapped with a function call (`Ember.Component.definition({ ... })`)?
-
-The *name* property should contain an identifier for this component, usually
-the component's dasherized name. This is primarily used by debug tools (e.g.
-Ember Inspector).
-
-The *layout* property specifies which template should be rendered when the
-component is invoked. For example, if "foo-bar" is specified, Ember will lookup
-the template `template:components/foo-bar` from the resolver.
-
-> **Open Question**: How does this interact with local lookup?
-
-The *manager* property is a string key specifying the `ComponentManager` to use
-with this component. For example, if "foo" is specified here, Ember will lookup
-the component manager `component-manager:foo`. This will be described in more
-detail in the sections below.
-
-> **Note**: Specifying the manager as a lookup key allows the component manager
-to receive injections.
-
-The *capabilities* property specifies the optional features required by this
-component. This will be described in more detail below.
-
-Finally, there is an optional *metadata* property which component authors can
-use to store arbitrary data. For example, it may include a *class* property to
-specify which component class to use. The *metadata* property is ignored by
-Ember but can be used by the `ComponentManager` to perform custom logic.
-
-## `ComponentManager`
-
-Whereas a `ComponentDefinition` describe the static property of the component,
-a `ComponentManager` controls its runtime properties.
-
-A basic `ComponentManager` satisfies the following interface:
-
-```typescript
-interface ComponentManager<T> {
-  create(definition: ComponentDefinition, args: ComponentArguments): T;
-  getContext(instance: T): any;
-  update(instance: T, args: ComponentArguments): void;
-}
-
-interface ComponentArguments {
-  positional: any[];
-  named: Object;
-}
-```
-
-> **Open Question**: Should we require `ComponentManager` to inherit from a
-provided super class (`Ember.ComponentManager.extend({ ... }`)?
-
-When Ember is about to render a component, Ember will lookup its component
-manager (as described above) and call its *create* method with the component
-defition and the *component arguments*.
-
-The *component arguments* object is a snapshot of the arguments pased into the
-component. It has a *positional* and *named* property which corresponds to an
-array and object (dictionary) of the current argument values.
-
-For example, for the following invocation:
+For example, given the following invocation:
 
 ```hbs
 {{blog-post (titleize post.title) post.body author=post.author excerpt=true}}
 ```
 
-Glimmer will look up the `blog-post` definition and call *create* on its
-manager with the following `ComponentArguments`:
+You will get the following as the second argument:
 
-```javascript
+```js
 {
   positional: [
     "Rails Is Omakase",
@@ -223,686 +306,635 @@ manager with the following `ComponentArguments`:
 }
 ```
 
-The component manager *must not* mutate the *component arguments* object (and
-the inner *positional* and *named* object/array) directly as they might be
-pooled or reused by the system.
+The arguments object should not be mutated (e.g. `args.positional.pop()` is no
+good). In development mode, it might be sealed/frozen to help prevent these
+kind of mistakes.
 
-> **Note**: We should probably freeze them in debug mode.
+### `getContext`
 
-Based on the information in the definition and the *component arguments*, the
-manager should return a *component instance* from the *create* method. From
-Ember's perspective, this could be any arbitrary value – it is only used for
-the component manager's internal book-keeping. In practice, this value should
-store enough information to represent the internal state of the component. For
-these reasons, it is often referred to as the "opaque state bucket".
+Once the component instance has been created, the next step is for Ember to
+determine the `this` context to use when rendering the component's template by
+calling the component manager's `getContext` method:
 
-At a later time, before Ember is ready to render the template, the component
-manager's *getContext* method will be called. It will receive the *component
-instance* and return the context object for the template. The context binds
-`{{this}}` inside the layout, which is also the root of implicit property
-lookups (e.g. `{{foo}}`, `{{foo.bar}}` are equivalent to `{{this.foo}}` and
-`{{this.foo.bar}}`).
+```js
+// ember-basic-component/app/component-managers/basic.js
 
-In many cases, the component manager can simply return the *component instance*
-from this hook:
+import EmberObject from '@ember/object';
 
-```typescript
-class MyManager implements ComponentManager<MyComponent> {
-  create(definition: ComponentDefinition, args: ComponentArguments): MyComponent {
-    ...
-  }
+export default EmberObject.extend({
+  createComponent(factory, args) {
+    return factory.create(args.named);
+  },
 
-  getContext(instance: MyComponent): MyComponent {
-    return instance;
-  }
+  getContext(component) {
+    return component;
+  },
 
-  update(instance: MyComponent, args: ComponentArguments) {
-    ...
-  }
-}
+  // ...
+});
 ```
 
-However, they could also choose derive a different value from the state bucket.
-This pattern allows the component manager to hide internal metadata:
+The `getContext` method gets passed the component instance returned from
+`createComponent` and should return the object that `{{this}}` should refer to
+in the component's template, as well as for any "fallback" property lookups
+such as `{{foo}}` where `foo` is neither a local variable or a helper (which
+resolves to `{{this.foo}}` where `this` is here is the object returned by
+`getContext`).
 
-```typescript
-interface MyStateBucket {
-  instance: MyComponent;
-  secret: any;
-}
+Typically, this method can simpliy return the component instance, as shown in
+the example above. The reason this exists as a separate method is to enable the
+so-called "state bucket" pattern which allows addon authors to attach extra
+book-keeping metadata to the component:
 
-class MyManager implements ComponentManager<MyStateBucket> {
-  create(definition: ComponentDefinition, args: ComponentArguments): MyStateBucket {
-    ...
-  }
+```js
+// ember-basic-component/app/component-managers/basic.js
 
-  getContext({ instance }: MyStateBucket): MyComponent {
-    return instance;
-  }
+import EmberObject from '@ember/object';
 
-  update({ instance, secret }: MyStateBucket, args: ComponentArguments) {
-    ...
-  }
-}
+export default EmberObject.extend({
+  createComponent(factory, args) {
+    let metadata = { ... };
+    let instance = factory.create(args.named);
+    return { metadata, instance, ... };
+  },
+
+  getContext(bucket) {
+    return bucket.instance;
+  },
+
+  // ...
+});
 ```
 
-Finally, when any of the *component arguments* have changed, Ember will call
-the *update* method on the manager, passing the *component instance* and a
-snapshot of the current *component arguments* value. This happens before the
-template is revalidated, therefore any updates to the context object performed
-here will be reflected in the template.
+Since the "state bucket", not the "context", is passed back to other hooks on
+the component manager, this allows the component manager to access the extra
+metadata but otherwise hide them from the app developers.
 
-Ember does not provide a fine-grained change tracking system, so there is no
-guarantee on how often *update* will be called. More precisely, if one of the
-*component arguments* have changed to a different value, *update* _will_ be
-called at least once; however, the reverse is not true – when *update* is
-called, it does not guarantee that at least one of the *component arguments*
-will have a different value.
+We will see an example that uses this pattern in a later section.
 
-For example, given the following invocation:
+At this point, Ember will have gathered all the information it needs to render
+the component's template, which will be rendered with ["Outer HTML" semantics](https://github.com/emberjs/rfcs/blob/master/text/0278-template-only-components.md).
+
+In other words, the content of the template will be rendered as-is, without a
+wrapper element (e.g. `<div id="ember1234" class="ember-view">...</div>`),
+except for subclasses of `Ember.Component`, which will retain the current
+legacy behavior (the internal `classic` manager uses private capabilities to
+achieve that).
+
+This API does not currently provide any way to fine-tune the rendering behavior
+(such as dynamically changing the component's template) besides `getContext`,
+but future iterations may introduce extra capabilities.
+
+### `updateComponent`
+
+When it comes time to re-render a component's template (usually because an
+argument has changed), Ember will call the manager's `updateComponent` method
+to give the manager an opportunity to reflect those changes on the component
+instance, before performing the re-render:
+
+```js
+// ember-basic-component/app/component-managers/basic.js
+
+import EmberObject from '@ember/object';
+
+export default EmberObject.extend({
+  createComponent(factory, args) {
+    return factory.create(args.named);
+  },
+
+  getContext(component) {
+    return component;
+  },
+
+  updateComponent(component, args) {
+    component.setProperties(args.named);
+  },
+
+  // ...
+});
+```
+
+The first argument passed to this method is the component instance returned by
+`createComponent`. As mentioned above, using the "state bucket" pattern will
+allow this hook to access the extra metadata:
+
+```js
+// ember-basic-component/app/component-managers/basic.js
+
+import EmberObject from '@ember/object';
+
+export default EmberObject.extend({
+  createComponent(factory, args) {
+    let metadata = { ... };
+    let instance = factory.create(args.named);
+    return { metadata, instance, ... };
+  },
+
+  getContext(bucket) {
+    return bucket.instance;
+  },
+
+  updateComponent(bucket, args) {
+    let { metadata, instance } = bucket;
+    // do things with metadata
+    instance.setProperties(args.named);
+  },
+
+  // ...
+});
+```
+
+The second argument is a snapshot of the updated arguments, passed with the
+same format as in `createComponent`. Note that there is no guarentee that
+anything in the arguments object has _actually_ changed when this method is
+called. For example, given:
 
 ```hbs
-{{my-component unit=(pluralize "cat" count=cats.count)}}
+{{blog-post title=(uppercase post.title) ...}}
 ```
 
-If `cats.count` changes from 3 to 4, the *pluralize* helper will return exactly
-the same value (the string `"cats"`), therefore from the manager's perspective,
-the *component arguments* have not changed. However, in today's implementation,
-the *update* method will still be called in this case. Over time, we intend for
-internal changes in the implementation to cause this method to be called less
-often, and other changes may cause it to be called more often. As a result,
-component managers should not rely on this detail.
+Imagine if `post.title` changed from `fOo BaR` to `FoO bAr`. Since the value
+is passed through the `uppercase` helper, the component will see `FOO BAR` in
+both cases.
 
-Here is a simple example that puts all of these pieces together:
+Generally speaking, Ember does not provide any guarentee on how it determine
+whether components need to be re-rendered, and the semantics may vary between
+releases – i.e. this method may be called more or less often as the internals
+changes. The _only_ guarentee is that if something _has_ changed, this method
+will definitely be called.
 
-```typescript
-interface MyStateBucket {
-  immutable: boolean;
-  instance: Object;
-}
+If it is important to your component's programming model to _only_ notify the
+component when there are actual changes, the manager is responsible for doing
+the extra book-keeping.
 
-class MyManager implements ComponentManager<MyStateBucket> {
-  // on initial invocation, turn the arguments into a per-instance state bucket
-  // that contains the component instance and some other internal details
-  create(definition: ComponentDefinition, args: ComponentArguments): MyStateBucket {
-    let immutable = Math.random() > 0.5;
-    let instance = getOwner(this).lookup(`component:${definition.metadata.class}`);
-
-    instance.setProperties(args.named);
-
-    return { immutable, instance };
-  }
-
-  // expose the component instance (but not the internal details) as
-  // {{this}} in the template
-  getContext({ instance }: MyStateBucket): any {
-    return instance;
-  }
-
-  // when update is called, update the properties on the component with the
-  // new values of the named arguments.
-  update({ immutable, instance }: MyStateBucket, args: ComponentArguments) {
-    if (!immutable) {
-      instance.setProperties(args.named);
-    }
-  }
-}
-```
-
-While each invocable component needs its own `ComponentDefinition`, a single
-`ComponentManager` instance can create and manage many *component instances*
-(and this is why all of the hooks takes the *component instance* as the first
-parameter). In fact, all classic components in Ember today share the same
-component manager. Therefore, it is important to follow the pattern of keeping
-your component's state in the state bucket, rather than storing it on the
-manager itself.
-
-That being said, in some rare cases, it might make sense to store some shared
-states on the manager. For example, a component manager might want to maintain
-a pool of *component instances* and reuse them when possible (e.g. `{{sustain}}`
-in flexi). In this case, it would make sense to store the components pool on
-the manager:
-
-```typescript
-class PooledManager implements ComponentManager<Object> {
-
-  private pools = {};
-
-  create({ metadata }: ComponentDefinition, args: ComponentArguments): Object {
-    let pool = this.pools[metadata.name];
-    let instance;
-
-    if (pool && pool.length) {
-      instance = pool.pop();
-    } else {
-      instance = getOwner(this).lookup(`component:${metadata.class}`);
-    }
-
-    instance.setProperties(args.named);
-
-    return instance;
-  }
-
-  //...
-
-}
-```
-
-## `ComponentCapabilitiesMask`
-
-The *capabilities* property on a `ComponentDefinition` describes the optional
-features required by this component. There are several reasons for this design.
-
-First of all, performance-wise, this allows us to make the costs associated
-with individual features PAYGO (pay-as-you-go). The Glimmer architecture makes
-it possible to break down the work of component invocation into small pieces.
-
-For example, a "template-only component" doesn't need Glimmer to invoke any
-of the hooks related to the lifecycle management of the *component instance*.
-Therefore, in an ideal world, they should not pay the cost associated with
-invoking those hooks.
-
-To accomplish this, we designed the component manager to only expose a minimal
-set of features by default and allow individual components to opt-in to additional
-features as needed. The capabilities mask is the mechanism for components to
-signal that.
-
-Second, it allows us to introduce new features and make improvements to this
-API without breaking existing code. In addition to enumerating the required
-features, the `ComponentCapabilitiesMask` also encodes the version of Ember.js
-the `ComponentDefinition`/`ComponentManager` was developed for. This makes it
-possible to, say, make angle bracket invocation the default for new components
-but preserve the current default ("curly" invocation) for existing components
-that were targeting and older API revision.
-
-Ember.js will provide a function to construct a `ComponentCapabilitiesMask`.
-Since this is a required property, at minimum, a component definition would
-specify the following:
+For example:
 
 ```js
-import Ember from 'ember';
+// ember-basic-component/app/component-managers/basic.js
 
-const { capabilities, definition } = Ember.Component;
+import EmberObject from '@ember/object';
 
-export default definition({
-  name: "foo-bar",
-  capabilities: capabilities("2.13"),
-  //...
+export default EmberObject.extend({
+  createComponent(factory, args) {
+    return {
+      args: args.named,
+      instance: factory.create(args.named)
+    };
+  },
+
+  getContext(bucket) {
+    return bucket.instance;
+  },
+
+  updateComponent(bucket, args) {
+    let instance = bucket.instance;
+    let oldArgs = bucket.args;
+    let newArgs = args.named;
+    let changed = false;
+
+    // Since the arguments are coming from the template invocation, you can
+    // generally assume that they have exactly the same keys. However, future
+    // additions such as "splat arguments" in the template layer might change
+    // that assumption.
+    for (let key of Object.keys(oldArgs)) {
+      let oldValue = oldArgs[key];
+      let newValue = newArgs[key];
+
+      if (oldValue !== newValue) {
+        instance.argumentWillChange(key, oldValue, newValue);
+        instance.set(key, newValue);
+        instance.argumentDidChange(key, oldValue, newValue);
+      }
+    }
+
+    bucket.args = newArgs;
+  },
+
+  // ...
 });
 ```
 
-The first argument to the function is a string specifying the Ember.js version
-(up to the minor version) this component is targeting. As mentioned above, this
-allows us to gracefully handle API changes between versions. This is important
-because the raw, low-level APIs in Glimmer are still highly unstable.
+This example also shows when the "state bucket" pattern could be useful.
 
-Changes to the Glimmer APIs at this layer can significantly improve the overall
-performance of the component system by changing its internal implementation.
-Even though the surface API is still under active development, we would like to
-start exposing the stable parts of this system to Ember addon authors as soon
-as possible.
+The return value of the `updateComponent` is ignored.
 
-The version identifier in the capabilities mask acts as a safety net. It allows
-Ember to absorb the churn and avoid breaking existing code.
+After calling the `updateComponent` method, Ember will update the component's
+template to reflect any changes.
 
-For example, the API proposed in this RFC supplies **reified** *component
-arguments* to the component manager's *create* and *update* methods, i.e. a
-"snapshot" of the current *component arguments* values, which imposes some
-unnecessary cost. Eventually, we would like to address this problem by moving
-to a [reference](https://github.com/tildeio/glimmer/blob/master/guides/04-references.md)-based
-API.
+## Capabilities
 
-Imagine that, by the time Ember 2.14 comes around, we were able to stablize the
-more performant reference-based APIs. Instead of the reified *component
-arguments* snapshot, new components targeting Ember 2.14 (i.e. `capabilities("2.14")`)
-will receive the reference-based *component arguments* objects instead.
-However, existing components that were written before Ember 2.14 (e.g.
-`capabilities("2.13")`) will continue to receive the reified *component
-arguments* for backwards compatability.
-
-The second argument allows components to opt-in to additional features that are
-not enabled by default:
+In addition to the methods specified above, component managers are required to
+have a `capabilities` property:
 
 ```js
-import Ember from 'ember';
+// ember-basic-component/app/component-managers/basic.js
 
-const { capabilities, definition } = Ember.Component;
+import { capabilities } from '@ember/component';
+import EmberObject from '@ember/object';
 
-export default definition({
-  name: "foo-bar",
-  capabilities: capabilities("2.13", {
-    someFeature: true,
-    anotherFeature: true
+export default EmberObject.extend({
+  capabilities: capabilities('3.2'),
+
+  createComponent(factory, args) {
+    return factory.create(args.named);
+  },
+
+  getContext(component) {
+    return component;
+  },
+
+  updateComponent(component, args) {
+    component.setProperties(args.named);
+  }
+});
+```
+
+This property must be set to the result of calling the `capabilities` function
+provided by Ember.
+
+The first, mandatory, argument to the `capabilities` function is the component
+manager API, which is denoted in the `${major}.${minor}` format, matching the
+minimum Ember version this manager is targeting.
+
+This allows Ember to introduce new capabilities and make improvements to this
+API without breaking existing code.
+
+Here is a hypothical scenario for such a change:
+
+1. Ember 3.2 implemented and shipped the component manager API as described in
+   this API.
+
+2. The `ember-basic-component` addon releases its first version with the
+   component manager shown above (notably, it declared `capabilities('3.2')`).
+
+3. In Ember 3.5, we determined that constructing the arguments object passed to
+   the hooks is a major performance bottleneck, and changes the API to pass a
+   "proxy" object with getter methods instead (e.g. `args.getPositional(0)` and
+   `args.getNamed('foo')`).
+
+   However, since Ember sees that the `basic` component manager is written to
+   target the `3.2` API version, it will retain the old behavior and passes the
+   old (more expensive) "reified" arguments object instead, to avoid breakage.
+
+4. The `ember-basic-component` addon author would like to take advantage of
+   this performance optimization, so it updates its component manager code to
+   work with the arguments proxy and changes its capabilities declaration to
+   `capabilities('3.5')` in a major release.
+
+This system allows us to rapidly improve the API and take advantage of the
+underlying rendering engine featuers as soon as they become available.
+
+The second, optional, argument to the `capabilities` is an object enumerating
+the optional features requested by the component manager.
+
+In the hypothical example above, while the "reified" arguments objects may be
+a little slower, they are certainly easier to work with, and the performance
+may not matter to but the most performance critical components. A component
+manager written for Ember 3.5 (again, only hypothically) and above would be
+able to explicitly opt back into the old behavior like so:
+
+```js
+// ember-basic-component/app/component-managers/basic.js
+
+import { capabilities } from '@ember/component';
+import EmberObject from '@ember/object';
+
+export default EmberObject.extend({
+  capabilities: capabilities('3.5', {
+    reifyArguments: true
   }),
-  //...
+
+  // ...
 });
 ```
 
-Under the hood, this will likely be implemented as a bit mask, but component
-authors should treat it as an opaque value intended for internal use by the
-framework only. There will not be any public APIs to introspect its value (e.g.
-`isEnabled()`), so component managers should not rely on this to alter its
-runtime behavior.
+In general, we will aim to have the defaults set to as bare-bone as possible,
+and allow the component managers to opt into the features they need in a PAYGO
+(pay-as-you-go) manner, which aligns with the Glimmer VM philosophy. As the
+rendering engine evolves, more and more feature will become optional.
 
-All features are additive. The default set of functionality for a particular
-version is always the most lightweight component available at the time.
+## Optional Capabilities
 
-### Optional Features
+The following optionally capabilities will be available with the first version
+of the component manager API. We expect future RFCs to propose additional
+capabilities within the framework provided by this initial RFC.
 
-Below is list of optional features supported in the initial implementation.
-This list is intentionally kept minimal to limit the scope of this RFC.
+### Async Lifecycle Callbacks
 
-Additional features (e.g. angle bracket invocation, references-based APIs,
-providing access to the component element, event handling/delegation) should be
-proposed in their own RFCs (they can even be proposed _in parallel_ to this
-RFC) which allows for a more focused discussions around those topics.
+When the `asyncLifecycleCallbacks` capability is set to `true`, the component
+manager is expected to implement two additional methods: `didCreateComponent`
+and `didUpdateComponent`.
 
-* `asyncLifecycleHooks`
+`didCreateComponent` will be called after the component has been rendered the
+first time, after the whole top-down rendering process is completed. Similarly,
+`didUpdateComponent` will be called after the component has been updated, after
+the whole top-down rendering process is completed. This would be the right time
+to invoke any user callbacks, such as `didInsertElement` and `didRender` in the
+classic components API.
 
-  When this feature is enabled, the `ComponentManager` should implement this
-  extended interface:
+These methods will be called with the component instance (the "state bucket"
+returned by `createComponent`) as the only argument. The return value is
+ignored.
 
-  ```typescript
-  interface WithAsyncHooks<T> extends ComponentManager<T> {
-    didCreate(instance: T): void;
-    didUpdate(instance: T): void;
-  }
-  ```
+These callbacks are called if and only if their synchronous APIs were invoked
+during rendering. For example, if `updateComponent` was called on during
+rendering (and it completed without errors), `didUpdateComponent` will always
+be called. Conversely, if `didUpdateComponent` is called, you can infer that
+the `updateComponent` was called on the same component instance during
+rendering.
 
-  These methods will be called with the *component instance* ("state bucket")
-  *after the rendering process is complete*. This would be the right time to
-  invoke any user callbacks, such as *didInsertElement* and *didRender* in the
-  classic components API.
+This API provides no guarentee about ordering with respect to siblings or
+parent-child relationships.
 
-  It is guaranteed that the async callbacks will the invoked if and only if the
-  synchronous APIs were invoked during rendering. For example, if *update* is
-  called on a *component instance* during rendering, it is guaranteed *didUpdate*
-  will be called. Conversely, if *didUpdate* is called, it is guaranteed that
-  that *component instance* was updated during rendering (per the semantics of
-  the *update* method described above).
+### Destructors
 
-  > **Open Question**: Should we provide ordering guarantee?
+When the `destructor` capability is set to `true`, the component manager is
+expected to implement an additional method: `destroyComponent`.
 
-* `destructor`
+`destroyComponent` will be called when the component is no longer needed. This
+is intended for performing object-model level cleanup.
 
-  When this feature is enabled, the `ComponentManager` should implement this
-  extended interface:
+Because this RFC does not provide ways to access or observe the component's DOM
+tree, the timing relative to DOM teardown is undefined (i.e. whether this is
+called before or after the component's DOM tree is removed from the document).
 
-  ```typescript
-  interface WithDestructor<T> extends ComponentManager<T> {
-    destroy(instance: T): void;
-  }
-  ```
+Therefore, this hook is not suitable for invoking user callbacks intended for
+performing DOM cleanup, such as `willDestroyElement` in the classic components
+API. We expect a subsequent RFC addressing DOM-related functionalities to
+clearify this issues or provide another specialized method for that purpose.
 
-  The *destroy* method will be called with the *component instance* ("state
-  bucket") when the component is no longer needed. This is intended for
-  performing object-model level cleanup. It might also be useful for niche
-  scenarios such as recycling *component instances* in the "component pool"
-  example mentioned above.
+Similar to the other async lifecycle callbacks, this API provides no guarentee
+about ordering with respect to siblings or parent-child relationships. Further,
+the exact timing of the calls are also undefined. For example, the calls from
+several render loops might be batched together and deferred into a browser idle
+callback.
 
-  Because this RFC does not provide ways access to the component DOM tree, the
-  timing relative to DOM teardown is undefined (i.e. whether this is called
-  before or after the component's DOM tree is removed from the document).
-  Therefore, this hook is **not** suitable for invoking DOM cleanup hooks such
-  as *willDestroyElement* in the classic components API. We expect a subsequent
-  RFC addressing DOM-related functionalities to clearify this issues (and
-  most-likely provide a specialized hook for that purpose).
+## Inspector Support
 
-  Further, the exact timing for the call is also undefined. For example, the
-  calls from several render loops might be batched together and deferred into a
-  browser idle callback.
+When the `inspectorSupport` capability is set to `true`, the component manager
+is expected to implement an additional method: `inspectComponent`.
 
-  > **Open Question**: Should we provide ordering guarantee?
+`destroyComponent` will be called when the component is no longer needed. This
+is intended for performing object-model level cleanup.
 
-* `viewSupport`
+Because this RFC does not provide ways to access or observe the component's DOM
+tree, the timing relative to DOM teardown is undefined (i.e. whether this is
+called before or after the component's DOM tree is removed from the document).
 
-  When this feature is enabled, the `ComponentManager` should implement this
-  extended interface:
+Therefore, this hook is not suitable for invoking user callbacks intended for
+performing DOM cleanup, such as `willDestroyElement` in the classic components
+API. We expect a subsequent RFC addressing DOM-related functionalities to
+clearify this issues or provide another specialized method for that purpose.
 
-  ```typescript
-  interface WithViewSupport<T> extends ComponentManager<T> {
-    getView(instance: T): Object;
-  }
-  ```
-
-  The *getView* method will be called with the *component instance* ("state
-  bucket") after the component has been created but before any children
-  components in its layout (or yielded blocks) are created. The manager should
-  return a view object corresponding to the *component instance* from this hook.
-  A lot of times, this will just be the *component instance* itself, but this
-  indirection allows you to hide (or intentionally expose) additional metadata.
-
-  Ember will install a GUID on the returned object using `Ember.guidFor` and
-  add the view to the view registry with the GUID. Currently, `Ember.guidFor`
-  adds an internal property on the object to store the GUID, therefore the view
-  cannot be frozen or sealed. This restriction might change in the future as
-  we move to a `WeakMap`-based internal implementation.
-
-  The view will also become visible to other components as a parent/child view.
-  If the parent view is an `Ember.Component`, it will see your component in its
-  *childViews* array. Similarly, when rendering other `Ember.Component` inside
-  your comoponent's layout (or yielded blocks), they will see your component as
-  their *parentView*.
-
-  > **Open Question**: Will this break existing code?
-
-  Note that these only applies to components that requests the *viewSupport*
-  capability. Components that do not have *viewSupport* enabled will essentially
-  be invisible in the Ember view hierarchy – they will not be added to the view
-  registry and the parent/child view tree will essentially "jump through" these
-  virtual views. At present, those components will also be invisible to debug
-  tools like the Ember Inspector, but subsequent RFCs may change that.
-
-  Components that are conceptually "advanced flow-control syntax", such as
-  LiquidFire's *liquid-if*, most likely want to remain "virtual". On the other
-  hand, general-purpose component toolkits probably want to participate in the
-  view hierarchy like `Ember.Component`s do.
+Similar to the other async lifecycle callbacks, this API provides no guarentee
+about ordering with respect to siblings or parent-child relationships. Further,
+the exact timing of the calls are also undefined. For example, the calls from
+several render loops might be batched together and deferred into a browser idle
+callback.
 
 # Examples
 
-> **Note**: For now, these examples side-steps the registration/resolution
-> problem (see the "Unresolved Questions" section) by specifying the outcome
-> of a particular container lookup (using the `type:name` convention) without
-> addressing *how* they get in there in the first place.
+## Basic Component Manager
 
-## Isolated Partials
+Here is the simpliest end-to-end component manager example that uses a plain
+`Ember.Object` super-class (as opposed to `Ember.Component`) with "Outer HTML"
+semantics:
 
-This example implements a very simple component API that acts more or less like
-a partial in Ember. However, unlike partials, it will only have access to named
-arguments that are explicitly passed in, instead of inheriting the caller's
-scope.
+```js
+// ember-basic-component/app/component-managers/basic.js
 
-Given the following `ComponentDefinition`s:
+import { capabilities } from '@ember/component';
+import EmberObject from '@ember/object';
 
-```javascript
-// component-definition:site-header
-{
-  name: "site-header",
-  layout: "site-header",
-  manager: "isolated-partials",
-  capabilities: capabilities("2.13")
-}
+export default EmberObject.extend({
+  capabilities: capabilities('3.2', {
+    destructor: true
+  }),
+
+  createComponent(factory, args) {
+    return factory.create(args.named);
+  },
+
+  getContext(component) {
+    return component;
+  },
+
+  updateComponent(component, args) {
+    component.setProperties(args.named);
+  },
+
+  destroyComponent(component) {
+    component.destroy();
+  }
+});
 ```
 
-```javascript
-// component-definition:site-footer
-{
-  name: "site-footer",
-  layout: "site-footer",
-  manager: "isolated-partials",
-  capabilities: capabilities("2.13")
-}
+```js
+// ember-basic-component/addon/index.js
+
+import EmberObject from '@ember/object';
+import { setComponentManager } from '@ember/component';
+
+export default setComponentManager(EmberObject.extend(), 'basic');
 ```
 
-```javascript
-// component-definition:contact-us
-{
-  name: "contact-us",
-  layout: "contact-us",
-  manager: "isolated-partials",
-  capabilities: capabilities("2.13")
-}
+### Usage
+
+```js
+// my-app/app/components/x-counter.js
+
+import BasicCompoment from 'ember-basic-component';
+
+export default BasicCompoment.extend({
+  init() {
+    this.count = 0;
+  },
+
+  down() {
+    this.decrementProperty('count');
+  },
+
+  up() {
+    this.incrementProperty('count');
+  }
+});
 ```
 
-...and the following templates:
+```hbs
+{{!-- my-app/app/templates/components/x-counter.hbs --}}
 
-```handlebars
-{{!-- app/templates/application.hbs --}}
-
-{{site-header}}
-
-{{outlet}}
-
-{{site-footer copyrightYear="2017" company=model}}
-```
-
-```handlebars
-{{!-- app/templates/components/site-header.hbs --}}
-
-<header>
-  <h1>Welcome</h1>
-</header>
-```
-
-```handlebars
-{{!-- app/templates/components/site-footer.hbs --}}
-
-<footer>
-  &copy; {{copyrightYear}} {{company.name}}.
-
-  {{contact-us tel=company.tel address=company.address}}
-</footer>
-```
-
-```handlebars
-{{!-- app/templates/components/contact-us.hbs --}}
-
-<div class"contact-us">
-  <h4>Contact Us</h4>
-  <a href="tel:{{tel}}">{{tel}}</a>
-  <address>{{address}}</address>
+<div>
+  <button {{action this.down}}>🔽</button>
+  {{this.count}}
+  <button {{action this.up}}>🔼</button>
 </div>
 ```
 
-...and the following component manager:
+## Template-only Components
 
-```javascript
-// component-manager:isolated-partials
+This example implements a kind of component similar to what was proposed in the
+[template-only components](https://github.com/emberjs/rfcs/blob/master/text/0278-template-only-components.md)
+RFC.
 
-class IsolatedPartialsManager extends ComponentManager<Object> {
-  create(_definition: ComponentDefinition, args: ComponentArguments) {
-    return { ...args.named };
+Since the custom components API proposed in this RFC requires a JavaScript
+files, we cannot implement true "template-only" components. We will need to
+create a component JS file to export a dummy value, for the sole purpose of
+indicating the component manager we want to use.
+
+In practice, there is no need for an addon to implement this API, since it is
+essentially re-implementing what the "template-only-glimmer-components"
+optional feature does. Nevertheless, this example is useful for illustrative
+purposes.
+
+```js
+// ember-template-only-component/app/component-managers/template-only.js
+
+import { capabilities } from '@ember/component';
+import EmberObject from '@ember/object';
+
+export default EmberObject.extend({
+  capabilities: capabilities('3.2'),
+
+  createComponent() {
+    return null
+  },
+
+  getContext() {
+    return null;
+  },
+
+  updateComponent() {
+    return;
   }
+});
+```
 
-  getContext(instance: Object): Object {
+```js
+// ember-template-only-component/addon/index.js
+
+import { setComponentManager } from '@ember/component';
+
+// Our `createComponent` method does not actually do anything with the factory,
+// so we don't even need to export a class here, `{}` would work just fine.
+export default setComponentManager({}, 'template-only');
+```
+
+### Usage
+
+```js
+// my-app/app/components/hello-world.js
+
+import TemplateOnlyComponent from 'ember-template-only-component';
+
+export default TemplateOnlyComponent;
+```
+
+```hbs
+Hello world! I have no backing class! {{this}} would be <code>null</code>.
+```
+
+## Recycling Components
+
+This example implements an API which maintain a pool of recycled component
+instances to avoid allocation costs, similar to Flex's "sustain" feature.
+
+This example also make use of the "state bucket" pattern.
+
+```js
+// ember-component-pool/app/component-managers/pooled.js
+
+import { capabilities } from '@ember/component';
+import EmberObject from '@ember/object';
+
+// How many instances to keep (per type/factory)
+const LIMIT = 10;
+
+export default EmberObject.extend({
+  capabilities: capabilities('3.2', {
+    destructor: true
+  }),
+
+  init() {
+    this.pool = new Map();
+  },
+
+  createComponent(factory, args) {
+    let instances = this.pool.get(factory);
+    let instance;
+
+    if (instances && instances.length > 0) {
+      instance = instances.pop();
+      instance.setProperties(args.named);
+    } else {
+      instance = factroy.create(args.named);
+    }
+
+    // We need to remember which factory does the instance belong to so we can
+    // check it back into the pool later.
+    return { factory, instance };
+  },
+
+  getContext({ instance }) {
     return instance;
-  }
+  },
 
-  update(instance: Object, args: ComponentArguments): void {
-    Object.assign(instance, args.named);
-  }
-}
-```
-
-...it would render something like this:
-
-```html
-<header>
-  <h1>Welcome</h1>
-</header>
-
-...
-
-<footer>
-  &copy; 2017 ACME Inc.
-
-  <div class"contact-us">
-    <h4>Contact Us</h4>
-    <a href="tel:1-800-ACME-INC">1-800-ACME-INC</a>
-    <address>100 Absolutely No Way, Portland, OR 98765</address>
-  </div>
-</footer>
-```
-
-This is probably most basic `ComponentManager` one could write. It essentially
-just returns named arguments as `{{this}}` context and renders the component's
-template. Nevertheless, it is a good example to understand the lifecycle of this
-API.
-
-## Pooled Components
-
-This next example is inspired by Flexi's sustain feature to maintain a pool of
-component instances.
-
-Given the following `ComponentDefinition`s:
-
-```javascript
-// component-definition:list-item
-{
-  name: "list-item",
-  layout: "list-item",
-  manager: "pooled",
-  capabilities: capabilities("2.13", {
-    destructor: true,
-    viewSupport: true
-  })
-}
-```
-
-...and the following templates:
-
-```handlebars
-{{!-- app/templates/application.hbs --}}
-
-{{#each key="id" as |item|}}
-  {{list-item item=item}}
-{{/each}}
-```
-
-```handlebars
-{{!-- app/templates/components/list-item.hbs --}}
-
-<li id="{{item.id}}">{{item.value}}</li>
-```
-
-...and the following component manager:
-
-```javascript
-// component-manager:pooled
-
-interface PoolEntry {
-  name: string;
-  instance: Ember.Component;
-  expiresAt: number;
-}
-
-class ComponentPool {
-  private pools = dict<PoolEntry>();
-
-  checkout(name: string): PoolEntry | null {
-    let pool = this.pools[name];
-
-    if (pool && pool.length) {
-      return pool.pop();
-    } else {
-      return null;
-    }
-  }
-
-  checkin(entry: PoolEntry) {
-    let { name } = entry;
-    let pool = this.pools[name];
-
-    if (!pool) {
-      pool = this.pools[name] = [];
-    }
-
-    entry.expiresAt = Date.now() + EXPIRATION;
-
-    pool.push(entry);
-  }
-
-  collect() {
-    let now = Date.now();
-
-    this.pools.forEach(pool => {
-      let i = 0;
-      let max = pool.length;
-
-      while (i < max) {
-        let entry = pool[i];
-
-        if (entry.expiresAt < now) {
-          entry.instance.destroy();
-          pool.splice(i, 1);
-          max--;
-        } else {
-          i++;
-        }
-      }
-    });
-  }
-}
-
-class PooledManager extends ComponentManager<PoolEntry> {
-
-  private pool = new ComponentPool();
-
-  create({ metadata }: ComponentDefinition, args: ComponentArguments) {
-    let name = metadata.class;
-    let entry = pool.checkout(name);
-    let instance, isRecycled;
-
-    if (entry) {
-      instance = entry.instance;
-      isRecycled = true;
-    } else {
-      instance = getOwner(this).lookup(`component:${name}`);
-      isRecycled = false;
-      entry = { name, instace, expiresAt: NaN };
-    }
-
+  updateComponent({ instance }, args) {
     instance.setProperties(args.named);
+  },
 
-    if (isRecycled) {
-      instance.didUpdateAttrs();
+  destroyComponent({ factory, instance }) {
+    let instances;
+
+    if (this.pool.has(factory)) {
+      instances = this.pool.get(factory);
     } else {
-      instance.didInitAttrs();
+      this.pool.set(factory, instances = []);
     }
 
-    instance.didReceiveAttrs();
+    if (instances.length >= LIMIT) {
+      instance.destroy();
+    } else {
+      // User hook to reset any state
+      instance.willRecycle();
+      instances.push(instance);
+    }
+  },
 
-    return entry;
-  }
+  // This is the `Ember.Object` lifecycle method, called when the component
+  // manager instance _itself_ is being destroyed, not to be confused with
+  // `destroyComponent`
+  willDestroy() {
+    for (let instances of this.pool.values()) {
+      instances.forEach(instance => instance.destroy());
+    }
 
-  getContext({ instance }: PoolEntry): Ember.Component {
-    return instance;
+    this.pool.clear();
   }
-
-  getView({ instance }): PoolEntry): Ember.Component {
-    return instance;
-  }
-
-  update({ instance }: PoolEntry, args: ComponentArguments): void {
-    instance.setProperties(args.named);
-    instance.didUpdateAttrs();
-    instance.didReceiveAttrs();
-  }
-
-  destroy(entry: PoolEntry) {
-    this.pool.checkin(entry);
-  }
-}
+});
 ```
 
-When a `{{list-entry}}` component is rendered, the manager first check if there
-are any recycled instances it could reuse. If not, it creates a new instance of
-that component as usual. Either way, it calls `Ember.setProperties` on the
-component instance to assign or update its properties based on the supplied
-*component arguments*.
+```js
+// ember-component-pool/addon/index.js
 
-When the component is no longer needed, instead of destroying the component, it
-checks it into a pool with an expiration timestamp. If another instance of
-`{{list-entry}}` is rendered before the expiration, the component instance will
-be reused, otherwise, it will eventually be destroyed through a scheduled GC task.
+import EmberObject from '@ember/object';
+import { setComponentManager } from '@ember/component';
 
-This examples shows how a custom component can request additional capability
-(`destructor` and `viewSupport` in this case). It also shows an example of the
-"state bucket" pattern – the component manager returns `entry.instance` as this
-`{{this}}` context, allowing it to hide the internal `expiresAt` timestamp. It
-also implements a subset of the `Ember.Component` hooks for *illustrative purpose*,
-although the semantics in this **low-fi** implementation does not exactly match
-the proper Ember semantics (**DO NOT** copy this code into an addon).
+function NOOP() {}
+
+export default setComponentManager(EmberObject.extend({
+  // Override this to implement reset any state on the instance
+  willRecycle(): NOOP,
+
+  // ...
+}), 'pooled');
+```
 
 # How We Teach This
 
 What is proposed in this RFC is a *low-level* primitive. We do not expect most
-users to interact with this layer directly. Instead, they are expected to go
-through additional conveniences provided by addon authors.
-
-For addon authors, we need to teach "components as an abstraction/encapsulation
-tool" as described above. For end users, we need to make sure using third-party
-component toolkits mostly "feels" like using the first-class component APIs.
+users to interact with this layer directly. Instead, most users will simply
+benefit from this feature by subclassing these special components provided by
+addons.
 
 At present, the classic components APIs is still the primary, recommended path
 for almost all use cases. This is the API that we should teach new users, so we
@@ -917,13 +949,12 @@ from the versioned documentation site.
 
 # Drawbacks
 
-In the long term, there is a possiblity that while we work on the new component
-API, the community will create a full fleet of competing third-party component
-toolkits, thereby fragmentating the Ember ecosystem. However, given the Ember
-community's love for conventions, this seems unlikely. We expect this to play
-out similar to the data-persistence story – there will be a primary way to do
-things (Ember Data), but there are also plenty of other alternatives catering
-to niche use cases that are underserved by Ember Data.
+In the long term, there is a risk of fragmentating the Ember ecosystem with
+many competing component APIs. However, given the Ember community's strong
+desire for conventions, this seems unlikely. We expect this to play out similar
+to the data-persistence story – there will be a primary way to do things (Ember
+Data), but there are also plenty of other alternatives catering to niche use
+cases that are underserved by Ember Data.
 
 Also, because apps can mix and match component styles, it's possible for a
 library like smoke-and-mirrors or Liquid Fire to take advantage of the
@@ -936,128 +967,9 @@ Instead of focusing on exposing enough low-level primitives to build the new
 components API, we could just focus on building out the user-facing APIs
 without rationalizing or exposing the underlying primitives.
 
-# Unresolved Questions
+# Appendix
 
-There are a few minor inline open questions throughout the RFC. However, at
-least two of them are worth repeating here.
-
-1. `ComponentDefinition` registration and resolution
-
-   There are (at least) two distinct use cases for the APIs proposed in this
-   RFC.
-
-   The first use case is for addons like LiquidFire and Flexi to implement
-   advanced "helpers" more efficiently and tap into low-level features that are
-   not exposed in the classic components API.
-
-   For this use case, since there are only a small and finite amount of these
-   helpers in each addon and that addon authors are relatively advanced users,
-   the registration of these components does not have to be very egonormic.
-
-   For example, we could allow addon authors to supply component definitions in
-   `/{app,addon}/component-definitions/foo-bar.js` and component managers in
-   `/{app,addon}/component-managers/my-manager.js`.
-
-   > **Note**: we might need to restrict the definition files to "universal
-   JavaScript" and disallow importing arbitrary files, see the build-time
-   compilation discussion below.
-
-   The second use case is to allow addons to develop an alternative component
-   API for their users to extend and build on – a component SDK if you will.
-   This would allow, among other things, the Ember core team to develop and
-   iterate on the new components API ("angle bracket components") as an addon.
-
-   Since this use case is targeting regular Ember users, and creating new
-   components is a relatively common part of the day-to-day development
-   workflow, the egonormics issue is much more important. Addons that chose to
-   go down this route should be able to provide a developer experience similar
-   to using classic components today. For instance, it would be unacceptable
-   if developers have to create an `app/component-definitions/foo-bar.js` file
-   for every custom component they create in addition to the template/JS file.
-
-   One solution to this problem is to run introspection on the component's JS
-   file. For example, we can require the exported value (usually the component
-   class) from `app/components/foo-bar.js` to contain a *definition* static
-   property that points to the component definition for that component.
-
-   This solution has two major issues.
-
-   First, one of the goals for the modules unification effort is to enable
-   build-time template compilation. Currently, Glimmer does a lot of runtime
-   triage due to syntatic ambiguities such as `{{foo-bar}}`, which could
-   resolve into either a helper invocation, a component invocation or a
-   property lookup depending on what is registered in the application. (In the
-   future, `<foo-bar>` would have a similar issue since it could either be a
-   component invocation or just a regular custom element/web component.)
-
-   One of the side goals/hopes with modules unification effort is to move more
-   of these compilation to build time by supplying a "build-time resolver" to
-   answer these questions for the Glimmer compiler. For that to work, the
-   "build-time resolver" would have to rely mostly on static information, such
-   as file system entries, because most Ember application files would not load
-   successfully without a full browser environment. (In general, to evaluate an
-   app file while *in the middle of* compiling the app poses many challenges –
-   in a lot of cases it is simply impossible.)
-
-   By introducing custom components, the Glimmer compiler would need access to
-   the component definitions (specifically, the capabilities mask) in order to
-   emit the right compilation for the component. Therefore, if the only way to
-   access the component definition is to evaluate the component JS file, that
-   would pretty much make build-time compilation impossible.
-
-   More importantly, the second issue with this approach is that because we are
-   planning to move the component's tag into the template (as opposed to having
-   *tagName*, *attributeBindings* and friends on the component class – see the
-   previous angle bracket components RFCs), we expect template-only components
-   (i.e. components without a JS file) to be relatively common. Therefore, in a
-   lot of cases, there won't even be a JS class to stash the definition on to,
-   making this solution a non-starter.
-
-   Naturally, the solution seems to be that we should attach this information
-   to the templates rather than the JS files. There are two proposals for this
-   so far. The first proposal is to put this information in the filenames. For
-   example, `foo-bar.glimmer.hbs` or `foo-bar.lite.hbs`. The second proposal is
-   to put this infomration inside the body of the template as a "pragma", such
-   as `{{!use glimmer}}`, `{{!use lite}}` (insert syntax bikeshed here). In
-   both cases, addons can register a factory for the component definitions
-   based on a string key ("glimmer" and "lite" in the examples).
-
-2. Interactions with component helpers
-
-   It is unclear how custom components should interact with the component
-   helper feature.
-
-   While there are indeed a lot of open questions on how this feature should
-   work with angle bracket invocations, since this RFC does not introduce angle
-   bracket invocation syntax, those questions can be deferred until a future
-   RFC comes along to introduce that capability.
-
-   However, while the `{{component}}` helper is implemented natively in Glimmer
-   and should have no problem handling custom components (since all components
-   are "custom" from Glimmer's perspective), it is unclear how it should work
-   with the "closure" `(component)` helper.
-
-   Currently, the "closure component" feature is not implemented natively in
-   Glimmer. Instead, Glimmer currently exposes some low-level hooks to Ember's
-   classic components manager, which allows it to implement its "closure"
-   semantics. These hooks are unstable and might go away in future refactors.
-
-   In the long run, we would like to implement this feature natively in Glimmer
-   so that it would "just work" with custom components. However, the current
-   "closure" semantics (specifically the ways it handles arguments currying) in
-   Ember is quite specific to the classic components API and are somewhat
-   counter-intuitive in some cases (the jury is still out, these issues might
-   simply be mistakes in the current implementation).
-
-   It seems unlikely that these issues would be resolved in the timeframe of
-   this RFC (at minimum, it seems unwise to couple the two). Therefore, there
-   are a few options here – 1) we can disallow using component helpers with
-   custom components altogether for the MVP and relax that restriction in the
-   future; 2) we can allow only `{{component}}` helper but not `(component)`;
-   3) we can allow both `{{component}}` and `(component)`, *however*, we will
-   disallow passing extra arguments to the `(component)` helper.
-
-# Follow-up RFCs
+## Follow-up RFCs
 
 We expect a few follow-up RFCs to introduce additional capabilities that are
 not included in this minimal proposal. These RFCs can run either in parallel
@@ -1071,11 +983,154 @@ tested in the wild.
 2. Expose a way to get access to the [reference][1]-based APIs. This could
    include the ability to customize the component's "tag" ([validator][2]).
 
-   [1]: https://github.com/tildeio/glimmer/blob/master/guides/04-references.md
-   [2]: https://github.com/tildeio/glimmer/blob/master/guides/05-validators.md
+   [1]: https://github.com/glimmerjs/glimmer-vm/blob/master/guides/04-references.md
+   [2]: https://github.com/glimmerjs/glimmer-vm/blob/master/guides/05-validators.md
 
 3. Expose additional features that are used to implement classic components,
    `{{outlet}}` and other built-in components, such as layout customizations,
    and dynamic scope access.
 
-4. Allow angle bracket invocation.
+4. Angle bracket invocation.
+
+## Using ES6 Classes
+
+Although this RFC uses `Ember.Object` in the examples, it is not a "hard"
+dependency.
+
+### Using ES6 Classes For Components
+
+The main interaction between the Ember object model and the component class
+is through the DI system. Specifically, the factory function returned by
+`factoryFor` (`factoryFor('component:foo-bar').create(...)`), which is passed
+to the `createComponent` method on the component manager, assumes a static
+`create` method on the class that takes the "property bag" and returns the
+created instance.
+
+Therefore, as long as your ES6 super-class provides such a function, it will
+work with the rest of the system:
+
+```js
+// ember-basic-component/addon/index.js
+
+import { setComponentManager } from '@ember/component';
+
+class BasicComponent {
+  static create(props) {
+    return new this(props);
+  }
+
+  constructor(props) {
+    // Do things with props, such as:
+    Object.assign(this, props);
+  }
+
+  // ...
+}
+
+export default setComponentManager(BasicComponent, 'basic');
+```
+
+```js
+// ember-basic-component/app/component-managers/basic.js
+
+import { capabilities } from '@ember/component';
+import EmberObject from '@ember/object';
+
+export default EmberObject.extend({
+  capabilities: capabilities('3.2'),
+
+  createComponent(factory, args) {
+    // This Just Works™ since we have a static create method on the class
+    return factory.create(args.named);
+  },
+
+  // ...
+});
+```
+
+```js
+// my-app/app/components/foo-bar.js
+
+import BasicCompoment from 'ember-basic-component';
+
+export default class extends BasicCompoment {
+  // ...
+};
+```
+
+Alternatively, if you prefer not to add a static create method to your
+super-class, you can also instantiate them in the component manager without
+going through the DI system:
+
+```js
+// ember-basic-component/app/component-managers/basic.js
+
+import { capabilities } from '@ember/component';
+import EmberObject from '@ember/object';
+
+export default EmberObject.extend({
+  capabilities: capabilities('3.2'),
+
+  createComponent(factory, args) {
+    // This does not use the factory function, thus no longer require a static
+    // create method on the class
+    return new factory.class(args.named);
+  },
+
+  // ...
+});
+```
+
+However, doing do will prevent your components from receiving injections (as
+well as setting the appropiate owner, etc). Therefore, when possible, it is
+better to go through the DI system's factory function.
+
+### Using ES6 Classes For Component Managers
+
+It is also possible to use ES6 classes for the component managers themselves.
+The main interaction here is that they are automatically instantiated by the DI
+system on-demand, which again assumes a static `create` method:
+
+```js
+// ember-basic-component/app/component-managers/basic.js
+
+import { capabilities } from '@ember/component';
+
+export default class BasicComponentManager {
+  static create(props) {
+    return new this(props);
+  }
+
+  constructor(props) {
+    // Do things with props, such as:
+    Object.assign(this, props);
+  }
+
+  capabilities = capabilities('3.2');
+
+  // ...
+};
+```
+
+Alternatively, as shown above, you can also register the component manager
+with `{ instantiate: false }`:
+
+```js
+// ember-basic-component/app/initializers/register-basic-component-manager.js
+
+import BasicComponentManager from 'ember-basic-component';
+
+export function initialize(application) {
+  application.register('component-manager:basic', new BasicComponentManager(), { instantiate: false });
+}
+
+export default {
+  name: 'register-basic-component-manager',
+  initialize
+};
+```
+
+Note that this behaves a bit differently as the component manager instance is
+shared across all application instances and is never destroyed, which might
+affect stateful component managers such as the one shown in the "Recycling
+Components" example above.
