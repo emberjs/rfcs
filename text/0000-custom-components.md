@@ -669,29 +669,6 @@ the exact timing of the calls are also undefined. For example, the calls from
 several render loops might be batched together and deferred into a browser idle
 callback.
 
-## Inspector Support
-
-When the `inspectorSupport` capability is set to `true`, the component manager
-is expected to implement an additional method: `inspectComponent`.
-
-`destroyComponent` will be called when the component is no longer needed. This
-is intended for performing object-model level cleanup.
-
-Because this RFC does not provide ways to access or observe the component's DOM
-tree, the timing relative to DOM teardown is undefined (i.e. whether this is
-called before or after the component's DOM tree is removed from the document).
-
-Therefore, this hook is not suitable for invoking user callbacks intended for
-performing DOM cleanup, such as `willDestroyElement` in the classic components
-API. We expect a subsequent RFC addressing DOM-related functionalities to
-clearify this issues or provide another specialized method for that purpose.
-
-Similar to the other async lifecycle callbacks, this API provides no guarentee
-about ordering with respect to siblings or parent-child relationships. Further,
-the exact timing of the calls are also undefined. For example, the calls from
-several render loops might be batched together and deferred into a browser idle
-callback.
-
 # Examples
 
 ## Basic Component Manager
