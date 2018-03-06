@@ -18,11 +18,11 @@ These classes have not been used in Ember itself for a while now. They have alwa
 
 # Transition Path
 
-`Ember.Map` and `Ember.MapWithDefault` will be deprecated and not extracted. There is already an addon with `Ember.OrderedSet` extracted ([@ember/ordered-set](https://github.com/emberjs/ember-ordered-set)).
+`Ember.Map` and `Ember.MapWithDefault` will be deprecated and not extracted, but not before the fix mentioned in the following paragraph is landed in Ember Data. There is already an addon with `Ember.OrderedSet` extracted ([@ember/ordered-set](https://github.com/emberjs/ember-ordered-set)).
 
 Ember Data is quite likely the biggest project using these classes. There is already a PR that needs merging before deprecating `Ember.Map` and `Ember.MapWithDefault` https://github.com/emberjs/data/pull/5255. Ember Data still needs to migrate to `@ember/ordered-set` to its relationship logic.
 
-Finally, these classes can be deprecated in Ember itself.
+Once Ember Data is updated to not use the classes from Ember, and that fix is released, the `Ember.Map` and `Ember.MapWithDefault` can be deprecated in Ember itself.
 
 # How We Teach This
 
