@@ -866,7 +866,7 @@ Hello world! I have no backing class! {{this}} would be <code>null</code>.
 ## Recycling Components
 
 This example implements an API which maintain a pool of recycled component
-instances to avoid allocation costs, similar to [flexi-sustain](https://github.com/html-next/flexi-sustain).
+instances to avoid allocation costs.
 
 This example also make use of the "state bucket" pattern.
 
