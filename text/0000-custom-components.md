@@ -1,6 +1,6 @@
 - Start Date: 2017-03-13
-- RFC PR: (leave this empty)
-- Ember Issue: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/213
+- Ember Issue: https://github.com/emberjs/ember.js/issues/16301
 
 # Summary
 
@@ -8,15 +8,15 @@ This RFC aims to expose a _low-level primitive_ for defining _custom
 components_.
 
 This API will allow addon authors to provide special-purpose component base
-classes that their users can subclass from in the apps. These components are
+classes that their users can subclass from in apps. These components are
 invokable in templates just like any other Ember components (decendents of
 `Ember.Component`) today.
 
 # Motivation
 
-The ability to author reusable, composable components is a core features of
+The ability to author reusable, composable components is a core feature of
 Ember.js. Despite being a [last-minute addition](http://emberjs.com/blog/2013/06/23/ember-1-0-rc6.html)
-to Ember 1.0, the `Ember.Component` API and programming mode has proven itself
+to Ember 1.0, the `Ember.Component` API and programming model has proven itself
 to be an extremely versatile tool and has aged well over time into the primary
 unit of composition in Ember's view layer.
 
@@ -87,8 +87,7 @@ objects (i.e. `{ singleton: true, instantiate: true }`), meaning that Ember
 will create and maintain (at most) one instance of each unique component
 manager for every application instance.
 
-To register a component manager, an addon will typically put it inside its
-`app` tree:
+To register a component manager, an addon will put it inside its `app` tree:
 
 ```js
 // ember-basic-component/app/component-managers/basic.js
@@ -99,6 +98,10 @@ export default EmberObject.extend({
   // ...
 });
 ```
+
+(Typically, the convention is for addons to define classes like this in its
+`addon` tree and then re-export them from the `app` tree. For brevity, we will
+just inline them in the `app` tree directly for the examples in this RFC.)
 
 This allows the component manager to participate in the DI system – receiving
 injections, using services, etc. Alternatively, component managers can also
@@ -146,29 +149,13 @@ class:
 import EmberObject from '@ember/object';
 import { setComponentManager } from '@ember/component';
 
-const MyComponent = EmberObject.extend({
+export default setComponentManager('awesome', EmberObject.extend({
   // ...
-});
-
-setComponentManager(MyComponent, 'awesome');
-
-export default MyComponent;
+}));
 ```
 
 This tells Ember to use the `awesome` manager (`component-manager:awesome`) for
-the `foo-bar` component. Since the `setComponentManager` function also returns
-the class, this can also be simplified as:
-
-```js
-// my-app/app/components/foo-bar.js
-
-import EmberObject from '@ember/object';
-import { setComponentManager } from '@ember/component';
-
-export default setComponentManager(EmberObject.extend({
-  // ...
-}), 'awesome');
-```
+the `foo-bar` component. `setComponentManager` function returns the class.
 
 In the future, this function can also be invoked as a decorator:
 
@@ -178,16 +165,15 @@ In the future, this function can also be invoked as a decorator:
 import EmberObject from '@ember/object';
 import { componentManager } from '@ember/component';
 
-@componentManager('awesome')
-export default EmberObject.extend({
+export default @componentManager('awesome') EmberObject.extend({
   // ...
 });
 ```
 
-In reality, app developer would never have to write this in their apps, since
-the component manager would already be assigned on a super-class provided by
-the framework or an addon. The `setComponentManager` function is essentially a
-low-level API designed for addon authors and not intended to be used by app
+In reality, an app developer would never have to write this in their apps,
+since the component manager would already be assigned on a super-class provided
+by the framework or an addon. The `setComponentManager` function is essentially
+a low-level API designed for addon authors and not intended to be used by app
 developers.
 
 For example, the `Ember.Component` class would have the `classic` component
@@ -212,10 +198,9 @@ Similarly, an addon can provided the following super-class:
 import EmberObject from '@ember/object';
 import { componentManager } from '@ember/component';
 
-@componentManager('basic')
-export default EmberObject.extend({
+export default setComponentManager('basic', EmberObject.extend({
   // ...
-});
+}));
 ```
 
 With this, app developers can simply inherit from this in their app:
@@ -223,9 +208,9 @@ With this, app developers can simply inherit from this in their app:
 ```js
 // my-app/app/components/foo-bar.js
 
-import TurboComponent from 'ember-basic-component';
+import BasicComponent from 'ember-basic-component';
 
-export default TurboComponent.extend({
+export default BasicComponent.extend({
   // ...
 });
 ```
@@ -457,7 +442,7 @@ Imagine if `post.title` changed from `fOo BaR` to `FoO bAr`. Since the value
 is passed through the `uppercase` helper, the component will see `FOO BAR` in
 both cases.
 
-Generally speaking, Ember does not provide any guarentee on how it determine
+Generally speaking, Ember does not provide any guarentee on how it determines
 whether components need to be re-rendered, and the semantics may vary between
 releases – i.e. this method may be called more or less often as the internals
 changes. The _only_ guarentee is that if something _has_ changed, this method
@@ -468,6 +453,27 @@ component when there are actual changes, the manager is responsible for doing
 the extra book-keeping.
 
 For example:
+
+```js
+// ember-basic-component/index.js
+
+import EmberObject from '@ember/object';
+import { setComponentManager } from '@ember/component';
+
+function NOOP() {}
+
+export default setComponentManager('basic', EmberObject.extend({
+  // Users of BasicComponent can override this hook to be notified when an
+  // argument will change
+  argumentWillChange: NOOP,
+
+  // Users of BasicComponent can override this hook to be notified when an
+  // argument will change
+  argumentDidChange: NOOP,
+
+  // ...
+}));
+```
 
 ```js
 // ember-basic-component/app/component-managers/basic.js
@@ -496,7 +502,7 @@ export default EmberObject.extend({
     // generally assume that they have exactly the same keys. However, future
     // additions such as "splat arguments" in the template layer might change
     // that assumption.
-    for (let key of Object.keys(oldArgs)) {
+    for (let key in oldArgs) {
       let oldValue = oldArgs[key];
       let newValue = newArgs[key];
 
@@ -524,7 +530,14 @@ template to reflect any changes.
 ## Capabilities
 
 In addition to the methods specified above, component managers are required to
-have a `capabilities` property:
+have a `capabilities` property.  This property must be set to the result of
+calling the `capabilities` function provided by Ember.
+
+### Versioning
+
+The first, mandatory, argument to the `capabilities` function is the component
+manager API, which is denoted in the `${major}.${minor}` format, matching the
+minimum Ember version this manager is targeting. For example:
 
 ```js
 // ember-basic-component/app/component-managers/basic.js
@@ -549,23 +562,16 @@ export default EmberObject.extend({
 });
 ```
 
-This property must be set to the result of calling the `capabilities` function
-provided by Ember.
-
-The first, mandatory, argument to the `capabilities` function is the component
-manager API, which is denoted in the `${major}.${minor}` format, matching the
-minimum Ember version this manager is targeting.
-
 This allows Ember to introduce new capabilities and make improvements to this
 API without breaking existing code.
 
 Here is a hypothical scenario for such a change:
 
 1. Ember 3.2 implemented and shipped the component manager API as described in
-   this API.
+   this RFC.
 
-2. The `ember-basic-component` addon releases its first version with the
-   component manager shown above (notably, it declared `capabilities('3.2')`).
+2. The `ember-basic-component` addon released version 1.0 with the component
+   manager shown above (notably, it declared `capabilities('3.2')`).
 
 3. In Ember 3.5, we determined that constructing the arguments object passed to
    the hooks is a major performance bottleneck, and changes the API to pass a
@@ -579,13 +585,60 @@ Here is a hypothical scenario for such a change:
 4. The `ember-basic-component` addon author would like to take advantage of
    this performance optimization, so it updates its component manager code to
    work with the arguments proxy and changes its capabilities declaration to
-   `capabilities('3.5')` in a major release.
+   `capabilities('3.5')` in version 2.0.
 
-This system allows us to rapidly improve the API and take advantage of the
-underlying rendering engine featuers as soon as they become available.
+This system allows us to rapidly improve the API and take advantage of
+underlying rendering engine features as soon as they become available.
 
-The second, optional, argument to the `capabilities` is an object enumerating
-the optional features requested by the component manager.
+Note that addon authors are not _required_ to update to the newer API.
+Concretely, component manager APIs have the following support policy:
+
+* API versions will continue to be supported in the same major release of
+  Ember. As shown in the example above, `ember-basic-component` 1.0 (which
+  targets component manager API version 3.2), will continue to work on
+  Ember 3.5. However, the reverse is not true – component manager API version
+  3.5 will (somewhat obviously) not work in Ember 3.2.
+
+* In addition, to ensure a smooth transition path for addon authors and app
+  developers across major releases, each Ember version will support (at least)
+  the previous LTS version as of the release was made. For example, if 3.16 is
+  the last LTS release of the 3.x series, the component manager API version
+  3.16 will be supported by Ember 4.0 through 4.4, at minimum.
+
+Addon authors can also choose to target multiple versions of the component
+manager API using [ember-compatibility-helpers](https://github.com/pzuraq/ember-compatibility-helpers/):
+
+```js
+// ember-basic-component/app/component-managers/basic.js
+
+import { gte } from 'ember-compatibility-helpers';
+
+let ComponentManager;
+
+if (gte('3.5')) {
+  ComponentManager = EmberObject.extend({
+    capabilities: capabilities('3.5'),
+
+    // ...
+  });
+} else {
+  ComponentManager = EmberObject.extend({
+    capabilities: capabilities('3.2'),
+
+    // ...
+  });
+}
+
+export default ComponentManager;
+```
+
+Since the conditionals are resolved at build time, the irrevelant code will be
+stripped from production builds, avoiding any deprecation warnings.
+
+### Optional Features
+
+The second, optional, argument to the `capabilities` function is an object
+enumerating the optional features requested by the component manager.
 
 In the hypothical example above, while the "reified" arguments objects may be
 a little slower, they are certainly easier to work with, and the performance
@@ -661,7 +714,7 @@ called before or after the component's DOM tree is removed from the document).
 Therefore, this hook is not suitable for invoking user callbacks intended for
 performing DOM cleanup, such as `willDestroyElement` in the classic components
 API. We expect a subsequent RFC addressing DOM-related functionalities to
-clearify this issues or provide another specialized method for that purpose.
+clarify this issues or provide another specialized method for that purpose.
 
 Similar to the other async lifecycle callbacks, this API provides no guarentee
 about ordering with respect to siblings or parent-child relationships. Further,
@@ -712,7 +765,7 @@ export default EmberObject.extend({
 import EmberObject from '@ember/object';
 import { setComponentManager } from '@ember/component';
 
-export default setComponentManager(EmberObject.extend(), 'basic');
+export default setComponentManager('basic', EmberObject.extend());
 ```
 
 ### Usage
@@ -793,7 +846,7 @@ import { setComponentManager } from '@ember/component';
 
 // Our `createComponent` method does not actually do anything with the factory,
 // so we don't even need to export a class here, `{}` would work just fine.
-export default setComponentManager({}, 'template-only');
+export default setComponentManager('template-only', {});
 ```
 
 ### Usage
@@ -813,7 +866,7 @@ Hello world! I have no backing class! {{this}} would be <code>null</code>.
 ## Recycling Components
 
 This example implements an API which maintain a pool of recycled component
-instances to avoid allocation costs, similar to Flex's "sustain" feature.
+instances to avoid allocation costs, similar to [flexi-sustain](https://github.com/html-next/flexi-sustain).
 
 This example also make use of the "state bucket" pattern.
 
@@ -898,12 +951,12 @@ import { setComponentManager } from '@ember/component';
 
 function NOOP() {}
 
-export default setComponentManager(EmberObject.extend({
+export default setComponentManager('pooled', EmberObject.extend({
   // Override this to implement reset any state on the instance
   willRecycle(): NOOP,
 
   // ...
-}), 'pooled');
+}));
 ```
 
 # How We Teach This
@@ -919,10 +972,10 @@ do not expect the guides need to be updated for this feature (at least not the
 components section).
 
 For documentation purposes, each Ember.js release will only document the latest
-component manager API. The documentation will also include the steps needed to
-upgrade, as well as a list of new capabilities added since the last version.
-Documentation for a specific version of the component manager API can be viewed
-from the versioned documentation site.
+component manager API, along with the available optional capabilities for that
+realease. The documentation will also include the steps needed to upgrade from
+the previous version. Documentation for a specific version of the component
+manager API can be viewed from the versioned documentation site.
 
 # Drawbacks
 
@@ -948,17 +1001,17 @@ without rationalizing or exposing the underlying primitives.
 
 ## Follow-up RFCs
 
-We expect a few follow-up RFCs to introduce additional capabilities that are
-not included in this minimal proposal. These RFCs can run either in parallel
-to this RFC or be submitted after this initial RFC has been implemented and
-tested in the wild.
+We expect to rapidly iterate and improve the component manager API through the
+RFC process and in-the-field usage/implementation experience. Here are a few
+examples of additional capabilities that we hope to see proposed after this
+initial (and intentionally minimal) proposal is finalized:
 
-1. Expose a way to get access to the component's DOM structure, such as its
-   element and bounds. This RFC would also need to introduce a hook for DOM
-   teardown and address how event handling/delegation would work.
+1. Expose a way to access to the component's DOM structure, such as its bounds.
+   This RFC would also need to introduce a hook for DOM teardown and address
+   how event handling/delegation would work.
 
-2. Expose a way to get access to the [reference][1]-based APIs. This could
-   include the ability to customize the component's "tag" ([validator][2]).
+2. Expose a way to access to the [reference][1]-based APIs. This could include
+   the ability to customize the component's "tag" ([validator][2]).
 
    [1]: https://github.com/glimmerjs/glimmer-vm/blob/master/guides/04-references.md
    [2]: https://github.com/glimmerjs/glimmer-vm/blob/master/guides/05-validators.md
@@ -1004,7 +1057,7 @@ class BasicComponent {
   // ...
 }
 
-export default setComponentManager(BasicComponent, 'basic');
+export default setComponentManager('basic', BasicComponent);
 ```
 
 ```js
