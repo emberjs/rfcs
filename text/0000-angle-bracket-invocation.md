@@ -47,7 +47,7 @@ Still, separate from other programming model improvements, there is still a
 strong desire from the Ember community for the previously proposed angle
 bracket invocation syntax.
 
-The main advantage of the angle bracket syntax is clearity. Because component
+The main advantage of the angle bracket syntax is clarity. Because component
 invocation are often encapsulating important pieces of UI, a dedicated syntax
 would help visually distinguish them from other handlebars constructs, such as
 control flow and dynamic values. This can be seen in the example shown above –
@@ -87,7 +87,7 @@ at build time, thus requiring a lot of extra runtime code to support the
 "fallback" scenario.
 
 In conclusion, the ideal syntax should be similar to HTML syntax so it doesn't
-feel out of place, but differet enough that developers and the compiler can
+feel out of place, but different enough that developers and the compiler can
 easier tell that they are not just regular HTML elements at a glance.
 
 ## Detailed design
@@ -96,10 +96,10 @@ easier tell that they are not just regular HTML elements at a glance.
 
 The first part of the angle bracket invocation syntax is the tag name. While
 web components use the "dash rule" to distinguish from regular HTML elements,
-we propose to use captial letters to distinguish Ember components from regular
+we propose to use capital letters to distinguish Ember components from regular
 HTML elements and web components.
 
-The invocation `<FooBar />` is equivilant to `{{foo-bar}}`. The tag name will
+The invocation `<FooBar />` is equivalent to `{{foo-bar}}`. The tag name will
 be normalized using the `dasherize` function, which is the same rules used by
 existing use cases, such as service injections. This allows existing components
 to be invoked by the new syntax.
@@ -140,7 +140,7 @@ Positional arguments (`{{foo-bar "first" "second"}}`) are not supported.
 HTML attributes can be passed to the component using the regular HTML syntax.
 For example, `<FooBar class="btn btn-large" role="button" />`. HTML attributes
 can be interleaved with named arguments (it does not make any difference). This
-is a new feature that is not avaialble in the classic invocation style.
+is a new feature that is not available in the classic invocation style.
 
 These attributes can be accessed from the component template with the new
 `...attributes` syntax, which is available only in element positions, e.g.
@@ -164,7 +164,7 @@ a dedicated syntax is needed.
 ### Block
 
 A block can be passed to the invokee using the angle bracket invocation syntax.
-For example, the invocation `<FooBar>some content</FooBar>` is equivilant to
+For example, the invocation `<FooBar>some content</FooBar>` is equivalent to
 `{{#foo-bar}}some content{{/foo-bar}}`. As with the classic invocation style,
 this block will be accessible using the `{{yield}}` keyword, or the `@main`
 named argument per the [named blocks RFC](https://github.com/emberjs/rfcs/blob/master/text/0226-named-blocks.md).
@@ -182,9 +182,9 @@ tag exactly. If no block is passed, the self-closing tag syntax `<FooBar />`
 can also be used.
 
 > Open Question: What should `{{has-block}}` return for components invoked with
-> the self-closing tag? On one hand, returning true would be quite conter-
-> intuitive; on the other hand, returing false would mean self-closing tags and
-> not semantically equivilant to an immediately closed tag.
+> the self-closing tag? On one hand, returning true would be quite counter-
+> intuitive; on the other hand, returning false would mean self-closing tags and
+> not semantically equivalent to an immediately closed tag.
 
 ### Dynamic Invocations
 
@@ -252,7 +252,7 @@ Because angle bracket invocation is designed for the future in mind, allowing
 angle bracket invocations on classic components might introduce some temporary
 incoherence (such as the interaction between the attributes passing feature and
 the "inner HTML" semantics). However, in our opinion, the upside of allowing
-incremental migration outweights the cons.
+incremental migration outweighs the cons.
 
 ## Alternatives
 
