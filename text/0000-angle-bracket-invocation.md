@@ -104,7 +104,7 @@ be normalized using the `dasherize` function, which is the same rules used by
 existing use cases, such as service injections. This allows existing components
 to be invoked by the new syntax.
 
-Another benefit of the captial letter rule is that we can now support component
+Another benefit of the capital letter rule is that we can now support component
 names with a single word, such as `<Button>`, `<Modal>` and `<Tab>`.
 
 > Note: Some day, we may want to explore a file system migration to remove the
@@ -183,7 +183,7 @@ can also be used.
 
 > Open Question: What should `{{has-block}}` return for components invoked with
 > the self-closing tag? On one hand, returning true would be quite counter-
-> intuitive; on the other hand, returning false would mean self-closing tags and
+> intuitive; on the other hand, returning false would mean self-closing tags are
 > not semantically equivalent to an immediately closed tag.
 
 ### Dynamic Invocations
@@ -231,7 +231,7 @@ The following example will be a syntax error:
 
 > Note: The [named blocks RFC](https://github.com/emberjs/rfcs/blob/master/text/0226-named-blocks.md)
 > proposed to use the `<@foo>...</@foo>` syntax on the invocation side to mean
-> proivding a block named `@foo`. This will create a conflict with this RFC.
+> providing a block named `@foo`. This will create a conflict with this RFC.
 > Since the named blocks RFC has not been implemented yet, we propose to change
 > that syntax to avoid the conflict, for example, `<@foo=>...</@foo>` or
 > `<Block @foo>...</Block>`.
