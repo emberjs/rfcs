@@ -66,20 +66,73 @@ This proposal:
 - brings clarity and [addresses confusion](#appendix-a) as how to set a property on an element
 - enables the usage of [custom elements](https://custom-elements-everywhere.com/)
 - fixes HTML serialization issues for server-side rendering
-- removes the need for `TextSupport` mixin for supporting input events
-- removes the need for `{{textarea}}` and `{{input}}`
 
 ## Detailed design
 
-To move to this more explicit syntax in a backwards compatable we will convert well-known properties to use the `{{prop}}` and `{{on}}` modifiers via a codemod and retain the runtime setting rules for `attributeBindings`.
+To move to this more explicit syntax in a backwards compatible we will convert well-known properties to use the `{{prop}}` and `{{on}}` modifiers via a codemod and retain the runtime setting rules for `attributeBindings`.
 
 ### Transforming Through Codemod
-Due to the declarative nature of HTML we are able to see exactly which attributes are being set on which elements. This allows us to understand where we need to set properties and where we can safely rely on setting attributes. Using the list of [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes) and [WAI-ARIA attributes](https://www.w3.org/TR/wai-aria-1.1/) we can then determine which attributes in templates need to be converted to use either `{{prop}}` or `{{on}}`.
+Due to the declarative nature of HTML we are able to see exactly which attributes are being set on which elements. This allows us to understand where we need to set properties and where we can safely rely on setting attributes. Using the list of [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes) and [WAI-ARIA attributes](https://www.w3.org/TR/wai-aria-1.1/) we can then determine which attributes in templates need to be converted to use either `{{prop}}` or `{{on}}`. We will create a "best effort" codemod to transform all of these cases by default.
 
 ### Runtime Rules
 With Ember Components we have the notion of `attributeBindings` to set attributes on the wrapping element as defined by the `tagName` on the component class. For this case we will continue to use the setting rules we have today. Notably, [Glimmer Components](https://glimmerjs.com/guides/templates-and-helpers) have adopted the "Outer HTML" semantics long ago and the experience has been very positive. This means that when Glimmer Components become available in Ember they would be covered by the codemod as described above.
 
-Furthermore, we would deprecate the usage of `{{textarea}}`, `{{input}}`, and the `TextSupportMixin`. This will require a deprecation guide for showing developers how to convert to use these new primitives.
+### `{{prop}}` Static Semantics
+
+- {{__prop__ _HashPair_}}
+  - {{__prop__ _HashPair_ ... }}
+
+- _HashPair_ __:__
+  - _Key_ __=__ _Value_
+
+- _Key_ __:__
+  - _PathExpression_
+  - _StringLiteral_
+
+- _Value_ __:__
+  - _PathExpression_
+  - _StringLiteral_
+  - _BooleanLiteral_
+  - _NullLiteral_
+  - _UndefinedLiteral_
+  - _NumberLiteral_
+
+### `{{prop}}` Runtime Semantics
+The `{{prop}}` modifier is installed on the element once the element is placed in the DOM. At that time it will loop over the `HashPair`(s) setting the properties on to the element. No normalization is done for the `Key` or `Value`. In other words what you see is what you get.
+
+The `{{prop}}` modifier will install a cache on the modifier that it uses to compare against if and when the `Value`(s) change. This is to ensure that `Value`(s) that may force layout don't force layout unnecessarily.
+
+There are no destruction semantics. Becuase of this event setting should not go through `{{prop}}`.
+
+### `{{on}}` Static Semantics
+
+- {{__on__ _EventName_ _EventCallBack_ _EventOptions?_}}
+
+- _EventOptions?_ __:__
+  - _Key_ __=__ _Value_
+
+- _Key_ __:__
+  - __passive__
+  - __capture__
+
+- _Value_ __:__
+  - _PathExpression_
+  - _BooleanLiteral_
+
+- _EventName_ __:__
+  - _PathExpression_
+  - _StringLiteral_
+
+- _EventCallBack_ __:__
+  - _PathExpression_
+  - _SubExpression_
+
+### `{{on}}` Runtime Semantics
+The `{{on}}` modifier is installed on the element once the element is placed into the DOM. At that time we will call `addEventListener` with the `EventName` and `EventCallBack`. Since an element can have multiple `{{on}}` modifiers installed on it, we will associate the `EventCallBack` and `EventName` with the element so we can call `removeEventListener` during destruction of the element. The `addEventListener` will be called with `{ capture: true }` if `EventOptions` are not passed.
+
+The `EventCallback` will receive the `Event` object as the first argument in callback.
+
+If and when the callback or event name changes, we will `removeEventListener` of the old event and `addEventListener` on the new event.
 
 ## How we teach this
 The vast majority of the time you want to be setting attributes on elements. The cases in which you need to set properties are when you are setting a dynamic value to an element that takes user input e.g. `<input />`, `<option />`, and `<textarea />`. For example we automatically would set the `value` prop on `<input />` instead of setting the attribute:
@@ -102,7 +155,11 @@ The other option is to take Angular's approach and always set properties. Howeve
 
 ## Unresolved questions
 
-TBD?
+- Can we remove `TextSupportMixin`?
+- Can we remove `{{textarea}}`?
+- Can we remove `{{input}}`?
+- Do we really want `{{on}}` to have updating semantics for `EventName`?
+- Who is responsible for binding the context for the `EventCallback`?
 
 ## Appendix A
 
