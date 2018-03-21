@@ -105,7 +105,8 @@ I think would be useful.
 
 # How We Teach This
 
-* These test helpers could be documented along with the other test helpers.
+* These test helpers could be documented in the guides along side "Testing
+  Models" or in a new section for "Testing Serializers".
 * The blueprint for serializer tests could include an example of testing
   normalization along with the current example testing serialization.
 
@@ -123,9 +124,5 @@ I think would be useful.
 # Unresolved questions
 
 * I'm not attached to any of the specific names. Would different names be clearer?
-* In what package would these actually live? I was assuming
-  `ember-test-helpers`, but maybe they could actually be a part of the `ember-data` addon?
 * Another helper that might be helpful is something to assert that the
   normalization result is valid JSONAPI. Would it make sense to include that here?
-* Should these be globally available test helpers (like the acceptance test
-  helpers)? or something that is imported from `ember-test-helpers` (like `ember-test-helpers/wait`)?
