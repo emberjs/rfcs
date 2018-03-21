@@ -4,7 +4,9 @@
 
 # Summary
 
-Unit testing `serialize()` is fairly straightforward; however, unit testing `normalize*` functions is not so obvious, despite the fact they’re often great candidates for unit tests.
+Unit testing `serialize()` is fairly straightforward; however, unit testing
+`normalize*` functions is not so obvious, despite the fact they’re often great
+candidates for unit tests.
 
 # Motivation
 
