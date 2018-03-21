@@ -33,30 +33,38 @@ I think would be useful.
    Here is an example test:
 
    ```js
-   const EXAMPLE_QUERY_RECORD_RESPONSE = {
-     data: [{
-       id: '10',
-       type: 'user',
-       attributes: {
-         name: 'Tomster',
-       },
-     }],
-   };
+   import { module, test } from 'qunit';
+   import { setupTest } from 'ember-qunit';
+   import { normalizePayload } from 'ember-data/test-helpers';
 
-   test('normalizeQueryRecord - it can turn the array we get back from the server into the single record that ember-data expects', function(assert) {
-     const normalizedHash = normalizePayload(this.store(), 'user', EXAMPLE_QUERY_RECORD_RESPONSE, 'queryRecord');
+   module('Unit | Serializer | user', function(hooks) {
+     setupTest(hooks);
 
-     assert.deepEqual(normalizedHash, {
-       data: {
+     const EXAMPLE_QUERY_RECORD_RESPONSE = {
+       data: [{
          id: '10',
          type: 'user',
          attributes: {
            name: 'Tomster',
          },
-       },
+       }],
+     };
+
+     test('normalizeQueryRecord - it can turn the array we get back from the server into the single record that ember-data expects', function(assert) {
+       const store = this.owner.lookup('service:store');
+       const normalizedHash = normalizePayload(store, 'user', EXAMPLE_QUERY_RECORD_RESPONSE, 'queryRecord');
+
+       assert.deepEqual(normalizedHash, {
+         data: {
+           id: '10',
+           type: 'user',
+           attributes: {
+             name: 'Tomster',
+           },
+         },
+       });
      });
    });
-
    ```
 
 2. `pushPayload` - Given an example response, return the ember-data models it
@@ -68,20 +76,29 @@ I think would be useful.
    Here is an example test:
 
    ```js
-   const EXAMPLE_QUERY_RECORD_RESPONSE = {
-     data: [{
-       id: '10',
-       type: 'user',
-       attributes: {
-         name: 'Zoey',
-       },
-     }],
-   };
+   import { module, test } from 'qunit';
+   import { setupTest } from 'ember-qunit';
+   import { pushPayload } from 'ember-data/test-helpers';
 
-   test('normalizeQueryRecord - it can turn the array we get back from the server into the single record that ember-data expects', function(assert) {
-     const record = pushPayload(this.store(), 'user', EXAMPLE_QUERY_RECORD_RESPONSE, 'queryRecord');
+   module('Unit | Serializer | user', function(hooks) {
+     setupTest(hooks);
 
-     assert.deepEqual(record.get('name'), 'Zoey');
+     const EXAMPLE_QUERY_RECORD_RESPONSE = {
+       data: [{
+         id: '10',
+         type: 'user',
+         attributes: {
+           name: 'Zoey',
+         },
+       }],
+     };
+
+     test('normalizeQueryRecord - it can turn the array we get back from the server into the single record that ember-data expects', function(assert) {
+       const store = this.owner.lookup('service:store');
+       const record = pushPayload(store, 'user', EXAMPLE_QUERY_RECORD_RESPONSE, 'queryRecord');
+
+       assert.deepEqual(record.get('name'), 'Zoey');
+     });
    });
 
    ```
