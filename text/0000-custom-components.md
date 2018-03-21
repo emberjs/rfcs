@@ -9,7 +9,7 @@ components_.
 
 This API will allow addon authors to provide special-purpose component base
 classes that their users can subclass from in apps. These components are
-invokable in templates just like any other Ember components (decendents of
+invokable in templates just like any other Ember components (descendants of
 `Ember.Component`) today.
 
 # Motivation
