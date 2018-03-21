@@ -156,10 +156,12 @@ an internal block, and `...attributes` is the syntax for yielding to this
 internal block. Since the `yield` keyword is not available in element position,
 a dedicated syntax is needed.
 
-> Open Question: Should classic components (`Ember.Component`) implicitly add
-> `...attributes` to the hidden wrapper element? If not, should it be an error
-> for developers to add `...attributes` to a classic component's template? Are
-> either of those approach going to create a migration/compatibility risk?
+Classic components (`Ember.Component`) will implicitly have an `...attributes`
+added to the end of the wrapper element (if `tagName` is not an empty string),
+after any attributes added by the component itself (using `attributeBindings`,
+`classNames` etc). This means that attributes provided by the caller will
+override (replace) those added by the component (except for `class`, which is
+merged).
 
 ### Block
 
@@ -179,12 +181,7 @@ that can be passed using the named blocks syntax.
 The last piece of the angle bracket invocation syntax is the closing tag, which
 is mandatory. The closing tag should match the tag name portion of the opening
 tag exactly. If no block is passed, the self-closing tag syntax `<FooBar />`
-can also be used.
-
-> Open Question: What should `{{has-block}}` return for components invoked with
-> the self-closing tag? On one hand, returning true would be quite counter-
-> intuitive; on the other hand, returning false would mean self-closing tags are
-> not semantically equivalent to an immediately closed tag.
+can also be used (in which case `{{has-block}}` will be false).
 
 ### Dynamic Invocations
 
