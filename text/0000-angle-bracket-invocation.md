@@ -207,34 +207,36 @@ Because `Option` is the name of a local variable (block param), the `<Option>`
 invocation will invoke the yielded value instead of looking for a component
 named "option".
 
-More generally, the tag name portion can be any path expressions:
+To avoid collision with HTML, only local variables starting with a capital
+letter can be invoked this way. No other forms of expressions are allowed in
+this position at this moment:
 
 ```hbs
-<this.foo>...</this.foo>
-<@foo>...</@foo>
+{{!-- these do not work! --}}
+<this.foo />
+<@foo />
 
 <MyForm as |f|>
-  <f.input>...</f.input>
+  <f.input />
+  <f />
 </MyForm>
 ```
 
-The only exception is that it is illegal to invoke a local variable starting
-with a lower case letter without a path segment, as it will conflict with HTML.
-The following example will be a syntax error:
+This restriction may be relaxed in the future. In the time being, the `let` can
+be used to rename these into an invocable form:
 
 ```hbs
-{{!-- don't do this! --}}
-<FooBar as |foo|>
-  <foo />
-</FooBar>
+{{#let ... as |FooBar|}}
+  <FooBar />
+{{/let}}
 ```
 
 > Note: The [named blocks RFC](https://github.com/emberjs/rfcs/blob/master/text/0226-named-blocks.md)
 > proposed to use the `<@foo>...</@foo>` syntax on the invocation side to mean
-> providing a block named `@foo`. This will create a conflict with this RFC.
-> Since the named blocks RFC has not been implemented yet, we propose to change
-> that syntax to avoid the conflict, for example, `<@foo=>...</@foo>` or
-> `<Block @foo>...</Block>`.
+> providing a block named `@foo`. This will create a potential conflict with
+> this future extension. Since the named blocks RFC has not been implemented
+> yet, we propose to change the block-passing syntax to `<@foo=>...</@foo>` to
+> avoid any confusion and potential conflict.
 
 ## How we teach this
 
