@@ -102,7 +102,7 @@ The `{{prop}}` modifier is installed on the element once the element is placed i
 
 The `{{prop}}` modifier will install a cache on the modifier that it uses to compare against if and when the `Value`(s) change. This is to ensure that `Value`(s) that may force layout don't force layout unnecessarily.
 
-There are no destruction semantics. Becuase of this event setting should not go through `{{prop}}`.
+There are no destruction semantics. Becuase of this event setting should not go through `{{prop}}`. `{{prop}}` is not ran when server-side rendering.
 
 ### `{{on}}` Static Semantics
 
@@ -133,6 +133,8 @@ The `{{on}}` modifier is installed on the element once the element is placed int
 The `EventCallback` will receive the `Event` object as the first argument in callback.
 
 If and when the callback or event name changes, we will `removeEventListener` of the old event and `addEventListener` on the new event.
+
+`{{on}}` is not ran when server-side rendering.
 
 ## How we teach this
 The vast majority of the time you want to be setting attributes on elements. The cases in which you need to set properties are when you are setting a dynamic value to an element that takes user input e.g. `<input />`, `<option />`, and `<textarea />`. For example we automatically would set the `value` prop on `<input />` instead of setting the attribute:
