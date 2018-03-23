@@ -53,8 +53,8 @@ This illustrates the setting inconsistencies based on the attribute name and if 
 ```hbs
 <div class="{{color}}">
   <p class="preview">{{firstName}}</p>
-  <input {{prop value=firstName}} {{on keydown=(action "changedName")}} />
-  <input value="Submit" type="Button" {{on click=(action "submit")}} />
+  <input {{prop value=firstName}} {{on 'keydown' (action "changedName")}} />
+  <input value="Submit" type="Button" {{on 'click' (action "submit")}} />
 </div>
 ```
 
