@@ -25,11 +25,43 @@ lighter.
 ## Detailed design
 
 For the most part, this is a 1:1 substitution of the global `console` object 
-for `Ember.Logger`. However, Node only added support for `console.debug` in 
-Node version 9. If we wish to support earlier versions of Node, our codemod 
-will need to use `console.log`, rather than `console.debug`, as the 
-replacement for `Logger.debug`. For users who don't care about Node or are 
-specifying Node version 9 as their minimum, we could use `console.debug`.
+for `Ember.Logger`.
+
+Node only added support for `console.debug` in Node version 9. Where we wish
+to support earlier versions of Node, we will need to use `console.log`, rather than
+`console.debug`, as the replacement for `Logger.debug`. Apps and addons
+which don't care about Node or are specifying Node version 9 as their minimum can
+use `console.debug`.
+
+Internet Explorer 11 and Edge both require console methods to be bound to the
+console object when the developer tools are not showing. This diverges from the
+expectations of other browsers. Direct calls to console methods will work correctly,
+but constructs which involve explicitly or implicitly binding the console methods to
+other objects or using them unbound will fail. This is straightforward to work around.
+
+You can address the issue by binding the method to the console object:
+
+``` javascript
+// Before - assigning raw method to a variable for later use
+var print = Logger.log; // assigning method to variable
+print('Message');
+
+// After - assigning console-bound method to variable for later use
+var print = console.log.bind(console);
+print('Message');
+```
+
+In some cases, you can use rest parameter syntax to avoid the issue entirely:
+
+``` javascript
+// Before
+Logger.info.apply(undefined, arguments); // or
+Logger.info.apply(null, arguments); // or
+Logger.info.apply(this, arguments); // or
+
+// After
+console.info(...arguments);
+```
 
 ### Within the framework
 
@@ -72,23 +104,16 @@ currently consumes `Ember.Logger`, _not_ by `Ember.Logger` itself. Hence,
 replacing calls to `Ember.Logger` with direct calls to the console will not 
 affect this behavior. 
 
-### Codemod 
-
-Provide a codemod that developers can use to switch references to the methods 
-of `Ember.Logger` to use the corresponding `console` methods instead. 
-
-The codemod will need to replace `Ember.Logger.debug` calls with `(console.debug || 
-console.log)(<arguments>)` or something similar to take in stride the situation 
-where console.debug isn't defined.
-
-I will definitely need help here.
-
 ### Add-On Developers
 
 The following high-impact add-ons (9 or 10 or a * on EmberObserver) use 
 `Ember.Logger` and should probably be given an early heads-up to adjust 
 their code to use `console` before this RFC is implemented. This will limit 
 the level of pain that their users experience when the deprecation is released.
+
+Add-ons that need to also support Ember 2.x will need to make their console
+references conditional on console being "truthy", of course, to support Internet
+Explorer 9.
 
 In the order of their number of references to `Ember.Logger`:
 
@@ -129,10 +154,10 @@ Once it is gone from the code, we also need to verify it no longer appears in
 the API listings. 
 
 We must provide an entry in the deprecation guide for this change:
-* offering instruction for using the codemod to perform the change automatically
-with before and after code samples.
-* describing the issue with using console.debug on node versions 
-earlier than Node 9 and what provision the codemod has made to deal with it.
+* describing relevant divergences remaining in the handling of the console in
+Internet Explorer 11 and Edge browsers.
+* describing the issue with using console.debug on node versions
+earlier than Node 9.
 * describing alternative ways of dealing with eslint's `no-console` messages.
 
 ## Drawbacks
@@ -143,9 +168,8 @@ on many projects.
 
 This, of course, can be said for almost any deprecation, and Ember's 
 disciplined approach to deprecation has been repeatedly shown to ease things. 
-Providing a codemod to replace `Ember.Logger` calls with the corresponding 
-console calls should make this transition relatively painless. Also, only 
-twenty of those add-ons have more than six references to `Ember.Logger`. 
+These particular changes are proving easy to locate and replace by hand. Also,
+only twenty of those add-ons have more than six references to `Ember.Logger`.
 If this is characteristic of the user base, the level of effort to make 
 the change, even by hand, should be very small for most users.
 
