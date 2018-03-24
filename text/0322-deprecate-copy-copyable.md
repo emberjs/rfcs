@@ -1,5 +1,5 @@
 - 2018-03-24
-- RFC PR: (leave this empty)
+- RFC PR: 322
 - Ember Issue: (leave this empty)
 
 # Deprecation of Ember.copy and Ember.Copyable
