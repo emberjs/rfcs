@@ -49,22 +49,17 @@ The route  `packages/ember-routing/lib/system/route.js` has one shallow copy, bu
 
 The `copy()` methods in `packages/ember-metal/lib/map.js` and  `chains.js` and their use in `meta.js`, and  `map_test.js` are unrelated.
 
-During the deprecation period, the `Ember.copy` method and the `NativeArray.copy` methods will carry a deprecation warning. At the end of this period, we will remove the deprecated elements:
-* The deprecated copy() method and the Copyable mixin
-* The use of Copyable in NativeArray
-* The deprecated  copy() method in NativeArray
+At present, the handling of arrays in `Ember.copy` is inconsistent. `NativeArray` uses the `Copyable` mixin and implements a `copy` method. When calling `Ember.copy`, passing a `NativeArray`, it will note that the passed parameter uses `Copyable` and call the copy method inside  `NativeArray`. However, the recursive `_copy` method that `Ember.copy` calls for other objects has its own generic mechanism for copying arrays. If `copy` is passed a non-`Copyable` object that contains a `NativeArray` as a member, when the recursion gets to that member, it will use the generic mechanism rather than delegating to the `copy` method within the  `NativeArray`.
 
-Seamlessly weaning `NativeArray` off of `Copyable` could potentially be a little tricky, especially if we continue delegating to it during the deprecation period, but I think I see a potential way through.
+The recursive  `_copy` method also has an assertion that will fail if it is called with any `EmberObject` that is not also `Copyable`. This assertion occurs before (and hence affects) the code which handles arrays, even though, for arrays, the object's `copy` method isn't then used.
 
-At present, the `Ember.copy` method already can copy JS arrays of any kind without delegating to `NativeArray`. If `Ember.copy` itself is passed a NativeArray (which implements `Copyable`) it will delegate to `NativeArray.copy`. If `Ember.copy` is passed an object containing a `NativeArray` as a property, when it gets to that property, it will copy it like any other array using the generic copying mechanism - without even considering that it is `Copyable`. The behavior is inconsistent, but I'm not sure if there is a deliberate reason for this.
+During the deprecation period, the `Ember.copy` method and the `NativeArray.copy` methods will carry a deprecation warning. We will remove `Copyable` from `NativeArray` and change  `Ember.copy` to consistently use the common array copy mechanism to copy arrays rather than sometimes delegating. We will move the assertion that an `EmberObject` must be  `Copyable` to the clause that handles non-array objects.
 
-If we change  `Ember.copy` to consistently always use the array copy mechanism to copy arrays, even arrays that implement `Copyable`, the `NativeArray.copy` method should never be called as a side-effect of calling `Ember.copy`. By deprecating `NativeArray.copy` as well, the only users who ever see this deprecation will be those who are calling it directly.
+We need a way to deprecate use of the `Copyable` mixin. If the penalty for adding code in such a common place isn't too high, we could have `core_object.extend()`  check for `Copyable` and deprecate accordingly. We will also supply a new eslint warning that flags the deprecated use of `Copyable`. (This may be our first eslint check for deprecations. We may want to consider adding others at the same time.)
 
-Even if we don't make this change in `Ember.copy`, we absolutely must do so in the version of `copy` in the add-on. We must also exempt arrays from the restriction on `EmberObject` and `Copyable`, since we will be removing `Copyable` from `NativeArray`.
+Those using the add-on will need to mechanically adjust any uses of  `myArray.copy(deep)` to  `copy(myArray, deep)` in order to avoid the deprecation message.
 
-Those using the add-on would need to mechanically adjust any uses of  `myArray.copy(deep)` to  `copy(myArray, deep)` in order to avoid the deprecation message.
-
-I cannot see a way to notify the user through deprecation at runtime about their own objects that are extending `Copyable` and contain `copy()` methods that will no longer be called when the deprecated `Ember.copy()` method goes away. Our best bet for this might be to supply a new eslint warning that flags the import of `Copyable`.
+At the end of this period, we will remove the deprecated copy() method, the Copyable mixin, and the deprecated NativeArray.copy() method.
 
 #### `ember-data`
 
@@ -97,7 +92,7 @@ The Code Search capabilities of emberobserver are a wonderful way to get a glimp
 
 A quick search of the top-scoring add-on packages revealed that most, but by no means all, of the uses of `copy()` in the modules were for shallow copies that can be accomplished using Object.assign, so a lot of the code affected by this deprecation can rely on a simple substitution.
 
-Very few packages used `Copyable` - only 9 across the whole set - and most used the feature for only one class.   `ember-data-copyable` is probably most wedded to the mechanism: it delivers a tasking mixin for `Copyable`.  `ember-data-model-fragments` has pretty open-ended properties. These add-ons would be likely to use the proposed add-on moving forward.   `ember-restless`, and `ember-calendar` appear more bounded. Any deep copy mechanism for POJOs may meet their needs.
+Very few packages used `Copyable` - only 9 across the whole set - and most used the feature for only one class.   `ember-data-copyable` is probably most wedded to the mechanism: it delivers a  `Copyable`-based mixin for asynchronous copying.  `ember-data-model-fragments` has pretty open-ended properties. These add-ons would be likely to use the proposed add-on moving forward.   `ember-restless`, and `ember-calendar` appear more bounded. Any deep copy mechanism for POJOs may meet their needs.
 
 ### Add-on
 
@@ -113,9 +108,7 @@ We need to inform users that `Ember.copy` and `Ember.Copyable` will be dprecated
 
 ### Official code bases and documentation
 
-We do not actively teach the use of `Ember.copy`. [True? Not true?] We will need to remove any passing references to `Ember.copy` from the Ember guides, from the Super Rentals tutorial, and anywhere it appears on the website.
-
-Once it is gone from the code, we also need to verify it no longer appears in the API listings.
+We do not actively teach the use of `Ember.copy`. It doesn't appear anywhere in our guides, website, or tutorial. Once it is gone from the code, we also need to verify it no longer appears in the API listings.
 
 We must provide an entry in the deprecation guide for this change:
 * describing the use of `to = Object.assign({},from)` for shallow copies.
