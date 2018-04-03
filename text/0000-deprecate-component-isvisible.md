@@ -4,15 +4,15 @@
 
 # Summary
 
-The aim of this RFC is to deprecate the component `isVisible` attribute 
-is not used by ember internally and left undefined unless manually set.
+The aim of this RFC is to deprecate the component's `isVisible` property. 
+It is not used by Ember internally and left undefined unless manually set.
 It's poorly documented and component visibility it better managed in 
 template space rather than JS.
 
 # Motivation
 
-Component visbility is better handled in tempalte space
-apposed to the JS alternative. Using this attribute to toggle component visibility
+Component visbility is better handled in template space
+apposed to the JS alternative. Using this property to toggle component visibility
 introduces bugs with `StyleBindingReference` not updating. Currently, it adds
 `display: none` as an inline style which removes all other inline
 styles attached to an element. It is an additional way of hiding components
@@ -35,7 +35,7 @@ could also be used to add hidden classes.
 
 # How We Teach This
 
-The `isVisible` attribute is rarely used so deprecating in a future blog post
+The `isVisible` property is rarely used so deprecating in a future blog post
 would be sufficient. It will need to be removed from the API docs. It would be
 beneficial to add documentation on hiding components to the Ember guides with
 suggested ways of hiding components with a simple example.
