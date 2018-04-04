@@ -24,7 +24,8 @@ options.
 
 In cases where the `isVisible` property is used we provide a deprecation warning
 with a link to the deprecation guide which states why it was deprecated and/or the
-options available to hide the component.
+options available to hide the component. As it is a public API it will be removed
+in the next major version release (4.0).
 
 There are several options available to hiding elements 
 such as `<div hidden={{boolean}}></div>`(hidden is valid for all elements
@@ -54,5 +55,3 @@ hidden attribute of the element instead of adding the inline style.
 
 What would be the suggested way of hiding components from the DOM in Ember as
 there are a few options to choose from?
-
-When will support for the deprecated property end?
