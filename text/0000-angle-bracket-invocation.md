@@ -204,36 +204,145 @@ Because `Option` is the name of a local variable (block param), the `<Option>`
 invocation will invoke the yielded value instead of looking for a component
 named "option".
 
-To avoid collision with HTML, only local variables starting with a capital
-letter can be invoked this way. No other forms of expressions are allowed in
-this position at this moment:
+Similar to curly invocations, most valid Handlebars path expressions are
+invokable in this manner:
 
 ```hbs
-{{!-- these do not work! --}}
-<this.foo />
-<@foo />
+{{!-- LOCAL VARIABLES --}}
 
-<MyForm as |f|>
-  <f.input />
-  <f />
-</MyForm>
-```
+{{#form-for model=user as |f|}}
+  {{f.fieldset}}
+    {{f.input name="username" type="text"}}
+    {{f.input name="password" type="password" }}
+  {{/f.fieldset}}
 
-This restriction may be relaxed in the future. In the time being, the `let` can
-be used to rename these into an invocable form:
+  {{!-- is equivilant to --}}
 
-```hbs
-{{#let ... as |FooBar|}}
-  <FooBar />
-{{/let}}
+  <f.fieldset>
+    <f.input @name="username" @type="text" />
+    <f.input @name="password" @type="text" />
+  </f.fieldset>
+{{/form-for}}
+
+{{!-- NAMED BLOCKS OR CURRIED COMPONENTS --}}
+
+{{@content}}
+
+{{!-- is equivilant to --}}
+
+<@content />
+
+{{!-- THIS LOOKUP --}}
+
+{{#this.container}}
+  {{this.child}}
+{{/this.container}}
+
+<this.container>
+  <this.child />
+</this.container>
 ```
 
 > Note: The [named blocks RFC](https://github.com/emberjs/rfcs/blob/master/text/0226-named-blocks.md)
 > proposed to use the `<@foo>...</@foo>` syntax on the invocation side to mean
-> providing a block named `@foo`. This will create a potential conflict with
-> this future extension. Since the named blocks RFC has not been implemented
-> yet, we propose to change the block-passing syntax to `<@foo=>...</@foo>` to
-> avoid any confusion and potential conflict.
+> providing a block named `@foo`, which creates a conflict with this proposal.
+> [RFC #317](https://github.com/emberjs/rfcs/pull/317) propose to change the
+> block-passing syntax to `<@foo=>...</@foo>` to avoid this conflict.
+
+Notably, based on the rules laied out above, the following is perfectly legal:
+
+```hbs
+{{!-- DON'T DO THIS --}}
+
+{{#let (component "my-div") as |div|}}
+  {{!-- here, <div /> referes to the local variable, not the HTML tag! --}}
+  <div id="my-div" class="lol" />
+{{/let}}
+```
+
+From a programming language's perspective, the semantics here is quite clear. A
+local variable is allowed to override ("shadow") another varible on the outer
+scope (the "global" scope, in this case), similar to what is possible in
+JavaScript:
+
+```js
+let console = {
+  log() {
+    alert("I win!");
+  }
+};
+
+console.log("Hello!"); // shows alert dialog instead of logging to the console
+```
+
+While this is semantically unambigious, it is obviously very confusing to the
+human reader, and we don't recommend anyone actually doing this.
+
+A previous version of this RFC recommended statically disallowing these cases.
+However, after giving it more thoughts, we realized it should not be the
+programming language's job to dictate what are considered "good" programming
+patterns. By statically disallowing arbitrary expressions, it actually makes it
+more difficult to learn and understand the underlying programming model.
+
+Instead, we recommend [including a template linter](https://github.com/ember-cli/rfcs/pull/114)
+in the default stack and defer to the linter to make such recommendations. At
+minimum, we recommend liniting against invoking local variables with lowercase
+names without a path segment, regarless of whether the name actually collide
+with a known HTML tag – human readers of an Ember template should be able to
+safely assume lowercase tags refer to HTML.
+
+Eventually, we might want to provide stronger guidance with via the linter. For
+example, we may want to recommend capitalizing invokable local variables, as in
+`<F.Input />`. We will let the community experiment and coalesce around these
+conventions before recommending them by default.
+
+Finally, there are two exceptions to the general rule where certain technically
+valid Handlebars path expressions are not supported for dynamic invocations:
+
+* Implicit `this` lookups (a.k.a. "property fallback" in [RFC #308](https://github.com/emberjs/rfcs/pull/308)
+* Slash lookups
+
+First, while `{{foo}}` or `{{Foo}}` can normally refer to `{{this.foo}}` or
+`{{this.Foo}}` normally, allowing this implicitly lookup will mean _any_ tag
+in the template (i.e. `<foo />` or `<Foo />`) can possibly refer to a property
+on the current `this` context.
+
+This ambiguity is highly undesirable for both human readers and the compiler,
+therefore implicitly `this` lookup is not allowed in angle bracket invocations.
+This explicit form, `<this.foo />` and `<this.Foo />` is required.
+
+This requirement aligns well with [RFC #308](https://github.com/emberjs/rfcs/pull/308)
+and the current curly invocation semantics, due to the ["dot rule"](https://github.com/emberjs/rfcs/blob/master/text/0064-contextual-component-lookup.md#component-helper-shorthand)
+that requires a dot in the path. Note that this is actually more restrictive
+than the proposed angle bracket invocation semantics, since it is not possible
+to invoke a local variable without a dot:
+
+```hbs
+{{#super-select selected={{this.user.country}} as |option|>
+  {{#each this.availableCountries as |country|}}
+    {{!-- this is not legal today, since `option` does not contain a dot --}}
+    {{#option value=country}}{{country.name}}{{/option}}
+  {{/each}}
+{{/super-select}}
+```
+
+We propose to relax that rule to match the proposed angle bracket invocation
+semantics (i.e. allowing local variables without a dot, as well as `@names`,
+but disallowing implicit `this` lookup).
+
+Second, while Handlebars technically allows `{{foo/bar}}` as an equivilant
+alternative to the `{{foo.bar}}` path lookup (and therefore `foo/bar` is
+technically a valid Handlebars path expression), it will not be supported in
+angle bracket invocation. This is both because the `/` conflicts with the HTML
+closing tag syntax, and the fact that Ember overrides that syntax with a
+different semantic.
+
+In today's semantics, `{{foo/bar}}` does not try to lookup `this.foo.bar` and
+invoke it as a component. Instead, it is used as a filesystem scoping syntax.
+Since this feature will be rendered unnecessary with [Module Unification](https://github.com/emberjs/rfcs/blob/master/text/0143-module-unification.md),
+we recommend apps using "slash components" to migrate to alternatives provided
+by Module Unification (or, alternatively, keep using curly invocations for this
+purpose).
 
 ## How we teach this
 
