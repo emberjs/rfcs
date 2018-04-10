@@ -144,7 +144,7 @@ is a new feature that is not available in the classic invocation style.
 
 These attributes can be accessed from the component template with the new
 `...attributes` syntax, which is available only in element positions, e.g.
-`<div ...atributes />`. Using `...attributes` in any other positions, e.g.
+`<div ...attributes />`. Using `...attributes` in any other positions, e.g.
 `<div>{{...attributes}}</div>`, would be a syntax error. It can also be used on
 multiple elements in the same template. If attributes are passed but the
 component template does not contain `...attributes` (i.e. the invoker passed
