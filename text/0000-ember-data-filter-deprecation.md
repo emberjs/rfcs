@@ -27,6 +27,8 @@ By removing this feature, we significantly simplify and streamline the core of `
 ## Detailed design
 
 We will provide 3 new deprecations with links to a [guide on how to refactor](https://github.com/ember-data/ember-data-filter#recommended-refactor-guide).
+These deprecations will target `3.5`, meaning that the `ember-data-filter` addon will continue to
+work and be supported through the release of ember-data `3.4`.
 
 **Deprecation: ember-data-filter:filter**
 
