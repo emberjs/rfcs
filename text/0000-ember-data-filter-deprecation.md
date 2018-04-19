@@ -15,7 +15,7 @@ behind a private `ENV` variable that was enabled by the addon
 The `filter` API was a "memory leak by design". [Patterns exist](https://github.com/ember-data/ember-data-filter#recommended-refactor-guide)
 with no-worse ergonomics that have better performance and do not incur memory leak penalties.
  
-While the change in ergonomics for end consumers in minimal, the change to `ember-data` is subtantial.
+While the change in ergonomics for end consumers in minimal, the change to `ember-data` is substantial.
 The code for this feature required significant amounts of confusing internal plumbing to ensure that
 filters were rerun every time any form of mutation (update, addition, deletion) occurred to any record.
 
