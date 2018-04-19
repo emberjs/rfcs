@@ -47,7 +47,7 @@ use `peekAll`, which would return the same record result set.
 
 ## How we teach this
 
-The `filter` API is rarely, having been discouraged for many years. A simple post
+The `filter` API is rarely used, having been discouraged for many years. A simple post
  alerting users to it's deprecation should be sufficient. The refactoring guide is
  sufficiently simple that teaching folks a better way should not be much of a hurdle.
 
