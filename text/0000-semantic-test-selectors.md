@@ -503,6 +503,40 @@ import {
 } from '@ember/test-helpers';
 ```
 
+### Overload the existing `click` and `fillIn` helpers
+
+[@cibernox] proposed the following:
+
+> What I don't like a lot is having two fillIn or click methods, and I don't
+> think we can only rely on semantic selectors because there there will be
+> exceptions or developers that just won't care about semantics.
+>
+> I am thinking that perhaps after some experimentation, we could unify them.
+
+```js
+// click.js in @ember/test-helpers
+
+export default async function(selectorOrText) {
+  if (selectorOrText instanceof HTMLElement || isSelector(selectorOrText)){
+    // current behaviour
+  } else {
+    // semantic behaviour
+  }
+}
+```
+
+> That way we wouldn't have to choose between semantic vs css-based when importing the helpers.
+>
+> — <cite>[@cibernox], [comment #382852271]
+
+After some discussion, we concluded that implementing `isSelector` reliably is
+potentially devilishly difficult.
+
+> touché, and with custom element the task is essentially impossible. I take it
+> back then.
+>
+> — [@cibernox], [comment #382859189]
+
 ### Prior Art
 
 #### Capybara
@@ -602,3 +636,6 @@ RFCs.
 [Introducing the react-testing-library]: https://blog.kentcdodds.com/introducing-the-react-testing-library-e3a274307e65
 [“do what I mean”]: https://en.wikipedia.org/wiki/DWIM
 [@ember/test-helpers]: https://github.com/emberjs/ember-test-helpers
+[@cibernox]: https://github.com/cibernox
+[comment #382852271]: https://github.com/emberjs/rfcs/pull/327#issuecomment-382852271
+[comment #382859189]: https://github.com/emberjs/rfcs/pull/327#issuecomment-382859189
