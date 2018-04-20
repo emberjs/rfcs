@@ -473,6 +473,16 @@ await click(getByText('Login'));
 This would increases the amount of line noise in tests but is more explicit and
 less “magical”.
 
+[@cibernox] proposes a similar tactic in [comment #28667926]:
+
+```js
+import { click, fillIn, triggerKeyEvent, findInput } from '@ember/test-helpers';
+
+let input = findInput('Label');
+await fillIn(input, 'Search term');
+await trigerKeyEvent(input, 'keydown', 'Enter');
+```
+
 ### Distribute as Part of @ember/test-helpers
 
 We could distribute the semantic helpers as part of [@ember/test-helpers].
@@ -529,13 +539,36 @@ export default async function(selectorOrText) {
 >
 > — <cite>[@cibernox], [comment #382852271]
 
-After some discussion, we concluded that implementing `isSelector` reliably is
-potentially devilishly difficult.
+After some discussion, we posited that implementing `isSelector` reliably could be
+devilishly difficult.
 
 > touché, and with custom element the task is essentially impossible. I take it
 > back then.
 >
 > — [@cibernox], [comment #382859189]
+
+Then [@cibernox] came upon with some ingenious alternatives:
+
+> Perhaps the very test selectors could be expanded to take a POJO as first
+> argument an allow more invocations:
+
+```js
+fillIn(input, 'text'); // Receiving an HTMLElement
+fillIn('.css-class', text); // Css selector
+fillIn({ label: 'Email' }, 'text'); // Semantic descriptor POJO
+```
+
+> Perhaps even if we can implement a `isSelector` that is 99% accurate, we could
+> rely on it and for the 1% of cases in which the text of the link looks like a
+> css selector but it's not, we can force it with
+
+```js
+fillIn(input, 'text'); // Receiving an HTMLElement
+fillIn('.css-class', text); // Css selector
+fillIn('Email', 'text'); // Clearly not a selector, interpreted as label
+fillIn({ label: '#holidays' }, 'text'); // Looks like a selector but it's the actual text of the link to a hashtag
+fillIn({ selector: 'my-foo' }, 'text'); // The other way aroind, it may seem a label but it's actually a custom element.
+```
 
 ### Prior Art
 
@@ -639,3 +672,4 @@ RFCs.
 [@cibernox]: https://github.com/cibernox
 [comment #382852271]: https://github.com/emberjs/rfcs/pull/327#issuecomment-382852271
 [comment #382859189]: https://github.com/emberjs/rfcs/pull/327#issuecomment-382859189
+[comment #28667926]: https://github.com/emberjs/rfcs/pull/327#commitcomment-28667926
