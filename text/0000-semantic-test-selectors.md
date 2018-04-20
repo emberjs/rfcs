@@ -236,6 +236,29 @@ semantic test selectors. The implementations of [`queryByText`] and
 [`queryByLabelText`] display a considerable amount of rigour and seem
 sufficiently composable for our needs.
 
+### Candidate Implementation
+
+[@billybonks] has created an implementation of `ember-semantic-test-helpers`
+that we can all try out today:
+
+> So i have been doing this in our app since ember-conf, extracted it into an
+> addon, that people can try play with.
+>
+> Some differences exist instead of just fillin i have fillin select toggle, an
+> example of how fillin differs to select is with power-select if you use select
+> helper it will use selectChoose if you use select helper it will first use
+> selectSearch then selectChoose.
+>
+> It currently doesn't fully respect the spec with regards to what a button is or
+> a checkbox.
+>
+> https://github.com/tradegecko/ember-semantic-test-helpers
+>
+> I will be working over the next few days, to make sure it respects those
+> definitions and has proper tests/documentation.
+>
+> — <cite>[@billybonks], [comment #383054032]</cite>
+
 ## How we teach this
 
 This proposal is an evolution of current Ember UI testing patterns. We believe
@@ -537,7 +560,7 @@ export default async function(selectorOrText) {
 
 > That way we wouldn't have to choose between semantic vs css-based when importing the helpers.
 >
-> — <cite>[@cibernox], [comment #382852271]
+> — <cite>[@cibernox], [comment #382852271]</cite>
 
 After some discussion, we posited that implementing `isSelector` reliably could be
 devilishly difficult.
@@ -673,3 +696,5 @@ RFCs.
 [comment #382852271]: https://github.com/emberjs/rfcs/pull/327#issuecomment-382852271
 [comment #382859189]: https://github.com/emberjs/rfcs/pull/327#issuecomment-382859189
 [comment #28667926]: https://github.com/emberjs/rfcs/pull/327#commitcomment-28667926
+[@billybonks]: https://github.com/billybonks
+[comment #383054032]: https://github.com/emberjs/rfcs/pull/327#issuecomment-383054032
