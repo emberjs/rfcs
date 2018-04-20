@@ -184,8 +184,9 @@ A **switch** is one of the following:
 
 A **form control** is an **input** or **switch**.
 
-The **perceivable text** of a **link** or **button** may be found in any/all of
-the following locations:
+The **perceivable text** of a **link**, **button**, or other element may be
+found in any/all of the following locations **if-and-only-if the element is
+perceivable**:
 
 - Its `innerText` property
 - Its `title` attribute
@@ -193,12 +194,22 @@ the following locations:
 - Its `aria-label` attribute
 - The **perceivable text** of the element identified by its `aria-labelledby` attribute
 
-The **perceivable label** of a **form control** may be found in any/all of the
-following locations:
+The **perceivable label** of a **perceivable form control** may be found in
+any/all of the following locations:
 
 - Its `aria-label` attribute
 - The **perceivable text** of its **label**
 - The **perceivable text** of the element identified by its `aria-labelledby` attribute
+
+For an element to be **perceivable**, it MUST be **perceivable to all users**.
+If an element is not perceivable to screen readers, or not perceivable due to
+unsufficient colour contrast, then it is not perceivable to tests either.
+
+Perceivability takes into account the DOM, CSS and the accessbility tree. If an
+element or one of its ancestors has `display: none`, `visiblity: hidden`,
+`hidden="true"` or `aria-hidden="true"`, then it is **not perceivable**. This
+is not a complete definition of perceivability in the browser, but a reasonable
+approximation for the purposes of this document.
 
 ### Distribution
 
