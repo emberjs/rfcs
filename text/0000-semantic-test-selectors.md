@@ -163,6 +163,7 @@ A **button** is one of the following:
 - `input[type="reset"]`
 - `input[type="submit"]`
 - `[role="button"]`
+- `input[type="image"][alt]`
 
 An **input** is one of the following:
 
@@ -174,15 +175,15 @@ An **input** is one of the following:
 - `[role="textbox"]`
 - `[contenteditable="true"]`
 
-A **switch** is one of the following:
 
+A **switch** is one of the following:
 - `input[type="checkbox"]`
 - `input[type="radio"]`
 - `[role="checkbox"]`
 - `[role="option"]`
 - `[role="radio"]`
 
-A **form control** is an **input** or **switch**.
+A **form control** is an **input**, **switch**, **select**
 
 The **perceivable text** of a **link**, **button**, or other element may be
 found in any/all of the following locations **if-and-only-if the element is
