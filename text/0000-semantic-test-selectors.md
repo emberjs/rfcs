@@ -169,18 +169,20 @@ An **input** is one of the following:
 
 - `input`
 - `textarea`
-- `select`
 - `[role="slider"]`
 - `[role="spinbutton"]`
 - `[role="textbox"]`
 - `[contenteditable="true"]`
 
+A **select** is one of the following:
+
+- `select`
+- `[role="listbox"]`
 
 A **switch** is one of the following:
 - `input[type="checkbox"]`
 - `input[type="radio"]`
 - `[role="checkbox"]`
-- `[role="option"]`
 - `[role="radio"]`
 
 A **form control** is an **input**, **switch**, **select**
