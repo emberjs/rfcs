@@ -133,7 +133,14 @@ specified by `label`.
 If it finds a matching element, it invokes the general-purpose `fillIn` helper
 upon it with `value` as the second argument.
 
-If a label is found without a counterpart form control it throws:
+If a label is found targeting a non labellable element it throws:
+
+```
+A Label was found targeting a non labelable element please use `aria-label`, `aria-labelledby`,
+https://dev.w3.org/html5/spec-preview/forms.html#category-label
+```
+
+If a label is found without a for attribute or child labellable control:
 
 ```
 Form control not found for label containing '${label}' when calling
