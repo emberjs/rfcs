@@ -170,26 +170,29 @@ A **button** is one of the following:
 - `input[type="reset"]`
 - `input[type="submit"]`
 - `[role="button"]`
+- `input[type="image"][alt]`
 
 An **input** is one of the following:
 
 - `input`
 - `textarea`
-- `select`
 - `[role="slider"]`
 - `[role="spinbutton"]`
 - `[role="textbox"]`
 - `[contenteditable="true"]`
 
-A **switch** is one of the following:
+A **select** is one of the following:
 
+- `select`
+- `[role="listbox"]`
+
+A **switch** is one of the following:
 - `input[type="checkbox"]`
 - `input[type="radio"]`
 - `[role="checkbox"]`
-- `[role="option"]`
 - `[role="radio"]`
 
-A **form control** is an **input** or **switch**.
+A **form control** is an **input**, **switch**, **select**
 
 The **perceivable text** of a **link**, **button**, or other element may be
 found in any/all of the following locations **if-and-only-if the element is
