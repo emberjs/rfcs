@@ -188,18 +188,25 @@ The **perceivable text** of a **link**, **button**, or other element may be
 found in any/all of the following locations **if-and-only-if the element is
 perceivable**:
 
-- Its `innerText` property
-- Its `title` attribute
-- Its `alt` attribute
-- Its `aria-label` attribute
-- The **perceivable text** of the element identified by its `aria-labelledby` attribute
+The percivable text is calculated using [Text alternative spec](https://www.w3.org/TR/accname-1.1/#mapping_additional_nd_te)
 
-The **perceivable label** of a **perceivable form control** may be found in
-any/all of the following locations:
-
-- Its `aria-label` attribute
-- The **perceivable text** of its **label**
-- The **perceivable text** of the element identified by its `aria-labelledby` attribute
+**tldr**
+A. if current node is hidden
+ return ""
+B. if current node has `aria-labeledby` accumulate values and
+  return accumulated string
+C. if current node has `aria-label`  && not nested within a `label`
+  return value
+D. if node has attribute or referenced by a text alternative option
+  return value
+E. if it is nested within a `label`
+  return name based on section E
+F. try generate if role allows [try name from content](https://www.w3.org/TR/wai-aria-1.1/#namefromcontent)
+              || current node is referenced by aria-labelledby, aria-describedby
+              || or is a descendant of a native host language text alternative element
+    accumulates name from
+      - `:before`, `:after` text alternative
+      - the result of text alternative for each child node
 
 For an element to be **perceivable**, it MUST be **perceivable to all users**.
 If an element is not perceivable to screen readers, or not perceivable due to
