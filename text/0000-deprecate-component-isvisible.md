@@ -11,40 +11,50 @@ template space rather than JS.
 
 # Motivation
 
-`isVisible` is super legacy and not entirely necessary Component visbility 
-is better handled in tempalte space apposed to the JS alternative. Using 
-this attribute to toggle component visibility introduces bugs with `StyleBindingReference` 
-not updating. Currently, it adds `display: none` as an inline style which removes 
-all other inline styles attached to an element. It is an additional way of 
-hiding components that with its removal will reduce confusion on which approach
-to take when performing said functionality.
+Setting the isVisible property on a component instance as a way to toggle
+the visibility of the component is confusing. The majority of its usage
+predates even Ember 1.0.0, and modern Ember applications already completely
+avoid using isVisible in favor of simpler conditionals in the template
+space.
+
+In addition, when `isVisible` is used today it often introduces subtle (and
+difficult to track down) bugs due to its interaction with the `style`
+attribute (toggling `isVisible` clobbers any existing content in `style`).
+
+Simply put, removing `isVisible` will reduce confusion amongst users.
 
 # Transition Path
 
-In cases where the `isVisible` property is used we provide a deprecation warning
-with a link to the deprecation guide which states why it was deprecated and/or the
-options available to hide the component. As it is a public API it will be removed
-in the next major version release (4.0).
+Whenever `isVisible` is used a deprecation will be issued with a link to 
+the deprecation guide explaining the deprecation and how to refactor in order
+to avoid it.
+
+Given that `Component#isVisible` is a public API, deprecating now would
+schedule for removal in the next major version release (4.0).
 
 There are several options available to hiding elements 
 such as `<div hidden={{boolean}}></div>`(hidden is valid for all elements
 and is semantically correct) or wrapping the component in a template
-conditional `{{#if}}` statement which do not interfere with
-the `StyleBindingReference`. Components `classNames` an `classNameBindings`
+conditional `{{#if}}` statement. Components `classNames` and `classNameBindings`
 could also be used to add hidden classes.
 
 # How We Teach This
 
-The `isVisible` property is rarely used so deprecating in a future blog post
-would be sufficient. It will need to be removed from the API docs. It would be
-beneficial to add documentation on hiding components to the Ember guides with the
-conditional handlebar helper.
-`{{#if showComponent}}`
-  `{{component}}`
-`{{/if}}`
+The `isVisible` property is rarely used, the deprecation along with a mention
+in a future blog post would be sufficient.
 
-Alternatively, with the now widely supported HTML hidden attribute using a simple
-`<div hidden={{isHidden}}></div>` where isHidden can be toggled.
+We should consider adding documentation on hiding components to the Ember
+guides with the conditional handlebar helper or via the widely supported `hidden`
+attribute.
+
+```hbs
+{{#if showComponent}}
+  {{component}}
+{{/if}}
+
+{{! or }}
+<div hidden={{isHidden}}></div>
+```
 
 # Alternatives
 
