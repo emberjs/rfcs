@@ -6,7 +6,11 @@
 
 ## Summary
 
-Adding ember-cli-build-notifications as a default addon will increase developer productivity and improve the feedback cycle of day-to-day development. It will also assist new ember devs by quickly notifying them of errors they do not yet know to look at for. The default settings should should be verbose, as that would be most helpful to new Ember developers. 
+`ember-cli-build-notifications` uses `node-notifier` to provide cross platform system notifications for `ember-cli` build events (specifically on build success and build error).
+
+![](https://github.com/pdud/ember-cli-build-notifications/raw/master/example.png)
+
+Adding ember-cli-build-notifications as a default addon will increase developer productivity and improve the feedback cycle of day-to-day development. It will also assist new ember devs by quickly notifying them of errors they do not yet know to look at for. The default settings should be verbose, as that would be most helpful to new Ember developers. 
 
 ## Motivation
 
@@ -17,14 +21,17 @@ Confusion as a result of the state of the build consumes a surprising amount of 
 There are several parallel paths that we can take to communicate the state of a build. Recent developments in the new error page are one of them.  Having `ember-cli-build-notifications` alert on **all** builds is another. Not all problems result in a build error, so the absence of a notification is also a useful tool in debugging.
 
 Some of these scenarios include: 
-* Addons, like `ember-cli-typescript` or tools like `watchman` breaking and not to starting a new build
-* Saves in linked packages not causing builds to start
+* Addons, like `ember-cli-typescript` or tools like `watchman` breaking, as well as saves linked pacakges not starting a new build
+  * Not seeing a success/error notification when you normally do will indicate something is off
 * Page refreshed not happening after successful builds due to livereload disconnecting
-* Making only style changes and not realizing the new css was already pushed
+  * When you see a success message but the page hasn't refreshed you know it's time to refresh the page on your own
+* Making only style changes and not realizing the new css was already pushed to the browser
+  * Seeing the success notificaiton makes it plain that your changes are now present, rather than wondering a build error has occured
 
 Build notifications give automatic insight into these scenarios in an unobtrusive way. 
 
 ## Detailed design
+
 1. Include `ember-cli-build-notifications` as part of the default kit
 2. Generate it’s config file at `{app}/config/build-notifications.js`
 3. Configure it to notify on success and notify, including sound, on failure
@@ -51,7 +58,8 @@ The best thing about this approach is that it teaches itself. The alerts will ar
 
 ## Drawbacks
 
-* Some may find the notifications noisy or unnecessary. If so, they can easily tweak the config or remove the add-on. 
+* Some may find the notifications noisy or unnecessary. If so, they can easily tweak the config or remove the add-on
+* The default for OSX is to include the all the notifications in the notification center, which is a lot. This is easily configured, but it can only done after the fact (as far as I know)
 * It’s another dependency
 
 ## Alternatives
