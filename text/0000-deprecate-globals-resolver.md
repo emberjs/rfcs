@@ -78,5 +78,5 @@ We don't believe this is a reasonable alternative.
 
 # Unresolved questions
 
-There has never been a transition guide for transitioning an old codebase to Ember-CLI, despite
-its obvious necessity. Do we want to create one at this late date?
+There has never been a transition guide for transitioning an old codebase to Ember-CLI.
+Do we want to create one at this late date?
