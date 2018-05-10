@@ -20,6 +20,39 @@ Over the past years we have transitioned to using Ember-CLI as the main way
 to compile Ember apps. The globals resolver is a holdover and primarily
 facilitates use of Ember without Ember-CLI.
 
+# The Globals Resolver
+
+For those who are not aware, the globals resolver is available via `@ember/globals-resolver` or
+`Ember.DefaultResolver`. For more information, see the
+[api](https://www.emberjs.com/api/ember/release/classes/GlobalsResolver/properties).
+Using it looks like the following:
+
+```js
+// app.js
+var App = Ember.Application.create();
+
+App.Router.map(function() {
+  this.route('about');
+});
+
+App.AboutRoute = Ember.Route.extend({
+  model: function() {
+    return ['red', 'yellow', 'blue'];
+  }
+});
+```
+
+```html
+// index.html
+<script type="text/x-handlebars" data-template-name="about">
+  <ul>
+    {{#each model as |item|}}
+      <li>{{item}}</li>
+    {{/each}}
+  </ul>
+</script>
+```
+
 # Transition Path
 
 Primarily, the transition path is to recommend using Ember-CLI.
