@@ -1,5 +1,5 @@
 - Start Date: (fill me in with today's date, 2018-04-18)
-- RFC PR: (leave this empty)
+- RFC PR: #326
 - Ember Issue: (leave this empty)
 
 # Ember Data Filter Deprecation
