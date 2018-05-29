@@ -16,7 +16,7 @@ to the new site.
 ## Motivation
 
 The purpose of these changes are to empower new contributors, create a consistent
-narrative structure, and lead new readers through a reasonable learning progression.
+narrative structure, and lead new readers through a natural learning progression.
 
 Ember's public sites are being migrated from Middleman apps to Ember apps
 in order to improve maintainability and empower new contributors. The CLI docs
@@ -53,7 +53,9 @@ addon work, or who are planning for broad extensibility
 
 Applying these User Personas to the CLI content, the following Table of
 Contents emerges. "Beginner" topics will include links to later "Advanced"
-topics, similar to how the Guides link to the API docs.
+topics, similar to how the Guides link to the API docs. This topic 
+arrangement may change as writing progresses, but community feedback is
+requested so no important topics are skipped.
 
 - Landing page 
     - how to install ember cli 
@@ -70,6 +72,7 @@ topics, similar to how the Guides link to the API docs.
     - ember generate
     - ember install (incl some general info about ember addons vs npm packages)
 - Basic use (explain options of each)
+    - using the "help" commmand
     - ember new
     - ember server
     - ember test
@@ -99,6 +102,16 @@ topics, similar to how the Guides link to the API docs.
     - Including assets
     - Testing your addon
 
+### Contributor involvement
+
+A sample app with sone written content is available [here]().
+Once the table of contents has been scaffolded, there will be a
+quest issue and call for contributors. Many sections will include
+comments and pointers for writers, so that they do not 
+need to read the entire guides to know the scope.
+Contributors will especially needed for addons and advanced
+documentation.
+
 ### Versioning
 
 Only one version of the documentation will be deployed.
@@ -106,13 +119,12 @@ The documentation app itself will have clear releases
 as major changes are made, so that users working on
 older apps can still go back in time if they need to. 
 
-### Handling legacy links
+### Availability of past content
 
-Legacy links will still direct to the old site,
-which will have a large deprecation banner on each page. This lets us
-maintain existing SEO, links from blog posts, etc. without being
-constrained by the old content or trying to engineer fancy redirects,
-which are prone to breaking.
+The old site will remain publicly available under 
+a "legacy" url, with a
+deprecation banner on each page. The new app will
+likewise include a prominent link to the old documentation.
 
 ### Application architecture
 
@@ -155,7 +167,7 @@ The Ember CLI website is not referenced in the API docs.
 
 Some potential drawbacks include:
 
-- Old bookmarks will still point to old content
+- Old bookmarks will mot map perfectly to new content
 - Users may be used to finding content in a particular place
 - Some existing content will be deemphasized or removed
 - It's another app to keep in step with the main website
