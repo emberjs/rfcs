@@ -32,6 +32,98 @@ explanation that will make super-easy for developers to migrate to closure actio
 As it is mandatory with new deprecations, a new entry in the deprecation guides will be added
 explaining the migration path in depth.
 
+To refresh what the migration path would look like in the typical use case.
+
+**BEFORE**
+```js
+// parent-component.js
+export default Component.extend({
+  actions: {
+    sayHi() {
+      alert('Hello user!');
+    }
+  }
+})
+```
+
+```hbs
+{{!-- parent-component.hbs --}}
+{{child-component salute="sayHi"}}
+```
+
+```js
+// child-component.js
+export default Component.extend({
+  actions: {
+    sendSalute() {
+      this.sendAction('salute');
+    }
+  }
+});
+```
+
+```hbs
+{{!-- child-component.hbs --}}
+<button {{action "sendSalute"}}>Send salute</button>
+```
+
+**AFTER**
+```js
+// parent-component.js
+export default Component.extend({
+  actions: {
+    sayHi() {
+      alert('Hello user!');
+    }
+  }
+})
+```
+
+```hbs
+{{!-- parent-component.hbs --}}
+{{child-component salute=(action "sayHi")}}
+```
+
+```js
+// child-component.js
+export default Component.extend({
+  actions: {
+    sendSalute() {
+      this.salute();
+    }
+  }
+});
+```
+
+```hbs
+{{!-- child-component.hbs --}}
+<button {{action "sendSalute"}}>Send salute</button>
+```
+
+However _closure actions_ allow to be less verbose, so the same behavior could be attained using
+less intermediate calls
+
+```js
+// parent-component.js
+export default Component.extend({
+  actions: {
+    sayHi() {
+      alert('Hello user!');
+    }
+  }
+})
+```
+
+```hbs
+{{!-- parent-component.hbs --}}
+{{child-component salute=(action "sayHi")}}
+```
+
+```hbs
+{{!-- child-component.hbs --}}
+<button onclick={{@salute}}>Send salute</button>
+```
+
 ## How we teach this
 
 There are no new concepts to teach, but the removal of an old concept now considered outdated.
