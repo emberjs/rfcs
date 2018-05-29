@@ -20,6 +20,9 @@ _Closure actions_ have been available since 1.13. That is 3 years ago, so deprec
 should not cause too much pain and yet addons can support still support the last version of the 1.X
 cycle if they really want to.
 
+It is out of the scope of this RFC to enumerate the reasons why _closure actions_ are preferred over
+_sendAction_ but you can find an in depth explanation of _closure actions_ in [this blog post from 2016](http://miguelcamba.com/blog/2016/01/24/ember-closure-actions-in-depth).
+
 ## Detailed design
 
 A deprecation message will appear when `sendAction` is invoked. The feature will be removed in
