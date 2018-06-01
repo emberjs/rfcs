@@ -4,7 +4,7 @@
 
 # Summary
 
-Deprecate the fallback behavior of resolving `{{foo}}` by requiring the usage of `{{this.foo}}` as syntax to refer to properties of the templates' backing component. This would be the default behavior in Glimmer Components.
+Beging the transition to deprecate the fallback behavior of resolving `{{foo}}` by requiring the usage of `{{this.foo}}` as syntax to refer to properties of the templates' backing component. This would be the default behavior in Glimmer Components.
 
 For example, given the following component class:
 
@@ -86,9 +86,31 @@ Furthermore, by enforcing the `this` prefix, tooling like the [Ember Language Se
 
 # Transition Path
 
-The `{{this.foo}}` syntax has always been supported Handlebars syntax and thus can be used in every version of Ember. However, no guides or documentation promote its usage. While applications can start migrating today to this more explicit syntax, we can surface information about what properties on the class were accessed allowing developers to get a concise list of expressions that should be migrated. This can be surfaced because we are already disambiguating the syntax at runtime.
+We intend this to be a _very slow_ process as we understand it is a large change. Because of this we will be doing a phased rollout to help guide people in transtion. Below is an outline of how we plan to roll this change out.
 
-Using this information, we will also have the ability to create a codemod that will help migrate templates.
+**Phase 1:**
+- Add [template lint rule](https://github.com/ember-template-lint/ember-template-lint/pull/392) to [ember-template-lint](https://github.com/ember-template-lint/ember-template-lint) as an **opt-in** rule
+- Document the [codemod infrastructure](https://github.com/dyfactor/dyfactor) and [codemod](https://github.com/dyfactor/dyfactor-plugin-disambiguate-locals). Make it available for early adopters
+- Start updating docs to use `this.`
+
+**Phase 2:**
+- Add the lint rule by default _in the apps_ `.template-lintrc.js`
+- Complete doc migration to use `this.`
+
+**Phase 3:**
+- Enable the lint rule by default in the `recommended` config
+
+**Phase 4:**
+- Introduce deprecation **app only** fallbacks
+
+**Phase 5:**
+- Introduce deprecation for **any** fallbacks
+
+**Phase 6:**
+- Rev major to 4.0.0
+
+**Phase 7:**
+- Remove fallback functionality post 4.3.0 LTS
 
 # How We Teach This
 
