@@ -57,6 +57,13 @@ App.AboutRoute = Ember.Route.extend({
 
 Primarily, the transition path is to recommend using Ember-CLI.
 
+One small detail required to implement this RFC: ember-cli's own default resolver,
+[ember-resolver](https://github.com/ember-cli/ember-resolver)
+currently still extends from the globals resolver.
+In order to implement this RFC, the ember-cli resolver will need to be changed
+so that it does *not* extend from the globals resolver, or otherwise ember-cli users
+will get a deprecation warning as well.
+
 During the 3.x timeframe, it MAY become increasingly difficult to use this old functionality.
 For example, with the release of 3.0, we already stopped publishing builds that support
 globals mode. Here are some of the changes that have impacted or may soon impact users of globals mode:
