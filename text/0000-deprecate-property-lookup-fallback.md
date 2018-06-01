@@ -4,7 +4,7 @@
 
 # Summary
 
-Beging the transition to deprecate the fallback behavior of resolving `{{foo}}` by requiring the usage of `{{this.foo}}` as syntax to refer to properties of the templates' backing component. This would be the default behavior in Glimmer Components.
+Beginning the transition to deprecate the fallback behavior of resolving `{{foo}}` by requiring the usage of `{{this.foo}}` as syntax to refer to properties of the templates' backing component. This would be the default behavior in Glimmer Components.
 
 For example, given the following component class:
 
