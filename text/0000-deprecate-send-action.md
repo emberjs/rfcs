@@ -90,6 +90,10 @@ export default Component.extend({
   actions: {
     sendSalute() {
       this.salute();
+      // if the salute action is optional you'll have to guard in case it's undefined:
+      // if (this.salute) {
+      //   this.salute()
+      // }
     }
   }
 });
