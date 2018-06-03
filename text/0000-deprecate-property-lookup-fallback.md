@@ -108,9 +108,10 @@ We intend this to be a _very slow_ process as we understand it is a large change
 
 **Phase 6:**
 - Rev major to 4.0.0
+- Add assert for fallback behavior
 
 **Phase 7:**
-- Remove fallback functionality post 4.3.0 LTS
+- Remove fallback functionality in 4.5, post 4.4.0 LTS
 
 # How We Teach This
 
