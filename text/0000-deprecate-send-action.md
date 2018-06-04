@@ -94,6 +94,12 @@ export default Component.extend({
       // if (this.salute) {
       //   this.salute()
       // }
+      // 
+      // Alternatively, you can also define a noop salute function:
+      // salute() {}
+      //
+      // This allows you to remove the guard while provinding an obvious place to add
+      // docs for that action.
     }
   }
 });
