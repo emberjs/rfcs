@@ -1,5 +1,5 @@
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
-- RFC PR: (leave this empty)
+- Start Date: 2017-10-03
+- RFC PR: https://github.com/emberjs/ember.js/pull/15780
 - Ember Issue: (leave this empty)
 
 # Summary
@@ -23,8 +23,10 @@ Follow the usual process for other deprecations.
 Deprecation will suggest usage of `disabled` and removal of `disabledWhen`
 
 # Drawbacks
+None
 
 # Alternatives
+None
 
 # Unresolved questions
 
