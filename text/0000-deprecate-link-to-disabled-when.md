@@ -19,7 +19,7 @@ Therefore in order to bring `link-to` into consistency with other built-in compo
 Follow the usual process for other deprecations
 
 # How We Teach This
-It is more intuitive to use `disabled` property because nativly supported by other html elements and therefore new user's more likely familiar with it already. Therefore deprecation will suggest usage of `disabled` and removal of `disabledWhen`.
+It is more intuitive to use `disabled` property because nativly supported by other html elements and therefore new user's more likely familiar with it already. Deprecation will simply suggest to use `disabled` instead of `disabledWhen`.
 
 # Drawbacks
 Implementation of deprication can be done with none breaking way so don't see any drawbacks to it.
