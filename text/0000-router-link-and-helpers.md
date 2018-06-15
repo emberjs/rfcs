@@ -56,7 +56,7 @@ Inspiration for helpers implementation could come from https://github.com/BBVAEn
 {{!-- components/link/template.hbs --}}
 <a 
   {{action (transition ...@to)}} 
-  class="{{if (is-route-active @to) 'active'}}"
+  class="{{if (is-route-active ...@to) 'active'}}"
 >
 
 {{yield}}
