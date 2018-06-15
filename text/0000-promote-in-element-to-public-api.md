@@ -60,15 +60,15 @@ a deprecation. I suggest keeping the deprecated private API will until the first
 
 ### Small proposed changes
 
-There is however one part of the behaviour that the core team wants to make explicit before promoting
+There is however one part of the behavior that the core team wants to make explicit before promoting
 the private API to public, and that is how the content is added to the destination when there is other
 content already there.
 
 The desired behavior is that, by default, the rendered content will **replace all the content of the destination**,
 effectively becoming the its `innerHTML`.
 In the current behaviour the rendered content is appended as the end of any existing content. This will still
-be supported by passing `nextSibling=null`, but it will not be the default anymore.
-Any other value passed to `nextSibling` must produce an error.
+be supported by passing `insertBefore=null`, but it will not be the default anymore.
+Any other value passed to `insertBefore` must produce an error.
 
 
 # How We Teach This
