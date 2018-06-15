@@ -68,12 +68,18 @@ and the `create` method to circumvent this issue.
 
 This change _would_ be a breaking change to the behavior of native classes
 today, and a change from the previous class RFC. This will impact early adopters
-and should be made with that in mind. However, because native classes never
-officially shipped as part of Ember's public API (an announcement was not made,
-docs have not been written, etc), this RFC proposes that the change would _not_
-be considered a breaking change _for the purposes of semver_. This would allow
-us to ship the change during the Ember v3 release cycle, and prevent more code
-from being built on top of the previous behavior.
+and should be made with that in mind. It would _not_ be a change that breaks the
+behavior of the community solutions to class fields mentioned above, and all
+other changes would be relatively easy to create a safe codemod for (essentially
+converting `constructor` -> `init` in affected classes), so the impact _should_
+be minimal.
+
+Because native classes never officially shipped as part of Ember's public API
+(an announcement was not made, docs have not been written, etc), this RFC
+proposes that the change would _not_ be considered a breaking change _for the
+purposes of semver_. This would allow us to ship the change during the Ember v3
+release cycle, and prevent more code from being built on top of the previous
+behavior.
 
 ## Detailed design
 
@@ -141,7 +147,11 @@ assigned each time a class is initialized, but these are easier to work around.
 ### Injections and the `init` hook
 
 One side effect of this change is that injections will not be available on the
-class instance during the `constructor` phase. The ideal behavior here is
+class instance during the `constructor` phase. This behavior is not very
+commonly used - based on an informal community survey we found only a few usages
+\- but it _does_ exist and have its use cases.
+
+Figuring out the ideal behavior of injections during the constructor phase is
 outside of the scope of this RFC, and is something that should be discussed in
 future RFCs. For the time being, users can still rely on the `init` hook, which
 will continue to be called after all injections and properties have been
@@ -202,13 +212,11 @@ demonstrate the behaviors of classes throughout the guides and API docs.
 One thing we should make clear is that EmberObject will likely be deprecated
 in the near future, and that ideally for non-Ember classes (things that aren't
 Components, Services, etc.) users should drop EmberObject altogether and use
-native classes only. For the purposes of codemodding, however, this will not be
-possible, since EmberObject based classes still have many differences in common
-usage from standard native classes.
+native classes only.
 
 ## Drawbacks
 
-This would be a breaking change that would negatively affect early adopters.
+This would be a breaking change that could negatively affect early adopters.
 
 ## Alternatives
 
