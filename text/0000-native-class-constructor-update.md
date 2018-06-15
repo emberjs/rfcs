@@ -118,8 +118,8 @@ class EmberObject {
   static create(props) {
     let instance = new this(props);
 
-    Object.assign(this, props);
-    this.init();
+    Object.assign(instance, props);
+    instance.init();
 
     return instance;
   }
