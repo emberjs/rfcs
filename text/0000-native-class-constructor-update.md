@@ -162,6 +162,9 @@ assigned to the instance.
 It was previously possible to use `new` syntax with EmberObject. While this
 was not considered public API, it has technically worked and been under test
 since the early days of Ember, and may fall under the category of intimate API.
+Ideally, we would deprecate this usage as a private/intimate API, which would
+mean supporting it through the next LTS version, and dropping support after
+(currently, this would mean dropping it at `v3.5.0`).
 
 We can continue to support this behavior in a backwards compatible way while
 deprecating it with one final tweak to the change above:
@@ -182,7 +185,11 @@ class EmberObject {
        return this;
     }
 
-    deprecate('using new with EmberObject has been deprecated', true);
+    deprecate('using `new` with EmberObject has been deprecated. Pleas use `create` instead.', false, {
+      id: 'object.new-constructor',
+      until: '3.5.0'
+    });
+
     initialize(this, props);
   }
 
