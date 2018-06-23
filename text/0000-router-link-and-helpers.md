@@ -80,7 +80,7 @@ It's possible we could write a codemod to auto-convert everyone's non-angle-brac
 
 We'll want to make it very clear that the traditional `LinkTo` technique of linking will still be available, but will eventually be deprecated.
 
-The documentation and guides would need to be incrementally upgraded to inform people about the new linking strategy -- but becaus the old way would still work, having some docs say `LinkTo` instead of `Link` wouldn't be the worst thing.
+The documentation and guides would need to be incrementally upgraded to inform people about the new linking strategy -- but because the old way would still work, having some docs say `LinkTo` instead of `Link` wouldn't be the worst thing.
 
 
 ## Drawbacks
