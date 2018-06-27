@@ -24,7 +24,7 @@ payload caches, etc.
 #### before
  ![image](https://user-images.githubusercontent.com/715175/33340994-6380c66a-d432-11e7-9f00-ed905e78915a.png)
 
-This RFC proposes rationalizing and extracting ED's core model data handling layer into a ModelData class.
+This RFC proposes rationalizing and extracting ED's core record data handling layer into a RecordData class.
 
 #### after
 ![image](https://user-images.githubusercontent.com/715175/33341155-e5f170c2-d432-11e7-9c50-4a3e977331fe.png)
@@ -32,35 +32,35 @@ This RFC proposes rationalizing and extracting ED's core model data handling lay
 This will allow us to rationalize internal ED APIs, establish clearer internal boundaries, 
 allow experimentation by addon authors, and create a path for internal ED experimentation.
 
-You can think of Model Data as a layer that can receive JSON api payloads for a record,
+You can think of Record Data as a layer that can receive JSON api payloads for a record,
 apply local changes to it, and can be queried for the current state of the data.
 
 Examples of things this would enable:
 
-1) By shipping a custom ModelData, EmberDataModelFragments can implement a large part of their 
+1) By shipping a custom RecordData, EmberDataModelFragments can implement a large part of their 
 funcionality without relying on private apis. Spike at [model fragments](https://github.com/igorT/ember-data.model-fragments/tree/igor/model-data)
 
 2) A spike of Ember Data backed by Orbit, can be implemented as an addon, where most of the work
-is in implementing a Model Data backed by Orbit. Spike at [data-orbit](https://github.com/igorT/data-orbit/tree/orbit-model-data)
+is in implementing a Record Data backed by Orbit. Spike at [data-orbit](https://github.com/igorT/data-orbit/tree/orbit-model-data)
 
-3) By using an ES6 class for Model Data implementation, this brings us closer to an Emberless 
+3) By using an ES6 class for Record Data implementation, this brings us closer to an Emberless 
 Ember Data running.
 
 4) If you needed to implement a GraphQL like projection API, Adapters and Serializers would be enough
 for the loading data, but currently there is no good place to handle client side data interactions.
-ModelData would make it much easier to have a GraphQL ED addon
+RecordData would make it much easier to have a GraphQL ED addon
 
 5) Certain apps and models have a large amount of read only data, which is currently very performance heavy
-to implement in ED. They could use a read only fast model data addon, which would enable a large perf win.
+to implement in ED. They could use a read only fast record data addon, which would enable a large perf win.
 
 6) Experimenting with schemaless approaches is currently very hard in ED, because internal
-models encode assumptions of how attributes and relationships work. Having a swappable ModelData would
+models encode assumptions of how attributes and relationships work. Having a swappable RecordData would
 make it easier for us to implement schemaless approaches in addons.
 
-7) By having Model Data fully expressed in JSON API apis, the current state of the store becomes serializable.
+7) By having Record Data fully expressed in JSON API apis, the current state of the store becomes serializable.
 
-By designing a public interface for ModelData that dosen't rely on any other part of EDs current system,
-we can use ModelData as the main building block around which we can refactor the rest of ED.
+By designing a public interface for RecordData that dosen't rely on any other part of EDs current system,
+we can use RecordData as the main building block around which we can refactor the rest of ED.
 
 
 ### Detailed design
@@ -68,42 +68,42 @@ we can use ModelData as the main building block around which we can refactor the
 
 #### High level design
 
-Ember Data would define a ModelData interface, and ship a default implementation. Addons would
-be able to swap their own implementation of the ModelData interface.
+Ember Data would define a RecordData interface, and ship a default implementation. Addons would
+be able to swap their own implementation of the RecordData interface.
 
-ModelData is an interface defining the api for how the store and DS.Models 
-store and apply changes to data. ModelDatas hold
+RecordData is an interface defining the api for how the store and DS.Models 
+store and apply changes to data. RecordDatas hold
 the backing data for each record, and act as a bridge between the Store, DS.Model, and Snapshots.
  It is per record, and defines apis that respond to 
 store api calls like `pushData`, `adapterDidCommit` and DS.Model updates like `setAttribute`.
-ModelData represents the bucket of state that is backing a particular DS.Model.
+RecordData represents the bucket of state that is backing a particular DS.Model.
 
-The store instantiates the ModelData, feeds it JSON API data coming from the server and
-tells it about state changes. DS.Model queries the ModelData for the attribute
+The store instantiates the RecordData, feeds it JSON API data coming from the server and
+tells it about state changes. DS.Model queries the RecordData for the attribute
 and relationship values and sends back the updates the user has made.
 
-Other than the `storeApisWrapper` passed to it, ModelData does not assume existence of
+Other than the `storeApisWrapper` passed to it, RecordData does not assume existence of
 any other Ember or Ember Data object. It is a fully self contained system, that might serve
 as a basic building block of non Ember/ED data libraries and could be extracted into a separate
 library.
 
 #### Interface
 
-The interface for ModelData is:
+The interface for RecordData is:
 
 ```js
-export default class ModelData {
+export default class RecordData {
   constructor(modelName: string, clientId?: string, id?: string, storeApisWrapper: StoreApisWrapper) {
     /*
-      Exposing the entire store api to the ModelData seems very risky and would 
+      Exposing the entire store api to the RecordData seems very risky and would 
       limit the kind of refactors we can do in the future. We would provide a wrapper
-      to the ModelData that would enable funcionality MD absolutely needs 
+      to the RecordData that would enable funcionality MD absolutely needs 
     */
   }
 
 
   /*
-    Hooks through which the store tells the Model Data about the data
+    Hooks through which the store tells the Record Data about the data
     changes. They all take JSON API and return a list of keys that the 
     record will need to update
   */
@@ -118,7 +118,7 @@ export default class ModelData {
   }
 
   /*
-    Hooks through which the store tells ModelData about the lifecycle of the data,
+    Hooks through which the store tells RecordData about the lifecycle of the data,
     allowing it to keep track of dirtyness
   */
 
@@ -153,7 +153,7 @@ export default class ModelData {
 
 
   /*
-    Methods through which DS.Model interacts with ModelData, by setting and getting local state
+    Methods through which DS.Model interacts with RecordData, by setting and getting local state
   */
 
   setAttr(modelName: string, id?: string, clientId?: string, key: string, value: string) {
@@ -196,10 +196,10 @@ export default class ModelData {
 
 export default class StoreApiWrapper {
   /* clientId is used as a fallback in the case of client side creation */
-  createModelDataFor(modelName, id, clientId)
+  createRecordDataFor(modelName, id, clientId)
   notifyPropertyChanges(modelName, id, clientId, keys)
   /* 
-  in order to not expose ModelClasses to ModelData, we need to supply it with
+  in order to not expose ModelClasses to RecordData, we need to supply it with
   model schema information. Because a schema design is out of scope for this RFC,
   for now we expose these two methods we intend to deprecate once we have a schema
   interpretation
@@ -211,12 +211,12 @@ export default class StoreApiWrapper {
 ```
 
 
-#### ED's usage of ModelData
-We would refactor internal models, DS.Models and Snapshots to use ModelData's apis.
+#### ED's usage of RecordData
+We would refactor internal models, DS.Models and Snapshots to use RecordData's apis.
 
-Reimplementation of ED current internals on top of ModelData apis would consist of the store
-pushing the json api payload to the backing model data and the model data setting up internal
-data tracking, as well as storing relationship data on any additional needed modelDatas.
+Reimplementation of ED current internals on top of RecordData apis would consist of the store
+pushing the json api payload to the backing record data and the record data setting up internal
+data tracking, as well as storing relationship data on any additional needed recordDatas.
 
 
 ```js
@@ -233,8 +233,8 @@ store.push(data);
 
 // internal store method
 _internalMethod() {
-  let modelData = store.modelDataFor('user', 1, this._storeWrapperApi)
-  modelData.pushData(data, false)
+  let recordData = store.recordDataFor('user', 1, this._storeWrapperApi)
+  recordData.pushData(data, false)
 }
 
 ->
@@ -247,7 +247,7 @@ pushData(data, shouldCalculateChanges) {
 ->
 // model-data.js
 _setupRelationships(data) {
-  this.storeWrapperApi.modelDataFor('house', 1);
+  this.storeWrapperApi.recordDataFor('house', 1);
   ....
 }
 ```
@@ -260,8 +260,8 @@ user.get('name');
 ->
 // DS.Model
 get(key) {
-  let modelData = _internalMethodForGettingTheCorrespondingModelData(this);
-  return modelData.getAttr('name');
+  let recordData = _internalMethodForGettingTheCorrespondingRecordData(this);
+  return recordData.getAttr('name');
 }
 ```
 
@@ -269,7 +269,7 @@ get(key) {
 
 ##### Basic loading of relationships
 
-ModelData's relationship hooks would receive and return json api relationship objects with
+RecordData's relationship hooks would receive and return json api relationship objects with
 additional metadata meaningful to Ember Data.
 
 Lets say that we started off with the same user data as above
@@ -286,7 +286,7 @@ let data = {
 let clemens = store.push(data);
 ```
 
-Getting a relationships from Clemens would trace a path from the DS.Model to backing model data,
+Getting a relationships from Clemens would trace a path from the DS.Model to backing record data,
 which would then give the store a json api object, and the store would instantiate a ManyArray
 with the records
 
@@ -295,11 +295,11 @@ with the records
 clemens.get('houses');
 // DS.Model
 get() {
-  let clemensModelData = _internalApiGetsUsTheModelDataFromIDMMAP();
+  let clemensRecordData = _internalApiGetsUsTheRecordDataFromIDMMAP();
   return clemens.getHasMany('houses');
 }
 ->
-// Model Data returns
+// Record Data returns
 {[ 
   data: { id: 5, type: 'house'},
   links: { related: '/houses' },
@@ -318,7 +318,7 @@ have all the ids if we loaded from the belongsTo side) and whether the link shou
 
 ##### Setting relationship data locally
 
-Similarly to the attributes, changing relationships locally tells model data to update
+Similarly to the attributes, changing relationships locally tells record data to update
 the backing data store
 ```js
 let anotherHouse = store.push({data: { type: 'house', id: '5' }});
@@ -326,7 +326,7 @@ clemens.get('houses').then((houses) => {
   houses.pushObject(anotherHouse);
   -> 
   // internally
-  clemensModelData.addToHasMany('houses', { data: { type: 'house', id: '5' } })
+  clemensRecordData.addToHasMany('houses', { data: { type: 'house', id: '5' } })
 });
 ```
 
@@ -345,7 +345,7 @@ clemens.get('houses').then((houses) => {
   houses.pushObject(newHouse);
   ->
   // internally
-  clemensModelData.addToHasMany('houses', { data: { type: 'house', id: null, { meta: _ED: { clientId: 1}} } })
+  clemensRecordData.addToHasMany('houses', { data: { type: 'house', id: null, { meta: _ED: { clientId: 1}} } })
 });
 clemens.get('houses') ->
 { data: 
@@ -362,16 +362,16 @@ ED internals would keep a separate cache of client ID and resolve the correct re
 
 #### Addon usage
 
-The Store provides a public api for looking up a modelData which the store has not seen before.
+The Store provides a public api for looking up a recordData which the store has not seen before.
 
 ```
-modelDataFor(modelName, id, options) {
+recordDataFor(modelName, id, options) {
 
 }
 ```
 
 If an Addon wanted to implement custom data handling functionality, it would subclass the store
-and implement their own ModelData handler.
+and implement their own RecordData handler.
 
 There are three main reasons to do this.
 
@@ -379,25 +379,25 @@ There are three main reasons to do this.
 
 Best example would be the Ember Data backed by Orbit.js experiment. EmberDataOrbit Addon replaces
 Ember Data's backing data implementation with Orbit.js. Most of this work can be done by EmberDataOrbit
-replacing ED's Model Data implementation
+replacing ED's Record Data implementation
 
 ```
-modelDataFor(modelName, id, options, storeWrapper) {
-  return new OrbitModelData(modelName, id, storeApisWrapper) 
+recordDataFor(modelName, id, options, storeWrapper) {
+  return new OrbitRecordData(modelName, id, storeApisWrapper) 
 }
 ```
 
 2. Per Model replacement of Ember Data's data handling
 
 If a large app was loading thousands of instances of a particular record type, which was read-only,
-it could use a read only ED addon, which implemented a simplified ModelData without any change tracking.
+it could use a read only ED addon, which implemented a simplified RecordData without any change tracking.
 
-The addon would implement a `modelDataFor` on the store as 
+The addon would implement a `recordDataFor` on the store as 
 
 ```
-modelDataFor(modelName, id, options, storeWrapper) {
+recordDataFor(modelName, id, options, storeWrapper) {
   if (addonDecidesIfReadOnly(modelName))  {
-    return new ReadOnlyModelData(modelName, id, storeApisWrapper) 
+    return new ReadOnlyRecordData(modelName, id, storeApisWrapper) 
   }
   return this._super(modelName, id, options, storeWrapper);
 }
@@ -407,13 +407,13 @@ modelDataFor(modelName, id, options, storeWrapper) {
 
 Ember Data Model Fragments Addon adds support for handling of embedded data fragments.
 In order to manage the handling of fragments, Model Fragments would compose ED's default
-ModelData with it's own for handling fragments.
+RecordData with it's own for handling fragments.
 
 
 ```js
-modelDataFor(modelName, id, options, storeWrapper) {
-  let EDModelData = this._super(modelName, id, options, storeWrapper);
-  return new ModelFragmentsModelData(modelName, id, options, storeWrapper, EDModelData);
+recordDataFor(modelName, id, options, storeWrapper) {
+  let EDRecordData = this._super(modelName, id, options, storeWrapper);
+  return new ModelFragmentsRecordData(modelName, id, options, storeWrapper, EDRecordData);
 }
 ```
 
@@ -423,7 +423,7 @@ to ED's implementation
 ```js
 pushData(data, shouldCalculateChanges) {
   let keysThatChanged = this.extractAndHandleFragments(data);
-  return keysThatChanged.concat(this.EDModelData.pushData(data, shouldCalculateChanges))
+  return keysThatChanged.concat(this.EDRecordData.pushData(data, shouldCalculateChanges))
 }
 ```
 
@@ -432,7 +432,7 @@ pushData(data, shouldCalculateChanges) {
 These APIs are not meant to be used by most users, or app level code, and should be hidden away and
 described in an api/guides section meant for ED addon authors. Currently there are a few widely used
 addons which would greatly benefit from this, so we can also reach out in person. I have already implemented
-a spike of ModelFragments using ModelData. Having couple addons implement different ModelDatas would be
+a spike of ModelFragments using RecordData. Having couple addons implement different RecordDatas would be
 a great way to teach new addon authors about the purpose and implementation of the API.
 
 ### Drawbacks
@@ -445,8 +445,8 @@ creating a path for future simplification of the codebase.
 
 #### It allows people to do very non-standard changes that will complexify their app needlessly
 
-The main mitigation, is only giving ModelData access to a small amount of knowledge of the external world,
-and keeping most APIs pull only thus discouraging trying to do innapropriate work in the ModelData layer
+The main mitigation, is only giving RecordData access to a small amount of knowledge of the external world,
+and keeping most APIs pull only thus discouraging trying to do innapropriate work in the RecordData layer
 
 #### The new JSON api interaction might preclude performance improvements, or reduce current performance
 
@@ -458,13 +458,13 @@ and keeping most APIs pull only thus discouraging trying to do innapropriate wor
 I believe that this approach is valid as an internal architecture, so would like to do it even if
 we did not expose any of it to addons/apps.
 
-#### Make ModelData's looked up from the resolver
+#### Make RecordData's looked up from the resolver
 
-Currently ModelData is a dumb ES6 class and does not live in the Ember resolver system, for performance
+Currently RecordData is a dumb ES6 class and does not live in the Ember resolver system, for performance
 and simplicity reasons. We could alternatively look it up from the resolver, allowing people
 to mock it and inject into it easier.
 
-#### Don't expect a per record Model Data
+#### Don't expect a per record Record Data
 
 Currently, the MD layer semantics mimics current ED's data storage, where data is stored per record in
 internalModels. You could alternatively do this using an app wide cache, like Orbit.js does, or
@@ -482,34 +482,34 @@ apis. However this requires us to make the new apis public from the get go, and 
 
 The following options are available, none of them great:
 
-1) Feature flag ModelData work. The scope of this refactor is large enough, that doing a full feature
+1) Feature flag RecordData work. The scope of this refactor is large enough, that doing a full feature
 flagging would be an enourmous burden to bear, and I would advise against it. We can proxy some basic
 things, to allow for simpler changes and as a way of warning/deprecating
 
-2) Move from the internals to public ModelData in a single release cycle, and hope public apis we created
+2) Move from the internals to public RecordData in a single release cycle, and hope public apis we created
 make sense, and will not be performance issues in the future. I am reasonably confident having implemented
-several addons using ModelData that the basic design works, but things can always come up.
+several addons using RecordData that the basic design works, but things can always come up.
 
-3) Move from private internals to private ModelData, and then feature flag the public apis over couple
+3) Move from private internals to private RecordData, and then feature flag the public apis over couple
 versions. In this case the addons monkeypatching the internals, would monkeypatch the new nicer apis
 for a while, and then easily switch to the public api. This feel a bit like SemVer cheating.
 
 #### ClientID passing to store api methods
 
-We use `modelDataFor(modelName, id, clientId)` as the api to look up modelDatas. Passing an often
-null clientId seems annoying. Orbit.js uses an identity object instead, and if we did the api would look like `modelDataFor(identityObject)`, where `identityObject` would look like `{ type, id, meta: { _ED: { clientId }}}`. This seem a bit more correct, but doesn't look like any existing ED api, and could create
+We use `recordDataFor(modelName, id, clientId)` as the api to look up recordDatas. Passing an often
+null clientId seems annoying. Orbit.js uses an identity object instead, and if we did the api would look like `recordDataFor(identityObject)`, where `identityObject` would look like `{ type, id, meta: { _ED: { clientId }}}`. This seem a bit more correct, but doesn't look like any existing ED api, and could create
 a lot of allocations.
 
-#### ModelDatas might need to do some global setup/communication, how does that work?
+#### RecordDatas might need to do some global setup/communication, how does that work?
 
 Normally you would do this in an initializer, but becasue MDs aren't resolved, the only way would be
-to do it in ModelDataFor or by using a singleton import. Some ceremony being required to using ModelData
+to do it in RecordDataFor or by using a singleton import. Some ceremony being required to using RecordData
 isn't super bad, because it will discourage app authors from customizing it for trivial/innapropriate
 things.
 
 #### What do we do with the record state management? 
 
-Currently ModelData has no interaction with the state machine. I think we should punt on this
+Currently RecordData has no interaction with the state machine. I think we should punt on this
 for now. 
 
 #### { meta: { _ED: { props here } } } alternatives?
@@ -523,7 +523,7 @@ Please help with better names for things if you have ideas
 
 #### Snapshot interface
 
-How does a Snapshot ask Model Data for it's attributes
+How does a Snapshot ask Record Data for it's attributes
 
 #### Real life perf impact
 
