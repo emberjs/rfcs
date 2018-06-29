@@ -53,9 +53,7 @@ App.AboutRoute = Ember.Route.extend({
 </script>
 ```
 
-# Transition Path
-
-Primarily, the transition path is to recommend using Ember-CLI.
+# Implementation Details
 
 One small detail required to implement this RFC: ember-cli's own default resolver,
 [ember-resolver](https://github.com/ember-cli/ember-resolver)
@@ -63,6 +61,13 @@ currently still extends from the globals resolver.
 In order to implement this RFC, the ember-cli resolver will need to be changed
 so that it does *not* extend from the globals resolver, or otherwise ember-cli users
 will get a deprecation warning as well.
+However, changing the base class of the ember cli classic resolver is a breaking change,
+so prior to ember/ember-cli version 4.0 we need to take another step.
+In the ember-cli classic resolver, deprecate any runtime calls where there is fallback to the globals mode resolver. This would be a deprecation in ember-cli's resolver. We could bump a major version of ember-cli-resolver removing the base class and release it in ember-cli after an LTS of ember-cli.
+
+# Transition Path
+
+Primarily, the transition path is to recommend using Ember-CLI.
 
 During the 3.x timeframe, it MAY become increasingly difficult to use this old functionality.
 For example, with the release of 3.0, we already stopped publishing builds that support
