@@ -185,7 +185,7 @@ class EmberObject {
        return this;
     }
 
-    deprecate('using `new` with EmberObject has been deprecated. Pleas use `create` instead.', false, {
+    deprecate('using `new` with EmberObject has been deprecated. Please use `create` instead.', false, {
       id: 'object.new-constructor',
       until: '3.5.0'
     });
@@ -227,8 +227,20 @@ This would be a breaking change that could negatively affect early adopters.
 
 ## Alternatives
 
-We could leave the behavior as is, and choose a method for defaulting to
+* We could leave the behavior as is, and choose a method for defaulting to
 standardize on.
+
+* We could make this change behind a feature flag and require users to opt-in
+to the new behavior, like optional features that currently exist. This would
+have to be a build time feature flag, since the area is very performance
+sensitive. Given native classes are not yet public API, if we were to do this we
+should probably still default to enabling the new behavior and recommending it
+as the preferred path.
+
+* We could not deprecate `new EmberObject` altogether, and instead only
+deprecate passing properties to the constructor. While this would work as a
+temporary solution, it may also encourage users to continue using EmberObject
+instead of switching to native classes, which is ultimately the long term goal.
 
 ## Unresolved questions
 
