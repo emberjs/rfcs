@@ -49,7 +49,7 @@ allow for controlled sharing of resources.
 Engines can be either "routable" or "route-less":
 
 * Routable engines provide a routing map which can be integrated with the
-  routing maps of parent applications or engines. Routing maps are alway eager
+  routing maps of parent applications or engines. Routing maps are always eager
   loaded, which allows for deep linking into an engine's routes regardless of
   whether the engine itself has been instantiated.
 
