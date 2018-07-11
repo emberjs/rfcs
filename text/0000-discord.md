@@ -14,8 +14,6 @@ Real-time chat is essential to the function of online communities, particularly 
 
 The Ember community predominantly uses [a Slack instance](https://ember-community-slackin.herokuapp.com/) as the gathering place of choice. While we have benefited enormously from Slack, there are significant downsides as well.
 
-## Detailed design
-
 ### Loss of History
 
 Because we use Slack's free plan, the entire instance is limited to 10,000 messages in history at any time. Because of this hard cap, the amount of time messages persist continues to shrink as the community grows.
@@ -54,7 +52,7 @@ First, it has caused many of the most prolific contributors to be less active in
 
 Second, and perhaps worst of all, it undermines the transparency and open governance that we have worked hard to create. Our bar is higher than just making it possible to contribute—we go out of our way to actively welcome and encourage everyone to participate, learn and contribute.
 
-## How we teach this/set this up
+## Detailed design
 
 ### Transition Plan
 
@@ -143,6 +141,14 @@ The following proposed initial category and channel list was chosen based on the
   - Media (livestreams, videos, podcasts)
   - Pets
   - Women in Ember 🔒
+
+## How do we teach this?
+
+In addition to having a setup channel available upon login (with illustrated instructions), here are some links where community members can read more: 
+
+- [Discord Loves Open Source](https://discordapp.com/open-source)
+- [Discord Community Guidelines](https://discordapp.com/guidelines)
+- [How to use Discord](http://www.businessinsider.com/how-to-use-discord-the-messaging-app-for-gamers-2018-5)
 
 ## Drawbacks
 
