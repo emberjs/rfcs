@@ -164,7 +164,9 @@ There is some concern that we may lose some community members due to this move.
 
 The alternative to this would be to temporarily remain on Slack until we are able to evaluate and choose another viable option. However, we believe that staying on Slack is not desirable.
 
-## Unresolved questions
+## Unresolved questions & FAQ
 
-* When will there be conversation threads?
+- When will there be conversation threads? We have been told that it is in the works, but there is no ETA.
+- Disqus, Discord, Discuss? Which is which? For clarity, we will encourage the use of the terms **chat** (Discord), **the forums** (Discuss), and **blog comments** (Disqus)- mostly so no one has to try to remember.
+
 
