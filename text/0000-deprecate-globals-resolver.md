@@ -1,5 +1,5 @@
 - Start Date: 2018-05-08
-- RFC PR: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/331
 - Ember Issue: (leave this empty)
 
 # Summary
@@ -107,6 +107,10 @@ of Ember.js by default unless tree shaking is turned off.
 # How We Teach This
 
 We already do teach this and don't teach the globals resolver. No changes required here.
+
+## Deprecation Guide
+
+A draft deprecation guide has been pull requested at https://github.com/ember-learn/deprecation-app/pull/155
 
 # Drawbacks
 
