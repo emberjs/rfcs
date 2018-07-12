@@ -143,6 +143,9 @@ The following proposed initial category and channel list was chosen based on the
   - Media (livestreams, videos, podcasts)
   - Pets
   - Women in Ember 🔒
+  
+**Integrations**
+Discord's integration game is strong. Discord has a [very detailed API](https://discordapp.com/developers/docs/intro) and many integrations already exist, and with no limitation (compared to free Slack instances, that have limited numbers of integrations).
 
 ## How do we teach this?
 
