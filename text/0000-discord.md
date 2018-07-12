@@ -80,7 +80,7 @@ Community members will then have the option of visiting the "setup" channel and 
 - muting a channel
 - muting a category
 
-Because our goal is transparency, all channels will be visible. A lock icon will display if the user does not have the role necessary to join that channel.
+Because our goal is transparency, all channels will be visible. A lock icon will display if the user does not have the role necessary to join that channel. (FWIW, the alternative is to not display locked channels at all, which we felt would be less ideal- better to know that there are channels where private conversations are necessary and see what they are.)
 
 The following proposed initial category and channel list was chosen based on the current channel needs and evaluation of the channels with the most members on Slack. _Additional channels may be requested in the Admin/community-feedback channel._
 
@@ -130,7 +130,7 @@ The following proposed initial category and channel list was chosen based on the
   - infrastructure
 - Event-Chat
   - EmberConf
-  - EmberCamp
+  - EmberCamps
   - EmberFest
   - Talks
   - Other Conferences
