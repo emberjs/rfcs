@@ -67,11 +67,13 @@ Because Discord has fine-grained controls, we will be able to implement categori
 
 We intend to have the "welcome" channel as the initial channel for everyone who joins the Discord server. This channel will be read-only and will list the rules for the Discord server.
 
+We also intend to have a "setup" channel. This channel will give you a complete guide of how to take advantage of the personalization, privacy and security, and notification controls in Discord. 
+
 **Verification Level**
 Initially, we will be implementing the "low" verification level, which means users will need to have a verified email on their Discord account. If this proves to be too easy of a target for spammers, we will implement a higher level of verification (levels include amount of time a user has to be a verified member of the server before they can post).
 
 **Explicit Content Filter**
-Since this is a public Discord server, we will be setting an explicit content filter- it will scan messages from all members without a role.
+Since this is a public Discord server, we will be setting an explicit content filter- it will scan messages from all members without a role. Email-verified members will be given a community member role to start, and other roles may be added to users over time. 
 
 **Categories and Channels**
 Community members will then have the option of visiting the "setup" channel and learning more about fine-grained controls, such as:
@@ -80,7 +82,7 @@ Community members will then have the option of visiting the "setup" channel and 
 - muting a channel
 - muting a category
 
-Because our goal is transparency, all channels will be visible. A lock icon will display if the user does not have the role necessary to join that channel. (FWIW, the alternative is to not display locked channels at all, which we felt would be less ideal- better to know that there are channels where private conversations are necessary and see what they are.)
+Because our goal is transparency, all of the channels that exist will be visible in the channel list. A lock icon will display if the user does not have the role necessary to join that channel. (_FWIW, the alternative is to not display locked channels at all, which we felt would be less ideal- it is better to know that there are channels where private conversations are necessary and see what they are._)
 
 The following proposed initial category and channel list was chosen based on the current channel needs and evaluation of the channels with the most members on Slack. _Additional channels may be requested in the Admin/community-feedback channel._
 
@@ -158,7 +160,7 @@ There is some concern that there is already some confusion on Slack about where 
 
 ### Losing Community Members 
 
-There is some concern that we may lose some community members due to this move.
+There is some concern that we may lose some community members due to this move. This could happen for a variety of reasons- the nature of OSS work means that some are not always active on the chat community, or the user doesn't want a different chat app, etc. We believe that the former is probably more likely than the latter, since many of us are on at least 2-3 chat apps already. 
 
 ## Alternatives
 
@@ -168,5 +170,6 @@ The alternative to this would be to temporarily remain on Slack until we are abl
 
 - When will there be conversation threads? We have been told that it is in the works, but there is no ETA.
 - Disqus, Discord, Discuss? Which is which? For clarity, we will encourage the use of the terms **chat** (Discord), **the forums** (Discuss), and **blog comments** (Disqus)- mostly so no one has to try to remember.
+
 
 
