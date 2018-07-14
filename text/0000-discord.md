@@ -88,8 +88,8 @@ The following proposed initial category and channel list was chosen based on the
 
 **Category/Channel List:**
 - (No Category)
-  - welcome (community guidelines are posted here)
-  - setup-profile (how to setup your profile)
+  - welcome (community guidelines are posted here) <--readonly & the server invite puts users in this channel first. 
+  - setup-profile (how to setup your profile) <--readonly
 - Admin
   - community-feedback (questions, comments, concerns, requests)
   - security
