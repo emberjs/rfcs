@@ -60,6 +60,7 @@ We will need these things to transition the community smoothly:
 
 - a period of time when we use both chat platforms during the transition, put the equivalent Discord channel information in the Slack channel topic
 - a clear guide (with illustrations)
+- once all of the setup is complete, the Discord server invites can be distributed. 
 
 #### Initial Setup
 
