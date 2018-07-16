@@ -1,5 +1,5 @@
 - Start Date: 2017-12-22
-- RFC PR: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/287
 - Ember Issue: (leave this empty)
 
 # Summary
