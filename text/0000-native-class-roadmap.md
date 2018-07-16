@@ -219,12 +219,15 @@ difficult to maintain:
   ```js
   const constructionContainers = [];
 
+  function getOwner(obj) {
+    return OWNER in obj
+      ? obj[OWNER]
+      : constructionContainers[constructionContainers.length - 1];
+  }
+
   function service(target, key, desc) {
     desc.get = function() {
-      let owner = getOwner(this)
-        || constructionContainers[constructionContainers.length - 1);
-
-      return owner.lookup(`service:${key}`);
+      return getOwner(this).lookup(`service:${key}`);
     }
   }
 
@@ -240,6 +243,7 @@ difficult to maintain:
 
       try {
         instance = new Class();
+        instance[OWNER] = this;
       } finally {
         // remove the current container, even in the case of an error
         constructionContainers.pop();
