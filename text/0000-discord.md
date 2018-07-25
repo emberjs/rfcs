@@ -6,7 +6,7 @@
 
 ## Summary
 
-Encourage the Ember community to adopt Discord for real-time chat.
+Encourage the Ember community to adopt Discord for real-time chat (vs Slack or other options).
 
 ## Motivation
 
@@ -52,6 +52,8 @@ First, it has caused many of the most prolific contributors to be less active in
 
 Second, and perhaps worst of all, it undermines the transparency and open governance that we have worked hard to create. Our bar is higher than just making it possible to contribute—we go out of our way to actively welcome and encourage everyone to participate, learn and contribute.
 
+Finally, this is not intended to replace [the forum](https://discuss.emberjs.com/), and that should be made clear. The forum is still the preferred place for asyncronous, threaded conversations where in-depth discussion is desired. 
+
 ## Detailed design
 
 ### Transition Plan
@@ -61,6 +63,8 @@ We will need these things to transition the community smoothly:
 - a period of time when we use both chat platforms during the transition, put the equivalent Discord channel information in the Slack channel topic
 - a clear guide (with illustrations)
 - once all of the setup is complete, the Discord server invites can be distributed. 
+
+Note: the current Discord chat will be closed while this RFC is under consideration. If the RFC is accepted, then a detailed implementation plan (mostly role/channel/server setup) & invitation strategy will be carried out.  
 
 #### Initial Setup
 
@@ -169,6 +173,14 @@ There is some concern that we may lose some community members due to this move. 
 ## Alternatives
 
 The alternative to this would be to temporarily remain on Slack until we are able to evaluate and choose another viable option. However, we believe that staying on Slack is not desirable.
+
+List of Slack alternatives:
+
+- riot.io
+- mattermost.org
+- rocket.chat
+- spectrum.chat
+
 
 ## Unresolved questions & FAQ
 
