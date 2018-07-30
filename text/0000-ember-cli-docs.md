@@ -1,4 +1,4 @@
-- Start Date: (fill me in with today's date, 2018-07-29)
+- Start Date: 2018-07-29
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
@@ -88,16 +88,6 @@ topics, similar to how the Guides link to the API docs.
     - Testing your addon
 - API Documentation
     - brief description of the target audience and a link
-
-### Contributor involvement
-
-A sample app with sone written content is available [here]().
-Once the table of contents has been scaffolded, there will be a
-quest issue and call for contributors. Many sections will include
-comments and pointers for writers, so that they do not 
-need to read the entire guides to know the scope.
-Contributors will especially needed for addons and advanced
-documentation.
 
 ### Versioning
 
