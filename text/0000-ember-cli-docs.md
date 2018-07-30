@@ -31,16 +31,18 @@ Middleman apps to Ember.
 
 ### Writing process
 
-Writing new content and porting over existing information is a job that will require the help of many contributors! After this RFC is accepted, a call for contributors will be made. Each unwritten section will have comments indicating which topics to cover or information to fact-check.
+Writing new content and porting over existing information is a job that will require the help of many contributors! After this RFC is accepted, a call for contributors will be made. Each unwritten section will have comments indicating which topics to cover. In cases where content has been ported over, comments will indicate which sections to fact-check, clarify, or revise. Following a verson one release, writing work will be organized via normal GitHub issues.
 
 Since maintaining consistent voice and structure across a blank slate is a challenge, beta content for the core learning experience has already been drafted, including Basic Use guides and a tutorial for creating an addon from start to finish.
 
 The beta version of the CLI Guides content can be found at [ember-learn/cli-guides-source](https://github.com/ember-learn/cli-guides-source). The Markdown files there are rendered by [ember-learn/cli-guides-app](https://github.com/ember-learn/cli-guides-source). The app is currently deployed via [Netlify](https://sad-noyce-026d89.netlify.com/)for testing and UX validation, however it requires more work to resolve many known bugs.
 
+A writing styleguide will be provided for contributors.
+
 ### User Personas
 
 The content layout should follow the progression of an Ember developer's
-learning experience. We have identified up to four user personas for the 
+learning experience. There are four main user personas for the 
 CLI documentation:
 
 1. A new or "typical" Ember CLI user - someone whose primary work is
@@ -114,14 +116,16 @@ Legacy links should be maintained because deprecating the links would cause SEO 
 
 ### Application architecture
 
-The application architecture will follow the same patterns as other Middleman
-apps that have been successfully turned into Ember apps. Some examples are:
+The application architecture will follow similar patterns as other Middleman
+apps that have been successfully turned into Ember apps. Some examples of past conversions are:
 
 - [Deprecations](https://github.com/ember-learn/deprecation-app)
 - [The Guides](https://github.com/ember-learn/guides-app)
 - [The API docs](https://github.com/ember-learn/ember-api-docs)
 
-It will make use of typography and UI assets from 
+[Chris Manson](https://github.com/mansona?tab=overview&from=2018-06-01&to=2018-06-30) has a project in development that automates the creation of documentation apps, integrating the lessons learned from these past conversions. Early results are looking great!
+
+The resulting app will make use of typography and UI assets from 
 [ember-styleguide](https://github.com/ember-learn/ember-styleguide)
 
 Although only one version will be deployed/maintained for the forseeable future, the URL structure will allow for future growth, i.e. `https://guides.emberjs.com/cli/release/some-topic`
