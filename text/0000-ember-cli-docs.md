@@ -112,7 +112,11 @@ While the project is in development, it will be worked on as a separate site, an
 
 Legacy links should be maintained because deprecating the links would cause SEO problems. The options include:
 - Leaving the old guides as-is, with deprecation banners
-- Finding a way to replicate the URL structure of the current guides site within the new site
+- Finding a way to replicate the URL structure of the current guides site within the new site, and linking to deprecated content as needed.
+
+For SEO reasons, the second option is preferred.
+
+Upon reaching feature parity, [https://ember-cli.com](https://ember-cli.com) will receive the new content. Between the first release and feature parity with the old site, content will be hosted at [https://guides.emberjs.com/cli].
 
 ### Application architecture
 
