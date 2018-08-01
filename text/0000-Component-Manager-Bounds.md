@@ -9,9 +9,9 @@
 This is a follow up custom components RFC that outlines how we expose a component's DOM structure and associated semantics.
 
 ## Motivation
-Historically, classic ember components have had a built in escape hatch for doing DOM manipulation via `didInsertElement`. This allowed for components to encapsulate some 3rd party JavaScript library or do some fine grain DOM manipulation. We feel that is ability to drop down to a lower level abstraction makes components powerful.
+Historically, classic Ember components have had a built in escape hatch for doing DOM manipulation via `didInsertElement`. This allowed for components to encapsulate some 3rd party JavaScript library or do some fine grain DOM manipulation. We feel that is ability to drop down to a lower level abstraction makes components powerful.
 
-Today, the custom components are not given direct access to the DOM structure; internally known as `Bounds`. This limitation means that custom components cannot easily encapsulate functionality in the same way that classic ember components can. Expanding the capabilities of custom components to expose the `Bounds` is in order to increase the usefulness of the abstraction.
+Today, the custom components are not given direct access to the DOM structure; internally known as `Bounds`. This limitation means that custom components cannot easily encapsulate functionality in the same way that classic Ember components can. Expanding the capabilities of custom components to expose the `Bounds` is in order to increase the usefulness of the abstraction.
 
 ## Detailed design
 
@@ -19,7 +19,7 @@ In [RFC#2013](https://github.com/emberjs/rfcs/blob/master/text/0213-custom-compo
 
 ### `elementHook` capability
 
-The primary way of introducing new functionality to the component manager is through capabilities. To allow custom component managers to announce that they support element related hooks, we will introduce a `elementHook` flag to the capabilities. In doing so, bounds will be dispatched to a `didRenderLayout` method on the manager and `willDestroyLayout` will be called during destruction.
+The primary way of introducing new functionality to the component manager is through capabilities. To allow custom component managers to announce that they support element related hooks, we will introduce an `elementHook` flag to the capabilities. In doing so, bounds will be dispatched to a `didRenderLayout` method on the manager and `willDestroyLayout` will be called during destruction.
 
 ```js
 import { capabilities } from '@ember/component';
