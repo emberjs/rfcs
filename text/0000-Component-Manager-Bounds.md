@@ -17,9 +17,9 @@ Today, the custom components are not given direct access to the DOM structure; i
 
 In [RFC#2013](https://github.com/emberjs/rfcs/blob/master/text/0213-custom-components.md#detailed-design) we outlined the component lifecycle and how a custom component is associated with a manager. This design builds off off of that existing work and concepts.
 
-### `elementHook` capability
+### `bounds` capability
 
-The primary way of introducing new functionality to the component manager is through capabilities. To allow custom component managers to announce that they support element related hooks, we will introduce a `elementHook` flag to the capabilities. In doing so, bounds will be dispatched to a `didRenderLayout` method on the manager and `willDestroyLayout` will be called during destruction.
+The primary way of introducing new functionality to the component manager is through capabilities. To allow custom component managers to announce that they support element related hooks, we will introduce a `bounds` flag to the capabilities. In doing so, bounds will be dispatched to a `didCreateBounds` method on the manager and `willDestroyBounds` will be called during destruction.
 
 ```js
 import { capabilities } from '@ember/component';
@@ -27,15 +27,15 @@ import EmberObject from '@ember/object';
 
 export default EmberObject.extend({
   capabilities: capabilities('3.5', {
-    elementHook: true
+    bounds: true
   }),
 
   // ...
 });
 ```
 
-### `didRenderLayout` hook
-Once the rendering engine has constructed the bounds for the component the `didRenderLayout` hook will be called with the `component` and a `Bounds` instance.
+### `didCreateBounds` hook
+Once the rendering engine has constructed the bounds for the component the `didCreateBounds` hook will be called with the `ComponentStateBucket` and a `Bounds` instance.
 
 
 ```js
@@ -47,9 +47,8 @@ export default EmberObject.extend({
     elementHook: true
   }),
 
-  didRenderLayout(component, bounds) {
+  didCreateBounds({ component }, bounds) {
     component.bounds = bounds;
-    component.didInsertElement();
   }
   // ...
 });
@@ -57,11 +56,11 @@ export default EmberObject.extend({
 
 #### Timing Semantics
 
-`didRenderLayout` has the following timing semantics:
+`didCreateBounds` has the following timing semantics:
 
 **Always**
 - called **before** `didCreateComponent`
-- called **after** the children's `didRenderLayout` hook is called
+- called **after** the children's `didCreateBounds` hook is called
 - called **after** DOM insertion
 
 **May or May Not**
@@ -71,9 +70,9 @@ export default EmberObject.extend({
 
 In other words, components **should not** rely on the timing of DOM insertion outside of the component's own bounds.
 
-### `willDestroyLayout` hook
+### `willDestroyBounds` hook
 
-To balance `didRenderLayout` we will expose a hook called `willDestroyLayout` that is invoked during destruction. It will receive the `component` instance.
+To balance `didRenderLayout` we will expose a hook called `willDestroyBounds` that is invoked during destruction. It will receive the `ComponentStateBucket` instance.
 
 ```js
 import { capabilities } from '@ember/component';
@@ -84,12 +83,11 @@ export default EmberObject.extend({
     elementHook: true
   }),
 
-  didRenderLayout(component, bounds) {
+  didRenderLayout({ component }, bounds) {
     component.bounds = bounds;
-    component.didInsertElement();
   },
 
-  willDestroyLayout(component) {
+  willDestroyBounds({ component }) {
     component.willDestroyElement();
   }
   // ...
@@ -98,11 +96,11 @@ export default EmberObject.extend({
 
 #### Timing Semantics
 
-`willDestroyLayout` has the following timing semantics:
+`willDestroyBounds` has the following timing semantics:
 
 **Always**
 - called **before** `destroyComponent`
-- called **after** the children's `willDestroyLayout` hook is called
+- called **after** the children's `willDestroyBounds` hook is called
 
 **May or May Not**
 - be called in the same tick as DOM removal
@@ -113,17 +111,14 @@ export default EmberObject.extend({
 The `Bounds` instance that is passed to `didRenderLayout` has the following interface.
 
 ```ts
-
-type FirstNode = Node;
-type LastNode = Node;
-
 interface Bounds {
-  firstNode: Node | LastNode;
-  lastNode: Node | FirstNode;
+  firstNode: Node | Bounds;
+  lastNode: Node | Bounds;
+  parentNode: Node;
 }
 ```
 
-It's an important to note that the bounds is kept up to date with the structure of the template. For instance a template that looks like:
+It's an important to note that the bounds is stable, but the properties will be kept up to date with the structure of the template. For instance a template that looks like:
 
 ```hbs
 <h1>Hello</h1>
@@ -155,6 +150,23 @@ In cases where a component's layout doesn't have an `HTMLElement` at the top-lev
 
 If `this.condition` is truthy, `firstNode` and `lastNode` will point to the `p` node, however if the condition is toggled and the block is destroyed the bounds object is going to mutate. Instead of pointing at the `p` node, both `firstNode` and `lastNode` are going to point to a `comment` node. Because of this component authors should be defensive when it comes to coding against the bounds.
 
+## Example
+
+Attaching a jQuery date picker:
+
+```hbs
+<input type="date" />
+```
+
+```js
+import BasicComponent from 'basic-component';
+
+export default class extends BasicComponent {
+  didCreateComponent() {
+    $(this.bounds.firstNode).datePicker();
+  }
+}
+```
 
 ## How we teach this
 
