@@ -1,6 +1,6 @@
 - Start Date: 2018-06-15
-- RFC PR: 
-- Ember Issue: 
+- RFC PR:
+- Ember Issue:
 
 # Add a Link component and routing helpers
 
@@ -14,60 +14,104 @@ Currently, on ember#canary, the Angle Bracket Invocation feature doesn't support
 
 ## Detailed design
 
-Helpers to be implemented:
- - `transition` 
-    this is a helper that would tie into the router to be able to achive the same functionality as the simple usage of `LinkTo`
+#### tl;dr:
 
-    example:
-      
+*Phase 1*
+- add named arguments to `LinkTo`: `@routeName` and `@models`
+- add built-in helpers for custom link-like behavior
+
+*Phase 2*
+- add `Link` component with `@to` named argument -- all other named arguments will be the params
+- deprecate `LinkTo`
+
+*Phase 3*
+- remove `LinkTo` and the corresponding deprecation
+
+
+#### Phase 1
+*Add Named Arguments to `LinkTo`*
+
+  `@routeName` and `@models` will allow us to smoothly transition away from `{{link-to}}` into the `<AngleBracket />` invocation-style.
+
+  example:
+
+    ```hbs
+      {{!-- before --}}
+      {{#link-to 'posts.edit' post.id}}
+        Edit
+      {{/link-to}}
+
+      {{!-- After --}}
+      <LinkTo @routeName='posts.edit' @models={{hash postId=post.id}}>
+        Edit
+      </LinkTo>
+    ```
+
+  The `<AngleBracket />` invocation with named arguments is more verbose, but trade-off here is the added clarity of what argument is used for what purpose -- especially with respect to the models / model ids.
+
+*Helpers to be implemented*
+
+ - `transition`
+    this is a helper that would tie into the router to be able to achieve the same functionality as the navigational usage of `LinkTo`
+
+    examples:
+
+      ```hbs
+      <button {{action (transition to='posts.edit' postId=post.id)}} />
+        Edit
+      </button>
+
+      <button {{action (transition to='login' replace=true)}} />
+        Login
+      </button>
       ```
-      <button {{action (transition to='posts.edit' postId=post.id}}
-      ```
-    
- - `replace-with`
-    this is same as transition, but replaces the current URL and current history entry. This may be an argument to transition instead. e.g.: `(transition ... replace=true)`
-    
+
+
+
  - `is-route-active`
     this returns a boolean representing whether or not the current route matches the passed argument.
-    
+
     example:
-    
+
+      ```hbs
+      <button
+        {{action (transition to='posts.edit' post=model.post)}}
+        class={{if (is-route-active 'posts.edit' post=model.post) 'selected'}} />
       ```
-      <button 
-        {{action (transition to='posts.edit' post=model.post)}} 
-        class={{if (is-route-active name='posts.edit' post=model.post) 'selected'}} />
-      ```
-      
+
    this may need to support multiple invocation styles, for when there aren't parameters and the dev wants to be concise:
 
-   example:
-   
-     ```
+   examples:
+
+     ```hbs
      <button ... class={{if (is-route-active 'posts') 'selected'}} />
+      No model params provided
+     </button>
      ```
 
-Inspiration for helpers implementation could come from https://github.com/BBVAEngineering/ember-route-helpers
+#### Phase 2
 
- Components to be implemented:
- - `Link`
- 
+*Add `Link` Component*
+
 `Link` could just be tagless component with the following template:
+
 ```hbs
 {{!-- components/link/template.hbs --}}
-<a 
-  {{action (transition ...@to)}} 
-  class="{{if (is-route-active ...@to) 'active'}}"
->
+<a
+  {{action (transition @to models=@models)}}
+  class="{{if (is-route-active @to models=@models) 'active'}}">
 
-{{yield}}
+  {{yield}}
 
 </a>
- ```
+```
 
 Usage:
 ```hbs
-<Link @to=(array 'posts.edit' post)>Edit Post</Link>
+<Link @to='posts.edit' @models={{post}}>Edit Post</Link>
 ```
+
+where `@models` can be a `hash`, `array`, or just a single object or id.
 
 
 **Deprecation** `LinkTo` aka `link-to`
@@ -93,7 +137,7 @@ Without positional params, the alternative may need to use the `array` helper fo
 
 There are two alternatives:
 
-1. Do nothing: 
+1. Do nothing:
   - people will find that the `LinkTo` usage with angle bracket invocation to be somewhat awkward, maybe unintuitive.
 2. Only implement the routing helpers
   - people could define their own linking components however they desire
@@ -105,3 +149,9 @@ There are two alternatives:
 - For routes with multiple segment parameters, it may become hard to keep track of things. e.g.: `(array 'posts.edit.comments.reply' post comment.id)` how do I know where the parameters are going to go without looking at the router.js file? (though, this is an existing question)
 
 - Would it make sense to somehow have a way to statically confirm that the route path is valid? right now, it looks like a string -- how would I know if I typed it wrong?
+
+## Inspiration / Code taken from
+- https://github.com/alexspeller/ember-cli-active-link-wrapper
+- https://github.com/BBVAEngineering/ember-route-helpers
+- https://github.com/peec/ember-transition-helper
+- https://github.com/rwjblue/ember-router-helpers
