@@ -33,19 +33,20 @@ Currently, on ember#canary, the Angle Bracket Invocation feature doesn't support
 
   `@routeName` and `@models` will allow us to smoothly transition away from `{{link-to}}` into the `<AngleBracket />` invocation-style.
 
-  example:
+  - example:
 
-    ```hbs
-      {{!-- before --}}
-      {{#link-to 'posts.edit' post.id}}
-        Edit
-      {{/link-to}}
+  ```hbs
+    {{!-- before --}}
+    {{#link-to 'posts.edit' post.id}}
+      Edit
+    {{/link-to}}
 
-      {{!-- After --}}
-      <LinkTo @routeName='posts.edit' @models={{hash postId=post.id}}>
-        Edit
-      </LinkTo>
-    ```
+    {{!-- After --}}
+    <LinkTo @routeName='posts.edit' @models={{hash postId=post.id}}>
+      Edit
+    </LinkTo>
+  ```
+
 
   The `<AngleBracket />` invocation with named arguments is more verbose, but trade-off here is the added clarity of what argument is used for what purpose -- especially with respect to the models / model ids.
 
