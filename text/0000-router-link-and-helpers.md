@@ -114,6 +114,8 @@ Usage:
 where `@models` can be a `hash`, `array`, or just a single object or id.
 
 
+
+
 **Deprecation** `LinkTo` aka `link-to`
 
 The goal of `Link` and the route helpers is to provide a flexible way of routing from the template while providing a sample component with sensible defaults. This would achieve the exact same functionality as `LinkTo`, so `LinkTo` would no longer be needed and could eventually be removed.
@@ -144,9 +146,10 @@ There are two alternatives:
 
 ## Unresolved questions
 
-- Is there a way for making `(array 'posts.edit' post)` more ergonomic? _having_ to use the array helper _seems_ like it shouldn't be a thing. Maybe if the `transition-to` helper took named arguments without `hash`?  transition can be implemented to support this:`(transition to='posts.edit' postId=post.id)`.. but for `Link`, I don't know how the route arguments would get passed to `transition`.
-
-- For routes with multiple segment parameters, it may become hard to keep track of things. e.g.: `(array 'posts.edit.comments.reply' post comment.id)` how do I know where the parameters are going to go without looking at the router.js file? (though, this is an existing question)
+- Should we offer additional click APIs on `Link`? such as:
+  - onclick / onclick
+  - beforeTransition
+  - etc?
 
 - Would it make sense to somehow have a way to statically confirm that the route path is valid? right now, it looks like a string -- how would I know if I typed it wrong?
 
