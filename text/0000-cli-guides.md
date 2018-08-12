@@ -35,7 +35,7 @@ Writing new content and porting over existing information is a job that will req
 
 Since maintaining consistent voice and structure across a blank slate is a challenge, beta content for the core learning experience has already been drafted, including Basic Use guides and a tutorial for creating an addon from start to finish.
 
-The beta version of the CLI Guides content can be found at [ember-learn/cli-guides-source](https://github.com/ember-learn/cli-guides-source). The Markdown files there are rendered by [ember-learn/cli-guides-app](https://github.com/ember-learn/cli-guides-source). The app is currently deployed via [Netlify](https://sad-noyce-026d89.netlify.com/)for testing and UX validation, however it requires more work to resolve many known bugs.
+The beta version of the CLI Guides content can be found at [ember-learn/cli-guides-source](https://github.com/ember-learn/cli-guides-source). The Markdown files there are rendered by [ember-learn/cli-guides-app](https://github.com/ember-learn/cli-guides-source). The app is currently [deployed on Netlify](https://sad-noyce-026d89.netlify.com/) for testing and UX validation, however it requires more work to resolve many known bugs.
 
 A writing styleguide will be provided for contributors.
 
@@ -96,6 +96,9 @@ The documentation app itself will have clear releases
 as major changes are made, so that users working on
 older apps can still go back in time if they need to.
 
+The url will contain `/release/` so that if versioning is needed in the future,
+the option is available.
+
 ### Transition and legacy links
 
 While the project is in development, it will be worked on as a separate site, and the main site, [https://ember-cli.com](https://ember-cli.com) will remain in place.
@@ -126,7 +129,14 @@ Although only one version will be deployed/maintained for the forseeable future,
 
 ### Maintaining content
 
-The Ember CLI is quite stable, so it is expected that content churn will be low as new releases come out. Members of both the Learning Core Team and Ember CLI Core team will have merge access.
+With module unification and tree shaking refactors underway, there may be some big changes to Ember's
+file structure. There are a few ways to mitigate this, while still maintaining only one version of these guides:
+
+1. Whenever possible, the CLI guides should link to the Ember Guides. The details of file layout and syntax are best handled in a resource that is versioned.
+2. The CLI guides can also frequently give a nod to past configurations/features. A url checker will make sure that these "legacy" resource links still exist. The pace of major version releases is slow enough that this should be sustainable.
+3. As mentioned earlier, the urls for the cli guides will include `/release/` in case future versioning is needed
+
+Members of both the Learning Core Team and Ember CLI Core team will have merge access.
 
 ## How we teach this
 
