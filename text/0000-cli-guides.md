@@ -86,6 +86,7 @@ topics, similar to how the Guides link to the API docs.
     - Using the dummy app
     - Including assets
     - Testing your addon
+    - Sharing your addon (deploying)
 - API Documentation
     - brief description of the target audience and a link
 
