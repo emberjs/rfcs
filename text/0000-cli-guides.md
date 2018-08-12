@@ -31,13 +31,20 @@ Middleman apps to Ember.
 
 ### Writing process
 
-Writing new content and porting over existing information is a job that will require the help of many contributors! After this RFC is accepted, a call for contributors will be made. Each unwritten section will have comments indicating which topics to cover. In cases where content has been ported over, comments will indicate which sections to fact-check, clarify, or revise. Following a verson one release, writing work will be organized via normal GitHub issues.
+Writing new content and porting over existing information is a job that will require the help of many contributors! After this RFC is accepted, a call for contributors will be made. 
+
+Here are some strategies to help contributor work to be successful:
+- A quest issue will outline sections that need work so that people can volunteer
+- Collaboration will be encouraged so that no one person blocks writing on a particular topic
+- Contributing can take multiple forms. For example, developers with some CLI expertise who don't have time/interest for formal writing can share some brief notes or suggestions to help out the writers. Writers don't need to be experts. In some cases, it's better when someone isn't very familiar with the content because they can help identify gaps.
+- Each unwritten section will have comments in the markdown indicating which topics to cover. In cases where content has been ported over, comments will indicate which sections to fact-check, clarify, or revise. 
+- A strike team channel will be created on a chat
+- A writing styleguide will be provided for contributors
+- Following a verson one release, writing work will be organized via normal GitHub issues.
 
 Since maintaining consistent voice and structure across a blank slate is a challenge, beta content for the core learning experience has already been drafted, including Basic Use guides and a tutorial for creating an addon from start to finish.
 
 The beta version of the CLI Guides content can be found at [ember-learn/cli-guides-source](https://github.com/ember-learn/cli-guides-source). The Markdown files there are rendered by [ember-learn/cli-guides-app](https://github.com/ember-learn/cli-guides-source). The app is currently [deployed on Netlify](https://sad-noyce-026d89.netlify.com/) for testing and UX validation, however it requires more work to resolve many known bugs.
-
-A writing styleguide will be provided for contributors.
 
 ### User Personas
 
