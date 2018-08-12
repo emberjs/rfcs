@@ -117,7 +117,7 @@ Legacy links should be maintained because deprecating the links would cause SEO 
 
 For SEO reasons, the second option is preferred.
 
-Upon reaching feature parity, [https://ember-cli.com](https://ember-cli.com) will receive the new content. Between the first release and feature parity with the old site, content will be hosted at [https://guides.emberjs.com/cli].
+Upon reaching feature parity, [https://ember-cli.com](https://ember-cli.com) will redirect to the new site. Ultimately, content will be hosted at [https://cli.emberjs.com/](https://cli.emberjs.com/). This improves the SEO of our emberjs domain.
 
 ### Application architecture
 
@@ -133,7 +133,7 @@ apps that have been successfully turned into Ember apps. Some examples of past c
 The resulting app will make use of typography and UI assets from 
 [ember-styleguide](https://github.com/ember-learn/ember-styleguide)
 
-Although only one version will be deployed/maintained for the forseeable future, the URL structure will allow for future growth, i.e. `https://guides.emberjs.com/cli/release/some-topic`
+Although only one version will be deployed/maintained for the forseeable future, the URL structure will allow for future growth, i.e. `https://cli.emberjs.com/release/some-topic`
 
 ### Maintaining content
 
