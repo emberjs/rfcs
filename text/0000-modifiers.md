@@ -100,7 +100,7 @@ Below is an example of how this hook could be used:
 import { Modifier } from '@ember/modifiers';
 
 export default class extends Modifier {
-  this.listnerOptions = undefined;
+  this.listenerOptions = undefined;
   didInsertElement([ eventType, callback ], eventOptions) {
     this.listenerOptions = [
       eventType,
@@ -130,7 +130,7 @@ Below is an example of how this hook could be used:
 import { Modifier } from '@ember/modifiers';
 
 export default class extends Modifier {
-  this.listnerOptions = undefined;
+  this.listenerOptions = undefined;
   didInsertElement([ eventType, callback ], eventOptions) {
     this.listenerOptions = [
       eventType,
@@ -143,7 +143,7 @@ export default class extends Modifier {
   didUpdate([ eventType, callback ], eventOptions) {
     this.element.removeEventListener(...this.listenerOptions);
     this.element.addEventListener(eventType, callback, eventOptions);
-    this.listnerOptions = [eventType, callback, eventOptions];
+    this.listenerOptions = [eventType, callback, eventOptions];
   }
 }
 ```
@@ -158,7 +158,7 @@ Below is an example of how this hook could be used:
 import { Modifier } from '@ember/modifiers';
 
 export default class extends Modifier {
-  this.listnerOptions = undefined;
+  this.listenerOptions = undefined;
   didInsertElement([ eventType, callback ], eventOptions) {
     this.listenerOptions = [
       eventType,
@@ -171,7 +171,7 @@ export default class extends Modifier {
   didUpdate([ eventType, callback ], eventOptions) {
     this.element.removeEventListener(...this.listenerOptions);
     this.element.addEventListener(eventType, callback, eventOptions);
-    this.listnerOptions = [eventType, callback, eventOptions];
+    this.listenerOptions = [eventType, callback, eventOptions];
   }
 
   willDestroyElement() {
