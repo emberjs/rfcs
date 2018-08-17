@@ -6,7 +6,7 @@
 
 ## Summary
 
-This RFC introduces the concept of user defined element modfiers. Unlike a component, there is no template/layout for an element modifier. Unlike a helper, an element modifier does not return a value.
+This RFC introduces the concept of user defined element modifiers. Unlike a component, there is no template/layout for an element modifier. Unlike a helper, an element modifier does not return a value.
 
 Below is an example of the element modifier syntax:
 
