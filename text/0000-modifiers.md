@@ -18,9 +18,9 @@ This RFC supercedes the [original element modifiers RFC](https://github.com/embe
 
 ## Motivation
 
-Classic component instances have a `this.element` property which provides you a single DOM node as defined by `tagName`. It's children of this node will be the DOM representation of what you wrote in your template, this is typically referred to as `innerHTML` semantics. These semantics allow for components to encapsulate some 3rd party JavaScript library or do some fine grain DOM manipulation.
+Classic component instances have a `this.element` property which provides you a single DOM node as defined by `tagName`. The children of this node will be the DOM representation of what you wrote in your template. Templates are typically referred to having `innerHTML` semantics in classic components since there is a single wrapping element that is the parent of the template. These semantics allow for components to encapsulate some 3rd party JavaScript library or do some fine grain DOM manipulation.
 
-Glimmer components have `outerHTML` semantics, meaning what you see in the template is what you get in the DOM, there is no `tagName` that wraps the template. While this drastically simplifies API for creating new components it makes reliable access to the a component's DOM structure very difficult to do. As [pointed out](https://github.com/emberjs/rfcs/pull/351#issuecomment-412123046) in the [Bounds RFC](https://github.com/emberjs/rfcs/pull/351) the stability of the nodes in the `Bounds` object creates way too many footguns. So a formalized way for accessing DOM in the Glimmer component world is still needed.
+Glimmer components have `outerHTML` semantics, meaning what you see in the template is what you get in the DOM, there is no `tagName` that wraps the template. While this drastically simplifies the API for creating new components it makes reliable access to the a component's DOM structure very difficult to do. As [pointed out](https://github.com/emberjs/rfcs/pull/351#issuecomment-412123046) in the [Bounds RFC](https://github.com/emberjs/rfcs/pull/351) the stability of the nodes in the `Bounds` object creates way too many footguns. So a formalized way for accessing DOM in the Glimmer component world is still needed.
 
 Element modifiers allow for stable access of the DOM node they are installed on. This allows for programatic assess to DOM in Glimmer templates and also offers a more targeted construct for cases where classic components were being used. The introduction of this API will likely result in the proliferation of one or several popular addons for managing element event listeners, style and animation.
 
@@ -65,7 +65,7 @@ MU paths:
 The element modifier class is a default export from these files. For example:
 
 ```js
-import { Modifier } from '@ember/modifiers';
+import Modifier from '@ember/modifier';
 
 export default class extends Modifier {}
 ```
@@ -97,7 +97,7 @@ This hook has the following timing semantics:
 Below is an example of how this hook could be used:
 
 ```js
-import { Modifier } from '@ember/modifiers';
+import Modifier from '@ember/modifier';
 
 export default class extends Modifier {
   this.listenerOptions = undefined;
@@ -127,7 +127,7 @@ This hook has the following timing semantics:
 Below is an example of how this hook could be used:
 
 ```js
-import { Modifier } from '@ember/modifiers';
+import Modifier from '@ember/modifier';
 
 export default class extends Modifier {
   this.listenerOptions = undefined;
@@ -155,7 +155,7 @@ export default class extends Modifier {
 Below is an example of how this hook could be used:
 
 ```js
-import { Modifier } from '@ember/modifiers';
+import Modifier from '@ember/modifier';
 
 export default class extends Modifier {
   this.listenerOptions = undefined;
@@ -196,7 +196,7 @@ In terms of guides, I believe we should add a section to the "Templates" section
 
 ## Drawbacks
 
-The drawbacks of adding element modifiers largely deal with explaining when to use a classic Ember component for encapsulating some DOM manipulation versus when to use an element modifier. That being said it is likely that the recommendation would be to use element modifiers if you are just manually modifying the DOM.
+The drawbacks of adding element modifiers largely deal with explaining when to use a classic component for encapsulating some DOM manipulation versus when to use an element modifier. That being said it is likely that the recommendation would be to use element modifiers if you are just manually modifying the DOM.
 
 This API also doesn't attempt to create a corollary of `this.element` for Glimmer Components and instead offers a different API for altering DOM nodes directly. This expands the surface area of Ember's API.
 
