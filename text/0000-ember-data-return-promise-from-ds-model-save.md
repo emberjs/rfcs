@@ -6,7 +6,7 @@
 
 ## Summary
 
-DS.Model.save() will return an Ember.RSVP.Promise instead of a PromiseObject.
+DS.Model.save() will return an RSVP.Promise instead of a PromiseObject.
 
 ## Motivation
 
@@ -19,7 +19,7 @@ DS.Model.save() will return an Ember.RSVP.Promise instead of a PromiseObject.
 
 ## Detailed design
 
-Introduce a new feature flag, “ds-return-promise-from-model-save”. When enabled, DS.Model.save() will return a RSVP.Promise that resolves with the model if the save was successful, or rejects with an error if the save fails. When disabled, a PromiseObject will be returned to keep today's behavior, but accessing properties on the PromiseObject or calling non-Promise functions (.then, .finally, .catch) on the PromiseObject will issue a deprecation warning.
+Introduce a new feature flag, “ds-return-promise-from-model-save”. When enabled, DS.Model.save() will return an RSVP.Promise that resolves with the model if the save was successful, or rejects with an error if the save fails. When disabled, a PromiseObject will be returned to keep today's behavior, but accessing properties on the PromiseObject or calling non-Promise functions (.then, .finally, .catch) on the PromiseObject will issue a deprecation warning.
 
 Deprecation Plan:
 
