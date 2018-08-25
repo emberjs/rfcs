@@ -40,26 +40,26 @@ Element modifiers may be invoked with params or hash arguments.
 
 ### Definition and lookup
 
-A basic element modifier is defined with the type of `element-modifier`. For example these paths would be global element modifiers in an application:
+A basic element modifier is defined with the type of `modifier`. For example these paths would be global element modifiers in an application:
 
 ```
 Classic paths:
 
-  app/element-modifiers/flummux.js
-  app/element-modifiers/whipperwill.js
+  app/modifiers/flummux.js
+  app/modifiers/whipperwill.js
 
 MU paths:
 
-  src/ui/components/flummux/element-modifier.js
-  src/ui/routes/posts/-components/whipperwill/element-modifier.js
+  src/ui/components/flummux/modifier.js
+  src/ui/routes/posts/-components/whipperwill/modifier.js
 ```
 
-Element modifiers, like component and helpers, are eligible for local lookup. For example:
+In Module Unification, modifiers live within the generalized collection type "components" [as specified](https://github.com/dgeb/rfcs/blob/module-unification/text/0000-module-unification.md#components). Modifiers, like component and helpers, are eligible for local lookup. For example:
 
 ```
 MU paths:
 
-  src/ui/routes/posts/-components/post-editor/flummux/element-modifier.js
+  src/ui/routes/posts/-components/post-editor/flummux/modifier.js
 ```
 
 The element modifier class is a default export from these files. For example:
@@ -87,12 +87,12 @@ It is important to note that in server-side rendering environments none of the l
 This hook has the following timing semantics:
 
 **Always**
-- called **after** any children modifiers `didInsertElement` hook are called
+- called **after** all children modifiers `didInsertElement` hook are called
 - called **after** DOM insertion
 
  **May or May Not**
 - be called in the same tick as DOM insertion
-- have the the parent's children fully initialized in DOM
+- have the sibling nodes fully initialized in DOM
 
 Below is an example of how this hook could be used:
 
@@ -183,7 +183,7 @@ export default class extends Modifier {
 This hook has the following timing semantics:
 
 **Always**
-- called **after** any children modifier's `willDestroyElement` hook is called
+- called **after** all children modifier's `willDestroyElement` hook is called
 
  **May or May Not**
 - be called in the same tick as DOM removal
