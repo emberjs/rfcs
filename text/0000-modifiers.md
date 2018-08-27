@@ -22,7 +22,7 @@ Classic component instances have a `this.element` property which provides you a 
 
 Glimmer components have `outerHTML` semantics, meaning what you see in the template is what you get in the DOM, there is no `tagName` that wraps the template. While this drastically simplifies the API for creating new components it makes reliable access to the a component's DOM structure very difficult to do. As [pointed out](https://github.com/emberjs/rfcs/pull/351#issuecomment-412123046) in the [Bounds RFC](https://github.com/emberjs/rfcs/pull/351) the stability of the nodes in the `Bounds` object creates way too many footguns. So a formalized way for accessing DOM in the Glimmer component world is still needed.
 
-Element modifiers allow for stable access of the DOM node they are installed on. This allows for programatic assess to DOM in Glimmer templates and also offers a more targeted construct for cases where classic components were being used. The introduction of this API will likely result in the proliferation of one or several popular addons for managing element event listeners, style and animation.
+Element modifiers allow for stable access of the DOM node they are installed on. This allows for programatic access to DOM in Glimmer templates and also offers a more targeted construct for cases where classic components were being used. The introduction of this API will likely result in the proliferation of one or several popular addons for managing element event listeners, style and animation.
 
 ## Detailed design
 
@@ -187,6 +187,87 @@ This hook has the following timing semantics:
 
  **May or May Not**
 - be called in the same tick as DOM removal
+
+## Examples
+
+Below are some examples of what you could do with a modifier:
+
+### Performance Marking
+```hbs
+<section id="about-us" {{performance 'mark' 'about-page'}}>
+  <h1>About Us</h1>
+  {{!-- snip --}}
+</section>
+```
+
+```js
+import Modifier from '@ember/modifier';
+
+export Modifier.extend({
+  didInsertElement([ type, marker ]) {
+    performance[type](marker);
+  }
+});
+```
+
+### jQuery Widget
+```hbs
+<input type="date" {{datepicker changeMonth=true changeYear=true}} />
+```
+
+```js
+import Modifier from '@ember/modifier';
+import $ from 'jquery';
+
+export Modifier.extend({
+  didInsertElement(_params, hash) {
+    $(this.element).datepicker(this._normalizeOptions(hash));
+  },
+
+  _normalizeOptions(options) {
+    return Object.assign(options, { minDate: 20, maxDate: '+1M +10D' });
+  },
+
+  willDestroyElement() {
+    $(this.element).datepicker('destroy');
+  }
+});
+```
+
+### Page View Tracking
+```hbs
+<section {{track-impression eventCategory="Post"}}>
+  <header>Chad liked a post</header>
+  <img src="cat.jpg">
+  {{!-- Snip --}}
+<section>
+```
+
+```js
+import Modifier from '@ember/modifier';
+import { inject as service } from '@ember/service';
+
+export Modifier.extend({
+  ga: service('google-analytics'),
+  init() {
+    this._super(...arguments);
+    this.eventCategory = undefined;
+    this.interSectionObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        this.ga.send('event', 'impression', this.eventCategory);
+      });
+    });
+  },
+  didInsertElement(_params, { eventCategory }) {
+    this.eventCategory = eventCategory;
+    this.interSectionObserver.observe(this.element);
+  },
+
+  willDestroyElement() {
+    this.interSectionObserver.unobserve(this.element);
+  }
+});
+```
 
 ## How we teach this
 
