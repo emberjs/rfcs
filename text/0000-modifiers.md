@@ -18,11 +18,11 @@ This RFC supercedes the [original element modifiers RFC](https://github.com/embe
 
 ## Motivation
 
-Classic component instances have a `this.element` property which provides you a single DOM node as defined by `tagName`. The children of this node will be the DOM representation of what you wrote in your template. Templates are typically referred to having `innerHTML` semantics in classic components since there is a single wrapping element that is the parent of the template. These semantics allow for components to encapsulate some 3rd party JavaScript library or do some fine grain DOM manipulation.
+`Ember.Component` instances have a `this.element` property which provides you a single DOM node as defined by `tagName`. The children of this node will be the DOM representation of what you wrote in your template. Templates are typically referred to having `innerHTML` semantics in `Ember.Component`s since there is a single wrapping element that is the parent of the template. These semantics allow for components to encapsulate some 3rd party JavaScript library or do some fine grain DOM manipulation.
 
-Glimmer components have `outerHTML` semantics, meaning what you see in the template is what you get in the DOM, there is no `tagName` that wraps the template. While this drastically simplifies the API for creating new components it makes reliable access to the a component's DOM structure very difficult to do. As [pointed out](https://github.com/emberjs/rfcs/pull/351#issuecomment-412123046) in the [Bounds RFC](https://github.com/emberjs/rfcs/pull/351) the stability of the nodes in the `Bounds` object creates way too many footguns. So a formalized way for accessing DOM in the Glimmer component world is still needed.
+Custom components have `outerHTML` semantics, meaning what you see in the template is what you get in the DOM, there is no `tagName` that wraps the template. While this drastically simplifies the API for creating new components it makes reliable access to the a component's DOM structure very difficult to do. As [pointed out](https://github.com/emberjs/rfcs/pull/351#issuecomment-412123046) in the [Bounds RFC](https://github.com/emberjs/rfcs/pull/351) the stability of the nodes in the `Bounds` object creates way too many footguns. So a formalized way for accessing DOM in the custom component world is still needed.
 
-Element modifiers allow for stable access of the DOM node they are installed on. This allows for programatic access to DOM in Glimmer templates and also offers a more targeted construct for cases where classic components were being used. The introduction of this API will likely result in the proliferation of one or several popular addons for managing element event listeners, style and animation.
+Element modifiers allow for stable access of the DOM node they are installed on. This allows for programatic access to DOM in custom component templates and also offers a more targeted construct for cases where classic components were being used. The introduction of this API will likely result in the proliferation of one or several popular addons for managing element event listeners, style and animation.
 
 ## Detailed design
 
@@ -36,7 +36,7 @@ An element modifier is invoked in "element space". This is the space between `<`
 <b {{crum bing='whoop'}} zip="bango">Hm...</b>
 ```
 
-Element modifiers may be invoked with params or hash arguments.
+Element modifiers may be invoked with positional and/or named arguments.
 
 ### Definition and lookup
 
@@ -54,7 +54,7 @@ MU paths:
   src/ui/routes/posts/-components/whipperwill/modifier.js
 ```
 
-In Module Unification, modifiers live within the generalized collection type "components" [as specified](https://github.com/dgeb/rfcs/blob/module-unification/text/0000-module-unification.md#components). Modifiers, like component and helpers, are eligible for local lookup. For example:
+In Module Unification, modifiers live within the generalized collection type "components" [as specified](https://github.com/emberjs/rfcs/blob/master/text/0143-module-unification.md#components). Modifiers, like component and helpers, are eligible for local lookup. For example:
 
 ```
 MU paths:
@@ -150,7 +150,7 @@ export default class extends Modifier {
 
 #### `willDestroyElement` semantics
 
-`willDestroyElement` is called during the destruction of a template. It receives no arguments.
+`willDestroyElement` is called during the destruction of the element. It receives no arguments.
 
 Below is an example of how this hook could be used:
 
@@ -184,9 +184,24 @@ This hook has the following timing semantics:
 
 **Always**
 - called **after** all children modifier's `willDestroyElement` hook is called
+- called **after** all children component's `willDestroyComponent` hook is called.
 
  **May or May Not**
 - be called in the same tick as DOM removal
+
+### Relationship With Components
+
+Element modifers are intended to be directly installed onto HTML elements and can not be invoked on a component invocation. They also cannot be passed as arguments to a component. The examples below will result in a compile error.
+
+```hbs
+<FooBar {{draggable x=x y=y}} />
+```
+
+```hbs
+<FooBar (draggable x=x y=y) />
+```
+
+This also means that they have no relationship to `...attributes`.
 
 ## Examples
 
@@ -279,7 +294,7 @@ In terms of guides, I believe we should add a section to the "Templates" section
 
 The drawbacks of adding element modifiers largely deal with explaining when to use a classic component for encapsulating some DOM manipulation versus when to use an element modifier. That being said it is likely that the recommendation would be to use element modifiers if you are just manually modifying the DOM.
 
-This API also doesn't attempt to create a corollary of `this.element` for Glimmer Components and instead offers a different API for altering DOM nodes directly. This expands the surface area of Ember's API.
+This API also doesn't attempt to create a corollary of `this.element` for custom components and instead offers a different API for altering DOM nodes directly. This expands the surface area of Ember's API.
 
 ## Alternatives
 
