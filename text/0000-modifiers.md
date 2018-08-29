@@ -74,11 +74,34 @@ export default class extends Modifier {}
 
 During rendering and teardown of a target element, any attached element modifiers will execute a series of hooks. These hooks are:
 
+* `willInsertElement`
 * `didInsertElement`
 * `didUpdate`
 * `willDestroyElement`
 
 It is important to note that in server-side rendering environments none of the lifecycle events are called.
+
+#### `willInsertElement` semantics
+`willInsertElement` is called when the element has been constructed, but has yet to be inserted into the DOM. Any attributes that where defined within the template will be present. This hook is specifically to be used for programmatically attatching additional attributes or properties that must be there before the element is in-DOM. Some examples of this are `style`, `selected`, `value`, etc. This hook is called once.
+
+This hook has the following timing semantics:
+
+**Always**
+- called **after** all child modifiers `willInsertElement` hook are called
+- called **after** template defined attributes are attached
+- called **before** DOM insertion
+
+Below is an example of how this hook could be used:
+
+```js
+import Modifier from '@ember/modifier';
+
+export default class extends Modifier {
+  willInsertElement() {
+    this.element.style = 'background-color: green;'
+  }
+}
+```
 
 #### `didInsertElement` semantics
 
@@ -101,6 +124,11 @@ import Modifier from '@ember/modifier';
 
 export default class extends Modifier {
   this.listenerOptions = undefined;
+
+  willInsertElement() {
+    this.element.style = 'background-color: green;'
+  }
+
   didInsertElement([ eventType, callback ], eventOptions) {
     this.listenerOptions = [
       eventType,
@@ -131,6 +159,11 @@ import Modifier from '@ember/modifier';
 
 export default class extends Modifier {
   this.listenerOptions = undefined;
+
+  willInsertElement() {
+    this.element.style = 'background-color: green;'
+  }
+
   didInsertElement([ eventType, callback ], eventOptions) {
     this.listenerOptions = [
       eventType,
@@ -159,6 +192,11 @@ import Modifier from '@ember/modifier';
 
 export default class extends Modifier {
   this.listenerOptions = undefined;
+
+  willInsertElement() {
+    this.element.style = 'background-color: green;'
+  }
+
   didInsertElement([ eventType, callback ], eventOptions) {
     this.listenerOptions = [
       eventType,
