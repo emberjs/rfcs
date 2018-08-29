@@ -70,6 +70,24 @@ import Modifier from '@ember/modifier';
 export default class extends Modifier {}
 ```
 
+### Resolution
+
+As mentioned in the [invocation section](#invocation), an modifier must be invoked in element space. If an element modifier is invoked outside of element space, it will go through the existing resolution logic.
+
+#### Invocation With Parameters
+
+- *If* closure component, then unroll arguments and invoke
+- *Else If* helper, then invoke
+- *Else* throw "Helper not found" error
+
+#### Invocation Without Parameters
+
+- *If* clusure component, then unroll arguments and invoke
+- *Else If* helper, then invoke
+- *Else If* local, look up value and place in DOM
+- *Else If* property on context, look up value and place in DOM
+- *Else* resolve to `undefined`
+
 ### Lifecycle Hooks
 
 During rendering and teardown of a target element, any attached element modifiers will execute a series of hooks. These hooks are:
