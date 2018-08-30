@@ -45,7 +45,7 @@ Positional arguments are not planned for use with Angle Bracket invocations. For
 
 
 
- - `is-active`
+ - `is-route-active`
     this returns a boolean representing whether or not the current route matches the passed argument.
 
     example:
@@ -53,7 +53,7 @@ Positional arguments are not planned for use with Angle Bracket invocations. For
       ```hbs
       <button
         {{action (transition to='posts.edit' post=model.post)}}
-        class={{if (is-active 'posts.edit' post=model.post) 'selected'}} />
+        class={{if (is-route-active 'posts.edit' post=model.post) 'selected'}} />
       ```
 
    this may need to support multiple invocation styles, for when there aren't parameters and the dev wants to be concise:
@@ -61,7 +61,7 @@ Positional arguments are not planned for use with Angle Bracket invocations. For
    examples:
 
      ```hbs
-     <button ... class={{if (is-active 'posts') 'selected'}} />
+     <button ... class={{if (is-route-active 'posts') 'selected'}} />
       No model params provided
      </button>
      ```
@@ -74,7 +74,8 @@ Positional arguments are not planned for use with Angle Bracket invocations. For
 ```hbs
 {{!-- components/link/template.hbs --}}
 <a
-  {{action (transition @to models=@models)}}
+  {{action (transition @to models=@models replace=@replace)}}
+  ...attributes
   class="{{if (is-route-active @to models=@models) 'active'}}">
 
   {{yield}}
@@ -89,13 +90,13 @@ Usage:
 
 where `@models` can be a `hash`, `array`, or just a single object or id.
 
-Starting with @rwjblue's [ember-router-helpers](https://github.com/rwjblue/ember-router-helpers) as a base, `is-active` is already implemented, along with `route-params`, `transition-to`, and `url-for`.
+Starting with @rwjblue's [ember-router-helpers](https://github.com/rwjblue/ember-router-helpers) as a base, `is-route-active` is already implemented (as `is-active`, so this would need to be renamed), along with `route-params`, `transition-to`, and `url-for`.
 
-A [PR](https://github.com/rwjblue/ember-router-helpers/pull/46) has been started that aims to implement the `transition` helper (or just rename `transition-to`), as well as implement the `Link` component.
+A [PR](https://github.com/rwjblue/ember-router-helpers/pull/46) has been started that upgrades `ember-router-helpers` and adds tests in preparation for implementing the helper renames and `Link` component.
 
 
 
-**Deprecation** `link-to` aka `link-to`
+**Deprecation** `link-to`
 
 The goal of `Link` and the route helpers is to provide a flexible way of routing from the template while providing a sample component with sensible defaults. This would achieve the exact same functionality as `link-to`, so `link-to` would no longer be needed and could eventually be removed.
 
