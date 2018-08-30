@@ -10,50 +10,26 @@ The purpose of this is to add a single component, `Link`, that wraps up some rou
 
 ## Motivation
 
-Currently, on ember#canary, the Angle Bracket Invocation feature doesn't support positional arguments. For clarity, and with some inspiration from react-router, It may be beneficial for Ember to include a `Link` component, similar to the existing `LinkTo` (`link-to`), but with only named arguments. This will help with clarity of intent, and also allow for easier transitioning from other communities who already have named-argument links.
+Positional arguments are not planned for use with Angle Bracket invocations. For clarity, and with some inspiration from react-router, It may be beneficial for Ember to include a `Link` component, similar to the existing `link-to`, but with only named arguments. This will help with clarity of intent, and also allow for easier transitioning from other communities who already have named-argument links.
 
 ## Detailed design
 
-#### tl;dr:
-
 *Phase 1*
-- add named arguments to `LinkTo`: `@routeName` and `@models`
 - add built-in helpers for custom link-like behavior
+- add `Link` component with `@to` named argument -- all other named arguments will be the params
 
 *Phase 2*
-- add `Link` component with `@to` named argument -- all other named arguments will be the params
 - deprecate `LinkTo`
 
 *Phase 3*
 - remove `LinkTo` and the corresponding deprecation
 
-
-#### Phase 1
-*Add Named Arguments to `LinkTo`*
-
-  `@routeName` and `@models` will allow us to smoothly transition away from `{{link-to}}` into the `<AngleBracket />` invocation-style.
-
-  - example:
-
-  ```hbs
-    {{!-- before --}}
-    {{#link-to 'posts.edit' post.id}}
-      Edit
-    {{/link-to}}
-
-    {{!-- After --}}
-    <LinkTo @routeName='posts.edit' @models={{hash postId=post.id}}>
-      Edit
-    </LinkTo>
-  ```
-
-
-  The `<AngleBracket />` invocation with named arguments is more verbose, but trade-off here is the added clarity of what argument is used for what purpose -- especially with respect to the models / model ids.
+### Details
 
 *Helpers to be implemented*
 
  - `transition`
-    this is a helper that would tie into the router to be able to achieve the same functionality as the navigational usage of `LinkTo`
+    this is a helper that would tie into the router to be able to achieve the same functionality as the navigational usage of `link-to`
 
     examples:
 
@@ -69,7 +45,7 @@ Currently, on ember#canary, the Angle Bracket Invocation feature doesn't support
 
 
 
- - `is-route-active`
+ - `is-active`
     this returns a boolean representing whether or not the current route matches the passed argument.
 
     example:
@@ -77,7 +53,7 @@ Currently, on ember#canary, the Angle Bracket Invocation feature doesn't support
       ```hbs
       <button
         {{action (transition to='posts.edit' post=model.post)}}
-        class={{if (is-route-active 'posts.edit' post=model.post) 'selected'}} />
+        class={{if (is-active 'posts.edit' post=model.post) 'selected'}} />
       ```
 
    this may need to support multiple invocation styles, for when there aren't parameters and the dev wants to be concise:
@@ -85,12 +61,11 @@ Currently, on ember#canary, the Angle Bracket Invocation feature doesn't support
    examples:
 
      ```hbs
-     <button ... class={{if (is-route-active 'posts') 'selected'}} />
+     <button ... class={{if (is-active 'posts') 'selected'}} />
       No model params provided
      </button>
      ```
 
-#### Phase 2
 
 *Add `Link` Component*
 
@@ -114,45 +89,33 @@ Usage:
 
 where `@models` can be a `hash`, `array`, or just a single object or id.
 
+Starting with @rwjblue's [ember-router-helpers](https://github.com/rwjblue/ember-router-helpers) as a base, `is-active` is already implemented, along with `route-params`, `transition-to`, and `url-for`.
+
+A [PR](https://github.com/rwjblue/ember-router-helpers/pull/46) has been started that aims to implement the `transition` helper (or just rename `transition-to`), as well as implement the `Link` component.
 
 
 
-**Deprecation** `LinkTo` aka `link-to`
+**Deprecation** `link-to` aka `link-to`
 
-The goal of `Link` and the route helpers is to provide a flexible way of routing from the template while providing a sample component with sensible defaults. This would achieve the exact same functionality as `LinkTo`, so `LinkTo` would no longer be needed and could eventually be removed.
-
-It's possible we could write a codemod to auto-convert everyone's non-angle-bracket invocation of `{{#link-to ...` to the new angle bracket component: `Link`
+The goal of `Link` and the route helpers is to provide a flexible way of routing from the template while providing a sample component with sensible defaults. This would achieve the exact same functionality as `link-to`, so `link-to` would no longer be needed and could eventually be removed.
 
 ## How we teach this
 
-We'll want to make it very clear that the traditional `LinkTo` technique of linking will still be available, but will eventually be deprecated.
+We'll want to make it very clear that the traditional `link-to` technique of linking will still be available, but will eventually be deprecated.
 
-The documentation and guides would need to be incrementally upgraded to inform people about the new linking strategy -- but becaus the old way would still work, having some docs say `LinkTo` instead of `Link` wouldn't be the worst thing.
+The documentation and guides would need to be incrementally upgraded to inform people about the new linking strategy -- but because the old way would still work, having some docs say `link-to` instead of `Link` wouldn't be the worst thing.
 
 
 ## Drawbacks
 
 The biggest drawback is that all routing documentation would be out of date, and there is a lot of routing documentation and blog posts throughout the web.
 
-Without positional params, the alternative may need to use the `array` helper for the `@to` argument... which could almost make people wonder why `LinkTo` didn't get a named argument for the route / route params. With the `Link` component, the arguments would read more ergonomically -- `<Link @to=...` vs `<LinkTo @route=...`. The latter implies that things other than routes could be linked to via the `LinkTo` component, which could cause confusion about the intended usage.
+Without positional params, the alternative may need to use the `array` helper for the `@to` argument... which would feel awkward enough to make people wonder why `link-to` (as `LinkTo`) didn't get a named argument for the route / route params. With the `Link` component, the arguments would read more ergonomically -- `<Link @to=...` vs `<LinkTo @route=...`. The latter implies that things other than routes could be linked to via the `link-to` component, which could cause confusion about the intended usage.
 
 ## Alternatives
 
-There are two alternatives:
-
-1. Do nothing:
-  - people will find that the `LinkTo` usage with angle bracket invocation to be somewhat awkward, maybe unintuitive.
-2. Only implement the routing helpers
+1. Only implement the routing helpers
   - people could define their own linking components however they desire
-
-## Unresolved questions
-
-- Should we offer additional click APIs on `Link`? such as:
-  - onclick / onclick
-  - beforeTransition
-  - etc?
-
-- Would it make sense to somehow have a way to statically confirm that the route path is valid? right now, it looks like a string -- how would I know if I typed it wrong?
 
 ## Inspiration / Code taken from
 - https://github.com/alexspeller/ember-cli-active-link-wrapper
