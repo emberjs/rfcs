@@ -11,7 +11,7 @@ This RFC introduces the concept of user defined element modifiers. Unlike a comp
 Below is an example of the element modifier syntax:
 
 ```hbs
-<button {{add-event-listener 'click' (action 'save')}}>Save</button>
+<button {{effect 'fade-in'}}>Save</button>
 ```
 
 This RFC supercedes the [original element modifiers RFC](https://github.com/emberjs/rfcs/pull/112) and is intended to replace the [`this.bounds` RFC](https://github.com/emberjs/rfcs/pull/351).
@@ -258,6 +258,16 @@ Element modifers are intended to be directly installed onto HTML elements and ca
 ```
 
 This also means that they have no relationship to `...attributes`.
+
+### Relationship With Other Modifiers
+
+An element may have multiple modifiers installed on it.
+
+```hbs
+<button {{effect 'fade-in'}} {{effect 'spin'}}>Wat!</button>
+```
+
+The modifiers are evaluated from left to right. This means that the `fade-in` effect's hooks will run before `spin` effect's.
 
 ## Examples
 
