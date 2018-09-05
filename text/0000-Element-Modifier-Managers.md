@@ -14,7 +14,7 @@ Ever since Ember 1.0 we have had the concept of element modifiers, however Ember
 
 As [pointed out](https://github.com/emberjs/rfcs/pull/353#issuecomment-417769349) in the [Element Modifiers RFC](https://github.com/emberjs/rfcs/pull/353) we should expose the underlying infrastructure that makes element modifiers possible. Based on our experience, we believe it would be beneficial to open up these new primitives to the wider community. The largest benefit is that it allows the community to experiment with and iterate on APIs outside of the core framework.
 
-This is RFC is in the same spirit as the [custom components RFC](https://github.com/emberjs/rfcs/blob/master/text/0213-custom-components.md).
+This RFC is in the same spirit as the [custom components RFC](https://github.com/emberjs/rfcs/blob/master/text/0213-custom-components.md).
 
 ## Detailed design
 
@@ -117,7 +117,7 @@ import EmberObject from '@ember/object';
 
 export default EmberObject.extend({
   createModifier(factory, args) {
-    return factory.create(args.named);
+    return factory.create(args);
   },
 });
 ```
@@ -152,6 +152,8 @@ You will get the following as the second argument:
 }
 ```
 
+The arguments object should not be mutated (e.g. args.positional.pop() is no good). In development mode, it might be sealed/frozen to help prevent these kind of mistakes.
+
 This hook has the following timing semantics:
 
 **Always**
@@ -185,7 +187,7 @@ export default EmberObject.extend({
 
 `installModifer` is responsible for giving access to the underlying element and arguments to the modifier instance.
 
-The first argument passed to `installModifer` is the result `createModifier`. The second argument is the `element` the modifier was defined on. The third argument is the same snapshot of the arguments passed to the modifier in the template invocation that `createModifier` recieved.
+The first argument passed to `installModifer` is the result of `createModifier`. The second argument is the `element` the modifier was defined on. The third argument is the same snapshot of the arguments passed to the modifier in the template invocation that `createModifier` recieved.
 
 This hook has the following timing semantics:
 
@@ -251,7 +253,6 @@ This hook has the following timing semantics:
 **Always**
 
 - called after all children modifier manager's `destroyModifier` hook is called
-- called after all children modifier manager's `destroyModifier` hook is called.
 
 **May or May Not**
 
