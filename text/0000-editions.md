@@ -84,3 +84,7 @@ Editions introduces more conceptual overhead to understanding Ember - now, in ad
 ## Unresolved questions
 
 - What to call these? “Editions” is a good candidate, but might introduce confusion vs. releases (as evidenced by the comment thread on the 2018 Roadmap RFC). “Epochs” was also proposed as it better captures the duration aspect (“edition” sounds like a moment in time, whereas this concept spans multiple releases), but is confusing for most people to pronounce and might present difficulties for non-native English speakers. Perhaps there’s a better word to adopt for this concept?
+
+## Prior Art
+
+Much of the edition concept outlined in this RFC borrows heavily from the Rust language community's concept of editions (previously called epochs). For more background, check out the [RFC itself](https://github.com/rust-lang/rfcs/blob/master/text/2052-epochs.md) as well as [the discussion thread](https://internals.rust-lang.org/t/evolving-rust-through-epochs/5475)
