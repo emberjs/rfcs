@@ -248,6 +248,31 @@ This hook has the following timing semantics:
 
 `destroyModifier` will be called when the modifier is no longer needed. This is intended for performing object-model level cleanup.
 
+```js
+// ember-basic-component/app/modifier-managers/basic.js
+
+import EmberObject from '@ember/object';
+
+export default EmberObject.extend({
+  createModifier(factory, args) {
+    return factory.create(args.named);
+  },
+
+  installModifier(instance, element, args) {
+    instance.element = element;
+    if (instance.wasInstalled !== undefined) {
+      instance.wasInstalled(args.positional, args.named);
+    }
+  },
+
+  destroyModifier(instance, args) {
+    if (instance.willDestroyDOM !== undefined) {
+      instance.willDestroyDOM();
+    }
+  }
+});
+```
+
 This hook has the following timing semantics:
 
 **Always**
@@ -257,6 +282,152 @@ This hook has the following timing semantics:
 **May or May Not**
 
 - be called in the same tick as DOM removal
+
+## Capabilities
+
+In addition to the methods specified above, modifier managers are required to
+have a `capabilities` property.  This property must be set to the result of
+calling the `capabilities` function provided by Ember.
+
+### Versioning
+
+The first, mandatory, argument to the `capabilities` function is the modifier
+manager API, which is denoted in the `${major}.${minor}` format, matching the
+minimum Ember version this manager is targeting. For example:
+
+```js
+// ember-basic-component/app/component-managers/basic.js
+
+import { capabilities } from '@ember/modifier';
+import EmberObject from '@ember/object';
+
+export default EmberObject.extend({
+  capabilities: capabilities('3.6'),
+
+  createModifier(factory, args) {
+    return factory.create(args.named);
+  },
+
+  installModifier(instance, element, args) {
+    instance.element = element;
+    if (instance.wasInstalled !== undefined) {
+      instance.wasInstalled(args.positional, args.named);
+    }
+  },
+
+  destroyModifier(instance, args) {
+    if (instance.willDestroyDOM !== undefined) {
+      instance.willDestroyDOM();
+    }
+  }
+});
+```
+
+This allows Ember to introduce new capabilities and make improvements to this
+API without breaking existing code.
+
+Here is a hypothical scenario for such a change:
+
+1. Ember 3.2 implemented and shipped the modifier manager API as described in
+   this RFC.
+
+2. The `ember-basic-modifier` addon released version 1.0 with the modifier
+   manager shown above (notably, it declared `capabilities('3.6')`).
+
+3. In Ember 3.8, we determined that constructing the arguments object passed to
+   the hooks is a major performance bottleneck, and changes the API to pass a
+   "proxy" object with getter methods instead (e.g. `args.getPositional(0)` and
+   `args.getNamed('foo')`).
+
+   However, since Ember sees that the `basic` modifier manager is written to
+   target the `3.6` API version, it will retain the old behavior and passes the
+   old (more expensive) "reified" arguments object instead, to avoid breakage.
+
+4. The `ember-basic-modifier` addon author would like to take advantage of
+   this performance optimization, so it updates its modifier manager code to
+   work with the arguments proxy and changes its capabilities declaration to
+   `capabilities('3.8')` in version 2.0.
+
+This system allows us to rapidly improve the API and take advantage of
+underlying rendering engine features as soon as they become available.
+
+Note that addon authors are not _required_ to update to the newer API.
+Concretely, modifier manager APIs have the following support policy:
+
+* API versions will continue to be supported in the same major release of
+  Ember. As shown in the example above, `ember-basic-modifier` 1.0 (which
+  targets modifier manager API version 3.6), will continue to work on
+  Ember 3.8. However, the reverse is not true – modifier manager API version
+  3.8 will (somewhat obviously) not work in Ember 3.6.
+
+* In addition, to ensure a smooth transition path for addon authors and app
+  developers across major releases, each Ember version will support (at least)
+  the previous LTS version as of the release was made. For example, if 3.16 is
+  the last LTS release of the 3.x series, the modifier manager API version
+  3.16 will be supported by Ember 4.0 through 4.4, at minimum.
+
+Addon authors can also choose to target multiple versions of the modifier
+manager API using [ember-compatibility-helpers](https://github.com/pzuraq/ember-compatibility-helpers/):
+
+```js
+// ember-basic-modifier/app/modifier-managers/basic.js
+
+import { gte } from 'ember-compatibility-helpers';
+
+let ComponentManager;
+
+if (gte('3.5')) {
+  ComponentManager = EmberObject.extend({
+    capabilities: capabilities('3.8'),
+
+    // ...
+  });
+} else {
+  ComponentManager = EmberObject.extend({
+    capabilities: capabilities('3.6'),
+
+    // ...
+  });
+}
+
+export default ComponentManager;
+```
+
+Since the conditionals are resolved at build time, the irrevelant code will be
+stripped from production builds, avoiding any deprecation warnings.
+
+### Optional Features
+
+The second, optional, argument to the `capabilities` function is an object
+enumerating the optional features requested by the modifier manager.
+
+In the hypothical example above, while the "reified" arguments objects may be
+a little slower, they are certainly easier to work with, and the performance
+may not matter to but the most performance critical modifiers. A modifier
+manager written for Ember 3.8 (again, only hypothically) and above would be
+able to explicitly opt back into the old behavior like so:
+
+```js
+// ember-basic-component/app/component-managers/basic.js
+
+import { capabilities } from '@ember/component';
+import EmberObject from '@ember/object';
+
+export default EmberObject.extend({
+  capabilities: capabilities('3.8', {
+    reifyArguments: true
+  }),
+
+  // ...
+});
+```
+
+In general, we will aim to have the defaults set to as bare-bone as possible,
+and allow the component managers to opt into the features they need in a PAYGO
+(pay-as-you-go) manner, which aligns with the Glimmer VM philosophy. As the
+rendering engine evolves, more and more feature will become optional.
+
+At this time this RFC does not specify any optional capabilties for the initial release.
 
 ## How we teach this
 
