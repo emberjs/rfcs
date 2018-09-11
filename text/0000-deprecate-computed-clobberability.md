@@ -123,6 +123,18 @@ functions elsewhere and replace them with a proxy getter and the mandatory
 setter assertion, respectively. In the long term, making computeds more
 transparent in this way would be ideal, but it is out of scope for this RFC.
 
+## Deprecation Timeline
+
+This change will be a breaking change, which means we will not be able to change
+the behavior of `computed` until Ember v4.0.0. Until then, we should provide two
+deprecation warnings:
+
+1. When users invoke the default override-setter behavior
+2. When users call `.readOnly()` on a computed property
+
+The warnings should explain the deprecation, and recommend that users do not
+rely on setter behavior or opting-in to read only behavior.
+
 # How We Teach This
 
 In general, we can teach that computed properties are essentially cached native
