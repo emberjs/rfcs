@@ -31,15 +31,15 @@ function makeFoo() {
   'use strict';
 
   class Foo {
-  get bar() {
-    return this._value;
+    get bar() {
+      return this._value;
+    }
   }
-}
 
-let foo = new Foo();
+  let foo = new Foo();
 
-foo.bar; // undefined
-foo.bar = 'baz'; // throws an error in strict mode
+  foo.bar; // undefined
+  foo.bar = 'baz'; // throws an error in strict mode
 }
 ```
 
@@ -126,11 +126,14 @@ transparent in this way would be ideal, but it is out of scope for this RFC.
 ## Deprecation Timeline
 
 This change will be a breaking change, which means we will not be able to change
-the behavior of `computed` until Ember v4.0.0. Until then, we should provide two
-deprecation warnings:
+the behavior of `computed` until Ember v4.0.0. Additionally, users will likely
+want to continue using `.readOnly()` up until overriding has been fully removed
+to ensure they are using properties safely. With that in mind, the ordering of
+events should be:
 
-1. When users invoke the default override-setter behavior
-2. When users call `.readOnly()` on a computed property
+1. Deprecate the default override-setter behavior immediately, remove it in
+Ember v4
+2. Deprecate the `.readOnly()` modifier in Ember v4, remove it in v5
 
 The warnings should explain the deprecation, and recommend that users do not
 rely on setter behavior or opting-in to read only behavior.
