@@ -131,9 +131,24 @@ want to continue using `.readOnly()` up until overriding has been fully removed
 to ensure they are using properties safely. With that in mind, the ordering of
 events should be:
 
-1. Deprecate the default override-setter behavior immediately, remove it in
-Ember v4
-2. Deprecate the `.readOnly()` modifier in Ember v4, remove it in v5
+1. Ember v3
+  * Deprecate the default override-setter behavior immediately. This means that
+    a deprecation warning will be thrown if a user attempts to set a
+    non-`readOnly` property which does not have a setter. User's will still be
+    able to declare a property is `readOnly` without a deprecation warning.
+  * Add optional feature to change the deprecation to an assertion after the
+    deprecation has been released, and to show a deprecation when using
+    the `.readOnly()` modifier.
+  * After the deprecation and optional feature have been available for a
+    reasonable amount of time, enable the optional feature by default in new
+    apps and addons. The main reason we want to delay this is to give _addons_
+    a chance to address deprecations, since enabling this feature will affect
+    both apps and the addons they consume.
+2. Ember v4
+  * Remove the override-setter entirely, making non-overrideable properties the
+    default.
+  * Make the `readOnly` modifier a no-op, and show a deprecation warning when it
+    is used.
 
 The warnings should explain the deprecation, and recommend that users do not
 rely on setter behavior or opting-in to read only behavior.
