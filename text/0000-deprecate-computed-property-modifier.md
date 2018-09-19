@@ -55,30 +55,35 @@ As mentioned above, macros which receive a callback function as an argument are
 the only valid use of `.property()` in current Ember. Currently, there are two
 such macros in Ember core: `map` and `filter`.
 
-This RFC proposes that these macros be updated to receive a list of dependent
-keys instead of just one. The first dependent key will be the value to be
-mapped/filtered, and the subsequent keys will only invalidate the cache.
+This RFC proposes that these macros be updated to receive additional dependent
+keys via their public API directly via an optional configuration object mode.
+The new API signatures would be:
 
-```js
-foo: filter('strings', 'filterText', function(s) {
-  return s.includes(this.filterText);
-})
+```ts
+function filter(filteredPropertyKey: string, callback: Function): ComputedProperty;
+function filter(filteredPropertyKey: string, options: {
+  callback: Function,
+  dependentKeys: string[]
+}): ComputedProperty;
 
-// with ember-decorators
-@filter('strings', 'filterText')
-foo() {
-  return s.includes(this.filterText);
-}
+function map(mappedPropertyKey: string, callback: Function): ComputedProperty;
+function map(mappedPropertyKey: string, options: {
+  callback: Function,
+  dependentKeys: string[]
+}): ComputedProperty;
 ```
-
-This will be the recommended approach for macros supplied by addons as well.
 
 ## Deprecation Timeline
 
-Once the macros have been updated to accept an arbitrary number of dependent
-keys, a deprecation warning should be added to calls to `.property()`. Removing
-the functionality will be a breaking change, so it will be set to be removed
-in Ember v4.0.0.
+The deprecation should follow these steps:
+
+* Update `filter` and `map` to their new APIs
+* Add a deprecation warning to uses of `.property` which add dependent keys to
+  computed properties.
+* Add an optional feature to turn the deprecation into an assertion
+* After enough time has passed for addons and users to update, enable the
+  optional feature by default in new addons and apps
+* Fully remove `.property()` in Ember v4.0.0
 
 # How We Teach This
 
@@ -99,25 +104,12 @@ only the first argument will be filtered/mapped
 
 # Alternatives
 
-We could allow additional dependent keys to be passed to filter/map in a
-different way, such as via an options object:
+We could allow additional dependent keys to be passed in as arbitrary arguments:
 
-```js
-foo: filter(
-  'strings',
-  {
-    dependentKeys: ['filterText']
-  },
-  function(s) {
-    return s.includes(this.filterText);
-  }
-)
-
-// with ember-decorators
-@filter('strings', {
-  dependentKeys: ['filterText']
-})
-foo() {
-  return s.includes(this.filterText);
-}
+```ts
+filter(...dependentKeys: string[], callback: Function): ComputedProperty;
+map(...dependentKeys: string[], callback: Function): ComputedProperty;
 ```
+
+This would potentially be confusing since the only key which would be used by
+the macro directly would be the first key.
