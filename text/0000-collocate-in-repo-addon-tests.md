@@ -6,7 +6,7 @@
 
 ## Summary
 
-Locate tests that are associated with an in-repo-addon in that addon's tests folder
+Locate tests that are associated with an in-repo-addon in that addon's tests folder. However, for this RFC, the output of the tests bundles will remain identical to the current output.
 
 ## Motivation
 
