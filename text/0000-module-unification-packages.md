@@ -138,6 +138,10 @@ I suggest two further constraints:
   normalization rules for package names in templates and in service injections
   should be the same. Given that a developer is using Ember Data they should not
   refer to it in some places as EmberData and others as `ember-data`.
+- **Added APIs for accessing packages should be available in classic `app/`
+  applications.** For example if Ember Power Select has been updated to use
+  `src/`, then an application should be able to access it's components, helpers,
+  and services via the new APIs we're adding.
 
 These are the problems and constraints that motivate this RFC.
 
@@ -282,6 +286,8 @@ The semantics of `{{use}}` are the following:
 - If a symbol introduced by `{{use}}` is already present in a template a
   compilation error is thrown for `Duplicate declaration ${BindingIdentifier}`.
   This mirrors the behavior of ES imports.
+- The `{{use}}` helper is available to all templates, be they in an application's `app/` or
+  `src/` directory, or in an addon's `app/`, `addon/` or `src/` directory.
 
 The syntax of `{{use}}` can be described using syntax spec language
 comparable to the [ES `import`
@@ -591,8 +597,9 @@ following two files:
 </Select>
 ```
 
-At build time and before template compilation they would be combined to a
-single file:
+The relationship between these files can be taught as a prefix and body
+concatenated at build time. For example a new Ember user might think of these
+files as combined at build time to:
 
 ```hbs
 {{! src/prelude.hbs }}
@@ -603,21 +610,32 @@ single file:
 </Select>
 ```
 
-* This file contains all the information the compiler, and any template tooling,
+In implementation `prelude.hbs` should strip whitespace and comments, and should
+throw when any helper besides `{{use}}` is called. The files may not actually be
+concatenated at all, but if they were then the following would be an equivalent
+combined file:
+
+```hbs
+{{use Select from 'ember-power-select'}}{{! src/ui/routes/posts/template.hbs }}
+<Select @options=names as |name|>
+  {{name}}
+</Select>
+```
+
+Some behaviors that shake out of `prelude.hbs` and `{{use}}` are:
+
+* The concatentated files contain all the information the compiler, and any template tooling,
   will need to resolve all non-app components staticly.
 * The template compiler may, during compilation, choose to strip `{{use}}`
   calls that add an unused identifier to the template. As such making
   a `{{use}}` global can still have a very low runtime and packaging overhead.
-* The unused identifier stripping is to the exclusion
-  of templates which have a `{{component}}` helper. Because a template with a
-  `{{component}}` helper does not know until runtime what component is being
-  invoked, staticly un-used identifiers must be retained for possible dynamic
-  invocation.
-* Because duplicate declarations are not permitted (you cannot `{{use}}` two
-  things with the import binding `Select` without renaming one of them)
-  Once an addon has claimed a name in a prelude the app will not, in its own
-  templates, be able
-  to write `{{use}}` for that name without a re-assignment.
+* Because duplicate declarations are not permitted, an author cannot `{{use}}` two
+  things with the import binding `Select` without renaming one of them. A
+  `{{use}}` in `prelude.hbs` cannot be overridden in a template, which helps
+  app templates remain consistent about globals.
+* This file is part of a given package, and other packages (like an app's
+  addons) have no way to alter globals without suggesting an edit to the app's
+  `prelude.hbs`.
 
 If an addon wants to provide a global component/helper the following options
 are available:
@@ -636,7 +654,8 @@ are available:
 ### Implicit packages for services
 
 Service injections do not currently have source information encoded. Here we
-propose adding that information via an AST transform and argument to
+propose adding that information via an AST transform of JS files in the `src/`
+directory and an argument to
 `inject.service`. This additional information provided by Ember CLI at build
 time mirrors how `source` is already a compile-time addition for templates.
 
@@ -669,12 +688,11 @@ export default Service.extend({
 ```
 
 All uses of Service `inject` would have `source` added, including those in
-components or helpers.
+component or helper JS files.
 
 Note: Because services are not configured in the Ember module unification config to be
 an available as a nested collection, services are never
 subject for local lookup resolution despite using `source`.
-
 
 ### Explicit packages for service injections
 
@@ -698,6 +716,13 @@ export default Ember.Component.extend({
 
 });
 ```
+
+Both `src/` and `app/` based JavaScript can use this API to reference a service
+from a package (for example from an addon which has been upgraded to Module
+Unification).
+
+The AST transform adding `source` will add to the options object if it is
+present.
 
 ### Explicit packages for `owner` APIs
 
