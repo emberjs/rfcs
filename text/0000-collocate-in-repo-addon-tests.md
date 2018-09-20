@@ -22,12 +22,14 @@ Having a simple syntax for executing tests associated with an addon is useful an
   - `ember test --ir-addon foo-bar`
   - The flag's use would create a list of tests to run that are collocated in that in-repo-addon's test folder. The tests will still be included all in one bundle, so this is basically just running the modules that are associated with the co-located tests.
 
-## Not covered in this RFC
+## Not covered in this RFC (but will be covered in a following RFC)
 - Splitting the test bundles
   - Tests should be separately bundled to allow running these tests without loading other tests.
   - In very large application with many in-repo-addons, there is significant overhead in loading all of the application's tests, when only a single in-repo-addon's tests are being tested
   - Expect another RFC coming soon to address this functionality
-
+- Option to run addpn tests with dummy app
+  - Tests for an in-repo-addon/engine could be chosen to either run against the main app, or a (shared) dummy app.
+  
 ## How we teach this
 
 - Create a guide chapter on in-repo-addons
@@ -43,4 +45,4 @@ As the use of this feature would be completely optional by a user any drawbacks 
 
 ## Unresolved questions
 
-- Option to run addon tests with dummy app
+
