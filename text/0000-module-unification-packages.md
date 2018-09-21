@@ -911,11 +911,67 @@ as smooth as possible via the following steps:
 
 ### Example migration story: Ember Data
 
-TODO: Can codemods exist for ember-data injections, etc? Example of ember-data migration path
+Understanding how the myriad of design changes in this RFC impacts a real user
+can be daunting. In this example section a plausible migration path to
+Module Unification is described for Ember Data and its users.
+
+1. Before Ember Data does anything some applications may have already
+adopted Module Unification (may have a `src/` directory). By default new
+`src/` applications use the [ember-resolver fallback resolver](https://github.com/ember-cli/ember-resolver/blob/1bcba4bf5c589bb98c66a1ac1745238384fd154e/mu-trees/addon/resolvers/fallback/index.js).
+Those applications (any applications using the fallback resolver)
+will first resolve using standard Module Unification rules then will fall back
+to classic rules. So MU apps can leave their service injections as-is and
+their code should continue to work as it did in their classic app.
+2. Ember Data will migrate files to `src/`.
+  * In this way the new `store: inject({package: 'ember-data'})`
+API will be unlocked.
+  * Module Unification apps using the glimmer resolver or fallback resoler can use the new API.
+If they are using the glimmer resolver, they are 100% decoupled from any classic
+code.
+  * Classic apps (those with `app/`) can use the fallback resolver to access the new API
+without migrating to `src/` for application code.
+ * For APIs where the users currently import files from
+Ember Data in JavaScript, re-exports from `src/` with a deprecation notice can be added to `addon/`.
+ * To continue supporting classic application code, Ember CLI re-exports
+addon service files in `src/` to the `app/` tree. Via this path or via a custom
+initializer or `app/` file Ember Data can continue to support legacy `inject`
+calls without a package name.
+3. In a major version bump Ember Data removes the classic `app/` and `addon/`
+re-exports. At this time the glimmer or fallback resolver would be required to
+use Ember Data.
+  * Classic apps that *still* had not upgraded would be forced to use the
+fallback resolver if they want to continue using Ember Data.
+  * This step should probably only occur *after* use of the classic resovlers
+has been deprecated.
 
 ### Example migration story: Ember Power Select
 
-TODO
+In this example section a plausible migration path to
+Module Unification is described for Ember Power Select and its users.
+
+1. Before Ember Power Select does anything some applications may have already
+adopted Module Unification (may have a `src/` directory). By default new
+`src/` applications use the [ember-resolver fallback
+resolver](https://github.com/ember-cli/ember-resolver/blob/1bcba4bf5c589bb98c66a1ac1745238384fd154e/mu-trees/addon/resolvers/fallback/index.js).
+Those applications (any applications using the fallback resolver)
+will first resolve using standard Module Unification rules then will fall back
+to classic rules. So MU apps can leave their use of Ember Power Select usage as-is
+and their templates will continue to work as they did in their classic app.
+2. Ember Power Select migrates its templates from the `addon/` directory to the
+`src/` directory. It removes the `app/` directory.
+  * `{{use}}` would now be available to access components.
+  * Module Unification apps using the glimmer resolver or fallback resoler can use the new API.
+If they are using the glimmer resolver, they are 100% decoupled from any classic
+code.
+  * Classic apps (those with `app/`) can use the fallback resolver to access the new `{{use}}` API
+without migrating to `src/` for application code.
+  * Ember-CLI re-exports components from the `src/` directory to the `app/`
+directory. So long as the names of the components have not changed any app using
+the fallback or classic resolver can continue to use classic invocations.
+
+In this second state users of Ember Power Select should be able to upgrade their
+invocations at their convenience. Eventually the classic resolver modes will
+be deprecated by Ember and users will adopt the new layout..
 
 ## How we teach this
 
