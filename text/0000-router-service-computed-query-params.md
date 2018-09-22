@@ -6,15 +6,15 @@
 
 ## Summary
 
-Access to query params is currently restricted to the controller, and subsequently, the corresponding controller. 
+Access to query params is currently restricted to the controller, and subsequently, the corresponding route. 
 This results in some limitations with which users may consume query param data. 
-By exposing query params as a computed property on the `RouterService`, users will be able to more 
+By exposing query params as a computed property on the `RouterService`, users will be able to easily access the params from deep down a component tree, removing the need to pass the params down many levels.
 
 ## Motivation
 
 Modern SPA concepts have converged on the idea that query params should be easily accessible from the object responsible for handling the route.
 However, like with the [RouterService](https://github.com/emberjs/rfcs/blob/master/text/0095-router-service.md), 
-it is common to have a need perform routing behavior from deep down a component tree. 
+it is common to have a need to perform routing behavior from deep down a component tree. 
 
 ### Examples
 
