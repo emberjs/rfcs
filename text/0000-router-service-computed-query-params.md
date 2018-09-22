@@ -13,16 +13,17 @@ By exposing query params as a computed property on the `RouterService`, users wi
 ## Motivation
 
 Modern SPA concepts have converged on the idea that query params should be easily accessible from the object responsible for handling the route.
-However, like with the [RouterService](https://github.com/emberjs/rfcs/blob/master/text/0095-router-service.md), 
+Like with the [RouterService](https://github.com/emberjs/rfcs/blob/master/text/0095-router-service.md), 
 it is common to have a need to perform routing behavior from deep down a component tree. 
 
 ### Examples
 
 Having query params accessible on the router service would allow users to implement:
 
- - query-param aware modals that may hide or show depending on the presence of a query param.
+ - query param aware modals that may hide or show depending on the presence of a query param.
  - fill in form fields from a link.
  - filter / search components could update the query param property.
+ - whatever else query params are used for outside of a SPA.
 
 ## Detailed design
 
