@@ -31,6 +31,8 @@ Add a computed property that splits out `window.location.search` into an object,
 This may need to be an observer that sets a property, 
 depending on what information we can derive from existing computed properties.
 
+Ensure that setting any deeply nested value in the query params object computed property also updates the URL.
+
 ## How we teach this
 
 The `RouterService` api documentation will need to be updated with examples on how to get and set the query params.
