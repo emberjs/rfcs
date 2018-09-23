@@ -59,6 +59,6 @@ and then define a series of computed properties that depend on `'location.search
 ## Unresolved questions
 
 - What behavior are people using with query params that computed properties defined on the `RouterService` would not allow?
-- if query params become a computed property on the `RouterService`, should they also be aliased inside the `Route`?
-  - this would consequently eliminate the need to setup query params in the controller
-    - but would beg the question of how to set defaults
+- if query params become a computed property on the `RouterService`, should they also be aliased inside the `Controller` and / or `Route`?
+  - this would consequently eliminate the need to setup query params using the existing method
+    - how do we set defaults?
