@@ -56,21 +56,23 @@ the only valid use of `.property()` in current Ember. Currently, there are two
 such macros in Ember core: `map` and `filter`.
 
 This RFC proposes that these macros be updated to receive additional dependent
-keys via their public API directly via an optional configuration object mode.
-The new API signatures would be:
+keys via their public API directly via an optional second parameter which is an
+array of the keys:
 
 ```ts
 function filter(filteredPropertyKey: string, callback: Function): ComputedProperty;
-function filter(filteredPropertyKey: string, options: {
-  callback: Function,
-  dependentKeys: string[]
-}): ComputedProperty;
+function filter(
+  filteredPropertyKey: string,
+  additionalDependentKeys: string[],
+  callback: Function
+): ComputedProperty;
 
 function map(mappedPropertyKey: string, callback: Function): ComputedProperty;
-function map(mappedPropertyKey: string, options: {
-  callback: Function,
-  dependentKeys: string[]
-}): ComputedProperty;
+function map(
+  mappedPropertyKey: string,
+  additionalDependentKeys: string[],
+  callback: Function
+): ComputedProperty;
 ```
 
 ## Deprecation Timeline
@@ -104,12 +106,18 @@ only the first argument will be filtered/mapped
 
 # Alternatives
 
-We could allow additional dependent keys to be passed in as arbitrary arguments:
+We could allow additional dependent keys to be passed via an options argument:
 
 ```ts
-filter(...dependentKeys: string[], callback: Function): ComputedProperty;
-map(...dependentKeys: string[], callback: Function): ComputedProperty;
+filter(dependentKey: string, options: {
+  additionalDependentKeys: [],
+  callback: Function,
+}): ComputedProperty;
+
+map(dependentKey: string, options: {
+  additionalDependentKeys: [],
+  callback: Function,
+}): ComputedProperty;
 ```
 
-This would potentially be confusing since the only key which would be used by
-the macro directly would be the first key.
+This is more verbose, but would be very clear.
