@@ -37,7 +37,7 @@ Ensure that setting any deeply nested value in the query params object computed 
 
 The `RouterService` api documentation will need to be updated with examples on how to get and set the query params.
 
-This could be the primary we use query params, instead of the controller params.
+This could be the primary way we use query params, instead of the controller params.
 
 ## Drawbacks
 
