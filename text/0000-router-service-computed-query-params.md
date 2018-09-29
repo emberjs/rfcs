@@ -41,7 +41,7 @@ export default class extends Controller {
   queryParams = ['page', 'filter', {
    // QP 'articles_category' is mapped to 'category' in our route and controller
    category: 'articles_category'
-  };
+  }];
   category = null;
   page = 1;
   filter = 'recent';
