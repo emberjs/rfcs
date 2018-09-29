@@ -28,16 +28,49 @@ Having query params accessible on the router service would allow users to implem
 ## Detailed design
 
 Add a computed property that splits out `window.location.search` into an object, which could have deeply nested objects and arrays.
-This may need to be an observer that sets a property, 
-depending on what information we can derive from existing computed properties.
+The computed property must contain a dependent key on the route path, as the same queury parame may be used differently on different routes.
+The computed property must return an object containing computed properties for allowing behavior bound to the value of a query param.
 
 Ensure that setting any deeply nested value in the query params object computed property also updates the URL.
 
 ## How we teach this
 
-The `RouterService` api documentation will need to be updated with examples on how to get and set the query params.
+Currently, query params _must_ be [specified on the controller](https://guides.emberjs.com/release/routing/query-params/):
+```ts
+export default class extends Controller {
+  queryParams = ['page', 'filter', {
+   // QP 'articles_category' is mapped to 'category' in our route and controller
+   category: 'articles_category'
+  };
+  category = null;
+  page = 1;
+  filter = 'recent';
+  
+  @computed('category', 'model')
+  get filteredArticles() {
+    // do something with category and model as category changes
+  }
+}
+```
 
-This could be the primary way we use query params, instead of the controller params.
+Having computed properties available from the `RouterService` would look like this:
+
+```ts
+export default class extends Controller {
+  @service router;
+ 
+  @readOnly('router.queryParams') query;
+ 
+  @alias('query.articles_category') category;
+  @alias('query.page') page = 1;
+  @alias('query.filter') filter = 'recent';
+ 
+  @computed('category', 'model')
+  get filteredArticles() {
+    // do something with category and model as category changes
+  }
+}
+```
 
 ## Drawbacks
 
@@ -59,6 +92,3 @@ and then define a series of computed properties that depend on `'location.search
 ## Unresolved questions
 
 - What behavior are people using with query params that computed properties defined on the `RouterService` would not allow?
-- if query params become a computed property on the `RouterService`, should they also be aliased inside the `Controller` and / or `Route`?
-  - this would consequently eliminate the need to setup query params using the existing method
-    - how do we set defaults?
