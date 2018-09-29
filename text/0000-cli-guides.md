@@ -113,11 +113,7 @@ the option is available.
 
 While the project is in development, it will be worked on as a separate site, and the main site, [https://ember-cli.com](https://ember-cli.com) will remain in place.
 
-Legacy links should be maintained because deprecating the links would cause SEO problems. The options include:
-- Leaving the old guides as-is, with deprecation banners
-- Finding a way to replicate the URL structure of the current guides site within the new site, and linking to deprecated content as needed.
-
-For SEO reasons, the second option is preferred.
+Legacy links should be maintained because deprecating the links would cause SEO problems. Consensus seems to be that the best option is to create individualized redirects from pages within [https://ember-cli.com](https://ember-cli.com) to the new site.
 
 Upon reaching feature parity, [https://ember-cli.com](https://ember-cli.com) will redirect to the new site. Ultimately, content will be hosted at [https://cli.emberjs.com/](https://cli.emberjs.com/). This improves the SEO of our emberjs domain.
 
@@ -180,9 +176,3 @@ Some potential drawbacks include:
 
 An alternative is to refactor the content in place. This will be more
 time consuming, and will not achieve a consistent narrative voice or cumulative learning experience.
-
-## Unresolved questions
-
-- How should legacy links be handled from a technical perspective?
-- The Table of Contents topic list is not yet complete
-- Advanced topics require further input from experienced addon authors
