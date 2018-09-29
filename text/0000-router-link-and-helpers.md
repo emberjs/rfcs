@@ -106,7 +106,6 @@ We'll want to make it very clear that the traditional `link-to` technique of lin
 
 The documentation and guides would need to be incrementally upgraded to inform people about the new linking strategy -- but because the old way would still work, having some docs say `link-to` instead of `Link` wouldn't be the worst thing.
 
-
 ## Drawbacks
 
 The biggest drawback is that all routing documentation would be out of date, and there is a lot of routing documentation and blog posts throughout the web.
