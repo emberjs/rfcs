@@ -92,6 +92,8 @@ topics, similar to how the Guides link to the API docs.
     - Tutorial: Creating a standalone addon and an in-repo addon, 
     - Using the dummy app
     - Including assets
+    - Configuration
+    - Nested addons
     - Testing your addon
     - Sharing your addon (deploying)
 - API Documentation
