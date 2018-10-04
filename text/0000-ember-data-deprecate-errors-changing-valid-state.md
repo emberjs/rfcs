@@ -17,7 +17,7 @@ In `ember-data`, adding, removing, or clearing errors from a record's `errors` o
 
 By deprecating these methods entirely, and providing replacement methods that do not
  affect the state of the `record`, we provide end users a clear path and a clear timeline
- for resolving the deprecation, and a mechanism through with users can determine if this
+ for resolving the deprecation, and a mechanism through which users can determine if this
  change in behavior requires any additional changes in their application code.
 
 ## Detailed design
