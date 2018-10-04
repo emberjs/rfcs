@@ -60,7 +60,7 @@ interface Store {
 }
 ```
 
-Users interested in providing a custom class for their `records` and whom override `modelFactoryFor`,
+Users interested in providing a custom class for their `records` and who override `modelFactoryFor`,
  would not need to also change `modelFor`, as this would be the `klass` accessible via the `factory`.
 
 Users wishing to extend the behavior of `modelFactoryFor` could do so in the following manner:
@@ -129,33 +129,34 @@ export default class CustomModel extends EmberObject {
 Custom classes for models should expect their constructor to receive a single argument: an object with *at least*
  the following.
  
-- A `recordData` instance available on the `recordData` `Symbol` and accessible via `getRecordData` (see below)
+- A `recordData` instance accessible via `getRecordData` (see below)
 - Any properties passed as the second arg to `createRecord`
-- An `owner` available on the owner `Symbol` and accessible via `Ember.getOwner`
+- An `owner` accessible via `Ember.getOwner`
 - Any DI injections
 - any other properties that `Ember` chooses to pass to a class instantiated via `factory.create` (currently none)
 
-### getRecordData/setRecordData
+### getRecordData
 
 Every `record` (instance of the class returned by `modelFactoryFor`) will have an associated [RecordData](https://github.com/emberjs/rfcs/pull/293)
  which contains the backing data for the id, type, attributes and relationships of that record.
  
 This backing data can be accessed by using the `getRecordData` util on the `record` (or on the `createArgs` passed to
- a record).
+ a record). Using `getRecordData` on a `record` is only guaranteed after the record has been instantiated. During
+ instantiation, this call should be made on the `createArgs` object passed into the record.
  
-If providing a custom class that does not inherit from `EmberObject`, you *MUST* either use `assign` (see example 2)
- or `setRecordData` (see example 4) to add the symbol for the backing `recordData` instance onto your record instance.
- If inheriting from `EmberObject` calling `super` with the `createArgs` is sufficient.
-
 **Example 4**
 
 ```javascript
-import { getRecordData, setRecordData } from 'ember-data';
+import { getRecordData } from 'ember-data';
 
 export default class CustomModel {
   constructor(createArgs) {
+    // during instantiation, `recordData` is available by calling `getRecordData` on createArgs
     let recordData = getRecordData(createArgs);
-    setRecordData(this, recordData);
+  }
+  someMethod() {
+    // post instantiation, `recordData` is available by calling `getRecordData` on the instance
+    let recordData = getRecordData(this);
   }
   destroy() {
     // ... do teardown
