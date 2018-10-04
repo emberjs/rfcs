@@ -45,7 +45,7 @@ export default EmberObject.extend({
 just inline them in the `app` tree directly for the examples in this RFC.)
 
 This allows the modifier manager to participate in the DI system – receiving
-injections, using services, etc. Alternatively, component managers can also
+injections, using services, etc. Alternatively, modifier managers can also
 be registered with imperative API. This could be useful for testing or opt-ing
 out of the DI system. For example:
 
@@ -82,14 +82,15 @@ class:
 // my-app/app/modifier/foo.js
 
 import EmberObject from '@ember/object';
+import Basic from './basic-manager';
 import { setModifierManager } from '@ember/modifier';
 
-export default setModifierManager('basic', EmberObject.extend({
+export default setModifierManager(Basic, EmberObject.extend({
   // ...
 }));
 ```
 
-This tells Ember to use the `basic` manager (`modifier-manager:basic`) for
+This tells Ember to use the `Basic` manager for
 the `foo` element modifier. `setModifierManager` function returns the class.
 
 In reality, an app developer would never have to write this in their apps,
@@ -328,7 +329,7 @@ API without breaking existing code.
 
 Here is a hypothical scenario for such a change:
 
-1. Ember 3.2 implemented and shipped the modifier manager API as described in
+1. Ember 3.6 implemented and shipped the modifier manager API as described in
    this RFC.
 
 2. The `ember-basic-modifier` addon released version 1.0 with the modifier
