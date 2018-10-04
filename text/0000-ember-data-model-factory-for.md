@@ -177,8 +177,6 @@ documenting the nature and purpose of `modelFactoryFor`.
 
 - Users may try to use the hook to instantiate records on their own. Ultimately, the store
   should still do the instantiating.
-- We have not yet documented the APIs required to be implemented by a custom `ModelClass` and
-  how/where a `record` accesses the backing `RecordData` instance.
 
 ## Alternatives
 
