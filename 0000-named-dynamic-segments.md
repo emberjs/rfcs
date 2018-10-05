@@ -6,12 +6,8 @@
 
 ## Summary
 
-> One paragraph explanation of the feature.
 
 ## Motivation
-
-> Why are we doing this? What use cases does it support? What is the expected
-outcome?
 
 The [open "Router link component and routing helpers" RFC](https://github.com/emberjs/rfcs/pull/339) proposes new helpers and a new `Link` component. One important difference of the proposed APIs will be named dynamic segments. While most of that RFC could be implemented as an addon on the existing public API, the essential building block for this is the router service.
 
@@ -21,14 +17,6 @@ This will also make the [open "Always run model hook"](https://github.com/emberj
 Also this RFC will change some of the [Router Service RFC](https://github.com/emberjs/rfcs/blob/master/text/0095-router-service.md).
 
 ## Detailed design
-
-> This is the bulk of the RFC.
-
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here.
 
 The current `transitionTo`, `isActive` and `replaceWith` implementations on the RouteService have the following signature:
 
@@ -75,38 +63,14 @@ Next on a major release the old API will be removed.
 Essentially this will not increase the API surface. Instead it will actually reduce the API surface.
 We need to update the guides and the API docs to use the new API. 
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
-
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
-
-> How should this feature be introduced and taught to existing Ember
-users?
-
 ## Drawbacks
-
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
 
 The possibility to pass model instances to the transition functions will be removed. In the end calls to `transitionTo` will be longer. Also this removes some caching possibilities that could be considered *nice*. However the overall benefit from the cleaner APIs seems worth this.
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
-
 We could keep serialize and implement some api like `dynamicSegments: { blogPost: myBlogPost }` and let `serialize` transform this to `{ blog_post_id: myBlogPost }`. However `serialize` feels very magically and not in the spirit of the current attempts to make ember easier to learn.
 
 ## Unresolved questions
-
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
 
 Do we want `dynamicSegments` side by side with `queryParams`? We could also do `transitionTo({ blog_post_id: "1" }, { queryParams: {...} })`, however this makes it problematic to implement this with the old API side-by-side.
