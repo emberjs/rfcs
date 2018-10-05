@@ -82,16 +82,25 @@ class:
 // my-app/app/modifier/foo.js
 
 import EmberObject from '@ember/object';
-import Basic from './basic-manager';
+import { createManager } from './basic-manager';
 import { setModifierManager } from '@ember/modifier';
 
-export default setModifierManager(Basic, EmberObject.extend({
+export default setModifierManager(createManager, EmberObject.extend({
   // ...
 }));
 ```
 
-This tells Ember to use the `Basic` manager for
-the `foo` element modifier. `setModifierManager` function returns the class.
+```js
+// my-app/app/modifier/basic-manager.js
+
+// ...
+
+export function createManager(owner) {
+  return new BasicManager(owner);
+}
+```
+
+`setModifierManager` takes two parameters. The first parameter is a function that takes an `Owner` and returns an instance of a manager. The second parameter is the base class that applications would extend from.
 
 In reality, an app developer would never have to write this in their apps,
 since the modifier manager would already be assigned on a super-class provided
