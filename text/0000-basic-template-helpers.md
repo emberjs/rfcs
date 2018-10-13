@@ -2,7 +2,7 @@
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
-# (RFC title goes here)
+# Promote helpers from ember-truth-helpers into Ember
 
 ## Summary
 
@@ -55,8 +55,8 @@ I propose to not move:
 - `xor`      (not very common)
 - `not-eq`   (can be expressed as `(not (eq a b)`)
 
-When this feature is implemented, we would update `ember-truth-helpers` to not ship the helpers that
-were moved into the core if the version of Ember is
+When this feature is implemented, we would update `ember-truth-helpers` to automatically remove
+the promoted helpers from the code when the Ember is above a certain version number.
 
 ## How we teach this
 
