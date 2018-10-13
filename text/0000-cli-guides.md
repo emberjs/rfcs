@@ -44,7 +44,7 @@ Here are some strategies to help contributor work to be successful:
 
 Since maintaining consistent voice and structure across a blank slate is a challenge, beta content for the core learning experience has already been drafted, including Basic Use guides and a tutorial for creating an addon from start to finish.
 
-The beta version of the CLI Guides content can be found at [ember-learn/cli-guides-source](https://github.com/ember-learn/cli-guides-source). The Markdown files there are rendered by [ember-learn/cli-guides-app](https://github.com/ember-learn/cli-guides-source). The app is currently [deployed on Netlify](https://sad-noyce-026d89.netlify.com/) for testing and UX validation, however it requires more work to resolve many known bugs.
+The beta version of the CLI Guides content can be found at [ember-learn/cli-guides-source](https://github.com/ember-learn/cli-guides-source). The Markdown files there are rendered by [ember-learn/cli-guides-app](https://github.com/ember-learn/cli-guides-source). The app is currently deployed to a temporary endpoint for testing and UX validation. The link is available on the repositories.
 
 ### User Personas
 
