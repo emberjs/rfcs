@@ -30,57 +30,84 @@ For accessibility and semantic reasons, sometimes a `<div>` may not be the best 
 We might want the panel to be a `<section>` element, or an `<aside>` when it's content is somewhat unrelated
 with the rest of the page. Or maybe a `<legend>` if it's and the end of a form.
 
+With the `element` helper proposed in this RFC, this can be accomplished with something like this:
+
+```hbs
+{{#let (element @tagName) as |Tag|}}
+  <Tag class="pt-10 pb-10 ps-20 box-shadow" ...attributes>
+    {{yield}}
+  </Tag>
+{{/let}}
+```
+
 ## Detailed design
 
-The syntax I propose is to allow to interpolate just after the `<` and `</` markers in templates.
+We propose to add a new `element` helper that takes a tag name and generates a contextual component that, when invoked, renders the selected element.
 
-For instance:
-
-```hbs
-<{{@tagName}} class="pt-10 pb-10 ps-20 box-shadow" ...attributes>
-  {{yield}}
-</{{@tagName}}>
-```
-
-The glimmer parser needs to be able to distinguish this from any other interpolation in the so called
-_element space_, like the future [Element Modifiers](https://github.com/emberjs/rfcs/pull/353).
-
-This syntax presents two edge cases that we need clarification:
-
-1 - What happens when the value in the interpolated in the opening and closing tags are different?
+Example:
 
 ```hbs
-<{{@tagName}} class="pt-10 pb-10 ps-20 box-shadow" ...attributes>
-  {{yield}}
-</{{@otherTagName}}>
+{{#let (element @htmlTag) as |Tag|}}
+  <Tag>...</Tag>
+{{/let}}
 ```
 
-This is clearly illegal and must throw an exception in development or production alike.
+Unlike ids, classes or other attributes, the tag name of DOM element cannot be changed in runtime.
 
-2 - What if the interpolated value is not a string? (`null`, `undefined` or a number/object).
+To help the user understand that changing the tag of an element in runtime is an expensive operation,
+the syntax is intentionally chosen to express that changes in the tag name will turn down the given block
+and recreate it again.
 
-Any value other than a String must throw an exception in development or production alike.
+Having dynamic tag names can also open the door to possible XSS vulnerabilities if developers allow user-input
+to become tag names (e.g. `xlink:`) . To prevent that, this helper will throw an error for any tag name containing anyting
+but lowercase letters and dashes.
 
-About `null`/`undefined` we can take two approaches.
-We can deem them an error and throw an exception or we can take a similar approach than React did with `<>...</>`.
-For those not familiar with `<></>` in React, that is used to generate DOM fragments. That is, the absence of a root
-element.
-I lean towards considering that a runtime error, but I could be convinced otherwise.
+A working proof of concept of this approach has been created in https://github.com/tildeio/ember-element-helper
 
+Shall this RFC me accepted, that helper would be ported to Ember.js itself, perhaps making it more efficient
+on the process.
 
 ## How we teach this
 
-This must be documented with examples in the guides, making very clear that the values being interpolated
-have to be strings.
+_It's vitally important that developers have awareness the negative impact that misuse of dynamic tags can have on the accessibility of an Ember application._
+
+While dynamic tags enable a great deal of flexibility in components, it's essential to recognize that these can also negatively impact accessibility. Developers should be keenly aware of the appropriate role that should be applied per HTML element (as specified in the [WAI-ARIA specification](https://www.w3.org/WAI/PF/aria/roles)), and ensure that the role is also updated, if necessary, as the tag name is changed. In some cases, the use of native, semantic HTML elements may eliminate the need to apply a role at all, so developers should consult the WAI-ARIA specification until they are certain of the correct use for their specific use cases.
+
+This new helpers will be added to the list of [built-in helpers](https://emberjs.com/api/ember/release/classes/Ember.Templates.helpers) along
+with its cousins `component`, `array`, `each`, etc...
+
+Some meaningful example for the docs could look like this (extracted from a real use case):
+
+```hbs
+{{!-- sidebar.hbs, a template-only component --}}
+{{#let (element (or @htmlTag "aside")) as |Tag|}}
+  <Tag ...>...</Tag>
+{{/let}}
+```
+
+```hbs
+<Sidebar @htmlTag="nav">...</Sidebar>
+```
+
+Since this feature is not very commonly used it is debatable if it should be mentioned in the more beginner-friendly guides,
+but if deemed appropriate the _Components > Customizing a Component's Element_ section is a perfect
+fit.
 
 ## Drawbacks
 
-Admittedly this syntax is somewhat strange, and the fact that the exact same value has to be repeated in
-both the opening and closing tags opens the door to making mistakes that should have good error messages.
+Admittedly this syntax is somewhat convoluted, as it involves using the `let` helper, the new `element`
+helper that yields a contextual component that is then invoked using angle-bracket syntax.
+
+This syntax is intentional to make clear that any change in the tag name would yield a new contextual component,
+effectively tearing down the previous one before rendering the new one, but I can see perceiving this
+as unnecessarily complex.
 
 ## Alternatives
 
-We can propose other alternative syntax. For instance, we could have a special built-in component for this:
+We can decide not to do anything and leave this problem to be solved in user space, as it can be
+solved using only public APIs.
+
+We can also propose other alternative syntaxes. For instance, we could have a special built-in component for this:
 
 ```hbs
 <DynamicElement @tagName={{@tagName}} class="some-class" ...attributes>
@@ -89,23 +116,4 @@ We can propose other alternative syntax. For instance, we could have a special b
 
 ## Unresolved questions
 
-#### Should we allow helpers inside those interpolations?
-
-For instance:
-```hbs
-<{{or @tagName "div"}}>
-
-</{{or @tagName "div"}}>
-```
-
-I think that this repetition makes templates harder to read, so I advocate that only simple bindings
-can be passed in. If the user wants to use something more complex than a binding, they could use the `let`/`with` helpers
-for that.
-
-```hbs
-{{#with (or @tagName "div") as |tagName|}}
-  <{{tagName}} class="foo">
-    ...
-  </{{tagName}}>
-{{/with}}
-```
+---
