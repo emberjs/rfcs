@@ -7,29 +7,58 @@
 ## Summary
 
 Add new built-in template helpers to perform basic operations in templates, identical to the
-helpers in [ember-truth-helpers](https://github.com/jmurphyau/ember-truth-helpers)
+helpers in [ember-truth-helpers](https://github.com/jmurphyau/ember-truth-helpers).
+
+This is a resurrection of [RFC #152](https://github.com/emberjs/rfcs/pull/152) that was opened over
+by @martndemus two years ago, updated to reflect the new start of the things in Ember, with the glimmer
+VM powering our templates.
 
 ## Motivation
 
 It is a very common necessity to almost every Ember app to perform certain operations like compare
-by equality, negate a value, or perform boolean operations, and often the most convenient place to
-do it is in the templates.
-Because of that, `ember-truth-helpers` is probably the single most installed addon either directly
-or transitively in the entire ecosystem.
+by equality, negate a value or perform boolean operations, and often the most convenient place to
+do it is right in the templates.
+Because of that, `ember-truth-helpers` is probably the single most installed addon that exists, either
+directly by apps or indirectly by other addons that those apps use.
 
-The fact that this addon is so popular is very telling and Ember should consider to move into the
-core of the templating engine at least the most popular helpers.
+The fact that this addon is so popular is very telling and Ember.js should consider moving into the
+core of the templating engine at least some of those helpers.
 
-One of the shocking moments developers that are familiar with React, Vue or Angular have when trying Ember
-is that they cannot, at least out of the box, perform the most basic comparisons and boolean operations
-they are so used to in JSX or Vue/Angular templates.
+A second reason is that I believe it would help making Ember more approachable by newcomers
+that have _some_ experience in other frameworks. One of the most shocking moments that developers
+that are familiar with React, Vue or Angular experience when trying Ember is that they cannot,
+at least out of the box, perform the most basic logical comparisons and operation they are so used to
+in JSX or Vue/Angular templates.
 
-Furthermore, if the [RFC #367](https://github.com/emberjs/rfcs/pull/367) eventually gets merged, these
-helpers are the perfect candidates to create adoption friction in the community because of how
-pervasive its usage it in so many templates.
+A third reason is that if we implement those super common helpers in the Glimmer VM, that would open
+a important vector of low level optimization.
 
-Albeit less important, implementing these helpers in the core _could_ enable clever trickery in the
-Glimmer VM, like evaluating them at compile time when the arguments are constant.
+Consider the following template:
+
+```hbs
+{{#if (and @featureEnabled this.expensiveComputedProperty @model.asyncEDRelationship.length)}}
+  {{!-- some logic --}}
+{{else}}
+  {{!-- some logic --}}
+
+{{/if}}
+```
+
+Because of the way Ember helpers work, all their input parameters are eagerly evaluated by the
+Glimmer VM and passed to the helpers. This might include computationally expensive computed properties,
+or hitting code paths that trigger network requests.
+
+Implementing helpers like `and` or `or` at a lower lever would allow those helpers to be evaluated in
+short circuit, so if `@featureEnabled` is false, neither of the following arguments will ever evaluated.
+
+Going one step further into the optimizing compiler world, if **every** invocation of the component
+with this template receives `@featureEnabled={{false}}`, the compiler could even completely remove
+the conditional and the truthy branch of the if from compiled output.
+
+The last reason is that if the [RFC #367](https://github.com/emberjs/rfcs/pull/367) eventually gets merged,
+these helpers are the perfect candidates to create adoption friction in the community because of how
+pervasive its usage it in so many templates, forcing them to explicitly importing them on most templates
+or adding them to the proposed `prelude.hbs` file.
 
 ## Detailed design
 
@@ -77,10 +106,14 @@ addons.
 The main unresolved question is what helpers we deem worthy of being moved into the core, and also
 if we want any other helpers not mentioned above.
 
+In particular, I'm sitting on the fence about `not-eq`.
+It is not _really necessary_, in the same way `{{unless foo}}` can also be expressed as `{{#if (not foo)}}`,
+but it may be convenient.
+
 Other helpers that come to mind that _could_ also be worth adding:
 
-- `array` (there is an RFC for it: https://github.com/emberjs/rfcs/pull/318)
+- `array` (there is an [RFC](https://github.com/emberjs/rfcs/pull/318) and its being implemented)
 - `add`, `subtract`, and other arithmetic operators.
 - `{{#await promise as |value|}}` to render a block conditionally if a promise resolves or fails.
 
-If there is interest in them, I advocate creating standalone RFCS for them.
+If there is interest in them, I advocate creating standalone RFCS for each one of them.
