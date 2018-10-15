@@ -89,7 +89,10 @@ the promoted helpers from the code when the Ember is above a certain version num
 
 ## How we teach this
 
-As any new API, will have to be documented in the guides with examples.
+The introduction of these helpers does not impact the current mental model for Ember applications.
+
+In addition to API and Guides documentation with illustrative examples of usage of the various helpers,
+and explanation of their short circuiting nature might be warranted.
 
 ## Drawbacks
 
@@ -98,8 +101,10 @@ those helpers are extremely straightforward.
 
 ## Alternatives
 
-An alternative path would be to include `ember-truth-helpers` in the default blueprint for apps an
+An alternative path would be to include `ember-truth-helpers` in the default blueprint for apps and
 addons.
+However, this alternative loses strength due to the fact that it is not possible to implement short
+circuiting helpers in Ember's userspace.
 
 ## Unresolved questions
 
