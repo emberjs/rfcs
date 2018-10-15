@@ -2,11 +2,11 @@
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
-# Promote helpers from ember-truth-helpers into Ember
+# Add new basic template helpers to Ember
 
 ## Summary
 
-Add new built-in template helpers to perform basic operations in templates, identical to the
+Add new built-in template helpers to perform basic boolean operations and comparisons in templates, identical to some of the
 helpers in [ember-truth-helpers](https://github.com/jmurphyau/ember-truth-helpers).
 
 This is a resurrection of [RFC #152](https://github.com/emberjs/rfcs/pull/152) that was opened over
@@ -39,8 +39,7 @@ Consider the following template:
 {{#if (and @featureEnabled this.expensiveComputedProperty @model.asyncEDRelationship.length)}}
   {{!-- some logic --}}
 {{else}}
-  {{!-- some logic --}}
-
+  {{!-- some other logic --}}
 {{/if}}
 ```
 
@@ -65,7 +64,7 @@ or adding them to the proposed `prelude.hbs` file.
 The process consists on deciding what helpers from `ember-truth-helpers` we consider the most important
 and move them into Ember.js itself or even the Glimmer VM, in a fully backwards compatible way.
 
-I propose to move to core at least:
+I propose to add to core at least:
 
 - `eq`
 - `not`
@@ -76,7 +75,7 @@ I propose to move to core at least:
 
 Those helpers are very low lever and generally useful in both Ember and Glimmer.
 
-I propose to not move:
+I propose to not add:
 
 - `is-array` (uses `Ember.isArray`)
 - `is-empty` (uses `Ember.isEmpty`)
@@ -104,7 +103,8 @@ those helpers are extremely straightforward.
 An alternative path would be to include `ember-truth-helpers` in the default blueprint for apps and
 addons.
 However, this alternative loses strength due to the fact that it is not possible to implement short
-circuiting helpers in Ember's userspace.
+circuiting helpers in Ember's userspace, and because even if an addon is added by default, user
+can still choose to remove it, so addons would not just be able to rely on them.
 
 ## Unresolved questions
 
