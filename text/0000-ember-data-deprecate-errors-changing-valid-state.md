@@ -6,8 +6,8 @@
 
 ## Summary
 
-Deprecates the `add` `remove` and `clear` methods of `DS.Errors` in favor of `addError`
- `removeError` and `clearErrors`.
+Deprecates the `add` `remove` and `clear` methods of `DS.Errors` in favor of `addErrors`
+ `removeErrors` and `clearErrors`.
 
 ## Motivation
 
