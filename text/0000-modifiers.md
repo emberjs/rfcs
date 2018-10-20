@@ -1,5 +1,5 @@
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
-- RFC PR: (leave this empty)
+- Start Date: 2018-08-17
+- RFC PR: https://github.com/emberjs/rfcs/pull/353
 - Ember Issue: (leave this empty)
 
 # Element Modifiers
