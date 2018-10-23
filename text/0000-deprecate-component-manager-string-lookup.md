@@ -4,7 +4,7 @@
 
 # Summary
 
-This deprecates the string based lookup API for associating a custom component manager with a corresponding base class.
+This deprecates the string-based lookup API for associating a custom component manager with a corresponding base class.
 
 ```js
 import EmberObject from '@ember/object';
