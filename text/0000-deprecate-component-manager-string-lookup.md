@@ -77,7 +77,7 @@ From our understanding this API has very limited usage as it is a low-level API.
 
 # Drawbacks
 
-Historically, Ember has given developers base classes that the developer would extend from and Ember would create on your behalf. This allows the framework know that the interface of the object is complete. With this approach we are relying more on the addon author to construct the object and ensure it conforms to the correct interface.
+Historically, Ember has given developers base classes that the developer would extend from and Ember would create instances on your behalf. This allows the framework to know that the interface of the object is complete. With this approach we are relying more on the addon author to construct the object and ensure it conforms to the correct interface.
 
 Generally speaking this a good practice of OOP but due to the fact that JavaScript does not have first-class interfaces, Ember has taken the concretion approach.
 
