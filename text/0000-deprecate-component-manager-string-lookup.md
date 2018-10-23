@@ -15,7 +15,7 @@ export default setComponentManager('basic', EmberObject.extend({
 }))
 ```
 
-Instead the you must pass a factory function that produces a instance of the custom manager:
+Instead you must pass a factory function that produces a instance of the custom manager:
 
 ```js
 import EmberObject from '@ember/object';
