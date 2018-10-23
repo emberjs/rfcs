@@ -83,7 +83,7 @@ Generally speaking this a good practice of OOP but due to the fact that JavaScri
 
 # Alternatives
 
-Instead of passing a factory function we could pass the class it's self. This option does have the issue of Ember needed to know how to construct the class and does not allow for the addon author to perform any dependency injections.
+Instead of passing a factory function we could pass the class itself. This option does have the issue of Ember needing to know how to construct the class and does not allow for the addon author to perform any dependency injections.
 
 # Unresolved questions
 
