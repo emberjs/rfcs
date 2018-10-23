@@ -39,7 +39,7 @@ export function createManager(owner) {
 
 There are several motivators:
 
-- A string based API is not friendly when it comes to tree shaking. Would force us into creating a compiler to turn the string into a symbol that build tools like Rollup and Webpack could analyze.
+- A string-based API is not friendly when it comes to tree shaking. It would force us into creating a compiler to turn the string into a symbol that build tools like Rollup and Webpack could analyze.
 - This API expands the namespacing problems associated with module unification. Specifically an addon author would have to associate the package name with the string, similar to how [RFC#367](https://github.com/mixonic/rfcs/blob/mu-packages/text/0000-module-unification-packages.md#explicit-packages-for-service-injections) proposes changes to services.
 - `setModifierManager` as introduced by [RFC#373](https://github.com/emberjs/rfcs/blob/89349d30ade24303a06448bc121b8fd810cbe58d/text/0373-Element-Modifier-Managers.md#determining-which-modifier-manager-to-use) uses a factory style API. This RFC intends to align these to function signatures.
 - We want to make sure this API is compatible with the binary AoT compilation work we did in the Glimmer-VM.
