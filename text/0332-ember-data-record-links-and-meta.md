@@ -1,6 +1,6 @@
-- Start Date: (fill me in with today's date, 2018-05-10)
-- RFC PR: (leave this empty)
-- Ember Issue: (leave this empty)
+- Start Date: 2018-10-24
+- RFC PR: https://github.com/emberjs/rfcs/pull/332
+- Ember Issue:
 
 # Ember Data Record Links & Meta
 
