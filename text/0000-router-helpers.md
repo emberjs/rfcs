@@ -26,7 +26,7 @@ This represents a super set of the functionality provided by [Ember Router Helpe
 
 ### Anchor Tags
 
-We currently do not have a good solution for transitioning solely based on HTML anchors defined in the templating layer. For instance let say you are using [Ember Intl](https://github.com/ember-intl/ember-intl) to do internationalization for your application. Ember Intl uses the [ICU message format](http://userguide.icu-project.org/formatparse/messages) for the actual translation strings and supports having HTML within the string. Now lets say you want to put a link in a translation string and have it work like `{{link-to}}` works. In that case you either have role your own solution or use something like [Ember-href-to](https://github.com/intercom/ember-href-to). Another example where this would be useful is that links within markdown produced by addons like [Ember-CLI-Showdown](https://github.com/gcollazo/ember-cli-showdown) would just work. API's like `RouterService#transitionTo` can transition an application using relative URLs and we have an opportunity to leverage this functionality to support this use case.
+We currently do not have a good solution for transitioning solely based on HTML anchors defined in the templating layer. For instance let say you are using [Ember Intl](https://github.com/ember-intl/ember-intl) to do internationalization for your application. Ember Intl uses the [ICU message format](http://userguide.icu-project.org/formatparse/messages) for the actual translation strings and supports having HTML within the string. Now lets say you want to put a link in a translation string and have it work like `{{link-to}}` works. In that case you either have to roll your own solution or use something like [Ember-href-to](https://github.com/intercom/ember-href-to). Another example where this would be useful is that links within markdown produced by addons like [Ember-CLI-Showdown](https://github.com/gcollazo/ember-cli-showdown) would just work. API's like `RouterService#transitionTo` can transition an application using relative URLs and we have an opportunity to leverage this functionality to support this use case.
 
 ### Extensibility Of `{{link-to}}`
 
@@ -72,7 +72,7 @@ In the DOM you will have an `href` on the anchor that gets serializes as:
 <a href="/profile?someBool=true" class="active ember-view">Profile</a>
 ```
 
-Looking at a template you would have no idea that rendering the `{{link-to}}` would result in the query params being serialized. From an implementation point of view, this is problematic as we are forced to `lookup` the `Route` and the associated `Controller` to grab the query params. This can add a non-trivial amount of overhead during rendering, especially if you have many `{{link-to}}`s on a route that link many different parts of your application. As a side-note, this is one of the things  that needs to be delt with if we are ever to kill controllers.
+Looking at a template you would have no idea that rendering the `{{link-to}}` would result in the query params being serialized. From an implementation point of view, this is problematic as we are forced to `lookup` the `Route` and the associated `Controller` to grab the query params. This can add a non-trivial amount of overhead during rendering, especially if you have many `{{link-to}}`s on a route that link many different parts of your application. As a side-note, this is one of the things  that needs to be dealt with if we are ever to kill controllers.
 
 ### Does Not Work With Angle Bracket Invocation
 
