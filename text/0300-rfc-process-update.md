@@ -21,41 +21,47 @@ Proposals by both Core and community members are discussed and refined,
 with the result coming out much stronger.
 Other projects like React also adopted an RFC process, lending external validation to this idea.
 
-Following its initial implementation, shortcomings of the RFC process as well as new requirements were identified,
-which we will try to address in this proposal.
+During this time, the community and the core teams have identified shortcomings of the RFC process as well as new requirements,
+which this proposal intends to address:
 
 ### Confusion about emberjs/rfcs and ember-cli/rfcs
 
 The Ember project currently has two separate RFC processes for Ember.js and Ember CLI.
 
-This leads to confusion because community members must keep track of two different repositories in order to monitor progress.
-The submitter must consider these differences during the lifecycle of the RFC.
+This leads to confusion because the community needs to track of two different repositories for progress.
+For contributors there is the overhead of having to decide where to file their RFC if the proposal involves both projects,
+as well as being aware of the differences in the process during its lifecycle.
 
-There are also some cases where it is not clear exactly where the RFC should be submitted.
-This can also lead to multiple RFCs being written, one for each repository.
-While multiple RFCs might be warranted in some cases,
-it should be a choice instead of a limitation of the current processes.
-
-### Process does not cover sufficient areas of development
+### The process does not cover sufficient areas of development
 
 RFCs to emberjs/rfcs and ember-cli/rfcs concern themselves mostly with features or deprecations to ember.js and ember-cli respectfully, with some ember-data proposals in emberjs/rfcs.
 
-Once again taking inspiration from Rust, they have experimented expanding the types of RFCs proposed
-[crates.io default ranking](https://github.com/rust-lang/rfcs/blob/master/text/1824-crates.io-default-ranking.md)
-[default URLs for documentation](https://github.com/rust-lang/rfcs/blob/master/text/1826-change-doc-default-urls.md).
-The latter one, for example, would have been a useful RFC when designing the new [API docs](https://github.com/ember-learn/ember-api-docs).
+We do not have a process for some kinds of initiatives, like a website redesign,
+information architecture suggestions, SEO suggestions, and the like.
 
 ### Lingering RFCs
 
-The emberjs/rfcs repository currently has [54 issues](https://github.com/emberjs/rfcs/issues) and [62 PRs](https://github.com/emberjs/rfcs/pulls) open, and ember-cli/rfcs has [183 issues](https://github.com/ember-cli/ember-cli/issues) and [49 PRs](https://github.com/ember-cli/ember-cli/pulls).
-A significant percentage of these have not been active in the recent past.
+The emberjs/rfcs repository currently has [86 issues](https://github.com/emberjs/rfcs/issues) and [67 PRs](https://github.com/emberjs/rfcs/pulls) open, and ember-cli/rfcs has [21 issues](https://github.com/ember-cli/ember-cli/issues) and [34 PRs](https://github.com/ember-cli/ember-cli/pulls).
+A percentage of these have not been active in the recent past.
 
 We have kept PRs and issues open so people could more easily find the discussions,
 but this has instead given a negative feeling of staleness, as RFCs linger open without new feedback.
 
+### Gaps between RFC proposal, implementation work, and release
+
+At the moment the process underspecifies what happens when an RFC is accepted and merged.
+Even with the presence of the statusboard,
+it has been hard to communicate to the community the status of the various initiatives.
+
 ## Detailed design
 
-To address the issues raised in the “Motivation” section, I will propose changes to the current process.
+To address the issues raised in the “Motivation” section, I propose the following changes:
+
+- Add frontmatter to RFC files denoting which teams are involved
+- Unify emberjs/rfcs and ember-cli/rfcs
+- Define how core champions are assigned
+- Add the concept of FCP to close
+- Define how to track the implementation after an RFC is accepted
 
 ### Implement Core Champion
 
@@ -146,12 +152,7 @@ None at the moment.
 
 ## Unresolved questions
 
-### How do Champions get assigned to an RFC?
-
-More enterprising authors will likely reach out to team members on their own,
-but the added burden of having to seek a Champion might discourage people from authoring RFCs.
-
-The various teams could agree to review new RFCs during the weekly calls and assign Champions?
+None at the moment.
 
 ---
 
