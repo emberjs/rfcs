@@ -39,6 +39,20 @@ of `yarn test`
    `devDependencies`.
 2. Provide documentation on `eslint` and editor integration as well as precommit hooks
 
+Redefine `npm test` or `yarn test` (depending on whether the `--yarn` option was
+used to create project) to
+
+```
+ember test && npm run lint:js && npm run lint:hbs
+```
+
+and
+
+```
+ember test && yarn lint:js && yarn lint:hbs
+```
+
+
 # How We Teach This
 
 Providing documentation regarding how to run linting should suffice as well as
