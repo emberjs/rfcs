@@ -2,14 +2,13 @@
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
-# Router Helpers & Modifiers
+# Router Helpers
 
 ## Summary
 
-This RFC introduces new router helpers that represent a decomposition of functionality of what we commonly use `{{link-to}}` for. This RFC also deprecates the `{{link-to}}` component, `{{query-params}}` helper, and default query param serialization. Below is a list of the new helpers:
+This RFC introduces new router helpers that represent a decomposition of functionality of what we commonly use `{{link-to}}` for. Below is a list of the new helpers:
 
 ```hbs
-{{transition-to}}
 {{url-for}}
 {{root-url}}
 {{is-active}}
@@ -19,6 +18,8 @@ This RFC introduces new router helpers that represent a decomposition of functio
 ```
 
 This represents a super set of the functionality provided by [Ember Router Helpers](https://github.com/rwjblue/ember-router-helpers/) which has provided this RFC that confidence that a decomposition is possible.
+
+This RFC does **not** deprecate `{{link-to}}` or `{{query-params}}`. These deprecations will come in the form of a deprecation RFC.
 
 ## Motivation
 
@@ -84,15 +85,19 @@ Since angle bracket invocation does not support positional params, `{{link-to}}`
 
 ## Detailed design
 
-Below is a detailed design of all of the template helpers and modifiers.
+Below is a detailed design of all of the template helpers.
 
-### `{{transition-to}}` Element Modifier
+### URL Generation Helpers
+
+The following helpers are to be used to construct a valid root-relative URL that will be used by the event dispatcher to perform a transition. These helpers **do not** pass the in memory model, meaning the model hook will always run for the route you are transitioning to.
+
+### `{{url-for}}` Helper
 
 ```hbs
-<a {{transition-to routeName model queryParams=(hash a=a)}}>Profile</a>
+{{url-for routeName model queryParams=(hash a=a)}}
 ```
 
-`{{transition-to}}` is an element modifier that transitions the router to a new route when a user interacts with it. When installed on an anchor tag it will generate the url and set it as the `href` exactly how `{{url-for}}` would generate a url. When a user clicks or taps on the link, the event will be handled by Ember's global [`EventDispatcher`](https://www.emberjs.com/api/ember/release/classes/Ember.EventDispatcher).
+`{{url-for}}` generates a root-relative URL as a string (which will include the application's rootUrl). When the link is clicked it will cause a transition to occur. See the [Event Dispatcher Changes](#event-dispatcher-changes). It will not serialize the default query params on the controller.
 
 #### Signature Explainer
 
@@ -100,64 +105,13 @@ Using the example above:
 
 _Positional Params_
 - **`routeName`** _String_: A fully-qualified name of this route, like `"people.index"`
-- **`model`** _...Object|Array|Number|String_: Optionally pass an arbitrary amount of models or identifiers for each dynamic segment to be use for generation. If you pass a fully materialized model the model hook for the corresponding route _won't_ run when the anchor is clicked. This is consistent how `{{link-to}}` works.
+- **`model`** _...Object|Array|Number|String_: Optionally pass an arbitrary amount of models or identifiers for each dynamic segment to be use for generation.
 
 _Named Params_
 - **`queryParms`** _Object_: Optionally pass key value pairs that will be serialized
-- **`data`** _Object_: Optionally pass a metadata key value pairs that will be attached to the transition at `Transition.data`. See below.
-- **`replace`** _Boolean_: Optionally pass a boolen to replace the current entry in the browser's history. By default `replace` is `false`.
 
-#### Passing Data To Transition
-
-`{{transition-to}}` takes a new option `data` that allows you to add metadata to the `Transition` object. For instance if you were instrumenting your application with Google Analytics you could use this in conjunction with the routing service to understand the attribution of a transition.
-
-```hbs
-<a {{transition-to 'people.index' data=(hash attribution="edit.continue.button")}}>Continue >></a>
-```
-
-Then using the routing service's `routeDidChange` events you can intercept this data on the transition.
-
-```js
-import Route from '@ember/routing/route';
-import { inject as service } from '@ember/service';
-
-export default Route.extend({
-  router: service('router'),
-  init() {
-    this._super(...arguments);
-
-    this.router.on('routeDidChange', transition => {
-      ga.send('pageView', {
-        from: transition.from ? transition.from.name : 'initial',
-        to: transition.to.name,
-        attribution: transition.data.attribution
-      });
-    });
-  }
-})
-```
-
-#### `transitionTo` updates
-
-`transitionTo` has always synchronously returned a new `Transition` instance however it was the responsibility of the caller to insert `data` onto the `Transition` instance. To align the declarative API with the imperative API, this RFC proposes that `transitionTo` allows you to pass data in the options of `transitionTo` that will be set on the `Transition` during construction time.
-
-```ts
-interface Options {
-  queryParams?: Dict<string|number>,
-  data?: Dict<string|number>
-}
-
-interface Router /* Route, RouterService */ {
-  //...
-  transitionTo(routeName: string, models?: string|number|object, options?: Options): Transition;
-}
-```
-
-#### `Transition.data` integrity
-
-The data in a `Transition` is guaranteed to be carried through the completion of the route transition. This includes `abort`s, `redirect`s and `retry`s of the transition.
-
-### URL Generation Helpers
+_Returns_
+- _String_: a root-relative URL as a string (which will include the application's `rootUrl`)
 
 ### `{{root-url}}` Helper
 
@@ -176,28 +130,6 @@ Will result in the following for the default configuration:
 #### Signature Explainer
 
 `{{root-url}}` does not take any parameters.
-
-### `{{url-for}}` Helper
-
-```hbs
-{{url-for routeName model queryParams=(hash a=a)}}
-```
-
-`{{url-for}}` generates a root-relative URL as a string (which will include the application's rootUrl).
-
-#### Signature Explainer
-
-Using the example above:
-
-_Positional Params_
-- **`routeName`** _String_: A fully-qualified name of this route, like `"people.index"`
-- **`model`** _...Object|Array|Number|String_: Optionally pass an arbitrary amount of models or identifiers for each dynamic segment to be use for generation.
-
-_Named Params_
-- **`queryParms`** _Object_: Optionally pass key value pairs that will be serialized
-
-_Returns_
-- _String_: a root-relative URL as a string (which will include the application's `rootUrl`)
 
 ### Route State Helpers
 
@@ -291,7 +223,7 @@ _Named Params_
 _Returns_
 - _Boolean_: Determines if the route is transitioning out.
 
-### Event Dispatcher Changes
+### Event Dispatcher
 
 In the past, only `HTMLAnchorElement`s that were produced by `{{link-to}}`s would produce a transition when a user clicked on them. This RFC changes to the global `EventDispatcher` to allow for any `HTMLAnchorElement` with a valid root relative `href` to cause a transition. This will allow for us to not only allows us to support use cases like the ones described in the [motivation](#anchor-tags), it makes teaching easier since people who know HTML don't need know an Ember specific API to participate in routing transitions.
 
@@ -308,21 +240,48 @@ Router.map(function() {
 
 When an event comes into the `EventDispatcher` we will cross check the blacklist to see if the event should be let through to the browser or if it should be handled internally.
 
-### Deprecation of `{{link-to}}`
+### Transition Attribution
 
-This RFC explodes out all of the functionality of `{{link-to}}` into a series of helpers. Since `{{link-to}}` was added to Ember it has grown naturally and unfortunately has added features that are non-performant and are not required by all applications. Because us this we plan to deprecate `{{link-to}}` and provide a [codemod](#migration-path) for migrating all instance of `{{link-to}}` to the corresponding helpers.
+This RFC introduces the notion of an `attribution` to the `Transition`. The `TransitionAttribution` is a read-only object that has 2 fields `event` and `source`.
 
-### Deprecation of `{{query-params}}`
+```ts
+interface TransitionAttribution {
+  readonly event: Maybe<Event>;
+  readonly source: unknown
+}
 
-This RFC introduces APIs that take `queryParams` as a named parameter and thus `{{query-params}}` is not needed as a stand alone helper.
+interface Transition {
+  readonly attribution: TransitionAttribution;
+}
+```
 
-### Deprecation of Default Query Param Serialization
+On initial render `event` and `source` will be `null`. On subsequent transitions, the `event` will be the DOM event that caused the transition and `element` will be populated with `HTMLElement` that the user interacted with to cause the transition. See [Appendix A](#appendix-a) for example usage. In the event that the transition occurs programmatically through an API like `replaceWith` or `transitionTo` the `event` will be `null` but can be [populated by the caller](#programatic-attribution).
 
-As mentioned in the motivation, we want do not want to lookup the corresponding controller to serialize the default query param values. This means that any query params that you want to be serialized must be passed directly into the corresponding helper. As part of the migration **only** query params that were declared with `{{query-params}}` will be migrated.
+#### Programatic Attribution
+
+In cases where you need to programatically transition with `transitionTo` or `replaceWith` we will allow for you to pass your own `TransitionAttribution`. See Appendix B for an example.
+
+```ts
+interface Options {
+  queryParams?: Dict<string|number>,
+  attribution?: TransitionAttribution;
+}
+
+interface Router /* Route, RouterService */ {
+  //...
+  transitionTo(routeName: string, models?: string|number|object, options?: Options): Transition;
+  replaceWith(routeName: string, models?: string|number|object, options?: Options): Transition;
+}
+```
+
+#### `Transition.attribution` Integrity
+
+The `attribution` in a `Transition` is guaranteed to be carried through the completion of the route transition. This includes `abort`s, `redirect`s and `retry`s of the transition. The `attribution` field is readonlu and the `TransitionAttribution` is readonly and frozen.
+
 
 ## Migration Path
 
-Since `{{link-to}}` is static we can write a codemod using [Ember Template Recast](https://github.com/ember-template-lint/ember-template-recast) to migrate the code. Below are numerous before and after examples of how the codemod would migrate.
+Since this RFC does not deprecate `{{link-to}}` you can continue to use it. That being said `{{link-to}}` has static semantics therefore we can write a codemod using [Ember Template Recast](https://github.com/ember-template-lint/ember-template-recast) to migrate the code. Below are numerous before and after examples of how the codemod would migrate. It's important to note that the behavior of the application [will change](#url-generation-helpers) if you are relying on the passing of the in-memory model. Because of this the codemod would need different levels of converstion.
 
 ### Basic `{{link-to}}`
 
@@ -352,8 +311,8 @@ Since `{{link-to}}` is static we can write a codemod using [Ember Template Recas
 **After:**
 
 ```hbs
-<a {{transition-to 'profile' this.profile}} class="profile">Profile</a>
-<a {{transition-to 'about' this.contact}}>About</a>
+<a class="profile" href={{url-for 'profile' this.profile}}>Profile</a>
+<a href={{url-for 'about' this.contact}}>About</a>
 ```
 
 ### With Query Params `{{link-to}}`
@@ -367,21 +326,7 @@ Since `{{link-to}}` is static we can write a codemod using [Ember Template Recas
 **After:**
 
 ```hbs
-<a {{transition-to 'post' this.post queryParms=(hash order="CHRON")}}>{{this.post.name}}</a>
-```
-
-### With Replace `{{link-to}}`
-
-**Before:**
-
-```hbs
-{{#link-to 'post' this.post replace=true}}{{this.post.name}}{{/link-to}}
-```
-
-**After:**
-
-```hbs
-<a {{transition-to 'post' this.post replace=true}}>{{this.post.name}}</a>
+<a href={{url-for 'post' this.post queryParms=(hash order="CHRON")}}>{{this.post.name}}</a>
 ```
 
 One of the trickier parts about this migration is knowing how the autogenerated CSS classes are being used. Because of this, adding the route state helpers must explicitly be turned on in the codemod. For instance if you are making heavy use of the `.active` class, you will be suited best by turning pass the codemod the correct configuration to do a transform like the following:
@@ -412,9 +357,9 @@ If you were to transform all `{{link-to}}`s verbatim in terms of functionality t
 
 ```hbs
 <a
-  {{transition-to 'profile'
+  href={{url-for 'profile'
     model
-    queryParams=(hash foo=bar) replace=true}}
+    queryParams=(hash foo=bar)}}
   class="{{if (is-active 'profile' model queryParams=(hash foo=bar)) 'active'}} {{if (is-loading 'profile' model queryParams=(hash foo=bar)) 'loading'}} {{if (is-transitioning-in 'profile' model queryParams=(hash foo=bar)) 'ember-transitioning-in'}} {{if (is-transitioning-out 'profile' model queryParams=(hash foo=bar)) 'ember-transitioning-out'}}">Profile</a>
 ```
 
@@ -428,7 +373,7 @@ In the cases where you do need to do more complicated things like pass in memory
 
 ## Drawbacks
 
-This RFC expands the surface area of the templating layer by exposing the primitives that make up `{{link-to}}`. This may cause confusion of choosing between using simple basic anchor tags, `{{url-for}}` and `{{transition-to}}`, however I believe that each one of the these APIs are solving a real problem that we have in Ember today.
+This RFC expands the surface area of the templating layer by exposing the primitives that make up `{{link-to}}`. This may cause confusion of choosing between using simple basic anchor tags, `{{url-for}}` and `{{link-to}}`, however I believe that each one of the these APIs are solving a real problem that we have in Ember today.
 
 By proxy this may cause people to encapsulate all of these primitives into a single component and thus creating a user-land version of `{{link-to}}`. This could be seen as a framework misstep if the majority of applications end up depending on the addon.
 
@@ -439,4 +384,153 @@ We could just start deprecating and removing functionality from `{{link-to}}` it
 ## Unresolved questions
 
 TBD?
+
+
+## Appendix A
+
+```js
+// app/utils/tracking.js
+const TRACKING_DATA = new WeakMap();
+export default TRACKING_DATA;
+```
+
+```js
+// app/components/track-link.js
+import Component from '@ember/component';
+import TRACKING_DATA from '../utils/tracking';
+
+export default Component.extend({
+  tagName: 'a',
+  attributeBindings: ['href'],
+  didInsertElement() {
+    TRACKING_DATA.set(this.element, this.contextName);
+  }
+})
+```
+
+```js
+// app/routes/application.js
+import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
+import TRACKING_DATA from '../utils/tracking';
+
+export default Route.extend({
+  router: service('router'),
+  init() {
+    this._super(...arguments);
+
+    this.router.on('routeDidChange', transition => {
+      let { source, event } = trasition.attribution;
+
+      let trackingInfo = {
+        cause: event.type,
+        contextName: null
+      };
+
+      if (TRACKING_DATA.has(trasition.source)) {
+        trackingInfo.contextName = TRACKING_DATA.get(source);
+      }
+
+      ga.send('pageView', {
+        from: transition.from ? transition.from.name : 'initial',
+        to: transition.to.name,
+        attribution: trackingInfo
+      });
+    });
+  }
+})
+```
+
+```hbs
+<h1>Hello {{@name}}!</h1>
+<TrackLink href="/profile" @contextName="profile.link">Profile</TrackLink>
+<TrackLink href="/about" @contextName="about.link">About</TrackLink>
+<TrackLink href="/contact" @contextName="contact.link">Contact</TrackLink>
+```
+
+## Appendix B
+
+```js
+// app/utils/tracking.js
+const TRACKING_DATA = new WeakMap();
+export default TRACKING_DATA;
+```
+
+```js
+// app/routes/profile.js
+import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
+import TRACKING_DATA from '../utils/tracking';
+
+export default Route.extend({
+  store: service('store'),
+  actions: {
+    changeName(name) {
+      this.model.set('name', name);
+    },
+
+    changeAge(age) {
+      this.model.set('age', age);
+    },
+
+    submit(e) {
+      if (isValid(this.model)) {
+        let attribution = {
+          event: e,
+          source: e.target,
+        };
+
+        TRACKING_DATA.set(e.target, 'profile.submit');
+
+        this.model.save().then(() => {
+          this.transitionTo('profile.success', { attribution });
+        }, () => {
+          alert('Issue saving... please try again.');
+        });
+      } else {
+        alert('Data is not valid!');
+      }
+    }
+  }
+})
+```
+
+```hbs
+<input onchange={{action 'changeName' value="target.value"}} />
+<input onchange={{action 'changeAge' value="target.value"}} />
+<button onclick={{action 'submit' this.model}}>Submit</button>
+```
+
+```js
+// app/routes/application.js
+import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
+import TRACKING_DATA from '../utils/tracking';
+
+export default Route.extend({
+  router: service('router'),
+  init() {
+    this._super(...arguments);
+
+    this.router.on('routeDidChange', transition => {
+      let { source, event } = trasition.attribution;
+
+      let trackingInfo = {
+        cause: event.type,
+        contextName: null
+      };
+
+      if (TRACKING_DATA.has(trasition.source)) {
+        trackingInfo.contextName = TRACKING_DATA.get(source);
+      }
+
+      ga.send('pageView', {
+        from: transition.from ? transition.from.name : 'initial',
+        to: transition.to.name,
+        attribution: trackingInfo
+      });
+    });
+  }
+})
+```
 
