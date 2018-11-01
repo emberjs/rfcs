@@ -21,72 +21,74 @@ This documents presents the proposed **public** import path changes for `ember-d
   <thead>
     <tr>
       <th colspan="2">Before</th>
-      <th colspan="2">After</th>
+      <th>After</th>
     </tr>
     <tr>
         <th>`import DS from 'ember-data';`</th>
         <th>Direct Import</th>
-        <th>After</th>
-        <th>Notes</th>
+        <th>New Location</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td colspan="4">`@ember-data/model`</td>
+      <td colspan="3">`@ember-data/model`</td>
     </tr>
     <tr>
       <td>`DS.Model`</td>
       <td>`import Model from 'ember-data/model';`</td>
       <td>`import { Model } from '@ember-data/model';`</td>
-      <td>Not the default export to make working with attr/belongsTo/hasMany even easier</td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        `Model` is not the default export to make working with
+        `attr/belongsTo/hasMany` even easier
+      </td>
     </tr>
     <tr>
       <td>`DS.attr`</td>
       <td>`import attr from 'ember-data/attr';</td>
       <td>`import { attr } from '@ember-data/model';`</td>
-      <td></td>
     </tr>
     <tr>
       <td>`DS.belongsTo`</td>
       <td>`import { belongsTo } from 'ember-data/relationships';`</td>
       <td>`import { belongsTo } from '@ember-data/model';`</td>
-      <td></td>
     </tr>
     <tr>
       <td>`DS.hasMany`</td>
       <td>`import { hasMany } from 'ember-data/relationships';`</td>
       <td>`import { hasMany } from '@ember-data/model';`</td>
-      <td></td>
     </tr>
     <tr>
       <td>`DS.Errors`</td>
       <td>none</td>
-      <td>`import Errors from '@ember-data/model/errors';`</td>
-      <td>We should also deprecate directly importing this class</td>
+      <td>`import Errors from '@ember-data/model/errors';`<br>
+        <br>We should also deprecate directly importing this class
+      </td>
     </tr>
     <tr>
       <td>`DS.PromiseManyArray`</td>
       <td>none</td>
-      <td>`import PromiseManyArray from '@ember-data/model/promise-many-array';`</td>
-      <td>We should also deprecate directly importing this class</td>
+      <td>`import PromiseManyArray from '@ember-data/model/promise-many-array';`<br>
+        <br>We should also deprecate directly importing this class
+      </td>
     </tr>
     <tr>
       <td>`DS.ManyArray`</td>
       <td>none</td>
-      <td>`import ManyArray from '@ember-data/model/many-array';`</td>
-      <td>We should also deprecate directly importing this class</td>
+      <td>`import ManyArray from '@ember-data/model/many-array';`<br>
+        <br>We should also deprecate directly importing this class
+      </td>
     </tr>
     <tr>
       <td>(`@private`) `DS.InternalModel`</td>
       <td>none</td>
       <td>none</td>
-      <td>Access to this private API will be removed</td>
     </tr>
     <tr>
       <td>(`@private`) `DS.RootState`</td>
       <td>none</td>
       <td>none</td>
-      <td>Access to this private API will be removed</td>
     </tr>
   </tbody>
 </table>
