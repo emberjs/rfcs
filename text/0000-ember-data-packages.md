@@ -31,7 +31,7 @@ This documents presents the proposed **public** import path changes for `ember-d
   </thead>
   <tbody>
     <tr>
-      <td colspan="3">@ember-data/model</td>
+      <td colspan="3"><h3>@ember-data/model</h3></td>
     </tr>
     <tr>
       <td>DS.Model</td>
@@ -85,7 +85,7 @@ This documents presents the proposed **public** import path changes for `ember-d
       <td>none</td>
     </tr>
     <tr>
-      <td colspan="3">@ember-data/adapters</td>
+      <td colspan="3"><h3>@ember-data/adapters</h3></td>
     </tr>
     <tr>
       <td>DS.Adapter</td>
@@ -166,17 +166,141 @@ This documents presents the proposed **public** import path changes for `ember-d
         <br>this public method should also be a candidate for deprecation
       </td>
     </tr>
+    <tr>
+      <td colspan="3"><h3>@ember-data/serializers</h3></td>
+    </tr>
+    <tr>
+      <td>DS.Serializer</td>
+      <td>import Serializer from 'ember-data/serializer';</td>
+      <td>import Serializer from '@ember-data/serializers';</td>
+    </tr>
+    <tr>
+      <td>DS.JSONSerializer</td>
+      <td>import JSONSerializer from 'ember-data/serializers/json';</td>
+      <td>import JSONSerializer from '@ember-data/serializers/json';</td>
+    </tr>
+    <tr>
+      <td>DS.RESTSerializer</td>
+      <td>import RESTSerializer from 'ember-data/serializers/rest';</td>
+      <td>import RESTSerializer from '@ember-data/serializers/rest';</td>
+    </tr>
+    <tr>
+      <td>DS.EmbeddedRecordsMixin</td>
+      <td>import EmbeddedRecordsMixin from 'ember-data/serializers/embedded-records-mixin';</td>
+      <td>import EmbeddedRecordsMixin from 'ember-data/serializers/rest/mixins';</td>
+    </tr>
+    <tr>
+      <td>DS.JSONAPISerializer</td>
+      <td>import JSONAPISerializer from 'ember-data/serializers/json-api';</td>
+      <td>import JSONAPISerializer from 'ember-data/serializers/json-api';</td>
+    </tr>
+    <tr>
+      <td>DS.Transform</td>
+      <td>import Transform from 'ember-data/transform';</td>
+      <td>import Transform from 'ember-data/transforms';</td>
+    </tr>
+    <tr>
+      <td>DS.DateTransform</td>
+      <td>import DateTransform from 'ember-data/transforms/date';</td>
+      <td>import { DateTransform } from 'ember-data/transforms';</td>
+    </tr>
+    <tr>
+      <td>DS.StringTransform</td>
+      <td>import StringTransform from 'ember-data/transforms/string';</td>
+      <td>import { StringTransform } from 'ember-data/transforms';</td>
+    </tr>
+    <tr>
+      <td>DS.NumberTransform</td>
+      <td>import NumberTransform from 'ember-data/transforms/number';</td>
+      <td>import { NumberTransform } from 'ember-data/transforms';</td>
+    </tr>
+    <tr>
+      <td>DS.BooleanTransform</td>
+      <td>import BooleanTransform from 'ember-data/transforms/boolean';</td>
+      <td>import { BooleanTransform } from 'ember-data/transforms';</td>
+    </tr>
+    <tr>
+      <td colspan="3"><h3>@ember-data/store</h3></td>
+    </tr>
+    <tr>
+      <td>DS.Store</td>
+      <td>import Store from 'ember-data/store';</td>
+      <td>import Store from '@ember-data/store';</td>
+    </tr>
+    <tr>
+      <td>DS.Snapshot</td>
+      <td>none</td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td>DS.PromiseArray</td>
+      <td>none</td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td>DS.PromiseObject</td>
+      <td>none</td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td>DS.RecordArray</td>
+      <td>none</td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td>DS.AdapterPopulatedRecordArray</td>
+      <td>none</td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td>DS.RecordarrayManager</td>
+      <td>none</td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td>DS._initializeStoreService</td>
+      <td>import initializeStoreService from 'ember-data/intialize-store-service';</td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td>DS._setupContainer</td>
+      <td>import setupContainer from 'ember-data/setup-container';</td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td>DS.normalizeModelName</td>
+      <td>none</td>
+      <td>import { normalizeModelName } from 'ember-data/store';<br>
+        <br>this public method should be a candidate for deprecation
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3"><h3>@ember-data/relationship-layer</h3></td>
+    </tr>
+    <tr>
+      <td>DS.Relationship</td>
+      <td>none</td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td colspan="3"><h3>@ember-data/debug</h3></td>
+    </tr>
+    <tr>
+      <td>DS.DebugAdapter</td>
+      <td>none</td>
+      <td>none</td>
+    </tr>
   </tbody>
 </table>
 
-### Unresolved Questions
+### Notes
 
-### `@ember-data/model`
+#### `@ember-data/model`
   
   1) `InternalModel` and `RootState` are tightly coupled to the store and to our provided `Model`
     implementation. Overtime we need to uncouple this, but given their coupling to `Model` and our
     desire to enable them to be eliminated from projects not using `Model`, I believe these exports
-    belong here.
+    belong in `@ember-data/model` for this reason.
 
   2) Do the following belong in `@ember-data/model`, or in `@ember-data/relationship-layer`?
     if not with relationships, does the package name "relationship-layer" become confusing?
@@ -189,34 +313,14 @@ This documents presents the proposed **public** import path changes for `ember-d
   * `hasMany`
   * `PromiseManyArray`
   * `ManyArray`
+  
+#### `@ember-data/serializers`
 
-### @ember-data/serializer
+  1) We should move automatic registration of transforms into a more traditional
+    `app/` directory re-export for the package so that when the package is dropped they
+    cleanly drop as well.
 
-  * DS.Serializer
-  * DS.RESTSerializer
-  * DS.JSONSerializer 
-  * DS.JSONAPISerializer
-  * DS.Transform
-  * DS.DateTransform
-  * DS.StringTransform
-  * DS.NumberTransform
-  * DS.BooleanTransform
-  * DS.EmbeddedRecordsMixin
-
-### @ember-data/store
-
-  * DS.Store
-  * (deprecate-access) DS.PromiseArray
-  * (deprecate-access) DS.PromiseObject
-  * DS.Snapshot
-  * (deprecate-access) DS.RecordArray
-  * (deprecate-access) DS.AdapterPopulatedRecordArray
-  * (private deprecate-access) DS.RecordArrayManager
-  * (private deprecate-access) DS._initializeStoreService
-  * (private deprecate-access) DS._setupContainer
-  * (deprecate) normalizeModelName
-
-**Unresolved Questions**
+#### `@ember-data/store`
 
   1) _setupContainer registers various adapters and serializers for fallbacks.
   Either we need to deprecate this behavior (preferred), or separate out initialization
@@ -229,25 +333,20 @@ This documents presents the proposed **public** import path changes for `ember-d
   3) normalizeModelName is defined... very oddly. Why? Also we should probably deprecate this
    and continue to move to a world in which less normalization of modelName is required.
 
-### @ember-data/relationship-layer
-  
-  * (private deprecate) DS.Relationship
-
-**Notes**
+#### `@ember-data/relationship-layer`
 
 This package seems thin but it's likely to hold quite a bit.
   Additional private things that would be moved here:
-  everything in `-private/system/relationships/state`
-  logic from `internal-model` that need to be extracted
-
-### @ember-data/debug
   
-  * DS.DebugAdapter
+  * everything in `-private/system/relationships/state`
+  * `BelongsToReference` and `HasManyReference`
+  * relationship logic from `store` / `internal-model` that need to be isolated and extracted
 
-**Notes**
+#### `@ember-data/debug`
 
-  Moving this here would allow dropping it. I already suspect we should RFC dropping it for production
-  builds. This exists to support the ember inspector.
+  Moving `DebugAdapter` here would allow dropping it if not desired. I already suspect we should
+  RFC dropping it for production builds where it adds persistent unnecessary overhead for a tool
+  meant for devs. This exists to support the ember inspector.
 
 ### Documented Public APIs without public import paths
 
