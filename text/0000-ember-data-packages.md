@@ -24,71 +24,147 @@ This documents presents the proposed **public** import path changes for `ember-d
       <th>After</th>
     </tr>
     <tr>
-        <th>`import DS from 'ember-data';`</th>
+        <th>import DS from 'ember-data';</th>
         <th>Direct Import</th>
         <th>New Location</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td colspan="3">`@ember-data/model`</td>
+      <td colspan="3">@ember-data/model</td>
     </tr>
     <tr>
-      <td>`DS.Model`</td>
-      <td>`import Model from 'ember-data/model';`</td>
-      <td>`import { Model } from '@ember-data/model';`</td>
+      <td>DS.Model</td>
+      <td>import Model from 'ember-data/model';</td>
+      <td>import { Model } from '@ember-data/model';</td>
     </tr>
     <tr>
-      <td colspan="3">
-        `Model` is not the default export to make working with
-        `attr/belongsTo/hasMany` even easier
+      <td>DS.attr</td>
+      <td>import attr from 'ember-data/attr';</td>
+      <td>import { attr } from '@ember-data/model';</td>
+    </tr>
+    <tr>
+      <td>DS.belongsTo</td>
+      <td>import { belongsTo } from 'ember-data/relationships';</td>
+      <td>import { belongsTo } from '@ember-data/model';</td>
+    </tr>
+    <tr>
+      <td>DS.hasMany</td>
+      <td>import { hasMany } from 'ember-data/relationships';</td>
+      <td>import { hasMany } from '@ember-data/model';</td>
+    </tr>
+    <tr>
+      <td>DS.Errors</td>
+      <td>none</td>
+      <td>import Errors from '@ember-data/model/errors';<br>
+        <br>+ deprecate directly importing this class
       </td>
     </tr>
     <tr>
-      <td>`DS.attr`</td>
-      <td>`import attr from 'ember-data/attr';</td>
-      <td>`import { attr } from '@ember-data/model';`</td>
-    </tr>
-    <tr>
-      <td>`DS.belongsTo`</td>
-      <td>`import { belongsTo } from 'ember-data/relationships';`</td>
-      <td>`import { belongsTo } from '@ember-data/model';`</td>
-    </tr>
-    <tr>
-      <td>`DS.hasMany`</td>
-      <td>`import { hasMany } from 'ember-data/relationships';`</td>
-      <td>`import { hasMany } from '@ember-data/model';`</td>
-    </tr>
-    <tr>
-      <td>`DS.Errors`</td>
+      <td>DS.PromiseManyArray</td>
       <td>none</td>
-      <td>`import Errors from '@ember-data/model/errors';`<br>
-        <br>We should also deprecate directly importing this class
+      <td>import PromiseManyArray from '@ember-data/model/promise-many-array';<br>
+        <br>+ deprecate directly importing this class
       </td>
     </tr>
     <tr>
-      <td>`DS.PromiseManyArray`</td>
+      <td>DS.ManyArray</td>
       <td>none</td>
-      <td>`import PromiseManyArray from '@ember-data/model/promise-many-array';`<br>
-        <br>We should also deprecate directly importing this class
+      <td>import ManyArray from '@ember-data/model/many-array';<br>
+        <br>+ deprecate directly importing this class
       </td>
     </tr>
     <tr>
-      <td>`DS.ManyArray`</td>
+      <td>(@private) DS.InternalModel</td>
       <td>none</td>
-      <td>`import ManyArray from '@ember-data/model/many-array';`<br>
-        <br>We should also deprecate directly importing this class
+      <td>none</td>
+    </tr>
+    <tr>
+      <td>(@private) DS.RootState</td>
+      <td>none</td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td colspan="3">@ember-data/adapters</td>
+    </tr>
+    <tr>
+      <td>DS.Adapter</td>
+      <td>import Adapter from 'ember-data/adapter';</td>
+      <td>import Adapter from '@ember-data/adapters';</td>
+    </tr>
+    <tr>
+      <td>DS.RESTAdpter</td>
+      <td>import RESTAdapter from 'ember-data/adapters/rest';</td>
+      <td>import RESTAdapter from '@ember-data/adapters/rest';</td>
+    </tr>
+    <tr>
+      <td>DS.JSONAPIAdapter</td>
+      <td>import JSONAPIAdapter from 'ember-data/adapters/json-api';</td>
+      <td>import from '@ember-data/adapters/json-api';</td>
+    </tr>
+    <tr>
+      <td>DS.BuildURLMixin</td>
+      <td>none</td>
+      <td>import BuildURLMixin from '@ember-data/adapters/mixins/build-url';</td>
+    </tr>
+    <tr>
+      <td>DS.AdapterError</td>
+      <td>import { AdapterError } from 'ember-data/adapters/errors';</td>
+      <td>import { AdapterError } from '@ember-data/adapters/errors';</td>
+    </tr>
+    <tr>
+      <td>DS.InvalidError</td>
+      <td>import { InvalidError } from 'ember-data/adapters/errors';</td>
+      <td>import { InvalidError } from '@ember-data/adapters/errors';</td>
+    </tr>
+    <tr>
+      <td>DS.TimeoutError</td>
+      <td>import { TimeoutError } from 'ember-data/adapters/errors';</td>
+      <td>import { TimeoutError } from '@ember-data/adapters/errors';</td>
+    </tr>
+    <tr>
+      <td>DS.AbortError</td>
+      <td>import { AbortError } from 'ember-data/adapters/errors';</td>
+      <td>import { AbortError } from '@ember-data/adapters/errors';</td>
+    </tr>
+    <tr>
+      <td>DS.UnauthorizedError</td>
+      <td>import { UnauthorizedError } from 'ember-data/adapters/errors';</td>
+      <td>import { UnauthorizedError } from '@ember-data/adapters/errors';</td>
+    </tr>
+    <tr>
+      <td>DS.ForbiddenError</td>
+      <td>import { ForbiddenError } from 'ember-data/adapters/errors';</td>
+      <td>import { ForbiddenError } from '@ember-data/adapters/errors';</td>
+    </tr>
+    <tr>
+      <td>DS.NotFoundError</td>
+      <td>import { NotFoundError } from 'ember-data/adapters/errors';</td>
+      <td>import { NotFoundError } from '@ember-data/adapters/errors';</td>
+    </tr>
+    <tr>
+      <td>DS.ConflictError</td>
+      <td>import { ConflictError } from 'ember-data/adapters/errors';</td>
+      <td>import { ConflictError } from '@ember-data/adapters/errors';</td>
+    </tr>
+    <tr>
+      <td>DS.ServerError</td>
+      <td>import { ServerError } from 'ember-data/adapters/errors';</td>
+      <td>import { ServerError } from '@ember-data/adapters/errors';</td>
+    </tr>
+    <tr>
+      <td>DS.errorsHashToArray</td>
+      <td>none</td>
+      <td>import { errorsHashToArray } from '@ember-data/adapters/errors';<br>
+         <br>this public method should also be a candidate for deprecation
       </td>
     </tr>
     <tr>
-      <td>(`@private`) `DS.InternalModel`</td>
+      <td>DS.errorsArrayToHash</td>
       <td>none</td>
-      <td>none</td>
-    </tr>
-    <tr>
-      <td>(`@private`) `DS.RootState`</td>
-      <td>none</td>
-      <td>none</td>
+      <td>import { errorsArrayToHashr } from '@ember-data/adapters/errors';<br>
+        <br>this public method should also be a candidate for deprecation
+      </td>
     </tr>
   </tbody>
 </table>
@@ -113,68 +189,6 @@ This documents presents the proposed **public** import path changes for `ember-d
   * `hasMany`
   * `PromiseManyArray`
   * `ManyArray`
-
-### @ember-data/adapters
-
-  * Adapter
-    * replaces: `import { Adapter } from 'ember-data';`
-    * replaces: `import Adapter from 'ember-data/adapter';`
-    * `import Adapter from '@ember-data/adapters';`
-  * RESTAdapter
-    * replaces: `import { RESTAdapter } from 'ember-data';`
-    * replaces: `import RESTAdapter from 'ember-data/adapters/rest';`
-    * `import RESTAdapter from '@ember-data/adapters/rest';`
-  * JSONAPIAdapter
-    * replaces: `import { JSONAPIAdapter } from 'ember-data';`
-    * replaces: `import JSONAPIAdapter from 'ember-data/adapters/json-api';`
-    * `import JSONAPIAdapter from '@ember-data/adapters/json-api';`
-  * BuildURLMixin
-    * replaces: `import { BuildURLMixin } from 'ember-data';`
-    * `import BuildURLMixin from '@ember-data/adapters/mixins/build-url';`
-  * AdapterError
-    * replaces: `import { AdapterError } from 'ember-data';`
-    * replaces: `import { AdapterError { from 'ember-data/adapters/errors';`
-    * `import AdapterError from '@ember-data/adapters/errors';`
-  * InvalidError
-    * replaces: `import { InvalidError } from 'ember-data';`
-    * replaces: `import { InvalidError { from 'ember-data/adapters/errors';`
-    * `import { InvalidError } from '@ember-data/adapters/errors';`
-  * TimeoutError
-    * replaces: `import { TimeoutError } from 'ember-data';`
-    * replaces: `import { TimeoutError { from 'ember-data/adapters/errors';`
-    * `import { TimeoutError } from '@ember-data/adapters/errors';`
-  * AbortError
-    * replaces: `import { AbortError } from 'ember-data';`
-    * replaces: `import { AbortError { from 'ember-data/adapters/errors';`
-    * `import { AbortError } from '@ember-data/adapters/errors';`
-  * UnauthorizedError
-    * replaces: `import { UnauthorizedError } from 'ember-data';`
-    * replaces: `import { UnauthorizedError { from 'ember-data/adapters/errors';`
-    * `import { UnauthorizedError } from '@ember-data/adapters/errors';`
-  * ForbiddenError
-    * replaces: `import { ForbiddenError } from 'ember-data';`
-    * replaces: `import { ForbiddenError { from 'ember-data/adapters/errors';`
-    * `import { ForbiddenError } from '@ember-data/adapters/errors';`
-  * NotFoundError
-    * replaces: `import { NotFoundError } from 'ember-data';`
-    * replaces: `import { NotFoundError { from 'ember-data/adapters/errors';`
-    * `import { NotFoundError } from '@ember-data/adapters/errors';`
-  * ConflictError
-    * replaces: `import { ConflictError } from 'ember-data';`
-    * replaces: `import { ConflictError { from 'ember-data/adapters/errors';`
-    * `import { ConflictError } from '@ember-data/adapters/errors';`
-  * ServerError
-    * replaces: `import { ServerError } from 'ember-data';`
-    * replaces: `import { ServerError { from 'ember-data/adapters/errors';`
-    * `import { ServerError } from '@ember-data/adapters/errors';`
-  * errorsHashToArray
-    * this public method should also be a candidate for deprecation
-    * replaces: `import { errorsHashToArray } from 'ember-data';`
-    * `import { errorsHashToArray } from '@ember-data/adapters/errors';`
-  * errorsArrayToHash
-    * this public method should also be a candidate for deprecation
-    * replaces: `import { errorsArrayToHash } from 'ember-data';`
-    * `import { errorsArrayToHash } from '@ember-data/adapters/errors';`
 
 ### @ember-data/serializer
 
