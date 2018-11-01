@@ -97,6 +97,12 @@ The following helpers are to be used to construct a valid root-relative URL that
 {{url-for routeName model queryParams=(hash a=a)}}
 ```
 
+Or
+
+```hbs
+{{url-for routeName models=model queryParams=(hash a=a)}}
+```
+
 `{{url-for}}` generates a root-relative URL as a string (which will include the application's rootUrl). When the link is clicked it will cause a transition to occur. See the [Event Dispatcher Changes](#event-dispatcher-changes). It will not serialize the default query params on the controller.
 
 #### Signature Explainer
@@ -108,6 +114,7 @@ _Positional Params_
 - **`model`** _...Object|Array|Number|String_: Optionally pass an arbitrary amount of models or identifiers for each dynamic segment to be use for generation.
 
 _Named Params_
+- **`models`** _Object|Array|Number|String_: Same as the positional parameter. It is a compiler error if the positional params and the named param is used.
 - **`queryParms`** _Object_: Optionally pass key value pairs that will be serialized
 
 _Returns_
@@ -141,6 +148,12 @@ The following helpers are all _context dependent_, not global. For instance you 
 {{is-active 'people.index' model queryParams=(hash a=a)}}
 ```
 
+or
+
+```hbs
+{{is-active 'people.index' models=model queryParams=(hash a=a)}}
+```
+
 The arguments to `{{is-active}}` have the same semantics as `{{url-for}}`, however the return value is a boolean. This should provide the same logic that determines whether to put an `active` class on a `{{link-to}}`.
 
 #### Signature Explainer
@@ -152,6 +165,7 @@ _Positional Params_
 - **`model`** _...Object|Array|Number|String_: Optionally pass an arbitrary amount of models to use for generation
 
 _Named Params_
+- **`models`** _Object|Array|Number|String_: Same as the positional parameter. It is a compiler error if the positional params and the named param is used.
 - **`queryParms`** _Object_: Optionally pass key value pairs that will be used to determine if the route is active.
 
 _Returns_
@@ -161,6 +175,12 @@ _Returns_
 
 ```hbs
 {{is-loading 'people.index' model queryParams=(hash a=a)}}
+```
+
+Or
+
+```hbs
+{{is-loading 'people.index' models=model queryParams=(hash a=a)}}
 ```
 
 The arguments to `{{is-loading}}` have the same semantics as `{{url-for}}` and `{{is-active}}`, however if any of the model(s) passed to it are unresolved e.g. evaluate to `undefined` the helper will return `true`, otherwise the helper will return `false`. This should provide the same logic that determines whether to put an `loading` class on a `{{link-to}}`.
@@ -174,6 +194,7 @@ _Positional Params_
 - **`model`** _...Object|Array|Number|String_: Optionally pass an arbitrary amount of models to use for generation
 
 _Named Params_
+- **`models`** _Object|Array|Number|String_: Same as the positional parameter. It is a compiler error if the positional params and the named param is used.
 - **`queryParms`** _Object_: Optionally pass key value pairs that will be used to determine if the route is loading.
 
 _Returns_
@@ -183,6 +204,12 @@ _Returns_
 
 ```hbs
 {{is-transitioning-in 'people.index' model queryParams=(hash a=a)}}
+```
+
+Or
+
+```hbs
+{{is-transitioning-in 'people.index' models=model queryParams=(hash a=a)}}
 ```
 
 The arguments to `{{is-transitioning-in}}` have the same semantics as all the other route state helpers, however `{{is-transitioning-in}}` only returns `true` when the route is going from an non-active to an active state. This should provide the same logic that determines whether to put an `ember-transition-in` class on a `{{link-to}}`.
@@ -196,6 +223,7 @@ _Positional Params_
 - **`model`** _...Object|Array|Number|String_: Optionally pass an arbitrary amount of models to use for generation
 
 _Named Params_
+- **`models`** _Object|Array|Number|String_: Same as the positional parameter. It is a compiler error if the positional params and the named param is used.
 - **`queryParms`** _Object_:  Optionally pass key value pairs that will be used to determine if the route is transitioning in.
 
 _Returns_
@@ -205,6 +233,12 @@ _Returns_
 
 ```hbs
 {{is-transitioning-out 'people.index' model queryParams=(hash a=a)}}
+```
+
+Or
+
+```hbs
+{{is-transitioning-out 'people.index' models=model queryParams=(hash a=a)}}
 ```
 
 `{{is-transitioning-out}}` is just the inverse of `{{is-transitioning-in}}`.
@@ -218,6 +252,7 @@ _Positional Params_
 - **`model`** _...Object|Array|Number|String_: Optionally pass an arbitrary amount of models to use for generation
 
 _Named Params_
+- **`models`** _Object|Array|Number|String_: Same as the positional parameter. It is a compiler error if the positional params and the named param is used.
 - **`queryParms`** _Object_:  Optionally pass key value pairs that will be used to determine if the route is transitioning out.
 
 _Returns_
