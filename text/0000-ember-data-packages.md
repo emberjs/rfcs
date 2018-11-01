@@ -17,45 +17,83 @@ This documents presents the proposed **public** import path changes for `ember-d
 
 ## Detailed design
 
-### @ember-data/model
+<table>
+  <thead>
+    <tr>
+      <th colspan="2">Before</th>
+      <th colspan="2">After</th>
+    </tr>
+    <tr>
+        <th>`import DS from 'ember-data';`</th>
+        <th>Direct Import</th>
+        <th>After</th>
+        <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td colspan="4">`@ember-data/model`</td>
+    </tr>
+    <tr>
+      <td>`DS.Model`</td>
+      <td>`import Model from 'ember-data/model';`</td>
+      <td>`import { Model } from '@ember-data/model';`</td>
+      <td>Not the default export to make working with attr/belongsTo/hasMany even easier</td>
+    </tr>
+    <tr>
+      <td>`DS.attr`</td>
+      <td>`import attr from 'ember-data/attr';</td>
+      <td>`import { attr } from '@ember-data/model';`</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>`DS.belongsTo`</td>
+      <td>`import { belongsTo } from 'ember-data/relationships';`</td>
+      <td>`import { belongsTo } from '@ember-data/model';`</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>`DS.hasMany`</td>
+      <td>`import { hasMany } from 'ember-data/relationships';`</td>
+      <td>`import { hasMany } from '@ember-data/model';`</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>`DS.Errors`</td>
+      <td>none</td>
+      <td>`import Errors from '@ember-data/model/errors';`</td>
+      <td>We should also deprecate directly importing this class</td>
+    </tr>
+    <tr>
+      <td>`DS.PromiseManyArray`</td>
+      <td>none</td>
+      <td>`import PromiseManyArray from '@ember-data/model/promise-many-array';`</td>
+      <td>We should also deprecate directly importing this class</td>
+    </tr>
+    <tr>
+      <td>`DS.ManyArray`</td>
+      <td>none</td>
+      <td>`import ManyArray from '@ember-data/model/many-array';`</td>
+      <td>We should also deprecate directly importing this class</td>
+    </tr>
+    <tr>
+      <td>(`@private`) `DS.InternalModel`</td>
+      <td>none</td>
+      <td>none</td>
+      <td>Access to this private API will be removed</td>
+    </tr>
+    <tr>
+      <td>(`@private`) `DS.RootState`</td>
+      <td>none</td>
+      <td>none</td>
+      <td>Access to this private API will be removed</td>
+    </tr>
+  </tbody>
+</table>
 
-  * Model: `import { Model } from '@ember-data/model';`
-    * replaces: `import { Model } from 'ember-data';`
-    * replaces: `import Model from 'ember-data/model;`
-  * attr
-    * replaces: `import { attr } from 'ember-data'`
-    * replaces: `import attr from 'ember-data/attr';`
-    * `import { attr } from '@ember-data/model';`
-  * belongsTo
-    * replaces: `import { belongsTo } from 'ember-data'`
-    * replaces: `import belongsTo from 'ember-data/belongsTo';`
-    * `import { belongsTo } from '@ember-data/model';`
-  * hasMany
-    * replaces: `import { hasMany } from 'ember-data'`
-    * replaces: `import hasMany from 'ember-data/hasMany';`
-    * `import { hasMany } from '@ember-data/model';`
-  * Errors
-    * we will deprecate directly importing this class
-    * replaces: `import { Errors } from 'ember-data'`
-    * `import Errors from '@ember-data/model/errors';`
-  * PromiseManyArray
-    * we will deprecate directly importing this class
-    * replaces: `import { PromiseManyArray } from 'ember-data'`
-    * `import PromiseManyArray from '@ember-data/model/promise-many-array';`
-  * ManyArray
-    * we will deprecate directly importing this class
-    * replaces: `import { ManyArray } from 'ember-data'`
-    * `import ManyArray from '@ember-data/model/many-array';`
-  * `@private` InternalModel
-    * we will deprecate directly importing this class
-    * replaces: `import { ManyArray } from 'ember-data'`
-    * `import ManyArray from '@ember-data/model/-private/internal-model';`
-  * `@private` RootState
-    * we will deprecate directly importing this class
-    * replaces: `import { RootState } from 'ember-data'`
-    * `import RootState from '@ember-data/model/-private/root-state';`
+### Unresolved Questions
 
-**Unresolved Questions**
+### `@ember-data/model`
   
   1) `InternalModel` and `RootState` are tightly coupled to the store and to our provided `Model`
     implementation. Overtime we need to uncouple this, but given their coupling to `Model` and our
@@ -65,7 +103,7 @@ This documents presents the proposed **public** import path changes for `ember-d
   2) Do the following belong in `@ember-data/model`, or in `@ember-data/relationship-layer`?
     if not with relationships, does the package name "relationship-layer" become confusing?
     
-    The argument for them being here is they are far more related to the current `Model` ui
+   The argument for them being here is they are far more related to the current `Model` ui
     presentation layer than they are to the state book-keeping which could be used with
     alternative implementations.
 
