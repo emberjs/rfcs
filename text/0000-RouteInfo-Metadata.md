@@ -54,6 +54,10 @@ export default Service.extend({
 
 While the `RouteInfo` object is sufficient in providing developers metadata about the `Route` itself, it is not sufficient in layering on application specific metadata about the `Route`. This metadata could be anything from just a more domain specific name for a `Route` e.g. `profile_page` vs `profile.index`, all the way to providing contextual data when the `Route` was visited.
 
+This metadata could be used for more pratical things like updating the `document.title`. Currently addons like [Ember CLI Head](https://github.com/ronco/ember-cli-head) and [Ember CLI Document Title](https://github.com/kimroen/ember-cli-document-title) require to supply special metadata fields on your `Route` that will be used to update the title. This API would be a formalized place to place that metadata.
+
+See the [appendix](#appendix-a) for examples.
+
 ## Detailed design
 
 ### `buildRouteInfoMetadata`
@@ -215,3 +219,87 @@ Today `activate` does not get called when the dynamic segments of the `Route` ch
 ## Unresolved questions
 
 TBD?
+
+
+### Apendix A
+
+Tracking example
+
+```js
+// app/route/profile.js
+import Route from '@ember/routing/route';
+import { inject } from '@ember/service';
+export default Route.extend({
+  user: inject('user'),
+  buildRouteInfoMetadata() {
+    return {
+      trackingKey: 'page_profile',
+      user: {
+        id: this.user.id,
+        type: this.user.type
+      }
+    }
+  }
+  // ...
+});
+```
+
+```js
+// app/services/analytics.js
+import Service, { inject } from '@ember/service';
+
+export default Service.extend({
+  router: inject('router'),
+  init() {
+    this._super(...arguments);
+    this.router.on('routeDidUpdate', (transition) => {
+      let { to, from } = transition;
+      let fromMeta = from.metadata;
+      let toMeta = to.metadata;
+      ga.sendEvent('pageView', {
+        from: fromMeta,
+        to: toMeta,
+        timestamp: Date.now(),
+      })
+    })
+  },
+  // ...
+});
+```
+
+
+### Appendix B
+
+Updating document.title
+
+```js
+// app/route/profile.js
+import Route from '@ember/routing/route';
+import { inject } from '@ember/service';
+export default Route.extend({
+  user: inject('user'),
+  buildRouteInfoMetadata() {
+    return {
+      title: 'My Cool WebPage'
+    }
+  }
+  // ...
+});
+```
+
+```js
+// app/router.js
+import Router from '@ember/routing/router';
+
+// ...
+export default Router.extend({
+  init() {
+    this._super(...arguments);
+    this.on('routeDidUpdate', (transition) => {
+      let { title } = transition.metadata;
+      document.title = title;
+    });
+  },
+  // ...
+});
+```
