@@ -1,5 +1,5 @@
 - Start Date: 2018-06-14
-- RFC PR: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/337
 - Ember Issue: (leave this empty)
 
 # Native Class Constructor Update
