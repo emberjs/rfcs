@@ -102,7 +102,8 @@ The guides and tutorial should be updated to incorporate an example on how these
 
 ## Drawbacks
 
-This adds an additional hook that is called during route activation, expands the surface area of the `Route` class. While this is true there is currently know good way to associate application specicific metadata with a route transition.
+This adds an additional hook that is called during route activation, expanding the surface area of the `Route` class.
+While this is true, there is currently no good way to associate application-specific metadata with a route transition.
 
 ## Alternatives
 
