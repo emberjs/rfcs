@@ -189,7 +189,7 @@ The value would then be populated on `RouteInfo.metadata`.
 
 ```js
 // app/services/analytics.js
-import { getRouteMetaData } from '@ember/routing/route';
+import { getRouteMetadata } from '@ember/routing/route';
 import Service, { inject } from '@ember/service';
  export default Service.extend({
   router: inject('router'),
