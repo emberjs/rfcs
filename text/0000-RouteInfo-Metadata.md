@@ -1,5 +1,5 @@
 - Start Date: 2018-11-02
-- RFC PR: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/398
 - Ember Issue: (leave this empty)
 
 # RouteInfo MetaData
