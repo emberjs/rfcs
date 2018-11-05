@@ -121,7 +121,7 @@ export default Route.extend({
 
   init() {
     this._super(...arguments);
-    setRouteMetaData(this, {
+    setRouteMetadata(this, {
       trackingKey: 'page_profile',
       profile: {
         viewing: this.userId,
