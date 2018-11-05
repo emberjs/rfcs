@@ -147,7 +147,7 @@ import Service, { inject } from '@ember/service';
     this.router.on('routeDidUpdate', (transition) => {
       let { to, from } = transition;
       let { trackingKey: fromKey } = getRouteMetadata(from);
-      let { trackingKey: toKey } = getRouteMetaData(to);
+      let { trackingKey: toKey } = getRouteMetadata(to);
       ga.sendEvent('pageView', {
         from: fromKey,
         to: toKey,
