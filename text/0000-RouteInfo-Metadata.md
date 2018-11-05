@@ -98,7 +98,7 @@ This field will also be added to `RouteInfoWithAttributes` as it is just a super
 
 We feel that this a low-level primitive that will allow existing tracking addons to encapsulate. That being said the concept here is pretty simple: What gets returned from `buildRouteInfoMetadata` becomes the value of `RouteInfo.metadata` for that `Route`.
 
-The guides and tutorial should be updated to encoporate an example on how these APIs could integrate with services like Google Analytics.
+The guides and tutorial should be updated to incorporate an example on how these APIs could integrate with services like Google Analytics.
 
 ## Drawbacks
 
