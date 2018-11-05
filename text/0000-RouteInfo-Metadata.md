@@ -78,7 +78,7 @@ interface Route {
 #### Runtime Semantics
 
 - **Always** called before the `beforeModel` hook is called
-- **Maybe** be called more than once during a transition e.g. aborts, redirects.
+- **Maybe** called more than once during a transition e.g. aborts, redirects.
 
 ### `RouteInfo.metadata`
 
