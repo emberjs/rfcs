@@ -82,7 +82,7 @@ interface Route {
 
 ### `RouteInfo.metadata`
 
-The `metadata` optional field on the `RouteInfo` will be populated with the return value of `buildRouteInfoMetadata`. If there is no metadata associated with the `Route`, the `metadata` field will be `null`.
+The `metadata` optional field on `RouteInfo` will be populated with the return value of `buildRouteInfoMetadata`. If there is no metadata associated with the `Route`, the `metadata` field will be `null`.
 
 ```ts
 interface RouteInfo {
