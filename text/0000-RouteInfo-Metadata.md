@@ -138,7 +138,7 @@ You would then use the a `RouteInfo` to lookup the value:
 
 ```js
 // app/services/analytics.js
-import { getRouteMetaData } from '@ember/routing/route';
+import { getRouteMetadata } from '@ember/routing/route';
 import Service, { inject } from '@ember/service';
  export default Service.extend({
   router: inject('router'),
