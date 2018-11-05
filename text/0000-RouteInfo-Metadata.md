@@ -55,7 +55,8 @@ export default Service.extend({
 
 While the `RouteInfo` object is sufficient in providing developers metadata about the `Route` itself, it is not sufficient in layering on application specific metadata about the `Route`. This metadata could be anything from a more domain-specific name for a `Route`, e.g. `profile_page` vs `profile.index`, all the way to providing contextual data when the `Route` was visited.
 
-This metadata could be used for more pratical things like updating the `document.title`. Currently addons like [Ember CLI Head](https://github.com/ronco/ember-cli-head) and [Ember CLI Document Title](https://github.com/kimroen/ember-cli-document-title) require to supply special metadata fields on your `Route` that will be used to update the title. This API would be a formalized place to place that metadata.
+This metadata could be used for more pratical things like updating the `document.title`.
+Currently, addons like [Ember CLI Head](https://github.com/ronco/ember-cli-head) and [Ember CLI Document Title](https://github.com/kimroen/ember-cli-document-title) require the user to supply special metadata fields on your `Route` that will be used to update the title. This API would be a formalized place to place that metadata.
 
 See the [appendix](#appendix-a) for examples.
 
