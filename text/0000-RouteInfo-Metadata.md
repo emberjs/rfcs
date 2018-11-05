@@ -161,7 +161,7 @@ import Service, { inject } from '@ember/service';
 
 This could work but there are two things that are confusing here:
 
-1. What happens if you call `setRouteMetaData` mutliple times. Do you clobber the existing metadata? Do you merge it?
+1. What happens if you call `setRouteMetadata` mutliple times. Do you clobber the existing metadata? Do you merge it?
 2. It is very odd that you would use a `RouteInfo` to access the metadata when you set it on the `Route`.
 
 ### `Route.metadata`
