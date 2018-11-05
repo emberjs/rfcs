@@ -115,7 +115,7 @@ This API would be similar to `setComponentManager` and `setModifierManager`. For
 
 ```js
 // app/route/profile.js
-import Route, { setRouteMetaData } from '@ember/routing/route';
+import Route, { setRouteMetadata } from '@ember/routing/route';
 
 export default Route.extend({
 
