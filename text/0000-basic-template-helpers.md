@@ -67,6 +67,7 @@ and move them into Ember.js itself or even the Glimmer VM, in a fully backwards 
 I propose to add to core at least:
 
 - `eq`
+- `not-eq`
 - `not`
 - `and`
 - `or`
@@ -81,7 +82,6 @@ I propose to not add:
 - `is-empty` (uses `Ember.isEmpty`)
 - `is-equal` (uses `Ember.isEqual`)
 - `xor`      (not very common)
-- `not-eq`   (can be expressed as `(not (eq a b)`)
 
 When this feature is implemented, we would update `ember-truth-helpers` to automatically remove
 the promoted helpers from the code when the Ember is above a certain version number.
