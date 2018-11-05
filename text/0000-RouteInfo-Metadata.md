@@ -215,7 +215,7 @@ This could work but there are two things that are problematic here:
 1. What happens to the this data if you subclass it? Do you merge or clobber the field?
 2. This is a generic property name and may conflict in existing applications
 
-### Return MetaData From `activate`
+### Return Metadata From `activate`
 
 Today `activate` does not get called when the dynamic segments of the `Route` change, making it not well fit for this use case.
 
