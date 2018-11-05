@@ -109,7 +109,7 @@ While this is true, there is currently no good way to associate application-spec
 
 There are numerous alternative to the proposal:
 
-### `setRouteMetaData`
+### `setRouteMetadata`
 
 This API would be similar to `setComponentManager` and `setModifierManager`. For example:
 
