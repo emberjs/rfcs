@@ -170,7 +170,7 @@ This would add a special field to the `Route` class that would be copied off on 
 
 ```js
 // app/route/profile.js
-import Route, { setRouteMetaData } from '@ember/routing/route';
+import Route, { setRouteMetadata } from '@ember/routing/route';
 
 export default Route.extend({
   metadata: {
