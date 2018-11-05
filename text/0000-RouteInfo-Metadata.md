@@ -12,6 +12,7 @@ The RFC introduces the ability to associate application specific metadata with i
 // app/route/profile.js
 import Route from '@ember/routing/route';
 import { inject } from '@ember/service';
+
 export default Route.extend({
   user: inject('user'),
   buildRouteInfoMetadata() {
