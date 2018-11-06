@@ -86,6 +86,61 @@ I propose to not add:
 When this feature is implemented, we would update `ember-truth-helpers` to automatically remove
 the promoted helpers from the code when the Ember is above a certain version number.
 
+The implementation details of each helper:
+
+#### `{{not}}`
+
+- Unary operation. Throws an error if not called with **exactly** one argument.
+- Equivalent of `!<argument>`
+
+#### `{{eq}}`
+
+- Binary operation. Throws an error if not called with **exactly** two arguments.
+- Equivalent of `<arg1> === <arg2>`
+
+#### `{{not-eq}}`
+
+- Binary operation. Throws an error if not called with **exactly** two arguments.
+- Equivalent of `<arg1> !== <arg2>`
+
+#### `{{gt}}`
+
+- Binary operation. Throws an error if not called with **exactly** two arguments.
+- Equivalent of `<arg1> > <arg2>`
+- Lazy: If the first argument is `null` or `undefined`, the second argument is never evaluated
+
+#### `{{gte}}`
+
+- Binary operation. Throws an error if not called with **exactly** two arguments.
+- Equivalent of `<arg1> >= <arg2>`
+- Lazy: If the first argument is `null` or `undefined`, the second argument is never evaluated
+
+#### `{{lt}}`
+
+- Binary operation. Throws an error if not called with **exactly** two arguments.
+- Equivalent of `<arg1> < <arg2>`
+- Lazy: If the first argument is `null` or `undefined`, the second argument is never evaluated
+
+#### `{{lte}}`
+
+- Binary operation. Throws an error if not called with **exactly** two arguments.
+- Equivalent of `<arg1> <= <arg2>`
+- Lazy: If the first argument is `null` or `undefined`, the second argument is never evaluated
+
+#### `{{and}}`
+
+- Binary or greater operation. Throws an error if called with **less than** two arguments.
+- Equivalent of `<arg1> && <arg2> && ... && <argN>`. That means it returns the last truthy value or the first falsy value.
+- Definition of truthiness: The same the `&&` operator has in javascript.
+- Lazy: It starts evaluating arguments in order and short-circuits as soon as one of them is falsy.
+
+#### `{{or}}`
+
+- Binary or greater operation. Throws an error if called with **less than** two arguments.
+- Equivalent of `<arg1> || <arg2> || ... || <argN>`. That means it returns the first truthy value or the last value.
+- Definition of truthiness: The same the `||` operator has in javascript.
+- Lazy: It starts evaluating arguments in order and short-circuits as soon as one of them is truthy.
+
 ## How we teach this
 
 The introduction of these helpers does not impact the current mental model for Ember applications.
