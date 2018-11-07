@@ -6,7 +6,7 @@
 
 ## Summary
 
-The RFC introduces the ability to associate application specific metadata with it's corresponding `RouteInfo` object. This also adds a `metadata` field to the `RouteInfo` which will be the return value of `buildRouteInfoMetadata` for it's corresponding `Route`.
+The RFC introduces the ability to associate application specific metadata with its corresponding `RouteInfo` object. This also adds a `metadata` field to `RouteInfo`, which will be the return value of `buildRouteInfoMetadata` for its corresponding `Route`.
 
 ```js
 // app/route/profile.js
