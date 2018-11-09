@@ -187,37 +187,37 @@ This documents presents the proposed **public** import path changes for `ember-d
     <tr>
       <td>DS.EmbeddedRecordsMixin</td>
       <td>import EmbeddedRecordsMixin from 'ember-data/serializers/embedded-records-mixin';</td>
-      <td>import EmbeddedRecordsMixin from 'ember-data/serializers/rest/mixins';</td>
+      <td>import EmbeddedRecordsMixin from '@ember-data/serializers/rest/mixins';</td>
     </tr>
     <tr>
       <td>DS.JSONAPISerializer</td>
       <td>import JSONAPISerializer from 'ember-data/serializers/json-api';</td>
-      <td>import JSONAPISerializer from 'ember-data/serializers/json-api';</td>
+      <td>import JSONAPISerializer from '@ember-data/serializers/json-api';</td>
     </tr>
     <tr>
       <td>DS.Transform</td>
       <td>import Transform from 'ember-data/transform';</td>
-      <td>import Transform from 'ember-data/transforms';</td>
+      <td>import Transform from '@ember-data/transforms';</td>
     </tr>
     <tr>
       <td>DS.DateTransform</td>
       <td>import DateTransform from 'ember-data/transforms/date';</td>
-      <td>import { DateTransform } from 'ember-data/transforms';</td>
+      <td>import { DateTransform } from '@ember-data/transforms';</td>
     </tr>
     <tr>
       <td>DS.StringTransform</td>
       <td>import StringTransform from 'ember-data/transforms/string';</td>
-      <td>import { StringTransform } from 'ember-data/transforms';</td>
+      <td>import { StringTransform } from '@ember-data/transforms';</td>
     </tr>
     <tr>
       <td>DS.NumberTransform</td>
       <td>import NumberTransform from 'ember-data/transforms/number';</td>
-      <td>import { NumberTransform } from 'ember-data/transforms';</td>
+      <td>import { NumberTransform } from '@ember-data/transforms';</td>
     </tr>
     <tr>
       <td>DS.BooleanTransform</td>
       <td>import BooleanTransform from 'ember-data/transforms/boolean';</td>
-      <td>import { BooleanTransform } from 'ember-data/transforms';</td>
+      <td>import { BooleanTransform } from '@ember-data/transforms';</td>
     </tr>
     <tr>
       <td colspan="3"><h3>@ember-data/store</h3></td>
@@ -298,7 +298,7 @@ This documents presents the proposed **public** import path changes for `ember-d
 #### `@ember-data/model`
   
   1) `InternalModel` and `RootState` are tightly coupled to the store and to our provided `Model`
-    implementation. Overtime we need to uncouple this, but given their coupling to `Model` and our
+    implementation. Over time we need to uncouple this, but given their coupling to `Model` and our
     desire to enable them to be eliminated from projects not using `Model`, I believe these exports
     belong in `@ember-data/model` for this reason.
 
