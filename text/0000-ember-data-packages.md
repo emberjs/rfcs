@@ -55,7 +55,7 @@ Today, `ember-data` is a large single package (`~35KB gzipped` in production). `
  some users use very little. Providing these packages helps to clearly show the cost of various features, and better
  allows us to enable end users to eliminate unneeded packages.
 
-Users that implement their own adapter os serializers today must still carry the significant weight of the adapter and
+Users that implement their own adapter or serializers today must still carry the significant weight of the adapter and
  serializer implementations that `ember-data` ships regardless. This is a weight we should enable these users to eliminate.
 
 With the landing of `RecordData` and the merging of the `modelFactoryFor` RFC, it is likely that many applications
