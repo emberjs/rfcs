@@ -6,14 +6,84 @@
 
 ## Summary
 
-This documents presents the proposed **public** import path changes for `ember-data`.
- How *exactly* we re-align any internals is informed but not determined by this.
+This documents presents the proposed **public** import path changes for `ember-data`, and moving `ember-data`
+  into the `@ember-data` namespace.
 
 ## Motivation
 
- * Unify import location `import { Model } from 'ember-data'` or `import Model from 'ember-data/model'` ?
- * Drop the concept of a single `DS` namespace
- * Unlock the potential to enable end users to drop unneeded portions of ember-data
+**Reduce Confusion & Bike Shedding**
+
+Users of `ember-data` have often noted their confusion by the existence of both direct and "god object" (`DS.`) style
+ imports for modules from `ember-data`. The documentation currently uses primarily the `DS.` use style, and users have
+ expressed interest and confusion over why the documentation has not been updated to reflect direct imports.
+
+**Improve The TypeScript Experience**
+
+Presence of multiple import locations confuses `Typescript`'s autocomplete, symbol resolution, and type hinting.
+ 
+**Simplify The Mental Model**
+
+Users of `ember-data` complain about the large API surface area; however, a large portion of this surface area is
+ non-essential user-land APIs that the provided adapter and serializer implementations expose. This move to packages
+ helps us simplify the mental model in three ways.
+ 
+ First: it gives us a natural way of dividing the documentation and learning story such that key concepts
+   and APIs are more discoverable.
+ 
+ Second: it allows us specifically to isolate the API surface area explosion of the provided adapter and serializer
+   implementations and make it clear that these are non-essential, replaceable APIs. E.G. it will help us to communicate
+   that these adapters and serializers are _an implementation_, **not** _the required implementation_.
+   
+ Third: it clarifies the roles of several concepts within `ember-data` that are often misused today. Specifically:
+   the `embedded-records-mixin` should *_only_* be used with the `RESTAdapter`, and `transforms` are *_only_* a
+   serialization/deserialization concern and not a way of defining custom `attrs` or `types`. Furthermore, `transforms`
+   are only applicable to the serializer implementations that `ember-data` provides, and not to `custom` (and sometimes
+   not to `subclassed`) serializers.
+
+**Improve the Contributor Experience**
+
+Contributors to `ember-data` are faced with a large, complex project with poor code and test organization. This makes it
+ unduly difficult to discover what tests exist, where to add tests, where associated code lives, and even what parts of
+ the code base relate to the feature or bug that they are looking to address.
+ 
+ This move to packages will help us restructure the project and associated tests in a manner that is more discoverable.
+
+**Provide a Clear Subdivision of Packages**
+
+Today, `ember-data` is a large single package (`~35KB gzipped` in production). `ember-data` is often one of the largest
+ dependencies `emberjs` users have in their applications. However, not all users utilize all parts of `ember-data`, and
+ some users use very little. Providing these packages helps to clearly show the cost of various features, and better
+ allows us to enable end users to eliminate unneeded packages.
+
+Users that implement their own adapter os serializers today must still carry the significant weight of the adapter and
+ serializer implementations that `ember-data` ships regardless. This is a weight we should enable these users to eliminate.
+
+With the landing of `RecordData` and the merging of the `modelFactoryFor` RFC, it is likely that many applications
+ will soon require far less of `ember-data` than they do today. `ember-m3` is an example of a project that utilizes these
+ APIs in a way that requires significantly less of the `ember-data` experience.
+
+**Provide Infrastructure for Additional Changes**
+
+`ember-data` is entering a period of extended evolution, of which `RecordData` and `modelFactoryFor` are only the early
+  pieces. For example, current thinking includes the possibility of `ember-data` evolving to provide an `ember-m3`-like
+  experience for `json-api` as the default out-of-the-box experience, and a rethinking of how we manage the request/response
+  lifecycle when fulfilling a request for data.
+  
+ These experiences would live alongside the existing experience for a time prior to any deprecations of the current layer,
+  and it is possible that sometimes the current experience would never be deprecated. Subdividing `ember-data` into these
+  packages will enable us to provide a more seamless transition between these experiences without hoisting any package
+  size costs onto users that do not use either the current or the new experience.
+
+**Improve our CI Time**
+
+Currently `ember-data` lives in the `emberjs` organization on `github` despite owning the `ember-data` organization.
+  Other core projects (`ember-cli`, `glimmer`, `ember-learn`) have already established the value of a core team utilizing
+  their own organization. This includes improvements in managing membership permissions for their respective teams.
+  
+Today, presence in the `emberjs` organization on `github` also places `ember-data` in the
+  `emberjs` organization on `Travis`, where we compete for a shared pool of test instances, often delaying our tests
+  by as much as an extra hour. A move to the `ember-data` organization would move our `CI` runs out of the `emberjs`
+  on `Travis` into our own organization, removing us from the shared pool. 
 
 ## Detailed design
 
@@ -93,7 +163,7 @@ This documents presents the proposed **public** import path changes for `ember-d
       <td>import Adapter from '@ember-data/adapters';</td>
     </tr>
     <tr>
-      <td>DS.RESTAdpter</td>
+      <td>DS.RESTAdapter</td>
       <td>import RESTAdapter from 'ember-data/adapters/rest';</td>
       <td>import RESTAdapter from '@ember-data/adapters/rest';</td>
     </tr>
@@ -187,7 +257,7 @@ This documents presents the proposed **public** import path changes for `ember-d
     <tr>
       <td>DS.EmbeddedRecordsMixin</td>
       <td>import EmbeddedRecordsMixin from 'ember-data/serializers/embedded-records-mixin';</td>
-      <td>import EmbeddedRecordsMixin from 'ember-data/serializers/rest/mixins';</td>
+      <td>import EmbeddedRecordsMixin from '@ember-data/serializers/rest/mixins/embedded-records';</td>
     </tr>
     <tr>
       <td>DS.JSONAPISerializer</td>
@@ -275,6 +345,14 @@ This documents presents the proposed **public** import path changes for `ember-d
       </td>
     </tr>
     <tr>
+      <td colspan="3"><h3>@ember-data/record-data</h3></td>
+    </tr>
+    <tr>
+      <td>none</td>
+      <td>import { RecordData } from 'ember-data/-private';</td>
+      <td>import RecordData from '@ember-data/record-data';</td>
+    </tr>
+    <tr>
       <td colspan="3"><h3>@ember-data/relationship-layer</h3></td>
     </tr>
     <tr>
@@ -330,7 +408,7 @@ This documents presents the proposed **public** import path changes for `ember-d
   2) _initializeStoreService eagerly instantiates the store to ensure that `defaultStore` is our store.
   we should get rid of this but can't until there is a `defaultStore` RFC for ember itself.
 
-  3) normalizeModelName is defined... very oddly. Why? Also we should probably deprecate this
+  3) normalizeModelName is defined... very oddly. Why? We should probably deprecate this
    and continue to move to a world in which less normalization of modelName is required.
 
 #### `@ember-data/relationship-layer`
@@ -344,7 +422,7 @@ This package seems thin but it's likely to hold quite a bit.
 
 #### `@ember-data/debug`
 
-  Moving `DebugAdapter` here would allow dropping it if not desired. I already suspect we should
+  Moving `DebugAdapter` here would allow dropping it if not desired. Additionally we should likely
   RFC dropping it for production builds where it adds persistent unnecessary overhead for a tool
   meant for devs. This exists to support the ember inspector.
 
@@ -356,6 +434,7 @@ There are a few public classes that are not exposed at all via `export` today. T
   * `@ember-data/store`
     * `Reference`
     * `RecordReference`
+    * `StoreWrapper`
   * `@ember-data/relationship-layer`
     * `BelongsToReference`
     * `HasManyReference`
@@ -365,32 +444,21 @@ There are a few public classes that are not exposed at all via `export` today. T
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
+This RFC should be seen as a continuation of the `javascript-modules` RFC that defined explicit import paths for `emberjs`.
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
+Codemods and lint rules would be provided to convert existing imports to the new syntax. Existing import locations
+ would continue to exist for a time but would print build-time deprecations.
 
-> How should this feature be introduced and taught to existing Ember
-users?
+Ember documentation and guides would be updated to reflect these new import paths as well as to utilize the new package
+ divisions to improve the teaching story.
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+* A Tiny amount of churn
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
-
-## Unresolved questions
-
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+* Divide into packages without exposing the new division publically
+* Don't divide into packages until nebulous future RFCs have landed
+* Use the `@ember` namespace.
+* Use the `@ember-data` namespace without moving to the `@ember-data` org.
