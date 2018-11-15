@@ -14,7 +14,7 @@ This documents presents the proposed **public** import path changes for `ember-d
 **Reduce Confusion & Bike Shedding**
 
 Users of `ember-data` have often noted their confusion by the existence of both direct and "god object" (`DS.`) style
- imports for modules from `ember-data`. The documentation currently uses primarily the `DS.` use style, and users have
+ imports for modules from `ember-data`. The documentation currently uses primarily the `DS.` style, and users have
  expressed interest and confusion over why the documentation has not been updated to reflect direct imports.
 
 **Improve The TypeScript Experience**
