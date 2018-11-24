@@ -377,15 +377,14 @@ Today, presence in the `emberjs` organization on `github` also places `ember-dat
   
   1) `InternalModel` and `RootState` are tightly coupled to the store and to our provided `Model`
     implementation. Over time we need to uncouple this, but given their coupling to `Model` and our
-    desire to enable them to be eliminated from projects not using `Model`, I believe these exports
-    belong in `@ember-data/model` for this reason.
+    desire to enable them to be eliminated from projects not using `Model`, these exports
+    belong in `@ember-data/model`.
 
-  2) Do the following belong in `@ember-data/model`, or in `@ember-data/relationship-layer`?
-    if not with relationships, does the package name "relationship-layer" become confusing?
-    
-   The argument for them being here is they are far more related to the current `Model` ui
-    presentation layer than they are to the state book-keeping which could be used with
-    alternative implementations.
+  2) The following belong in `@ember-data/model` and not in `@ember-data/relationship-layer` with
+    relationships.  While this presents a mild risk of confusion due to the presence of the 
+    `relationship-layer` package, the argument for their presence here is they are a ui-layer concern
+     being coupled to the current `Model` presentation layer and not related to overall state management
+     of relationships which could itself be used with alternative implementations.
 
   * `belongsTo`
   * `hasMany`
@@ -400,15 +399,15 @@ Today, presence in the `emberjs` organization on `github` also places `ember-dat
 
 #### `@ember-data/store`
 
-  1) _setupContainer registers various adapters and serializers for fallbacks.
+  1) `_setupContainer` registers various adapters and serializers for fallbacks.
   Either we need to deprecate this behavior (preferred), or separate out initialization
   by package, or both. It also eagerly injects store, which we should deprecate but
   can't until there is a `defaultStore` RFC for ember itself.
 
-  2) _initializeStoreService eagerly instantiates the store to ensure that `defaultStore` is our store.
+  2) `_initializeStoreService` eagerly instantiates the store to ensure that `defaultStore` is our store.
   we should get rid of this but can't until there is a `defaultStore` RFC for ember itself.
 
-  3) normalizeModelName is defined... very oddly. Why? We should probably deprecate this
+  3) `normalizeModelName` is defined... very oddly. Why? We should probably deprecate this
    and continue to move to a world in which less normalization of modelName is required.
 
 #### `@ember-data/relationship-layer`
@@ -458,7 +457,46 @@ Ember documentation and guides would be updated to reflect these new import path
 
 ## Alternatives
 
-* Divide into packages without exposing the new division publically
-* Don't divide into packages until nebulous future RFCs have landed
-* Use the `@ember` namespace.
-* Use the `@ember-data` namespace without moving to the `@ember-data` org.
+1) Divide into packages without exposing the new division publicly
+
+  * _argument for:_ Don't expose churn to end users without a clear win, we aren't 100% sure what belongs in a vague
+    "future ember-data", so wait until we are sure.
+  * _rebuttal:_ The churn is minimal and mostly automated (codemod). There are clear wins here for many users. We 
+    should not hold up progress now on an uncertain future. Dividing into packages now gives us more options for how to
+    manage future evolution. Regardless of when we become certain of what belongs in "future ember-data", these packages
+    would need to exist alongside at least for a time.
+
+2) Don't divide into packages until nebulous future RFCs have landed
+
+  * _argument for:_ This argument is an extension of _alternative 1_ in which we wait for specific concepts to mature and
+    materialize that we have discussed internally, including a significant rework of how we manage the `request/response`
+    lifecycle. These new feature RFCs would come with corresponding deprecation RFCs for parts of the system they either
+    fully replace or make vestigial.
+  * _rebuttal:_ The argument here is a variation of the argument in _alternative 1_ and the rebuttal merely extends
+    that rebuttal as well. These future deprecations would necessarily be long-tail, if we deprecate at all. There is
+    the option to have both old and new experiences live side-by-side. Additionally, if we deprecate and then land
+    `@ember-data/packages` there is both an equal amount of churn and fewer options for how to manage those deprecations.
+
+3) Use the `@ember` namespace.
+
+  * _argument for:_ `ember-data` is an official package and we wish to position it centrally within the `ember`
+    ecosystem. This [argument has been presented](https://github.com/emberjs/rfcs/pull/238#issuecomment-318745236)
+    by other core teams in response to previous attempts to move forward with a packages RFC for `ember-data`.
+  * _rebuttal:_ `ember-cli` and `glimmer` are also official packages, but with their own namespaces. Additionally
+    re-using the `@ember` namespace would only further confusion that many folks already have regarding:
+      * where `ember` ends and `ember-data` begins.
+      * whether `ember-data` is required or optional
+      * whether other data layers are seen as "bad practices" (they are not)
+      * what packages are provided by `ember-data` vs `ember`
+    `ember-data`'s status as a team, in the guides and in release blog posts on `emberjs.com`, as well as presence in 
+     the default blueprint provided by `ember-cli` make clear it's status as an official offering. Using the `@ember` 
+     namespace is not required for this.
+
+    This argument also necessarily foments an untrue presupposition: that `ember-data` is the right choice for every app.
+    While we strive to make this the case, it would be very difficult to claim this today, and may never be true,
+    as every app presents unique concerns and needs.
+    
+    Finally, using the `@ember` namespace would leave us in the unfortunate position of either always scoping all of our
+    packages to `@ember/data/` or of fighting with `emberjs` for package names.
+
+4) Use the `@ember-data` namespace without moving to the `@ember-data` org.
