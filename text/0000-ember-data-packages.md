@@ -106,7 +106,7 @@ Today, presence in the `emberjs` organization on `github` also places `ember-dat
     <tr>
       <td>DS.Model</td>
       <td>import Model from 'ember-data/model';</td>
-      <td>import { Model } from '@ember-data/model';</td>
+      <td>import Model from '@ember-data/model';</td>
     </tr>
     <tr>
       <td>DS.attr</td>
@@ -170,7 +170,7 @@ Today, presence in the `emberjs` organization on `github` also places `ember-dat
     <tr>
       <td>DS.JSONAPIAdapter</td>
       <td>import JSONAPIAdapter from 'ember-data/adapters/json-api';</td>
-      <td>import from '@ember-data/adapters/json-api';</td>
+      <td>import JSONAPIAdapter from '@ember-data/adapters/json-api';</td>
     </tr>
     <tr>
       <td>DS.BuildURLMixin</td>
