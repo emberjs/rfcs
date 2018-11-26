@@ -82,8 +82,10 @@ Currently `ember-data` lives in the `emberjs` organization on `github` despite o
   
 Today, presence in the `emberjs` organization on `github` also places `ember-data` in the
   `emberjs` organization on `Travis`, where we compete for a shared pool of test instances, often delaying our tests
-  by as much as an extra hour. A move to the `ember-data` organization would move our `CI` runs out of the `emberjs`
+  by as much as an extra hour. A move to the `ember-data` organization would move our `CI` runs out of `emberjs`
   on `Travis` into our own organization, removing us from the shared pool. 
+
+**The proposed package location is `@ember-data/ember-data`.**
 
 ## Detailed design
 
@@ -500,3 +502,39 @@ Ember documentation and guides would be updated to reflect these new import path
     packages to `@ember/data/` or of fighting with `emberjs` for package names.
 
 4) Use the `@ember-data` namespace without moving to the `@ember-data` org.
+
+* _argument for:_ Folks have come to expect the repository to live at `emberjs/data`, and this provides extra signal that the package is an official one.
+
+* _rebuttal:_
+  * `github` does a great job of redirecting packages to new locations. We should provide as consistent an experience as possible (package name, import paths, package location etc. all being `@ember-data`)
+
+  * `data` already presents a namespacing issue for folks that fork `ember-data` to contribute back (`data` being a generic package name, akin to having a package called `cli` or `website`).
+
+5) This RFC but with Adapters and Serializers broken out into the packages `@ember-data/json` `@ember-data/rest` `@ember-data/json-api`.
+
+* _argument for:_ grouping the adapter / serializer "by API spec" feels more natural and would allow for users to drop only the versions of adapters / serializer they don't require.
+
+* _rebuttal:_ Even without considering future changes to `ember-data`'s API surface, there are several issues with this approach.
+
+  1) The implementations inherit each other:
+     * `JSONAPISerializer extends RESTSerializer extends JSONSerializer extends Serializer`
+     * `JSONAPIAdapter extends RESTAdapter extends Adapter`
+  2) The adapter / serializer pairings aren't coupled
+     * It is fairly common to use the `JSONAPIAdapter` with the `RESTSerializer` or
+    with a custom serializer that extends the `RESTSerializer` and vice-verse.
+     * Even when using a consistent spec (`json-api` or `rest`) it is common to need
+    a fully custom serializer. The division of needs is at least equally between 
+    adapter/serializer as it is between specs.
+
+  3) Transforms are an implementation detail for all the provided serializers
+
+     * But they  are not required and likely not even used by custom serializers.
+
+  4) Packages for automatically registered fallbacks would fit poorly.
+     * Serializers: `"-default"` `"-rest"` `"-json-api"`
+     * Adapters: `"-rest"` `"-json-api"`
+  5) Today, we use multiple serializers for a single type based on entry-point
+     * `Model.serialize` (per-type) / `Model.toJSON` (`"-json"`) / `Adapter.serialize` (per-adapter)
+  
+  That said, this organization is also one of the only-nods
+  to future RFCs this RFC concedes. The existing provided implementations all follow roughly the same interface for their implementations, and that interface is something we strongly wish to change. For this reason, it seems advantageous to keep the existing implementations together such that the delineation between a new experience and this experience can be kept clear.
