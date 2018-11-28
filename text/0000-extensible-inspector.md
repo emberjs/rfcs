@@ -17,10 +17,10 @@ https://discuss.emberjs.com/t/ember-inspector-call-for-feature-requests-pain-poi
 
 ### Use cases
 
-*Data layer*
+#### Data layer
 Allow other data layers to implement devtools, for example Redux.
 
-*Ember addons*
+#### Ember addons
 Increase the debuggability of Ember addons by providing devtools for them.
 
 Few examples:
@@ -29,10 +29,10 @@ Few examples:
 - Ember-mirage could have an editor for its state.
 - Ember-animated could show controls for speed of the animations.
 
-*Devtools only addons*
+#### Devtools only addons
 We would also open the possibility to create addons that only contain devtools. This unlocks experimentation for new features for the Inspector without changing the core. It could also be used to provide devtools for the web platform or JS libraries.
 
-*Application specific devtools*
+#### Application specific devtools
 Ember apps could write their own devtools.
 
 - Good for large teams
