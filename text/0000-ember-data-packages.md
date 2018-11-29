@@ -74,20 +74,9 @@ With the landing of `RecordData` and the merging of the `modelFactoryFor` RFC, i
   packages will enable us to provide a more seamless transition between these experiences without hoisting any package
   size costs onto users that do not use either the current or the new experience.
 
-**Improve our CI Time**
-
-Currently `ember-data` lives in the `emberjs` organization on `github` despite owning the `ember-data` organization.
-  Other core projects (`ember-cli`, `glimmer`, `ember-learn`) have already established the value of a core team utilizing
-  their own organization. This includes improvements in managing membership permissions for their respective teams.
-  
-Today, presence in the `emberjs` organization on `github` also places `ember-data` in the
-  `emberjs` organization on `Travis`, where we compete for a shared pool of test instances, often delaying our tests
-  by as much as an extra hour. A move to the `ember-data` organization would move our `CI` runs out of `emberjs`
-  on `Travis` into our own organization, removing us from the shared pool. 
-
-**The proposed package location is `@ember-data/ember-data`.**
-
 ## Detailed design
+
+The following modules would continue to live in a monorepo that (until further RFC) would continue to live at `github.com/ember/data`.
 
 <table>
   <thead>
@@ -448,7 +437,9 @@ There are a few public classes that are not exposed at all via `export` today. T
 This RFC should be seen as a continuation of the `javascript-modules` RFC that defined explicit import paths for `emberjs`.
 
 Codemods and lint rules would be provided to convert existing imports to the new syntax. Existing import locations
- would continue to exist for a time but would print build-time deprecations.
+ would continue to exist for a time but would at some point in the future be made to print build-time deprecations.
+
+End users would need to run the codemod at some point, but no other changes will be required.
 
 Ember documentation and guides would be updated to reflect these new import paths as well as to utilize the new package
  divisions to improve the teaching story.
@@ -501,16 +492,7 @@ Ember documentation and guides would be updated to reflect these new import path
     Finally, using the `@ember` namespace would leave us in the unfortunate position of either always scoping all of our
     packages to `@ember/data/` or of fighting with `emberjs` for package names.
 
-4) Use the `@ember-data` namespace without moving to the `@ember-data` org.
-
-* _argument for:_ Folks have come to expect the repository to live at `emberjs/data`, and this provides extra signal that the package is an official one.
-
-* _rebuttal:_
-  * `github` does a great job of redirecting packages to new locations. We should provide as consistent an experience as possible (package name, import paths, package location etc. all being `@ember-data`)
-
-  * `data` already presents a namespacing issue for folks that fork `ember-data` to contribute back (`data` being a generic package name, akin to having a package called `cli` or `website`).
-
-5) This RFC but with Adapters and Serializers broken out into the packages `@ember-data/json` `@ember-data/rest` `@ember-data/json-api`.
+4) This RFC but with Adapters and Serializers broken out into the packages `@ember-data/json` `@ember-data/rest` `@ember-data/json-api`.
 
 * _argument for:_ grouping the adapter / serializer "by API spec" feels more natural and would allow for users to drop only the versions of adapters / serializer they don't require.
 
