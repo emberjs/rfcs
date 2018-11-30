@@ -40,16 +40,16 @@ inside the Form component `@disabled` would equal to `true`.
 
 ## How we teach this
 
-This should be include in guides and also should be easier to teach as it is inline with HTML spec for attributes.
+This should be included in guides and also should be easier to teach as it is inline with HTML spec for attributes.
 
 ## Drawbacks
 
-
+Can't think of any at the moment.
 
 ## Alternatives
 
-In React if a prop is passed with no value it is truthy inside of a component.
-In Vue if a prop is passed with no value it is falsy inside of a component.
+- In React if a prop is passed with no value it is truthy inside of a component.
+- In Vue if a prop is passed with no value it is falsy inside of a component.
 
 ## Unresolved questions
 
