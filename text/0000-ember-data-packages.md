@@ -191,64 +191,64 @@ The following modules would continue to live in a monorepo that (until further R
       <td>import { BuildURLMixin } from '@ember-data/adapters';</td>
     </tr>
     <tr>
-      <td colspan="3"><h3>@ember-data/adapter-errors</h3></td>
+      <td colspan="3"><h3>@ember-data/adapter-error</h3></td>
     </tr>
     <tr>
       <td>DS.AdapterError</td>
       <td>import { AdapterError } from 'ember-data/adapters/errors';</td>
-      <td>import { AdapterError } from '@ember-data/adapter-errors';</td>
+      <td>import AdapterError from '@ember-data/adapter-error';</td>
     </tr>
     <tr>
       <td>DS.InvalidError</td>
       <td>import { InvalidError } from 'ember-data/adapters/errors';</td>
-      <td>import { InvalidError } from '@ember-data/adapter-errors';</td>
+      <td>import { InvalidError } from '@ember-data/adapter-error';</td>
     </tr>
     <tr>
       <td>DS.TimeoutError</td>
       <td>import { TimeoutError } from 'ember-data/adapters/errors';</td>
-      <td>import { TimeoutError } from '@ember-data/adapter-errors';</td>
+      <td>import { TimeoutError } from '@ember-data/adapter-error';</td>
     </tr>
     <tr>
       <td>DS.AbortError</td>
       <td>import { AbortError } from 'ember-data/adapters/errors';</td>
-      <td>import { AbortError } from '@ember-data/adapter-errors';</td>
+      <td>import { AbortError } from '@ember-data/adapter-error';</td>
     </tr>
     <tr>
       <td>DS.UnauthorizedError</td>
       <td>import { UnauthorizedError } from 'ember-data/adapters/errors';</td>
-      <td>import { UnauthorizedError } from '@ember-data/adapter-errors';</td>
+      <td>import { UnauthorizedError } from '@ember-data/adapter-error';</td>
     </tr>
     <tr>
       <td>DS.ForbiddenError</td>
       <td>import { ForbiddenError } from 'ember-data/adapters/errors';</td>
-      <td>import { ForbiddenError } from '@ember-data/adapter-errors';</td>
+      <td>import { ForbiddenError } from '@ember-data/adapter-error';</td>
     </tr>
     <tr>
       <td>DS.NotFoundError</td>
       <td>import { NotFoundError } from 'ember-data/adapters/errors';</td>
-      <td>import { NotFoundError } from '@ember-data/adapter-errors';</td>
+      <td>import { NotFoundError } from '@ember-data/adapter-error';</td>
     </tr>
     <tr>
       <td>DS.ConflictError</td>
       <td>import { ConflictError } from 'ember-data/adapters/errors';</td>
-      <td>import { ConflictError } from '@ember-data/adapter-errors';</td>
+      <td>import { ConflictError } from '@ember-data/adapter-error';</td>
     </tr>
     <tr>
       <td>DS.ServerError</td>
       <td>import { ServerError } from 'ember-data/adapters/errors';</td>
-      <td>import { ServerError } from '@ember-data/adapter-errors';</td>
+      <td>import { ServerError } from '@ember-data/adapter-error';</td>
     </tr>
     <tr>
       <td>DS.errorsHashToArray</td>
       <td>none</td>
-      <td>import { errorsHashToArray } from '@ember-data/adapter-errors';<br>
+      <td>import { errorsHashToArray } from '@ember-data/adapter-error';<br>
          <br>this public method should also be a candidate for deprecation
       </td>
     </tr>
     <tr>
       <td>DS.errorsArrayToHash</td>
       <td>none</td>
-      <td>import { errorsArrayToHashr } from '@ember-data/adapter-errors';<br>
+      <td>import { errorsArrayToHashr } from '@ember-data/adapter-error';<br>
         <br>this public method should also be a candidate for deprecation
       </td>
     </tr>
