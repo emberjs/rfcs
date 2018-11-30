@@ -117,33 +117,55 @@ The following modules would continue to live in a monorepo that (until further R
     <tr>
       <td>DS.Errors</td>
       <td>none</td>
-      <td>import Errors from '@ember-data/model/errors';<br>
+      <td>import { Errors } from '@ember-data/model/-private';<br>
         <br>+ deprecate directly importing this class
       </td>
     </tr>
     <tr>
       <td>DS.PromiseManyArray</td>
       <td>none</td>
-      <td>import PromiseManyArray from '@ember-data/model/promise-many-array';<br>
+      <td>import { PromiseManyArray } from '@ember-data/model/-private';<br>
         <br>+ deprecate directly importing this class
       </td>
     </tr>
     <tr>
       <td>DS.ManyArray</td>
       <td>none</td>
-      <td>import ManyArray from '@ember-data/model/many-array';<br>
+      <td>import { ManyArray } from '@ember-data/model/-private';<br>
         <br>+ deprecate directly importing this class
       </td>
     </tr>
     <tr>
       <td>(@private) DS.InternalModel</td>
       <td>none</td>
-      <td>none</td>
+      <td>import { InternalModel } from '@ember-data/model/-private';<br>
+        <br>+ deprecate directly importing this class
+      </td>
     </tr>
     <tr>
       <td>(@private) DS.RootState</td>
       <td>none</td>
-      <td>none</td>
+      <td>import { RootState } from '@ember-data/model/-private';<br>
+        <br>+ deprecate directly importing this class
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3"><h3>@ember-data/interfaces</h3></td>
+    </tr>
+    <tr>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>import { Adapter } from '@ember-data/interfaces';</td>
+    </tr>
+    <tr>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>import { Serializer } from '@ember-data/interfaces';</td>
+    </tr>
+    <tr>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>import { RecordData } from '@ember-data/interfaces';</td>
     </tr>
     <tr>
       <td colspan="3"><h3>@ember-data/adapters</h3></td>
@@ -156,74 +178,77 @@ The following modules would continue to live in a monorepo that (until further R
     <tr>
       <td>DS.RESTAdapter</td>
       <td>import RESTAdapter from 'ember-data/adapters/rest';</td>
-      <td>import RESTAdapter from '@ember-data/adapters/rest';</td>
+      <td>import { RESTAdapter } from '@ember-data/adapters';</td>
     </tr>
     <tr>
       <td>DS.JSONAPIAdapter</td>
       <td>import JSONAPIAdapter from 'ember-data/adapters/json-api';</td>
-      <td>import JSONAPIAdapter from '@ember-data/adapters/json-api';</td>
+      <td>import { JSONAPIAdapter } from '@ember-data/adapters';</td>
     </tr>
     <tr>
       <td>DS.BuildURLMixin</td>
       <td>none</td>
-      <td>import BuildURLMixin from '@ember-data/adapters/mixins/build-url';</td>
+      <td>import { BuildURLMixin } from '@ember-data/adapters';</td>
+    </tr>
+    <tr>
+      <td colspan="3"><h3>@ember-data/adapter-errors</h3></td>
     </tr>
     <tr>
       <td>DS.AdapterError</td>
       <td>import { AdapterError } from 'ember-data/adapters/errors';</td>
-      <td>import { AdapterError } from '@ember-data/adapters/errors';</td>
+      <td>import { AdapterError } from '@ember-data/adapter-errors';</td>
     </tr>
     <tr>
       <td>DS.InvalidError</td>
       <td>import { InvalidError } from 'ember-data/adapters/errors';</td>
-      <td>import { InvalidError } from '@ember-data/adapters/errors';</td>
+      <td>import { InvalidError } from '@ember-data/adapter-errors';</td>
     </tr>
     <tr>
       <td>DS.TimeoutError</td>
       <td>import { TimeoutError } from 'ember-data/adapters/errors';</td>
-      <td>import { TimeoutError } from '@ember-data/adapters/errors';</td>
+      <td>import { TimeoutError } from '@ember-data/adapter-errors';</td>
     </tr>
     <tr>
       <td>DS.AbortError</td>
       <td>import { AbortError } from 'ember-data/adapters/errors';</td>
-      <td>import { AbortError } from '@ember-data/adapters/errors';</td>
+      <td>import { AbortError } from '@ember-data/adapter-errors';</td>
     </tr>
     <tr>
       <td>DS.UnauthorizedError</td>
       <td>import { UnauthorizedError } from 'ember-data/adapters/errors';</td>
-      <td>import { UnauthorizedError } from '@ember-data/adapters/errors';</td>
+      <td>import { UnauthorizedError } from '@ember-data/adapter-errors';</td>
     </tr>
     <tr>
       <td>DS.ForbiddenError</td>
       <td>import { ForbiddenError } from 'ember-data/adapters/errors';</td>
-      <td>import { ForbiddenError } from '@ember-data/adapters/errors';</td>
+      <td>import { ForbiddenError } from '@ember-data/adapter-errors';</td>
     </tr>
     <tr>
       <td>DS.NotFoundError</td>
       <td>import { NotFoundError } from 'ember-data/adapters/errors';</td>
-      <td>import { NotFoundError } from '@ember-data/adapters/errors';</td>
+      <td>import { NotFoundError } from '@ember-data/adapter-errors';</td>
     </tr>
     <tr>
       <td>DS.ConflictError</td>
       <td>import { ConflictError } from 'ember-data/adapters/errors';</td>
-      <td>import { ConflictError } from '@ember-data/adapters/errors';</td>
+      <td>import { ConflictError } from '@ember-data/adapter-errors';</td>
     </tr>
     <tr>
       <td>DS.ServerError</td>
       <td>import { ServerError } from 'ember-data/adapters/errors';</td>
-      <td>import { ServerError } from '@ember-data/adapters/errors';</td>
+      <td>import { ServerError } from '@ember-data/adapter-errors';</td>
     </tr>
     <tr>
       <td>DS.errorsHashToArray</td>
       <td>none</td>
-      <td>import { errorsHashToArray } from '@ember-data/adapters/errors';<br>
+      <td>import { errorsHashToArray } from '@ember-data/adapter-errors';<br>
          <br>this public method should also be a candidate for deprecation
       </td>
     </tr>
     <tr>
       <td>DS.errorsArrayToHash</td>
       <td>none</td>
-      <td>import { errorsArrayToHashr } from '@ember-data/adapters/errors';<br>
+      <td>import { errorsArrayToHashr } from '@ember-data/adapter-errors';<br>
         <br>this public method should also be a candidate for deprecation
       </td>
     </tr>
@@ -238,22 +263,28 @@ The following modules would continue to live in a monorepo that (until further R
     <tr>
       <td>DS.JSONSerializer</td>
       <td>import JSONSerializer from 'ember-data/serializers/json';</td>
-      <td>import JSONSerializer from '@ember-data/serializers/json';</td>
+      <td>import { JSONSerializer } from '@ember-data/serializers';</td>
     </tr>
     <tr>
       <td>DS.RESTSerializer</td>
       <td>import RESTSerializer from 'ember-data/serializers/rest';</td>
-      <td>import RESTSerializer from '@ember-data/serializers/rest';</td>
-    </tr>
-    <tr>
-      <td>DS.EmbeddedRecordsMixin</td>
-      <td>import EmbeddedRecordsMixin from 'ember-data/serializers/embedded-records-mixin';</td>
-      <td>import EmbeddedRecordsMixin from '@ember-data/serializers/rest/mixins/embedded-records';</td>
+      <td>import { RESTSerializer } from '@ember-data/serializers';</td>
     </tr>
     <tr>
       <td>DS.JSONAPISerializer</td>
       <td>import JSONAPISerializer from 'ember-data/serializers/json-api';</td>
-      <td>import JSONAPISerializer from '@ember-data/serializers/json-api';</td>
+      <td>import { JSONAPISerializer } from '@ember-data/serializers';</td>
+    </tr>
+    <tr>
+      <td colspan="3"><h3>@ember-data/embedded-records-mixin</h3></td>
+    </tr>
+    <tr>
+      <td>DS.EmbeddedRecordsMixin</td>
+      <td>import EmbeddedRecordsMixin from 'ember-data/serializers/embedded-records-mixin';</td>
+      <td>import EmbeddedRecordsMixin from '@ember-data/embedded-records-mixin';</td>
+    </tr>
+    <tr>
+      <td colspan="3"><h3>@ember-data/transforms</h3></td>
     </tr>
     <tr>
       <td>DS.Transform</td>
@@ -431,6 +462,21 @@ There are a few public classes that are not exposed at all via `export` today. T
   * `@ember-data/model`
       * `PromiseBelongsTo`
       * `PromiseRecord`
+
+## Migration
+
+Blueprints, guides, docs, and twiddle would be updated to use the new `@ember-data/` package imports.
+
+A codemod would be provided to convert from the existing import locations to the new ones, as well as lint rules for encouraging their use.
+
+The package `ember-data` would continue to exist, much like `ember-source`. Initially, this package would provide all of the subpackages
+ as dependencies as well as the respective re-exports for supporting the existing import paths. After a time, the existing paths would
+ be deprecated.
+
+Users who have resolved the deprecations may choose to convert to consuming only the packages they still require directly,
+ by dropping `ember-data` from their `package.json` and adding in the individual `@ember-data/` packages as necessary.
+ 
+Ultimately, the default `ember-data` story in `ember-cli` would change to install select packages from `@ember-data` directly.
 
 ## How we teach this
 
