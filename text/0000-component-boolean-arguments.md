@@ -37,6 +37,22 @@ This RFC proposes that if argument is passed without any value it should have va
 ```
 inside the Form component `@disabled` would equal to `true`.
 
+This RFC also proposes that it should be possible to pass attributes without an explicit value e.g.
+
+```hbs
+<Input disabled />
+```
+
+and inside a component `...attributes` should also contain `disabled` attribute. e.g.
+
+```hbs
+<input ...attributes>
+```
+should render as:
+```html
+<input disabled>
+```
+
 
 ## How we teach this
 
