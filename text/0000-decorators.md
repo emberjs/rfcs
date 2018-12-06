@@ -69,7 +69,7 @@ For the purposes of this RFC, we'll use the following terminology:
 
 ## Motivation
 
-Native JavaScript class syntax has been evolving for some time now, filling in
+Native JavaScript class syntax has been evolving for the past three years, filling in
 the cracks and providing better, more standardized ways to write classes for the
 web. They will be a key part of the Octane programming model, and the ES Classes
 RFC was the first step toward enabling Ember users to use native class syntax,
@@ -254,7 +254,7 @@ be a function, there is no choice about it. However, the _Ember_ piece is _very_
 flexible. The legacy object model just needs a way to get the meta information
 for the property when the class is being finalized. We can either assign the
 meta information to the decorator function directly, or we can associate it via
-a `WeakMap`.
+a [`WeakMap`](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/WeakMap).
 
 The benefit of doing this is that the entire Ember ecosystem will get decorator
 support with no extra work required. Because standard `computed` definitions
@@ -368,7 +368,7 @@ possible to call `@computed` with no arguments:
 ```js
 class Person {
   @computed()
-  get cache {
+  get cache() {
     return {};
   };
 }
@@ -447,7 +447,7 @@ const fullName = computed('firstName', 'lastName', function() {
 });
 
 class Person {
-  @computed('firstName', 'lastName').readOnly() // this is invalid
+  @computed('firstName', 'lastName').readOnly() // this is invalid JS decorator syntax
   get fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
