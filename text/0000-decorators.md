@@ -59,12 +59,12 @@ For the purposes of this RFC, we'll use the following terminology:
   established by the Ember Octane edition. It includes _native classes_,
   _tracked properties_ and _Glimmer components_, and more generally refers to
   features that will be considered _core to Ember_ in the future.
-* The **legacy programming model** refers to the traditional programming model.
-  It includes _legacy classes_, _computed properties_, _event listeners_,
-  _observers_, _property notifications_, and _legacy components_, and more
+* The **classic programming model** refers to the traditional programming model.
+  It includes _classic classes_, _computed properties_, _event listeners_,
+  _observers_, _property notifications_, and _classic components_, and more
   generally refers to features that will not be central to Ember Octane.
 * **Native classes** are classes defined using the JavaScript `class` keyword
-* **Legacy classes** are classes defined by subclassing from `EmberObject`
+* **Classic classes** are classes defined by subclassing from `EmberObject`
   using the static `extend` method.
 
 ## Motivation
@@ -168,7 +168,7 @@ native classes than the current computed macros.
 
 The [Ember Decorators](http://ember-decorators.github.io/ember-decorators/)
 project has been experimenting with using decorators within Ember for some time
-now, with the goal of reaching feature parity with the legacy object model, and
+now, with the goal of reaching feature parity with the classic object model, and
 the learnings from that project will be used to inform the API design in this
 RFC.
 
@@ -177,23 +177,23 @@ RFC.
 This RFC proposes that:
 
 1. `Ember.computed`, the `inject` macros, and the computed property macros be
-   updated to return a standard JavaScript decorator. Internally, the legacy
+   updated to return a standard JavaScript decorator. Internally, the classic
    object model will be made aware of these decorators, and know how to apply
    them. This will allow the same exact imports to continue working as both
-   native decorators and legacy decorators. This decorator _will_ be compatible
+   native decorators and classic decorators. This decorator _will_ be compatible
    with classes that extend from `EmberObject` and classes which do not.
 2. A new `@action` decorator be added to allow the definition of actions on
    classes. This decorator will _only_ be compatible with classes that are
    action handlers.
 
-This does leave out some features from the legacy programming model which are
+This does leave out some features from the classic programming model which are
 currently provided by Ember Decorators. This is both to minimize decorators' API
 surface area, and because they will not be a major part of Ember Octane's
 programming model. Addressing them individually:
 
 * **Observers and event listeners**, which have long been considered an
   antipattern.
-* **Legacy component** functionality such as `classNames`, `classNameBindings`,
+* **Classic component** functionality such as `classNames`, `classNameBindings`,
   `attributeBindings`, etc. will be unnecessary with Glimmer components.
 * **Ember Data** provides computed properties which had to be manually wrapped
   in decorators. With the changes proposed in this RFC, however, they should
@@ -215,7 +215,7 @@ a descriptor and modify it as necessary.
 
 Unfortunately, there's no way for us to know _ahead of time_ when a computed
 property is going to be used as a native decorator in a native class, and when
-it is going to be used in a legacy class. Consider the following:
+it is going to be used in a classic class. Consider the following:
 
 ```js
 class Person {
@@ -236,7 +236,7 @@ class Person {
 ```
 
 Therefore, the `alias` function _must_ itself return a decorator function.
-However, this conflicts with usage in the legacy programming model:
+However, this conflicts with usage in the classic programming model:
 
 ```js
 const Person = EmberObject.extend({
@@ -251,7 +251,7 @@ receives the string `'prefix'`, so it has no context for how it will be used.
 
 The native class piece of this puzzle is completely inflexible. A decorator must
 be a function, there is no choice about it. However, the _Ember_ piece is _very_
-flexible. The legacy object model just needs a way to get the meta information
+flexible. The classic object model just needs a way to get the meta information
 for the property when the class is being finalized. We can either assign the
 meta information to the decorator function directly, or we can associate it via
 a [`WeakMap`](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/WeakMap).
@@ -334,8 +334,8 @@ class Person {
 }
 ```
 
-Notably, using computed as a decorator _directly_ will not be supported. This is
-to prevent a parameter check on a critical path:
+Notably, using `@computed` as a decorator _directly_, without parenthesis, will
+not be supported. This is to prevent a parameter check on a critical path:
 
 ```js
 class Person {
@@ -346,7 +346,7 @@ class Person {
 }
 ```
 
-The most common use case for this form in legacy classes was to provide a new
+The most common use case for this form in classic classes was to provide a new
 instance of an object or array per instance of the class. This use case is
 solved in native classes by class fields:
 
@@ -591,7 +591,7 @@ This would be implemented by creating the class's `actions` object and assigning
 the method to it, setting up inheritance and such in the process. The decorator
 leaves the method definition on the class, where it can be called like a normal
 method would, including `super` functionality. This maintains compatibility with
-the legacy object model, while making the `actions` namespace an
+the classic object model, while making the `actions` namespace an
 _implementation_ detail rather than something users need to know about.
 
 This does mean that actions can once again collide with actual lifecycle and
@@ -636,7 +636,7 @@ export default class ButtonComponent extends GlimmerComponent {
 <button onclick={{action this.onClick}}>Click me!</button>
 ```
 
-This pattern can be used today with legacy components and controllers, but
+This pattern can be used today with classic components and controllers, but
 routes still depend heavily on `sendAction` and actions being made available
 internally via the actions object, so for the time being, we need a way to mark
 methods as actions.
@@ -660,24 +660,25 @@ Teaching decorators is intrinsically tied to a wider shift in the Ember
 programming model - the Ember Octane edition. From a teaching perspective, this
 edition will be completely overhauling the guides and updating all of the best
 practices as they stand. New users should see native class syntax with
-decorators as the _default_, and should not ever have to write a legacy class
+decorators as the _default_, and should not ever have to write a classic class
 or see an example for one.
 
 With this RFC, the majority of existing examples in the Ember guides will be
-updatable to native class syntax. The exception would be examples of legacy
+updatable to native class syntax. The exception would be examples of classic
 components, which would be addressed separately by updating the guides to
 Glimmer Components (proposed in a separate RFC). Otherwise, all examples in the
 guides should be updated.
 
 ### Updating and Interop
 
-For existing users, or users who have to interact with legacy code from a modern
-context, it'll be important to have a reference for the legacy object model.
-The current section on the object model in the guides can be moved to a legacy
+For existing users, or users who have to interact with classic code from a modern
+context, it'll be important to have a reference for the classic object model.
+The current section on the object model in the guides can be moved to a classic
 section, and a section on updating should be added. Links to relevant codemods,
 such as the
 [ember-es6-class-codemod](https://github.com/scalvert/ember-es6-class-codemod),
-should be included.
+should be included. This section should remain updated and included in the main
+guides for as long as `EmberObject` is a part of Ember's public API.
 
 ## Drawbacks
 
@@ -714,7 +715,7 @@ should be included.
 
 ### No Decorators
 
-We could not have official Ember support for any aspects of the legacy
+We could not have official Ember support for any aspects of the classic
 programming model. This essentially means computed properties, since `@action`
 and the injection helpers are still needed for the Octane model. This would
 leave many users in limbo, unable to update to native class syntax fully because
@@ -725,14 +726,14 @@ libraries like `@ember-decorators` essential.
 
 We could include decorators as a separate package, such as `@ember/decorators`.
 This is not ideal as it would force users to remember more import paths, and it
-would make eventual deprecation of the legacy form much more difficult. It would
+would make eventual deprecation of the classic form much more difficult. It would
 also mean that the wider ecosystem would have to do much more work to adopt
 decorator syntax.
 
 ### Full Compatibility Decorators
 
-We could include decorators for the remaining legacy features: Observers, event
-listeners, and legacy components. These would add extra weight, and may
+We could include decorators for the remaining classic features: Observers, event
+listeners, and classic components. These would add extra weight, and may
 encourage users to continue using these features, which would not be ideal.
 
 Instead, we can recommend that users wanting to update to native class syntax
@@ -743,7 +744,7 @@ include these packages if they are necessary.
 ### Default Read Only Decorator
 
 In this proposal, computeds used as decorators match the semantics of computeds
-used in legacy classes exactly. This is true even in the unfortunate case of
+used in classic classes exactly. This is true even in the unfortunate case of
 computed overridability:
 
 ```js
