@@ -21,34 +21,55 @@ This does allow the value to be a variable e.g.
 <Dialog @visible={{this.visible}} />
 ```
 
+### Hacky "solution"
 If the value is not a variable `{{}}` can actually be ommited as a `true` string is truthy leading to somewhat easier to remember syntax of
 ```hbs
 <MyHackyBoolArgument @bool=true />
 ```
+Since this is hacky, one have to remember that
+```hbs
+<MyHackyBoolArgument @bool=false />
+```
+would not work as `@bool=false` would pass a `false` as string that is truthy in JavaScript.
 
 For simple usecases  it is verbose to write and does not align with HTML attributes like `disabled` of which value can be ommited as desribed in [HTML Spec](https://www.w3.org/TR/html5/infrastructure.html#sec-boolean-attributes)
 
 ## Detailed design
 
-This RFC proposes that if argument is passed without any value it should have value `true` set inside of a component.
+This RFC proposes that if an argument is passed without any value it should have a value `true` set inside of a component.
 
+e.g.
 ```hbs
-<Form @disabled />
+<Button @secondary />
 ```
-inside the Form component `@disabled` would equal to `true`.
+inside the Button component `@secondary` should equal to `true`.
+e.g.
+```hbs
+<button class={{if @secondary "is-secondary"}}>
+  Button
+</button>
+```
 
-This RFC also proposes that it should be possible to pass attributes without an explicit value e.g.
+should render as
+```html
+<button class="is-secondary">
+  Button
+</button>
+```
 
+### Align with attributes
+This would align with how attributes behave currently.
+Given an Input component:
+```hbs
+<input ...attributes>
+```
+
+if it is invoked like this:
 ```hbs
 <Input disabled />
 ```
 
-and inside a component `...attributes` should also contain `disabled` attribute. e.g.
-
-```hbs
-<input ...attributes>
-```
-should render as:
+it will render as
 ```html
 <input disabled>
 ```
