@@ -56,7 +56,7 @@ provide a codemod to convert from the previous version of the spec to the next.
 
 3. If the spec is dropped from TC39 altogether, Ember would have to continue to provide
 support for decorators via babel transforms until they are deprecated following
-the standard RFC process, and removed according to semver. Reverse codemods
+the standard RFC process, and removed according to SemVer. Reverse codemods
 which translate decorators and native class syntax back to classic class syntax
 _will_ be made, and alternatives for native class syntax will be explored.
 
@@ -67,8 +67,9 @@ allow a smooth transition for users who do not want to adopt native classes
 until they are completely stable.
 
 It is possible that decorators will be advanced before this RFC closes and this
-will be a non-issue. Either way, if accepted, Ember would do the best it can to
-provide the stability the framework is known for throughout this process.
+will be a non-issue. Either way, if accepted, Ember would maintain its strong
+commitment to SemVer and making transitions to new programming models as easy as
+possible.
 
 ## Terminology
 
