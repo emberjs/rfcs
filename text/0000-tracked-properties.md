@@ -750,19 +750,6 @@ tracked properties, and listen to dependencies explicitly. In some cases, this
 may be preferable, though tracked getter should be the conventional standard
 with the long term goal of removing all explicit dependencies.
 
-#### Version Constraints
-
-Tracked properties should be adoptable by apps immediately since they are
-backwards compatible with computed properties and prior change tracking. Addons,
-however, will only be able to adopt them as soon as their minimum supported
-version of Ember also supports them, otherwise their users could be left behind.
-
-Tracked properties will be made available for all of the 3.x LTS releases via
-patch release. An additional effort will be made to backport them to the last
-2.x LTS release as well. This should give addon authors some confidence that
-they can update to tracked properties without dropping support for older
-versions.
-
 ## How we teach this
 
 There are three different aspects of tracked properties which need to be
