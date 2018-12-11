@@ -18,38 +18,51 @@ other behavior) for use in native classes.
 
 ### A Note on Decorator Stability
 
-Decorators are important to adopting native class syntax. They are a
-formalization of the patterns we have been using as a community for years (as
-discussed later on in this RFC), and it will not be possible to use native
+[Decorators](https://github.com/tc39/proposal-decorators) are important to
+adopting native class syntax. They are a formalization of the patterns we have
+been using as a community for years, and it will not be possible to use native
 classes ergonomically without them unless a number of major concepts (computed
 properties, injections, actions) are rethought. That said, decorators are still
-a [_stage 2_ proposal](https://tc39.github.io/process-document/) in TC39, which
-means that while they are fully defined as a spec, they are not yet considered
-a candidate for inclusion in the language, and may have incremental changes that
+a [_stage 2_ proposal](https://tc39.github.io/process-document) in TC39, which
+means that while they are fully defined as a spec, they are not yet considered a
+candidate for inclusion in the language, and may have incremental changes that
 could be breaking if/when moved to stage 3. As such, merging support for them
-now would pose some risk.
+now would pose some risk. Additionally, [class
+fields](https://github.com/tc39/proposal-class-fields) are also required for
+effective use of decorators, and while they are stage 3 in the process, they
+have not yet been accepted either.
 
-This RFC proposes adding the minimum amount of support possible for decorators
-in Ember for users who are comfortable taking that risk today. Ember cannot
+This RFC proposes making the `@tracked` decorator and class fields available in
+Ember for users who are comfortable taking that risk today. Ember cannot
 guarantee that the spec won't change, and such changes cannot apply to Ember's
 normal semver guarantees. But it can make the following guarantees:
 
 1. If there are changes to the spec, and it ***is*** possible to avoid changing
-the public APIs of decorators, then Ember will make the changes necessary to
-avoid public API changes.
+   the public APIs of decorators, then Ember will make the changes necessary to
+   avoid public API changes.
 
 2. If there are changes to the spec, and it ***is not*** possible to avoid
-breaking changes, Ember will minimize the changes as much as possible, and will
-provide a codemod to convert from the previous version of the spec to the next.
+   breaking changes, Ember will minimize the changes as much as possible, and
+   will provide a codemod to convert from the previous version of the spec to
+   the next.
 
-3. If the spec is dropped from TC39 altogether, Ember will continue to provide
-support for decorators via babel transforms until they are deprecated following
-the standard RFC process, and removed according to semver. Replacements for the
-core concepts of features that require decorators _will_ be made.
+3. If the spec is dropped from TC39 altogether, Ember would have to continue to
+   provide support for decorators via babel transforms until they are deprecated
+   following the standard RFC process, and removed according to SemVer. Reverse
+   codemods which translate decorators and native class syntax back to classic
+   class syntax _will_ be made, and alternatives for native class syntax will be
+   explored.
+
+4. Classic class syntax will continue to be supported _at least_ until these
+   features have been stabilized in the JavaScript language, to allow us to
+   revert these changes if necessary. They will most likely be supported for
+   longer to allow a smooth transition for users who do not want to adopt native
+   classes until they are completely stable.
 
 It is possible that decorators will be advanced before this RFC closes and this
-will be a non-issue. Either way, if accepted, Ember would do the best it can to
-provide the stability the framework is known for throughout this process.
+will be a non-issue. Either way, if accepted, Ember would maintain its strong
+commitment to SemVer and making transitions to new programming models as easy as
+possible.
 
 ## Terminology
 
