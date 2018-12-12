@@ -150,24 +150,6 @@ The following modules would continue to live in a monorepo that (until further R
       </td>
     </tr>
     <tr>
-      <td colspan="3"><h3>@ember-data/interfaces</h3></td>
-    </tr>
-    <tr>
-      <td>n/a</td>
-      <td>n/a</td>
-      <td>import { Adapter } from '@ember-data/interfaces';</td>
-    </tr>
-    <tr>
-      <td>n/a</td>
-      <td>n/a</td>
-      <td>import { Serializer } from '@ember-data/interfaces';</td>
-    </tr>
-    <tr>
-      <td>n/a</td>
-      <td>n/a</td>
-      <td>import { RecordData } from '@ember-data/interfaces';</td>
-    </tr>
-    <tr>
       <td colspan="3"><h3>@ember-data/adapters</h3></td>
     </tr>
     <tr>
