@@ -260,32 +260,9 @@ The following modules would continue to live in a monorepo that (until further R
       <td>import { EmbeddedRecordsMixin } from '@ember-data/serializer/rest';</td>
     </tr>
     <tr>
-      <td colspan="3"><h3>@ember-data/transforms</h3></td>
-    </tr>
-    <tr>
       <td>DS.Transform</td>
       <td>import Transform from 'ember-data/transform';</td>
-      <td>import Transform from '@ember-data/transforms';</td>
-    </tr>
-    <tr>
-      <td>DS.DateTransform</td>
-      <td>import DateTransform from 'ember-data/transforms/date';</td>
-      <td>import { DateTransform } from '@ember-data/transforms';</td>
-    </tr>
-    <tr>
-      <td>DS.StringTransform</td>
-      <td>import StringTransform from 'ember-data/transforms/string';</td>
-      <td>import { StringTransform } from '@ember-data/transforms';</td>
-    </tr>
-    <tr>
-      <td>DS.NumberTransform</td>
-      <td>import NumberTransform from 'ember-data/transforms/number';</td>
-      <td>import { NumberTransform } from '@ember-data/transforms';</td>
-    </tr>
-    <tr>
-      <td>DS.BooleanTransform</td>
-      <td>import BooleanTransform from 'ember-data/transforms/boolean';</td>
-      <td>import { BooleanTransform } from '@ember-data/transforms';</td>
+      <td>import Transform from '@ember-data/serializer/transform';</td>
     </tr>
     <tr>
       <td colspan="3"><h3>@ember-data/store</h3></td>
