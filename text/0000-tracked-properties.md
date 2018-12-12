@@ -47,24 +47,26 @@ guarantee that the spec won't change, and such changes cannot apply to Ember's
 normal semver guarantees. But it can make the following guarantees:
 
 1. If there are changes to the spec, and it ***is*** possible to avoid changing
-the public APIs of decorators, then Ember will make the changes necessary to
-avoid public API changes.
+   the public APIs of decorators, then Ember will make the changes necessary to
+   avoid public API changes.
 
 2. If there are changes to the spec, and it ***is not*** possible to avoid
-breaking changes, Ember will minimize the changes as much as possible, and will
-provide a codemod to convert from the previous version of the spec to the next.
+   breaking changes, Ember will minimize the changes as much as possible, and
+   will provide a codemod to convert from the previous version of the spec to
+   the next.
 
-3. If the spec is dropped from TC39 altogether, Ember would have to continue to provide
-support for decorators via babel transforms until they are deprecated following
-the standard RFC process, and removed according to SemVer. Reverse codemods
-which translate decorators and native class syntax back to classic class syntax
-_will_ be made, and alternatives for native class syntax will be explored.
+3. If the spec is dropped from TC39 altogether, Ember would have to continue to
+   provide support for decorators via babel transforms until they are deprecated
+   following the standard RFC process, and removed according to SemVer. Reverse
+   codemods which translate decorators and native class syntax back to classic
+   class syntax _will_ be made, and alternatives for native class syntax will be
+   explored.
 
 4. Classic class syntax will continue to be supported _at least_ until these
-features have been stabilized in the JavaScript language, to allow us to revert
-these changes if necessary. They will most likely be supported for longer to
-allow a smooth transition for users who do not want to adopt native classes
-until they are completely stable.
+   features have been stabilized in the JavaScript language, to allow us to
+   revert these changes if necessary. They will most likely be supported for
+   longer to allow a smooth transition for users who do not want to adopt native
+   classes until they are completely stable.
 
 It is possible that decorators will be advanced before this RFC closes and this
 will be a non-issue. Either way, if accepted, Ember would maintain its strong
@@ -842,6 +844,16 @@ setters should cover most integration use cases. We should add a guide which
 specifically demonstrates their usage by wrapping a common, simple external
 library such as `moment.js`. This will demonstrate its usage concretely, and
 establish best practices.
+
+## Acceptance Commitments
+
+> This section serves to capture the various commitments accepting this RFC
+> would entail.
+
+* Adds support for decorators and class fields to Ember's public API. Transforms
+  would be included out of the box as well.
+* Adds the `tracked` decorator, which can be used in both classic classes and
+  native classes.
 
 ## Drawbacks
 
