@@ -115,41 +115,6 @@ The following modules would continue to live in a monorepo that (until further R
       <td>import { hasMany } from '@ember-data/model';</td>
     </tr>
     <tr>
-      <td>DS.Errors</td>
-      <td>none</td>
-      <td>import { Errors } from '@ember-data/model/-private';<br>
-        <br>+ deprecate directly importing this class
-      </td>
-    </tr>
-    <tr>
-      <td>DS.PromiseManyArray</td>
-      <td>none</td>
-      <td>import { PromiseManyArray } from '@ember-data/model/-private';<br>
-        <br>+ deprecate directly importing this class
-      </td>
-    </tr>
-    <tr>
-      <td>DS.ManyArray</td>
-      <td>none</td>
-      <td>import { ManyArray } from '@ember-data/model/-private';<br>
-        <br>+ deprecate directly importing this class
-      </td>
-    </tr>
-    <tr>
-      <td>(@private) DS.InternalModel</td>
-      <td>none</td>
-      <td>import { InternalModel } from '@ember-data/model/-private';<br>
-        <br>+ deprecate directly importing this class
-      </td>
-    </tr>
-    <tr>
-      <td>(@private) DS.RootState</td>
-      <td>none</td>
-      <td>import { RootState } from '@ember-data/model/-private';<br>
-        <br>+ deprecate directly importing this class
-      </td>
-    </tr>
-    <tr>
       <td colspan="3"><h3>@ember-data/adapter</h3></td>
     </tr>
     <tr>
