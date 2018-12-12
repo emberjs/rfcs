@@ -693,6 +693,16 @@ such as the
 should be included. This section should remain updated and included in the main
 guides for as long as `EmberObject` is a part of Ember's public API.
 
+## Acceptance Commitments
+
+> This section serves to capture the various commitments accepting this RFC
+> would entail.
+
+* Adds support for decorators and class fields to Ember's public API. Transforms
+  would be included out of the box as well.
+* Allows computed properties to work as a native decorators on native classes.
+* Adds the `@action` decorator for defining actions on native classes.
+
 ## Drawbacks
 
 * The `ComputedProperty` class has long been considered intimate API. Even with
