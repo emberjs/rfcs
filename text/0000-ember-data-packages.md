@@ -183,6 +183,20 @@ The following modules would continue to live in a monorepo that (until further R
       <td>import { ServerError } from '@ember-data/adapter/error';</td>
     </tr>
     <tr>
+      <td>DS.errorsHashToArray</td>
+      <td>none</td>
+      <td>import { errorsHashToArray } from '@ember-data/adapter/error';<br>
+         <br>this public method should also be a candidate for deprecation
+      </td>
+    </tr>
+    <tr>
+      <td>DS.errorsArrayToHash</td>
+      <td>none</td>
+      <td>import { errorsArrayToHash } from '@ember-data/adapter/error';<br>
+        <br>this public method should also be a candidate for deprecation
+      </td>
+    </tr>
+    <tr>
       <td colspan="3"><h3>@ember-data/serializer</h3></td>
     </tr>
     <tr>
@@ -254,6 +268,13 @@ The following modules would continue to live in a monorepo that (until further R
       <td>none</td>
     </tr>
     <tr>
+      <td>DS.normalizeModelName</td>
+      <td>none</td>
+      <td>import { normalizeModelName } from 'ember-data/store';<br>
+        <br>this public method should be a candidate for deprecation
+      </td>
+    </tr>
+    <tr>
       <td colspan="3"><h3>@ember-data/record-data</h3></td>
     </tr>
     <tr>
@@ -305,6 +326,19 @@ The following modules would continue to live in a monorepo that (until further R
   1) We should move automatic registration of transforms into a more traditional
     `app/` directory re-export for the package so that when the package is dropped they
     cleanly drop as well.
+
+#### `@ember-data/store`
+
+  1) `_setupContainer` registers various adapters and serializers for fallbacks.
+  Either we need to deprecate this behavior (preferred), or separate out initialization
+  by package, or both. It also eagerly injects store, which we should deprecate but
+  can't until there is a `defaultStore` RFC for ember itself.
+
+  2) `_initializeStoreService` eagerly instantiates the store to ensure that `defaultStore` is our store.
+  we should get rid of this but can't until there is a `defaultStore` RFC for ember itself.
+
+  3) `normalizeModelName` is defined... very oddly. Why? We should probably deprecate this
+   and continue to move to a world in which less normalization of modelName is required.
 
 #### `@ember-data/relationship-layer`
 
