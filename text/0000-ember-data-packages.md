@@ -327,19 +327,6 @@ The following modules would continue to live in a monorepo that (until further R
     `app/` directory re-export for the package so that when the package is dropped they
     cleanly drop as well.
 
-#### `@ember-data/store`
-
-  1) `_setupContainer` registers various adapters and serializers for fallbacks.
-  Either we need to deprecate this behavior (preferred), or separate out initialization
-  by package, or both. It also eagerly injects store, which we should deprecate but
-  can't until there is a `defaultStore` RFC for ember itself.
-
-  2) `_initializeStoreService` eagerly instantiates the store to ensure that `defaultStore` is our store.
-  we should get rid of this but can't until there is a `defaultStore` RFC for ember itself.
-
-  3) `normalizeModelName` is defined... very oddly. Why? We should probably deprecate this
-   and continue to move to a world in which less normalization of modelName is required.
-
 #### `@ember-data/relationship-layer`
 
 This package seems thin but it's likely to hold quite a bit.
