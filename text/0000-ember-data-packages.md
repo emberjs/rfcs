@@ -150,7 +150,7 @@ The following modules would continue to live in a monorepo that (until further R
       </td>
     </tr>
     <tr>
-      <td colspan="3"><h3>@ember-data/adapters</h3></td>
+      <td colspan="3"><h3>@ember-data/adapter</h3></td>
     </tr>
     <tr>
       <td>DS.Adapter</td>
@@ -232,35 +232,32 @@ The following modules would continue to live in a monorepo that (until further R
       </td>
     </tr>
     <tr>
-      <td colspan="3"><h3>@ember-data/serializers</h3></td>
+      <td colspan="3"><h3>@ember-data/serializer</h3></td>
     </tr>
     <tr>
       <td>DS.Serializer</td>
       <td>import Serializer from 'ember-data/serializer';</td>
-      <td>import Serializer from '@ember-data/serializers';</td>
+      <td>import Serializer from '@ember-data/serializer';</td>
     </tr>
     <tr>
       <td>DS.JSONSerializer</td>
       <td>import JSONSerializer from 'ember-data/serializers/json';</td>
-      <td>import { JSONSerializer } from '@ember-data/serializers';</td>
+      <td>import JSONSerializer from '@ember-data/serializer/json';</td>
     </tr>
     <tr>
       <td>DS.RESTSerializer</td>
       <td>import RESTSerializer from 'ember-data/serializers/rest';</td>
-      <td>import { RESTSerializer } from '@ember-data/serializers';</td>
+      <td>import RESTSerializer from '@ember-data/serializer/rest';</td>
     </tr>
     <tr>
       <td>DS.JSONAPISerializer</td>
       <td>import JSONAPISerializer from 'ember-data/serializers/json-api';</td>
-      <td>import { JSONAPISerializer } from '@ember-data/serializers';</td>
-    </tr>
-    <tr>
-      <td colspan="3"><h3>@ember-data/embedded-records-mixin</h3></td>
+      <td>import JSONAPISerializer from '@ember-data/serializer/json-api';</td>
     </tr>
     <tr>
       <td>DS.EmbeddedRecordsMixin</td>
       <td>import EmbeddedRecordsMixin from 'ember-data/serializers/embedded-records-mixin';</td>
-      <td>import EmbeddedRecordsMixin from '@ember-data/embedded-records-mixin';</td>
+      <td>import { EmbeddedRecordsMixin } from '@ember-data/serializer/rest';</td>
     </tr>
     <tr>
       <td colspan="3"><h3>@ember-data/transforms</h3></td>
