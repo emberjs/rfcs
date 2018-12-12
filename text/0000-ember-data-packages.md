@@ -268,16 +268,6 @@ The following modules would continue to live in a monorepo that (until further R
       <td>none</td>
     </tr>
     <tr>
-      <td>DS._initializeStoreService</td>
-      <td>import initializeStoreService from 'ember-data/intialize-store-service';</td>
-      <td>none</td>
-    </tr>
-    <tr>
-      <td>DS._setupContainer</td>
-      <td>import setupContainer from 'ember-data/setup-container';</td>
-      <td>none</td>
-    </tr>
-    <tr>
       <td>DS.normalizeModelName</td>
       <td>none</td>
       <td>import { normalizeModelName } from 'ember-data/store';<br>
