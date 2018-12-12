@@ -193,10 +193,6 @@ to complicate the implementation without improving developer intent at all.
 People understand intuitively that they are typing out dependent keys to help
 _Ember_, not other programmers.
 
-Second, people tell us that this syntax is not very intuitive. You have to read
-the Ember documentation at least once to understand what is happening in this
-example.
-
 It's also not clear what syntax goes inside the dependent key string. In this
 simple example it's a property name, but nested dependencies become a property
 path, like `'person.firstName'`. (Good luck writing a computed property that
