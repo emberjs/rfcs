@@ -226,7 +226,12 @@ export default function scrollTo() {
 ## Detailed design
 
 This RFC proposes adding two element modifiers, `{{did-render}}` and
-`{{will-destroy}}`.
+`{{will-destroy}}`. Note that element modifiers do _not_ run in SSR mode - this
+code is only run on clients.
+
+> Note: The timing semantics in the following section were mostly defined in the
+> [element modifier manager RFC](https://github.com/emberjs/rfcs/blob/master/text/0373-Element-Modifier-Managers.md)
+> and are repeated here for clarity and convenience.
 
 ### `{{did-render}}`
 
@@ -235,16 +240,17 @@ any of the arguments passed to it update, including the function passed as the
 first argument. It has the following timing semantics:
 
 * **Always**
-  * called _after_ the enclosing component's `didUpdateArgs` hook
+  * called after DOM insertion
   * called _after_ any child element's `{{did-render}}` modifiers
+  * called _after_ the enclosing component's `willRender` hook
+  * called _before_ the enclosing component's `didRender` hook
   * called in definition order in the template
+  * called after the arguments to the modifier have changed
 * **May or May Not**
   * be called in the same tick as DOM insertion
   * have the sibling nodes fully initialized in DOM
-
-> Note: These timing semantics were mostly defined in the
-> [element modifier manager RFC](https://github.com/emberjs/rfcs/blob/master/text/0373-Element-Modifier-Managers.md)
-> and are repeated here for clarity.
+* **Never**
+  * called if the arguments to the modifier are constants
 
 `{{did-render}}` receives a function with the following signature as the first
 positional parameter:
@@ -264,17 +270,11 @@ This modifier runs immediately before the element is removed. It has the
 following timing semantics:
 
 * **Always**
-  * called _after_ the enclosing component's `didUpdateArgs` hook
-  * called _before_ the enclosing component's `willDestroy` hook
   * called _after_ any child element's `{{will-destroy}}` modifiers
+  * called _before_ the enclosing component's `willDestroy` hook
   * called in definition order in the template
 * **May or May Not**
   * be called in the same tick as DOM insertion
-  * have the sibling nodes fully initialized in DOM
-
-> Note: These timing semantics were mostly defined in the
-> [element modifier manager RFC](https://github.com/emberjs/rfcs/blob/master/text/0373-Element-Modifier-Managers.md)
-> and are repeated here for clarity.
 
 `{{will-destroy}}` receives a function with the following signature as the first
 positional parameter:
@@ -315,6 +315,10 @@ Adding this implicit context to other helpers and modifiers would require
 changes to the Glimmer VM and is a much larger language design problem. As such,
 we believe it is out of scope for this RFC. Default binding behavior could be
 added in the future, if a context API is decided on.
+
+> Note: It's worth calling out that action's binding behavior can be confusing
+> in cases as well, check out [ember-bind-helper](https://github.com/Serabe/ember-bind-helper)
+> for an example and alternatives.
 
 ## How we teach this
 
@@ -366,7 +370,7 @@ export default Component.extend({
 After:
 
 ```hbs
-<div {{did-render this.setScrollPosition @scrollPosition}} class="scroll-container">
+<div {{did-render (action this.setScrollPosition) @scrollPosition}} class="scroll-container">
   {{yield}}
 </div>
 ```
@@ -408,7 +412,7 @@ After:
 
 ```hbs
 {{#if shouldShow}}
-  <div {{did-render this.fadeIn}} class="alert">
+  <div {{did-render (action this.fadeIn)}} class="alert">
     {{yield}}
   </div>
 {{/if}}
@@ -428,7 +432,7 @@ _contents_ or _attributes_ on the element change. For instance, `{{did-render}}`
 will _not_ rerun when `@type` changes here:
 
 ```hbs
-<div {{did-render this.setupType}} class="{{@type}}"></div>
+<div {{did-render (action this.setupType)}} class="{{@type}}"></div>
 ```
 
 If `{{did-render}}` should rerun whenever a value changes, the value should be
@@ -437,7 +441,7 @@ resize itself to fit text whenever the text is modified could be setup like
 this:
 
 ```hbs
-<textarea {{did-render this.resizeArea @text}}>
+<textarea {{did-render (action this.resizeArea) @text}}>
   {{@text}}
 </textarea>
 ```
