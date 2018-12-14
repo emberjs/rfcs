@@ -213,12 +213,12 @@ set the scroll position of an element:
 
 ```js
 // helpers/scroll-to.js
-export default function scrollTo([element, scrollPosition]) {
-  element.scrollTop = scrollPosition;
+export default function scrollTo() {
+  (element, scrollPosition) => element.scrollTop = scrollPosition;
 }
 ```
 ```hbs
-<div {{did-render scroll-to @scrollPosition}} class="scroll-container">
+<div {{did-render (scroll-to) @scrollPosition}} class="scroll-container">
   ...
 </div>
 ```
@@ -428,7 +428,7 @@ _contents_ or _attributes_ on the element change. For instance, `{{did-render}}`
 will _not_ rerun when `@type` changes here:
 
 ```hbs
-<div {{did-render this.setupType}} class={{@type}}></div>
+<div {{did-render this.setupType}} class="{{@type}}"></div>
 ```
 
 If `{{did-render}}` should rerun whenever a value changes, the value should be
@@ -466,13 +466,13 @@ export default Component.extend({
     super(...arguments);
     this.children = new Set();
 
-    this.args.parent.registerChild(this);
+    this.parent.registerChild(this);
   }
 
   willDestroy() {
     super(...arguments);
 
-    this.args.parent.unregisterChild(this);
+    this.parent.unregisterChild(this);
   }
 
   registerChild(child) {
