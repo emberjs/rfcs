@@ -385,7 +385,9 @@ export default class Component.extend({
 #### Example: Adding a class to an element after render for CSS animations
 
 This adds a CSS class to an alert element in a conditional whenever it renders
-to fade it in, which is a bit of an extra hoop.
+to fade it in, which is a bit of an extra hoop. For CSS transitions to work, we
+need to append the element _without_ the class, then add the class after it has
+been appended.
 
 Before:
 
