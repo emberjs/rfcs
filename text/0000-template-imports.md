@@ -63,11 +63,17 @@ In order to maintain support for component injections, we will need a way to ins
 
 It would also be possible to import helpers in the same way. The implementation strategy is similar to the strategy for components. The `lookupHelper` hook on the Ember runtime resolver (which also takes template meta), would look up helper names in the module system rather than through the resolver. Class-based helpers would be instantiated similarly to components.
 
+### Helper or Component Ambiguity
+
+Unlike module unification, this RFC does not require that helpers are named `helper` in order to be used. As a result, any name that is imported in a template might be a helper or it might be a component.
+
+For the initial implementation, we will use the brand installed by the `helper` function in `@ember/component/helper` to disambiguate between helpers and components. This means that if `lookupHelper` is called by Glimmer, before returning the value found by the *Helper Implementation Strategy* above, `lookupHelper` will first do a brand check that verifies that the value it found is indeed a helper. If not, it will return `null`. Similarly, `lookupComponentDefinition` will return `null` if the value found is branded as a helper.
+
+> Note: In the longer-term, we will want to use static information (such as decorators or other syntactic patterns) to disambiguate between helpers and components during precompilation. Since we are not currently in a position to use the Bundle Compiler in Ember, we can defer identifying the exact static form for now.
+
 ### Module Unification Interaction
 
 ### Component or Helper Values in JavaScript
-
-
 
 ### `$components`
 
