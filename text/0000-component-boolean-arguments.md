@@ -86,8 +86,8 @@ Can't think of any at the moment.
 ## Alternatives
 
 - In both React and Vue if a prop is passed with no value it is truthy inside of a component.
--- https://vuejs.org/v2/guide/components-props.html#Passing-a-Boolean
--- https://reactjs.org/docs/jsx-in-depth.html#props-default-to-true
+  - https://vuejs.org/v2/guide/components-props.html#Passing-a-Boolean
+  - https://reactjs.org/docs/jsx-in-depth.html#props-default-to-true
 
 ## Unresolved questions
 
