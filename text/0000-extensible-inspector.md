@@ -41,7 +41,7 @@ Ember apps could write their own devtools.
 
 ### Non Ember CLI apps
 
-The addon devtools would only work when there’s a Ember CLI dev server running along with the Ember app. When inspecting an app in production (Non Ember CLI) you would only get what’s currently included in the inspector.
+The addon devtools would only work when there’s an Ember CLI dev server running along with the Ember app. When inspecting an app in production (Non Ember CLI) you would only get what’s currently included in the inspector.
 
 We should focus on enriching the experience for local development while keeping the same functionality for production apps.
 
