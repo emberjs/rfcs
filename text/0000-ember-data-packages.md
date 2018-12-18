@@ -388,6 +388,8 @@ Ember documentation and guides would be updated to reflect these new import path
 ## Drawbacks
 
 * A Tiny amount of churn
+* Sub-packages will require sprinkling significant numbers of excess package.json files throughout our repo.
+* Our import paths may not align with the expected mental model for addon import paths going forward (no `/src/` in path)
 
 ## Alternatives
 
