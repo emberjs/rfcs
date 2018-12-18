@@ -55,7 +55,7 @@ To avoid all security risk we can use sandboxed iframes, just like Twiddle and s
 
 Having a better devtools should make the learning curve better for Ember. The devtools would be installed automatically as you install addons so there’s no need to teach this to the users.
 
-We will need to create a documentation for addon authors on how to hook into the inspector and the running Ember app to provide devtools.
+We will need to create documentation for addon authors on how to hook into the inspector and the running Ember app to provide devtools.
 
 ## Drawbacks
 
