@@ -1,17 +1,20 @@
 - Start Date: 2018-19-12
-- RFC PR: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/421
 - Ember Issue: (leave this empty)
 
-# Summary
+# Deprecate Application Controller Router Properties
+
+## Summary 
 
 This RFC proposes the deprecation of `ApplicationController#currentPath` and `ApplicationController#currentRouteName`.
 
+## Motivation
 
-# Motivation
+These APIs are no longer needed as the `RouterService` now has `RouterService#currentPath` and `RouterService#currentRouteName`.
+These fields are only ever present on the application controller which is a weird special casing that we would like to remove.
+Additionally, it's likely that there are very few if any consumers of this API as it is not documented.
 
-These APIs are no longer needed as the `RouterService` now has `RouterService#currentPath` and `RouterService#currentRouteName`. These fields are only ever present on the application controller which is a weird special casing that we would like to remove. Additionally, it's likely that there are very few if any consumers of this API as it is not documented.
-
-# Transition Path
+## Transition Path
 
 If you are reliant on `ApplicationController#currentPath` and `ApplicationController#currentRouteName` you can get the same functionality from the `RouterService` to migrate, inject the `RouterService` and read the `currentRouteName` or `currentPath` off of it.
 
@@ -24,6 +27,7 @@ import fetch from 'fetch';
 
 export default Controller.extend({
   store: service('store'),
+
   actions: {
     sendPayload() {
       fetch('/endpoint', {
@@ -47,6 +51,7 @@ import fetch from 'fetch';
 export default Controller.extend({
   store: service('store'),
   router: service('router'),
+
   actions: {
     sendPayload() {
       fetch('/endpoint', {
@@ -60,19 +65,19 @@ export default Controller.extend({
 })
 ```
 
-# How We Teach This
+## How We Teach This
 
 There is likely very few consumers of this functionality and migration path is covered by existing documentation.
 
-# Drawbacks
+## Drawbacks
 
 This may introduce churn that we are not aware of.
 
-# Alternatives
+## Alternatives
 
 No real alternative other than keep setting the properties.
 
-# Unresolved questions
+## Unresolved questions
 
 Optional, but suggested for first drafts. What parts of the design are still
 TBD?
