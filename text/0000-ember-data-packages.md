@@ -314,17 +314,18 @@ The following modules would continue to live in a monorepo that (until further R
   
   1) `InternalModel` and `RootState` are tightly coupled to the store and to our provided `Model`
     implementation. Over time we need to uncouple this, but given their coupling to `Model` and our
-    desire to enable them to be eliminated from projects not using `Model`, these exports
-    belong in `@ember-data/model`.
+    desire to enable them to be eliminated from projects not using `Model`, these concepts belong in `@ember-data/model`, although they will not be given direct import paths.
 
   2) The following belong in `@ember-data/model` and not in `@ember-data/relationship-layer` with
     relationships.  While this presents a mild risk of confusion due to the presence of the 
-    `relationship-layer` package, the argument for their presence here is they are a ui-layer concern
-     being coupled to the current `Model` presentation layer and not related to overall state management
+    `relationship-layer` package, the argument for their presence here is they are a ui-layer concern being coupled to the current `Model` presentation layer and not related to overall state management
      of relationships which could itself be used with alternative implementations.
 
   * `belongsTo`
   * `hasMany`
+
+ 3) The following have the same considerations as #2 but they will not be given direct import paths.
+ 
   * `PromiseManyArray`
   * `ManyArray`
   
