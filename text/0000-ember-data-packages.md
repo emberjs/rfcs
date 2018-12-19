@@ -78,7 +78,7 @@ With the landing of `RecordData` and the merging of the `modelFactoryFor` RFC, i
 
 This RFC proposes import paths following the guidelines established in [Ember Modules RFC #176](https://github.com/emberjs/rfcs/pull/176),
   with two addendums to account for scenarios that weren't faced by `ember`:
-* `error` sub-classes are named exports
+* `Error` sub-classes are named exports
 * `Mixins` are named exports
 
 This is done to allow for continued grouping by common usage and mental model, where otherwise users would be faced with multiple imports from length file paths.
@@ -325,7 +325,7 @@ The following modules would continue to live in a monorepo that (until further R
   * `hasMany`
 
  3) The following have the same considerations as #2 but they will not be given direct import paths.
- 
+
   * `PromiseManyArray`
   * `ManyArray`
   
