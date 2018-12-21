@@ -183,7 +183,7 @@ champion at any time.
 - [ ] Achieve consensus to move to "FCP to Merge" from relevant core teams
 - [ ] Comment in the RFC to address any outstanding issues and to proclaim the 
 start of the FCP period
-- [ ] Tweet from `emberjs` about the FCP 
+ - [ ] Tweet from `@emberjs` about the FCP 
 - [ ] Ensure the RFC has had the filename and header updated with the PR number 
 
 #### Move to FCP to Close
