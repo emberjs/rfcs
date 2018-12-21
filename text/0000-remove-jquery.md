@@ -17,7 +17,7 @@ In that way it is not meant as a replacement of the previous RFC, but rather as 
 
 ## Motivation
 
-## Lean by default
+### Lean by default
 
 This follows the philosophy of making Ember leaner (or *higher octane* if you want), by deprecating unused or 
 non-essential APIs.
@@ -95,23 +95,47 @@ to make their consuming app automatically include jQuery and the related APIs in
 Thereby they make their dependency on jQuery explicit, which in turn helps users to make an educated choice if they 
 deem this to be acceptable.
 
+### Update app blueprint
+
+The blueprint to create a new app with `ember new` should be updated to not use jQuery by default. This involves to
+* disable jQuery integration by default (in `config/optional-features.json`)
+* remove the `@ember/jquery` package
+* replace `ember-ajax` with `ember-fetch`, as the former is based on jQuery
+* add the [`no-jquery`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-jquery.md) rule to the
+default ESLint config
+
 ### Timeline
 
 During Ember 3.x:
 * migrate the jQuery integration features to the `@ember/jquery` package
 * add deprecation warnings as stated above
-* update the blueprints for `ember new` to disable jQuery integration by default
+* update the blueprints as stated above
 
 Upon Ember 4.0
 * remove deprecated functions
 * remove the jQuery specific code paths in the `EventDispatcher`
 
+#### Potential blockers
+
+It must be ensured that all parts of the core Ember experience work flawlessly without jQuery. Currently `ember-data`
+is still relying on jQuery for its XHR requests. By the time this RFC is implemented (i.e. the deprecation messages are 
+added), it must support work out of the box without jQuery. 
+
+Fortunately [migration efforts](https://github.com/emberjs/data/pull/5386) are well advanced to support the `fetch` API
+through `ember-fetch`, and we can be expected that to land soon enough that it does not block the transition.
+
 ## How we teach this
 
-The Guides already teach native DOM APIs and the new testing APIs, so these do not need to change.
+As part of the efforts to make jQuery optional, the guides have already been updated to have all examples teach native 
+DOM APIs instead of jQuery, and the new testing APIs. 
+The [jQuery migration guide](https://guides.emberjs.com/release/configuring-ember/optional-features/#toc_jquery-integration)
+already mentions the APIs that are not available anymore without jQuery and how to opt-out now.
 
-The deprecation messages should link to a deprecation guide, suggesting to preferably use native DOM APIs or install
-`@ember/jquery`.
+Activating the `no-jquery` ESLint rule will warn developers about any usages of the jQuery-based APIs being deprecated
+here. 
+
+The newly added deprecation messages should link to a deprecation guide, suggesting to preferably use native DOM APIs or
+install `@ember/jquery`.
 
 ## Drawbacks
 
