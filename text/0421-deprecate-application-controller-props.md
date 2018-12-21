@@ -57,7 +57,7 @@ export default Controller.extend({
       fetch('/endpoint', {
         method: 'POST',
         body: JSON.stringify({
-          route: router.currentRouteName
+          route: this.router.currentRouteName
         })
       });
     }
