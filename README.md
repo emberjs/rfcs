@@ -16,7 +16,7 @@ consistent and controlled path for new features to enter the framework.
 
 You need to follow this process if you intend to make "substantial"
 changes to Ember, Ember Data, Ember CLI, their documentation, or any other 
-projects under the purview of the [Ember core teams](https://emberjs.com/team/) 
+ projects under the purview of the [Ember core teams](https://emberjs.com/team/).
 What constitutes a "substantial" change is evolving based on community norms, 
 but may include the following.
 
