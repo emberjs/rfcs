@@ -1,6 +1,7 @@
 - Start Date: (fill me in with today's date, YYYY-MM-DD)
-- RFC PR: (leave this empty)
-- Ember Issue: (leave this empty)
+- Relevant Team(s): (fill this in with the team(s) to which this RFC applies)
+- RFC PR: (after opening the RFC PR, update this with a link to it)
+- Tracking: (leave this empty)
 
 # <RFC title>
   
