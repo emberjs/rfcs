@@ -18,7 +18,7 @@ You need to follow this process if you intend to make "substantial"
 changes to Ember, Ember Data, Ember CLI, their documentation, or any other 
  projects under the purview of the [Ember core teams](https://emberjs.com/team/).
 What constitutes a "substantial" change is evolving based on community norms, 
-but may include the following.
+ but may include the following:
 
    - A new feature that creates new API surface area, and would
      require a [feature flag] if introduced.
