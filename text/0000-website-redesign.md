@@ -1,5 +1,5 @@
 - Start Date: 2018-12-21
-- RFC PR: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/425
 - Ember Issue: (leave this empty)
 
 # Website Redesign
