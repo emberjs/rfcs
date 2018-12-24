@@ -23,7 +23,7 @@ A visual redesign is a bit different than most of the Code RFCs, so showing beco
 
 Like any good design project, we expect changes along the way, but that these comps present the primary thrust and look/feel of the things that have not yet been designed.
 
-[![Comp 1](../images/website_1.png)](https://github.com/wifelette/rfcs/raw/master/images/website_1.png)
+[![Comp 1](../images/website_1.png)](https://user-images.githubusercontent.com/2922250/50390285-67d7c100-0703-11e9-9841-f3d3b4d34f7f.png)
 
 Much of the copy is placeholder, but much of it represents concrete thought. A lot of that content was gleaned from a survey of about 200 of our most active users, who told us that they most value *clear best practices* and *productivity*.
 
