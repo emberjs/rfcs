@@ -54,22 +54,24 @@ the existing APIs around it. This is what the `@ember/jquery` package is meant f
 All current public APIs that are coupled to jQuery should be deprecated via the usual deprecation process. 
 This specifically involves:
 
-* adding a deprecation warning to `Ember.$()`
+* adding a (universal, non-silenceable) deprecation warning to `Ember.$()`
 * adding a deprecation warning to `this.$()` in an `Ember.Component`
-* adding a deprecation warning to `this.$()` in component integration tests (based on either the older 
-`moduleForComponent()` or the newer `setupRenderingTest()`) 
+* adding a deprecation warning to `this.$()` in component integration tests, based on `setupRenderingTest()` 
+
+### `this.$()` in old style tests
+
+`this.$()` in tests based on the old `moduleForComponent()` based testing APIs will not be specifically deprecated, 
+as these legacy testing APIs will eventually be deprecated altogether, as already envisaged in RFC232.
 
 ### Extend `@ember/jquery` package
 
-For apps and addons that have to or choose to still require jQuery, they can add this new package to its dependencies.
+For apps and addons that have to or choose to still require jQuery, they can add this package to its dependencies.
 This will provide a way to retain the deprecated and later removed APIs. So by adding this to your dependencies this 
 would effectively be the way to *opt-in* to require jQuery.
 
 RFC294 already introduced this package, being responsible to include jQuery into the JavaScript bundle. As part of this
 RFC the scope of this addon will be extended to also reintroduce the deprecated APIs, but *without* triggering any 
-deprecation warnings:
-  * `Ember.$()`
-  * `this.$()` in a component
+deprecation warnings for `this.$()` in a component.
 
 As the default `EventDispatcher`, which currently dispatches jQuery events when jQuery is enabled, will eventually 
 support native events only (see the Timeline below), the addon also needs to replace it with one that again dispatches
@@ -95,34 +97,47 @@ to make their consuming app automatically include jQuery and the related APIs in
 Thereby they make their dependency on jQuery explicit, which in turn helps users to make an educated choice if they 
 deem this to be acceptable.
 
+### Extend ember-fetch
+
+The `ember-fetch` addon integrates the newer [`Fetch API`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
+nicely into an Ember app, with an (optional) polyfill for older browsers. This can be used as a replacement for the
+jQuery-based `ember-ajax`. 
+
+One piece that is missing so far when switching is a convenient way to customize all outgoing requests, e.g. to add
+HTTP headers for authentication tokens. When using jQuery's AJAX implementation, this could be easily done using its
+[`prefilter`](http://api.jquery.com/jquery.ajaxprefilter/) function. To facilitate something similar when using 
+`ember-fetch`, the addon should be extended with an appropriate API, e.g. by adding a simple service through which 
+fetch requests are issued, which provides similar features for customization. The exact API of such a service is however
+out of scope for this RFC.
+
+### Make ember-data use ember-fetch
+
+It must be ensured that all parts of the core Ember experience work flawlessly without jQuery. Currently `ember-data`
+is still relying on jQuery for its XHR requests. By the time this RFC is implemented (i.e. the deprecation messages are 
+added), it must work out of the box without jQuery. 
+
+Fortunately [migration efforts](https://github.com/emberjs/data/pull/5386) are well advanced to support the `fetch` API
+through `ember-fetch`, so we can expect that to land soon enough that it does not block the transition.
+
 ### Update app blueprint
 
 The blueprint to create a new app with `ember new` should be updated to not use jQuery by default. This involves to
 * disable jQuery integration by default (in `config/optional-features.json`)
 * remove the `@ember/jquery` package
-* replace `ember-ajax` with `ember-fetch`, as the former is based on jQuery
+* replace `ember-ajax` with `ember-fetch`
 * add the [`no-jquery`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-jquery.md) rule to the
 default ESLint config
 
 ### Timeline
 
 During Ember 3.x:
-* migrate the jQuery integration features to the `@ember/jquery` package
-* add deprecation warnings as stated above
-* update the blueprints as stated above
+1. migrate the jQuery integration features to the `@ember/jquery` package
+2. update the blueprints as stated above
+3. add deprecation warnings as stated above
 
 Upon Ember 4.0
 * remove deprecated functions
 * remove the jQuery specific code paths in the `EventDispatcher`
-
-#### Potential blockers
-
-It must be ensured that all parts of the core Ember experience work flawlessly without jQuery. Currently `ember-data`
-is still relying on jQuery for its XHR requests. By the time this RFC is implemented (i.e. the deprecation messages are 
-added), it must support work out of the box without jQuery. 
-
-Fortunately [migration efforts](https://github.com/emberjs/data/pull/5386) are well advanced to support the `fetch` API
-through `ember-fetch`, and we can be expected that to land soon enough that it does not block the transition.
 
 ## How we teach this
 
@@ -134,8 +149,16 @@ already mentions the APIs that are not available anymore without jQuery and how 
 Activating the `no-jquery` ESLint rule will warn developers about any usages of the jQuery-based APIs being deprecated
 here. 
 
-The newly added deprecation messages should link to a deprecation guide, suggesting to preferably use native DOM APIs or
-install `@ember/jquery`.
+The newly added deprecation messages should link to a deprecation guide, which will provide details on how to silence
+these deprecations, either by using native DOM APIs only or by installing `@ember/jquery` to explicitly opt-in into 
+jQuery. 
+
+For apps the tone of it should be neutral regarding jQuery itself, in the sense that using jQuery is neither
+bad nor good by itself. It depends on the context of the app if using jQuery makes sense or not. It is just that *Ember* 
+does no need it anymore, so it is not part of the default Ember experience anymore.
+
+For addons the story is a bit different, in that they are not aware of their app's context, so they should abstain from
+using jQuery if possible. See the [Motivation](#motivation) chapter above.
 
 ## Drawbacks
 
@@ -156,7 +179,3 @@ deprecated APIs, so no further refactorings are required
 
 Stick to the current *opt-out* process.
 
-### Deprecation of `this.$()` in old style tests
-
-Rather than specifically deprecating `this.$()` in tests based on the old `moduleForComponent()` based testing APIs, 
-the deprecations for the whole suite of old testing APIs could be enforced, as already envisaged in RFC232.
