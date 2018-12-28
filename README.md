@@ -46,7 +46,7 @@ It's often helpful to get feedback on your concept before diving into the
 level of API design detail required for an RFC. **You may open an
 issue on this repo to start a high-level discussion**, with the goal of
 eventually formulating an RFC pull request with the specific implementation
-design. We also highly recommend sharing drafts of RFCs in `dev-rfc` on 
+ design. We also highly recommend sharing drafts of RFCs in `#dev-rfc` on 
 the [Ember Discord](https://discord.gg/emberjs) for early feedback.
 
 ## The process
