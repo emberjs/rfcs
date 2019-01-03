@@ -25,53 +25,15 @@ export default class Person {
 }
 ```
 
-### A Note on Decorator Stability
+### A Note on Decorator Support
 
-[Decorators](https://github.com/tc39/proposal-decorators) are important to
-adopting native class syntax. They are a formalization of the patterns we have
-been using as a community for years, and it will not be possible to use native
-classes ergonomically without them unless a number of major concepts (computed
-properties, injections, actions) are rethought. That said, decorators are still
-a [_stage 2_ proposal](https://tc39.github.io/process-document) in TC39, which
-means that while they are fully defined as a spec, they are not yet considered a
-candidate for inclusion in the language, and may have incremental changes that
-could be breaking if/when moved to stage 3. As such, merging support for them
-now would pose some risk. Additionally, [class
-fields](https://github.com/tc39/proposal-class-fields) are also required for
-effective use of decorators, and while they are stage 3 in the process, they
-have not yet been accepted either.
-
-This RFC proposes making the `@tracked` decorator and class fields available in
-Ember for users who are comfortable taking that risk today. Ember cannot
-guarantee that the spec won't change, and such changes cannot apply to Ember's
-normal semver guarantees. But it can make the following guarantees:
-
-1. If there are changes to the spec, and it ***is*** possible to avoid changing
-   the public APIs of decorators, then Ember will make the changes necessary to
-   avoid public API changes.
-
-2. If there are changes to the spec, and it ***is not*** possible to avoid
-   breaking changes, Ember will minimize the changes as much as possible, and
-   will provide a codemod to convert from the previous version of the spec to
-   the next.
-
-3. If the spec is dropped from TC39 altogether, Ember would have to continue to
-   provide support for decorators via babel transforms until they are deprecated
-   following the standard RFC process, and removed according to SemVer. Reverse
-   codemods which translate decorators and native class syntax back to classic
-   class syntax _will_ be made, and alternatives for native class syntax will be
-   explored.
-
-4. Classic class syntax will continue to be supported _at least_ until these
-   features have been stabilized in the JavaScript language, to allow us to
-   revert these changes if necessary. They will most likely be supported for
-   longer to allow a smooth transition for users who do not want to adopt native
-   classes until they are completely stable.
-
-It is possible that decorators will be advanced before this RFC closes and this
-will be a non-issue. Either way, if accepted, Ember would maintain its strong
-commitment to SemVer and making transitions to new programming models as easy as
-possible.
+This RFC proposes a decorator version of tracked properties, and uses this
+decorator version in most examples, on the assumption that the [Decorators RFC]
+(https://github.com/emberjs/rfcs/pull/408) will be accepted and implemented
+before this RFC. If the Decorators RFC is _not_ accepted, or cannot be
+implemented due to other criteria not being met (such as decorators remaining at
+stage 2), then only the classic class syntax for tracked properties will be
+implemented.
 
 ## Terminology
 
@@ -840,16 +802,6 @@ setters should cover most integration use cases. We should add a guide which
 specifically demonstrates their usage by wrapping a common, simple external
 library such as `moment.js`. This will demonstrate its usage concretely, and
 establish best practices.
-
-## Acceptance Commitments
-
-> This section serves to capture the various commitments accepting this RFC
-> would entail.
-
-* Adds support for decorators and class fields to Ember's public API. Transforms
-  would be included out of the box as well.
-* Adds the `tracked` decorator, which can be used in both classic classes and
-  native classes.
 
 ## Drawbacks
 
