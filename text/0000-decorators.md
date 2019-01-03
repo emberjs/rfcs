@@ -22,12 +22,12 @@ other behavior) for use in native classes.
 adopting native class syntax. They are a formalization of the patterns we have
 been using as a community for years, and it will not be possible to use native
 classes ergonomically without them unless a number of major concepts (computed
-properties, injections, actions) are rethought. That said, decorators are still
-a [_stage 2_ proposal](https://tc39.github.io/process-document) in TC39, which
-means that while they are fully defined as a spec, they are not yet considered a
-candidate for inclusion in the language, and may have incremental changes that
-could be breaking if/when moved to stage 3. As such, merging support for them
-now would pose some risk. Additionally, [class
+properties, injections, actions) are rethought. That said, as of today (01/03/19)
+decorators are still a [_stage 2_ proposal](https://tc39.github.io/process-document)
+in TC39, which means that while they are fully defined as a spec, they are not
+yet considered a candidate for inclusion in the language, and may have
+incremental changes that could be breaking if/when moved to stage 3. As such,
+merging support for them now would pose some risk. Additionally, [class
 fields](https://github.com/tc39/proposal-class-fields) are also required for
 effective use of decorators, and while they are stage 3 in the process, they
 have not yet been fully accepted either.
