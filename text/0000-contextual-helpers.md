@@ -31,7 +31,7 @@ to create easy-to-use and easy-to-understand DSL-like APIs that could benefit
 users of all level.
 
 For example, the original RFC used form controls as a motivating example.
-Without contextual compoments, an addon that provides form-building components
+Without contextual components, an addon that provides form-building components
 might have to expose an API like this:
 
 ```hbs
@@ -42,7 +42,7 @@ might have to expose an API like this:
 </SuperForm>
 ```
 
-As you can see, this is far from ideal for serveral reasons. First, to avoid
+As you can see, this is far from ideal for several reasons. First, to avoid
 collision, the addon author had to prefix all the components. Second, the
 `@model` argument has to be passed to all the controls that needs it. Finally,
 in cases where the compoments need to communicate with each other (the form and
@@ -113,7 +113,7 @@ helpers and modifiers, like so:
 </SuperForm>
 ```
 
-For reference, the `<SuperForm>` compoment's template would look something like
+For reference, the `<SuperForm>` component's template would look something like
 this:
 
 ```hbs
@@ -133,16 +133,16 @@ This RFC proposes a complete design for enabling this capability.
 
 ### The `helper` and `modifier` helpers
 
-This RFC introduce two new helpers named `helper` and `modifier`, which work
+This RFC introduces two new helpers named `helper` and `modifier`, which work
 similarly to the `component` helper:
 
 * When passed a string (e.g. `(helper "foo")`) as the first argument, it will
-  produce an opaque, internal helper definition" object that can be passed
-  around and used to invoke the corresponding helper (the `foo` helper in this
-  case) in Handlebars.
+  produce an opaque, internal "helper definition" object that can be passed
+  around and used to invoke the corresponding helper in Handlebars.
+  The `foo` helper in this case.
 
 * When passed an "helper definition" as the first argument, it will produce a
-  functionally equivialent "helper definition" object.
+  functionally equivalent "helper definition" object.
 
 * In either case, any additional positional and/or named arguments will be
   stored ("curried") inside the "helper definition" object, such that, when
@@ -159,8 +159,8 @@ Some additional details:
   invoked, the error may not be reported at all. This timing may change between
   versions, and should not be relied upon.
 
-* Positional arguments are "curried" the same way as the `component` helper
-  (which matches the behavior of `Function.prototype.bind`).
+* Positional arguments are "curried" the same way as the `component` helper.
+  This matches the behavior of `Function.prototype.bind`.
 
   ```hbs
   {{#let (helper "concat") as |my-concat|}}
@@ -178,8 +178,8 @@ Some additional details:
   {{/let}}
   ```
 
-* Named arguments are "curried" the same way as the `component` helper (which
-  is "last-write-wins", matching the behavior of `Object.assign`).
+* Named arguments are curried the same way as the `component` helper.
+  This matches the "last-write-wins" behavior of `Object.assign`.
 
   ```hbs
   {{#let (helper "hash") as |my-hash|}}
@@ -198,10 +198,10 @@ Some additional details:
   ```
 
 * When a "helper definition" is passed into JavaScipt, the resulting value is
-  left unspecified (which is why it is described as "opaque"). In particular,
+  left unspecified, which is why it is described as "opaque". In particular,
   it is _not_ guarenteed that it will be an invokable JavaScript function. The
   only guarentee provided is that, when passed back into Handlebars, it will be
-  functionally equivilant to the original "helper definition". Hanging onto a
+  functionally equivalent to the original "helper definition". Hanging onto a
   "helper definition" object in JavaScript may result in unexpected memory
   leaks, as these objects may "close over" arbitrary template states to allow
   currying.
@@ -222,7 +222,7 @@ any other helpers:
   {{!-- attribute position --}}
   <div class={{foo-bar "baz"}}>...</div>
 
-  {{!-- curly invokcation, argument position --}}
+  {{!-- curly invocation, argument position --}}
   {{MyComponent value=(foo-bar "baz")}}
 
   {{!-- angle bracket invokation, argument position --}}
@@ -243,7 +243,7 @@ any other helpers:
 
 ### Ambigious invocations (invoking without arguments)
 
-When invoking a contextual helper without arguments, the invokation becomes
+When invoking a contextual helper without arguments, the invocation becomes
 ambigious. Consider this:
 
 ```hbs
@@ -278,7 +278,7 @@ ambigious. Consider this:
 {{/let}}
 ```
 
-In these cases, these are ambigious between passing the _result_ of the helper
+In these cases, these are ambiguities between passing the _result_ of the helper
 (first invoking the helper, then pass along the result), or passing the helper
 itself (the "helper definition" object, so that it can be invoked or "curried"
 again on the receiving side).
@@ -369,13 +369,13 @@ there are no other possible meaning in that position:
 
 ### Deprecation
 
-In today's Ember, "global helpers" (as opposed to "contextual helpers") does
+In today's Ember, "global helpers" (as opposed to "contextual helpers") do
 not always follow the rules laid out above. In particular, they do not behave
 the same way in arguments and subexpression positions:
 
 ```hbs
 {{#let (helper "concat") as |my-concat|}}
-  {{!-- curly invokcation, argument position --}}
+  {{!-- curly invocation, argument position --}}
 
   {{!-- this.value is the helper --}}
   {{MyComponent value=my-concat}}
@@ -383,7 +383,7 @@ the same way in arguments and subexpression positions:
   {{!-- this.value is the undefined --}}
   {{MyComponent value=concat}}
 
-  {{!-- angle bracket invokation, argument position --}}
+  {{!-- angle bracket invocation, argument position --}}
 
   {{!-- @value is the helper --}}
   <MyComponent @value={{my-concat}} />
@@ -412,7 +412,7 @@ While this is not so different from other programming languages like Java and
 Ruby which also do not treat functions (methods) as first-class values, it is
 distinctly different from JavaScript which does. For example, `alert("hello")`
 is the same as `let a = alert; a("hello");`, whereas in Java and Ruby (and
-today's Handlebars), the moral equivilant of the latter would fail with `alert`
+today's Handlebars), the moral equivalent of the latter would fail with `alert`
 being an undefined reference.
 
 The goal of this RFC is to iterate the Ember Handlebars programming model
@@ -425,12 +425,12 @@ Specifically:
 
 ```hbs
 {{#let (helper "concat") as |my-concat|}}
-  {{!-- curly invokcation, argument position --}}
+  {{!-- curly invocation, argument position --}}
 
   {{!-- deprecation: use `this.concat` instead --}}
   {{MyComponent value=concat}}
 
-  {{!-- angle bracket invokation, argument position --}}
+  {{!-- angle bracket invocation, argument position --}}
 
   {{!-- deprecation: use `{{(concat)}}` instead --}}
   <MyComponent @value={{concat}} />
@@ -440,18 +440,18 @@ Specifically:
   {{!-- deprecation: use `this.concat` instead --}}
   {{yield (hash value=concat)}}
 
-  {{!-- depreaction: use `this.concat` instead --}}
+  {{!-- deprecation: use `this.concat` instead --}}
   {{#if (eq my-concat concat)}}...{{/if}}
 {{/let}}
 ```
 
 Overall, we expect the effect of this deprecation to be quite minimal. For the
-cases that triggers a property lookup today, they are already covered in the
+cases that trigger a property lookup today, they are already covered in the
 [Property Lookup Fallback Deprecation RFC](https://github.com/emberjs/rfcs/blob/master/text/0308-deprecate-property-lookup-fallback.md),
 plus it would already be quite confusing to name an instance variable after a
 global helper. For the cases where the "global helper" is implicitly invoked
 without arguments, since helpers are supposed to be pure computations, a helper
-that doesn't accept any arguments have very limited utility thus should also be
+that doesn't accept any arguments has very limited utility thus should also be
 quite rare.
 
 In addition, another natural fallout of this plan is that it is not be possible
@@ -556,16 +556,15 @@ On the high-level, the guiding principles are:
 
 2. Without violating the first principle, for ergonomic reasons, in places
    where it unambigiously would not make sense for them to behave as values,
-   they should be _implicitly_ invoked rather than raisng an error or giving
+   they should be _implicitly_ invoked rather than raising an error or giving
    nonsensical results.
 
 For helpers, the explicit invocation syntax is `(...)`, i.e. `(foo-bar)`,
 `(foo-bar "baz")`, `(foo-bar baz="bat")`, etc. This is already mandatory in all
 sub-expression posisitions today.
 
-It follows that, the explicit syntax for invoking a helper and appending its
+It follows that the explicit syntax for invoking a helper and appending its
 result to the DOM would be:
-
 
 ```hbs
 <ul>
@@ -590,9 +589,9 @@ invocation syntax will continue to work:
 ```
 
 The last two forms (with arguments) are non-ambigious: they could not possibly
-mean anything else other than to invoke `foo-bar` with the given arguments,
-therefore, in these cases, the parentheses will be automatically inserted in
-parsing time.
+mean anything else other than to invoke `foo-bar` with the given arguments.
+Therefore, the parentheses will be automatically inserted at
+parsing time in these cases.
 
 The first form (without arguments) is indeed ambigious – in fact it will be a
 violation of the first guiding principle if this is interpreted as anything
@@ -601,17 +600,17 @@ value referred to by the `foo-bar` identifier (which happens to be a helper) as
 content into the DOM". Therefore, we propose to rationalize this case
 differently.
 
-Indeed, the helper is passed as a value here (as opposed to being invoked).
+Indeed, the helper is passed as a value here, as opposed to being invoked.
 However, at runtime, the rendering engine has to decide exactly how to append a
 particular value, which happens to be a helper here, as content into the DOM.
 
-There are serveral options here, such as rasing an error ("I don't know how to
-turn a helper into content"), using JavaScript's default `toString` (resulting
-in "[object Object]") or first invoke the helper with no arguments and then
-append the _result_ as content. We argue that the first option is too pedantic,
-the second option is not useful and therefore the third option is unambigiously
-the only reasonable option. This allows all three existing form to work while
-still staisfying the guiding principles.
+There are several options here:
+1. Raising an error ("I don't know how to turn a helper into content").
+2. Using JavaScript's default `toString` (resulting in "[object Object]").
+3. Invoking the helper with no arguments and then appending the _result_ as content.
+We argue that the first option is too pedantic, the second option is not useful and
+therefore the third option is unambigiously the only reasonable option.
+This allows all three existing form to work while still staisfying the guiding principles.
 
 This works similarly in attribute positions too.
 
@@ -635,8 +634,8 @@ Implicit invocation forms:
 </ul>
 ```
 
-Here, the first form relies on the runtime to invoke the helper before its
-added to the DOM, and the last two relies on automatic parentheses insertion
+Here, the first form relies on the runtime to invoke the helper before it is
+added to the DOM, and the last two rely on automatic parentheses insertion
 at parse time.
 
 For named arguments position, it is slightly different.
@@ -661,7 +660,7 @@ For components, the explict invocation syntax is `<...>`, i.e. `<FooBar />`,
 When a component is "invoked" in sub-expression form, we propose that it should
 produce a new curried component with the given arguments. That is, if `foo-bar`
 refers to a component value, then `(foo-bar)`, `(foo-bar "baz")` and
-`(foo-bar bat="baz")` has the same semantics as `(component foo-bar)`,
+`(foo-bar bat="baz")` have the same semantics as `(component foo-bar)`,
 `(component foo-bar "baz")` and `(component foo-bar bat="baz")`, respectively.
 
 This allows curly invocations to work:
@@ -676,7 +675,7 @@ In the first case, it refers to the component by value. Since the value happens
 to be a component in this case, the rendering engine will invoke it at runtime.
 The second and the third case relies on automatic parentheses insertion – they
 desugars into `{{(foo-bar "baz")}}` and `{{(foo-bar baz="bat")}}`, respectively,
-which produces anymous curried components, which are also invoked at runtime.
+which produces anonymous curried components, which are also invoked at runtime.
 
 If a component value, curried or not, is passed to an attribute position, it
 will result in a runtime error as there is no sensible behavior there.
