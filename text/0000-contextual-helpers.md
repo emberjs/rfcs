@@ -608,6 +608,7 @@ There are several options here:
 1. Raising an error ("I don't know how to turn a helper into content").
 2. Using JavaScript's default `toString` (resulting in "[object Object]").
 3. Invoking the helper with no arguments and then appending the _result_ as content.
+
 We argue that the first option is too pedantic, the second option is not useful and
 therefore the third option is unambigiously the only reasonable option.
 This allows all three existing form to work while still staisfying the guiding principles.
