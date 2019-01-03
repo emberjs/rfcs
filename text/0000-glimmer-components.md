@@ -436,11 +436,15 @@ interface GlimmerComponent<T = object> {
   isDestroying: boolean;
   isDestroyed: boolean;
 
-  constructor(owner: Owner, args: T): void;
-
-  didUpdateArgs(): void;
+  constructor(owner: Opaque, args: T): void;
   willDestroy(): void;
 }
+```
+
+This class will be importable from `@glimmer/component`;
+
+```js
+import Component from '@glimmer/component';
 ```
 
 In addition, two new element modifiers will fill in the gaps left by the
@@ -518,9 +522,8 @@ Glimmer components have 3 properties: `args`, `isDestroying`, and `isDestroyed`.
 
 As discussed in the motivation section, `args` is an object with the values of
 the named arguments passed to the component. This property will be updated
-whenever the arguments change, with the `didUpdateArgs` hook being called after
-any updates. It will be shallow-frozen in development mode to prevent users
-from setting values on it.
+whenever the arguments change. It will be shallow-frozen in development mode to
+prevent users from setting values on it.
 
 #### `isDestroying`
 
@@ -582,16 +585,18 @@ cycle in a number of ways:
   `didUpdateAttrs` do _not_ have opposing bookends is inconsistent with this
   pattern.
 
+* Hooks that are used to update derived state, such as `didUpdate` and
+  `didUpdateAttrs`, can be generally be replaced with tracked or computed
+  properties that pull the required values as they are used, rather than eagerly
+  as they are updated. This is more inline with Glimmer's pull-based change
+  tracking system, and encourages better practices that are easier to optimize.
+
 * Hooks which are used to manipulate elements or the DOM in general can be
   removed in favor of element modifiers, which are discussed in detail in the
   next section.
 
-We can also encourage users to remove code which can be placed in tracked
-properties from hooks in general, lessening dependence on them, and gaining
-benefits from moving toward a pull-based model where computation happens as a
-side-effect of a property's use. Based on these considerations, we can reduce
-these hooks to one per major phase of the component's lifecycle: the
-`constructor`, `didUpdateArgs`, and `willDestroy`.
+Based on these considerations, we can reduce these hooks to just a setup and
+teardown method: `constructor` and `willDestroy`.
 
 #### `constructor`
 
@@ -626,24 +631,6 @@ class Person {
 Class fields are assigned _after_ the call to `super` in the constructor, but
 _before_ any of the user's code runs, allowing their values to be accessed by
 users as well.
-
-#### `didUpdateArgs`
-
-This hook runs after the component's `args` have been updated, allowing users to
-run any code they need in order to react to changes external to the component.
-This is particularly useful for running asynchronous code based on the value of
-an argument, such as `fetch` requests or ember-concurrency style tasks. It has
-the following timing semantics:
-
-* **Always**
-  * called when `args` has changed
-  * called _before_ any child component `didUpdateArgs` hooks
-  * called _before_ any `{{did-render}}` modifiers in the component's template
-* **May or May Not**
-  * be called if `args` contents are stable, i.e. the `args` object itself has
-    changed, but all the values on `args` are the same.
-  * be called in a stable order relative to sibling component `didUpdateArgs`
-    hooks
 
 #### `willDestroy`
 
@@ -789,31 +776,103 @@ using `didRender` or `didUpdate`. The only instance we found of this was in
 where it was used detect when an
 [overlay](https://ember-google-maps.sandydoo.me/docs/overlays) component has
 rendered and needs to be repositioned. For this rare case, we believe a
-[ResizeObserver](https://wicg.github.io/ResizeObserver/) may be more
-appropriate. For the more general case where a user needs to detect any and all
-rerenders in a subtree, we believe a component defined with a custom component
-manager, which still retains this ability, is an appropriate escape hatch.
+[MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)
+set to detect mutations to the DOM subtreemay be more appropriate.
+Alternatively, a component can be defined with a custom component manager, which
+still retains this ability.
 
 The usages from the audit and their equivalent solution in Glimmer components
 have been included in this RFC in an appendix.
+
+### Actions
+
+In classic components, actions are defined on the `actions` hash, and can be
+referenced in templates using strings passed to the `{{action}}` helper:
+
+```js
+export default Component.extend({
+  actions: {
+    buttonPressed() {
+      // ...
+    }
+  }
+})
+```
+```hbs
+<button onclick={{action 'buttonPressed'}}>Press Me!</button>
+```
+
+This form of action sending is based on the `ActionHandler` mixin and requires
+that the component class have a `send` method. Glimmer components will _not_
+implement this API, and as such will not support string based action helpers.
+In development mode a special error will be thrown instead, informing users of
+alternatives.
+
+Instead, users should use helpers or decorators to bind functions to the
+component instance. The `action` helper and modifier do this in templates, as
+does the `bind` helper provided by the [ember-bind-helper](https://github.com/Serabe/ember-bind-helper) addon:
+
+```js
+export default class ButtonComponent extends Component {
+  buttonPressed() {
+    // ...
+  }
+}
+```
+```hbs
+<button onclick={{action this.buttonPressed}}>Press Me!</button>
+```
+
+Alternatively, a decorator could be used to bind the helper to the instance.
+This helper could bind _lazily_ as it is consumed, rather than eagerly when the
+instance is created, to prevent performance overhead:
+
+```js
+export default class ButtonComponent extends Component {
+  @bind
+  buttonPressed() {
+    // ...
+  }
+}
+```
+```hbs
+<button onclick={{this.buttonPressed}}>Press Me!</button>
+```
+
+However, one method for binding methods which should be discouraged is assigning
+an arrow function to class fields:
+
+```js
+export default class ButtonComponent extends Component {
+  buttonPressed = () => {
+    // ...
+  }
+}
+```
+
+This is messy for a few reasons:
+
+* The method is no longer available on the prototype, making it difficult to
+  mock
+* It breaks `super` and inheritance, meaning subclasses have no way to override
+  the arrow function
+* Values such as `arguments` will not be set since it is an arrow function
+
+For more details, see [this document explaining the rationale for decorators](https://github.com/tc39/proposal-decorators/blob/master/bound-decorator-rationale.md)
+over class fields for binding.
 
 ## Dependencies
 
 In it's current form this RFC is dependent on 2 of 3 open RFCs being accepted:
 
-* EITHER the [Decorators RFC](https://github.com/emberjs/rfcs/pull/408) or
-  [Tracked Properties RFC](https://github.com/emberjs/rfcs/pull/410) must be
+* The [Decorators RFC](https://github.com/emberjs/rfcs/pull/408) must be
   accepted, because Glimmer components cannot be defined using classic class
-  syntax. We only need one - it is fine to say that you can only use computed
-  properties or tracked properties for now, while work out the kinks in the
-  other.
+  syntax. If it is not accepted this RFC will have to be amended to add a way
+  for users to define Glimmer components with classic classes.
 
-  If neither is accepted, this RFC will have to be amended to add a way for
-  users to define Glimmer components with classic classes.
-
-* The [Render Element Modifiers RFC](https://github.com/emberjs/rfcs/pull/415) must be accepted, since Glimmer
-  components currently do not have any render lifecycle hooks or ways to
-  interact with the DOM.
+* The [Render Element Modifiers RFC](https://github.com/emberjs/rfcs/pull/415)
+  must be accepted, since Glimmer components currently do not have any render
+  lifecycle hooks or ways to interact with the DOM.
 
   If it is not accepted, this RFC will have to explore some of the alternatives
   listed below (`{{capture-element}}`, `bounds`, and render hooks).
@@ -940,9 +999,6 @@ bullet points here are:
   argument changes for any values that can be computed directly via getters.
   Ideally, most logic for derived state is conventionally in tracked or computed
   properties.
-* `didUpdateArgs` is the place to react to argument changes that don't fit into
-  getters. This includes asynchronous calls, conditional changes (e.g. if an arg
-  changed, do X, else do nothing), etc.
 * `willDestroy` is the correct place for all teardown code, like in classic
   components.
 * `didReceiveAttrs`, `willRender`, and `didRender` code should be extracted into
@@ -987,6 +1043,19 @@ concept in Ember, and as such will likely be unfamiliar to users and require
 more learning than normal to get used to. This also means that users will not
 be able to rely on well established patterns, and will have to develop new ones
 for dealing with element manipulation.
+
+### Lack of positional parameter support
+
+Glimmer components are meant to cover _most_ common use cases, but are also
+meant to be as minimal as possible. As such, they do _not_ have support for
+positional parameters. Positional parameters are already unusable with any
+component invoked using angle bracket syntax, but Glimmer components will also
+not support them even when using curly bracket invocation.
+
+The use cases for positional parameters are very uncommon, so it doesn't make
+sense to add them to the main component class as an option. Instead, we should
+make alternative component classes which support positional parameters, perhaps
+exclusively (e.g. asserting if positional parameters are _not_ defined).
 
 ## Alternatives
 
@@ -1149,8 +1218,8 @@ enabling typed injections.
 
 |Usage|Use Case|Converts To|
 |-----|--------|-----------|
-|[link][ep-did-update-attrs-1]|Setup component state based on incoming arguments|`didUpdateArgs`|
-|[link][ep-did-update-attrs-2]|Setup component state based on incoming arguments|`didUpdateArgs`|
+|[link][ep-did-update-attrs-1]|Setup component state based on incoming arguments|Tracked properties|
+|[link][ep-did-update-attrs-2]|Setup component state based on incoming arguments|Tracked properties|
 |[link][ep-did-update-attrs-3]|Element setup/update code based on incoming arguments|`{{did-render}}` with arguments|
 |[link][ep-did-update-attrs-4]|Element setup/update code based on incoming arguments|`{{did-render}}` with arguments|
 |[link][ep-did-update-attrs-5]|Element setup/update code based on incoming arguments|`{{did-render}}` with arguments|
@@ -1165,13 +1234,13 @@ enabling typed injections.
 
 |Usage|Use Case|Converts To|
 |-----|--------|-----------|
-|[link][ep-did-receive-attrs-1]|Setup component state based on incoming arguments|`didUpdateArgs` and `constructor`|
-|[link][ep-did-receive-attrs-2]|Setup component state based on incoming arguments|`didUpdateArgs` and `constructor`|
-|[link][ep-did-receive-attrs-3]|Setup component state based on incoming arguments, validate incoming arguments|`didUpdateArgs` and `constructor`|
+|[link][ep-did-receive-attrs-1]|Setup component state based on incoming arguments|Tracked properties and `constructor`|
+|[link][ep-did-receive-attrs-2]|Setup component state based on incoming arguments|Tracked properties and `constructor`|
+|[link][ep-did-receive-attrs-3]|Setup component state based on incoming arguments, validate incoming arguments|Tracked properties and `constructor`|
 |[link][ep-did-receive-attrs-4]|Animate based on incoming arguments|`{{did-render}}` with arguments|
-|[link][ep-did-receive-attrs-5]|Trigger validations|`didUpdateArgs` and `constructor`|
-|[link][ep-did-receive-attrs-6]|Element update code and sending an action|`didUpdateArgs` and `{{did-render}}` with args|
-|[link][ep-did-receive-attrs-7]|Updating logic and element update code|`didUpdateArgs` and `{{did-render}}` with args|
+|[link][ep-did-receive-attrs-5]|Trigger validations|Tracked properties and `constructor`|
+|[link][ep-did-receive-attrs-6]|Element update code and sending an action|Tracked properties and `{{did-render}}` with args|
+|[link][ep-did-receive-attrs-7]|Updating logic and element update code|Tracked properties and `{{did-render}}` with args|
 
 [ep-did-receive-attrs-1]: https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-autocomplete.js#L93
 [ep-did-receive-attrs-2]: https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-card-actions.js#L17
@@ -1283,12 +1352,12 @@ enabling typed injections.
 
 |Usage|Use Case|Converts To|
 |-----|--------|-----------|
-|[link][ep-did-render-1]|Resize component based on changes to args|`{{did-render}}` with arguments, or [ResizeObserver](https://wicg.github.io/ResizeObserver/)|
+|[link][ep-did-render-1]|Resize component based on changes to args|`{{did-render}}` with arguments, or [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)|
 |[link][ep-did-render-2]|Animate component based on changes to arguments|`{{did-render}}` with arguments|
 |[link][ep-did-render-3]|Set `elementDidRender` boolean on instance|`{{did-render}}`|
-|[link][ep-did-render-4]|Measure component on render|`{{did-render}}` with arguments, or [ResizeObserver](https://wicg.github.io/ResizeObserver/)|
-|[link][ep-did-render-5]|Resize component based on changes to size|`{{did-render}}` with args, or [ResizeObserver](https://wicg.github.io/ResizeObserver/)|
-|[link][ep-did-render-6]|Measure element sizes based on changes to args|`{{did-render}}` with args, or schedule `afterRender` from `didUpdateArgs`|
+|[link][ep-did-render-4]|Measure component on render|`{{did-render}}` with arguments, or [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)|
+|[link][ep-did-render-5]|Resize component based on changes to size|`{{did-render}}` with args, or [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)|
+|[link][ep-did-render-6]|Measure element sizes based on changes to args|`{{did-render}}` with args|
 
 [ep-did-render-1]: https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-input.js#L97
 [ep-did-render-2]: https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-speed-dial-action-action.js#L34
@@ -1303,8 +1372,8 @@ enabling typed injections.
 
 |Usage|Use Case|Converts To|
 |-----|--------|-----------|
-|[link][egm-did-update-attrs-1]|Synchronize options with Google maps|`didUpdateArgs`|
-|[link][egm-did-update-attrs-2]|Update component based on changes to arguments|`didUpdateArgs`|
+|[link][egm-did-update-attrs-1]|Synchronize options with Google maps|Refactor to use actions to modify data, or use a modifier|
+|[link][egm-did-update-attrs-2]|Update component based on changes to arguments|Refactor to use actions to modify data, or use a modifier|
 
 [egm-did-update-attrs-1]: https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/components/g-map.js#L103
 [egm-did-update-attrs-2]: https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/components/g-map/map-component.js#L54
@@ -1343,7 +1412,7 @@ enabling typed injections.
 
 |Usage|Use Case|Converts To|
 |-----|--------|-----------|
-|[link][egm-did-render-1]|Detect changes to subtree and reposition overlay|[ResizeObserver](https://wicg.github.io/ResizeObserver/) or custom component that can trigger actions on subtree rerenders|
+|[link][egm-did-render-1]|Detect changes to subtree and reposition overlay|[MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver) or custom component that can trigger actions on subtree rerenders|
 
 [egm-did-render-1]: https://github.com/sandydoo/ember-google-maps/blob/master/addon/templates/components/g-map/overlay.hbs#L6
 
@@ -1353,9 +1422,9 @@ enabling typed injections.
 
 |Usage|Use Case|Converts To|
 |-----|--------|-----------|
-|[link][lf-did-receive-attrs-1]|Capture argument as component state|`constructor` or `didUpdateArgs`|
-|[link][lf-did-receive-attrs-2]|Capture argument as component state|`constructor` or `didUpdateArgs`|
-|[link][lf-did-receive-attrs-3]|Run update code for changing versions (and animating)|`constructor` and `didUpdateArgs`|
+|[link][lf-did-receive-attrs-1]|Capture argument as component state|`constructor`|
+|[link][lf-did-receive-attrs-2]|Capture argument as component state|`constructor`|
+|[link][lf-did-receive-attrs-3]|Run update code for changing versions (and animating)|`constructor` and tracked properties or element modifiers|
 
 [lf-did-receive-attrs-1]: https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/illiquid-model.js#L7
 [lf-did-receive-attrs-2]: https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-outlet.js#L23
