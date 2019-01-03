@@ -30,12 +30,10 @@ could be breaking if/when moved to stage 3. As such, merging support for them
 now would pose some risk. Additionally, [class
 fields](https://github.com/tc39/proposal-class-fields) are also required for
 effective use of decorators, and while they are stage 3 in the process, they
-have not yet been accepted either.
+have not yet been fully accepted either.
 
-This RFC proposes making the `@tracked` decorator and class fields available in
-Ember for users who are comfortable taking that risk today. Ember cannot
-guarantee that the spec won't change, and such changes cannot apply to Ember's
-normal semver guarantees. But it can make the following guarantees:
+Ember cannot guarantee that the spec won't change, and such changes cannot apply
+to Ember's normal semver guarantees. But it can make the following guarantees:
 
 1. If there are changes to the spec, and it ***is*** possible to avoid changing
    the public APIs of decorators, then Ember will make the changes necessary to
@@ -59,10 +57,12 @@ normal semver guarantees. But it can make the following guarantees:
    longer to allow a smooth transition for users who do not want to adopt native
    classes until they are completely stable.
 
-It is possible that decorators will be advanced before this RFC closes and this
-will be a non-issue. Either way, if accepted, Ember would maintain its strong
-commitment to SemVer and making transitions to new programming models as easy as
-possible.
+This RFC is being made with the assumption that decorators will be moved to
+stage 3 in the near future, _before_ this RFC is implemented in Ember,
+dramatically reducing the risk of adopting decorators. If this RFC is accepted
+and decorators are not advanced in a timely manner, a followup RFC should be
+made to determine whether or not decorators should be adopted in stage 2, and
+what the support for them would look like.
 
 ## Terminology
 
@@ -820,6 +820,20 @@ export default class ButtonComponent extends GlimmerComponent {
 
 This could be added later by a followup RFC, so it is not part of this proposal.
 Ideally it won't be necessary.
+
+## Unresolved questions
+
+As stated in the introduction, this RFC is being made with the assumption that
+decorators will be moved to stage 3 before this RFC is actually implemented. If
+they are _not_ moved to stage 3, we will have to decide if decorators should be
+supported in while they are in stage 2.
+
+If they are supported while in stage 2, there are some additional questions:
+
+* Should stage 2 transforms continue to be supported after decorators move to
+  stage 3? Would removing stage 2 support require a major version bump?
+* Should Typescript's stage 1-like decorators be supported, since Typescript
+  will not implement new decorator transforms until they reach stage 3?
 
 ## Appendix A
 
