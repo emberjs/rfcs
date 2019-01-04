@@ -235,9 +235,13 @@ code is only run on clients.
 
 ### `{{did-render}}`
 
-This modifier runs immediately after the element is inserted, and again whenever
-any of the arguments passed to it update, including the function passed as the
-first argument. It has the following timing semantics:
+This modifier is activated:
+
+1. When The element is inserted in the DOM
+2. Whenever any of the arguments passed to it update, including the function
+   passed as the first argument.
+
+It has the following timing semantics when activated:
 
 * **Always**
   * called after DOM insertion
@@ -251,6 +255,10 @@ first argument. It has the following timing semantics:
   * have the sibling nodes fully initialized in DOM
 * **Never**
   * called if the arguments to the modifier are constants
+
+Note that these statements do not refer to when the modifier is _activated_,
+only to when it will be run relative to other hooks and modifiers _should it be
+activated_. The modifier is only activated on insertion and arg changes.
 
 `{{did-render}}` receives a function with the following signature as the first
 positional parameter:
@@ -266,8 +274,11 @@ rest of the arguments are any remaining positional parameters passed to
 
 ### `{{will-destroy}}`
 
-This modifier runs immediately before the element is removed. It has the
-following timing semantics:
+This modifier is activated:
+
+1. immediately before the element is removed from the DOM.
+
+It has the following timing semantics when activated:
 
 * **Always**
   * called _after_ any child element's `{{will-destroy}}` modifiers
