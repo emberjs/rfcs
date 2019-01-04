@@ -631,28 +631,25 @@ not. This RFC suggests that we choose option 3 for this reason. When the actions
 namespace was introduced, lifecycle hooks like `destroy` and `click` were less
 commonly known and used (event listeners were not uncommon). Most Ember users
 know they exist now, and will be aware that implementing an action with the same
-name is not recommended. In addition, eslint rtules can be added to hint against
+name is not recommended. In addition, eslint rules can be added to hint against
 these collisions.
 
-This also aligns with the future laid out by Glimmer components which will be
-discussed more thoroughly in upcoming RFCs, where actions will not need to be
-decorated at all, and will be plain methods:
+### Method Binding
+
+`@action` will also bind the function to the class instance, allowing it to be
+used in templates and elsewhere without having to be bound:
 
 ```js
-export default class ButtonComponent extends GlimmerComponent {
+export default class ButtonComponent extends Component {
+  @action
   onClick() {
     // handle click
   }
 }
 ```
 ```hbs
-<button onclick={{action this.onClick}}>Click me!</button>
+<button onclick={{this.onClick}}>Click me!</button>
 ```
-
-This pattern can be used today with classic components and controllers, but
-routes still depend heavily on `sendAction` and actions being made available
-internally via the actions object, so for the time being, we need a way to mark
-methods as actions.
 
 #### Usage and API
 
