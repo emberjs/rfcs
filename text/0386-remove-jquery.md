@@ -1,5 +1,5 @@
 - Start Date: 2018-10-07
-- RFC PR: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/386
 - Ember Issue: (leave this empty)
 
 # Remove jQuery by default
