@@ -17,9 +17,10 @@ an element is setting up or tearing down. Today, this logic conventionally lives
 in the `didInsertElement`, `didRender`, `didUpdate`, and  `willDestroyElement`
 hooks in components, but there are cases where these hooks are not ideal.
 
-This RFC proposes adding two new generic element modifiers, `{{did-render}}` and
-`{{will-destroy}}`, which users can use to run code during the most common
-phases of any element's lifecycle.
+This RFC proposes creating an official Ember addon which provides three new
+generic element modifiers: `{{did-insert}}`, `{{did-update}}`, and
+`{{will-destroy}}`. Users will be able to use these to run code during the most
+common phases of any element's lifecycle.
 
 ## Motivation
 
@@ -87,7 +88,7 @@ without worrying about the overall lifecycle:
 ```hbs
 {{#if this.isOpen}}
   <div
-    {{did-render (action this.setupPopper)}}
+    {{did-insert (action this.setupPopper)}}
     {{will-destroy (action this.teardownPopper)}}
 
     class="popover"
@@ -119,7 +120,7 @@ loop, and the render modifiers can be used to solve them as well:
 <ul>
   {{#each items as |item|}}
     <li
-      {{did-render (action this.registerElement)}}
+      {{did-insert (action this.registerElement)}}
       {{will-destroy (action this.unregisterElement)}}
     >
       ...
@@ -185,7 +186,7 @@ export default Component.extend({
 ```
 ```hbs
 <ul
-  {{did-render (action this.didInsertList)}}
+  {{did-insert (action this.didInsertList)}}
   {{will-destroy (action this.willDestroyList)}}
 >
   ...
@@ -206,71 +207,106 @@ Developers will be able to define element modifiers in the future with modifier
 managers provided by addons. However, the proposed modifier APIs are fairly
 verbose (with good reason) and not stabilized.
 
-However, `{{did-render}}` and `{{will-destroy}}` can receive _any_ function as
-their first parameter, allowing users to share and reuse common element setup
-code with helpers. For instance, a simple `scrollTo` helper could be created to
-set the scroll position of an element:
+However, the render modifiers can receive _any_ function as their first
+parameter, allowing users to share and reuse common element setup code with
+helpers. For instance, a simple `scrollTo` helper could be created to set the
+scroll position of an element:
 
 ```js
 // helpers/scroll-to.js
 export default function scrollTo() {
-  (element, scrollPosition) => element.scrollTop = scrollPosition;
+  return (element, scrollPosition) => element.scrollTop = scrollPosition;
 }
 ```
 ```hbs
-<div {{did-render (scroll-to) @scrollPosition}} class="scroll-container">
+<div
+  {{did-insert (scroll-to) @scrollPosition}}
+  {{did-update (scroll-to) @scrollPosition}}
+  class="scroll-container"
+>
   ...
 </div>
 ```
 
+### Official Addon
+
+While these modifiers will be generally useful, modifiers are meant to be a more
+generic API that can be used to create libraries for solving specific problems.
+Unfortunately, the community hasn't had much time to experiment with modifiers,
+since the public API for them hasn't been finalized.
+
+The modifiers in this RFC will provide an basic stepping stone for users who
+want to emulate lifecycle hooks and incrementally convert their applications to
+modifiers while modifiers in general are being experimented with in the
+community. In time, users should be able to pick and choose the modifiers that
+suit their needs more directly and effectively, and they shouldn't have to
+include these modifiers in the payload. These modifiers should also not be seen
+as the "Ember way" - they are just another addon, a basic one supported by
+the Ember core team, but one which may or may not be appropriate for a given
+application.
+
 ## Detailed design
 
-This RFC proposes adding two element modifiers, `{{did-render}}` and
-`{{will-destroy}}`. Note that element modifiers do _not_ run in SSR mode - this
-code is only run on clients.
+This RFC proposes adding three element modifiers:
+
+* `{{did-insert}}`
+* `{{did-update}}`
+* `{{will-destroy}}`
+
+Note that element modifiers do _not_ run in SSR mode - this code is only run on
+clients. Each of these modifiers receives a callback as it's first positional
+parameter:
+
+```ts
+type RenderModifierCallback = (element: Element, positionalArgs: [any], namedArgs: object): void;
+```
+
+The `element` argument is the element that the modifier is applied to,
+`positionalArgs` contains any remaining positional arguments passed to the
+modifier besides the callback, and `namedArgs` contains any named arguments
+passed to the modifier. If the first positional argument is not a callable
+function, the modifier will throw an error.
 
 > Note: The timing semantics in the following section were mostly defined in the
 > [element modifier manager RFC](https://github.com/emberjs/rfcs/blob/master/text/0373-Element-Modifier-Managers.md)
 > and are repeated here for clarity and convenience.
 
-### `{{did-render}}`
+### `{{did-insert}}`
 
-This modifier is activated:
-
-1. When The element is inserted in the DOM
-2. Whenever any of the arguments passed to it update, including the function
-   passed as the first argument.
+This modifier is activated only when The element is inserted in the DOM.
 
 It has the following timing semantics when activated:
 
 * **Always**
   * called after DOM insertion
-  * called _after_ any child element's `{{did-render}}` modifiers
+  * called _after_ any child element's `{{did-insert}}` modifiers
   * called _after_ the enclosing component's `willRender` hook
   * called _before_ the enclosing component's `didRender` hook
   * called in definition order in the template
-  * called after the arguments to the modifier have changed
 * **May or May Not**
   * be called in the same tick as DOM insertion
   * have the sibling nodes fully initialized in DOM
-* **Never**
-  * called if the arguments to the modifier are constants
 
 Note that these statements do not refer to when the modifier is _activated_,
 only to when it will be run relative to other hooks and modifiers _should it be
-activated_. The modifier is only activated on insertion and arg changes.
+activated_. The modifier is only activated on insertion.
 
-`{{did-render}}` receives a function with the following signature as the first
-positional parameter:
+### `{{did-update}}`
 
-```ts
-type DidRenderHandler = (element: Element, ...args): void;
-```
+This modifier is activated only on _updates_ to it's arguments (both positional
+and named). It does _not_ run during or after initial render, or before
+element destruction.
 
-The `element` argument is the element that the modifier is applied to, and the
-rest of the arguments are any remaining positional parameters passed to
-`{{did-render}}`. If the first positional parameter is not a callable function,
-`{{did-render}}` will throw an error.
+It has the following timing semantics when activated:
+
+* **Always**
+  * called after the arguments to the modifier have changed
+  * called _after_ any child element's `{{did-update}}` modifiers
+  * called _after_ the enclosing component's `willUpdate` hook
+  * called _before_ the enclosing component's `didUpdate` hook
+  * called in definition order in the template
+* **Never**
+  * called if the arguments to the modifier are constants
 
 ### `{{will-destroy}}`
 
@@ -285,19 +321,7 @@ It has the following timing semantics when activated:
   * called _before_ the enclosing component's `willDestroy` hook
   * called in definition order in the template
 * **May or May Not**
-  * be called in the same tick as DOM insertion
-
-`{{will-destroy}}` receives a function with the following signature as the first
-positional parameter:
-
-```ts
-type WillDestroyHandler = function(element: Element, ...args): void;
-```
-
-The `element` argument is the element that the modifier is applied to, and the
-rest of the arguments are any remaining positional parameters passed to
-`{{will-destroy}}`. If the first positional parameter is not a callable function,
-`{{will-destroy}}` will throw an error.
+  * be called in the same tick as DOM removal
 
 ### Function Binding
 
@@ -305,31 +329,24 @@ Functions which are passed to these element modifiers will _not_ be bound to any
 context by default. Users can bind them using the `(action)` helper:
 
 ```hbs
-<div {{did-render (action this.teardownElement)}}></div>
+<div {{did-insert (action this.setupElement)}}></div>
 ```
 
-Currently, neither modifiers nor helpers in Glimmer are given the context of the
-template at any point. Both the `{{action}}` helper and modifier are given the
-context as an implicit first argument, via an AST transform. The above becomes
-the following in the final template, before it is compiled into the Glimmer byte
-code:
+Or by using the `@action` decorator provided by the
+[Decorators RFC](https://github.com/emberjs/rfcs/pull/408) to bind the function
+in the class itself:
 
+```js
+export default class ExampleComponent extends Component {
+  @action
+  setupElement() {
+    // ...
+  }
+}
+```
 ```hbs
-<div {{did-render (action this this.teardownElement)}}></div>
+<div {{did-insert this.setupElement}}></div>
 ```
-
-This gives `{{action}}` the correct context to bind the function it is passed
-and was done purely for backwards compatibility, since `{{action}}` existed
-before modifiers and helpers were fully rationalized as features.
-
-Adding this implicit context to other helpers and modifiers would require
-changes to the Glimmer VM and is a much larger language design problem. As such,
-we believe it is out of scope for this RFC. Default binding behavior could be
-added in the future, if a context API is decided on.
-
-> Note: It's worth calling out that action's binding behavior can be confusing
-> in cases as well, check out [ember-bind-helper](https://github.com/Serabe/ember-bind-helper)
-> for an example and alternatives.
 
 ## How we teach this
 
@@ -343,14 +360,18 @@ should be seen as the place for any logic which needs to act directly on an
 element, or when an element is added to or removed from the DOM. Modifiers can
 be fully independent (for instance, a `scroll-to` modifier that transparently
 manages the scroll position of the element) or they can interact with the
-component (like the `did-render` and `will-destroy` modifiers). In all cases
+component (like the `did-insert` and `will-destroy` modifiers). In all cases
 though, they are _tied to the render lifecycle of the element_, and they
 generally contain _side-effects_ (though these may be transparent and
 declarative, as in the case of `{{action}}` or the theoretical `{{scroll-to}}`).
 
 Second, we should teach the render modifiers specifically. We can do this by
 illustrating common use cases which can currently be solved with render hooks,
-and comparing them to using modifiers for the same solution.
+and comparing them to using modifiers for the same solution. We should also
+emphasize that these are an addon, not part of the core framework, and are
+useful as solutions for _specific_ problems. As more modifiers become available,
+we should create additional guides that focus on using the _best_ modifier for
+the job, rather than these generic ones.
 
 One thing we should definitely avoid teaching except in advanced cases is the
 _ordering_ of element modifiers. Ideally, element modifiers should be
@@ -381,7 +402,12 @@ export default Component.extend({
 After:
 
 ```hbs
-<div {{did-render (action this.setScrollPosition) @scrollPosition}} class="scroll-container">
+<div
+  {{did-insert this.setScrollPosition @scrollPosition}}
+  {{did-update this.setScrollPosition @scrollPosition}}
+
+  class="scroll-container"
+>
   {{yield}}
 </div>
 ```
@@ -425,7 +451,7 @@ After:
 
 ```hbs
 {{#if shouldShow}}
-  <div {{did-render (action this.fadeIn)}} class="alert">
+  <div {{did-insert this.fadeIn}} class="alert">
     {{yield}}
   </div>
 {{/if}}
@@ -440,21 +466,21 @@ export default Component.extend({
 
 #### Example: Resizing text area
 
-One key thing to know about `{{did-render}}` is it will not rerun whenever the
-_contents_ or _attributes_ on the element change. For instance, `{{did-render}}`
+One key thing to know about `{{did-update}}` is it will not rerun whenever the
+_contents_ or _attributes_ on the element change. For instance, `{{did-update}}`
 will _not_ rerun when `@type` changes here:
 
 ```hbs
-<div {{did-render (action this.setupType)}} class="{{@type}}"></div>
+<div {{did-update this.setupType}} class="{{@type}}"></div>
 ```
 
-If `{{did-render}}` should rerun whenever a value changes, the value should be
+If `{{did-update}}` should rerun whenever a value changes, the value should be
 passed as a parameter to the modifier. For instance, a textarea which wants to
 resize itself to fit text whenever the text is modified could be setup like
 this:
 
 ```hbs
-<textarea {{did-render (action this.resizeArea) @text}}>
+<textarea {{did-update this.resizeArea @text}}>
   {{@text}}
 </textarea>
 ```
@@ -529,7 +555,7 @@ export default NodeComponent.extend();
 ```hbs
 <!-- components/root.hbs -->
 <div
-  {{did-render (action this.didInsertNode)}}
+  {{did-insert (action this.didInsertNode)}}
   {{will-destroy (action this.willDestroyNode)}}
 >
   {{yield (component "node" parent=this)}}
@@ -548,9 +574,6 @@ Usage:
 
 ## Drawbacks
 
-* Element modifiers are a new concept that haven't been fully stabilized as of
-  yet. It may be premature to add default modifiers to the framework.
-
 * Adding these modifiers means that there are more ways to accomplish similar
   goals, which may be confusing to developers. It may be less clear which is the
   conventional solution in a given situation.
@@ -564,24 +587,4 @@ Usage:
 * Stick with only lifecycle hooks for these situations, and don't add generic
   modifiers for them.
 
-* Add an implicit context to modifiers and helpers, instead of relying on users
-  to bind functions manually. Doing this should take into account a few
-  constraints and considerations:
-
-  * Adding an implicit context may make it more difficult to optimize modifiers
-    and helpers in the future. If possible, this should be something they opt
-    _into_, so only helpers which _need_ a context will deoptimize.
-
-  * Binding can be counterintuitive in some cases. For instance:
-
-    ```hbs
-    <button {{action this.service.reloadData}}>Reload</button>
-    ```
-
-    This example will likely error, because the `reloadData` function will be
-    bound to the _component_, not the service. Likewise, binding helpers doesn't
-    really make sense, since they should be pure functions. Solutions like the
-    [`{{bind}}` helper](https://github.com/Serabe/ember-bind-helper) attempt to
-    address this, but may not be something that can be fully rationalized (what
-    happens if there are multiple contexts?)
 
