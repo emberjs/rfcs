@@ -125,7 +125,7 @@ And here is an equivalent component written with the Glimmer component API:
 <section ...attributes role="region" type={{@post.type}} class="post {{@post.type}}">
   {{#if (eq @post.type 'image')}}
     <img
-      {{did-render (action this.didInsertImage)}}
+      {{did-insert this.didInsertImage}}
       src={{@post.imageUrl}}
       title={{@post.imageTitle}}
     />
@@ -137,6 +137,7 @@ And here is an equivalent component written with the Glimmer component API:
 ```js
 // components/post.js
 export default class PostComponent extends GlimmerComponent {
+  @action
   didInsertImage(element) {
     setupImageOverlay(element);
   }
@@ -419,7 +420,7 @@ As such, we now have two reference implementations which can be referred to:
   managers. It is usable in Ember today.
 
 Both of these have minor differences from the API proposed in this RFC, mainly
-because they were made before the [element modifiers
+because they were made before the [element modifier manager
 RFC](https://github.com/emberjs/rfcs/blob/master/text/0373-Element-Modifier-Managers.md)
 was accepted and opened up additional design possibilities. However, they serve
 as valuable data points for the viability of a simpler component API, and inform
@@ -446,12 +447,6 @@ This class will be importable from `@glimmer/component`;
 ```js
 import Component from '@glimmer/component';
 ```
-
-In addition, two new element modifiers will fill in the gaps left by the
-`didInsertElement`, `didRender`, and `willDestroyElement` lifecycle hooks:
-
-* `{{did-render}}`
-* `{{will-destroy}}`
 
 ### Constructor
 
@@ -607,7 +602,8 @@ before _any_ renders occur. It has the following timing semantics:
 * **Always**
   * called when a component is created
   * called _before_ any child components are created
-  * called _before_ any `{{did-render}}` modifiers in the component's template
+  * called _before_ any element modifiers with install hooks in the component's
+    template
 
 In many cases, using the `constructor` directly will not be necessary due to
 class fields, whose initializers run during instance construction.
@@ -640,7 +636,8 @@ cleanup code. It has the following timing semantics:
 * **Always**
   * called when a component is removed
   * called _after_ any child component `willDestroy` hooks
-  * called _after_ any `{{will-destroy}}` modifiers in the component's template
+  * called _after_ any element modifiers with destroy hooks in the component's
+    template
   * called _after_ `isDestroying` has been set to `true`, and _before_
     `isDestroyed` has been set to `true`
   * called _after_ the DOM has been fully removed and is inaccessible
@@ -650,96 +647,107 @@ cleanup code. It has the following timing semantics:
 
 ### Element Modifiers
 
-Glimmer components have outer HTML semantics, which means that whatever is put
-in the template is what we see in the final render. This also means that they
-can have _multiple_ top-level elements:
+DOM manipulation is a hard problem for component-oriented frameworks. We spend a
+lot of time crafting elegant, functional, template oriented abstractions that
+work very well, up until the point where we have to use an imperative native API
+like `addEventListener` or `MutationObserver`. This is not a problem unique to
+Ember - the recent introduction of the React Hooks API, and the [various flavors
+of hooks that exist](https://nikgraf.github.io/react-hooks/), many of which
+accomplish the same thing in slightly different ways, suggests that this is a
+_fundamentally difficult problem_ no matter how you tackle it.
+
+This is also evidenced by the sheer _number_ of hooks which have been added to
+classic Ember components over time to handle various different use cases, and
+the fact that there does not appear to be a general consensus on best practices
+for using these hooks. In our audit, we observed the following:
+
+1. `didInsertElement` was commonly used for setting up component state which had
+   nothing to do with the element and could have been accomplished in `init`.
+2. `didRender` was often used for setting up DOM state once on initial render
+   only, instead of `didInsertElement`.
+3. `didRender` and `didReceiveAttrs` (or `didUpdate` and `didUpdateAttrs`) were
+   used interchangeably for setting up and updating DOM state based on incoming
+   argument changes, without strong conventions on when to use one or the other,
+   or consideration for which ones fire in SSR (`didReceiveAttrs` and
+   `didUpdateAttrs`) and which do not.
+4. Libraries like
+   [ember-lifeline](https://github.com/ember-lifeline/ember-lifeline) were not
+   uncommon for managing the extra state that using hooks inevitably creates,
+   and imply that it is not always intuitive or well understood that you must
+   clean up that state.
+5. Guards for SSR appear sporadically throughout various hooks, since some
+   (`didInsertElement`, `willDestroyElement`) do _not_ run in SSR, but others
+   (`didReceiveAttrs`, `didUpdateAttrs`) do. This adds _another_ layer of state
+   that developers must be aware of as they are using lifecycle hooks. Often
+   times these guards occured even in hooks which _did not run_ in SSR, implying
+   that it is difficult to remember which hooks are best to use in either
+   situation.
+6. Hooks such as `didRender` had many different potential use cases. It was used
+   for reacting to changes to component arguments in some cases, but in others
+   it was used as a more general purpose "bloom filter", allowing the component
+   to react to _any_ changes to the DOM subtree. The variety of use cases seemed
+   to add to the confusion about which hooks should be used in which
+   circumstances.
+7. Another disadvantage of the flexibility of these hooks was that often
+   developers had to add additional validation steps for their specific use
+   case. For instance, if a developer wanted to react to a change to a specific
+   argument in `didRender` or `didReceiveAttrs`, they had to add cacheing and
+   comparison logic manually to do so for each property.
+
+In summary, lifecycle hooks attempted to provide on general solution to the
+problem of DOM manipulation for _all_ use-cases, and in doing so provided a
+solution that solves each individual problem and use-case in a mediocre way.
+Rather than continue these patterns in Glimmer components, we believe that they
+should lean instead on _Element Modifiers_.
+
+Modifiers provide a single unified way to define multiple _different_ APIs for
+interacting with the DOM. Individual modifiers can be targeted toward specific
+use cases, such as adding an event listener or `MutationObserver`, triggering a
+callback during certain lifecycle events, capturing element references for use
+in components, and more. Importantly, modifiers are _easy to compose_ and
+_self-contained_, meaning that it will be possible for general purpose addons to
+be built for various use cases, and for them all to be used together without
+difficulty.
+
+#### Conversion and Path Forward
+
+Modifiers may be the general purpose solution for writing DOM APIs, but average
+Ember developers should not have to _write_ a modifier very often. This is a key
+distinction - it means that beginner Ember developers will not need to learn the
+ins and outs of modifiers as soon as they need to use DOM, and that they will be
+able to instead rely on established patterns from established libraries, similar
+to helpers. This combined with the fact that DOM manipulation was on average a
+_rare_ occurence in our audits means they won't be overwhelming to learn.
+
+However, while we have merged the [Modifier Manager
+RFC](https://github.com/emberjs/rfcs/blob/master/text/0373-Element-Modifier-Managers.md),
+the final API for modifiers themselves is still in RFC, and the community hasn't
+had a chance to experiment with them and develop patterns yet. We also want to
+be able to provide straightforward upgrade and migration guides for users who
+want to convert from classic component lifecycle hooks to modifiers. In order to
+cover this gap while the community is still absorbing the new APIs, the
+modifiers proposed in the [Render Element Modifiers
+RFC](https://github.com/emberjs/rfcs/pull/415) will be released as an official
+Ember addon. These essentially expose the three hooks of modifiers to users
+directly, allowing them to pass callbacks from their components:
 
 ```hbs
-<div ...attributes>
-  First root element
+<div
+  {{did-insert this.setupElement @arg1 @arg2}}
+  {{did-update this.updateElement @arg1 @arg2}}
+  {{will-destroy this.teardownElement}}
+>
+  ...
 </div>
-<div>
-  Second root element
-</div>
 ```
 
-It is also possible that there are _no_ root elements:
-
-```hbs
-This is a text only component: {{@foo}}
-```
-
-This makes the `element` property of classic components awkward, since there is
-no one single referenceable element. A previous proposal for solving this
-problem was a `bounds` property which contained a `firstNode` and `lastNode`,
-but this could be very confusing to users since these nodes would likely have to
-be text nodes (how Glimmer tracks component boundaries internally), and would
-force users to write unintuitive looping logic to traverse nodes:
-
-```js
-let { firstNode, lastNode } = bounds;
-let currentNode = firstNode;
-
-while (currentNode !== lastNode) {
-  // do something with current node
-  currentNode = currentNode.nextSibling;
-}
-```
-
-This exposes users to low level APIs which are fairly complicated for most
-simple use cases, and can be error prone. We could also attempt to add an
-`element` property for cases where templates only have one root level element,
-but this represents a refactoring hazard if users attempt to rewrite code, and
-means we have to deal with a few complexities (what if a component has top level
-text nodes?)
-
-Instead, we can use new element modifiers which allow users to run code
-declaratively on the element:
-
-```hbs
-<div {{did-render (action this.setupElement)}} ...attributes>
-  First root element
-</div>
-<div {{did-render (action this.setupElement)}}>
-  Second root element
-</div>
-```
-
-This allows users to target which elements they care about directly. It also
-allows for code to be run on elements which are contained in conditionals,
-meaning users do not need to add messy logic to track component state
-themselves:
-
-```hbs
-{{#if shouldRender}}
-  <div
-    {{did-render (action this.setupElement)}}
-    {{will-destroy (action this.teardownElement)}}
-  >
-
-  </div>
-{{/if}}
-```
-
-Finally, this also aligns with the capabilities of _tagless_ classic components,
-should the render modifiers be accepted, which gives users a more gradual path
-to adopting glimmer components by first adopting tagless components as standard:
-
-```js
-export default Component.extend({
-  tagName: '',
-
-  setupElement(element) {
-    // ...
-  }
-});
-```
-```hbs
-<div {{did-render (action this.setupElement)}}></div>
-```
-
-A parallel RFC has been opened to focus on them in isolation. To see the details
-of these element modifiers, [see the RFC](https://github.com/emberjs/rfcs/pull/415).
+These modifiers should allow users to approximate most of the existing lifecycle
+hooks, and in most cases should be pretty straightforward to update to. The
+Ember guides will provide migration examples for a variety of use cases to
+assist in converting to these modifiers. Over time, as addons and libraries are
+released that target specific use cases, the guides should be updated to include
+popular patterns and demonstrate the most effective and conventional ways to
+solve _specific_ problems with DOM manipulation.
 
 ### Lifecycle Hook Audit
 
@@ -823,13 +831,12 @@ export default class ButtonComponent extends Component {
 <button onclick={{action this.buttonPressed}}>Press Me!</button>
 ```
 
-Alternatively, a decorator could be used to bind the helper to the instance.
-This helper could bind _lazily_ as it is consumed, rather than eagerly when the
-instance is created, to prevent performance overhead:
+Alternatively, a decorator could be used to bind the helper to the instance,
+such as the `@action` decorator proposed in the [Decorators RFC](https://github.com/emberjs/rfcs/pull/408).
 
 ```js
 export default class ButtonComponent extends Component {
-  @bind
+  @action
   buttonPressed() {
     // ...
   }
@@ -1002,7 +1009,7 @@ bullet points here are:
 * `willDestroy` is the correct place for all teardown code, like in classic
   components.
 * `didReceiveAttrs`, `willRender`, and `didRender` code should be extracted into
-  functions which are then passed to `{{did-render}}`
+  functions which are then passed to `{{did-insert}}` and `{{did-update}}`
 * `willDestroyElement` code should be extracted into functions which are then
   passed to `{{will-destroy}}`
 
@@ -1019,8 +1026,8 @@ RFC](https://github.com/emberjs/rfcs/blob/b9f390cb98f560d9cf876e3b1d67226fe0e161
 but the key points are:
 
 1. Teaching modifiers as a concept first, so users understand that what they're
-   looking at is a _general_ tool, and that the `{{did-render}}` and
-   `{{will-destroy}}` modifiers are defaults provided by Ember.
+   looking at is a _general_ tool, and that the render modifiers are an official
+   addon provided by Ember.
 
 2. Providing _lots_ of examples for various use cases, especially for users
    transitioning from classic components.
@@ -1078,13 +1085,14 @@ method is an element lifecycle hook or an internal method.
 Adding the standard element lifecycle hooks would allow users to follow the
 patterns they are currently used to, and that are used in other frameworks. If
 added without `{{capture-element}}` or `bounds` (see below), they could be used
-with `{{did-render}}` and `{{will-destroy}}` for registering elements:
+with `{{did-insert}}` and `{{will-destroy}}` for registering elements:
 
 ```hbs
-<div {{did-render (action this.registerElement)}}></div>
+<div {{did-render this.registerElement}}></div>
 ```
 ```js
 class ExampleComponent extends Component {
+  @action
   registerElement(element) {
     this.element = element;
   }
@@ -1098,12 +1106,12 @@ class ExampleComponent extends Component {
 ### Add a `{{capture-element}}` modifier
 
 This alternative would go hand in hand with having render lifecycle hooks.
-Rather than having `{{did-render}}` and `{{will-destroy}}`, we could add a
-modifier that allows users to specify elements which they want to reference in
-their component class:
+Rather than relying solely on element modifiers for DOM manipulation, we could
+add a modifier that allows users to specify elements which they want to
+reference in their component class:
 
 ```hbs
-<div {{capture-element}}></div>
+<div {{capture-element this}}></div>
 ```
 ```js
 class ExampleComponent extends Component {
@@ -1113,16 +1121,8 @@ class ExampleComponent extends Component {
 }
 ```
 
-This may require an AST transform to pass the context of the component to the
-element modifier, or require users to explicitly pass `this`:
-
-```hbs
-<div {{capture-element this}}></div>
-```
-
-It would also have to take into account multiple usages, and variations of
-usages. For instance, how would using `capture-element` in an `if` or `each`
-work?
+This would have to take into account multiple usages, and variations of usages.
+For instance, how would using `capture-element` in an `if` or `each` work?
 
 ```hbs
 <div {{capture-element this}}>
@@ -1146,7 +1146,7 @@ class ExampleComponent extends Component {
 ```
 
 This would also mean a fair amount of additional code would need to be added for
-reacting to changes in the DOM compared to `{{did-render}}` and
+reacting to changes in the DOM compared to `{{did-insert}}` and
 `{{will-destroy}}`. For instance, if the case of conditionally captured element,
 additional validation code will have to exist in `didRender`:
 
@@ -1172,7 +1172,7 @@ added or removed.
 ### Add `element` or `bounds` on the component
 
 We could attempt to add DOM references back to the component, instead of adding
-the `{{did-render}}` and `{{will-destroy}}` modifiers. This would require us to
+the `{{did-insert}}` and `{{will-destroy}}` modifiers. This would require us to
 handle a number of edge-cases (0 element, multi element), and would open up some
 intimate details of the Glimmer VM to user code (`bounds` nodes). If in the
 future the VM wanted to change these details, it could be problematic.
@@ -1220,9 +1220,9 @@ enabling typed injections.
 |-----|--------|-----------|
 |[link][ep-did-update-attrs-1]|Setup component state based on incoming arguments|Tracked properties|
 |[link][ep-did-update-attrs-2]|Setup component state based on incoming arguments|Tracked properties|
-|[link][ep-did-update-attrs-3]|Element setup/update code based on incoming arguments|`{{did-render}}` with arguments|
-|[link][ep-did-update-attrs-4]|Element setup/update code based on incoming arguments|`{{did-render}}` with arguments|
-|[link][ep-did-update-attrs-5]|Element setup/update code based on incoming arguments|`{{did-render}}` with arguments|
+|[link][ep-did-update-attrs-3]|Element setup/update code based on incoming arguments|`{{did-insert}}` and `{{did-update}}`|
+|[link][ep-did-update-attrs-4]|Element setup/update code based on incoming arguments|`{{did-insert}}` and `{{did-update}}`|
+|[link][ep-did-update-attrs-5]|Element setup/update code based on incoming arguments|`{{did-insert}}` and `{{did-update}}`|
 
 [ep-did-update-attrs-1]: https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-autocomplete-trigger.js#L37
 [ep-did-update-attrs-2]: https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-grid-tile.js#L41
@@ -1237,10 +1237,10 @@ enabling typed injections.
 |[link][ep-did-receive-attrs-1]|Setup component state based on incoming arguments|Tracked properties and `constructor`|
 |[link][ep-did-receive-attrs-2]|Setup component state based on incoming arguments|Tracked properties and `constructor`|
 |[link][ep-did-receive-attrs-3]|Setup component state based on incoming arguments, validate incoming arguments|Tracked properties and `constructor`|
-|[link][ep-did-receive-attrs-4]|Animate based on incoming arguments|`{{did-render}}` with arguments|
+|[link][ep-did-receive-attrs-4]|Animate based on incoming arguments|`{{did-insert}}` and `{{did-update}}`|
 |[link][ep-did-receive-attrs-5]|Trigger validations|Tracked properties and `constructor`|
-|[link][ep-did-receive-attrs-6]|Element update code and sending an action|Tracked properties and `{{did-render}}` with args|
-|[link][ep-did-receive-attrs-7]|Updating logic and element update code|Tracked properties and `{{did-render}}` with args|
+|[link][ep-did-receive-attrs-6]|Element update code and sending an action|Tracked properties and `{{did-insert}}` with args|
+|[link][ep-did-receive-attrs-7]|Updating logic and element update code|Tracked properties and `{{did-insert}}` with args|
 
 [ep-did-receive-attrs-1]: https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-autocomplete.js#L93
 [ep-did-receive-attrs-2]: https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-card-actions.js#L17
@@ -1254,7 +1254,7 @@ enabling typed injections.
 
 |Usage|Use Case|Converts To|
 |-----|--------|-----------|
-|[link][ep-will-insert-element-1]|Container setup code on initialization|`{{did-render}}`|
+|[link][ep-will-insert-element-1]|Container setup code on initialization|`{{did-insert}}`|
 
 [ep-will-insert-element-1]: https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-toast.js#L91
 
@@ -1262,27 +1262,27 @@ enabling typed injections.
 
 |Usage|Use Case|Converts To|
 |-----|--------|-----------|
-|[link][ep-did-insert-element-1]|Element setup code on initialization|`{{did-render}}`|
-|[link][ep-did-insert-element-2]|Element setup code on initialization|`{{did-render}}`|
-|[link][ep-did-insert-element-3]|Element setup code on initialization|`{{did-render}}`|
-|[link][ep-did-insert-element-4]|Element setup code on initialization|`{{did-render}}`|
-|[link][ep-did-insert-element-5]|Set focus after initial render|`{{did-render}}`|
-|[link][ep-did-insert-element-6]|Setup animation based on arguments|`{{did-render}}` with arguments|
-|[link][ep-did-insert-element-7]|Set focus after initial render|`{{did-render}}`|
-|[link][ep-did-insert-element-8]|Element setup code on initialization|`{{did-render}}`|
-|[link][ep-did-insert-element-9]|Element setup code on initialization (partially based on args)|`{{did-render}}` and `{{did-render}}` with args|
-|[link][ep-did-insert-element-10]|Element setup code on initialization|`{{did-render}}` with args|
-|[link][ep-did-insert-element-11]|Element setup code on initialization|`{{did-render}}` with args|
-|[link][ep-did-insert-element-12]|Measure element on initialization|`{{did-render}}`|
-|[link][ep-did-insert-element-13]|Element setup code on initialization|`{{did-render}}` with args|
-|[link][ep-did-insert-element-14]|Element setup code on initialization|`{{did-render}}` with args|
-|[link][ep-did-insert-element-15]|Element setup code on initialization|`{{did-render}}`|
-|[link][ep-did-insert-element-16]|Element setup code on initialization|`{{did-render}}`|
-|[link][ep-did-insert-element-17]|Element setup code on initialization|`{{did-render}}`|
-|[link][ep-did-insert-element-18]|Element setup code on initialization|`{{did-render}}`|
-|[link][ep-did-insert-element-19]|Measure element on initialization|`{{did-render}}`|
-|[link][ep-did-insert-element-20]|Element setup code on initialization|`{{did-render}}`|
-|[link][ep-did-insert-element-21]|Element animation on setup|`{{did-render}}`|
+|[link][ep-did-insert-element-1]|Element setup code on initialization|`{{did-insert}}`|
+|[link][ep-did-insert-element-2]|Element setup code on initialization|`{{did-insert}}`|
+|[link][ep-did-insert-element-3]|Element setup code on initialization|`{{did-insert}}`|
+|[link][ep-did-insert-element-4]|Element setup code on initialization|`{{did-insert}}`|
+|[link][ep-did-insert-element-5]|Set focus after initial render|`{{did-insert}}`|
+|[link][ep-did-insert-element-6]|Setup animation based on arguments|`{{did-insert}}` and `{{did-update}}`|
+|[link][ep-did-insert-element-7]|Set focus after initial render|`{{did-insert}}`|
+|[link][ep-did-insert-element-8]|Element setup code on initialization|`{{did-insert}}`|
+|[link][ep-did-insert-element-9]|Element setup code on initialization (partially based on args)|`{{did-insert}}` and `{{did-update}}`|
+|[link][ep-did-insert-element-10]|Element setup code on initialization|`{{did-insert}}` and `{{did-update}}`|
+|[link][ep-did-insert-element-11]|Element setup code on initialization|`{{did-insert}}` and `{{did-update}}`|
+|[link][ep-did-insert-element-12]|Measure element on initialization|`{{did-insert}}`|
+|[link][ep-did-insert-element-13]|Element setup code on initialization|`{{did-insert}}` and `{{did-update}}`|
+|[link][ep-did-insert-element-14]|Element setup code on initialization|`{{did-insert}}` and `{{did-update}}`|
+|[link][ep-did-insert-element-15]|Element setup code on initialization|`{{did-insert}}`|
+|[link][ep-did-insert-element-16]|Element setup code on initialization|`{{did-insert}}`|
+|[link][ep-did-insert-element-17]|Element setup code on initialization|`{{did-insert}}`|
+|[link][ep-did-insert-element-18]|Element setup code on initialization|`{{did-insert}}`|
+|[link][ep-did-insert-element-19]|Measure element on initialization|`{{did-insert}}`|
+|[link][ep-did-insert-element-20]|Element setup code on initialization|`{{did-insert}}`|
+|[link][ep-did-insert-element-21]|Element animation on setup|`{{did-insert}}`|
 
 [ep-did-insert-element-1]: https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-dialog-inner.js#L39
 [ep-did-insert-element-2]: https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-dialog.js#L64
@@ -1344,7 +1344,7 @@ enabling typed injections.
 
 |Usage|Use Case|Converts To|
 |-----|--------|-----------|
-|[link][ep-did-update-1]|Reapply styles based on changes to args|`{{did-render}}` with arguments|
+|[link][ep-did-update-1]|Reapply styles based on changes to args|`{{did-insert}}` and `{{did-update}}`|
 
 [ep-did-update-1]: https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-grid-list.js#L57
 
@@ -1352,12 +1352,12 @@ enabling typed injections.
 
 |Usage|Use Case|Converts To|
 |-----|--------|-----------|
-|[link][ep-did-render-1]|Resize component based on changes to args|`{{did-render}}` with arguments, or [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)|
-|[link][ep-did-render-2]|Animate component based on changes to arguments|`{{did-render}}` with arguments|
-|[link][ep-did-render-3]|Set `elementDidRender` boolean on instance|`{{did-render}}`|
-|[link][ep-did-render-4]|Measure component on render|`{{did-render}}` with arguments, or [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)|
-|[link][ep-did-render-5]|Resize component based on changes to size|`{{did-render}}` with args, or [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)|
-|[link][ep-did-render-6]|Measure element sizes based on changes to args|`{{did-render}}` with args|
+|[link][ep-did-render-1]|Resize component based on changes to args|`{{did-insert}}` and `{{did-update}}`, or [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)|
+|[link][ep-did-render-2]|Animate component based on changes to arguments|`{{did-insert}}` and `{{did-update}}`|
+|[link][ep-did-render-3]|Set `elementDidRender` boolean on instance|`{{did-insert}}`|
+|[link][ep-did-render-4]|Measure component on render|`{{did-insert}}` and `{{did-update}}`, or [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)|
+|[link][ep-did-render-5]|Resize component based on changes to size|`{{did-insert}}` with args, or [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)|
+|[link][ep-did-render-6]|Measure element sizes based on changes to args|`{{did-insert}}` with args|
 
 [ep-did-render-1]: https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-input.js#L97
 [ep-did-render-2]: https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-speed-dial-action-action.js#L34
@@ -1390,7 +1390,7 @@ enabling typed injections.
 
 |Usage|Use Case|Converts To|
 |-----|--------|-----------|
-|[link][egm-did-insert-element-1]|Register component with parent and initialize|`constructor` and parent component `{{did-render}}`|
+|[link][egm-did-insert-element-1]|Register component with parent and initialize|`constructor` and parent component `{{did-insert}}`|
 
 [egm-did-insert-element-1]: https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/components/g-map/map-component.js#L46
 
@@ -1434,11 +1434,11 @@ enabling typed injections.
 
 |Usage|Use Case|Converts To|
 |-----|--------|-----------|
-|[link][lf-did-insert-element-1]|Trigger animation|`{{did-render}}`|
-|[link][lf-did-insert-element-2]|Set did render|`{{did-render}}`|
-|[link][lf-did-insert-element-3]|Element setup code on insertion|`{{did-render}}`|
-|[link][lf-did-insert-element-4]|Element setup code on insertion|`{{did-render}}`|
-|[link][lf-did-insert-element-5]|Pause animations on insertion (continue later via action)|`{{did-render}}`|
+|[link][lf-did-insert-element-1]|Trigger animation|`{{did-insert}}`|
+|[link][lf-did-insert-element-2]|Set did render|`{{did-insert}}`|
+|[link][lf-did-insert-element-3]|Element setup code on insertion|`{{did-insert}}`|
+|[link][lf-did-insert-element-4]|Element setup code on insertion|`{{did-insert}}`|
+|[link][lf-did-insert-element-5]|Pause animations on insertion (continue later via action)|`{{did-insert}}`|
 
 [lf-did-insert-element-1]: https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-child.js#L12
 [lf-did-insert-element-2]: https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-container.js#L44
