@@ -509,9 +509,7 @@ interoperate with the most commonly used features of the classic model:
 - Classic classes
 - Computed properties
 - `get`/`set` and property notifications
-
-Tracked properties will _not_ interoperate with observers, which are strictly
-within the old paradigm.
+- Observers
 
 #### Classic Classes
 
@@ -710,6 +708,61 @@ The reverse, however, is not true - computed properties will be able to add
 tracked properties, and listen to dependencies explicitly. In some cases, this
 may be preferable, though tracked getter should be the conventional standard
 with the long term goal of removing all explicit dependencies.
+
+#### Observers
+
+While Ember's observer system has been minimized in recent years, it is still
+supported in Ember 3 and used occasionally throughout the ecosystem. Observers
+use a fundamentally different system for tracking changes than tracked
+properties, but this does not mean that it is impossible for the two systems to
+interoperate, and it theory it shouldn't require much effort to maintain such
+interoperation or regress performance in any meaningful way.
+
+As such, tracked properties will be made to interoperate with observers so that
+whenever a tracked property is set using _any_ valid syntax, observers watching
+that key will be fired:
+
+```js
+import { tracked } from '@glimmer/tracking';
+import { addObserver } from '@ember/object/observers';
+
+class Person {
+  constructor() {
+    addObserver('firstName', () => {
+      console.log('firstName changed!');
+    });
+  }
+
+  @tracked firstName;
+}
+```
+
+If in the implementation of this RFC it becomes apparent that there _are_ major
+caveats to supporting interop with observers, a followup RFC will be made to
+address those caveats and make a decision on whether or not to support observers
+with those additional constraints.
+
+### Does this mean I still have to use `get` and `set`?
+
+Yes. As mentioned above, interoperating with legacy code will require using
+`get` and `set` to be fully safe. However, even in greenfield applications which
+do not need to interoperate with legacy addons or code, there will still be use
+cases which are _not_ covered by tracked properties. These use cases are roughly
+the same as those that come with native [ES Getters][getters]:
+
+1. Objects that implement `unknownProperty` and `setUnknownProperty`
+2. [Ember proxies](https://emberjs.com/api/ember/release/classes/ObjectProxy),
+   which use `unknownProperty` and `setUnknownProperty`
+3. In general, cases where change tracking should be _dynamic_, where the keys
+   that are being tracked are _not_ known in advance and cannot be declared
+   using decorators.
+
+`get` and `set` will continue to work (as defined in this RFC) and will be
+necessary in many applications for the forseeable future. How long exactly is
+an [open question addressed below in the unresolved questions section](#unresolved-questions).
+
+[getters]: https://github.com/emberjs/rfcs/blob/master/text/0281-es5-getters.md#motivation
+
 
 ## How we teach this
 
@@ -939,7 +992,7 @@ exception to be thrown if a watched property is set without going through
 
 Unfortunately this strategy cannot be applied to values accessed by tracked
 getters. The only way we could detect such access would be with native
-[Proxies](proxy), but proxies are more focussed on security over flexibility
+[Proxies][proxy], but proxies are more focussed on security over flexibility
 and recent discussion shows that [they may break entirely when used with
 private fields](https://github.com/tc39/proposal-class-fields/issues/106). As
 such, it would not be ideal for us to use them in this way.
@@ -992,7 +1045,7 @@ not make sense to add it now.
 
 ### We could wait on private fields and Proxy developments
 
-Native [Proxies](proxy) represent a lot of possibilities for automatic change
+Native [Proxies][proxy] represent a lot of possibilities for automatic change
 tracking. Other frameworks such as Vue and Aurelia are looking into using
 recursive proxy structures to wrap objects and intercept access, which would
 allow them to track changes without _any_ decoration. We also considered using
@@ -1011,5 +1064,34 @@ was made](https://github.com/littledan/proposal-proxy-transparent) (though it
 has not advanced and does not seem like it will). We could wait to see what the
 future looks like here, and see if we can provide a more ergonomic tracked
 properties RFC in the future.
+
+## Unresolved questions
+
+### When can I stop using `get` and `set`?
+
+This is the biggest open question in this RFC, and with the direction that
+tracked properties set. How do we get rid of `get` and `set` for good, if that
+is the direction we want to go in?
+
+The full answer to that question is out of scope for tracked properties, but it
+would likely require at least two additional steps:
+
+1. The underlying system for tracking changes, including the ability to create
+   tags for fields and the ability to add to the current autotracking stack,
+   will need to be made public for advanced users who need dynamic change
+   tracking.
+
+2. First class support for [native proxies][proxy] within Ember.
+   `unknownProperty` and `setUnknownProperty` have no other analag in native
+   Javascript, and without support for native proxies there will likely be use
+   cases that cannot be supported in any other way.
+
+   As mentioned above, native proxies _will_ (potentially) have more limitations
+   than Ember proxies, but these limitations will most likely be possible to
+   work around for advanced users who need this functionality in the first
+   place. In other words, while they probably don't make sense as a basis for
+   _all_ change tracking in Ember, they will probably be invaluable for specific
+   use cases such as [Ember M3](https://www.npmjs.com/package/ember-m3) which
+   require very dynamic change tracking.
 
 [proxy]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
