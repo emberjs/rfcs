@@ -1,5 +1,5 @@
 - Start Date: 2018-10-20
-- RFC PR: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/408
 - Ember Issue: (leave this empty)
 
 # Decorators
