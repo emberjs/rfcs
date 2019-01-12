@@ -12,14 +12,38 @@ passed around as first-class values in templates.
 For example:
 
 ```hbs
-{{#let (helper "concat" "foo") as |foo|}}
-  {{#let (helper foo "bar") as |foo-bar|}}
-    {{foo-bar "baz"}}
+{{join "foo" "bar" "baz" seperator=" "}}
+
+{{!-- ...is functionally equivilant to... --}}
+
+{{#let (helper "join" seperator=" ") as |join|}}
+  {{#let (helper join "foo") as |foo|}}
+    {{#let (helper foo "bar") as |foo-bar|}}
+      {{foo-bar "baz"}}
+    {{/let}}
   {{/let}}
 {{/let}}
 ```
 
-This template will print "foobarbaz".
+```hbs
+<Submit {{on
+  click=(action "submit")
+  mouseenter=(action "highlight")
+  mouseleave=(action "unhighlight")
+}} />
+
+{{!-- ...is functionally equivilant to... --}}
+
+{{#let (modifier "on") as |on|}}
+  {{#let (modifier on click=(action "submit")) as |on-click|}}
+    {{#let (modifier on-click mouseenter=(action "highlight")) as |on-click-enter|}}
+      {{#let (modifier on-click-enter mouseleave=(action "unhighlight")) as |on-click-enter-leave|}}
+        <Submit {{on-click-enter-leave}} />
+      {{/let}}
+    {{/let}}
+  {{/let}}
+{{/let}}
+```
 
 ## Motivation
 
@@ -86,7 +110,15 @@ into a single object, but this is not required.)
 While this is indeed a pretty advanced feature, the users of `SuperForm` do not
 need to be aware of these implementation details in order to use the addon.
 This had proved to be a very useful and powerful feature and enabled a number
-of popular addons, such as **@kategengler send halp**.
+of popular addons, such as
+[ember-cli-addon-docs](https://ember-learn.github.io/ember-cli-addon-docs/),
+[ember-bootstrap](https://www.ember-bootstrap.com),
+[ember-table](https://opensource.addepar.com/ember-table/),
+[ember-paper](https://miguelcobain.github.io/ember-paper/),
+[ember-power-calendar](https://ember-power-calendar.com),
+[ember-accordion](http://khorus.github.io/ember-accordion/),
+[emberx-select](https://emberx-select.netlify.com/),
+[ember-light-table](https://offirgolan.github.io/ember-light-table/).
 
 The original RFC left an important question unanswered – [should this feature
 be available for helpers, too?](https://github.com/emberjs/rfcs/blob/master/text/0064-contextual-component-lookup.md#unresolved-questions)
@@ -137,27 +169,57 @@ This RFC introduces two new helpers named `helper` and `modifier`, which work
 similarly to the `component` helper:
 
 * When passed a string (e.g. `(helper "foo")`) as the first argument, it will
-  produce an opaque, internal "helper definition" object that can be passed
-  around and used to invoke the corresponding helper in Handlebars.
-  The `foo` helper in this case.
+  produce an opaque, internal "helper definition" or "modifier definition"
+  object that can be passed around and invoked elsewhere.
 
-* When passed an "helper definition" as the first argument, it will produce a
-  functionally equivalent "helper definition" object.
-
-* In either case, any additional positional and/or named arguments will be
-  stored ("curried") inside the "helper definition" object, such that, when
-  eventually invoked, these arguments will be passed along to the referenced
-  helper.
+* Any additional positional and/or named arguments will be stored ("curried")
+  inside the definition object, such that, when invoked, these arguments will
+  be passed along to the referenced helper or modifier.
 
 Some additional details:
 
-* The string will be used to resolve a helper with the same name. If the string
-  does not correspond to a valid helper, it will result in a runtime error.
+* When the first argument passed to the `helper` or `modifier` helper is
+  `null`, `undefined` or an empty string, it will produce a no-op definition
+  object. In the case of the `helper` helper, this will produce `undefined`
+  when invoked, regardless of the arguments that are passed to the invocation.
+  In the case of the `modifier` helper, it will not perform any operations on
+  the target element.
+
+* When the first argument passed to the `helper` or `modifier` helper is a
+  string, it will be used to resolve a helper or modifier (respectively) with
+  the same name. If the resolution failed, it will result in a runtime error.
   However, the timing of this lookup is unspecified. `(helper "not-a-helper")`
   may result in an immediate error, or it may happen when it is later passed
-  into the `helper` helper a second time, or when it is invoked. If it is never
-  invoked, the error may not be reported at all. This timing may change between
-  versions, and should not be relied upon.
+  into the `helper` helper a second time, or it may happen when it is invoked.
+  If it is never invoked, the error may not be reported at all. This timing may
+  change between releases and should not be relied upon.
+
+* Some built-in helpers or modifiers may not be resolvable with the `helper`
+  and `modifier` helpers. For example, `(helper "debugger")` and
+  `(helper "yield")` will not work, as they are considered _keywords_.
+
+* Similarly, contextual helpers cannot be named after keywords. For example,
+  `{{#let ... as |yield|}} {{yield}} {{/let}}` will not work. We propose to
+  turn these cases into syntax errors.
+
+* A contextual helper or modifier can be further "curried" by passing them back
+  into the `helper` or `modifier` helper again, as shown in the example in the
+  [summary](#Summary) section. This will produce a new definition object.
+
+* When the first argument passed to the `helper` or `modifier` helper is a
+  bound value, a new definition object will be produced whenever the value
+  changes. This will _invalidate_ all downstream invocations. If the previous
+  value is a [simple helper](https://emberjs.com/api/ember/3.7/functions/@ember%2Fcomponent%2Fhelper/helper),
+  this has no observable effect and Ember will simply invoke the new helper
+  value. If the previous value is a [class-based helper](https://emberjs.com/api/ember/3.7/classes/Helper),
+  or a modifier, the existing instance will be destroyed before the new value
+  is invoked. On the other hand, if only the curried arguments has changed, the
+  helper or modifier instances (if any) will remain.
+
+* An important implication of the teardown semantics is that it is possible for
+  a modifier to be destroyed while its target element lives on for much longer.
+  Therefore, it is important to actually teardown any event listeners and
+  cleanup any associated states in the `destroyModifier` hook.
 
 * Positional arguments are "curried" the same way as the `component` helper.
   This matches the behavior of `Function.prototype.bind`.
@@ -197,47 +259,218 @@ Some additional details:
   {{/let}}
   ```
 
-* When a "helper definition" is passed into JavaScipt, the resulting value is
-  left unspecified, which is why it is described as "opaque". In particular,
-  it is _not_ guarenteed that it will be an invokable JavaScript function. The
-  only guarentee provided is that, when passed back into Handlebars, it will be
-  functionally equivalent to the original "helper definition". Hanging onto a
-  "helper definition" object in JavaScript may result in unexpected memory
-  leaks, as these objects may "close over" arbitrary template states to allow
-  currying.
+* When a definition object is passed into JavaScipt (e.g. as an argument to a
+  JavaScript helper), the resulting value is unspecified (hence "opaque"). In
+  particular, for helpers, it is _not_ guarenteed that it will be an invokable
+  JavaScript function. The only guarentee provided is that, when passed back
+  into Handlebars it will be an invokable value. Hanging onto a definition
+  object in JavaScript may result in unexpected memory leaks, as these objects
+  may close over arbitrary template states.
 
 ### Invoking contextual helpers
 
-For the most part, invoking a contextual helper is no different from invoking
-any other helpers:
+Invoking a contextual helper is no different from invoking any other helpers:
 
 ```hbs
-{{#let (helper "concat" "foo" "bar") as |foo-bar|}}
+{{#let (helper "join" "foo" "bar" seperator=" ") as |foo-bar|}}
+
   {{!-- content position --}}
+
+  {{foo-bar}}
+
   {{foo-bar "baz"}}
 
+  {{foo-bar seperator=","}}
+
   {{!-- not necessary, but works --}}
+
+  {{helper foo-bar}}
+
   {{helper foo-bar "baz"}}
 
+  {{helper foo-bar seperator=","}}
+
   {{!-- attribute position --}}
+
+  <div class={{foo-bar}}>...</div>
+
   <div class={{foo-bar "baz"}}>...</div>
 
+  <div class={{foo-bar seperator=","}}>...</div>
+
+  {{!-- not necessary, but works --}}
+
+  <div class={{helper foo-bar}}>...</div>
+
+  <div class={{helper foo-bar "baz"}}>...</div>
+
+  <div class={{helper foo-bar seperator=","}}>...</div>
+
   {{!-- curly invocation, argument position --}}
-  {{MyComponent value=(foo-bar "baz")}}
+
+  {{my-component value=(foo-bar)}}
+
+  {{my-component value=(foo-bar "baz")}}
+
+  {{my-component value=(foo-bar seperator=",")}}
+
+  {{!-- these will pass the helper itself into the component, instead of invoking it now --}}
+
+  {{my-component helper=foo-bar}}
+
+  {{my-component helper=(helper foo-bar)}}
+
+  {{my-component helper=(helper foo-bar "baz")}}
+
+  {{my-component helper=(helper foo-bar seperator=",")}}
 
   {{!-- angle bracket invokation, argument position --}}
+
+  <MyComponent @value={{(foo-bar)}} />
+
   <MyComponent @value={{foo-bar "baz"}} />
 
-  {{!-- sub-expression positions --}}
-  {{yield (hash foo-bar=foo-bar)}}
+  <MyComponent @value={{foo-bar seperator=","}} />
 
-  {{#if (eq (foo-bar "baz") "foobarbaz")}}...{{/if}}
+  {{!-- these will pass the helper itself into the component, instead of invoking it now --}}
+
+  <MyComponent @helper={{foo-bar}} />
+
+  <MyComponent @helper={{helper foo-bar}} />
+
+  <MyComponent @helper={{helper foo-bar "baz"}} />
+
+  <MyComponent @value={{helper foo-bar seperator=","}} />
+
+  {{!-- sub-expression positions --}}
+
+  {{yield (foo-bar)}}
+
+  {{yield (foo-bar "baz")}}
+
+  {{yield (foo-bar seperator=",")}}
+
+  {{!-- these will yield the helper itself ("contextual helper"), instead of invoking it now --}}
+
+  {{yield foo-bar}}
+
+  {{yield (helper foo-bar)}}
+
+  {{yield (helper foo-bar "baz")}}
+
+  {{yield (helper foo-bar seperator=",")}}
+
+  {{!-- deeply nested sub-expression --}}
+
+  {{#if (eq (concat ">>> " (foo-bar "baz") " <<<") ">>> foo bar baz <<<")}}
+    This is true.
+  {{/if}}
 
   {{!-- runtime error: not a component --}}
   <foo-bar />
 
   {{!-- runtime error: not a modifier --}}
-  <div {{foo-bar "baz"}}>
+  <div {{foo-bar}}>
+{{/let}}
+```
+
+### Invoking contextual modifiers
+
+Invoking a contextual helper is no different from invoking any other modifiers:
+
+```hbs
+{{#let (modifier "on" click=(action "submit")) as |on-click|}}
+
+  {{!-- HTML elements --}}
+
+  <button {{on-click}}>Click Me!!</button>
+
+  <button {{on-click "extra" "args"}}>Click Me!!</button>
+
+  <button {{on-click mouseenter=(action "highlight") mouseleave=(action "unhighlight")}}>
+    Click Me!!
+  </button>
+
+  {{!-- not necessary, but works --}}
+
+  <button {{modifier on-click}}>Click Me!!</button>
+
+  <button {{modifier on-click "extra" "args"}}>Click Me!!</button>
+
+  <button {{modifier on-click mouseenter=(action "highlight") mouseleave=(action "unhighlight")}}>
+    Click Me!!
+  </button>
+
+  {{!-- components --}}
+
+  <MyComponent {{on-click}} />
+
+  <MyComponent {{on-click "extra" "args"}} />
+
+  <MyComponent {{on-click mouseenter=(action "highlight") mouseleave=(action "unhighlight")}} />
+
+  {{!-- not necessary, but works --}}
+
+  <MyComponent {{modifier on-click}} />
+
+  <MyComponent {{modifier on-click "extra" "args"}} />
+
+  <MyComponent {{modifier on-click mouseenter=(action "highlight") mouseleave=(action "unhighlight")}} />
+
+  {{!-- these will pass the modifier itself into the component, instead of invoking it now --}}
+
+  <MyComponent @modifier={{on-click}} />
+
+  <MyComponent @modifier={{modifier on-click}} />
+
+  <MyComponent @modifier={{modifier on-click "extra" "args"}} />
+
+  <MyComponent @modifier={{modifier on-click mouseenter=(action "highlight") mouseleave=(action "unhighlight")}} />
+
+  {{my-component modifier=on-click}}
+
+  {{my-component modifier=(modifier on-click)}}
+
+  {{my-component modifier=(modifier on-click "extra" "args")}}
+
+  {{my-component modifier=(modifier on-click mouseenter=(action "highlight") mouseleave=(action "unhighlight"))}}
+
+  {{!-- these will yield the modifier itself ("contextual modifier"), instead of invoking it now --}}
+
+  {{yield on-click}}
+
+  {{yield (modifier on-click)}}
+
+  {{yield (modifier on-click "extra" "args")}}
+
+  {{yield (modifier on-click mouseenter=(action "highlight") mouseleave=(action "unhighlight"))}}
+
+  {{!-- runtime error: cannot invoke a modifier as a helper --}}
+
+  {{yield (on-click)}}
+
+  {{yield (on-click "extra" "args")}}
+
+  {{yield (on-click mouseenter=(action "highlight") mouseleave=(action "unhighlight"))}}
+
+  {{!-- runtime error: cannot append a modifier --}}
+
+  {{on-click}}
+
+  {{on-click "extra" "args"}}
+
+  {{on-click mouseenter=(action "highlight") mouseleave=(action "unhighlight")}}
+
+  {{!-- runtime error: cannot set an attribute to a modifier --}}
+
+  <div class={{on-click}} />
+
+  <div class={{on-click "extra" "args"}} />
+
+  <div class={{on-click mouseenter=(action "highlight") mouseleave=(action "unhighlight")}} />
+
+  {{!-- runtime error: not a component --}}
+  <on-click />
 {{/let}}
 ```
 
