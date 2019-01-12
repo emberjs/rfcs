@@ -191,6 +191,29 @@ We will also test an early beta restructuring with beginner-level developers and
 
 This work will need to be done over many months/the next year, and will be done incrementally in the deployed guides. The plan prioritizes the refactors that will make Octane Guides writing easier. It will be communicated in the form of Quest issues, with help requested via the Ember Times, Discord, Discuss, etc.
 
+Community members will be asked to participate in PR review. A diversity of technical experience levels, English-language proficiency level, and perspectives will create a stronger output.
+
+The intial steps will aim for the quick wins and the urgent changes that aid in Octane documentation. 
+
+Here's what we could expect a minimal first pass to look like:
+
+- What is Ember?
+- Getting Started
+- Tutorial (already in progress of being split out)
+- Templates
+- Components
+- Routing (includes Routes, Router, and Controllers)
+- State management (aka computed properties)
+- Services
+- Ember Data (renamed from "Models")
+- Addons and dependencies
+- Testing
+- Configuration
+- Application Concerns
+- Ember Inspector
+
+The groupings like "Fundamentals" require architectural work on the guides app. They can be done in parallel depending on volunteer capacity and interest, or delayed until the end.
+
 ## Drawbacks
 
 This refactor is biased towards new user experience, so existing Ember users could experience the most drawbacks.
@@ -356,3 +379,7 @@ All three of the libraries above cover forms in their own dedicated section. The
 - What possible pain points does the community see?
 - Are there any areas missing from the Table of Contents?
 - What do people think of removing the “Ember Object Model” section?
+
+### One last note
+
+The Guides are one of those things where everyone has an opinion, and that's ok! However, as a reminder, please be kind and constructive in your comments. The Guides and the tools they cover are the work of many dedicated community members. They are authored and maintained through great volunteered and donated effort. Although we always know there is room for improvement, we are proud of where we came from and excited for where we're going next.
