@@ -19,7 +19,7 @@ export default class Person {
   @tracked firstName = 'Chad';
   @tracked lastName = 'Hietala';
 
-  @tracked get fullName() {
+  get fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
 }
@@ -46,12 +46,9 @@ features, this document uses the following language consistently:
 - A **computed property** is a property on an Ember object whose value is lazily
   produced by executing a function. That value is nearly always cached until one
   of computed property's dependencies changes.
-- A **tracked simple property** is a regular, non-getter property that has been
-  wrapped using the tracked decorator.
-- A **tracked getter** is a JavaScript getter that has been wrapped using the
-  tracked decorator
-- A **tracked property** refers to any property that has been instrumented with
-  `@tracked`, either a _tracked getter_ or a _tracked simple property_.
+- A **tracked property** refers to any class field that has been instrumented
+  with `@tracked`. Unlike computed properties, tracked properties are _never_
+  getters or setters.
 - The **classic programming model** refers to the traditional Ember programming
   model. It includes _classic classes_, _computed properties_, _event
   listeners_, _observers_, _property notifications_, and _classic components_,
@@ -194,7 +191,8 @@ complicated.
 
 Tracked properties have a feature called _autotrack_, where dependencies are
 automatically detected as they are used. This means that as long as all
-dependencies are marked as tracked, they will automatically be detected:
+properties that are dependencies are marked as tracked, they will automatically
+be detected:
 
 ```js
 import { tracked } from '@glimmer/tracking';
@@ -203,17 +201,18 @@ class Person {
   @tracked firstName = 'Tom';
   @tracked lastName = 'Dale';
 
-  @tracked
   get fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
 }
 ```
 
-This also allows us to opt out of tracking entirely, like if we know for
-instance that a given property is constant and will never change. In general,
-the idea is that _mutable_ properties should be marked as tracked, and
-_immutable_ properties should not.
+Note that getters and setters do _not_ need to be marked as tracked, only the
+properties that they access need to. This also allows us to opt out of tracking
+entirely, like if we know for instance that a given property is constant and
+will never change. In general, the idea is that _mutable_, _watchable_
+properties should be marked as tracked, and _immutable_ or _unwatched_
+properties should not be.
 
 ### Reducing Memory Consumption
 
@@ -280,8 +279,8 @@ strategy, the API for `@tracked` was updated to what is proposed here.
 
 ## Detailed Design
 
-This RFC proposes adding the `tracked` decorator function, used to mark
-properties and getters as tracked:
+This RFC proposes adding the `tracked` decorator function, used to mark class
+fields as tracked:
 
 ```ts
 const tracked: PropertyDecorator;
@@ -298,7 +297,6 @@ class Person {
   @tracked firstName = 'Tom';
   @tracked lastName = 'Dale';
 
-  @tracked
   get fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
@@ -344,10 +342,10 @@ person.age++;
 
 Tracked properties do not need to specify their dependencies. Under the hood,
 this works by utilizing an _autotrack stack_. This stack is a bit of global
-state which tracked getters can access. As tracked getters and properties are
-accessed, they push themselves onto the stack, and once they have finished
-running, the stack contains the full list of all the tracked properties that
-were accessed while it was running.
+state which tracked properties can access. As tracked properties are accessed,
+they push themselves onto the stack, and once they have finished running, the
+stack contains the full list of all the tracked properties that were accessed
+while it was running.
 
 In our first example, with the `Person` class, we can see this in action:
 
@@ -358,52 +356,36 @@ class Person {
   @tracked firstName = 'Tom';
   @tracked lastName = 'Dale';
 
-  @tracked
   get fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
 }
-
-let person = new Person();
 ```
 
-When we create a new instance of `Person`, `fullName` has no knowledge of
-`firstName` or `lastName`. If we set either of those values now, it won't know
-that anything has changed:
+When we create a new instance of `Person`, the tracking system has no knowledge
+of the connection between `fullName`, `firstName`, and `lastName`. Now, let's
+say we go to render this person's name in a component's template:
 
-```js
-// Dirties the `firstName` property, but because `fullName` has not been
-// accessed yet nothing happens to it.
-person.firstName = 'Rob';
+```hbs
+{{this.person.fullName}}
 ```
 
-This is ok though, because _nothing_ has accessed `fullName` yet. There is no
-state to invalidate anywhere else. Now, let's say we access `fullName`, and then
-update the field again:
+When Glimmer accesses the `fullName` property on person, it creates an
+_autotrack stack frame_. As we computed `fullName`, any values that are
+decorated with `@tracked` push themselves into this stack frame. Because getters
+and setters are pure functions, they will ultimately end up accessing some
+tracked properties - in this case, the `fullName` getter accesses the
+`firstName` and `lastName` properties, and they push themselves onto the stack
+frame.
 
-```js
-person.fullName; // 'Rob Dale'
+In this way, Glimmer will know about _all_ properties that were accessed when
+calculating any bound value in templates.
 
-person.lastName = 'Jackson';
-```
-
-Now `fullName` knows which tracked properties were accessed when it was run,
-and setting `lastName` has invalidated `fullName`.
-
-> **NOTE:** This does _not_ invalidate a cache like in computed properties. Even
-> if `firstName` and `lastName` were untracked, the tracked getter would still
-> return the correct value on subsequent accesses, because `@tracked` does _not_
-> cache values. The validation and invalidation is pure meta data that is only
-> accessible by the Glimmer VM.
->
+> **NOTE:** This does _not_ invalidate a cache like in computed properties.
 > Internally, Glimmer checks to see if a value has updated _before calling the
 > getter_. If it hasn't, then Glimmer does not rerender the related section of
-> the DOM. This is effectively an automatic `shouldComponentUpdate` (at least the most common usage) from React.
->
-> To prevent inconsistency, during development time, tracked properties will
-> keep a cache of their previous value to compare when they are activated and
-> ensure that it hasn't changed without invalidation. This will prevent improper
-> usage of tracked properties _outside_ of Glimmer's change tracking.
+> the DOM. This is effectively an automatic `shouldComponentUpdate` (at least
+> the most common usage) from React.
 
 ### Manual Invalidation
 
@@ -453,12 +435,10 @@ import Component, { tracked } from '@glimmer/tracking';
 export default class TimerComponent extends Component {
   @tracked timer = new Timer();
 
-  @tracked
   get currentSeconds() {
     return this.timer.seconds;
   }
 
-  @tracked
   get currentMinutes() {
     return this.timer.minutes;
   }
@@ -481,12 +461,10 @@ export default class TimerComponent extends Component {
     });
   }
 
-  @tracked
   get currentSeconds() {
     return this.timer.seconds;
   }
 
-  @tracked
   get currentMinutes() {
     return this.timer.minutes;
   }
@@ -575,7 +553,6 @@ directions:
 
     @alias('title') prefix;
 
-    @tracked
     get fullName() {
       return `${this.prefix} ${this.firstName} ${this.lastName}`;
     }
@@ -661,13 +638,15 @@ const Config = Service.extend({
 class SomeComponent extends Component {
   @service config;
 
-  @tracked
   get pollInterval() {
     let { shouldPoll, pollInterval } = this.config.polling;
 
     return shouldPoll ? pollInterval : -1;
   }
 }
+```
+```hbs
+{{this.pollInterval}}
 ```
 
 Let's walk through the flow here:
@@ -676,9 +655,9 @@ Let's walk through the flow here:
    the `Config` service (assuming this the first time it has ever been
    accessed). The service's init hook kicks off an async request to get the
    configuration from a remote URl.
-2. The tracked `pollInterval` property first accesses the service injection,
-   which is a computed property. The property is detected and added to the
-   tracked stack.
+2. The `pollInterval` property first accesses the service injection when
+   rendered, which is a computed property. The property is detected and added to
+   the tracked stack.
 3. We then access the plain, undecorated `polling` object. Because it is
    is not tracked and not a computed property, tracked does not know that it
    could update in the future.
@@ -694,7 +673,6 @@ properties.
 class SomeComponent extends Component {
   @service config;
 
-  @tracked
   get pollInterval() {
     let shouldPoll = get(this, 'config.polling.shouldPoll');
     let pollInterval = get(this, 'config.polling.pollInterval');
@@ -706,8 +684,9 @@ class SomeComponent extends Component {
 
 The reverse, however, is not true - computed properties will be able to add
 tracked properties, and listen to dependencies explicitly. In some cases, this
-may be preferable, though tracked getter should be the conventional standard
-with the long term goal of removing all explicit dependencies.
+may be preferable, though undecorated getters should be the conventional
+standard with the long term goal of removing all explicit dependencies and
+computed decorations.
 
 #### Observers
 
@@ -836,8 +815,8 @@ operation they need to do to update state is set the nearest tracked property.
 
 There are two cases that we need to consider when teaching interoperability:
 
-1. Tracked getters accessing non-tracked properties and computeds
-2. Computed getters accessing tracked properties
+1. Accessing non-tracked properties and computeds from an autotrack context
+2. Accessing tracked properties from a computed context
 
 In the first case, the general rule of thumb is to use `get` if you want to be
 100% safe. In cases where you are certain that the values you are accessing are
@@ -890,7 +869,6 @@ class Person {
   @tracked firstName;
   @tracked lastName;
 
-  @tracked
   get fullNameAsync() {
     return this.reloadUser().then(() => {
       return `${this.firstName} ${this.lastName}`;
@@ -916,7 +894,6 @@ One way you could address this is to ensure that any dependencies are consumed
 synchronously:
 
 ```js
-@tracked
 get fullNameAsync() {
   // Consume firstName and lastName so they are detected as dependencies.
   let { firstName, lastName } = this;
@@ -953,7 +930,6 @@ class Person {
   @tracked firstName;
   @tracked lastName;
 
-  @tracked
   get fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
