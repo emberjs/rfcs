@@ -188,23 +188,8 @@ Community buy-in is important to reduce perception of churn and encourage percep
 We will also test an early beta restructuring with beginner-level developers and developers who don’t know Ember. Although the rollout for the live site will take months, a rough cut, undeployed, could be completed in 1-2 weeks. It could serve as a North Star for the work to be done.
 
 ### Implementation plan
+
 This work will need to be done over many months/the next year, and will be done incrementally in the deployed guides. The plan prioritizes the refactors that will make Octane Guides writing easier. It will be communicated in the form of Quest issues, with help requested via the Ember Times, Discord, Discuss, etc.
-
-1. Settle on a Table of Contents layout*
-2. Make the refactors necessary for Components to come before Templates*
-3. Switch the order in the live Guides*
-4. Work Computed Properties into the Components section*
-5. Create an Upgrading section (this will house the Octane conversion guide)*
-6. Write What is Ember. This will be where we give a light intro into how the pieces fit together, and link to CLI guides resources on the file structure*
-7. Make the refactors necessary to add Controllers into the Routes explanations
-8. Group Controllers with Routes in the live Guides
-9. Make Services its own topic
-10. Rename “Glossary” to “JavaScript concepts” and move the JS Primer there
-11. Create Deploying section. Low on content, links to CLI Guides resources.
-12. Create Styles section. Low on content, links to CLI Guides resources.
-13. Rename Models to “Connecting to an API”
-
-*must be done before the first Octane edition release
 
 ## Drawbacks
 
