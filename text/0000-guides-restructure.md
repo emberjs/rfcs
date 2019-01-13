@@ -177,7 +177,11 @@ Notably missing is "Ember Object Model." This is on purpose. It will be pulled i
 
 ### Why doesn’t this RFC include rewriting content?
 
-Individual pages have already been refactored over the past two years by many contributors. Examples include the Ember Objects page, Controllers, using third party libraries, and explanations of data management. Many of the pain points that current Ember devs remember from their early days have been fixed. For example, it’s clear that Ember Data/JSONAPI aren’t mandatory, that you *can* use things like fetch, that Computed Properties need to be consumed for them to fire… we’re in a pretty good place! If we choose a good structure for the Table of Contents, it will make it much easier to write/rewrite individual sections.
+Individual pages have already been refactored over the past two years by many contributors. Examples include the Ember Objects page, Controllers, using third party libraries, and explanations of data management. Many of the pain points that current Ember devs remember from their early days have been fixed. For example, it’s clear that Ember Data/JSONAPI aren’t mandatory, that you *can* use things like fetch, that Computed Properties need to be consumed for them to fire… we’re in a pretty good place! Those improvements of individual topics may continue without the need for an RFC.
+
+If we choose a good structure for the Table of Contents, it will make it much easier to write/rewrite individual sections.
+
+It is also important to note here that that Ember does not have a foundation or funding arm, so although it would be great to have a dedicated writer tackle this from the ground up, we must choose an approach that would be realistic for a group of volunteers to achieve.
 
 ### Technical approach
 
@@ -386,6 +390,7 @@ All three of the libraries above cover forms in their own dedicated section. The
 - What possible pain points does the community see?
 - Are there any areas missing from the Table of Contents?
 - What do people think of removing the “Ember Object Model” section?
+- Are the goals of the Ember Data and Ember Inspector teams supported by this new layout?
 
 ### One last note
 
