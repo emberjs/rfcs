@@ -10,9 +10,9 @@ As our favorite framework has grown and changed a lot over the past few years, s
 
 ## Motivation
 
-The current structure and flow of the guides reflects the past, not the present experience for Ember developers. It’s time to fix that. With Octane coming down the line, and an influx of new Ember developers, it’s more important than ever to consider the overall learning experience.
+With Octane coming down the line, and an influx of fresh attention, it’s more important than ever to consider Ember's overall learning experience. It's time for a shift. The current structure and flow of the guides reflects the past, not the present experience for Ember. It’s time to fix that.
 
-At the time the Guides were originally written, things like object-oriented programming in JavaScript, components, routing, and SPAs in general were new ideas. If you look at our guides today, they start by teaching the “Ember Objects” programming concept, in a way that few beginners will use in their apps. However, this made sense at the time, because it would have been so unfamiliar to developers. Now, the learning hierarchy needs have shifted from “learn these new concepts” to “learn how the familiar pieces fit together so you can build quickly.”
+When the Guides were originally written, things like object-oriented programming in JavaScript, components, routing, and SPAs in general were new ideas. For example, they start by teaching the “Ember Objects” programming concept, necessary background information at the time. It would have been an unfamiliar pattern at the time. Now, the learning hierarchy needs have shifted from “learn these unique web development concepts” to “learn how familiar pieces fit together so you can build great apps quickly.”
 
 ## Detailed design
 
@@ -20,17 +20,18 @@ The focus of this RFC is not to write new content, but make better use of what i
 
 The overall learning strategy is to establish a common core of sequential knowledge, and then later topics can be read standalone, skipping around. What this means is that if beginners read through to routes, they could skip around the topics lower down the chain successfully.
 
-Finally, it is important to acknowlegde that the Guides are intended to represent the "Happy Path" of using Ember. It is not possible to have something that is a perfect fit for everyone's app needs, nor should it cover our entire API surface.
+Finally, it is important to acknowlegde that the Guides are intended to represent the "Happy Path" of using Ember. It is not possible to have something that is a perfect fit for everyone's app needs, nor should they cover our entire API surface.
 
 ### Process and preparation
 
 This Table of Contents plan was developed over the course of many months, meetings, and writing sessions. It includes input from many people in the community. Here are the sources of inspiration, information, and planning:
 
-- Chris Garrett's ([@pzuraq](https://github.com/pzuraq)) 2018 Roadmap Blog Post, [Ember as a Component-Service Framework](https://medium.com/@pzuraq/emberjs-2018-ember-as-a-component-service-framework-2e49492734f1), May 2018
-- My own Roadmap blog post reflections, [Be loud and be ready](https://gist.github.com/jenweber/a9fbea98478fc3841fb8b24f7dc961c8), May 2018
+- Chris Garrett's ([@pzuraq](https://github.com/pzuraq)) 2018 Roadmap Blog Post, [Ember as a Component-Service Framework](https://medium.com/@pzuraq/emberjs-2018-ember-as-a-component-service-framework-2e49492734f1)
+- My own Roadmap blog post reflections, [Be loud and be ready](https://gist.github.com/jenweber/a9fbea98478fc3841fb8b24f7dc961c8)
 - Extensive discussion in Ember Learning Team Meetings, which are held weekly and open to the public
 - The [2018 Roadmap RFC](https://github.com/emberjs/rfcs/blob/26c4d83fb66568e1087a05818fb39a307ebf8da8/text/0000-roadmap-2018.md) by [Tom Dale](https://github.com/tomdale)
 - The Octane Strike Team meetings and followup conversations
+- Hands-on writing of a mini guide for Octane
 - Ember.js Framework Core Team meetings
 - A [Twitter poll](https://twitter.com/jwwweber/status/1081352702083452928), "Name two things you think the guides should do well/better"
 - Discussion on Discord of the initial Table of Contents draft with some key contributors and content creators
@@ -42,9 +43,11 @@ This Table of Contents plan was developed over the course of many months, meetin
 - The successful restructure and rewrite of the [Ember CLI Guides](https://cli.emberjs.com) (a far more drastic project than this RFC aims to be)
 - Attempting to reorder the Guides in a branch, as an experiment
 
+We are confident that this is possible thanks to the incredible response and effort shared by the community for the CLI Guides work.
+
 ### Table of Contents
 
-This is the aspirational version. There will be many intermediate states between here and there, outlined later in this RFC.
+The following Table of Contents will be applied iteratively over the course of many months. The quick wins and urgent Octane refactors will be applied ASAP, and are described in the Implementation section of this RFC. Justification for the ordering is provided following the topics list.
 
 **Core Concepts**
 
@@ -82,9 +85,15 @@ In this section, we will cover why this order and grouping is being proposed.
 
 #### Groupings
 
-Groupings are added for the benefit of new learners. It breaks up the content visually and gives them a clue about which sections to pay the most attention to.
+Groupings are added for the benefit of new learners. They break up the content visually and gives them a clue about which sections to pay the most attention to.
 
-Just because something is included in "Leveling up" does not automatically make it an "advanced" topic. The main logic for the division between "Fundamentals" and "Leveling up" is the following test: Can someone ignore this section and still use Ember effectively? Can it be learned in any order if someone knows the basics? If so, it goes in "Leveling up." Another test is this: "Does someone need prior knowledge of another topic in order to understand this section? Which topic?" Topics that are important prior knowledge should generally go in "Fundamentals."
+Just because something is included in "Leveling up" does not automatically make it an "advanced" topic. The main logic for the division between "Fundamentals" and "Leveling up" are the following tests: Can someone ignore this section and still use Ember effectively? Can it be learned in any order if someone knows the basics? If so, it goes in "Leveling up." 
+
+As we look at each topic, we also ask: Does someone need prior knowledge of another topic in order to understand this section? Whatever those "prior knowledge" topics are, we add them as Fundamentals.
+
+#### Anatomy of an app
+
+The most common points of confusion for new devs have become things like “how does everything fit together? Why can't I call a sibling component's actions directly?” The faster we can get the “Mental Model” of Ember across, the better. The Super Rentals tutorial covers the bases well for using the CLI and adding basic interactions. Anecdotally, thanks to the Tutorial, it seems that the missing pieces in the guides are mostly architectural. "Anatomy of an app" is the main area of new content, where we attempt to give an overview of the topics a web developer has to care about, the parts of Ember that address them, and the file structure. Current Ember developers will reference this section while learning new features.
 
 #### Templates & Template helpers
 
@@ -160,40 +169,35 @@ The Ember Inspector team is requested to consider whether naming the section "De
 
 #### Unchanged topics
 
-Configuration, Testing, and Addons & Dependencies remain unchanged in their approach.
+Configuration, Testing, and Addons & Dependencies remain unchanged in their approach. There are plans underway to make the Tutorial an unversioned, separate resource. That is outside the scope of this RFC, however this Table of Contents assumes that work comes to completion.
 
 #### Removals
 
-Notably missing is Ember Object Model. This is on purpose. It will be pulled into other sections, in a “show, don’t tell” kind of approach. Also removed is "Application Concerns," which are separated into their appropriate alternate subtopics.
+Notably missing is "Ember Object Model." This is on purpose. It will be pulled into other sections, in a “show, don’t tell” kind of approach. Also removed is "Application Concerns," which are separated into their appropriate alternate subtopics.
 
 ### Why doesn’t this RFC include rewriting content?
+
 Individual pages have already been refactored over the past two years by many contributors. Examples include the Ember Objects page, Controllers, using third party libraries, and explanations of data management. Many of the pain points that current Ember devs remember from their early days have been fixed. For example, it’s clear that Ember Data/JSONAPI aren’t mandatory, that you *can* use things like fetch, that Computed Properties need to be consumed for them to fire… we’re in a pretty good place! If we choose a good structure for the Table of Contents, it will make it much easier to write/rewrite individual sections.
-
-### Improving the learning story
-
-Octane’s planned introduction of Angle Brackets, decorators, Glimmer components, and more mean that we need an easy way for past Ember devs to onboard. The Components and Templates API is the most heavily affected (for the better, but people will still need to study them).
-
-One of the most common points of confusion for new devs has become “how do the pieces fit together?” The Super Rentals tutorial covers the bases well for using the CLI and adding basic interactions. Anecdotally, thanks to the tutorial, it seems that the main remaining questions are mostly architectural. The faster we can get the “Mental Model” of Ember across, the better.
 
 ### Technical approach
 
 Thanks to Chris Manson’s work ([@real_ate aka @mansona](https://github.com/mansona)) on the Guides app architecture, we can move content around while preserving existing links! The Table of Contents specified in the `pages.yml` file of guides-source can have any paths, and is not 100% dependent on the physical file structure to create URLs. It is very important that we don’t break existing blog articles, community tutorials, Stack Overflow answers, etc, both for user experience and SEO reasons.
 
-All guides content is markdown. When we rearrange content, we’ll have to fix the links. However there are tests in place that check for bad links, so we can do this confidently.
+All guides content is markdown. When we rearrange content, we’ll have to change some links and add redirects. However there are tests in place that check for bad links, so we can do this confidently.
 
 ## How we teach this
 
-Community buy-in is important to reduce perception of churn and encourage perception of “leveling up” our resources. Significant efforts will be put towards informing the community of upcoming changes, and giving them the opportunity to participate.
+Community buy-in is important to reduce perception of churn and make “leveling up” our resources a team effort. Significant attention will be put towards informing the community of upcoming changes, and giving them the opportunity to participate.
 
-We will also test an early beta restructuring with beginner-level developers and developers who don’t know Ember. Although the rollout for the live site will take months, a rough cut, undeployed, could be completed in 1-2 weeks. It could serve as a North Star for the work to be done.
+We will also test major changes with beginner-level developers and developers who don’t know Ember. Although the rollout for the live site will take months, a rough cut, undeployed, could be completed in 1-2 weeks. It could serve as a North Star for the work to be done.
 
 ### Implementation plan
 
-This work will need to be done over many months/the next year, and will be done incrementally in the deployed guides. The plan prioritizes the refactors that will make Octane Guides writing easier. It will be communicated in the form of Quest issues, with help requested via the Ember Times, Discord, Discuss, etc.
+This work will need to be done incrementally over many months/the next year. It will be communicated in the form of Quest issues, with help requested via the Ember Times, Discord, Discuss, etc.
 
-Community members will be asked to participate in PR review. A diversity of technical experience levels, English-language proficiency level, and perspectives will create a stronger output.
+Community members will be asked to participate in PR reviews. A diversity of technical experience levels, language backgrounds, and use case perspectives will create a stronger output.
 
-The intial steps will aim for the quick wins and the urgent changes that aid in Octane documentation. 
+The intial steps will aim for the quick wins and the urgent changes that aid in Octane documentation.
 
 Here's what we could expect a minimal first pass to look like:
 
@@ -218,9 +222,9 @@ The groupings like "Fundamentals" require architectural work on the guides app. 
 
 This refactor is biased towards new user experience, so existing Ember users could experience the most drawbacks.
 
-1. The will need to discover where old content lives → mitigated by the site search, which is now stabilized
-2. Experienced developers who haven’t looked at the Guides for a long time will all reference it during the Octane upgrade, and may be surprised to find a new layout. It’s another “new thing to learn” → mitigated by consolidating most of the new things to learn into the Components section
-3. There will likely be some wrinkles to iron out with regards to content that should have been refactored during rearranging, but was overlooked → we know that the community will help identify these issues, thanks to the awesome response to the CLI docs refactor in 2018
+1. They will need to discover where old content lives. This is mitigated by the site search, which is now stabilized
+2. Experienced developers who haven’t looked at the Guides for a long time will all reference it during the Octane upgrade, and may be surprised to find a new layout. It’s another “new thing to learn.” This is mitigated by consolidating most of the new things to learn into the Components section
+3. There will likely be some wrinkles to iron out with regards to content that should have been refactored during rearranging, but was overlooked. We are confident that the community will help identify these issues.
 
 ## Alternatives
 
@@ -235,6 +239,7 @@ We choose the middle ground, because it requires the least new writing, and if w
 It’s also useful to study the learning flow of other front end libraries in order to determine possible alternatives. Let’s look at a few.
 
 ### React
+
 React is known for having low learning overhead for someone who is making their first app. With its popularity, we can guess that new users may expect to find similar topics easily accessible in our guides. This list is most useful for considering what should be in our Components section.
 
 1. Hello World
@@ -261,6 +266,7 @@ The Overview section of the React Tutorial also helps show what we may be missin
 Nowhere on our current site do we have a highly visible explanation of what Ember is, beyond snippets. In light of this glaring omission, we have added a “What is Ember” section to the Guides Table of Contents above. It is not meant to replace the ongoing “Why Ember” and marketing-focused descriptions that are underway.
 
 ### Vue
+
 As a fully-featured framework, Vue is an easier comparison for possible Table of Contents listings. Keep in mind that much of this type of content is present in our CLI docs instead, so this list will look longer than what we are aiming for.
 
 Introduction
@@ -320,6 +326,7 @@ Meet the Team
 One possible lesson here is that we could split up Components like Vue did with Component Basics and Components In-Depth. Their dedicated section on Computed Properties inspired the inclusion in our new Table of Contents.
 
 ### Angular
+
 Angular is also a full-featured framework that has a lot in common with Ember.
 
 FUNDAMENTALS
@@ -382,4 +389,4 @@ All three of the libraries above cover forms in their own dedicated section. The
 
 ### One last note
 
-The Guides are one of those things where everyone has an opinion, and that's ok! However, as a reminder, please be kind and constructive in your comments. The Guides and the tools they cover are the work of many dedicated community members. They are authored and maintained through great volunteered and donated effort. Although we always know there is room for improvement, we are proud of where we came from and excited for where we're going next.
+The Guides are one of those things where everyone has an opinion, and that's ok! However, as a reminder, please be kind and constructive in your comments. The Guides and the tools they cover are the work of many dedicated community members. They are authored and maintained through donated effort, both by unpaid individuals and companies who encourage their teams to contribute. Although we always know there is room for improvement, we are proud of where we came from and excited for where we're going next!
