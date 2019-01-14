@@ -225,14 +225,14 @@ Some additional details:
   This matches the behavior of `Function.prototype.bind`.
 
   ```hbs
-  {{#let (helper "concat") as |my-concat|}}
-    {{my-concat "foo" "bar" "baz"}} {{!-- "foobarbaz" --}}
+  {{#let (helper "join-words" separator=",") as |join|}}
+    {{join "foo" "bar" "baz"}} {{!-- "foo,bar,baz" --}}
 
-    {{#let (helper concat "foo") as |foo|}}
-      {{foo "bar" "baz"}} {{!-- "foobarbaz" --}}
+    {{#let (helper join "foo") as |foo|}}
+      {{foo "bar" "baz"}} {{!-- "foo,bar,baz" --}}
 
       {{#let (helper foo "bar") as |foo-bar|}}
-        {{foo-bar "baz"}} {{!-- "foobarbaz" --}}
+        {{foo-bar "baz"}} {{!-- "foo,bar,baz" --}}
       {{/let}}
 
     {{/let}}
@@ -244,14 +244,14 @@ Some additional details:
   This matches the "last-write-wins" behavior of `Object.assign`.
 
   ```hbs
-  {{#let (helper "hash") as |my-hash|}}
-    {{my-hash value="foo"}} {{!-- hash with value="foo" --}}
+  {{#let (helper "join-words" "foo" "bar" "baz") as |join|}}
+    {{join separator=","}} {{!-- foo,bar,baz --}}
 
-    {{#let (helper my-hash value="foo") as |foo|}}
-      {{foo value="bar"}} {{!-- hash with value="bar" --}}
+    {{#let (helper join separator=",") as |comma|}}
+      {{comma separator=" "}} {{!-- foo bar baz --}}
 
-      {{#let (helper foo value="bar") as |bar|}}
-        {{bar value="baz"}} {{!-- hash with value="baz" --}}
+      {{#let (helper comma separator=" ") as |space|}}
+        {{space separator="-"}} {{!-- foo-bar-baz --}}
       {{/let}}
 
     {{/let}}
