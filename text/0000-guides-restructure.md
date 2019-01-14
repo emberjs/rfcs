@@ -87,7 +87,7 @@ In this section, we will cover why this order and grouping is being proposed.
 
 Groupings are added for the benefit of new learners. They break up the content visually and gives them a clue about which sections to pay the most attention to.
 
-Just because something is included in "Leveling up" does not automatically make it an "advanced" topic. The main logic for the division between "Fundamentals" and "Leveling up" are the following tests: Can someone ignore this section and still use Ember effectively? Can it be learned in any order if someone knows the basics? If so, it goes in "Leveling up." 
+Just because something is included in "Leveling up" does not automatically make it an "advanced" topic. The main logic for the division between "Fundamentals" and "Leveling up" are the following tests: Can someone ignore this section and still use Ember effectively? Can it be learned in any order if someone knows the basics? If so, it goes in "Leveling up."
 
 As we look at each topic, we also ask: Does someone need prior knowledge of another topic in order to understand this section? Whatever those "prior knowledge" topics are, we add them as Fundamentals.
 
@@ -273,59 +273,59 @@ Nowhere on our current site do we have a highly visible explanation of what Embe
 
 As a fully-featured framework, Vue is an easier comparison for possible Table of Contents listings. Keep in mind that much of this type of content is present in our CLI docs instead, so this list will look longer than what we are aiming for.
 
-Introduction
-What is Vue.js?
-Getting Started
-Declarative Rendering
-Conditionals and Loops
-Handling User Input
-Composing with Components
-Relation to Custom Elements
-Ready for More?
-The Vue Instance
-Template Syntax
-Computed Properties and Watchers
-Class and Style Bindings
-Conditional Rendering
-List Rendering
-Event Handling
-Form Input Bindings
-Components Basics
-Components In-Depth
-Component Registration
-Props
-Custom Events
-Slots
-Dynamic & Async Components
-Handling Edge Cases
-Transitions & Animation
-Enter/Leave & List Transitions
-State Transitions
-Reusability & Composition
-Mixins
-Custom Directives
-Render Functions & JSX
-Plugins
-Filters
-Tooling
-Single File Components
-Unit Testing
-TypeScript Support
-Production Deployment
-Scaling Up
-Routing
-State Management
-Server-Side Rendering
-Internals
-Reactivity in Depth
-Migrating
-Migration from Vue 1.x
-Migration from Vue Router 0.7.x
-Migration from Vuex 0.6.x to 1.0
-Meta
-Comparison with Other Frameworks
-Join the Vue.js Community!
-Meet the Team
+- Introduction
+- What is Vue.js?
+- Getting Started
+- Declarative Rendering
+- Conditionals and Loops
+- Handling User Input
+- Composing with Components
+- Relation to Custom Elements
+- Ready for More?
+- The Vue Instance
+- Template Syntax
+- Computed Properties and Watchers
+- Class and Style Bindings
+- Conditional Rendering
+- List Rendering
+- Event Handling
+- Form Input Bindings
+- Components Basics
+- Components In-Depth
+- Component Registration
+- Props
+- Custom Events
+- Slots
+- Dynamic & Async Components
+- Handling Edge Cases
+- Transitions & Animation
+- Enter/Leave & List Transitions
+- State Transitions
+- Reusability & Composition
+- Mixins
+- Custom Directives
+- Render Functions & JSX
+- Plugins
+- Filters
+- Tooling
+- Single File Components
+- Unit Testing
+- TypeScript Support
+- Production Deployment
+- Scaling Up
+- Routing
+- State Management
+- Server-Side Rendering
+- Internals
+- Reactivity in Depth
+- Migrating
+- Migration from Vue 1.x
+- Migration from Vue Router 0.7.x
+- Migration from Vuex 0.6.x to 1.0
+- Meta
+- Comparison with Other Frameworks
+- Join the Vue.js Community!
+- Meet the Team
 
 One possible lesson here is that we could split up Components like Vue did with Component Basics and Components In-Depth. Their dedicated section on Computed Properties inspired the inclusion in our new Table of Contents.
 
