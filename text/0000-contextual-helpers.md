@@ -787,5 +787,11 @@ way you would expect, but only in some niche corner cases.
 
 ## Unresolved questions
 
-What are the list of built-in components, helpers and modifiers that should be
-accessible from the `component`, `helper` and `modifier` helpers, if any?
+* What are the list of built-in components, helpers and modifiers that should be
+  accessible from the `component`, `helper` and `modifier` helpers, if any?
+
+* If we make the `input` helper available as a global variable binding, it would
+  shadow the HTML tag with the same name (i.e. `<input ... />` would invoke the
+  Ember component, or perhaps a runtime error?), making it impossible to invoke
+  the HTML element. What do we do? Are there other names with the same problem,
+  and how do we avoid this in general, when all globals becomes a true value?
