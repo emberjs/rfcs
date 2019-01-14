@@ -725,6 +725,12 @@ For this group of users, we expect this feature to complement and complete the
 feature should feel right at home. We expect to be able to introduce this new
 feature at the point where we currently teach contextual components today.
 
+In the long term, the unifications proposed in this RFC should make these
+concepts easier to teach for this group of developers, as components, helpers
+and modifiers, whether global or contextual, will all behave uniformly. The
+value-based semantics also better matches JavaScript which they are probably
+already familiar with.
+
 The second side of this feature is the invoking side. We expect developers to
 enounter this mainly through addons that others have written. So long as there
 is adequate documentation from the addon authors, we expect that this group of
