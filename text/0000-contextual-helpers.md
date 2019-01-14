@@ -2,21 +2,21 @@
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
-# Contextual Helpers (a.k.a. "first-class helpers")
+# Contextual Helpers and Modifiers (a.k.a. "first-class helpers/modifiers")
 
 ## Summary
 
-We propose to extend the semantics of Handlebars helpers such that they can be
-passed around as first-class values in templates.
+We propose to extend the semantics of Handlebars helpers and modifiers such
+that they can be passed around as first-class values in templates.
 
 For example:
 
 ```hbs
-{{join "foo" "bar" "baz" seperator=" "}}
+{{join-words "foo" "bar" "baz" seperator=" "}}
 
 {{!-- ...is functionally equivilant to... --}}
 
-{{#let (helper "join" seperator=" ") as |join|}}
+{{#let (helper "join-words" seperator=",") as |join|}}
   {{#let (helper join "foo") as |foo|}}
     {{#let (helper foo "bar") as |foo-bar|}}
       {{foo-bar "baz"}}
@@ -141,7 +141,7 @@ helpers and modifiers, like so:
   {{!-- f.auto-resize is a contextual modifier --}}
   <f.Textarea @name="body" {{f.auto-resize maxHeight="500"}} />
 
-  <F.Submit />
+  <f.Submit />
 </SuperForm>
 ```
 
@@ -272,7 +272,7 @@ Some additional details:
 Invoking a contextual helper is no different from invoking any other helpers:
 
 ```hbs
-{{#let (helper "join" "foo" "bar" seperator=" ") as |foo-bar|}}
+{{#let (helper "join-words" "foo" "bar" seperator=" ") as |foo-bar|}}
 
   {{!-- content position --}}
 
@@ -474,228 +474,192 @@ Invoking a contextual helper is no different from invoking any other modifiers:
 {{/let}}
 ```
 
-### Ambigious invocations (invoking without arguments)
+### Relationship with globals
 
-When invoking a contextual helper without arguments, the invocation becomes
-ambigious. Consider this:
+Today, Ember apps rely heavily on the global namespace as the main mechanism of
+making components, helpers and modifiers available. Ideally, in a world where
+"everything is a value", the global and local namespace should behave the same
+way. Global components, helpers and modifiers should just be global variables
+that are implicitly defined around every templates in the app.
+
+In other words, it is as if every template has the following hidden "prelude"
+around its content:
 
 ```hbs
-{{#let (helper "concat" "foo" "bar") as |foo-bar|}}
-  {{!-- content position --}}
+{{!-- prelude --}}
+{{#let (component "input") as |input|}}
+  {{#let (helper "concat") as |concat|}}
+    {{#let (modifier "action") as |action|}}
+      {{!-- ...other global components, helpers and modifiers omitted... --}}
 
-  {{!-- does this render "foobar", or something like "[object Object]" ? --}}
-  {{foo-bar}}
+      {{!-- begin template content --}}
+      Your name:
+      {{concat this.firstName " " this.lastName}}
 
-  {{!-- attribute position --}}
+      Change it:
+      {{input value=this.firstName}}
+      {{input value=this.lastName}}
 
-  {{!-- class="foobar", or something like class="[object Object]" ? --}}
-  <div class={{foo-bar}}>...</div>
-
-  {{!-- curly invokcation, argument position --}}
-
-  {{!-- is this.value the string "foobar", or the "helper definition" ? --}}
-  {{MyComponent value=foo-bar}}
-
-  {{!-- angle bracket invokation, argument position --}}
-
-  {{!-- is @value the string "foobar", or the "helper definition" ? --}}
-  <MyComponent @value={{foo-bar}} />
-
-  {{!-- sub-expression positions --}}
-
-  {{!-- are we yielding the helper, or the string "foobar" ? --}}
-  {{yield (hash foo-bar=foo-bar)}}
-
-  {{!-- is this true or false? --}}
-  {{#if (eq foo-bar "foobar")}}...{{/if}}
+      <button {{action "submit"}}></button>
+      {{!-- end tempalte content ---}}
+    {{/let}}
+  {{/let}}
 {{/let}}
 ```
 
-In these cases, these are ambiguities between passing the _result_ of the helper
-(first invoking the helper, then pass along the result), or passing the helper
-itself (the "helper definition" object, so that it can be invoked or "curried"
-again on the receiving side).
+While this largely matches how things work today, there are a few notable
+differences where globals behave "unexpectedly" in this world.
 
-Since this RFC proposes to treat helpers and modifiers as first-class values,
-they should generally be passed through as _values_. This is particularly
-important in arguments and sub-expression positions. To invoke the helper, the
-explicit `(some-helper)` syntax can be used instead:
+First of all, it is not possible to reference a component, helper or modifier
+in templates without invoking them today:
 
 ```hbs
-{{#let (helper "concat" "foo" "bar") as |foo-bar|}}
-  {{!-- curly invokcation, argument position --}}
+{{!-- if `join-words` is a global helper, this works as expected --}}
+{{!-- this invokes the helper and yield the result --}}
 
-  {{!-- the component will receive the "helper definition" --}}
-  {{MyComponent value=foo-bar}}
+{{yield (join-words "foo" "bar" seperator=",")}}
+         ~~~~~~~~~~
 
-  {{!-- the component will receive the string "foobar" --}}
-  {{MyComponent value=(foo-bar)}}
+{{!-- however, in this position, Ember does not "see" the helper --}}
+{{!-- this falls back to looking up the `join-words` property on `this` --}}
 
-  {{!-- angle bracket invokation, argument position --}}
+{{yield join-words}}
+        ~~~~~~~~~~
 
-  {{!-- @value will be the "helper definition" --}}
-  <MyComponent @value={{foo-bar}} />
+{{!-- as opposed to a "true" variable/value binding... --}}
+{{!-- this yields the helper as a value, as expected --}}
 
-  {{!-- @value will be the string "foobar" --}}
-  <MyComponent @value={{(foo-bar)}} />
-
-  {{!-- sub-expression positions --}}
-
-  {{!-- yielding the helper --}}
-  {{yield (hash foo-bar=foo-bar)}}
-
-  {{!-- yielding the string "foobar" --}}
-  {{yield (hash foo-bar=(foo-bar))}}
-
-  {{!-- false --}}
-  {{#if (eq foo-bar "foobar")}}...{{/if}}
-
-  {{!-- true --}}
-  {{#if (eq (foo-bar) "foobar")}}...{{/if}}
+{{#let (helper "join-words") as |join-words|}}
+  {{yield join-words}}
+          ~~~~~~~~~~
 {{/let}}
 ```
 
-However, in the case of content and attribute positions, it would be overly
-pendantic to insist on the `{{(some-helper)}}` syntax, as the alternative of
-printing `[object Object]` to the DOM is almost certainly not what the
-developer had in mind. Therefore, we propose to allow contextual helpers to be
-auto-invoked in these positions.
+In the long term, we poropose to unify the semantics such that globals will
+behave exactly like local bindings (i.e. we should make this second case work).
+
+However, is not possible in the short term. This is due to the ambiguity
+between referencing a global variable and the
+[property lookup fallback](https://github.com/emberjs/rfcs/blob/master/text/0308-deprecate-property-lookup-fallback.md)
+feature. We propose we simply wait until the property lookup fallback is fully
+deprecated and removed, at which point we can reclaim the syntax.
+
+In the mean time, globals can be referenced explicitly using the `component`,
+`helper`, and `modifier` helpers.
+
+Another difference is how global helpers can be invoked without arguments in
+named arguments position today:
 
 ```hbs
-{{#let (helper "concat" "foo" "bar") as |foo-bar|}}
-  {{!-- content position --}}
+{{!-- if `pi` is a global helper that returns the value of the constant 𝛑 --}}
+{{!-- this invokes the helper and passes the value 3.1415... --}}
+<MyComponent @value={{pi}} />
+                      ~~
 
-  {{!-- "foobar" --}}
-  {{foo-bar}}
+{{!-- as opposed to a "true" variable/value binding... --}}
 
-  {{!-- not necessary, but works --}}
-  {{(foo-bar)}}
+{{#let (helper "pi") as |pi|}}
+  {{!-- this passes the helper into the component --}}
+  <MyComponent @value={{pi}} />
+                        ~~
 
-  {{!-- attribute position --}}
-
-  {{!-- class="foobar" --}}
-  <div class={{foo-bar}}>...</div>
-
-  {{!-- class="foobar" --}}
-  <div class={{(foo-bar)}}>...</div>
+  {{!-- this invokes the helper and passes the value 3.1415... --}}
+  <MyComponent @value={{(pi)}} />
+                         ~~
 {{/let}}
 ```
 
-It should also be noted that modifiers doe not have the same problem, since
-there are no other possible meaning in that position:
+Notably, this problem only exists in the named arguments position. For content
+and attribute positions, it would not makae sense to pass a helper "by value",
+so the ambiguity does not exist (so it always invokes). For sub-expression
+positions (which includes argument positions for curly invocations), the
+parentheses are already mandatory (otherwise it invokes the property fallback).
+
+We propose to deprecate invoking global helpers in named argument positions and
+require the parentheses instead. This will make room for unifying the global
+semantics in the future.
+
+It is also worth pointing out that, since helpers tend to be pure, helpers
+that take no arguments are exceedingly rare.
+
+Finally, the last challenge to the unification is it is entirely possible to
+have any combinations of components, helpers and modifiers all with the same
+name today. This works, as they currently live in different "namespaces", and
+each lookup is contextually scoped to their respective "namespace" depending on
+the position where it is invoked:
 
 ```hbs
-{{#let (modifier "foo-bar") as |foo-bar|}}
-  {{!-- modifier position: not ambigious --}}
-  <div {{foo-bar}} />
+{{!-- foo-bar, the modifier here --}}
+<div {{foo-bar}} />
+       ~~~~~~~
 
-  {{!-- not necessary, but works --}}
-  <div {{(foo-bar)}} />
+{{!-- foo-bar, the helper here --}}
+<div class={{foo-bar}} />
+             ~~~~~~~
 
-  {{!-- undefined behavior: runtime error or [object Object] ? --}}
-  {{foo-bar}}
-
-  {{!-- undefined behavior: runtime error or [object Object] ? --}}
-  <div class={{foo-bar}} />
+{{!-- foo-bar, the helper here --}}
+{{#let (foo-bar) as |result|}}
+        ~~~~~~~
 {{/let}}
+
+{{!-- foo-bar, the component here --}}
+{{#foo-bar}}...{{/foo-bar}}
+   ~~~~~~~        ~~~~~~~
+
+{{!-- prefers foo-bar, the component here --}}
+{{!-- if not found, then foo-bar, the helper --}}
+{{foo-bar}}
+  ~~~~~~~
 ```
 
-### Deprecation
+Since this could get pretty confusing, most developers already avoid giving
+these unrelated the same names. However, it is certainly possible that they
+may happen by accident and go unnoticed (e.g. an addon introducing a global
+helper that "conflicts" with a component in the app).
 
-In today's Ember, "global helpers" (as opposed to "contextual helpers") do
-not always follow the rules laid out above. In particular, they do not behave
-the same way in arguments and subexpression positions:
+These kind of naming conflicts would not make sense in the value-based world.
+Imagine if this is how JavaScript works:
 
-```hbs
-{{#let (helper "concat") as |my-concat|}}
-  {{!-- curly invocation, argument position --}}
+```js
+class FooBar {}
 
-  {{!-- this.value is the helper --}}
-  {{MyComponent value=my-concat}}
+function FooBar() {}
 
-  {{!-- this.value is the undefined --}}
-  {{MyComponent value=concat}}
+const FooBar = 1;
 
-  {{!-- angle bracket invocation, argument position --}}
+class FooBarBaz extends FooBar {}
+//                      ~~~~~~ FooBar, the class here
 
-  {{!-- @value is the helper --}}
-  <MyComponent @value={{my-concat}} />
+console.log(FooBar());
+//          ~~~~~~ FooBar, the function here
 
-  {{!-- @value is an empty string (invoking concat with no arguments) --}}
-  <MyComponent @value={{concat}} />
+console.log(FooBar + 1);
+//          ~~~~~~ FooBar, the constant here
 
-  {{!-- sub-expression positions --}}
-
-  {{!-- yielding the helper --}}
-  {{yield (hash value=my-concat)}}
-
-  {{!-- yielding undefined --}}
-  {{yield (hash value=concat)}}
-
-  {{!-- false: it compares the helper with undefined --}}
-  {{#if (eq my-concat concat)}}...{{/if}}
-{{/let}}
+someObj.FooBar = FooBar;
+//               ~~~~~~ well, which one is this?
 ```
 
-This illustrates the problem: "global helpers" are not modelled as first-class
-values today, they exists in a different "namespace" distinct from the "local
-variables" namespace.
+Clearly, this would be unacceptable and is similar to the situation we find
+ourselves in here.
 
-While this is not so different from other programming languages like Java and
-Ruby which also do not treat functions (methods) as first-class values, it is
-distinctly different from JavaScript which does. For example, `alert("hello")`
-is the same as `let a = alert; a("hello");`, whereas in Java and Ruby (and
-today's Handlebars), the moral equivalent of the latter would fail with `alert`
-being an undefined reference.
+We propose to issue deprecation warnings whenever we detect these conflicts,
+both at build time and at invocation time, while maintaining the same lookup
+precedence for the time being. For example, when invoking a component in the
+content position, if we see that there is also a helper with the same name, it
+should result in a deprecation asking the developer to remain one or the other.
 
-The goal of this RFC is to iterate the Ember Handlebars programming model
-towards a world closer to JavaScript's, where global names exists in the same
-namespace as local names. We propose to deprecate all cases where global names
-("global helpers", "global modifiers" and "global components") can be observed
-to behave differently.
+Notably, there is such a conflict in Ember today where `action` is both a
+helper and a modifier. Instead of deprecating one of them, we propose to use an
+internal mechanism to produce a single special value such that it will be
+invokable as either a modifier or a helper context. This is different the
+"namespace" semantics in there is only one context-independent value in this
+special case, i.e. `(helper "action") === (modifier "action")`.
 
-Specifically:
-
-```hbs
-{{#let (helper "concat") as |my-concat|}}
-  {{!-- curly invocation, argument position --}}
-
-  {{!-- deprecation: use `this.concat` instead --}}
-  {{MyComponent value=concat}}
-
-  {{!-- angle bracket invocation, argument position --}}
-
-  {{!-- deprecation: use `{{(concat)}}` instead --}}
-  <MyComponent @value={{concat}} />
-
-  {{!-- sub-expression positions --}}
-
-  {{!-- deprecation: use `this.concat` instead --}}
-  {{yield (hash value=concat)}}
-
-  {{!-- deprecation: use `this.concat` instead --}}
-  {{#if (eq my-concat concat)}}...{{/if}}
-{{/let}}
-```
-
-Overall, we expect the effect of this deprecation to be quite minimal. For the
-cases that trigger a property lookup today, they are already covered in the
-[Property Lookup Fallback Deprecation RFC](https://github.com/emberjs/rfcs/blob/master/text/0308-deprecate-property-lookup-fallback.md),
-plus it would already be quite confusing to name an instance variable after a
-global helper. For the cases where the "global helper" is implicitly invoked
-without arguments, since helpers are supposed to be pure computations, a helper
-that doesn't accept any arguments has very limited utility thus should also be
-quite rare.
-
-In addition, another natural fallout of this plan is that it is not be possible
-to have helpers, components or modifiers with the same name, as they ultimately
-will share the same namesapce. These conflicts will need to be detected and
-deprecated as well.
-
-### Local helpers (and modifiers)
+### Local helpers and modifiers
 
 A nice fallout of this plan is that developers will be able to define helpers
-specific to a component locally (i.e. in the same JavaScript file):
+and modifiers specific to a component locally in the same JavaScript file:
 
 ```js
 // app/components/date-picker.js
@@ -714,12 +678,11 @@ export default Component.extend({
 
 ```hbs
 {{!-- app/templates/components/date-picker.hbs --}}
-
-{{input value=(this.format-date this.date)}}
+{{this.format-date this.date}}
 ```
 
 In additional to encapsulation and namespacing, this will also enable even more
-advanced stateful use cases:
+advanced use cases that uses the component's state:
 
 ```js
 // app/components/filtered-each.js
@@ -760,181 +723,69 @@ addon authors and advanced developers.
 For this group of users, we expect this feature to complement and complete the
 "contextual components" feature. Developers who are already familiar with that
 feature should feel right at home. We expect to be able to introduce this new
-feature at places where we currently teach contextual components.
+feature at the point where we currently teach contextual components today.
 
-The second side of this feature is the invoking side. We expect intermediate
-developers (and perhaps even beginners) to enounter this mainly through addons
-that other developers have written. So long as there is adequate documentation
-from the addon authors, we expect that this group of users can be immediately
-productive by simply treating these APIs as DSLs (similar to the Router DSL).
+The second side of this feature is the invoking side. We expect developers to
+enounter this mainly through addons that others have written. So long as there
+is adequate documentation from the addon authors, we expect that this group of
+users can be immediately productive by simply treating these APIs as DSLs,
+similar to the Router DSL.
 
 In other words, while this group of developer may not immediately understand
 how to _author_ these kind of APIs, or what is involved under-the-hood to make
 it work, the design goal is that it should feel straightforward to _consume_
 this style of API.
 
-### Rationalization
-
-We propose to rationalize the existing and proposed semantics into a coherent
-model at a deeper level. This knowledge is necessary for day-to-day use, but
-could be helpful for guiding the implementation as well as design of future
-feature proposals.
-
-On the high-level, the guiding principles are:
-
-1. Components, helpers and modifiers are first-and-foremost values that are
-   bound to Handlebars identifiers. When referring to these identifiers, they
-   should consistently behave as inert values unless they are _explicitly_
-   invoked.
-
-2. Without violating the first principle, for ergonomic reasons, in places
-   where it unambigiously would not make sense for them to behave as values,
-   they should be _implicitly_ invoked rather than raising an error or giving
-   nonsensical results.
-
-For helpers, the explicit invocation syntax is `(...)`, i.e. `(foo-bar)`,
-`(foo-bar "baz")`, `(foo-bar baz="bat")`, etc. This is already mandatory in all
-sub-expression posisitions today.
-
-It follows that the explicit syntax for invoking a helper and appending its
-result to the DOM would be:
-
-```hbs
-<ul>
-  <li>No arguments: {{(foo-bar)}}</li>
-  <li>Positional argument: {{(foo-bar "baz")}}</li>
-  <li>Named argument: {{(foo-bar baz="bat")}}</li>
-</ul>
-```
-
-The `{{(...)}}` form results in a syntax error today. For completeness, we
-propose to modify the grammar to allow this explicit form. However, it is
-neither required nor necessarily encouraged, as it adds a lot of visual noise
-to the template. Following the second guiding principle, the implicit helper
-invocation syntax will continue to work:
-
-```hbs
-<ul>
-  <li>No arguments: {{foo-bar}}</li>
-  <li>Positional argument: {{foo-bar "baz"}}</li>
-  <li>Named argument: {{foo-bar baz="bat"}}</li>
-</ul>
-```
-
-The last two forms (with arguments) are non-ambigious: they could not possibly
-mean anything else other than to invoke `foo-bar` with the given arguments.
-Therefore, the parentheses will be automatically inserted at
-parsing time in these cases.
-
-The first form (without arguments) is indeed ambigious – in fact it will be a
-violation of the first guiding principle if this is interpreted as anything
-other than referring to the value. To be precise, it has to mean: "append the
-value referred to by the `foo-bar` identifier (which happens to be a helper) as
-content into the DOM". Therefore, we propose to rationalize this case
-differently.
-
-Indeed, the helper is passed as a value here, as opposed to being invoked.
-However, at runtime, the rendering engine has to decide exactly how to append a
-particular value, which happens to be a helper here, as content into the DOM.
-
-There are several options here:
-1. Raising an error ("I don't know how to turn a helper into content").
-2. Using JavaScript's default `toString` (resulting in "[object Object]").
-3. Invoking the helper with no arguments and then appending the _result_ as content.
-
-We argue that the first option is too pedantic, the second option is not useful and
-therefore the third option is unambigiously the only reasonable option.
-This allows all three existing form to work while still staisfying the guiding principles.
-
-This works similarly in attribute positions too.
-
-Explicit invocation forms:
-
-```hbs
-<ul>
-  <li class={{(foo-bar)}}>No arguments</li>
-  <li class={{(foo-bar "baz")}}>Positional argument</li>
-  <li class={{(foo-bar baz="bat")}}>Named argument</li>
-</ul>
-```
-
-Implicit invocation forms:
-
-```hbs
-<ul>
-  <li class={{foo-bar}}>No arguments</li>
-  <li class={{foo-bar "baz"}}>Positional argument</li>
-  <li class={{foo-bar baz="bat"}}>Named argument</li>
-</ul>
-```
-
-Here, the first form relies on the runtime to invoke the helper before it is
-added to the DOM, and the last two rely on automatic parentheses insertion
-at parse time.
-
-For named arguments position, it is slightly different.
-
-Explicit invocation forms:
-
-```hbs
-<MyItem @name={{(foo-bar)}}>No arguments</MyItem>
-<MyItem @name={{(foo-bar "baz")}}>Positional argument</MyItem>
-<MyItem @name={{(foo-bar baz="bat")}}>Named argument</MyItem>
-```
-
-While the parentheses in the last two forms can be unambigiously omitted, the
-same is not true about the first form. It is conceivable that there is both the
-need to pass helpers as value and the results of their invocations. Therefore,
-when there are no arguments, the parentheses are mandatory for invocations to
-disambiguate between the two.
-
-For components, the explict invocation syntax is `<...>`, i.e. `<FooBar />`,
-`<FooBar @foo="bar" />`, `<FooBar>...</FooBar>`, etc.
-
-When a component is "invoked" in sub-expression form, we propose that it should
-produce a new curried component with the given arguments. That is, if `foo-bar`
-refers to a component value, then `(foo-bar)`, `(foo-bar "baz")` and
-`(foo-bar bat="baz")` have the same semantics as `(component foo-bar)`,
-`(component foo-bar "baz")` and `(component foo-bar bat="baz")`, respectively.
-
-This allows curly invocations to work:
-
-```hbs
-{{foo-bar}}
-{{foo-bar "baz"}}
-{{foo-bar baz="bat"}}
-```
-
-In the first case, it refers to the component by value. Since the value happens
-to be a component in this case, the rendering engine will invoke it at runtime.
-The second and the third case relies on automatic parentheses insertion – they
-desugars into `{{(foo-bar "baz")}}` and `{{(foo-bar baz="bat")}}`, respectively,
-which produces anonymous curried components, which are also invoked at runtime.
-
-If a component value, curried or not, is passed to an attribute position, it
-will result in a runtime error as there is no sensible behavior there.
-
-We propose to apply these same rules to modifiers as well – sub-expression
-invocations will curry the arguments. If values other than (possibly curried)
-modifiers are passed to a modifier position, it will result in a runtime error.
-Conversely, if a modifier value is passed to content or attribute position, it
-will also result in a runtime error.
-
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
+This RFC introduces another feature that developers may encounter and have to
+learn when consuming addons. However, on the whole, we think this will simplify
+things more than adding to the concepts – as it ultimiately try to unify the
+behavior of components, helpers and modifiers (and in the future, globals).
+This should make things feel more consistent and allow developers to apply
+their knowledge consistently across the board.
 
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+In the short term, this feature may amplify some of the mismatches and causes
+confusions where the legacy semantics does not perfectly match the new world we
+are building. This could be mitigated with helpful deprecation messages.
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
+As proposed, this RFC relies heavily on context-dependent syntatic positions to
+disambiguate between component, helper and modifier invocations. For example,
+while they may look similar, the following syntax does not produce the same
+result:
 
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
+```hbs
+{{foo-bar baz="bat"}}
+
+{{(foo-bar baz="bar")}}
+```
+
+If `foo-bar` is a helper, either would work. However, if `foo-bar` is a
+component, only the first form would work and the second form would result in
+a runtime error (trying to invoke a component as helper).
+
+A different design has been considered where the first form is just strictly a
+syntatic surgar for the latter and `(...)` invocation is one true primitive
+that ties everything together.
+
+Specifically, when "invoked" with `(...)`, a component or modifier simply
+produces a value, which is a definition object with the curried arguments, i.e.
+`(...)` is a syntatic surgar for currying using the `helper` and `modifier`
+helpers. The `{{...}}` syntax then simply "append" the curried definition
+object by first invoking it.
+
+This design turned out to add more complexities and confusions than the
+unification has brought to the table, and so that design was abandoned in favor
+of what is proposed here.
+
+Another alternative is to keep the global namespace separate from the local
+namespace, thus avoiding the need for most deprecations. In practice, we
+believe this would result in much more confusion when things do not behave the
+way you would expect, but only in some niche corner cases.
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+What are the list of built-in components, helpers and modifiers that should be
+accessible from the `component`, `helper` and `modifier` helpers, if any?
