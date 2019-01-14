@@ -12,11 +12,11 @@ that they can be passed around as first-class values in templates.
 For example:
 
 ```hbs
-{{join-words "foo" "bar" "baz" seperator=" "}}
+{{join-words "foo" "bar" "baz" separator=","}}
 
-{{!-- ...is functionally equivilant to... --}}
+{{!-- ...is functionally equivalent to... --}}
 
-{{#let (helper "join-words" seperator=",") as |join|}}
+{{#let (helper "join-words" separator=",") as |join|}}
   {{#let (helper join "foo") as |foo|}}
     {{#let (helper foo "bar") as |foo-bar|}}
       {{foo-bar "baz"}}
@@ -32,7 +32,7 @@ For example:
   mouseleave=(action "unhighlight")
 }} />
 
-{{!-- ...is functionally equivilant to... --}}
+{{!-- ...is functionally equivalent to... --}}
 
 {{#let (modifier "on") as |on|}}
   {{#let (modifier on click=(action "submit")) as |on-click|}}
@@ -272,7 +272,7 @@ Some additional details:
 Invoking a contextual helper is no different from invoking any other helpers:
 
 ```hbs
-{{#let (helper "join-words" "foo" "bar" seperator=" ") as |foo-bar|}}
+{{#let (helper "join-words" "foo" "bar" separator=" ") as |foo-bar|}}
 
   {{!-- content position --}}
 
@@ -280,7 +280,7 @@ Invoking a contextual helper is no different from invoking any other helpers:
 
   {{foo-bar "baz"}}
 
-  {{foo-bar seperator=","}}
+  {{foo-bar separator=","}}
 
   {{!-- not necessary, but works --}}
 
@@ -288,7 +288,7 @@ Invoking a contextual helper is no different from invoking any other helpers:
 
   {{helper foo-bar "baz"}}
 
-  {{helper foo-bar seperator=","}}
+  {{helper foo-bar separator=","}}
 
   {{!-- attribute position --}}
 
@@ -296,7 +296,7 @@ Invoking a contextual helper is no different from invoking any other helpers:
 
   <div class={{foo-bar "baz"}}>...</div>
 
-  <div class={{foo-bar seperator=","}}>...</div>
+  <div class={{foo-bar separator=","}}>...</div>
 
   {{!-- not necessary, but works --}}
 
@@ -304,7 +304,7 @@ Invoking a contextual helper is no different from invoking any other helpers:
 
   <div class={{helper foo-bar "baz"}}>...</div>
 
-  <div class={{helper foo-bar seperator=","}}>...</div>
+  <div class={{helper foo-bar separator=","}}>...</div>
 
   {{!-- curly invocation, argument position --}}
 
@@ -312,7 +312,7 @@ Invoking a contextual helper is no different from invoking any other helpers:
 
   {{my-component value=(foo-bar "baz")}}
 
-  {{my-component value=(foo-bar seperator=",")}}
+  {{my-component value=(foo-bar separator=",")}}
 
   {{!-- these will pass the helper itself into the component, instead of invoking it now --}}
 
@@ -322,7 +322,7 @@ Invoking a contextual helper is no different from invoking any other helpers:
 
   {{my-component helper=(helper foo-bar "baz")}}
 
-  {{my-component helper=(helper foo-bar seperator=",")}}
+  {{my-component helper=(helper foo-bar separator=",")}}
 
   {{!-- angle bracket invokation, argument position --}}
 
@@ -330,7 +330,7 @@ Invoking a contextual helper is no different from invoking any other helpers:
 
   <MyComponent @value={{foo-bar "baz"}} />
 
-  <MyComponent @value={{foo-bar seperator=","}} />
+  <MyComponent @value={{foo-bar separator=","}} />
 
   {{!-- these will pass the helper itself into the component, instead of invoking it now --}}
 
@@ -340,7 +340,7 @@ Invoking a contextual helper is no different from invoking any other helpers:
 
   <MyComponent @helper={{helper foo-bar "baz"}} />
 
-  <MyComponent @value={{helper foo-bar seperator=","}} />
+  <MyComponent @value={{helper foo-bar separator=","}} />
 
   {{!-- sub-expression positions --}}
 
@@ -348,7 +348,7 @@ Invoking a contextual helper is no different from invoking any other helpers:
 
   {{yield (foo-bar "baz")}}
 
-  {{yield (foo-bar seperator=",")}}
+  {{yield (foo-bar separator=",")}}
 
   {{!-- these will yield the helper itself ("contextual helper"), instead of invoking it now --}}
 
@@ -358,7 +358,7 @@ Invoking a contextual helper is no different from invoking any other helpers:
 
   {{yield (helper foo-bar "baz")}}
 
-  {{yield (helper foo-bar seperator=",")}}
+  {{yield (helper foo-bar separator=",")}}
 
   {{!-- deeply nested sub-expression --}}
 
@@ -517,7 +517,7 @@ in templates without invoking them today:
 {{!-- if `join-words` is a global helper, this works as expected --}}
 {{!-- this invokes the helper and yield the result --}}
 
-{{yield (join-words "foo" "bar" seperator=",")}}
+{{yield (join-words "foo" "bar" separator=",")}}
          ~~~~~~~~~~
 
 {{!-- however, in this position, Ember does not "see" the helper --}}
