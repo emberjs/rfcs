@@ -69,7 +69,7 @@ might have to expose an API like this:
 As you can see, this is far from ideal for several reasons. First, to avoid
 collision, the addon author had to prefix all the components. Second, the
 `@model` argument has to be passed to all the controls that needs it. Finally,
-in cases where the compoments need to communicate with each other (the form and
+in cases where the components need to communicate with each other (the form and
 the submit button in the example), they would have to expose some internal state
 (the `|f|` block param) that the user would have to manually thread through. Not
 only does this make the API very verbose, it also breaks encapsulation.
@@ -85,7 +85,7 @@ API like this:
 </SuperForm>
 ```
 
-Behind the scene, the `<SuperForm>` compoment's template would look something
+Behind the scene, the `<SuperForm>` component's template would look something
 like this:
 
 ```hbs
