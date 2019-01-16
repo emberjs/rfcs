@@ -757,6 +757,14 @@ are building. This could be mitigated with helpful deprecation messages.
 
 ## Alternatives
 
+[RFC #208](https://github.com/emberjs/rfcs/pull/208) has previously explored
+the same design space. It solves the same fundamental problems, but proposes
+two seperate helpers resolution/currying and invocation. This is largely due to
+limitations and ambiguities in Handlebars. This RFC attempts to remove the need
+of a separate invocation helper by resolving the ambiguities and integrating
+more tightly with Handlebars. If accepted, this RFC will supersede the design
+proposed in RFC #208.
+
 As proposed, this RFC relies heavily on context-dependent syntatic positions to
 disambiguate between component, helper and modifier invocations. For example,
 while they may look similar, the following syntax does not produce the same
