@@ -1,5 +1,5 @@
 - Start Date: 2018-12-17
-- RFC PR: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/432
 - Ember Issue: (leave this empty)
 
 # Contextual Helpers and Modifiers (a.k.a. "first-class helpers/modifiers")
