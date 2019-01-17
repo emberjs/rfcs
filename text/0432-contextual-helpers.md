@@ -570,7 +570,7 @@ named arguments position today:
 ```
 
 Notably, this problem only exists in the named arguments position. For content
-and attribute positions, it would not makae sense to pass a helper "by value",
+and attribute positions, it would not make sense to pass a helper "by value",
 so the ambiguity does not exist (so it always invokes). For sub-expression
 positions (which includes argument positions for curly invocations), the
 parentheses are already mandatory (otherwise it invokes the property fallback).
