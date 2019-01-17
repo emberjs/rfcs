@@ -172,9 +172,10 @@ similarly to the `component` helper:
   produce an opaque, internal "helper definition" or "modifier definition"
   object that can be passed around and invoked elsewhere.
 
-* Any additional positional and/or named arguments will be stored ("curried")
-  inside the definition object, such that, when invoked, these arguments will
-  be passed along to the referenced helper or modifier.
+* Any additional positional and/or named arguments (a.k.a. params and hash)
+  will be stored ("curried") inside the definition object, such that, when
+  invoked, these arguments will be passed along to the referenced helper or
+  modifier.
 
 Some additional details:
 
@@ -548,7 +549,7 @@ In the mean time, globals can be referenced explicitly using the `component`,
 `helper`, and `modifier` helpers.
 
 Another difference is how global helpers can be invoked without arguments in
-named arguments position today:
+named arguments position for angle bracket invocations:
 
 ```hbs
 {{!-- if `pi` is a global helper that returns the value of the constant 𝛑 --}}
@@ -569,15 +570,16 @@ named arguments position today:
 {{/let}}
 ```
 
-Notably, this problem only exists in the named arguments position. For content
-and attribute positions, it would not make sense to pass a helper "by value",
-so the ambiguity does not exist (so it always invokes). For sub-expression
-positions (which includes argument positions for curly invocations), the
-parentheses are already mandatory (otherwise it invokes the property fallback).
+Notably, this problem only exists in the named arguments position and only in
+angle bracket invocations. For content and attribute positions, it would not
+make sense to pass a helper "by value", so the ambiguity does not exist (so it
+always invokes). For sub-expression positions (which includes argument
+positions for curly invocations), the parentheses are already mandatory
+(otherwise it invokes the property fallback).
 
-We propose to deprecate invoking global helpers in named argument positions and
-require the parentheses instead. This will make room for unifying the global
-semantics in the future.
+We propose to deprecate auto-invoking global helpers with no arguments in named
+argument positions for angle bracket invocations and require the parentheses
+instead. This will make room for unifying the global semantics in the future.
 
 It is also worth pointing out that, since helpers tend to be pure, helpers
 that take no arguments are exceedingly rare.
@@ -713,12 +715,26 @@ export default Component.extend({
 
 ## How we teach this
 
-There are two sides to this feature.
+There are two sides to this feature – the consumption side and the authoring
+side.
 
-First, there is the `helper` and `modifier` helpers that produces the "curried
-values". As with the `component` helper and other "higher-order functions" in
-JavaScript, this is a somewhat advanced concept that is mainly targeted at
-addon authors and advanced developers.
+The consumption side refers to learning how the contextual helper and modifier
+values can be used (invoked). We expect developers to enounter this mainly
+through addons that others have written. So long as there is adequate
+documentation from the addon authors, we expect that this group of users can be
+immediately productive by simply treating these APIs as DSLs, similar to the
+Router DSL.
+
+In other words, while this group of developer may not immediately understand
+how to _author_ these kind of APIs, or what is involved under-the-hood to make
+it work, the design goal is that it should feel straightforward to _consume_
+this style of API.
+
+The authoring side refers to using the `helper` and `modifier` helpers, and
+more importantly, the advanced composition patterns that motivated their
+existence in the first place As with the `component` helper and other
+"higher-order functions" in JavaScript, this is a somewhat advanced topic that
+is mainly targeted at addon authors and advanced developers.
 
 For this group of users, we expect this feature to complement and complete the
 "contextual components" feature. Developers who are already familiar with that
@@ -731,16 +747,32 @@ and modifiers, whether global or contextual, will all behave uniformly. The
 value-based semantics also better matches JavaScript which they are probably
 already familiar with.
 
-The second side of this feature is the invoking side. We expect developers to
-enounter this mainly through addons that others have written. So long as there
-is adequate documentation from the addon authors, we expect that this group of
-users can be immediately productive by simply treating these APIs as DSLs,
-similar to the Router DSL.
+The official documentations should be updated to include this feature:
 
-In other words, while this group of developer may not immediately understand
-how to _author_ these kind of APIs, or what is involved under-the-hood to make
-it work, the design goal is that it should feel straightforward to _consume_
-this style of API.
+* The new `helper` and `modifier` helpers need be be added to the API docs.
+  We should consider cross-linking between the `helper`, `modifier` and
+  `component` helpers since they solve a similar problem.
+
+* The guide should be updated to teach this feature as well. We recommend
+  teaching the two sides of the feature separately, and prioritize the
+  consumption side, as that is what beginners are likely to encounter first.
+
+  For example, when teaching component invocations, there can be a section that
+  mentions:
+
+  > Sometimes, components may be yielded to you as a block param. These are
+  called contextual components, and they can be invoked just like any other
+  components you have encountered so far.
+  >
+  > ...examples...
+  >
+  > To learn how to do this yourself, skip ahead to the "Composition Patterns"
+  > section (link).
+
+* For the authoring side, we recommend teaching the helper, modifier and
+  component version of the feature in a single place (such as a "Composition
+  Patterns" section), cross-linked from their respective sections, rather than
+  repeating it three times.
 
 ## Drawbacks
 
