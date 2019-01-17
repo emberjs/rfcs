@@ -781,7 +781,7 @@ component, only the first form would work and the second form would result in
 a runtime error (trying to invoke a component as helper).
 
 A different design has been considered where the first form is just strictly a
-syntatic surgar for the latter and `(...)` invocation is one true primitive
+syntactic sugar for the latter and `(...)` invocation is one true primitive
 that ties everything together.
 
 Specifically, when "invoked" with `(...)`, a component or modifier simply
