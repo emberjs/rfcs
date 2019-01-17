@@ -535,7 +535,7 @@ in templates without invoking them today:
 {{/let}}
 ```
 
-In the long term, we poropose to unify the semantics such that globals will
+In the long term, we propose to unify the semantics such that globals will
 behave exactly like local bindings (i.e. we should make this second case work).
 
 However, is not possible in the short term. This is due to the ambiguity
