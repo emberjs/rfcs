@@ -652,7 +652,7 @@ should result in a deprecation asking the developer to remain one or the other.
 Notably, there is such a conflict in Ember today where `action` is both a
 helper and a modifier. Instead of deprecating one of them, we propose to use an
 internal mechanism to produce a single special value such that it will be
-invokable as either a modifier or a helper context. This is different the
+invokable as either a modifier or a helper context. This is different than
 "namespace" semantics in that there is only one context-independent value in this
 special case, i.e. `(helper "action") === (modifier "action")`.
 
