@@ -1032,6 +1032,20 @@ but the key points are:
 2. Providing _lots_ of examples for various use cases, especially for users
    transitioning from classic components.
 
+### Template-Only Components
+
+[Template-only components](https://github.com/emberjs/rfcs/blob/master/text/0278-template-only-components.md)
+are not strictly speaking related to the `GlimmerComponent` class proposed in
+this RFC. However, conceptually they will probably be much easier to teach in
+relation to Glimmer components, and will be an important part of Octane that we
+should be sure to cover in depth. Additionally, the name of the optional feature
+flag, `template-only-glimmer-components`, would make teaching the differences
+between Glimmer components and template-only components much more difficult and
+confusing.
+
+As such, when writing the documentation for Glimmer components, we should ensure
+that we cover template-only components in some detail as well.
+
 ## Drawbacks
 
 ### Multiple component APIs
