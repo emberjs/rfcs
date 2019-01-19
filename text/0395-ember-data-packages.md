@@ -1,5 +1,5 @@
 - Start Date: 2018-10-31
-- RFC PR: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/395
 - Ember Issue: (leave this empty)
 
 # Ember Data Packages
@@ -20,20 +20,20 @@ Users of `ember-data` have often noted their confusion by the existence of both 
 **Improve The TypeScript Experience**
 
 Presence of multiple import locations confuses `Typescript`'s autocomplete, symbol resolution, and type hinting.
- 
+
 **Simplify The Mental Model**
 
 Users of `ember-data` complain about the large API surface area; however, a large portion of this surface area is
  non-essential user-land APIs that the provided adapter and serializer implementations expose. This move to packages
  helps us simplify the mental model in three ways.
- 
+
  First: it gives us a natural way of dividing the documentation and learning story such that key concepts
    and APIs are more discoverable.
- 
+
  Second: it allows us specifically to isolate the API surface area explosion of the provided adapter and serializer
    implementations and make it clear that these are non-essential, replaceable APIs. E.G. it will help us to communicate
    that these adapters and serializers are _an implementation_, **not** _the required implementation_.
-   
+
  Third: it clarifies the roles of several concepts within `ember-data` that are often misused today. Specifically:
    the `embedded-records-mixin` should *_only_* be used with the `RESTAdapter`, and `transforms` are *_only_* a
    serialization/deserialization concern and not a way of defining custom `attrs` or `types`. Furthermore, `transforms`
@@ -45,7 +45,7 @@ Users of `ember-data` complain about the large API surface area; however, a larg
 Contributors to `ember-data` are faced with a large, complex project with poor code and test organization. This makes it
  unduly difficult to discover what tests exist, where to add tests, where associated code lives, and even what parts of
  the code base relate to the feature or bug that they are looking to address.
- 
+
  This move to packages will help us restructure the project and associated tests in a manner that is more discoverable.
 
 **Provide a Clear Subdivision of Packages**
@@ -68,7 +68,7 @@ With the landing of `RecordData` and the merging of the `modelFactoryFor` RFC, i
   pieces. For example, current thinking includes the possibility of `ember-data` evolving to provide an `ember-m3`-like
   experience for `json-api` as the default out-of-the-box experience, and a rethinking of how we manage the request/response
   lifecycle when fulfilling a request for data.
-  
+
  These experiences would live alongside the existing experience for a time prior to any deprecations of the current layer,
   and it is possible that sometimes the current experience would never be deprecated. Subdividing `ember-data` into these
   packages will enable us to provide a more seamless transition between these experiences without hoisting any package
@@ -311,13 +311,13 @@ The following modules would continue to live in a monorepo that (until further R
 ### Notes
 
 #### `@ember-data/model`
-  
+
   1) `InternalModel` and `RootState` are tightly coupled to the store and to our provided `Model`
     implementation. Over time we need to uncouple this, but given their coupling to `Model` and our
     desire to enable them to be eliminated from projects not using `Model`, these concepts belong in `@ember-data/model`, although they will not be given direct import paths.
 
   2) The following belong in `@ember-data/model` and not in `@ember-data/relationship-layer` with
-    relationships.  While this presents a mild risk of confusion due to the presence of the 
+    relationships.  While this presents a mild risk of confusion due to the presence of the
     `relationship-layer` package, the argument for their presence here is they are a ui-layer concern being coupled to the current `Model` presentation layer and not related to overall state management
      of relationships which could itself be used with alternative implementations.
 
@@ -328,7 +328,7 @@ The following modules would continue to live in a monorepo that (until further R
 
   * `PromiseManyArray`
   * `ManyArray`
-  
+
 #### `@ember-data/serializers`
 
   1) We should move automatic registration of transforms into a more traditional
@@ -339,7 +339,7 @@ The following modules would continue to live in a monorepo that (until further R
 
 This package seems thin but it's likely to hold quite a bit.
   Additional private things that would be moved here:
-  
+
   * everything in `-private/system/relationships/state`
   * `BelongsToReference` and `HasManyReference`
   * relationship logic from `store` / `internal-model` that need to be isolated and extracted
@@ -378,7 +378,7 @@ The package `ember-data` would continue to exist, much like `ember-source`. Init
 
 Users who have resolved the deprecations may choose to convert to consuming only the packages they still require directly,
  by dropping `ember-data` from their `package.json` and adding in the individual `@ember-data/` packages as necessary.
- 
+
 Ultimately, the default `ember-data` story in `ember-cli` would change to install select packages from `@ember-data` directly.
 
 ## How we teach this
@@ -405,7 +405,7 @@ Ember documentation and guides would be updated to reflect these new import path
 
   * _argument for:_ Don't expose churn to end users without a clear win, we aren't 100% sure what belongs in a vague
     "future ember-data", so wait until we are sure.
-  * _rebuttal:_ The churn is minimal and mostly automated (codemod). There are clear wins here for many users. We 
+  * _rebuttal:_ The churn is minimal and mostly automated (codemod). There are clear wins here for many users. We
     should not hold up progress now on an uncertain future. Dividing into packages now gives us more options for how to
     manage future evolution. Regardless of when we become certain of what belongs in "future ember-data", these packages
     would need to exist alongside at least for a time.
@@ -432,14 +432,14 @@ Ember documentation and guides would be updated to reflect these new import path
       * whether `ember-data` is required or optional
       * whether other data layers are seen as "bad practices" (they are not)
       * what packages are provided by `ember-data` vs `ember`
-    `ember-data`'s status as a team, in the guides and in release blog posts on `emberjs.com`, as well as presence in 
-     the default blueprint provided by `ember-cli` make clear it's status as an official offering. Using the `@ember` 
+    `ember-data`'s status as a team, in the guides and in release blog posts on `emberjs.com`, as well as presence in
+     the default blueprint provided by `ember-cli` make clear it's status as an official offering. Using the `@ember`
      namespace is not required for this.
 
     This argument also necessarily foments an untrue presupposition: that `ember-data` is the right choice for every app.
     While we strive to make this the case, it would be very difficult to claim this today, and may never be true,
     as every app presents unique concerns and needs.
-    
+
     Finally, using the `@ember` namespace would leave us in the unfortunate position of either always scoping all of our
     packages to `@ember/data/` or of fighting with `emberjs` for package names.
 
@@ -456,7 +456,7 @@ Ember documentation and guides would be updated to reflect these new import path
      * It is fairly common to use the `JSONAPIAdapter` with the `RESTSerializer` or
     with a custom serializer that extends the `RESTSerializer` and vice-verse.
      * Even when using a consistent spec (`json-api` or `rest`) it is common to need
-    a fully custom serializer. The division of needs is at least equally between 
+    a fully custom serializer. The division of needs is at least equally between
     adapter/serializer as it is between specs.
 
   3) Transforms are an implementation detail for all the provided serializers
@@ -468,6 +468,6 @@ Ember documentation and guides would be updated to reflect these new import path
      * Adapters: `"-rest"` `"-json-api"`
   5) Today, we use multiple serializers for a single type based on entry-point
      * `Model.serialize` (per-type) / `Model.toJSON` (`"-json"`) / `Adapter.serialize` (per-adapter)
-  
+
   That said, this organization is also one of the only-nods
   to future RFCs this RFC concedes. The existing provided implementations all follow roughly the same interface for their implementations, and that interface is something we strongly wish to change. For this reason, it seems advantageous to keep the existing implementations together such that the delineation between a new experience and this experience can be kept clear.
