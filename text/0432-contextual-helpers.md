@@ -91,15 +91,15 @@ like this:
 ```hbs
 <form ...>
   {{yield (hash
-    Input=(component "super-input" form={{this}} model={{this.model}})
-    Textarea=(component "super-textarea" form={{this}} model={{this.model}})
-    Submit=(component "super-submit" form={{this}})
+    Input=(component "super-input" form=this model=this.model)
+    Textarea=(component "super-textarea" form=this model=this.model)
+    Submit=(component "super-submit" form=this model=this.model)
   )}}
 </form>
 ```
 
 Here, the `component` helper looked up the components by name (first argument)
-and packaged up ("curried") any additional arguments (`form={{this}}`) into an
+and packaged up ("curried") any additional arguments (`form=this`) into an
 internal object (known as a "component definition" in the Glimmer VM). This
 object can then be passed around like any other values and invoked at a later
 time.
@@ -566,7 +566,7 @@ named arguments position for angle bracket invocations:
 
   {{!-- this invokes the helper and passes the value 3.1415... --}}
   <MyComponent @value={{(pi)}} />
-                         ~~
+                        ~~~~
 {{/let}}
 ```
 
