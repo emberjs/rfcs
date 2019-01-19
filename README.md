@@ -169,6 +169,11 @@ As it is with the wider community, the RFC process is the time for
 teams and team members to push back on, encourage, refine, or otherwise comment 
 on proposals.
 
+### Referencing RFCs
+
+- When mentioning RFCs that have been merged, link to the merged version, 
+not to the pull-request.
+
 ### Champion Responsibilities
 
 * achieving consensus from the team(s) to move the RFC through the stages of 
@@ -187,7 +192,7 @@ champion at any time.
 - [ ] Achieve consensus to move to "FCP to Merge" from relevant core teams
 - [ ] Comment in the RFC to address any outstanding issues and to proclaim the 
 start of the FCP period
- - [ ] Tweet from `@emberjs` about the FCP 
+- [ ] Tweet from `@emberjs` about the FCP 
 - [ ] Ensure the RFC has had the filename and header updated with the PR number 
 
 #### Move to FCP to Close
@@ -202,8 +207,10 @@ start of the FCP period
 - [ ] Achieve consensus to merge from relevant core teams
 - [ ] Ensure the RFC has had the filename and header updated with the PR number 
 - [ ] Create a tracking card for the RFC implementation at {projects}
-- [ ] Update the RFC with a link to the tracking
+- [ ] Update the RFC header with a link to the tracking
 - [ ] Merge
+- [ ] Update the RFC PR with a link to the merged RFC (The `Rendered` links often
+go stale when the branch or fork is deleted)
 - [ ] Ensure relevant teams plan out what is necessary to implement
 - [ ] Put relevant issues on the tracking
 
