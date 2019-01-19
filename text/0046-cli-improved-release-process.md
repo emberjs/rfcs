@@ -1,7 +1,8 @@
-# Improved Release Process
-
 - Start Date: 2016-03-26
-- RFC PR: #46
+- Relevant Team(s): Ember CLI
+- RFC PR: [#46](https://github.com/ember-cli/rfcs/pull/29)
+
+# Improved Release Process
  
 ## Summary & Motivation
 
@@ -52,4 +53,3 @@ In order to undertake this task, there are multiple workflows which must occur:
 - [Ember RFC #56 - Improved Release Cycle](https://github.com/emberjs/rfcs/blob/master/text/0056-improved-release-cycle.md)
 - [Announcing Ember's First LTS Release](http://emberjs.com/blog/2016/02/25/announcing-embers-first-lts.html)
 - [ember-cli Release Instructions](https://github.com/ember-cli/ember-cli/blob/master/RELEASE.md)
- 
