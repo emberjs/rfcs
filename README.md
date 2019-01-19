@@ -15,10 +15,10 @@ consistent and controlled path for new features to enter the framework.
 ## When you need to follow this process
 
 You need to follow this process if you intend to make "substantial"
-changes to Ember, Ember Data, Ember CLI, their documentation, or any other 
- projects under the purview of the [Ember core teams](https://emberjs.com/team/).
-What constitutes a "substantial" change is evolving based on community norms, 
- but may include the following:
+changes to Ember, Ember Data, Ember CLI, their documentation, or any other
+projects under the purview of the [Ember core teams](https://emberjs.com/team/).
+What constitutes a "substantial" change is evolving based on community norms,
+but may include the following:
 
    - A new feature that creates new API surface area, and would
      require a [feature flag] if introduced.
@@ -157,10 +157,14 @@ feel free to ask (e.g. by leaving a comment on the associated issue).
 
 ## For Core Team Members
 
-### Reviewing RFC's
+### Reviewing RFCs
 
-Each core team is responsible for reviewing open RFCs. If an RFC 
-requires work from their team, ensuring that the RFC reflects that. 
+Each core team is responsible for reviewing open RFCs. The team must ensure 
+that if an RFC is relevant to their team's responsibilities the team is 
+correctly specified in the 'Relevant Team(s)' section of the RFC front-matter.
+The team must also ensure that each RFC addresses any consequences, changes, or
+work required in the team's area of responsibility.
+
 As it is with the wider community, the RFC process is the time for 
 teams and team members to push back on, encourage, refine, or otherwise comment 
 on proposals.
