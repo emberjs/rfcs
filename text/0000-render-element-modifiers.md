@@ -215,7 +215,7 @@ scroll position of an element:
 ```js
 // helpers/scroll-to.js
 export default function scrollTo() {
-  return (element, scrollPosition) => element.scrollTop = scrollPosition;
+  return (element, [scrollPosition]) => element.scrollTop = scrollPosition;
 }
 ```
 ```hbs
