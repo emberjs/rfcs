@@ -57,13 +57,28 @@ to enable powerful abstraction and composition patterns. Unfortunately, the
 two RFCs did not explicitly describe how these features would interact with
 each other. This RFC proposes three admenments to clarify their relationship:
 
-1. It is legal to apply modifiers to angle bracket component invocations.
+1. It is legal to apply modifiers to angle bracket component invocations, i.e.
+
+   ```hbs
+   {{!-- this is legal --}}
+   <MyButton {{action this.onClick}}>Click Me!</MyButton>
+   ```
 
 2. Element modifiers can be applied to the underlying HTML element(s), along
    with any HTML attributes, using the splattributes syntax.
 
+   ```hbs
+   {{!-- this apply any modifiers in addition to HTML attributes --}}
+   <a ...attributes>{{yield}}</a>
+   ```
+
 3. In addition, the splattributes syntax can be used to forward HTML attributes
    and element modifiers to subsequent angle bracket component invocations.
+
+   ```hbs
+   {{!-- this is also legal, does the same as the above --}}
+   <InternalButton ...attributes>{{yield}}</InternalButton>
+   ```
 
 This allows the end-users to retain some control over DOM event handling and
 other HTML concerns (such as CSS and ARIA roles/accessibility concerns) when
@@ -73,8 +88,15 @@ Fundamentally, element modifiers simply enable more fine-grained customization
 of an HTML element, on top of what one could accomplish with HTML attributes.
 If it is possible to configure the `class` and `aria-role` attributes of a
 component's HTML element, it should also be possible to extract them into a
-custom element modifier. Therefore, we believe it is important and consistent
-to allow these interactions.
+custom element modifier.
+
+It is also adventageous to allow modifiers like `action` to work consistently,
+whether the invocation happens to be an HTML element or a component. This allow
+features like the [element helper](https://github.com/emberjs/rfcs/pull/389) to
+compose better.
+
+For these reasons, we believe it is important and consistent to allow these
+interactions.
 
 ## Detailed design
 
@@ -85,6 +107,27 @@ splattributes syntax simply yields back to that block. Similarly, when applying
 the splattributes to another angle bracket invocation, it simply fowards the
 block recurrsively. This feature is only currently gated by a precautionary
 "compile time error" which can be easily removed once this RFC is accepted.
+
+As laid out in the [modifier manager RFC](https://github.com/emberjs/rfcs/pull/373),
+the `createModifier` hook is called in the order they appear in the template.
+This means that given the following invocation:
+
+```hbs
+<MyComponent {{bar}} />
+```
+
+And the following template for `MyComponent`:
+
+```hbs
+<div {{foo}} ...attributes {{baz}} />
+```
+
+The creation order will be `{{foo}}`, `{{bar}}`, `{{baz}}`. However, the RFC
+only provide relative timing guarentees for `createModifier`, and notably _not_
+for `installModifier` and `updateModifier` where most of the interesting work
+happen (`createModifier` does not receive the element). Therefore, in practice,
+it is both not very useful to rely on this timing guarentee, nor is it a good
+idea.
 
 ## How we teach this
 
@@ -109,11 +152,54 @@ This should be taught in the guides:
    set of HTML attributes (e.g. classes that goes together with aria-roles)
    into named element modifiers (e.g. `{{act-as "button"}}`).
 
+With the changes proposed in this RFC, it becomes more important to emphasize
+that element modifier is a "sharp tool". As with lifecycle hooks in the classic
+`Ember.Component`, element modifier is an escape valve from the declarative,
+pure and functional world of Handlebars templates, into the messy world of
+imperative code, shared states and mutability. While they are very flexible,
+that flexibility comes at a cost. When used incorrectly, they can easily leak
+state, stomp over each other and causes problems in the app.
+
+Therefore, when authoring element modifiers, it is important to be a "good
+citizen", keeping in mind that the underlying HTML element is "shared" among
+any bound attributes in the template and other element modifiers. For example,
+it is probably a bad idea to prevent event propagation from within an element
+modifier, as it may break other modifiers that are listening to the same DOM
+event.
+
+This problem is not new, as it is already possible to have multiple element
+modifiers attached to the same HTML element. However, when intermediate
+components are involved, this could become very difficult to notice.
+
+Therefore, it is even more important to teach and encourage users to author
+element modifiers that are plays well with each other to allow the kind of
+composition proposed in this RFC to work at scale.
+
+On the flip side, installing element modifiers on extenal components (i.e.
+those that came from outside the app, such as those provided by addons) is also
+a somewhat fragile act as it pierces through an encapsulation boundries. Very
+generic modifiers like `{{action}}` and `{{on}}` are unlikely to cause problems,
+but more special-purpose ones may not be appropiate, unless they are sanctioned
+by the component authors.
+
+This is already a risk with splattributes in general, as there are plenty of
+context-specific HTML attributes. However, allowing element modifiers here is
+going to increase the risk as the operations they perform are hidden further
+away.
+
 ## Drawbacks
 
-As proposed, this API does not allow the element modifiers to "see" any
-intermediate components, only the final HTML element. If this turned out to be
-useful, we can consider introducing it as an optional capability in future
+The main drawback is the added risk of breaking encapsulation boundries of
+components. Specifically, because the element modifiers have access to the raw
+underlying HTML element, they may inadvertently depend upon details about the
+element (it is of a particular type, has certain attributes or properties set,
+etc), beyond what was intended by the component author as a public API. If this
+turned out to be a wide-spread problem, it can be mitigated by adding linting
+rules to the template linter.
+
+Separately, as proposed, this API does not allow the element modifiers to "see"
+any intermediate components, only the final HTML element. If this turned out to
+be useful, we can consider introducing it as an optional capability in future
 extensions.
 
 ## Alternatives
