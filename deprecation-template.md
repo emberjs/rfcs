@@ -1,9 +1,10 @@
 - Start Date: (fill me in with today's date, YYYY-MM-DD)
-- RFC PR: (leave this empty)
-- Ember Issue: (leave this empty)
+- Relevant Team(s): (fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies)
+- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- Tracking: (leave this empty)
 
 # <RFC title>
-  
+
 ## Summary
 
 > One paragraph explanation of the deprecation.
@@ -16,7 +17,7 @@ What is the replacement functionality?
 ## Transition Path
 
 > This is the bulk of the RFC. Explain the use-cases that deprecated functionality
-covers, and for each use-case, describe the transition path.  
+covers, and for each use-case, describe the transition path.
 Describe it in enough detail for someone who uses the deprecated functionality
 to understand, for someone to write the deprecation guide, and for someone
 familiar with the implementation to implement.
@@ -25,7 +26,7 @@ familiar with the implementation to implement.
 
 > Would the acceptance of this proposal mean the Ember guides must be
 re-organized or altered? Does it change how Ember is taught to new users
-at any level?  
+at any level?
 Does it mean we need to put effort into highlighting the replacement
 functionality more? What should we do about documentation, in the guides
 related to this feature?  
@@ -36,7 +37,7 @@ users?
 
 > Why should we *not* do this? Please consider the impact on teaching Ember,
 on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.  
+on the impact of the API churn on existing apps, etc.
 There are tradeoffs to choosing any path, please attempt to identify them here.
 
 ## Alternatives
