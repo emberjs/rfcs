@@ -172,7 +172,7 @@ modifiers attached to the same HTML element. However, when intermediate
 components are involved, this could become very difficult to notice.
 
 Therefore, it is even more important to teach and encourage users to author
-element modifiers that are plays well with each other to allow the kind of
+element modifiers that play well with each other to allow the kind of
 composition proposed in this RFC to work at scale.
 
 On the flip side, installing element modifiers on extenal components (i.e.
