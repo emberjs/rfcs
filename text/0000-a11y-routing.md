@@ -87,5 +87,5 @@ It's possible that enterprise Ember users have already implemented their own sol
 
 - [NVDA Developer Guide](https://www.nvaccess.org/files/nvda/documentation/developerGuide.html)
 - [Microsoft Active Accessibility (MSAA)](https://docs.microsoft.com/en-us/windows/desktop/winauto/microsoft-active-accessibility) MSAA is an Application Programming Interface (API) for user interface accessibility. MSAA was introduced as a platform add-on to Microsoft Windows 95 in 1997. MSAA is designed to help Assistive Technology (AT) products interact with standard and custom user interface (UI) elements of an application (or the operating system), as well as to access, identify, and manipulate an application's UI elements. The current and latest specification of MSAA is found in part of [Microsoft UI Automation](https://docs.microsoft.com/en-us/windows/desktop/WinAuto/uiauto-specandcommunitypromise) Community Promise Specification.
-- [Structured Negtotiation: A Winning Alternative to Lawsuits](https://www.lflegal.com/book/)
+- [Structured Negotiation: A Winning Alternative to Lawsuits](https://www.lflegal.com/book/)
 
