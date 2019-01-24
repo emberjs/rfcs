@@ -197,11 +197,16 @@ Some additional details:
 
 * Some built-in helpers or modifiers may not be resolvable with the `helper`
   and `modifier` helpers. For example, `(helper "debugger")` and
-  `(helper "yield")` will not work, as they are considered _keywords_.
+  `(helper "yield")` will not work, as they are considered _keywords_. For
+  implementation simplicity, we propose to forbid resolving built-in helpers,
+  components and modifiers this way across the board (i.e. a runtime error).
+  We acknowledge that there are good use cases for this feature such as
+  currying the `array` and `hash` helpers, and will consider enabling them in
+  the future on a case-by-case basis.
 
-* Similarly, contextual helpers cannot be named after keywords. For example,
-  `{{#let ... as |yield|}} {{yield}} {{/let}}` will not work. We propose to
-  turn these cases into syntax errors.
+* Similarly, contextual helpers cannot be named after certain keywords. For
+  example, `{{#let ... as |yield|}} {{yield}} {{/let}}` will not work. We
+  propose to turn these cases into syntax errors.
 
 * A contextual helper or modifier can be further "curried" by passing them back
   into the `helper` or `modifier` helper again, as shown in the example in the
@@ -658,6 +663,41 @@ invokable as either a modifier or a helper context. This is different than
 "namespace" semantics in that there is only one context-independent value in this
 special case, i.e. `(helper "action") === (modifier "action")`.
 
+We also acknowledge that, so long as there are _implicit_ globals, we may never
+be able to truly unify global bindings with local ones, as implicit global
+bindings have a high risk of conflicting with HTML elements. Consider the
+built-in `input` helper, or an in-app `style` helper. If these were implicitly
+turned into global identifiers, they would conflict with the HTML elements with
+the same name:
+
+```hbs
+<input type="text">
+ ~~~~~ now refers to the global `input` identifier?
+
+<style>...</style>
+ ~~~~~ now refers to the global `style` identifier?
+```
+
+While the problem exists for local bindings also, it was already addressed in
+[RFC #311](https://github.com/emberjs/rfcs/pull/311). With local bindings, this
+problem is fairly noticible and understandable since the conflict is introduced
+nearby. The solution is also fairly simple – just rename the local variable to
+avoid the conflict. With proper linting, this could be quite easily avoided
+altogether.
+
+With _implicit_ global bindings, this problem is might more difficult to spot
+and reason about. There is also no quick way out, other than to rename the
+global component, helper or modifer which could be difficult or not an option
+at all for addon authors trying to maintain compatibility. To truly resolve
+this conflict, we would have to eliminate implicit globals, which is out of
+scope for this RFC. This also wouldn't be a problem until all the proposed
+deprecations are implemented and removed, which would be quite some time.
+
+We _speculate_ that when all the of that is said and done, we would have an
+alternative resolution mechanism ("template imports") that does not have this
+problem. Alternatively, we could exclude the angle bracket invocation position
+from being able to "see" implicit global identifiers.
+
 ### Local helpers and modifiers
 
 A nice fallout of this plan is that developers will be able to define helpers
@@ -833,11 +873,4 @@ way you would expect, but only in some niche corner cases.
 
 ## Unresolved questions
 
-* What are the list of built-in components, helpers and modifiers that should be
-  accessible from the `component`, `helper` and `modifier` helpers, if any?
-
-* If we make the `input` helper available as a global variable binding, it would
-  shadow the HTML tag with the same name (i.e. `<input ... />` would invoke the
-  Ember component, or perhaps a runtime error?), making it impossible to invoke
-  the HTML element. What do we do? Are there other names with the same problem,
-  and how do we avoid this in general, when all globals becomes a true value?
+None
