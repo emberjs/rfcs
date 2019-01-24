@@ -685,7 +685,7 @@ nearby. The solution is also fairly simple – just rename the local variable to
 avoid the conflict. With proper linting, this could be quite easily avoided
 altogether.
 
-With _implicit_ global bindings, this problem is might more difficult to spot
+With _implicit_ global bindings, this problem is much more difficult to spot
 and reason about. There is also no quick way out, other than to rename the
 global component, helper or modifer which could be difficult or not an option
 at all for addon authors trying to maintain compatibility. To truly resolve
