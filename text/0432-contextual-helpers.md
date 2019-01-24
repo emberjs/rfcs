@@ -666,7 +666,7 @@ special case, i.e. `(helper "action") === (modifier "action")`.
 We also acknowledge that, so long as there are _implicit_ globals, we may never
 be able to truly unify global bindings with local ones, as implicit global
 bindings have a high risk of conflicting with HTML elements. Consider the
-built-in `input` helper, or an in-app `style` helper. If these were implicitly
+built-in `input` helper, or an in-app `main` helper. If these were implicitly
 turned into global identifiers, they would conflict with the HTML elements with
 the same name:
 
@@ -674,8 +674,8 @@ the same name:
 <input type="text">
  ~~~~~ now refers to the global `input` identifier?
 
-<style>...</style>
- ~~~~~ now refers to the global `style` identifier?
+<main>...</main>
+ ~~~~ now refers to the global `main` identifier?
 ```
 
 While the problem exists for local bindings also, it was already addressed in
