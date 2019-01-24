@@ -74,6 +74,9 @@ The following Table of Contents will be applied iteratively over the course of m
 - Deploying
 - Upgrading (will contain links to upgrade resources and syntax conversion guides)
 - Debugging (currently named Ember Inspector)
+- Reference 
+    - Accessibility
+    - Syntax conversion guide
 
 ### Topic naming
 
