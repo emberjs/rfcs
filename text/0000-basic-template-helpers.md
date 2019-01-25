@@ -1,5 +1,5 @@
 - Start Date: 2018-10-13
-- RFC PR: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/388
 - Ember Issue: (leave this empty)
 
 # Add new basic template helpers to Ember
