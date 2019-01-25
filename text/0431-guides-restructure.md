@@ -73,7 +73,7 @@ The following Table of Contents will be applied iteratively over the course of m
 - Configuration
 - Deploying
 - Upgrading (will contain links to upgrade resources and syntax conversion guides)
-- Debugging (currently named Ember Inspector)
+- Developer Tools (currently named Ember Inspector)
 - Reference 
     - Accessibility
     - Syntax conversion guide
