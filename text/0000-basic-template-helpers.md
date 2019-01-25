@@ -172,7 +172,6 @@ but it may be convenient.
 
 Other helpers that come to mind that _could_ also be worth adding:
 
-- `array` (there is an [RFC](https://github.com/emberjs/rfcs/pull/318) and its being implemented)
 - `add`, `subtract`, and other arithmetic operators.
 - `{{#await promise as |value|}}` to render a block conditionally if a promise resolves or fails.
 
