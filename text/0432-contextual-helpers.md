@@ -753,6 +753,18 @@ export default Component.extend({
 {{/each}}
 ```
 
+This feature would work with element modifiers as well.
+
+Ideally, this should also work with components. However, currently there are
+two pieces to a component – a template and a JavaScript class, either could be
+optional. This poses a challenge to invoking components this way – without
+going through the component helper, there is no easy way to import or package
+a component into a single value. This is a solvable problem, but to design a
+solution for that would be out of scope for this RFC. For the time being, the
+only way to get a handle of a "component defition value" would be through the
+component helper. Attempting to "invoke" just the component template or class
+this way will result in a runtime error.
+
 ## How we teach this
 
 There are two sides to this feature – the consumption side and the authoring
