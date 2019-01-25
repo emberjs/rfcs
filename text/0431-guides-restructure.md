@@ -102,7 +102,7 @@ The most common points of confusion for new devs have become things like “how 
 
 Templates come before components, since it is possible for someone to not know JavaScript/Handlebars and still contribute to Ember apps. For example, designers could effectively work in only templates, using plain HTML. To make Templates work as the opening topic, additions are necessary in the introduction.
 
-Template Syntax will cover Ember Handlebars basics and built-in features like `{{#each}}` and `{{#if}}`. It will take care to make it clear that Ember uses its own implementation of Handlebars.
+Template Syntax will cover Ember Handlebars basics and built-in features like `{{#each}}` and `{{#if}}`. It will take care to make it clear that Ember uses its own implementation of Handlebars. It will clearly differentiate between control structures (loops and conditionals), inline vs block styles, component invocation, and helpers.
 
 Template helpers are split out and moved to "Leveling Up" because developers do not need to use them to write basic Ember apps (they are not a prerequisite). This section includes writing custom Helpers and using built-in helpers like `get`, `let`, and `array`. Although helpers themselves are not considered a difficult topic, they are used most often when developers understand their app's architecture and the flow of data. Also, template helpers have more in common with JavaScript functions than concerns relating to layout and data flow.
 
