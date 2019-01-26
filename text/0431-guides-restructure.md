@@ -47,7 +47,7 @@ We are confident that this is possible thanks to the incredible response and eff
 
 ### Table of Contents
 
-The following Table of Contents will be applied iteratively over the course of many months. The quick wins and urgent Octane refactors will be applied ASAP, and are described in the Implementation section of this RFC. Justification for the ordering is provided following the topics list.
+The following Table of Contents will be applied iteratively over the course of many months. It is not considered a blocker for the release of the Octane edition. The quick wins and urgent Octane refactors will be applied ASAP, and are described in the Implementation section of this RFC. Justification for the ordering is provided following the topics list.
 
 **Core Concepts**
 
