@@ -1,6 +1,6 @@
 - Start Date: 2019-01-18
-- RFC PR: (leave this empty)
-- Ember Issue: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/435
+- Ember Issue: https://github.com/emberjs/ember.js/issues/17493
 
 # Forwarding Element Modifiers with "Splattributes"
 
