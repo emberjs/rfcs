@@ -57,7 +57,7 @@ The following Table of Contents will be applied iteratively over the course of m
 
 **Fundamentals**
 
-- Template syntax
+- Templates
 - Working with JavaScript
 - Components
 - Routing (includes Routes, Router, and Controllers)
@@ -66,7 +66,6 @@ The following Table of Contents will be applied iteratively over the course of m
 
 **Leveling up**
 
-- Template helpers
 - Data management (future new content that references separate Ember Data guides)
 - Addons and dependencies
 - Testing
