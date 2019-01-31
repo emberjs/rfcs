@@ -89,7 +89,7 @@ The following Table of Contents will be applied iteratively over the course of m
 - Testing
 - Configuration
 - Deploying
-- Upgrading (will contain links to upgrade resources and syntax conversion guides)
+- Upgrading (will contain links to upgrade resources, Editions, Deprecations)
 - Developer Tools (currently named Ember Inspector)
 - Reference 
     - Accessibility
