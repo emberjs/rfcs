@@ -61,6 +61,8 @@ We propose that the Guides should focus on the following audience - newcomers wh
 
 Along these lines, anything that can be offloaded to the API docs, should. For example, the Guides should show using a Computed Property/tracked property to solve a problem in a Component or Controller. They should not get into the depths of syntax option for one aspect of an API surface, but rather link to them.
 
+We also have the current hypothesis to inform intro sections, as suggested by [Mike North](https://github.com/mike-north): "People want to get the smallest understandable atom that they can jump in on." This will help us refactor how we present different topics.
+
 ### Table of Contents
 
 The following Table of Contents will be applied iteratively over the course of many months. It is not considered a blocker for the release of the Octane edition. The quick wins and urgent Octane refactors will be applied ASAP, and are described in the Implementation section of this RFC. Justification for the ordering is provided following the topics list.
