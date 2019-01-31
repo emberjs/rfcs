@@ -372,7 +372,6 @@ FUNDAMENTALS
     - Attribute Directives
     - Structural Directives
     - Pipes
-
 - Forms
 - Observables & RxJS
 - Bootstrapping
