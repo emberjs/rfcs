@@ -354,48 +354,46 @@ One possible lesson here is that we could split up Components like Vue did with 
 Angular is also a full-featured framework that has a lot in common with Ember.
 
 FUNDAMENTALS
-Architecture
+- Architecture
+    - Architecture Overview
+    - Intro to Modules
+    - Intro to Components
+    - Intro to Services and DI
+    - Next Steps
+- Components & Templates
+    - Displaying Data
+    - Template Syntax
+    - User Input
+    - Lifecycle Hooks
+    - Component Interaction
+    - Component Styles
+    - Angular Elements
+    - Dynamic Components
+    - Attribute Directives
+    - Structural Directives
+    - Pipes
 
-  Architecture Overview
-  Intro to Modules
-  Intro to Components
-  Intro to Services and DI
-  Next Steps
-
-Components & Templates
-
-  Displaying Data
-  Template Syntax
-  User Input
-  Lifecycle Hooks
-  Component Interaction
-  Component Styles
-  Angular Elements
-  Dynamic Components
-  Attribute Directives
-  Structural Directives
-  Pipes
-
-Forms
-Observables & RxJS
-Bootstrapping
-NgModules
-Dependency Injection
-HttpClient
-Routing & Navigation
-Animations
+- Forms
+- Observables & RxJS
+- Bootstrapping
+- NgModules
+- Dependency Injection
+- HttpClient
+- Routing & Navigation
+- Animations
 
 SETUP & DEPLOYMENT
-Project File Structure
-Workspace Configuration
-npm Dependencies
-TypeScript Configuration
-Ahead-of-Time Compilation
-Building & Serving
-Testing
-Deployment
-Browser Support
-Dev Tool Integration
+
+- Project File Structure
+- Workspace Configuration
+- npm Dependencies
+- TypeScript Configuration
+- Ahead-of-Time Compilation
+- Building & Serving
+- Testing
+- Deployment
+- Browser Support
+- Dev Tool Integration
 
 Angular is the closest match to our current guides structure. Notably, they work Styles in as part of their Components section.
 
