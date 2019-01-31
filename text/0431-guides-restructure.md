@@ -45,6 +45,22 @@ This Table of Contents plan was developed over the course of many months, meetin
 
 We are confident that this is possible thanks to the incredible response and effort shared by the community for the CLI Guides work.
 
+### Audience
+
+There are many different types of documentation within Ember, so it's important to identify a target audience for each, in order to guide decision making and provide a learning flow that grows with the reader.
+
+There are 3 main audiences for our resources: 
+
+1. newcomers
+2. upgraders
+3. specific-answer-seekers
+
+A huge challenge within the Guides is that they somewhat serve all three, and we'd like to have cleaner distinctions between sections and resources. For example, the Quickstart and Tutorials are distinct resources from the rest of the guides, and they clearly target new users. Upgraders could be served by adding 1 section to the guides as they are today. Specific-answer-seekers must lean on both the API docs and the Guides to find what they need.
+
+We propose that the Guides should focus on the following audience - newcomers who have done the tutorial, and want to build real apps. It will show the "happy path" and how the parts of Ember interact to form good, useful patterns, in a way that would be out of scope for an API documentation block.
+
+Along these lines, anything that can be offloaded to the API docs, should. For example, the Guides should show using a Computed Property/tracked property to solve a problem in a Component or Controller. They should not get into the depths of syntax option for one aspect of an API surface, but rather link to them.
+
 ### Table of Contents
 
 The following Table of Contents will be applied iteratively over the course of many months. It is not considered a blocker for the release of the Octane edition. The quick wins and urgent Octane refactors will be applied ASAP, and are described in the Implementation section of this RFC. Justification for the ordering is provided following the topics list.
