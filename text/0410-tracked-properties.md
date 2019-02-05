@@ -1,5 +1,5 @@
 - Start Date: 2018-12-05
-- RFC PR: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/410
 - Ember Issue: (leave this empty)
 - Authors: Tom Dale, Chris Garrett, Chad Hietala, Yehuda Katz
 
