@@ -1,6 +1,6 @@
 - Start Date: 2019-02-06
 - Relevant Team(s): Ember.js, Ember Data, Ember CLI, Learning, Steering
-- RFC PR:
+- RFC PR: https://github.com/emberjs/rfcs/pull/440
 - Tracking: (leave this empty)
 
 # Decorator Support
