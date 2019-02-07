@@ -30,7 +30,7 @@ committee expects this feature to be included in the language in the future, and
 is working out the details and semantics. The fact that decorators _remain_ in
 stage 2, and have not been rejected, signals that they still expect this to be
 the case. This is also the feedback that the core team received in the January
-meeting. _Crucially_, all parties were in agreement about the _invocation_
+TC39 meeting. _Crucially_, all parties were in agreement about the _invocation_
 syntax of decorators:
 
 ```js
@@ -41,7 +41,8 @@ class Person {
 
 This is the most stable part of the spec, and the one that average developers
 will come into contact with most. It means that changes to the spec will likely
-affect library and framework maintainers, but **not** end users. This places the
+affect the _application_ of decorators, which will in turn affect library and
+framework maintainers, but **not** end users in most cases. This places the
 burden of dealing with the spec changes on the Ember.js core team, and addon
 authors who wish to adopt decorators while they are in stage 2.
 
@@ -91,7 +92,9 @@ This will allow the ecosystem to adopt decorators without fears that if an
 application updates, it could break their decorators. If no version is
 specified, the transform will default to the latest version supported by Ember
 at that time. In many cases the only decorators in use will be Ember's, so this
-allows the ecosystem to upgrade without additional maintenance costs.
+allows the ecosystem to upgrade without additional maintenance costs. The exact
+method for specifying the version will be determined during implementation, but
+will likely be a configuration option or addon.
 
 When new transforms are released, Ember will continue to support older versions
 of the transforms alongside the new ones until _at least_ the next LTS release,
