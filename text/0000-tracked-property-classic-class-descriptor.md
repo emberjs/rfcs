@@ -1,6 +1,6 @@
 - Start Date: 2018-02-07
 - Relevant Team(s): Ember.js, Learning
-- RFC PR:
+- RFC PR: https://github.com/emberjs/rfcs/pull/442
 - Tracking: (leave this empty)
 
 # Tracked Property Classic Class Descriptor
