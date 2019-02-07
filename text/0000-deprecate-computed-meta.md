@@ -1,6 +1,6 @@
 - Start Date: 2018-02-07
 - Relevant Team(s): Ember.js, Ember Data
-- RFC PR:
+- RFC PR: https://github.com/emberjs/rfcs/pull/441
 - Tracking: (leave this empty)
 
 # Deprecate `computed().meta()`
