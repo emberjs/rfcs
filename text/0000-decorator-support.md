@@ -46,7 +46,7 @@ framework maintainers, but **not** end users in most cases. This places the
 burden of dealing with the spec changes on the Ember.js core team, and addon
 authors who wish to adopt decorators while they are in stage 2.
 
-As such, adopting decorators now should present a minimal amount of risk to
+As such, adopting framework-provided decorators now should present a minimal amount of risk to
 Ember and its users, and while it is not ideal, it allows us to continue moving
 forward and innovating as a framework.
 
