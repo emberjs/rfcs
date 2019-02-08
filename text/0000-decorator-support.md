@@ -76,6 +76,28 @@ users want to write Glimmer-like component's with classic syntax.
 
 ### Decorator Versioning and Support
 
+The list of constraints which we are optimizing for is as follows, from the
+highest priority to the lowest priority:
+
+- Aligning with the decorator spec as it evolves over time.
+- Ensuring the maintenance cost for end users of _Ember's framework-provided_
+  decorators is as small as reasonably possible, accounting for changes in the
+  spec.
+- Ensuring addons that make use of supported versions of decorators can be
+  consumed in all apps that have decorator support, even if decorator versions
+  mismatch.
+- Minimizing the maintenance cost for end users of _addon provided decorators_
+  as the spec evolves.
+- Minimizing the increase to static asset sizes, resulting from adding decorator
+  support.
+
+Non-goals/non-constraints:
+
+- Interop with older versions of the spec, including Typescript's current
+  transforms.
+- Supporting all future versions of the spec simultaneously throughout the
+  ecosystem.
+
 Because the decorators spec has changed while remaining in a stage 2, it's no
 longer enough to refer to "stage 2" as a version. Since Babel will be providing
 the transforms, we will use their versioning system. [This is currently in
