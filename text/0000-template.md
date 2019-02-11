@@ -14,7 +14,7 @@ This RFC supersedes [RFC 319](https://github.com/emberjs/rfcs/pull/319) and prop
 
 ## Motivation
 
-When rendering, Ember escapes values by default. This helps prevent security attack vectors such as XSS when rendering untrusted content from end-users of the application. Sometimes a developer will have a need to bypass this default and render unescaped content directly, for example when rendering sanatized HTML returned from a server endpoint.
+When rendering, Ember escapes values by default. This helps prevent security attack vectors such as XSS when rendering untrusted content from end-users of the application. Sometimes a developer will have a need to bypass this default and render unescaped content directly, for example when rendering sanitized HTML returned from a server endpoint.
 
 Ember currently provides a couple of ways to render unescaped content, [`htmlSafe`](https://www.emberjs.com/api/ember/release/functions/@ember%2Ftemplate/htmlSafe) and the `{{{` handlebars syntax.
 
@@ -27,7 +27,7 @@ There are a number of downsides to these:
 Replacing `htmlSafe` and `{{{` with `trustedHtml` and `trusted-html` brings a number of benefits:
 
   * It helps make Ember easier to undertand and more consistent.
-  * It helps prevent developers from inadvertantly introducing serious security attack vectors by encouraging them to consider the trust aspects of rendering unescaped content.
+  * It helps prevent developers from inadvertently introducing serious security attack vectors by encouraging them to consider the trust aspects of rendering unescaped content.
   * The `html-safe` helper can be used in sub-expressions and the result can be passed around in ways that `{{{` can not.
 
 ## Detailed design
