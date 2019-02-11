@@ -90,4 +90,5 @@ There was some discussion on the [original RFC](https://github.com/emberjs/rfcs/
 
 ## Unresolved questions
 
-> Is `trusted-html` the best name? Are there additional suggestions that I should include in the section above?
+ * Is `trusted-html` the best name? Are there additional suggestions that we should include in the section above?
+ * Instead of deprecating `{{{`, perhaps we could just help developers to lint against it?
