@@ -20,7 +20,7 @@ The usage of `render` is deprecated. Please see the following deprecation guide 
 The following will be compile time deprecation for named outlets:
 
 ```
-Please refatctor `{{outlet <NAME>}}` to a component <SOURCE_INFO>.
+Please refactor `{{outlet <NAME>}}` to a component <SOURCE_INFO>.
 ```
 
 ## Motivation
