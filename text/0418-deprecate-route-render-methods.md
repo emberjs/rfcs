@@ -6,7 +6,22 @@
 
 ## Summary
 
-This RFC proposses the deprecation of [`Route#render`](https://emberjs.com/api/ember/3.6/classes/Route/methods/render?anchor=render), [`Route#renderTemplate`](https://emberjs.com/api/ember/3.6/classes/Route/methods/render?anchor=renderTemplate) and named `{{outlet}}` APIs.
+This RFC proposses the deprecation of [`Route#render`](https://emberjs.com/api/ember/3.6/classes/Route/methods/render?anchor=render), [`Route#renderTemplate`](https://emberjs.com/api/ember/3.6/classes/Route/methods/render?anchor=renderTemplate) and named `{{outlet}}` APIs. The following deprecation message will be emitted upon usage of `render` or `renderTemplate`:
+
+```
+The usage of `renderTemplate` is deprecated. Please see the following deprecation guide to migrate.
+```
+and
+
+```
+The usage of `render` is deprecated. Please see the following deprecation guide to migrate.
+```
+
+The following will be compile time deprecation for named outlets:
+
+```
+Please refatctor `{{outlet <NAME>}}` to a component <SOURCE_INFO>.
+```
 
 ## Motivation
 
@@ -232,7 +247,16 @@ export default Component.extend({
 
 # How We Teach This
 
-This has not been a mainline API for quite some time now. The guides do not mention this functionality at all. It is likely that the majority of Ember applications do not use these APIs.
+These APIs not been a mainline API for quite some time now. The guides briefly mention this functionality. In those cases we should mirgate the guides should link to the `{{in-element}}` documentation and the component documentation. The above "Transition Path" will serve as the deprecation guide.
+
+# Role Out Plan
+
+Prior to adding the deprecation we must first do the following items
+
+* [ ] The `{{in-element}}` helper implementation remains incomplete. It should be completed.
+  * [ ] The [small changes](https://github.com/emberjs/rfcs/blob/master/text/0287-promote-in-element-to-public-api.md#small-proposed-changes) section of the `{{in-element}}` RFC needs to be implemented. Specifically the helper should "replace all the content of the destination".
+  * [ ] The `{{in-element}}` helper should be documented in the [API docs](https://emberjs.com/api/ember/release/classes/Ember.Templates.helpers).
+  * [ ] Adding `{{in-element}}` usage to the guides can be considered.
 
 ## Drawbacks
 
