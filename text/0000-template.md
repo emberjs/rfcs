@@ -73,6 +73,12 @@ We should replace the current [`htmlSafe` API documentation](https://www.emberjs
 
 If we have a security section in the guides, we should mention how using `trusted-html` and `trustedHtml` requires the developer to understand the risks that rendering unescaped content can pose and that they are asserting that they do trust the content.
 
+We should revisit the binding style attributes warning message and the content that it links to:
+
+```
+WARNING: Binding style attributes may introduce cross-site scripting vulnerabilities; please ensure that values being bound are properly escaped. For more information, including how to disable this warning, see https://emberjs.com/deprecations/v1.x/#toc_binding-style-attributes.
+```
+
 ## Drawbacks
 
 This RFC introduces some API changes which require some changes to existing applications. We'll need to teach Ember users the new function and helper.
@@ -87,6 +93,10 @@ There was some discussion on the [original RFC](https://github.com/emberjs/rfcs/
  * `rawHtml`
  * `dangerously-render-html`
  * `dangerous-html`
+ * `unsafe-html`
+ * `bypass-sanitization`
+ * `bypass-html-escaping`
+ * `trusted`
 
 ## Unresolved questions
 
