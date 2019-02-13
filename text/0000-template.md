@@ -102,3 +102,5 @@ There was some discussion on the [original RFC](https://github.com/emberjs/rfcs/
 
  * Is `trusted-html` the best name? Are there additional suggestions that we should include in the section above?
  * Instead of deprecating `{{{`, perhaps we could just help developers to lint against it?
+ * Should these helpers/functions differentiate between HTML and style trusted strings? See [this comment](https://github.com/emberjs/rfcs/pull/443#issuecomment-462282379) for details.
+ * Should we remove the current `Binding style attributes may introduce cross-site scripting vulnerabilities` warning? See [this comment](https://github.com/emberjs/rfcs/pull/443#issuecomment-463129055) for more details.
