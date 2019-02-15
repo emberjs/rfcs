@@ -16,9 +16,9 @@ are using today) will be referred to as "sloppy mode" in this RFC.
 ## Motivation
 
 Ember has been using Handlebars since it was released 7 years ago (!). Over
-time, we have evloved, adapted and in some case repurposed the Handlebars
+time, we have evolved, adapted and in some case repurposed the Handlebars
 language significantly (remember "context-shifting" `{{#each}}`?). This RFC
-propose to provide a "strict mode" opt-in to remedy some of Handlebars' design
+proposes to provide a "strict mode" opt-in to remedy some of Handlebars' design
 decisions that we have come to regret over the years, or are otherwise not a
 good fit for Ember. We believe this will make the Handlbars language easier to
 learn, understand and implement, as well as enable better tooling to support
@@ -33,7 +33,7 @@ We propose the following changes:
 
 ### 1. No implicit globals
 
-Today, Ember implicitly introduce a set of implicit globals into a template's
+Today, Ember implicitly introduces a set of implicit globals into a template's
 scope, such as built-in helpers, components, modifiers. Apps and addons also
 have the ability to introduce additional implicit globals by placing files into
 the `app` folder or broccoli tree. It is also possible to further influence
