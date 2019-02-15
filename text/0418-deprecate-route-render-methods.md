@@ -1,6 +1,6 @@
 - Start Date: 2018-19-12
 - RFC PR: https://github.com/emberjs/rfcs/pull/418
-- Ember Issue: (leave this empty)
+- Tracking Issue: https://github.com/emberjs/rfc-tracking/issues/30
 
 # Deprecate Route render APIs
 
