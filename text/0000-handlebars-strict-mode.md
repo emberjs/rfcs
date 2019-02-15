@@ -136,12 +136,12 @@ import { First, Second, Third } form './contextual-components';
 {{/let}}
 ```
 
-This will both make it clear to the human reader and enables tools to perform
+This will make it clear to the human reader and enable tools to perform
 optimizations, such as tree-shaking, by following the explict dependency graph.
 
 ### 4. No evals (no partials)
 
-Ember current supports the `partial` feature. It takes a template name, which
+Ember currently supports the `partial` feature. It takes a template name, which
 can either be passed as a literal `{{partial "foo-bar"}}` or passed as a
 runtime value `{{partial this.someString}}`. In either case, Ember will resolve
 the template with the given name (with a prefix dash, like `-foo-bar.hbs`) and
@@ -183,12 +183,12 @@ in strict mode without a very high performance penalty.
 
 ## Detailed design
 
-This RFC aim to introduce and define the semantics of the Handlebars strict
+This RFC aims to introduce and define the semantics of the Handlebars strict
 mode, as well as the low-level primitive APIs to enable it. However, it does
 not introduce any new user-facing syntax or conveniences for opting into this
 mode.
 
-The intention is that primary way for users to opt-in to strict mode will be
+The intention is that the primary way for users to opt-in to strict mode will be
 defined by the [template imports](./0000-template-imports.md) proposal using
 the APIs proposed in this RFC. However, these low-level APIs will also enable
 other build tools (such as [ember-cli-htmlbars-inline-precompile](https://github.com/ember-cli/ember-cli-htmlbars-inline-precompile))
@@ -201,7 +201,8 @@ allow other experiments to be built in userland, such as explorations for a
 We propose to add an option to Ember's template compiler to enable strict mode
 compilation.
 
-There three primitive APIs involved in compiling Ember templates.
+There are three primitive APIs involved in compiling Ember templates, `precompile`,
+`template` and `compile`.
 
 The `precompile` function (a.k.a. [`precompileTemplate`](https://github.com/ember-cli/ember-rfc176-data))
 is responsible for taking a template string, running AST plugins, checking for
@@ -226,7 +227,7 @@ precompileTemplate('Hello, {{name}}!', {
 
 Again, the exact wire format changes from time to time, but the key is that the
 content is valid JavaScript. This allows build tools to take this output and
-insert in into any context where JavaScript expressions are allowed.
+insert it into any context where JavaScript expressions are allowed.
 
 At runtime, the "wire format" can be "rehydrated" into something consumable by
 Ember via the `template` function (a.k.a. [`createTemplateFactory`](https://github.com/ember-cli/ember-rfc176-data)).
@@ -282,8 +283,8 @@ For example, consider the following template:
 {{/let}}
 ```
 
-Here, `this.session.currentUser` is an explicit refernce to the component's
-instance state, `user` is a local variable introduced by the `#let` helper,
+Here, `this.session.currentUser` is an explicit reference to the component's
+instance state, `user` is a local variable introduced by the `#let` helper and
 `@model` is a reference to a named argument. They all have obvious semantics.
 
 On the other hand, `BlogPost` and `titleize` are undefined references. The
@@ -307,12 +308,12 @@ precompileTemplate(`{{#let this.session.currentUser as |user|}}
 ```
 
 Again, the specific format here is unimportant and subject to change. The key
-here is that the JavaScript code  produced by the compiler contains references
+here is that the JavaScript code produced by the compiler contains references
 (via the `scope` closure in this hypothetical compilation) to the JavaScript
 variables `BlogPost` and `titleize` in the surrounding JavaScript scope.
 
 The build tool is responsible for "linking" these undefined references by
-putting the compiled JavaScript code inside a JavaScirpt context where these
+putting the compiled JavaScript code inside a JavaScript context where these
 variables are defined. Otherwise, depending on the configuration, the undefined
 references will either cause a static (build-time) error from the linter,
 transpiler (e.g. babel) or packager (e.g. rollup or webpack), or a runtime
@@ -350,8 +351,8 @@ export default createTemplateFactory({
 
 When this is evaulated by a JavaScript engine, the references in the `scope`
 closure will automatically be "linked up" with the imports, and Ember will be
-able reference these values when rendering the template. Note that these
-references are _static_– the values are essentially "snapshotted" by the
+able to reference these values when rendering the template. Note that these
+references are _static_–the values are essentially "snapshotted" by the
 rendering engine whenever the template is instantiated. Updates to these values
 in the JavaScript scope will _not_ be observable by the rendering engine, even
 in conjunction with `Ember.set` or `@tracked`.
@@ -387,8 +388,8 @@ templates going forward. We anticipate this is going to be a slow transition,
 but once the majority of Ember developers have migrated, we expect them to find
 it clearer, more intuitive and more productive.
 
-Two of the strict mode restrictions – no implicit `this` fallback and no eval,
-can be incrementally adopted in sloppy mode templates. The former is already
+Two of the strict mode restrictions—no implicit `this` fallback and no eval—can
+be incrementally adopted in sloppy mode templates. The former is already
 covered by [RFC #432](https://github.com/emberjs/rfcs/pull/432). We should
 continue implementing the transition path laid out by that RFC and encourage
 developers to start adopting the explicit `this` style. The latter (partials)
@@ -412,7 +413,7 @@ intended for linking static values such as helpers and components.
 ## Drawbacks
 
 We could just deprecate without removing `this` fallback and partials, and let
-implicit globals and dynamic resolution co-exists with template imports (the
+implicit globals and dynamic resolution co-exist with template imports (the
 primary consumer of the proposed strict mode). However, this will create a very
 confusing compromise and users will not get most of the benefits of having
 template imports in the first place. We will also lose out on the opportunity
@@ -422,7 +423,7 @@ discussed in the contextual helpers RFC.
 
 ## Alternatives
 
-1. Instead of bundling these into a single "strict mode" opt-in, we could just
+1. Instead of bundling these into a single "strict mode" opt-in, we could
    allow developers to opt-in to each of these restrictions individually.
 
    In addition to the teaching and discoverability problems, we will also need
