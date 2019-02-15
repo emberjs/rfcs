@@ -118,7 +118,7 @@ the [template imports RFC](./0000-template-imports.md)):
 ```hbs
 ---
 import { eq, get, hash } from '@ember/template/helpers';
-import { First, Second, Third } form './contextual-components';
+import { First, Second, Third } from './contextual-components';
 ---
 
 {{#if (eq this.selected "first")}}
@@ -208,7 +208,7 @@ The `precompile` function (a.k.a. [`precompileTemplate`](https://github.com/embe
 is responsible for taking a template string, running AST plugins, checking for
 errors and returning the "wire format" representation of the template. The
 exact details of this "wire format" is unspecified and changes from time to
-time across minor Ember versions. The only guarentee is that it returns a
+time across minor Ember versions. The only guarantee is that it returns a
 string whose content is a valid JavaScript expression.
 
 For example:
@@ -417,7 +417,7 @@ implicit globals and dynamic resolution co-exist with template imports (the
 primary consumer of the proposed strict mode). However, this will create a very
 confusing compromise and users will not get most of the benefits of having
 template imports in the first place. We will also lose out on the opportunity
-to improve on the static guarentees in order to build better tools. Leaving
+to improve on the static guarantees in order to build better tools. Leaving
 around implicit globals also has the [issues](https://github.com/emberjs/rfcs/blob/master/text/0432-contextual-helpers.md#relationship-with-globals)
 discussed in the contextual helpers RFC.
 
@@ -438,7 +438,7 @@ discussed in the contextual helpers RFC.
 2. Instead of proposing a standalone strict mode, we could just bundle these
    semantics into the templates imports proposal.
 
-   That would make it a very long anc complex RFC. In addition, other build
+   That would make it a very long and complex RFC. In addition, other build
    tools like [ember-cli-htmlbars-inline-precompile](https://github.com/ember-cli/ember-cli-htmlbars-inline-precompile)
    will not be able to adopt the same semantics.
 
@@ -451,7 +451,7 @@ discussed in the contextual helpers RFC.
 
    We intend to move to an "attributes syntax always mean attributes" (and use
    modifiers for the rare cases of setting properties). We briefly considered
-   groupping that change into the strict mode opt-in, but ultimately decided it
+   grouping that change into the strict mode opt-in, but ultimately decided it
    would be too confusing for strict mode to include such a change. It's better
    to deprecate the feature and make this an app-wide setting.
 
@@ -459,7 +459,7 @@ discussed in the contextual helpers RFC.
 
    Similarly, there are some not ideal semantics issues with `(action ...)`
    around how the function's `this` is bound. We similarly considered fixing it
-   in strict mode but ultimately decided it wouldn't be appropiate.
+   in strict mode but ultimately decided it wouldn't be appropriate.
 
 ## Unresolved questions
 
