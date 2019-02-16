@@ -75,7 +75,7 @@ The following Table of Contents will be applied iteratively over the course of m
 
 **Fundamentals**
 
-- Templates
+- Templating
 - Working with JavaScript
 - Components
 - Routing (includes Routes, Router, and Controllers)
