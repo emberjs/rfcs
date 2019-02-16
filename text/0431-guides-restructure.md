@@ -129,7 +129,7 @@ An alternative to this split is to reduce the documentation of helpers themselve
 
 #### Working with JavaScript
 
-A common concern of new learners is, what is JavaScript and what is special to Ember? The Working with JavaScript section incorporates the existing JavaScript Primer and new content that will help make the distinctions clearer. Ember.js has procatively adopted JavaScript APIs as they become available, such as Classes and Decorators, in some cases before the larger JavaScript community becomes familiar with them. Key people in the Ember Community are also involved in the development of JavaScript itself through TC39. To an extent, it is our responsibility to at least suggest to developers which JavaScript concepts they must learn in order to feel comfortable with Ember.
+A common concern of new learners is, what is JavaScript and what is special to Ember? The Working with JavaScript section incorporates the existing JavaScript Primer and new content that will help make the distinctions clearer. Ember.js has proactively adopted JavaScript APIs as they become available, such as Classes and Decorators, in some cases before the larger JavaScript community becomes familiar with them. Key people in the Ember Community are also involved in the development of JavaScript itself through TC39. To an extent, it is our responsibility to at least suggest to developers which JavaScript concepts they must learn in order to feel comfortable with Ember.
 
 #### Components
 
