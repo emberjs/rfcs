@@ -146,7 +146,7 @@ Components will need the most refactor work and new content for Octane, so hereâ
 
 #### State management
 
-The State Management section is important because whether "computed properties" are available in their current state or as `@tracked` Decorators, the nunances must be within easy reach for existing Ember developers and future learners. We rename this topic in alignment with the Topic Naming convention mentioned above.
+The State Management section is important because whether "computed properties" are available in their current state or as `@tracked` Decorators, the nuances must be within easy reach for existing Ember developers and future learners. We rename this topic in alignment with the Topic Naming convention mentioned above.
 
 #### Routing
 
