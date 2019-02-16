@@ -12,7 +12,7 @@ As our favorite framework has grown and changed a lot over the past few years, s
 
 With Octane coming down the line, and an influx of fresh attention, it’s more important than ever to consider Ember's overall learning experience. It's time for a shift. The current structure and flow of the guides reflects the past, not the present experience for Ember. It’s time to fix that.
 
-When the Guides were originally written, things like object-oriented programming in JavaScript, components, routing, and SPAs in general were new ideas. For example, they start by teaching the “Ember Objects” programming concept, necessary background information at the time. It would have been an unfamiliar pattern at the time. Now, the learning hierarchy needs have shifted from “learn these unique web development concepts” to “learn how familiar pieces fit together so you can build great apps quickly.”
+When the Guides were originally written, things like object-oriented programming in JavaScript, components, routing, and Single-Page Applications ([SPA](https://en.wikipedia.org/wiki/Single-page_application)) in general were new ideas. For example, they start by teaching the “Ember Objects” programming concept, necessary background information at the time. It would have been an unfamiliar pattern at the time. Now, the learning hierarchy needs have shifted from “learn these unique web development concepts” to “learn how familiar pieces fit together so you can build great apps quickly.”
 
 ## Detailed design
 
