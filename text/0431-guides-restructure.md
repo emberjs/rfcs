@@ -1,6 +1,6 @@
 - Start Date: 2018-01-13
 - RFC PR: https://github.com/emberjs/rfcs/pull/431
-- Ember Issue: (leave this empty)
+- Tracking Issue: https://github.com/emberjs/rfc-tracking/issues/29
 
 # Restructuring the Guides Table of Contents
 
