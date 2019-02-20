@@ -3,7 +3,7 @@
 - RFC PR: https://github.com/emberjs/rfcs/pull/442
 - Tracking: (leave this empty)
 
-# Tracked Property Classic Class Descriptor
+# Add `descriptor()`
 
 ## Summary
 
