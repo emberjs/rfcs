@@ -81,6 +81,13 @@ necessary (classic components, utility classes), but this is no worse a status
 quo than where we are currently - some classes require `constructor`, and some
 require `init`.
 
+Finally, if we do this change, we could lint users to a place where they are not
+using _any_ EmberObject APIs at all for any of these constructs. This means that
+in the future, we _could_ deprecate them extending from `EmberObject` at all,
+without forcing users onto new import paths. This deprecation is outside of the
+scope of this RFC, but it sets us up to move forward with decoupling Ember from
+the classic object model in the future.
+
 ## Detailed design
 
 The "tunnel" itself is fairly simple. As described in the Constructor Update
