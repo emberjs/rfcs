@@ -1,6 +1,6 @@
 - Start Date: 2019-02-19
 - Relevant Team(s): Ember.js, Learning
-- RFC PR:
+- RFC PR: https://github.com/emberjs/rfcs/pull/451
 - Tracking:
 
 # Classic Class Owner Tunnel 🕳
