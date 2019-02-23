@@ -671,7 +671,7 @@ makes it much easier to understand at build time which components and
 templates go together, and what the dependencies between components are. The
 ability to quickly and accurately determine this dependency graph is
 imperative to the success of initiatives like Embroider and is required to
-unlock good trees-haking and code-splitting.
+unlock good tree-shaking and code-splitting.
 
 ## Unresolved questions
 
