@@ -205,15 +205,14 @@ import BlogPost from './components/blog-post';
 
 import { createTemplateFactory, setComponentTemplate } from '@ember/template-factory';
 
-const templateJSON$1 = {
+const wireFormat$1 = {
   "id": "ANJ73B7b",
   "block": "{\"statements\":[\"...\"]}",
-  "meta": { "moduleName": "src/ui/components/MyComponent.js" }
+  "meta": { "moduleName": "src/ui/components/MyComponent.js" },
+  "scope": () => [BlogPost, titleize]
 };
 
-const template$1 = createTemplateFactory(templateJSON$1, {
-  scope: () => [BlogPost, titleize]
-});
+const template$1 = createTemplateFactory(wireFormat$1);
 
 export default setComponentTemplate(template$1, class MyComponent extends Component {
   @service session;
@@ -224,7 +223,7 @@ Note that the file formats shown above are hypothetical and used as
 illustrative examples only. This RFC does *not* propose a recommended file
 format. Rather, the goal is to expose public JavaScript API for:
 
-1. Compiling a template into JSON.
+1. Compiling a template into a JavaScript wire format.
 3. Associating a compiled template with its backing JavaScript class.
 2. Specifying which values are in scope for a given template at runtime.
 
@@ -240,8 +239,8 @@ This RFC proposes the following new modules and exports:
 
 Name | Description  
 ---------|----------
-`import { precompile } from '@ember/template-compiler'` |  Compiles template source code into a JSON wire format.
-`import { createTemplateFactory } from '@ember/template-factory'` | Creates a template factory from wire format JSON, provides scope values.
+`import { precompile } from '@ember/template-compiler'` |  Compiles template source code into a JavaScript wire format.
+`import { createTemplateFactory } from '@ember/template-factory'` | Creates a template factory wrapper around the wire format.
 `import { setComponentTemplate } from '@ember/template-factory'` |  Associates a template factory with a JavaScript component class.
 
 Detailed descriptions and rationales for these APIs are provided below.
@@ -260,7 +259,7 @@ the first time a template is rendered.
 Ember uses Glimmer's JIT mode, so templates are sent to the browser as an
 optimized JSON data structure we call the _wire format_. The
 `@glimmer/compiler` package provides a helper function called `precompile`
-that turns raw template source code into this "pre-compiled" JSON wire format.
+that turns raw template source code into this "pre-compiled" wire format.
 
 ```js
 import { precompile } from '@glimmer/compiler';
@@ -279,28 +278,28 @@ const json = precompile(`<h1>{{this.firstName}}</h1>`);
 
 The exact structure of the wire format returned from `precompile` is not
 specified, is not considered public API, and is likely to change across minor
-versions. Other than a guarantee that it is a string that can be safely
-parsed via `JSON.stringify`, users should treat the value returned by
-`precompile` as completely opaque.
+versions. Other than a guarantee that it is a string that can be embedded in
+JavaScript and is a valid JavaScript expression, users should treat the value
+returned by `precompile` as completely opaque.
 
 ### Template Factories
 
 Once we have our template compiled into the wire format, we need a way to
-annotate it so that Ember knows that the JSON value represents a compiled
-template. The wrapper object around the wire format JSON that does this is
-called a _template factory_.
+annotate it so that Ember knows that the value represents a compiled
+template. The wrapper object around the wire format that does this is called
+a _template factory_.
 
 This RFC proposes exposing a function for creating template factories called
 `createTemplateFactory`, exported from the `@ember/template-factory` package.
 
-Users would use this function to turn the raw, wire format JSON into a template
+Users would use this function to turn the raw wire format into a template
 factory object at runtime:
 
 ```js
 import { createTemplateFactory } from '@ember/template-factory';
 
-const json = /* wire format JSON here */
-const templateFactory = createTemplateFactory(json);
+const wireFormat = /* embed wire format from precompile here */
+const templateFactory = createTemplateFactory(wireFormat);
 ```
 
 ### Associating Template Factories and Classes
@@ -352,8 +351,8 @@ arguments:
 import Component from '@glimmer/component';
 import { createTemplateFactory, setComponentTemplate } from '@ember/template-factory';
 
-const json = /* wire format JSON here */
-const templateFactory = createTemplateFactory(json);
+const wireFormat = /* wire format here */
+const templateFactory = createTemplateFactory(wireFormat);
 
 class MyComponent extends Component {
   /* ... */
@@ -403,87 +402,149 @@ superclass.
 In this context, _scope_ refers to the set of names that can be used to refer
 to values, helpers, and other components from within your template. For
 example, when you type `{{@firstName}}`, `{{this.count}}`, or `<UserAvatar
-/>`, how does Ember (or even you, as the programmer) figure out what each of these
-refers to? The answer to that is determined by the template's scope.
+/>`, how does Ember know what each of these refers to? The answer to that is
+determined by the template's scope.
 
 Today, the names available inside a particular template are determined by a
 few different rules:
 
-1. `this` always refers to the component instance (if the template has a backing class).
-2. Arguments (like `@firstName`) are placed into scope when you invoke the component.
-3. Block parameters (like `item` in `{{#each @items as |item|}}`) are in scope, but only inside the block.
-4. Anything else must be looked up dynamically through Ember's container.
-   This lookup process is somewhat complex and not always as fast as we'd like.
+1. `this` always refers to the component instance (if the template has a
+   backing class).
+2. Arguments (like `@firstName`) are placed into scope when you invoke the
+   component.
+3. Block parameters (like `item` in `{{#each @items as |item|}}`) are in
+   scope, but only inside the block.
+4. Anything else, like components and helper names, must be looked up
+   dynamically through Ember's container. This lookup process is somewhat
+   complex and not always as fast as we'd like.
 
-Because the rules of how components, helpers, and other values are looked up
-can be confusing for new learners, we'd like to explore alternate APIs that
-allow users to explicitly import them and refer to them from templates.
+Because the rules for how components and helpers are looked up are implicit
+and can be confusing for new learners, we'd like to explore alternate APIs
+that allow users to explicitly import values and refer to them from
+templates.
 
-Today, it's not easy for addons to add additional names to a template's scope
-that take precedence over dynamic resolution.
+This RFC proposes that templates compiled via the `precompile` function
+resolve unknown identifiers from the ambient JavaScript scope, rather than
+performing dynamic resolution through the container.
 
-This RFC proposes that the `precompile` function, described earlier, also
-accepts a `scope` option that specifies additional identifiers (as strings)
-that are available in the template's scope:
+To do this, `precompile` emits JavaScript code that contains references to
+the same identifiers as those used in the template:
 
 ```js
 import { precompile } from '@ember/template-compiler';
 
-const json = precompile(`{{t "Hello!"}} <User @user={{this.currentuser}} />`, {
-  scope: ['User', 't']  
-});
+const wireFormat = precompile(`{{t "Hello!"}} <User @user={{this.currentUser}} />`);
+/* => `{
+  "id": "ANJ73B7b",
+  "block": "{\"statements\":[\"...\"]}",
+  "scope": () => [t, User]
+}`                ^---- template identifiers emitted as JavaScript references
+*/
 ```
 
-The `scope` option is an array of zero or more strings. In this example, the
-identifiers `User` and `t` are added to the template scope. Identifiers
-provided this way are in scope for the entire template (unless shadowed by a
-block argument).
-
-This RFC further proposes that the `createTemplateFactory` function,
-described earlier, also accepts a `scope` option that returns the reified
-scope values at runtime:
+If a template references an identifier that is not in lexical
+scope, a `ReferenceError` will be produced at runtime:
 
 ```js
-import { createTemplateFactory } from '@ember/template-factory';
-import User from './OtherComponent';
-import t from '../helpers/i18n/t';
+import { precompileTemplate } from '@ember/template-compilation';
 
-const json = /* wire format JSON here */
-const template = createTemplateFactory(json, {
-  scope: () => [User, t]
-});
+// Compiles successfully but the generated code will throw a ReferenceError when
+// evaluated.
+const wireFormat = precompile(`<MissingComponent />`);
+/* => `{
+  "id": "ANJ73B7b",
+  "block": "{\"statements\":[\"...\"]}",
+  "scope": () => [MissingComponent]
+}`                ^------ will produce ReferenceError
+*/
 ```
 
-Note that, unlike with `precompile`, the `scope` option here is not an array
-but a function that _returns_ an array. This allows the array to be created
-after the JavaScript module has finished evaluating, ensuring the bindings
-included in the array have had time to be fully initialized.
+Optionally, you can provide an array of strings specifying the ambient
+identifiers in scope. If a `scope` array is provided and the template
+contains an identifier that is not present in the list, that reference will
+fall back to today's dynamic resolution lookup behavior:
 
-The order of the array is unimportant, other than that the same order must be
-preserved between the identifiers passed to `precompile` and the
-corresponding values passed to `createTemplateFactory`.
+```js
+// While `t` comes from ambient JavaScript scope, `User` will be looked up
+// through the container.
+const wireFormat = precompile(`{{t "Hello!"}} <User @user={{this.currentUser}} />`, {
+  mode: 2,
+  scope: ['t']
+}); /* => `{
+  "id": "ANJ73B7b",
+  "block": "{\"statements\":[\"...\"]}",
+  "scope": () => [t]
+}`                ^----- only includes identifiers specified in `scope`
+*/
+```
 
-Values provided to the template scope must be constant. Once the `scope` array has been created,
-mutation of those values is unsupported and may cause unexpected errors
-during render. Future RFCs may introduce support for scope values that change
-over time.
+```js
+import { precompile } from '@ember/template-compilation';
 
-Scope values are also limited to component classes and template helpers (i.e.
-subclasses of `Helper` or functions wrapped with `helper()` from
-`@ember/component/helper`). However, support for additional kinds of scope
-values may be expanded in future RFCs.
+const wireFormat = precompile(`<MissingComponent />`, {
+  scope: ['BlogPost', 'OtherComponent']
+})
+/* => Throws an exception: "MissingComponent is not defined."   */
+```
 
-If any of the following conditions are met, a runtime exception will be thrown:
+Addons that need to support existing templates that rely on container lookup
+to discover components and helpers should provide the list of valid
+identifiers via `scope`. Omitting this list causes all lookups to happen via
+ambient scope rather than through the container.
 
-* The `scope` function returns a value that is not an array.
-* The `scope` function returns an array containing a value that is not a
-  component class, helper, or `undefined`.
-* The `scope` function returns an array whose length is different than
-  the `scope` array provided to `precompile`.
-* A `scope` was provided when calling `precompile`, but is not provided when
-  calling `createTemplateFactory` with the resulting wire format.
-* A `scope` was _not_ provided when calling `precompile`, and _is_ provided when
-  calling `createTemplateFactory` with the resulting wire format.
+As of this RFC, scope values resolved via ambient scope are limited to
+component classes and template helpers (i.e. subclasses of `Helper` or
+functions wrapped with `helper()` from `@ember/component/helper`). However,
+support for additional kinds of scope values may be expanded in future RFCs.
+
+### Compilation Modes
+
+To support future evolution of template syntax and semantics, this RFC
+defines a `mode` option that can specify different rules for template
+compilation.
+
+This RFC defines a single mode:
+
+   Mode  | ID | Description
+---------|--------------|------------
+**Classic** | 1 | All deprecated and non-deprecated syntax supported. Mix of dynamic resolution and JavaScript scope supported.
+
+Modes are specified as an integer ID to reduce the size of compiled output
+and to allow additional modes to be added in the future. To specify the mode,
+pass a `mode` option to `precompile`:
+
+```js
+const wireFormat = precompile(`{{t "Hello!"}} <User @user={{this.currentUser}} />`, {
+  mode: 1,
+  scope: ['t']
+}); /* => `{
+  "id": "ANJ73B7b",
+  "block": "{\"statements\":[\"...\"]}",
+  "scope": () => [t]
+}`
+*/
+```
+
+If the mode is not specified, classic mode (mode `1`) is assumed. Future RFCs
+may specify additional modes.
+
+In strict mode, templates that references names that are not present in a supplied
+`scope` array produce a compile-time error. In sloppy mode, references to names
+that are not specified in the `scope` array will fall back to dynamic
+resolution:
+
+```js
+// `t` comes from ambient scope, `User` will be looked up.
+const wireFormat = precompile(`{{t "Hello!"}} <User @user={{this.currentUser}} />`, {
+  mode: 2,
+  scope: ['t']
+}); /* => `{
+  "id": "ANJ73B7b",
+  "block": "{\"statements\":[\"...\"]}",
+  "scope": () => [t]
+}`                ^----- only includes identifiers specified in `scope`
+*/
+```
 
 ## How we teach this
 
@@ -507,22 +568,34 @@ import { precompile } from '@ember/template-compiler';
 ```
 
 Compiles a string of Glimmer template source code into an intermediate "wire
-format" and returns it as a string. The exact value returned from
-`precompile` is not specified, is not considered public API, and is likely to
-change across minor versions. Other than the fact that it is guaranteed to be
-a string that may be safely parsed by `JSON.parse()`, you should treat the
-value returned by `precompile` as completely opaque.
+format" and returns it as a string of JavaScript code. The exact value
+returned from `precompile` is not specified, is not considered public API,
+and is likely to change across minor versions. The string is guaranteed to be
+a valid JavaScript expression. Other than that, you should treat the value
+returned by `precompile` as completely opaque.
 
-Optionally, an array of additional identifiers can be specified that will be
-included in the template's ambient scope. Each identifier must have a
-corresponding value provided at run time when the template's template factory
-is created.
+By default, components and helpers referenced in the passed template will be
+looked up from the JavaScript scope where the wire format string is inserted.
+To enable legacy container resolution behavior, a `scope` option can be
+provided containing a list of identifiers that should be considered to come
+from ambient JavaScript scope. Any identifiers in the template that are not
+present in the `scope` list will fall back to dynamic container resolution at
+runtime.
+
+An optional `mode` option may also be provided. Currently, only one mode is
+supported, which is the classic mode with ID of `1`. If no mode is specified,
+the default mode of `1` is assumed. Future RFCs may specify additional modes.
 
 ```ts
 function precompile(templateSource: string, options?: PrecompileOptions): string; 
 
 interface PrecompileOptions {
   scope?: string[];
+  mode?: PrecompileMode;
+}
+
+enum PrecompileMode {
+  Classic = 1;
 }
 ```
 
@@ -539,13 +612,7 @@ provided when calling `createTemplateFactory` that returns an array of
 reified values corresponding to each identifier.
 
 ```ts
-function createTemplateFactory(wf: WireFormatJSON, options?: CreateTemplateFactoryOptions): TemplateFactory;
-
-interface CreateTemplateFactoryOptions {
-  scope?: () => ScopeValue[];
-}
-
-type ScopeValue = ComponentFactory | HelperFactory | HelperFunction | undefined;
+function createTemplateFactory(wf: WireFormat): TemplateFactory;
 ```
 
 #### setComponentTemplate
@@ -596,58 +663,17 @@ compilation, unless we can come up with a clever compatibility hack.
 
 ## Alternatives
 
-### Providing Scope as POJO
+### Providing Scope Explicitly
 
-As currently proposed in this RFC, configuring the ambient scope for a template is a two-step process:
+As currently proposed in this RFC, template identifiers are looked up from
+ambient scope, with an optional fallback to dynamic resolution behavior.
 
-1. Provide additional identifiers as an array of strings to `precompile` at build time.
-2. Provide a corresponding array of values to `createTemplateFactory` at run time.
+An alternative considered was to specify scope values explicitly when
+creating the template factory. However, this adds boilerplate that is
+unneeded in the most common scenarios.
 
-The additional coordination required between these two environments adds
-complexity for addons wanting to use these APIs.
-
-An alternative considered was to specify scope as an object at runtime, where
-the keys are the identifiers and the values are also the scope values. This
-scope object would only need to be provided to `createTemplateFactory`, and
-no coordination with `precompile` would be required.
-
-Ultimately, I opted for the API described in this RFC for two reasons:
-
-1. Requiring the ambient scope at build time allows the compiler to detect
-   invalid identifiers and raise an early error, which is a much better
-   experience for developers than waiting for a runtime error to happen.
-2. The array form can minify more aggressively than the object form where keys
-   must be preserved.
-
-For an example of the minification impact, consider the following example:
-
-```js
-import ComponentA from './ComponentA';
-import ComponentB from './ComponentB';
-import ComponentC from './ComponentC';
-
-// Scope as array
-createTemplateFactory(json, {
-  scope: () => [ComponentA, ComponentB, ComponentC]
-})
-
-// Scope as hash
-createTemplateFactory(json, {
-  scope: () => ({ ComponentA, ComponentB, ComponentC })
-})
-```
-
-With tools like Rollup and Uglify, the array-based API allows for more
-aggressive reduction in file size. In my contrived example, minification
-reduced byte size by about 72% with the array-based API and only about 57%
-with the object-based API:
-
-```js
-// Array
-!function(){"use strict";var c={},s={},t={};l({scope:()=>[c,s,t]})}();
-// Object
-!function(){"use strict";var n={},o={},t={};json,l({scope:()=>({ComponentA:n,ComponentB:o,ComponentC:t})})}();
-```
+In favor of the extra boilerplate, addon authors can inject new bindings into
+JavaScript scope to customize template resolution.
 
 ### Additional Resolver-Based APIs
 
@@ -675,5 +701,97 @@ unlock good tree-shaking and code-splitting.
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+### Intermediate Wire Format
+
+Given that the wire format is unstable between different versions of Ember,
+it's important that all templates in an app (including those from addons) be
+compiled together.
+
+One of [Embroider's](https://github.com/embroider-build/embroider) goals is
+ensuring that addons can compile their assets when the addon is published to
+npm, rather than having compilation happen over and over again every time the
+host Ember application is built.
+
+We want an intermediate format that would allow addons to distribute
+components authored with SFCs and template imports, but would defer final
+template compilation to the wire format until the application was is
+compiled.
+
+## Changelog
+
+This section captures substantive changes made during the RFC process and the
+rationale behind the changes.
+
+### 2019/2/25
+
+#### Simpler Scope API
+
+The details of how scope works have changed to better align with the planned
+"strict mode" RFC for templates, and to reduce the boilerplate required in
+most common scenarios.
+
+Previously, setting a template's scope was a two-step process:
+
+1. Specifying the identifiers during the `precompile` phase.
+2. Specifying the associated values of the specifiers during the
+   `createTemplateFactory` phase.
+
+The API looked like this:
+
+```js
+import { precompile } from '@ember/template-compiler';
+import { createTemplateFactory } from '@ember/template-factory';
+import User from './OtherComponent';
+import t from '../helpers/i18n/t';
+
+// Provide array of string identifiers
+const wireFormat = precompile(`{{t "Hello!"}} <User @user={{this.currentUser}} />`, {
+  scope: ['User', 't']  
+});
+
+// Provide array of values
+const template = createTemplateFactory(wireFormat, {
+  scope: () => [User, t]
+});
+```
+
+This API has been updated so that, by default, the expression returned from
+`precompile` is assumed to be embedded in JavaScript code where the
+identifiers used in the template are in lexical scope. This eliminates the
+need to specify a `scope` array to either `precompile` or
+`createTemplateFactory`.
+
+The example above would instead be written like this:
+
+```js
+import { precompile } from '@ember/template-compiler';
+import { createTemplateFactory } from '@ember/template-factory';
+import User from './OtherComponent';
+import t from '../helpers/i18n/t';
+
+// Assume any ambiguous identifiers come from our lexical scope.
+const wireFormat = precompile(`{{t "Hello!"}} <User @user={{this.currentUser}} />`);
+const template = createTemplateFactory(wireFormat);
+```
+
+That means that the wire format can now contain JavaScript code, like in the
+following example:
+
+```js
+import { precompileTemplate } from '@ember/template-compilation';
+import User from './OtherComponent';
+import t from '../helpers/i18n/t';
+
+// Provide array of string identifiers
+const wireFormat = precompile(`{{t "Hello!"}} <User @user={{this.currentUser}} />`);
+/* => `{
+  "id": "ANJ73B7b",
+  "block": "{\"statements\":[\"...\"]}",
+  "scope": () => [t, User]
+}` */
+```
+
+#### Mode Option
+
+A new `mode` option has been added to `precompile` to allow for future
+evolution of compiler rules.
