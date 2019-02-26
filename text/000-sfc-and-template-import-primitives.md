@@ -613,17 +613,18 @@ const template$1 = TEMPLATE({
 ```
 
 The `__template__` `CallExpression` will be replaced with the compiled wire
-format:
+format and wrapped in a template factory:
 
 ```js
 import titleize from './helpers/titleize';
 import BlogPost from './components/blog-post';
+import { createTemplateFactory } from '@ember/template-factory';
 
-const template$1 = {
+const template$1 = createTemplateFactory({
   "id": "ANJ73B7b",
   "block": "{\"statements\":[\"...\"]}",
   "scope": () => [BlogPost, titleize]
-};
+});
 ```
 
 Note that the wire format is not defined in this RFC, is not considered
