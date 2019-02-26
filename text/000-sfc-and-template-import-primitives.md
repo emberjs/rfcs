@@ -203,16 +203,13 @@ import { inject as service } from '@ember/service';
 import titleize from './helpers/titleize';
 import BlogPost from './components/blog-post';
 
-import { createTemplateFactory, setComponentTemplate } from '@ember/template-factory';
+import { __template__, setComponentTemplate } from '@ember/template-factory';
 
-const wireFormat$1 = {
-  "id": "ANJ73B7b",
-  "block": "{\"statements\":[\"...\"]}",
-  "meta": { "moduleName": "src/ui/components/MyComponent.js" },
-  "scope": () => [BlogPost, titleize]
-};
-
-const template$1 = createTemplateFactory(wireFormat$1);
+const template$1 = __template__({
+  source: `{{#let this.session.currentUser as |user|}}\n  <BlogPost`, /* ... */
+  mode: 1,
+  scope: [BlogPost, titleize]
+});
 
 export default setComponentTemplate(template$1, class MyComponent extends Component {
   @service session;
@@ -223,9 +220,9 @@ Note that the file formats shown above are hypothetical and used as
 illustrative examples only. This RFC does *not* propose a recommended file
 format. Rather, the goal is to expose public JavaScript API for:
 
-1. Compiling a template into a JavaScript wire format.
+1. Compiling a template into a JavaScript representation.
 3. Associating a compiled template with its backing JavaScript class.
-2. Specifying which values are in scope for a given template at runtime.
+2. Allowing templates to access their ambient JavaScript scope.
 
 By focusing on primitives first, the community can iterate on different SFC
 designs via addons, before settling on a default format that we'd incorporate
@@ -239,13 +236,12 @@ This RFC proposes the following new modules and exports:
 
 Name | Description  
 ---------|----------
-`import { precompile } from '@ember/template-compiler'` |  Compiles template source code into a JavaScript wire format.
-`import { createTemplateFactory } from '@ember/template-factory'` | Creates a template factory wrapper around the wire format.
-`import { setComponentTemplate } from '@ember/template-factory'` |  Associates a template factory with a JavaScript component class.
+`import { createEmbeddableTemplate } from '@ember/template-compiler'` |  Converts template source code into a static syntax that can be inlined in JavaScript source.
+`import { setComponentTemplate } from '@ember/template-factory'` |  Associates a template with a JavaScript component class.
 
 Detailed descriptions and rationales for these APIs are provided below.
 
-### Template Wire Format
+### Template Compilation
 
 Browsers don't understand Ember templates natively. So how are these
 templates compiled and turned into a format that can be run in the browser?
@@ -256,53 +252,75 @@ Just-in-Time (JIT) mode where templates are compiled into an intermediate
 JSON format, with final bytecode compilation happening on demand in the browser
 the first time a template is rendered.
 
-Ember uses Glimmer's JIT mode, so templates are sent to the browser as an
-optimized JSON data structure we call the _wire format_. The
-`@glimmer/compiler` package provides a helper function called `precompile`
-that turns raw template source code into this "pre-compiled" wire format.
+Ember uses Glimmer's JIT mode, so templates are compiled into a JavaScript
+data structure we call the _wire format_. The wire format allows us to embed
+templates in JavaScript source code and make them available to Ember for use
+during rendering.
+
+While the wire format allows us to embed templates as a JavaScript data
+structure, the format of that data structure changes over time. For example,
+the wire format of a compiled template is likely to be slightly different
+(and mutually incompatible) between Ember 3.0 and 3.8.
+
+Today, addons distribute templates as source `.hbs` files. Each Ember
+application is responsible for compiling addon templates as well as its own
+templates, guaranteeing that the generated wire formats are compatible.
+
+Because the wire format is not stable across Ember versions, we need an
+alternate syntax for embedding templates within JavaScript code that is
+stable across different Ember releases.
+
+### Embeddable Templates
+
+This RFC proposes we expose a function called `createEmbeddableTemplate`,
+exported from the `@ember/template-compiler` package. This function takes a
+string of template source code and returns a version of that template encoded
+in JavaScript syntax that can be inserted into an existing JavaScript file:
 
 ```js
-import { precompile } from '@glimmer/compiler';
-const json = precompile(`<h1>{{this.firstName}}</h1>`);
+import { createEmbeddableTemplate } from '@ember/template-compiler';
+
+const templateSource = `<h1><BlogPost @title={{titleize this.post.title}} /></h1>`;
+const embeddableTemplate = createEmbeddableTemplate(templateSource);
+
+const jsFile = `
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
+import titleize from './helpers/titleize';
+import BlogPost from './components/blog-post';
+import { setComponentTemplate } from '@ember/template-factory';
+${embeddableTemplate.prelude};
+
+const template$1 = ${embeddableTemplate.value};
+
+export default setComponentTemplate(template$1, class MyComponent extends Component {
+  @service session;
+});
+`;
 ```
 
-There is some additional processing Ember does on top of the Glimmer VM
-compiler to allow compiled templates to work. This RFC proposes exposing this
-functionality as public API via a `precompile` function exported from the
-`@ember/template-compiler` package.
+The return value of `createEmbeddableTemplate` is an object with two
+properties, `prelude` and `value`.
 
-```js
-import { precompile } from '@ember/template-compiler';
-const json = precompile(`<h1>{{this.firstName}}</h1>`);
-```
+The `prelude` property is a string containing setup code, such as `import` statements,
+and must be inserted in the top level of the module. If multiple templates
+are being embedded in the same JavaScript module, the prelude must be
+included only once.
 
-The exact structure of the wire format returned from `precompile` is not
-specified, is not considered public API, and is likely to change across minor
-versions. Other than a guarantee that it is a string that can be embedded in
-JavaScript and is a valid JavaScript expression, users should treat the value
-returned by `precompile` as completely opaque.
+The `value` property is a string containing a JavaScript expression
+representing the template source and additional metadata. This value will be
+transformed into the final wire format version of the template when the
+application is compiled.
 
-### Template Factories
+The proposed syntax for templates encoded in JavaScript is described in the
+[Embeddable Template Format](#embeddable-template-format) section. However,
+the exact JavaScript code returned from `createEmbeddableTemplate` should be
+considered opaque and may change over time.
 
-Once we have our template compiled into the wire format, we need a way to
-annotate it so that Ember knows that the value represents a compiled
-template. The wrapper object around the wire format that does this is called
-a _template factory_.
+The `createEmbeddableTemplate` function will throw an exception if the
+template passed to it contains a syntax error.
 
-This RFC proposes exposing a function for creating template factories called
-`createTemplateFactory`, exported from the `@ember/template-factory` package.
-
-Users would use this function to turn the raw wire format into a template
-factory object at runtime:
-
-```js
-import { createTemplateFactory } from '@ember/template-factory';
-
-const wireFormat = /* embed wire format from precompile here */
-const templateFactory = createTemplateFactory(wireFormat);
-```
-
-### Associating Template Factories and Classes
+### Associating Templates and Classes
 
 In Ember, a component is made up of a template and an optional backing
 JavaScript class. But how does Ember know which class and template go
@@ -344,15 +362,14 @@ being fully optimized.
 This RFC proposes a more explicit, static system for associating templates
 with component classes. A function called `setComponentTemplate` is exported
 from the `@ember/template-factory` package. To create the association, this
-function is invoked with the template factory and component class as
+function is invoked with the embedded template and component class as
 arguments:
 
 ```js
 import Component from '@glimmer/component';
-import { createTemplateFactory, setComponentTemplate } from '@ember/template-factory';
+import { setComponentTemplate } from '@ember/template-factory';
 
-const wireFormat = /* wire format here */
-const templateFactory = createTemplateFactory(wireFormat);
+const template = /* embeddable template here */
 
 class MyComponent extends Component {
   /* ... */
@@ -423,74 +440,52 @@ and can be confusing for new learners, we'd like to explore alternate APIs
 that allow users to explicitly import values and refer to them from
 templates.
 
-This RFC proposes that templates compiled via the `precompile` function
-resolve unknown identifiers from the ambient JavaScript scope, rather than
-performing dynamic resolution through the container.
+This RFC proposes that templates embedded via the `createEmbeddableTemplate`
+function resolve unknown identifiers from the ambient JavaScript scope,
+rather than performing dynamic resolution through the container.
 
-To do this, `precompile` emits JavaScript code that contains references to
-the same identifiers as those used in the template:
+To do this, `createEmbeddableTemplate` emits JavaScript code that contains
+references to the same identifiers as those used in the template:
 
 ```js
-import { precompile } from '@ember/template-compiler';
+import { t } from '../helpers/t';
+import User from './user';
+import { __template__ } from '@ember/template-compiler';
 
-const wireFormat = precompile(`{{t "Hello!"}} <User @user={{this.currentUser}} />`);
-/* => `{
-  "id": "ANJ73B7b",
-  "block": "{\"statements\":[\"...\"]}",
-  "scope": () => [t, User]
-}`                ^---- template identifiers emitted as JavaScript references
-*/
+const template$1 = __template__({
+  source: '{{t "Hello!"}} <User @user={{this.currentUser}} />',
+  mode: 1,
+  scope: [User, t]
+});   /*  ^------- actual JavaScript identifier */
 ```
 
-If a template references an identifier that is not in lexical
-scope, a `ReferenceError` will be produced at runtime:
+When the embedded template is later compiled into the wire format, these references
+are retained:
 
 ```js
-import { precompileTemplate } from '@ember/template-compilation';
+import { t } from '../helpers/t';
+import User from './user';
+import { templateFactory } from '@ember/template-factory';
 
-// Compiles successfully but the generated code will throw a ReferenceError when
-// evaluated.
-const wireFormat = precompile(`<MissingComponent />`);
-/* => `{
+const template$1 = templateFactory({
+  "id": "ANJ73B7b",
+  "block": "{\"statements\":[\"...\"]}",
+  "scope": () => [User, t]
+});           /*  ^------- actual JavaScript identifier */
+```
+
+If a template references an identifier that is not in scope, a
+`ReferenceError` will be produced at runtime:
+
+```js
+import { templateFactory } from '@ember/template-factory';
+
+const template$1 = templateFactory({
   "id": "ANJ73B7b",
   "block": "{\"statements\":[\"...\"]}",
   "scope": () => [MissingComponent]
-}`                ^------ will produce ReferenceError
-*/
+});           /*  ^------- will produce a ReferenceError */
 ```
-
-Optionally, you can provide an array of strings specifying the ambient
-identifiers in scope. If a `scope` array is provided and the template
-contains an identifier that is not present in the list, that reference will
-fall back to today's dynamic resolution lookup behavior:
-
-```js
-// While `t` comes from ambient JavaScript scope, `User` will be looked up
-// through the container.
-const wireFormat = precompile(`{{t "Hello!"}} <User @user={{this.currentUser}} />`, {
-  mode: 2,
-  scope: ['t']
-}); /* => `{
-  "id": "ANJ73B7b",
-  "block": "{\"statements\":[\"...\"]}",
-  "scope": () => [t]
-}`                ^----- only includes identifiers specified in `scope`
-*/
-```
-
-```js
-import { precompile } from '@ember/template-compilation';
-
-const wireFormat = precompile(`<MissingComponent />`, {
-  scope: ['BlogPost', 'OtherComponent']
-})
-/* => Throws an exception: "MissingComponent is not defined."   */
-```
-
-Addons that need to support existing templates that rely on container lookup
-to discover components and helpers should provide the list of valid
-identifiers via `scope`. Omitting this list causes all lookups to happen via
-ambient scope rather than through the container.
 
 As of this RFC, scope values resolved via ambient scope are limited to
 component classes and template helpers (i.e. subclasses of `Helper` or
@@ -507,44 +502,133 @@ This RFC defines a single mode:
 
    Mode  | ID | Description
 ---------|--------------|------------
-**Classic** | 1 | All deprecated and non-deprecated syntax supported. Mix of dynamic resolution and JavaScript scope supported.
+**Strict** | 1 | Legacy template syntax becomes a compile-time error. Component and helper resolution happens via ambient JavaScript scope.
+
+The exact behavior of strict mode is defined in a companion RFC.
 
 Modes are specified as an integer ID to reduce the size of compiled output
 and to allow additional modes to be added in the future. To specify the mode,
-pass a `mode` option to `precompile`:
+pass a `mode` option to `createEmbeddableTemplate`:
 
 ```js
-const wireFormat = precompile(`{{t "Hello!"}} <User @user={{this.currentUser}} />`, {
-  mode: 1,
-  scope: ['t']
-}); /* => `{
-  "id": "ANJ73B7b",
-  "block": "{\"statements\":[\"...\"]}",
-  "scope": () => [t]
-}`
-*/
+const template = createEmbeddableTemplate('<div></div>', {
+  mode: 1
+});
 ```
 
-If the mode is not specified, classic mode (mode `1`) is assumed. Future RFCs
+If the mode is not specified, strict mode (mode `1`) is assumed. Future RFCs
 may specify additional modes.
 
-In strict mode, templates that references names that are not present in a supplied
-`scope` array produce a compile-time error. In sloppy mode, references to names
-that are not specified in the `scope` array will fall back to dynamic
-resolution:
+### Embeddable Template Format
+
+This section describes the JavaScript syntax generated by
+`createEmbeddableTemplate` and consumed by the Ember CLI build system.
+Similar to how Ember CLI automatically discovers `.hbs` files and compiles
+them into the wire format, templates embedded in `.js` files with this syntax
+will be replaced with the equivalent wire format at build time.
+
+The following constraints are important to the design described here:
+
+1. Parsing for embedded templates should be fast, to avoid regressing application
+   build times.
+2. The syntax should be static and only require parsing, not evaluating, JavaScript.
+3. The syntax should be valid JavaScript that will not cause incompatibility
+   with other tools.
+4. The syntax should produce real values and use real JavaScript references
+   rather than relying on "inert" constructs like strings or comments. This
+   is to make the embedded templates resilient to tools like minifiers or
+   packagers that aggressively remove code that seems unused and without
+   side-effects.
+
+The format described here is not intended to be authored by hand. Addons and
+other tools that need to generate embeddable templates are strongly
+encouraged to use the `createEmbeddableTemplate` function rather than
+generating the format manually.
+
+We propose a new export, `__template__`, from the `@ember/template-compiler`
+package. An embedded template is defined by a `CallExpression` with the
+imported `__template__` identifier (or its alias) as the callee and an
+`ObjectLiteral` expression as the first and only argument:
 
 ```js
-// `t` comes from ambient scope, `User` will be looked up.
-const wireFormat = precompile(`{{t "Hello!"}} <User @user={{this.currentUser}} />`, {
-  mode: 2,
-  scope: ['t']
-}); /* => `{
+import titleize from './helpers/titleize';
+import BlogPost from './components/blog-post';
+import { __template__ } from '@ember/template-compiler';
+
+const template$1 = __template__({
+  source: '<h1><BlogPost @title={{titleize "Coming Soon"}} /></h1>',
+  mode: 1,
+  scope: [BlogPost, titleize]
+});
+```
+
+The `ObjectLiteral` expression must contain the following property definitions:
+
+| `IdentifierName` | Description | `AssignmentExpression` |
+|---|---|---|
+| `source` | The original template source. | `StringLiteral` |
+| `mode` | The mode (see [Compilation Modes](#compilation-modes)) the template should be compiled in. | `DecimalIntegerLiteral` |
+| `scope` | Identifiers used in the template, sorted by identifier name. | `ArrayLiteral` containing zero or more `IdentifierName` expressions |
+
+While all property definitions are required, the order is unimportant and
+they may be provided in any order.
+
+The `scope` array must be sorted by identifier name, using the sort behavior
+[described in ECMA-262][262-sort]. Predictable sorting allows the template
+compiler to associate scope values with the correct template identifier, even
+if JavaScript identifiers have been mangled by a minifier.
+
+[262-sort]: https://tc39.github.io/ecma262/#sec-array.prototype.sort
+
+To avoid naming collisions, the `__template__` identifier may be aliased on import:
+
+```js
+import titleize from './helpers/titleize';
+import BlogPost from './components/blog-post';
+import { __template__ as TEMPLATE } from '@ember/template-compiler';
+
+// This alias is valid and will be detected as an embedded template.
+const template$1 = TEMPLATE({
+  source: '<h1><BlogPost @title={{titleize "Coming Soon"}} /></h1>',
+  mode: 1,
+  scope: [BlogPost, titleize]
+})
+```
+
+Any other form of aliasing is not supported:
+
+```js
+import titleize from './helpers/titleize';
+import BlogPost from './components/blog-post';
+import { __template__ } from '@ember/template-compiler';
+
+// This alias happens after the import and will either not be detected or cause
+// an exception to be thrown.
+const TEMPLATE = __template__
+const template$1 = TEMPLATE({
+  source: '<h1><BlogPost @title={{titleize "Coming Soon"}} /></h1>',
+  mode: 1,
+  scope: [BlogPost, titleize]
+})
+```
+
+The `__template__` `CallExpression` will be replaced with the compiled wire
+format:
+
+```js
+import titleize from './helpers/titleize';
+import BlogPost from './components/blog-post';
+
+const template$1 = {
   "id": "ANJ73B7b",
   "block": "{\"statements\":[\"...\"]}",
-  "scope": () => [t]
-}`                ^----- only includes identifiers specified in `scope`
-*/
+  "scope": () => [BlogPost, titleize]
+};
 ```
+
+Note that the wire format is not defined in this RFC, is not considered
+public API, and is subject to change over time. The example above is
+illustrative only.
 
 ## How we teach this
 
@@ -561,58 +645,44 @@ pre-requisite.
 
 ### API-Level Documentation
 
-#### precompile
+#### createEmbeddableTemplate
 
 ```js
-import { precompile } from '@ember/template-compiler';
+import { createEmbeddableTemplate } from '@ember/template-compiler';
 ```
 
-Compiles a string of Glimmer template source code into an intermediate "wire
-format" and returns it as a string of JavaScript code. The exact value
-returned from `precompile` is not specified, is not considered public API,
-and is likely to change across minor versions. The string is guaranteed to be
-a valid JavaScript expression. Other than that, you should treat the value
-returned by `precompile` as completely opaque.
+Encodes a string of Glimmer template source code as JavaScript code that can
+be embedded in a host JavaScript file. The JavaScript representation will later
+be compiled into the final compiled wire format by Ember CLI.
 
-By default, components and helpers referenced in the passed template will be
-looked up from the JavaScript scope where the wire format string is inserted.
-To enable legacy container resolution behavior, a `scope` option can be
-provided containing a list of identifiers that should be considered to come
-from ambient JavaScript scope. Any identifiers in the template that are not
-present in the `scope` list will fall back to dynamic container resolution at
-runtime.
+Returns an object with a `prelude` property and a `value` property. The
+`prelude` string should be inserted into the top-level scope of the host file
+and includes setup code such as import statements. The `value` string
+represents a JavaScript expression and may be inserted anywhere a JavaScript
+expression is syntactically valid, such as the right side of an assignment.
+
+Components and helpers referenced in the passed template will be
+looked up from the JavaScript scope where the `value` string is inserted.
 
 An optional `mode` option may also be provided. Currently, only one mode is
-supported, which is the classic mode with ID of `1`. If no mode is specified,
+supported, which is strict mode with ID of `1`. If no mode is specified,
 the default mode of `1` is assumed. Future RFCs may specify additional modes.
 
 ```ts
-function precompile(templateSource: string, options?: PrecompileOptions): string; 
+function createEmbeddableTemplate(templateSource: string, options?: CreateEmbeddableTemplateOptions): CreateEmbeddableTemplateResult; 
 
-interface PrecompileOptions {
-  scope?: string[];
-  mode?: PrecompileMode;
+interface CreateEmbeddableTemplateOptions {
+  mode?: TemplateCompilerMode;
 }
 
-enum PrecompileMode {
-  Classic = 1;
+interface CreateEmbeddableTemplateResult {
+  prelude: string;
+  value: string;
 }
-```
 
-#### createTemplateFactory
-
-```js
-import { createTemplateFactory } from '@ember/template-factory';
-```
-
-Creates a wrapper object around the raw wire format data of a compiled
-template. If the template had additional identifiers added to its ambient
-scope when it was compiled with `precompile`, a `scope` function must be
-provided when calling `createTemplateFactory` that returns an array of
-reified values corresponding to each identifier.
-
-```ts
-function createTemplateFactory(wf: WireFormat): TemplateFactory;
+enum TemplateCompilerMode {
+  Strict = 1;
+}
 ```
 
 #### setComponentTemplate
@@ -701,28 +771,35 @@ unlock good tree-shaking and code-splitting.
 
 ## Unresolved questions
 
-### Intermediate Wire Format
-
-Given that the wire format is unstable between different versions of Ember,
-it's important that all templates in an app (including those from addons) be
-compiled together.
-
-One of [Embroider's](https://github.com/embroider-build/embroider) goals is
-ensuring that addons can compile their assets when the addon is published to
-npm, rather than having compilation happen over and over again every time the
-host Ember application is built.
-
-We want an intermediate format that would allow addons to distribute
-components authored with SFCs and template imports, but would defer final
-template compilation to the wire format until the application was is
-compiled.
-
 ## Changelog
 
 This section captures substantive changes made during the RFC process and the
 rationale behind the changes.
 
-### 2019/2/25
+### 2019/02/26
+
+#### Replace Wire Format with Embeddable Templates
+
+To address the previous open question about wire format stability and how
+addons should distribute templates that exist within a JavaScript scope, the
+previous `precompile` API has been replaced with a new API,
+`createEmbeddableTemplate`, that creates an intermediate static syntax for
+template embedding that includes the original template source.
+
+#### Single Scoping Mechanism, Compilation Mode
+
+Previous versions of this RFC contained additional API for partially opting
+out of JavaScript lexical scope in a given template. This design added
+complexity to the API and the process of building an SFC addon, but was done
+on compatibility grounds. We now believe we have a better strategy for
+compatibility that does not rely on this complexity, so it has been removed
+in favor of always using ambient scope.
+
+This also means that the need for a sloppy mode is eliminated, so this RFC
+defines the default (and only) mode as strict mode. The exact semantics of
+strict mode will be defined in a companion RFC.
+
+### 2019/02/25
 
 #### Simpler Scope API
 
