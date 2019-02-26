@@ -7,8 +7,8 @@
 
 ## Summary
 
-Expose low-level primitives for associating templates with component classes
-and customizing a template's ambient scope.
+Expose low-level primitives for embedding templates in JavaScript and
+associating templates with component classes.
 
 These primitives unlock experimentation, allowing addons to provide
 highly-requested features (such as single-file components) via stable, public
@@ -266,9 +266,9 @@ Today, addons distribute templates as source `.hbs` files. Each Ember
 application is responsible for compiling addon templates as well as its own
 templates, guaranteeing that the generated wire formats are compatible.
 
-Because the wire format is not stable across Ember versions, we need an
-alternate syntax for embedding templates within JavaScript code that is
-stable across different Ember releases.
+Because the wire format is not stable, we need an alternate syntax for
+embedding templates within JavaScript code that is stable across different
+Ember versions.
 
 ### Embeddable Templates
 
