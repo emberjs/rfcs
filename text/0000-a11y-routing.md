@@ -84,8 +84,11 @@ It's possible that enterprise Ember users have already implemented their own sol
 - [Route Helpers](https://emberjs.github.io/rfcs/0391-router-helpers.html) by Chad Hietala
 
 ### Related Reading
-
+- Accessibility APIs
+  - Windows: [Microsoft Active Accessibility](https://docs.microsoft.com/en-us/windows/desktop/WinAuto/microsoft-active-accessibility) (MSAA), extended with another API called [IAccessible2](https://wiki.linuxfoundation.org/accessibility/iaccessible2/start) (IA2)
+  - Windows: [UI Automation](https://docs.microsoft.com/en-us/windows/desktop/WinAuto/entry-uiauto-win32) (UIA), the Microsoft successor to MSAA. A browser on Windows can choose to support MSAA with IA2, UIA, or both.
+  - MacOS: [NSAccessibility](https://developer.apple.com/documentation/appkit/nsaccessibility) (AXAPI)
+  - Linux/Gnome: [Accessibility Toolkit](https://developer.gnome.org/atk/stable/) (ATK) and [Assistive Technology Service Provider Interface](https://developer.gnome.org/libatspi/stable/) (AT-SPI). This case is a little different in that there are actually two separate APIs: one through which browsers and other applications pass information along to (ATK) and one that ATs then call from (AT-SPI).
 - [NVDA Developer Guide](https://www.nvaccess.org/files/nvda/documentation/developerGuide.html)
-- [Microsoft Active Accessibility (MSAA)](https://docs.microsoft.com/en-us/windows/desktop/winauto/microsoft-active-accessibility) MSAA is an Application Programming Interface (API) for user interface accessibility. MSAA was introduced as a platform add-on to Microsoft Windows 95 in 1997. MSAA is designed to help Assistive Technology (AT) products interact with standard and custom user interface (UI) elements of an application (or the operating system), as well as to access, identify, and manipulate an application's UI elements. The current and latest specification of MSAA is found in part of [Microsoft UI Automation](https://docs.microsoft.com/en-us/windows/desktop/WinAuto/uiauto-specandcommunitypromise) Community Promise Specification.
 - [Structured Negotiation: A Winning Alternative to Lawsuits](https://www.lflegal.com/book/)
 
