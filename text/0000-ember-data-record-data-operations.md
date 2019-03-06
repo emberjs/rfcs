@@ -6,8 +6,8 @@
 
 ## Summary
 
-Introduces `RecordData.performMutation` which takes an `Operation` for local mutations of
-data. `Operations` are small, serializable objects describing a mutation.
+Introduces `RecordData.performMutation` which takes an `Operation` for local mutations
+ of data. `Operations` are small, serializable objects describing a mutation.
 
 ## Motivation
 
@@ -18,6 +18,49 @@ data. `Operations` are small, serializable objects describing a mutation.
   logging, serialization, debugging APIs, reverse operations, transactions)
 - improved factoring of internals
 - easy deprecation path to singleton RD support
+
+`Operations` are a foundational concept for `acid` transactions. Without the ability to
+ describe an `operation` and a clear mental model of what operations exist and achieve,
+ it is difficult to understand how an action affects state. Granularity and clarity is 
+ **key**.
+
+In more layman terms, let's take a look at a few `RecordData` methods and how they might
+better be understood as operations, using the originally proposed singleton `RecordData`
+APIs for mutating an attribute or a relationship.
+
+```ts
+interface RecordData {
+  setAttr(modelName: string, id?: string, clientId?: string, key: string, value: string) {}
+  setBelongsTo(modelName: string, id?: string, clientId?: string, key: string, jsonApiResource) {}
+  addToHasMany(modelName: string, id?: string, clientId?: string, key: string, jsonApiResources, idx: number) {}
+  removeFromHasMany(modelName: string, id?: string, clientId?: string, key: string, jsonApiResources) {}
+}
+```
+
+The above is just one snapshot of the roughly dozen APIs relating to mutation of the ~25
+APIs present on `RecordData`.
+
+The "soup" of available methods prevents someone from knowing at a glance which methods
+are for mutations, and whether these methods are for mutating local state, or communicating
+remote state changes.
+
+It also means that developers must memorize a large API surface area, and don't have a clear
+picture of how these methods relate to each other in terms of what they achieve.
+
+### Eliminating unnecessary surface area and better decoupling
+
+Implementations proving a path towards a nicer relationship graph have shown that the distinction
+ between `belongsTo` and `hasMany` at the `RecordData` level is unnecessary, and only leads to
+ extraneous method branching throughout the rest of `ember-data`'s primtives.
+ 
+Furthermore, some `Record` and `RecordData` implementations may not provide relationships at all,
+ leaving unnecessary dangling methods around to confuse folks exploring the codebase while debugging.
+
+With these improvements to `RecordData` and associated changes to relationships and `Record` classes,
+`ember-data` will no longer need to be coupled to the existing understanding or semantics of `belongsTo`
+and `hasMany`, allowing custom records to define new types of relationships more easily (such as `map`,
+`set`, `union`, `enum`) without shoehorning them through `attribute` methods or fudging them into `belongsTo`
+or `hasMany` in form.
 
 ## Detailed design
 
