@@ -17,7 +17,7 @@ However, Ember ships with three built-in components – `{{link-to}}`, `{{input}
 and `{{textarea}}`. To date, it is not possible to invoke them with the angle
 bracket syntax due to various API mismatches and implementation details.
 
-This RFC proposes some small admenments to these APIs and their implementations
+This RFC proposes some small amendments to these APIs and their implementations
 to allow them to be invoked with the angle bracket syntax, i.e. `<LinkTo>`,
 `<Input>` and `<TextArea>`.
 
