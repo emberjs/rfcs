@@ -156,7 +156,7 @@ components that are selected based on the `type` argument. This is intended as
 an internal implmentation detail, but as a result, it is not possible to invoke
 the component with `<Input>` since it does not exist as a "real" component.
 
-We propose to change this internal implementation strategry to make it possible
+We propose to change this internal implementation strategy to make it possible
 to invoke this with angle brackets just like any other components.
 
 For example:
