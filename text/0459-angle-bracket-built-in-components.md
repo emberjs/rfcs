@@ -193,7 +193,7 @@ None.
 Due to a similar implementation issue, it is also not possible to invoke the
 `{{textarea}}` component with angle bracket invocation style.
 
-We propose to change this internal implementation strategry to make it possible
+We propose to change this internal implementation strategy to make it possible
 to invoke this with angle brackets just like any other components. However, to
 align with the name used in [RFC #176](./0176-javascript-module-api.md), we
 propose to take this opportunity to rename the component into `<TextArea>` (as
