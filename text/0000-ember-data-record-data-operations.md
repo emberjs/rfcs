@@ -6,8 +6,8 @@
 
 ## Summary
 
-Introduces `Operations` for local mutations of data which are small objects describing a
-mutation 
+Introduces `RecordData.performMutation` which takes an `Operation` for local mutations of
+data. `Operations` are small, serializable objects describing a mutation.
 
 ## Motivation
 
@@ -87,16 +87,16 @@ interface RecordData {
   removeFromInverseRelationships(isNew)
   rollbackAttributes()
   clientDidCreate()
-  didDelete()
 }
 ```
 
 Additionally we may consider modeling these APIs as operations as well
 
 ```ts
-  didCommit(data) // see also willCommit
-  _initRecordCreateOptions(options) // paired with clientDidCreate
-  reset()
+  didDelete() // cannonical update
+  didCommit(data) // cannonical update, see also willCommit
+  _initRecordCreateOptions(options) // 2nd phase of create, paired with clientDidCreate
+  reset() // similar to rollbackAttributes
 ```
 
 ## How we teach this
