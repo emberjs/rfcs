@@ -8,7 +8,7 @@
 ## Summary
 
 Move forward with the Decorators RFC via stage 1 decorators, and await a stable
-stage 3+ proposal.
+future decorators proposal.
 
 ## Motivation
 
@@ -159,11 +159,9 @@ code that will be hard to migrate forward to class fields in the future.
 Stage 1 decorators will be considered a first class Ember API. They will be
 supported until:
 
-1. Decorators have reached at least Stage 3 in TC39, with strong confidence that
-   they will not change significantly from Stage 3 -> 4.
-2. A new RFC has been made to introduce Stage 3 decorators as a parallel API to
+1. A new RFC has been made to introduce a new decorator API as a parallel API to
    the stage 1 decoraters.
-3. A deprecation RFC has been created for Stage 1 decorators.
+2. A deprecation RFC has been created for Stage 1 decorators.
 
 They will follow the same deprecation flow, and same SemVer requirements, as any
 other Ember feature.
