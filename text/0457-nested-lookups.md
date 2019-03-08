@@ -95,7 +95,31 @@ On the other hand, it has poor syntax highlighting in virtually all existing hig
 
 Additionally, some autocomplete systems assume that `<AppIcons/` is the beginning of a self-closing tag.
 
-Another drawback of this proposal is that it uses `::` syntax for a temporary concern. It's possible that we would want to use this syntax, which might be considered valuable, in another context in the future, even after we implement template imports. That said, there is no specific proposal for what we might want to use this syntax for, and we could compatibly reclaim it in the context of template imports, at the cost of some mental churn.
+Another drawback of this proposal is that it uses `::` syntax for today's templates, and we don't expect that syntax to be relevant to templates using template imports. It's possible that we would want to use this syntax, which might be considered valuable, in templates using template imports. That said, there is no specific proposal for what we might want to use this syntax for, and we could compatibly reclaim it in the context of template imports, at the cost of some mental churn.
+
+Another alternative is to recommend that people use `#let` with `(component)` in situations where nesting is required.
+
+```hbs
+{{#let (component 'app-icons/warning') as |Warning|}}
+  <Warning></Warning>
+{{/let}}
+```
+
+The primary drawback of this approach is that the need to group components together in directories comes up earlier in the typical Ember developer's experience than learning the ins and outs of `let` and the `component` helper. It seems likely that developers could encounter a desire to group components in directories even before they have a full understanding of `let` and block parameters.
+
+Secondarily, this is a fairly verbose syntax that introduces a significant cliff from top-level components to grouped components.
+
+Another alternative is to introduce a new non-block syntax for bringing components into scope, such as:
+
+```hbs
+{{resolve-component 'app-icons/warning' as Warning}}
+
+<Warning></Warning>
+```
+
+This avoids introducing rightward drift, but it is still relatively verbose. It also creates a question that we would need to provide guidance on whether people should use this feature for all components or just nested ones (both sides have plausible arguments).
+
+I also comes at the cost of creating a brand new way to bring variables into scope in Glimmer templates. Up to this point, we have carefully maintained the constraint that variables come into scope using nesting and `as |name|` syntax. While we might be willing to introduce new variable binding forms in the future, adding such a form to this proposal would significantly increase its design scope, and maintaining a small scope is a key goal of this RFC.
 
 Another alternative is to avoid introducing a solution to this problem, and wait for the expected longer-term solution, template imports. While this is indeed expected to serve our longer-term goals, it would mean that Ember users couldn't use angle-bracket invocation, with all the benefits they bring, with nested components, or choose not to nest components at all.
 
