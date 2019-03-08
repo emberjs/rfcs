@@ -1,6 +1,6 @@
 - Start Date: 2019-02-14
 - Relevant Team(s): Learning, Infrastructure
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/446
 - Tracking: (leave this empty)
 
 # Contribution Guides
@@ -16,7 +16,7 @@ In the past year alone, [43](https://github.com/emberjs/ember.js/graphs/contribu
 
 We are confident that there is an even greater potential for the community to contribute and that this can be unlocked by facilitating the contribution process - especially in regards to the on-boarding process for first-time contributors to Ember. Today, new community members oftentimes need to spend some time and effort to find a suitable project that allows them to apply a) their skills efficiently and b) is in their eyes worthwhile.
 
-This RFC proposes to create and release a Contribution Guide - a new website as part of the `emberjs.com` domain. This new site should allow contributors to find Ember-related projects to work on easily and should provide more information on the workflow for their potentially first open-source contribution.
+This RFC proposes to create and release a Contribution Guide - a new website as part of the `emberjs.com` domain. This new site should allow contributors to find Ember-related projects to work on easily and should provide more information on the workflow for their potentially (but not necessarily) first open-source contribution.
 
 ## Detailed design
 
@@ -24,13 +24,13 @@ The new Contribution Guides should be as **beginner-friendly** as possible to ac
 
  The list of topics covered should therefore include:
 
-- **A summary of the motivation of open-source and its meaning for Ember as an OSS project.** This aims to provide more context to those new to Ember and open-source in general about the purpose of OSS in general and how Ember values a collaborative approach in the development of the framework.
+- **A summary of the motivation of open-source and its meaning for Ember as an OSS project.** This aims to provide more context to those new to Ember and open-source in general about the purpose of the project and how Ember values a collaborative approach in the development of the framework.
 
 - **A How-To for code contributions with a real-world example.** This can include tips on how to find and claim a suitable issue, an introduction to Git and how to send a pull request, tips for the review process about finding a reviewer, communicating effectively and submitting changes and easy-to-review chunks of contribution work.
 
 - **A How-To for filing a new issue on an Ember project**
 
-- **An issue finder functionality inspired by the [What Can I Do for Mozilla landing page](https://whatcanidoformozilla.org/#!/progornoprog/teach).** This aims to lead users to a) a list of relevant issues on the [Ember Help Wanted App](https://help-wanted.emberjs.com/) or b) a related strike team channel on the Ember Discord chat.
+- **An issue finder functionality inspired by the [What Can I Do for Mozilla landing page](https://whatcanidoformozilla.org/#!/progornoprog/teach)**. This should lead users to a) a list of relevant issues on the [Ember Help Wanted App](https://help-wanted.emberjs.com/), b) a related strike team channel on the Ember Discord chat, c) a link to the description of an on-going initiative on the [Status Board](https://emberjs.com/statusboard/).
 
 Any subjects covered in the Guides should be presented as text instruction at least, but each topic can be enhanced with relevant code examples and multi-media content (e.g. slides of a relevant community talk, video content among others).
 
@@ -43,7 +43,7 @@ To improve discoverability of the Contribution Guides via search engines, it is 
 
 An alternative would be to not create a dedicated Contribution Guide and instead refer those that want to contribute to [the related section in the Ember Guides](https://guides.emberjs.com/release/contributing/adding-new-features/). It would also be possible to expand this section of the Ember Guides further with more content we'd like to share with contributors.
 
-Also, the Ember Help Wanted App already works in favor of one of the goals of this proposal which is increasing the discoverability of issues that require contribution help. Instead of creating a new, dedicated website for the Contribution Guides, it would also make sense to progressively enhance the Help Wanted App with relevant content on contribution, e.g. with a short tutorial on the contribution workflow or How-Tos on other kinds of contribution work.
+Also, the Ember Help Wanted App already works in favour of one of the goals of this proposal which is increasing the discoverability of issues that require contribution help. Instead of creating a new, dedicated website for the Contribution Guides, it would also make sense to progressively enhance the Help Wanted App with relevant content on contribution, e.g. with a short tutorial on the contribution workflow or How-Tos on other kinds of contribution work.
 
 ## Unresolved questions
 
