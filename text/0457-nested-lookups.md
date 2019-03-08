@@ -100,7 +100,3 @@ Another drawback of this proposal is that it uses `::` syntax for a temporary co
 Another alternative is to avoid introducing a solution to this problem, and wait for the expected longer-term solution, template imports. While this is indeed expected to serve our longer-term goals, it would mean that Ember users couldn't use angle-bracket invocation, with all the benefits they bring, with nested components, or choose not to nest components at all.
 
 On balance, it seems better to introduce an interim syntax that restores feature parity with curly invocation.
-
-## Unresolved questions
-
-Which of the alternatives should we choose?
