@@ -17,7 +17,7 @@ Today's angle-bracket syntax conversion guide says this:
 
 This has been an acceptable interim step as we have worked on completing the work of revamping the component model, but it's a source of incoherence (and a reported adoption blocker for some apps) in the Ember design, and we need to eliminate this source of incoherence in order to recommend angle bracket components in the Octane edition.
 
-For positional arguments, we recommend that add-on authors migrate to named arguments. Addons that are mimicking control-flow syntax (like `liquid-if`) should clearly document that they are meant to be used with curly syntax.
+For positional arguments, we recommend that add-on authors migrate to named arguments. There is one exception to this rule: addons that are mimicking control-flow syntax (like `liquid-if`). These addons should clearly document that they are meant to be used with curly syntax.
 
 For components nested inside of directories, this RFC proposes a new syntax to allow users to migrate directly to angle bracket invocation.
 
