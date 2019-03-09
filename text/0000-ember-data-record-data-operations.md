@@ -19,7 +19,7 @@ Introduces `RecordData.performMutation` which takes an `Operation` for local mut
 - improved factoring of internals
 - easy deprecation path to singleton RD support
 
-`Operations` are a foundational concept for `acid` transactions. Without the ability to
+`Operations` are a foundational concept for [ACID](https://en.wikipedia.org/wiki/ACID_(computer_science)) transactions. Without the ability to
  describe an `operation` and a clear mental model of what operations exist and achieve,
  it is difficult to understand how an action affects state. Granularity and clarity is 
  **key**.
