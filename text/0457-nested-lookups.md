@@ -76,9 +76,21 @@ This RFC amends the normalization rule by first replacing any occurrences of `::
 
 ## How we teach this
 
-RFC #311 introduced a normalization rule for angle bracket invocation, so we need to teach that `<NavBar>` invokes a component that appears in the file system as `nav-bar`.
+We currently don't cover directory nesting in the guides, and directory nesting is not an extremely early-stage Ember feature. That said, most Ember developers encounter a need or desire to group components together relatively quickly, and it does make sense to cover it.
 
-After this RFC, we will also need to teach that directories in the file system should be referenced in the template using `::`.
+RFC #311 introduced a normalization rule for angle bracket invocation, and the guides mention that `<NavBar>` invokes a component that appears in the file system as `nav-bar`.
+
+![rental-listing in the docs](../images/457-dasherization.jpg)
+
+After this RFC, the documentation should add a "Zoey says" sidebar that describes the rule in more detail, and mentions that you can refer to components nested in a directory with the `::` separator.
+
+Finally, the goal of this RFC is to make it possible to recommend that users always use angle-bracket invocation for components other than control flow (`if`, `each`).
+
+This means that we should update the syntax conversion guide to no longer say that `{{` syntax is sometimes required, and avoid recommending it.
+
+![existing documentation](../images/457-when-to-use-curlies.jpg)
+
+We should also recommend that component authors who are using positional parameters (other than control flow components like `liquid-if`) should stabilize, document and recommend named argument for their parameters so that their users can uniformly use angle bracket invocation syntax.
 
 ## Drawbacks and Alternatives
 
@@ -94,6 +106,8 @@ On the other hand, it has poor syntax highlighting in virtually all existing hig
 ```
 
 Additionally, some autocomplete systems assume that `<AppIcons/` is the beginning of a self-closing tag.
+
+![an example of an IDE confusing this syntax as a self-closing tag](../images/457-autocomplete-problem.gif)
 
 Another drawback of this proposal is that it uses `::` syntax for today's templates, and we don't expect that syntax to be relevant to templates using template imports. It's possible that we would want to use this syntax, which might be considered valuable, in templates using template imports. That said, there is no specific proposal for what we might want to use this syntax for, and we could compatibly reclaim it in the context of template imports, at the cost of some mental churn.
 
