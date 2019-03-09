@@ -8,9 +8,9 @@
 ## Summary
 
 [RFC #311](./0311-angle-bracket-invocation.md) introduced the angle bracket
-component invocation syntax. Many developers in the Ember community has since
+component invocation syntax. Many developers in the Ember community have since
 adopted this feature with very positive feedback. This style of component
-invocation will beomce the default style in the Octane edition and become the
+invocation will become the default style in the Octane edition and become the
 primary way component invocations are taught.
 
 However, Ember ships with three built-in components – `{{link-to}}`, `{{input}}`
@@ -27,7 +27,7 @@ As mentioned above, this will allow Ember developers to invoke components with
 a consistent syntax, which should make it easier to teach.
 
 This RFC _does not_ aim to "fix" issues or quirks with the existing APIs – it
-merely attempts to provide a way to do the equivilant invocation in angle
+merely attempts to provide a way to do the equivalent invocation in angle
 bracket syntax.
 
 ## Detailed design
@@ -96,8 +96,8 @@ named argument which accepts an array:
 
 The singular `@model` argument is a special case of `@models`, provided as a
 convenience for the common case. Passing both `@model` and `@models` will be an
-error. (So would passing insufficient amount of models for the given route, as
-it already is today.)
+error. Passing insufficient amount of models for the given route, will continue
+to be an error.
 
 It is also possible to pass query params to the `{{link-to}}` component with
 the somewhat awkward `(query-params)` API. We propose to replace it with a
@@ -116,7 +116,7 @@ the somewhat awkward `(query-params)` API. We propose to replace it with a
 ```
 
 Finally, as mentioned above, `{{link-to}}` supports an "inline" form without a
-block. This form doesn't bring much value and used to cause confusion around
+block. This form doesn't bring much value and causes confusion around
 the ordering of the arguments. We propose to simply not support this for the
 angle bracket invocation style:
 
@@ -149,11 +149,11 @@ invocation style.
 
 Today, the `{{input}}` component is internally implemented as several internal
 components that are selected based on the `type` argument. This is intended as
-an internal implmentation detail, but as a result, it is not possible to invoke
+an internal implementation detail, but as a result, it is not possible to invoke
 the component with `<Input>` since it does not exist as a "real" component.
 
 We propose to change this internal implementation strategy to make it possible
-to invoke this with angle brackets just like any other components.
+to invoke it with angle brackets just like any other components.
 
 For example:
 
