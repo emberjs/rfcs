@@ -19,7 +19,7 @@ bracket syntax due to various API mismatches and implementation details.
 
 This RFC proposes some small amendments to these APIs and their implementations
 to allow them to be invoked with the angle bracket syntax, i.e. `<LinkTo>`,
-`<Input>` and `<TextArea>`.
+`<Input>` and `<Textarea>`.
 
 ## Motivation
 
@@ -135,19 +135,15 @@ Other APIs of this compoment are already based on named arguments.
 We would provide a codemod to convert the old invocation style into the new
 style.
 
-#### Deprecations
+#### Template Lints
 
-Even though the angle bracket invocation style is recommended going forward
-(and should be enforced via a template lint), components can generally be
-invoked using the either the curly or angle bracket syntax. Therefore, while
-not recommended, `{{link-to}}` would still work and invoke the same component.
+Even though the angle bracket invocation style is recommended going forward,
+components can generally be invoked using the either the curly or angle bracket
+syntax. Therefore, while not recommended, `{{link-to}}` would still work and
+invoke the same component.
 
-In the case that the curly invocation style is used, we propose to issue the
-following deprecation warnings:
-
-* Passing positional arguments to `{{link-to}}` (pass named arguments instead)
-* Using the inline form of `{{link-to}}` (use the block form instead)
-* The `query-params` helper (pass a hash/POJO to the `query` argument instead)
+We propose to add template lint rules to using this component with the curly
+invocation style.
 
 ### `<Input>`
 
@@ -184,20 +180,23 @@ Another example:
 We would provide a codemod to convert the old invocation style into the new
 style.
 
-#### Deprecations
+#### Template Lints
 
-None.
+Even though the angle bracket invocation style is recommended going forward,
+components can generally be invoked using the either the curly or angle bracket
+syntax. Therefore, while not recommended, `{{input}}` would still work and
+invoke the same component.
 
-### `<TextArea>`
+We propose to add template lint rules to using this component with the curly
+invocation style.
+
+### `<Textarea>`
 
 Due to a similar implementation issue, it is also not possible to invoke the
 `{{textarea}}` component with angle bracket invocation style.
 
 We propose to change this internal implementation strategy to make it possible
-to invoke this with angle brackets just like any other components. However, to
-align with the name used in [RFC #176](./0176-javascript-module-api.md), we
-propose to take this opportunity to rename the component into `<TextArea>` (as
-opposed to `<Textarea>`).
+to invoke this with angle brackets just like any other components.
 
 For example:
 
@@ -206,7 +205,7 @@ For example:
 
 ...becomes...
 
-<TextArea @value={{this.model.body}} />
+<Textarea @value={{this.model.body}} />
 ```
 
 #### Migration Path
@@ -214,10 +213,20 @@ For example:
 We would provide a codemod to convert the old invocation style into the new
 style.
 
-#### Deprecations
+[RFC #176](./0176-javascript-module-api.md) picked `text-area`/`TextArea` for
+this component. To prevent confusion, we will add a helpful hint to the error
+message ("did you mean `<Textarea>`?") when a user mistakenly typed
+`{{text-area}}` or `<TextArea>` in development mode.
 
-To prevent surprises, `<Textarea>` will also invoke the same component but with
-a deprecation warning (use `<TextArea>` instead).
+#### Template Lints
+
+Even though the angle bracket invocation style is recommended going forward,
+components can generally be invoked using the either the curly or angle bracket
+syntax. Therefore, while not recommended, `{{textarea}}` would still work and
+invoke the same component.
+
+We propose to add template lint rules to using this component with the curly
+invocation style.
 
 ## How we teach this
 
@@ -250,7 +259,7 @@ None.
 
 * `<LinkTo>` could support a `@text` argument for inline usage.
 
-* `<TextArea>` could just be named `<Textarea>`.
+* `<Textarea>` could be named `<TextArea>`.
 
 ## Unresolved questions
 
