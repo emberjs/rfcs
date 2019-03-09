@@ -15,7 +15,13 @@ Today's angle-bracket syntax conversion guide says this:
 
 ![existing documentation](../images/457-when-to-use-curlies.jpg)
 
-This has been an acceptable interim step as we have worked on completing the work of Glimmer components, but it's a source of incoherence (and adoption problems) in the Ember design, and we need to eliminate this source of incoherence in order to recommend angle bracket components in the Octane edition.
+This has been an acceptable interim step as we have worked on completing the work of revamping the component model, but it's a source of incoherence (and a reported adoption blocker for some apps) in the Ember design, and we need to eliminate this source of incoherence in order to recommend angle bracket components in the Octane edition.
+
+For positional arguments, we recommend that add-on authors migrate to named arguments. Addons that are mimicking control-flow syntax (like `liquid-if`) should clearly document that they are meant to be used with curly syntax.
+
+For components nested inside of directories, this RFC proposes a new syntax to allow users to migrate directly to angle bracket invocation.
+
+## Detailed design
 
 > Note: This RFC uses curly syntax without blocks for illustrative purposes. In all cases, adding a block doesn't change the normalization or lookup rules described here.
 
@@ -66,7 +72,7 @@ This RFC proposes that the `::` separator serve the same purpose, with the same 
 <AppIcons::Warning @color="yellow" />
 ```
 
-## Detailed design
+---
 
 This RFC is an extension to the **normalization** rules that already occur in angle bracket notation.
 
