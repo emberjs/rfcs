@@ -11,6 +11,12 @@ Create a syntax for invoking components nested inside of directories in angle-br
 
 ## Motivation
 
+Today's angle-bracket syntax conversion guide says this:
+
+![existing documentation](../images/457-when-to-use-curlies.jpg)
+
+This has been an acceptable interim step as we have worked on completing the work of Glimmer components, but it's a source of incoherence (and adoption problems) in the Ember design, and we need to eliminate this source of incoherence in order to recommend angle bracket components in the Octane edition.
+
 > Note: This RFC uses curly syntax without blocks for illustrative purposes. In all cases, adding a block doesn't change the normalization or lookup rules described here.
 
 When using curly syntax, component invocation looks like this:
@@ -87,8 +93,6 @@ After this RFC, the documentation should add a "Zoey says" sidebar that describe
 Finally, the goal of this RFC is to make it possible to recommend that users always use angle-bracket invocation for components other than control flow (`if`, `each`).
 
 This means that we should update the syntax conversion guide to no longer say that `{{` syntax is sometimes required, and avoid recommending it.
-
-![existing documentation](../images/457-when-to-use-curlies.jpg)
 
 We should also recommend that component authors who are using positional parameters (other than control flow components like `liquid-if`) should stabilize, document and recommend named argument for their parameters so that their users can uniformly use angle bracket invocation syntax.
 
