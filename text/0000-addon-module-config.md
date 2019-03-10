@@ -1,17 +1,17 @@
 - Start Date: 2019-03-10
 - Relevant Team(s): Ember CLI
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: [#462](https://github.com/emberjs/rfcs/pull/462)
 - Tracking: (leave this empty)
 
 # Configuring addon modules in Module Unification layout
 
 ## Summary
 
-Provide an API for addons to register their own types and collections for Module Unification apps.
+Provide an API for addons to configure their module types and collections for Module Unification apps.
 
 ## Motivation
 
-The Octane layout uses the Module Unification layout described on the [RFC-143](https://github.com/emberjs/rfcs/blob/master/text/0143-module-unification.md), but addons that require apps to locate classes into a non-default app folder will not work.
+The Octane layout uses the Module Unification layout described on the [RFC-143](https://github.com/emberjs/rfcs/blob/master/text/0143-module-unification.md), but at this moment classic addons that require apps to locate classes into a non-default app folder do not work "out of the box" in an Octane application.
 
 For example, the ember-simple-auth addon allows defining the application authenticators on the `authenticators` folder.
 
@@ -21,7 +21,7 @@ For example, the ember-simple-auth addon allows defining the application authent
 this.get('session').authenticate('authenticator:custom')
 ```
 
-App developers don’t need to register the authenticator manually into the application container, only to locate the module on the **expected project folder**.
+App developers only need to locate the module on the **expected project folder** to make the addon work.
 
 ```js
 // app/authenticators/custom.js
@@ -32,9 +32,9 @@ export default Base.extend({
 });
 ```
 
-In an Octane application, you would likely locate `custom`  within `src/authenticators` but this will not work automatically. The Module Unification RFC provides a broader convention for naming and organizing a project's modules, and the options of the application module structure must be set up in the application resolver for MU applications.
+In an Octane application, you would likely locate `custom`  within `src/authenticators` but this will not work **automatically**.
 
-You can read more about the [MU Module Naming and Convention](https://github.com/emberjs/rfcs/blob/master/text/0143-module-unification.md#module-naming-and-organization).
+The Module Unification RFC provides a broader convention for naming and organizing a project's modules, and the options of the application module structure must be set up in the application resolver for MU applications. You can read more about the [MU Module Naming and Convention](https://github.com/emberjs/rfcs/blob/master/text/0143-module-unification.md#module-naming-and-organization).
 
 In Ember, the application resolver defines the lookup rules to resolve container lookups. The Resolver class has been updated to support the MU layout, and the Octane blueprint will generate the following `src/resolver.js`:
 
@@ -62,13 +62,13 @@ moduleConfig.collections = Object.assign(moduleConfig.collections, {
 });
 ```
 
-Because there is not an API for addons to add their types and collections, developers have to add them in the application resolver to make the addon works in an MU application.
+Because there is not an API for addons to add their module types or collections, developers have to add them in the application resolver to make the addon works in an MU application.
 The following proposal provides an API for addon authors to add their types and collections in order application developers do not have to configure them.
 
 
 ## Detailed design
 
-The API proposal is to define a new addon hook to define their own types and collections.
+The API proposal provides a new hook `resolverConfig` for addons to define their module types and collections.
 
 ```js
 // my-addon/index.js
@@ -103,9 +103,9 @@ The "writing addons" tutorial has to document the `resolverConfig` hook.
 
 The proposal does not allow:
 
-- two addons to register the same type or collection.
+- an addon to extend the Module Unification types and collections.
 
-- an addon to extend the MU types and collections.
+- two addons to register the same type or collection.
 
 This behaviour can be modified.
 
