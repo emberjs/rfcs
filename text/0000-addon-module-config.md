@@ -11,7 +11,7 @@ Provide an API for addons to configure their module types and collections for Mo
 
 ## Motivation
 
-The Octane layout uses the Module Unification layout described on the [RFC-143](https://github.com/emberjs/rfcs/blob/master/text/0143-module-unification.md), but at this moment classic addons that require apps to locate classes into a non-default app folder do not work "out of the box" in an Octane application.
+The Module Unification layout is described on the [RFC-143](https://github.com/emberjs/rfcs/blob/master/text/0143-module-unification.md). At this moment Classic addons that require apps to locate classes into a non-default app folder do not work "out of the box" in an Module Unification application.
 
 For example, the ember-simple-auth addon allows defining the application authenticators on the `authenticators` folder.
 
@@ -32,11 +32,11 @@ export default Base.extend({
 });
 ```
 
-In an Octane application, you would likely locate `custom`  within `src/authenticators` but this will not work **automatically**.
+In an Module Unification application, you would likely locate `custom`  within `src/authenticators` but this will not work **automatically**.
 
 The Module Unification RFC provides a broader convention for naming and organizing a project's modules, and the options of the application module structure must be set up in the application resolver for MU applications. You can read more about the [MU Module Naming and Convention](https://github.com/emberjs/rfcs/blob/master/text/0143-module-unification.md#module-naming-and-organization).
 
-In Ember, the application resolver defines the lookup rules to resolve container lookups. The Resolver class has been updated to support the MU layout, and the Octane blueprint will generate the following `src/resolver.js`:
+In Ember, the application resolver defines the lookup rules to resolve container lookups. The Resolver class has been updated to support the MU layout, and the blueprint will generate the following `src/resolver.js`:
 
 ```js
 import Resolver from 'ember-resolver/resolvers/fallback';
@@ -95,7 +95,7 @@ For more implementation details, there is an [open PR](https://github.com/ember-
 
 ## How we teach this
 
-The Octane guides should include a section explaining how to extend the default Octane resolver configuration for application developers or addon authors.
+The guides should include a section explaining how to extend the default resolver configuration for application developers or addon authors.
 
 The "writing addons" tutorial has to document the `resolverConfig` hook.
 
