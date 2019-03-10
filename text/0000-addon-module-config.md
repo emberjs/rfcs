@@ -3,7 +3,7 @@
 - RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
 - Tracking: (leave this empty)
 
-# Configuring Addon modules in Module Unification layout
+# Configuring addon modules in Module Unification layout
 
 ## Summary
 
@@ -18,7 +18,7 @@ For example, the ember-simple-auth addon allows defining the application authent
 > The authenticator to use is chosen when authentication is triggered via the name it is registered with in the Ember container:
 
 ```js
-this.get('session').authenticate('authenticator:custom)
+this.get('session').authenticate('authenticator:custom')
 ```
 
 App developers don’t need to register the authenticator manually into the application container, only to locate the module on the **expected project folder**.
@@ -39,15 +39,15 @@ You can read more about the [MU Module Naming and Convention](https://github.com
 In Ember, the application resolver defines the lookup rules to resolve container lookups. The Resolver class has been updated to support the MU layout, and the Octane blueprint will generate the following `src/resolver.js`:
 
 ```js
-    import Resolver from 'ember-resolver/resolvers/fallback';
-    import buildResolverConfig from 'ember-resolver/ember-config';
-    import config from '../config/environment';
+import Resolver from 'ember-resolver/resolvers/fallback';
+import buildResolverConfig from 'ember-resolver/ember-config';
+import config from '../config/environment';
 
-    let moduleConfig = buildResolverConfig(config.modulePrefix);
+let moduleConfig = buildResolverConfig(config.modulePrefix);
 
-    export default Resolver.extend({
-      config: moduleConfig
-    });
+export default Resolver.extend({
+  config: moduleConfig
+});
 ```
 
 The config option on the MU resolver is a hash that includes the `types` and `collections` mappings defining the rules to resolve container lookups. Now, an app can update the default resolver configuration to add their types and collections like:
