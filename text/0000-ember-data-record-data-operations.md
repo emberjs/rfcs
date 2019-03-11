@@ -25,8 +25,9 @@ Introduces `RecordData.performMutation` which takes an `Operation` for local mut
  **key**.
 
 In more layman terms, let's take a look at a few `RecordData` methods and how they might
-better be understood as operations, using the originally proposed singleton `RecordData`
-APIs for mutating an attribute or a relationship.
+better be understood as operations, using the originally proposed singleton
+[`RecordData`](https://github.com/emberjs/rfcs/pull/293) APIs for mutating an attribute
+or a relationship.
 
 ```ts
 interface RecordData {
