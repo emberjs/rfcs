@@ -24,28 +24,41 @@ Introduces `RecordData.performMutation` which takes an `Operation` for local mut
  it is difficult to understand how an action affects state. Granularity and clarity is 
  **key**.
 
-In more layman terms, let's take a look at a few `RecordData` methods and how they might
-better be understood as operations, using the originally proposed [`RecordData`](https://github.com/emberjs/rfcs/pull/293)
-APIs for mutating an attribute or a relationship.
+Let's take a look at a the [`RecordData`](https://github.com/emberjs/rfcs/pull/293)
+methods that might better be understood as operations using [`identifiers`](https://github.com/emberjs/rfcs/pull/403).
+
+**Methods That Mutate Record Properties**
 
 ```ts
 interface RecordData {
-  setAttr(modelName: string, id?: string, clientId?: string, key: string, value: string) {}
-  setBelongsTo(modelName: string, id?: string, clientId?: string, key: string, jsonApiResource) {}
-  addToHasMany(modelName: string, id?: string, clientId?: string, key: string, jsonApiResources, idx: number) {}
-  removeFromHasMany(modelName: string, id?: string, clientId?: string, key: string, jsonApiResources) {}
+  addToHasMany(key: string, recordDatas, idx: number) {}
+  removeFromHasMany(key: string, recordDatas) {}
+  removeFromInverseRelationships(isNew: boolean) {}
+  setBelongsTo(key: string, recordData) {}
+  setDirtyAttribute(key: string, value: any) {}
+  setHasMany(key: string, recordDatas) {}
+  rollbackAttributes() {}
 }
 ```
 
-The above is just one snapshot of the roughly dozen APIs relating to mutation of the ~25
-APIs present on `RecordData`.
+**Methods That Mutate Record State**
+
+```ts
+interface RecordData {
+  clientDidCreate() // "addRecord"
+  // in the original RFC but we failed to implement (but is needed)
+  clientDidDelete() // "removeRecord"
+  unloadRecord() // "unloadRecord"
+}
+```
 
 The "soup" of available methods prevents someone from knowing at a glance which methods
 are for mutations, and whether these methods are for mutating local state, or communicating
 remote state changes.
 
 It also means that developers must memorize a large API surface area, and don't have a clear
-picture of how these methods relate to each other in terms of what they achieve.
+picture of how these methods relate to each other in terms of what they achieve. Organizing
+mutations as `operations` will help us provide both clearer mental model and a better decoupling.
 
 ### Eliminating unnecessary surface area and better decoupling
 
@@ -95,21 +108,24 @@ export default interface RecordData {
 }
 ```
 
-Example operations
+### Operations
+
+**Operations That Mutate Record Properties**
+
+**`addToHasMany`**
 
 ```ts
-interface ReplaceAttributeOperation extends Operation {
-  op: 'replaceAttribute';
-  record: RecordIdentifier;
-  property: string; // "attr" propertyName
-  value: any;
-}
 interface AddToRelatedRecordsOperation extends Operation {
   op: 'addToRelatedRecords';
   record: RecordIdentifier;
   property: string; // "relationship" propertyName
   value: RecordIdentifier; // related record
 }
+```
+
+**`removeFromHasMany`**
+
+```ts
 interface RemoveFromRelatedRecordsOperation extends Operation {
   op: 'removeFromRelatedRecords';
   record: RecordIdentifier;
@@ -118,29 +134,89 @@ interface RemoveFromRelatedRecordsOperation extends Operation {
 }
 ```
 
-### Existing APIs this would supercede
+**`setBelongsTo`**
 
 ```ts
-interface RecordData {
-  setDirtyAttribute(key, value)
-  addToHasMany(key, recordDatas, index)
-  removeFromHasMany(key, recordDatas)
-  setHasMany(key, recordDatas)
-  setBelongsTo(key, recordData)
-  removeFromInverseRelationships(isNew)
-  rollbackAttributes()
-  clientDidCreate()
+interface ReplaceRelatedRecordOperation extends Operation {
+  op: 'replaceRelatedRecord';
+  record: RecordIdentity;
+  property: string;
+  value: RecordIdentity;
 }
 ```
 
-Additionally we may consider modeling these APIs as operations as well
+**`setDirtyAttribute`**
 
 ```ts
-  didDelete() // cannonical update
-  didCommit(data) // cannonical update, see also willCommit
-  _initRecordCreateOptions(options) // 2nd phase of create, paired with clientDidCreate
-  reset() // similar to rollbackAttributes
+interface ReplaceAttributeOperation extends Operation {
+  op: 'replaceAttribute';
+  record: RecordIdentifier;
+  property: string; // "attr" propertyName
+  value: any;
+}
 ```
+
+**`setHasMany`**
+
+```ts
+interface ReplaceRelatedRecordsOperation extends Operation {
+  op: 'replaceRelatedRecords';
+  record: RecordIdentity;
+  property: string;
+  value: RecordIdentity[];
+}
+```
+
+**`rollbackAttributes`**
+
+Once "logs" are present this could be modeled as a series of reverse operations.
+
+```ts
+interface RollbackAttributesOperation extends Operation {
+  op: 'rollbackAttributes',
+  record: RecordIdentity;
+}
+```
+
+**Operations That Mutate Record State**
+
+**`clientDidCreate`**
+
+```ts
+interface AddRecordOperation extends Operation {
+  op: 'addRecord';
+  record: Record;
+}
+```
+
+**`clientDidDelete`**
+
+```ts
+interface RemoveRecordOperation extends Operation {
+  op: 'removeRecord';
+  record: Record;
+}
+```
+
+**`unloadRecord`**
+
+```ts
+interface UnloadRecordOperation extends Operation {
+  op: 'unloadRecord';
+  record: Record;
+}
+```
+
+### _initRecordCreateOptions
+
+This API is problematic and hard to model, we need something, let's discuss.
+
+### removeFromInverseRelationships
+
+This API should be eliminated entirely, removeRecord and unloadRecord
+ would take care of the use case *if* recordData tracks whether it is
+ `isNew` and `isDeleted`.
+
 
 ## How we teach this
 
