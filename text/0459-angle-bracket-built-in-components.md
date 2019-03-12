@@ -248,6 +248,9 @@ It should also be mentioned that, other built-ins, such as `{{yield}}`,
 are also "control-flow-like", so it wouldn't be appropiate to invoke them with
 angle brackets.
 
+The technical implementation of this RFC will need to be accompanied by changes to the API docs for the built-in template helpers, [link-to](https://emberjs.com/api/ember/3.8/classes/Ember.Templates.helpers/methods/link-to?anchor=link-to) and [input](https://emberjs.com/api/ember/3.8/classes/Ember.Templates.helpers/methods/input?anchor=input). In keeping with past decisions for Angle Brackets, the API docs should show both curly and Angle Bracket invocations of these helpers. The API docs are expected to show the full supported API surface of Ember.
+
+`link-to` and `input` are used liberally throughout the Ember.js Guides, Tutorial, and `super-rentals` [sample app](https://github.com/ember-learn/super-rentals), so those examples will need to be updated. In the Guides, we want to show solely Angle Brackets invocation. The [syntax conversion guide](https://guides.emberjs.com/release/reference/syntax-conversion-guide/) should be revised to include these helpers.
 ## Drawbacks
 
 None.
