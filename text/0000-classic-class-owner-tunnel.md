@@ -3,11 +3,12 @@
 - RFC PR: https://github.com/emberjs/rfcs/pull/451
 - Tracking:
 
-# Classic Class Owner Tunnel 🕳
+# Injection Parameter Normalization
 
 ## Summary
 
-Make `getOwner` and explicit injections work in classic class constructors.
+Normalize on passing the `owner` as the first parameter to the constructor of
+classes that are created by the container.
 
 ## Terminology
 
