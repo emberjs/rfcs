@@ -160,89 +160,84 @@ tearing it down after all injections have been assigned.
 This RFC proposes that we normalize the assignment of the owner, and access to
 injected properties, to follow the same conventions as other popular DI
 frameworks. Injections will be assigned _after_ objects have been constructed,
-and a `didCreate` hook will be triggered after that. This will be
+and a `AFTER_INJECTION` symbol hook will be triggered after that. This will be
 _approximately_ the same flow as `init` is currently for native classes, but is
 a new hook to help with teaching purposes, since `init` has historically been
 taught as the same as `constructor` in native classes (even though it is not).
+We will also trigger a `BEFORE_DESTRUCTION` symbol hook when the container is
+cleaning up objects. Finally, we'll create decorators that users can use to
+decorate functions to run during these lifecycle hooks, so users have a friendly
+and flexible way to define their class's lifecycles.
 
 Doing this will ensure that users can rely on a consistent API for all DI
 related classes, and that the lifecycle of the DI system will be teachable and
 consisent. It also unblocks the usage of plain native classes which do not
-extend a base class in the future.
+extend a base class in the future. Finally , it will allow us to continue to
+build on the DI system, and
 
 ## Detailed design
 
-There are two parts to this design:
+There are three parts to this design:
 
-1. **Glimmer Components**
+### Symbols and Decorators
 
-   We'll update the `GlimmerComponent` class to _not_ receive any constructor
-   parameters. Instead, both `owner` and `args` will be assigned _after_ the
-   object has been fully constructed. We will also add the `didCreate` hook,
-   which will trigger immediately after `owner` and `args` have been assigned.
+Two symbols will be added to Ember:
 
-2. **`EmberObject` based classes (Route/Controller/Service/Helper)**
+- `AFTER_INJECTION`
+- `BEFORE_DESTRUCTION`
 
-   In the case of `EmberObject` classes, `didCreate` will trigger _after_
-   `init`. Since the `owner` and arguments are assigned before `init`, it won't
-   be necessary to add any assignment code for these.
+These symbols will be publicly accessible, and will be the keys for the methods
+that should be called on objects at the respective points in their lifecycles.
+We will also add two decorators:
 
-   Importantly, _only_ classes that are constructed by the container will have
-   `didCreate` triggered - utility classes that are made by extending
-   `EmberObject` and used throughout user code will only have `init`. This is
-   because the new hook is specifically for interacting with injections after
-   the class has been fully constructed, and does not make sense in classes that
-   are not initialized by the container.
+- `@afterInjection`
+- `@beforeDestruction`
 
-In the future these hooks could be generalized into an underlying set of
-primitives that would allow users to declaratively specify injections and hooks
-with decorators:
+These decorators will be usable on methods, and will cause the methods to run
+after injection and before destruction. Multiple methods can be decorated, and
+will all run in the order that decorators are evaluated (from top to bottom in
+the stage 1 spec).
 
-```js
-import { start, teardown } from "@ember/container";
-import { tracked } from "@glimmer/tracked"
-import { glimmer } from "@glimmer/component"
+### Glimmer Components
 
-export default class ClockService {
-  time = Date.now();
-  #interval = undefined;
+We'll update the `GlimmerComponent` class to _not_ receive any constructor
+parameters. Instead, both `owner` and `args` will be assigned _after_ the object
+has been fully constructed. We will also add the `AFTER_INJECTION` hook, which
+will trigger immediately after `owner` and `args` have been assigned. The
+`willDestroy` hook will also be renamed to `BEFORE_DESTRUCTION`. No default
+implementation will be provided on the base class.
 
-  @start
-  start() {
-    #interval = setInterval(() => this.time = Date.now(), 1000)
-  }
+### `EmberObject` based classes (Route/Controller/Service/Helper)
 
-  @tracked time;
+In the case of `EmberObject` classes, `AFTER_INJECTION` will trigger _after_
+`init`. Since the `owner` and arguments are assigned before `init`, it won't be
+necessary to add any assignment code for these.
 
-  @teardown
-  destroy() {
-    clearInterval(#interval);
-  }
-}
+Importantly, _only_ classes that are constructed by the container will have
+`AFTER_INJECTION` triggered - utility classes that are made by extending
+`EmberObject` and used throughout user code will only have `init`. This is
+because the new hook is specifically for interacting with injections after the
+class has been fully constructed, and does not make sense in classes that are
+not initialized by the container.
 
-export default @glimmer class MyComponent {
-  constructor(@service clock) {
-    this.createdAt = clock.time;
-  }
-}
-```
-
-However, this is beyond the scope of this RFC. For now, the design is focussed
-on staying in-line with this approach, and avoiding polluting the `constructor`
-signatures for the various base classes provided in Ember.
+`BEFORE_DESTRUCTION` will trigger `destroy` in EmberObjects by default, since
+the function currently runs at the same time. Users will be able to override
+this function and call the super function using `super[BEFORE_DESTRUCTION]` or
+`this._super()` in classic classes.
 
 ## How we teach this
 
-We would teach these concepts along with our material on DI in general.
-`didCreate` and its counter-part, `willDestroy`, should be thought of as
-container hooks that can be used to setup and teardown state based on
-injections.
+We would teach these concepts along with our material on DI in general. We
+primarily want to teach the `@afterInjection` and `@beforeDestruction`
+decorators for native classes, and then teach the existence of the symbols for
+classic class users.
 
 An important point to cover will be the differences between `constructor` and
-`didCreate`. We should teach `constructor` specifically as a mechanism for
-_shaping_ the class, defining the basic fields and properties that will exist on
-it. By contrast, `didCreate` is for setting up state within the larger system -
-the Ember application. Concrete examples can be used to drive this point home.
+`@afterInjection` methods. We should teach `constructor` specifically as a
+mechanism for _shaping_ the class, defining the basic fields and properties that
+will exist on it. By contrast, methods decorated with `@afterInjection` are for
+setting up state within the larger system - the Ember application. Concrete
+examples can be used to drive this point home.
 
 ## Drawbacks
 
@@ -254,17 +249,17 @@ the Ember application. Concrete examples can be used to drive this point home.
 
 - There has been a lot of concern about confusion between `constructor` and
   `init` as we head further down the native class adoption path. This decision
-  would formalize adopting `didCreate`, which is very similar to `init`, for
-  _all_ classes for the forseeable future. This could also cause confusion,
+  would formalize adopting `@afterInjection`, which is very similar to `init`,
+  for _all_ classes for the forseeable future. This could also cause confusion,
   since container based classes would essentially always have this dichotomy of
   two "creation" hooks.
 
   Creating a different hook with a new name should help with this issue. `init`
   has historically been taught as the same as `constructor`, which is why some
   users assume it will have the exact same semantics, and are confused when it
-  does not. Documenting the purpose for `didCreate`, along with clear, practical
-  examples for when to use it, and when to use `constructor`, should go a long
-  way toward preventing any additional confusion.
+  does not. Documenting the purpose for `@afterInjection`, along with clear,
+  practical examples for when to use it, and when to use `constructor`, should
+  go a long way toward preventing any additional confusion.
 
 ## Alternatives
 
@@ -272,31 +267,3 @@ the Ember application. Concrete examples can be used to drive this point home.
   option here. This would bring us inline with the current behavior of Glimmer
   components, and a short term solution that would enable this is proposed in
   the [Classic Class Owner Tunnel RFC](https://github.com/emberjs/rfcs/pull/451).
-
-- This RFC approaches the current problem directly - how do we address the
-  differences in behaviors of injections between different base classes in
-  Ember today, and what is the way we want users to interact with injections in
-  the long run?
-
-  However, it is also touching on some larger underlying infrastructural debt.
-  The reason this has become an issue at all is, in part, because Ember's
-  container is heavily tied to the `EmberObject` model and its implementation
-  details. There are several ways we could move forward with disconnecting
-  these:
-
-  1. We could move the container in a more annotation based direction, as
-     described earlier in this RFC, and similarly to how other DI frameworks
-     work.
-  2. We could implement a more generic Manager layer, similar to Component and
-     Modifier managers, that defines how a base class is managed by the
-     container.
-  3. We could do some combination of these systems.
-
-  This would be a much larger refactor, with much more design required,
-  especially if it would mean making more details of the container public. While
-  this would be good for updating and rationalizing Ember's internals in the
-  long run, these are implementation details that can still be addressed after
-  this decision has been made. It is not necessary to make these decisions now
-  to solve the basic question - should we pass injection parameters to the
-  `constructor` (without explicit annotation), or should we rely on lifecycle
-  hooks instead.
