@@ -59,7 +59,7 @@ this.add.bind(null, 1, 2);
 ```
 
 ```js
-this.session.logout.bind(this.session)
+this.session.logout.bind(this.anotherSession)
 ```
 
 ### Setting the `this` context and arguments
@@ -69,7 +69,7 @@ this.session.logout.bind(this.session)
 ```
 
 ```js
-this.car.logout.bind(this.car, 1000, 'mile')
+this.car.logout.bind(this.honda, 1000, 'mile')
 ```
 
 ### Comparison to Action Helper/Modifier
@@ -108,7 +108,7 @@ In guides we would no longer recommend using the `action` helper based on the re
 
 ## Drawbacks
 
-Since this recommended design sets the `this` context to `null` using `function.prototype.bind` this could be confusing to junior developers if the function was not already bound (using something like an `@bound` decorator, JS binding, arrow functions, or the `bind` helper earlier in the stack).
+Since this recommended design sets the `this` context to `null` using `function.prototype.bind` this could be confusing to junior developers if the function was not already bound (using something like the `@action` decorator or an `@autobind` decorator, JS binding, arrow functions, or the `bind` helper earlier in the stack).
 
 ## Alternatives
 
