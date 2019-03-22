@@ -188,6 +188,19 @@ Two symbols will be added to Ember:
 
 These symbols will be publicly accessible, and will be the keys for the methods
 that should be called on objects at the respective points in their lifecycles.
+
+```js
+class Profile extends Component {
+  [AFTER_INJECTION]() {
+    // setup component...
+  }
+
+  [BEFORE_DESTRUCTION]() {
+    // teardown component...
+  }
+}
+```
+
 We will also add two decorators:
 
 - `@afterInjection`
@@ -197,6 +210,25 @@ These decorators will be usable on methods, and will cause the methods to run
 after injection and before destruction. Multiple methods can be decorated, and
 will all run in the order that decorators are evaluated (from top to bottom in
 the stage 1 spec).
+
+```js
+class Profile extends Component {
+  @afterInjection
+  setup() {
+    // setup component...
+  }
+
+  @afterInjection
+  fetchData() {
+    // fetch data...
+  }
+
+  @beforeDestruction
+  teardown() {
+    // teardown component...
+  }
+}
+```
 
 ### Glimmer Components
 
