@@ -190,6 +190,8 @@ These symbols will be publicly accessible, and will be the keys for the methods
 that should be called on objects at the respective points in their lifecycles.
 
 ```js
+import { AFTER_INJECTION, BEFORE_DESTRUCTION } from '@ember/di';
+
 class Profile extends Component {
   [AFTER_INJECTION]() {
     // setup component...
@@ -212,6 +214,8 @@ will all run in the order that decorators are evaluated (from top to bottom in
 the stage 1 spec).
 
 ```js
+import { afterInjection, beforeDestruction } from '@ember/di';
+
 class Profile extends Component {
   @afterInjection
   setup() {
@@ -229,6 +233,8 @@ class Profile extends Component {
   }
 }
 ```
+
+These new APIs will be importable from `@ember/di`;
 
 ### Glimmer Components
 
@@ -270,6 +276,126 @@ mechanism for _shaping_ the class, defining the basic fields and properties that
 will exist on it. By contrast, methods decorated with `@afterInjection` are for
 setting up state within the larger system - the Ember application. Concrete
 examples can be used to drive this point home.
+
+Example docs (this comes after introducing services):
+
+### Container Lifecycle Hooks
+
+As we've discussed before, Ember.js uses _dependency injection_ to manage
+the various instances of framework classes such as components, services, routes,
+and controllers. In this setup, Ember apps create class instances automatically
+as they are used, and register and manage them internally. This is how we're
+able to _inject_ values, such as services in classes - we look up where they are
+registered, and then pass them into classes that ask for them:
+
+```js
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
+
+export default class Chat extends Component {
+  // By decorating this property, we're telling Ember.js
+  // that when it creates a Profile component, it should
+  // lookup the "messages" service, and assign it to the
+  // messages field on the component.
+  @service messages;
+}
+```
+
+Some classes require additional setup after they've been created and have access
+to these injections, and some require teardown before they're destroyed.
+However, injections are not available during the `constructor` for objects:
+
+```js
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
+
+export default class Chat extends Component {
+  @service messages;
+
+  constructor() {
+    super();
+
+    this.messages.subscribe(this.args.chatId);
+  }
+}
+```
+
+And there is no opposite of a `constructor` method built into JavaScript
+classes. Instead, Ember provides the `@afterInjection` and `@beforeDestruction`
+decorators to allow you to decorate methods and tell Ember that they should be
+run at these points in the class lifecycle.
+
+```js
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
+import { afterInjection, beforeDestruction } from '@ember/di';
+
+export default class Chat extends Component {
+  @service messages;
+
+  @afterInjection
+  subscribe() {
+    this.messages.subscribe(this.args.chatId);
+  }
+
+  @beforeDestruction
+  unsubscribe() {
+    this.messages.unsubscribe(this.args.chatId);
+  }
+}
+```
+
+The `afterInjection` hook will run immediately after _all_ injections have been
+assigned to the class, meaning you can run any setup code you want with them,
+and `beforeDestruction` will run just before Ember removes the class. Multiple
+methods can also be decorated with either decorator:
+
+```js
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
+import { afterInjection, beforeDestruction } from '@ember/di';
+
+export default class Chat extends Component {
+  @service messages;
+  @service notifications;
+
+  @afterInjection
+  subscribeToMessages() {
+    this.message.subscribe(this.args.chatId);
+  }
+
+  @beforeDestruction
+  unsubscribeFromMessages() {
+    this.message.unsubscribe(this.args.chatId);
+  }
+
+  @afterInjection
+  subscribeToNotifications() {
+    this.notifications.subscribe(this.args.chatId);
+  }
+
+  @beforeDestruction
+  unsubscribeFromNotifications() {
+    this.notifications.unsubscribe(this.args.chatId);
+  }
+}
+```
+
+#### `constructor` vs `@afterInjection`
+
+If Ember classes are not fully initialized during the `constructor`, you may be
+wondering what it's usefulness is. The main purpose of the constructor is for
+setting up the _initial state_ of the class, before it interacts with any other
+parts of the application.
+
+Class fields and the constructor both run during this phase, and they give your
+class a _shape_ that makes it much easier for the browser to optimize and
+understand your class. Types of values you should initialize in `constructor`
+and class fields include:
+
+- All properties that will ever exist on the object
+- Objects/arrays
+- Class instances
 
 ## Drawbacks
 
