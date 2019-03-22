@@ -104,6 +104,9 @@ function, users should use a helper such as the [bind helper](https://github.com
 <div {{on "click" (bind this.addNumber 123)}}></div>
 ```
 
+The event will also be passed as a parameter to the function, so it can be used
+directly.
+
 `{{on}}` does _not_ bind context. Context binding must be handled via a helper,
 or in the component definition via the `@action` decorator, which will be the
 recommended path:
