@@ -3,11 +3,11 @@
 - RFC PR: https://github.com/emberjs/rfcs/pull/470
 - Tracking: (leave this empty)
 
-# Bind Helper
+# `{{with-args}}` Helper
 
 ## Summary
 
-This RFC introduces a new helper `bind` to allow clear argument and context scope binding for functions passed in templates.
+This RFC introduces a new helper, `{{with-args}}`, to allow clear argument passing for functions in templates.
 
 ## Motivation
 
@@ -21,56 +21,41 @@ To understand the complexity of `action` there are many complex behaviors includ
 
 At build time the `action` helper currently is passed through an AST transform to explicitly bind the `this` to be deterministic at runtime. This is a private API where the outputted Glimmer is not a 1-1 to the template. Also, the `action` helper is confused and has overlap with the `action` modifier which has similar but slightly different behavior.
 
-Instead of this confusing and overloaded behavior, a new `bind` helper would be introduced to do partial application and context binding (with no need for build time private APIs).
+Instead of this confusing and overloaded behavior, a new `with-args` helper would be introduced to do partial application (with no need for build time private APIs), and context binding will be done instead using the `@action` decorator in classes.
 
 ## Detailed design
 
-The `bind` helper will take in a function and then the set of arguments that will be partially applied to the function.
-As an optional named argument the user can pass in a `this` property that will set the `this` context this named argument would default to `undefined`.
+The `with-args` helper will take in a function and then the set of arguments that will be partially applied to the function.
 
-The behavior of this helper will be simple and use JavaScript's `function.prototype.bind`.
-
-Here are some examples of the `bind` helper and the equivalent JS:
+Here are some examples of the `with-args` helper and the equivalent JS:
 
 ### Simple Case On Argument Curry
 
 ```hbs
-{{bind this.log 1}}
+{{with-args this.log 1}}
 ```
 
 ```js
-this.log.bind(null, 1);
+return function() {
+  this.log.call(this, 1);
+}
 ```
 
 ### Multiple Argument Partial Application
 
 ```hbs
-{{bind this.add 1 2}}
+{{with-args this.add 1 2}}
 ```
 
 ```js
-this.add.bind(null, 1, 2);
+return function() {
+  this.log.call(this, 1, 2);
+}
 ```
 
-### Setting the `this` context
+The use of `function` application like so allows us to preserve/pass through the `this` context of the calling site accurately, so creating a function `with-args` is equivalent to the same function _without_ args.
 
-```hbs
-{{{bind this.session.logout context=this.anotherSession}}}
-```
-
-```js
-this.session.logout.bind(this.anotherSession)
-```
-
-### Setting the `this` context and arguments
-
-```hbs
-{{bind this.car.drive 1000 'mile' context=this.honda}}
-```
-
-```js
-this.car.logout.bind(this.honda, 1000, 'mile')
-```
+We will also reserve the `withArgs` helper name for future use as an alias, anticipating changes coming from template imports and most helpers/components conforming to valid JS identifiers.
 
 ### Comparison to Action Helper/Modifier
 
@@ -83,8 +68,8 @@ this.car.logout.bind(this.honda, 1000, 'mile')
 <button {{action (action "increment")}}>Click</button>
 <button {{action (action this.increment)}}>Click</button>
 
-<button onclick={{bind this.increment context=this}}>Click</button>
-<button {{on "click" (bind this.increment context=this)}}>Click</button>
+<button onclick={{with-args this.increment context=this}}>Click</button>
+<button {{on "click" (with-args this.increment context=this)}}>Click</button>
 ```
 
 ### With `mut`
@@ -95,30 +80,35 @@ this.car.logout.bind(this.honda, 1000, 'mile')
 <button onclick={{action (mut showModal) true}}>Click</button>
 <button {{action (action (mut showModal) true)}}>Click</button>
 
-<button onclick={{bind (mut showModal) true}}>Click</button>
-<button {{on "click" (bind (mut showModal) true)}}>Click</button>
+<button onclick={{with-args (mut showModal) true}}>Click</button>
+<button {{on "click" (with-args (mut showModal) true)}}>Click</button>
 ```
-
-Because `function.prototype.bind` always binds the `this` context the bind helper would require functions to be already bound or the `this` named argument would need to be explicitly set.
 
 ## How we teach this
 
-For guides we would switch to recommending the `bind` helper to pass functions into components args and modifiers.
+For guides we would switch to recommending the `with-args` helper to pass functions into components args and modifiers.
+
 In guides we would no longer recommend using the `action` helper based on the reasons listed in motivations.
 
 ## Drawbacks
 
-Since this recommended design sets the `this` context to `null` using `function.prototype.bind` this could be confusing to junior developers if the function was not already bound (using something like the `@action` decorator or an `@autobind` decorator, JS binding, arrow functions, or the `bind` helper earlier in the stack).
+* `with-args` is a bit of a verbose name, and given this is a commonly used helper it could be a papercut to users and make templates harder to read. Combined with the extra complexity of requiring the `@action` decorator to bind context, and the `{{on}}` modifier to trigger events, it could lead to users avoiding the helper altogether in favor of `{{action}}`.
 
 ## Alternatives
 
 One alternative would be to continue using the `action` helper despite confusion and overloading behavior.
 
-Another alternative would be to make the `bind` helper arguments exactly match `function.prototype.bind` (requiring `this` to always be passed in as the first argument). Doing this should probably introduce an `unbound` helper to allow partial argument application without changing `this`.
+There are also a number of potential alternatives for names:
 
-A third alternative would be to make the `context=` behavior not bind the `this` context. The ability to do this would need some introspection of what the context is of the function call (essentially recreating the complexity of `action`).
+* `args` - A shorter, simpler name with similar properties. This is somewhat less self-explanatory (on its own, without context, one might think it refers to component args, or does something with them), but may make up for this by being short and simple.
+* `bind` - The original name this RFC suggested. `bind` is fairly _imperative_, it describes the action that we do to the function rather than what is returned. It also does not exactly match the JS method API, and as noted in the RFC feedback this could be confusing. Finally, it requires stopping to teach the concept of binding and how that works, which is a lot of overhead for a helper that will be used early and often.
+* `call` - This reads nicely in templates, but is _very_ imperative and has already been confusing to folks when discussed. It differs significantly from the JS method API, teaching around this would be difficult, though possible. It also is not clear that it is _not required_ unless args are being passed, so we may see users attempting to use it for plain functions.
 
-## Unresolved questions
+Names that have been considered, but passed over:
 
-> Optional, but suggested for first drafts. What parts of the design are still
-How does this feel with `mut` since we do not `value=` syntax (possibly an `extract` helper or some syntax to get args from events or nested objects).
+* `apply` - Same downsides as `call`, but less nice to read.
+* `applyArgs` - Similar enough to `with-args`, but uses more obscure computer-science-y terminology without many benefits.
+* `partial` - From LISP and other languages. `partial` there means "Partial Application". This is a computer-science-y term that isn't super explanatory, plus `partial` is already a (deprecated) feature in Ember templates.
+* `papply` - From R. Generally unaesthetically pleasing, and same issues as `partial`
+* `action` - We considered trying to reclaim the "action" term, but it still has the same problems of overlap with the modifier and decorator, and there isn't an easy transition path to deprecating the automatic `this` binding.
+* `callback` - Considered, but it conflicts with the `@action` decorator's naming - the method is an action, until we pass it to callback, at which point it's a callback? This felt too confusing, and we believe it makes most sense if the helper is an "adjective" that modifies whatever its input is.
