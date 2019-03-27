@@ -7,8 +7,15 @@
 
 ## Summary
 
-Normalize on passing the `owner` as the first parameter to the constructor of
-classes that are created by the container.
+Normalize on passing the `owner` as the first parameter to the constructor for
+Ember's built in framework classes that are constructed by the container:
+
+- `GlimmerComponent`
+- `EmberComponent`
+- `Service`
+- `Route`
+- `Controller`
+- `Helper`
 
 ## Terminology
 
@@ -52,44 +59,77 @@ classes that are created by the container.
 
 ## Motivation
 
-The [Native Class Constructor Update][1] RFC changed the way that classic
-classes were constructed, and one major side effect of this was that it made
-injections and the container inaccessible during the `constructor` of classes
-that extend from `EmberObject`. This was a necessary change for other reasons,
-but the lack of injections means that we still have to use `init` for various
-use cases in several classes, including:
+The introduction of native class syntax in Ember has recently exposed some of
+the inner-workings and expectations of Ember's Dependency Injection (DI) system.
+Specifically, it is now possible to write code that can run _before_
+dependencies are injected in some base classes, such as Services and
+Controllers. Currently, users must use the `init` hook in these classes if they
+wish to run setup code that accesses injections, but this is somewhat confusing
+since `init` has historically been taught as the same as the `constructor` in
+native classes.
 
-[1]: https://github.com/emberjs/rfcs/blob/master/text/0337-native-class-constructor-update.md
+Glimmer components made the decision to break from this pattern, and instead
+pass the DI Owner as the first parameter to the constructor. They then set it
+using `setOwner` in the base class, making injections available during the
+constructor, and to class field initializers.
 
+So far this has worked pretty well in practice:
+
+- Glimmer components have just 2 lifecycle hooks, which makes them simpler to
+  understand and learn about.
+- We don't have to teach the differences between `constructor` and `init`, when
+  to use one or the other, and debugging issues when the two have mixed usage
+  throughout the class hierarchy
+- We don't have to worry about explaining the timings/lifecycle of the container
+  and the way it constructs classes in order to explain why these are separate.
+
+This RFC seeks to normalize this contract for all _Ember base classes_ - that
+is, framework classes that are provided by Ember and instantiated by the
+container, including:
+
+- `GlimmerComponent`
+- `EmberComponent`
 - `Service`
 - `Route`
 - `Controller`
+- `Helper`
 
-These classes would otherwise be _completely free_ of any of the trappings of
-the classic object model. As the Octane striketeam has begun updating the guides
-for these, the fact that users must learn to use `init` with them has become a
-pain point in the new guides. This is _especially_ painful given that
-`GlimmerComponent` does _not_ have an `init` hook, meaning we can't teach users
-to just use `init` everywhere either. Instead, users must learn that they have
-to use one or the other depending on what type of class they're using, even in
-completely new Ember Octane apps.
+This RFC does **_not_** aim to provide a single contract for _all_ classes
+registered on the container, in perpetuity. This would lock us into a tight
+coupling between the container and constructors for objects that are registered,
+and wouldn't provide much flexibility in the future.
 
-By tunneling the owner through to the root constructor, we can unify our
-documentation and best practices around one recommendation. New Ember Octane
-applications will be able to completely forgo `init`, and never learn about it
-in the first place. Existing Ember apps will still have cases where it is
-necessary (classic components, utility classes), but this is no worse a status
-quo than where we are currently - some classes require `constructor`, and some
-require `init`.
-
-Finally, if we do this change, we could lint users to a place where they are not
-using _any_ EmberObject APIs at all for any of these constructs. This means that
-in the future, we _could_ deprecate them extending from `EmberObject` at all,
-without forcing users onto new import paths. This deprecation is outside of the
-scope of this RFC, but it sets us up to move forward with decoupling Ember from
-the classic object model in the future.
+Instead, we believe we should continue exploring APIs for generalizing the way
+DI is configured for a given base class. It could be done via custom managers,
+or via decoration, like the [Injection Hook Normalization
+RFC](https://github.com/emberjs/rfcs/pull/467). When these APIs are fully
+rationalized and accepted, we'll update Ember's base classes to use them to
+specify the owner injection like any other user class could.
 
 ## Detailed design
+
+This RFC has 2 major parts:
+
+1. The contract that we'll uphold for dependency injection in _Ember base
+   classes_.
+2. The implementation of that contract for existing base classes (the tunnel).
+
+### Dependency Injection Contract
+
+For all Ember base classes created by the container, such as `GlimmerComponent`,
+`Service`, `Controller`, etc. we will:
+
+1. Pass the owner as the first parameter when constructing the class.
+2. Set the owner with `setOwner` in the base class constructor.
+
+This will make explicit injections available during the `constructor` method of
+the class, and for access by class field initializers.
+
+This contract _only_ applies to Ember base classes and framework objects, and
+classes that extend `EmberObject`. It does _not_ necessarily apply to arbitrary
+classes that are created and registered in the container.
+
+### Implementation
 
 The "tunnel" itself is fairly simple. As described in the Constructor Update
 RFC, this is how the `create` method on classes works currently:
@@ -146,10 +186,7 @@ that instructs them to add the injection explicitly (ideally), or to use `init`.
 ### Backwards Compatibility
 
 This change is backwards compatible, so existing applications will not be
-affected. Some users may feel like there is some churn, especially TypeScript
-users (sorry folks!)
-
-These changes will also be backported to at least:
+affected. These changes will also be backported to at least:
 
 - lts-3.8
 - lts-3.4
@@ -178,22 +215,11 @@ than convert them to native classes. Classic components should become Glimmer
 components, and utility classes should be refactor _away_ from extending
 `EmberObject`.
 
-Supplemental guides should also be written to cover the nuances of using native
-class syntax with either of these, including when and where to use `init`.
-Additionally, lint rules should be made if possible that enforce that the user
-is using the correct method. These lint rules may need some hinting in the form
-of a decorator or other "trigger" that let's them know what type of class a
-given class is:
-
-```js
-// This tell the linter that this is a classic component that needs to be upgraded
-@todo('octane-upgrade')
-export default class FooComponent extends ClassicComponent {
-  // this throws an error because of the annotation, but will be fine once the
-  // annotation is removed.
-  constructor() {}
-}
-```
+The [`@classic`](https://github.com/emberjs/rfcs/pull/468) decorator will also
+provide a way to guide users toward the correct usage, based on whether they are
+in "classic" mode or "octane" mode. We will be able to provide linting and
+warnings/assertions to prevent users from accidentally using `init` when they
+should have used `constructor`, and vice-versa.
 
 ## Drawbacks
 
@@ -210,4 +236,4 @@ export default class FooComponent extends ClassicComponent {
   work in GC but not any other class constructor? Why does GC have `init` _and_
   `constructor`?)
 - Keep using `init` for classic classes for the indefinite future, and teach
-  around.
+  around it.
