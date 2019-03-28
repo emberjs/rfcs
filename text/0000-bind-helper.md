@@ -61,15 +61,15 @@ We will also reserve the `withArgs` helper name for future use as an alias, anti
 
 ```hbs
 {{!-- Actions --}}
-<button {{action "increment"}}>Click</button>
-<button {{action this.increment}}>Click</button>
-<button onclick={{action "increment"}}>Click</button>
-<button onclick={{action this.increment}}>Click</button>
-<button {{action (action "increment")}}>Click</button>
-<button {{action (action this.increment)}}>Click</button>
+<button {{action "increment" 5}}>Click</button>
+<button {{action this.increment 5}}>Click</button>
+<button onclick={{action "increment" 5}}>Click</button>
+<button onclick={{action this.increment 5}}>Click</button>
+<button {{action (action "increment" 5)}}>Click</button>
+<button {{action (action this.increment 5)}}>Click</button>
 
-<button onclick={{with-args this.increment context=this}}>Click</button>
-<button {{on "click" (with-args this.increment context=this)}}>Click</button>
+<button onclick={{with-args this.increment 5}}>Click</button>
+<button {{on "click" (with-args this.increment 5)}}>Click</button>
 ```
 
 ### With `mut`
