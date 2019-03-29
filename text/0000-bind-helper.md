@@ -49,7 +49,7 @@ return function() {
 
 ```js
 return function() {
-  this.log.call(this, 1, 2);
+  this.add.call(this, 1, 2);
 }
 ```
 
