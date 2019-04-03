@@ -98,10 +98,10 @@ than once:
 ```
 
 Extra positional parameters will be ignored. In order to pass values to a
-function, users should use a helper such as the [bind helper](https://github.com/emberjs/rfcs/pull/470):
+function, users should use a helper such as the [with-args helper](https://github.com/emberjs/rfcs/pull/470):
 
 ```hbs
-<div {{on "click" (bind this.addNumber 123)}}></div>
+<div {{on "click" (with-args this.addNumber 123)}}></div>
 ```
 
 The event will also be passed as a parameter to the function, so it can be used
@@ -133,6 +133,15 @@ to apply multiple event listeners to an element.
 
 Other than that, most examples in the guides can be translated directly from
 the `{{action}}` modifier to the `{{on}}` modifier.
+Documentation work would include:
+
+- revising [Handling Events](https://guides.emberjs.com/release/components/handling-events/#toc_event-names) or the corresponding Octane article in entirety
+- revising [Triggering Changes with Actions](https://guides.emberjs.com/release/components/triggering-changes-with-actions/) or the corresponding Octane article
+- Updating 50+ uses of `{{action}}` in the guides
+- Adding `{{on}}` as a new API docs entry 
+- Update examples within the API docs to show all uses of actions that are supported in the API docs - `{{on}}`, `{{action}}`, `onclick={{action}}`
+
+`{{action}}` is used 130+ times in the API docs. Not all examples would need to be updated, however an audit would be needed to figure out which need to be added to/changed.
 
 ## Drawbacks
 
