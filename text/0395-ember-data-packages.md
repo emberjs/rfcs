@@ -277,7 +277,7 @@ The following modules would continue to live in a monorepo that (until further R
     <tr>
       <td>DS.normalizeModelName</td>
       <td>none</td>
-      <td>import { normalizeModelName } from 'ember-data/store';<br>
+      <td>import { normalizeModelName } from '@ember-data/store';<br>
         <br>this public method should be a candidate for deprecation
       </td>
     </tr>
