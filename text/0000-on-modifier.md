@@ -73,8 +73,7 @@ The `{{on}}` modifier will recieve:
 
 1. The event name as a string as the first positional parameter
 2. The event listener function as the second positional parameter
-3. Named parameters as options for the event listener, such as `capture`,
-   `once`, and `passive`
+3. Named parameters as options
 
 The following usages are equivalent:
 
@@ -98,10 +97,10 @@ than once:
 ```
 
 Extra positional parameters will be ignored. In order to pass values to a
-function, users should use a helper such as the [with-args helper](https://github.com/emberjs/rfcs/pull/470):
+function, users should use a helper such as the [fn helper](https://github.com/emberjs/rfcs/pull/470):
 
 ```hbs
-<div {{on "click" (with-args this.addNumber 123)}}></div>
+<div {{on "click" (fn this.addNumber 123)}}></div>
 ```
 
 The event will also be passed as a parameter to the function, so it can be used
@@ -119,6 +118,18 @@ class ClickComponent extends Component {
   }
 }
 ```
+
+### Named Parameters
+
+The following named parameters will be accepted as options to `{{on}}`:
+
+- `capture`
+- `once`
+- `passive`
+
+These will be passed forward to `addEventListener` as options in modern
+browsers, and will be polyfilled in older browsers. Other options will be
+ignored.
 
 ## How we teach this
 
@@ -138,7 +149,7 @@ Documentation work would include:
 - revising [Handling Events](https://guides.emberjs.com/release/components/handling-events/#toc_event-names) or the corresponding Octane article in entirety
 - revising [Triggering Changes with Actions](https://guides.emberjs.com/release/components/triggering-changes-with-actions/) or the corresponding Octane article
 - Updating 50+ uses of `{{action}}` in the guides
-- Adding `{{on}}` as a new API docs entry 
+- Adding `{{on}}` as a new API docs entry
 - Update examples within the API docs to show all uses of actions that are supported in the API docs - `{{on}}`, `{{action}}`, `onclick={{action}}`
 
 `{{action}}` is used 130+ times in the API docs. Not all examples would need to be updated, however an audit would be needed to figure out which need to be added to/changed.
@@ -150,7 +161,7 @@ Documentation work would include:
   explicitness makes it much more clear what the separation of concerns is, and
   allows users to fine tune their event handling.
 - The `{{on}}` modifier requires another helper to pass values. Currently, the
-  ideal companion helper is the `{{bind}}` helper, which is still in RFC.
+  ideal companion helper is the `{{fn}}` helper, which is still in RFC.
 - The `onclick=` style at first looks like a native browser API, and is
   sometimes easier to teach because of this. However, it is _not_ the same as
   the `onclick` attribute, which only receives strings, and the differences are
