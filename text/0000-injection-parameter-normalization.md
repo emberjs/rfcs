@@ -8,7 +8,7 @@
 ## Summary
 
 Normalize on passing the `owner` as the first parameter to the constructor for
-Ember's built in framework classes that are constructed by the container:
+the following built in framework classes:
 
 - `GlimmerComponent`
 - `EmberComponent`
@@ -70,7 +70,7 @@ native classes.
 
 Glimmer components made the decision to break from this pattern, and instead
 pass the DI Owner as the first parameter to the constructor. They then set it
-using `setOwner` in the base class, making injections available during the
+using `setOwner` in the base class, making explicit injections available during the
 constructor, and to class field initializers.
 
 So far this has worked pretty well in practice:
@@ -84,8 +84,7 @@ So far this has worked pretty well in practice:
   and the way it constructs classes in order to explain why these are separate.
 
 This RFC seeks to normalize this contract for all _Ember base classes_ - that
-is, framework classes that are provided by Ember and instantiated by the
-container, including:
+is, framework classes that are provided by Ember:
 
 - `GlimmerComponent`
 - `EmberComponent`
@@ -126,17 +125,18 @@ This will make explicit injections available during the `constructor` method of
 the class, and for access by class field initializers.
 
 This contract _only_ applies to Ember base classes and framework objects, and
-classes that extend `EmberObject`. It does _not_ necessarily apply to arbitrary
+classes that extend `EmberObject`. It does _not_ apply to arbitrary
 classes that are created and registered in the container.
 
 ### Implementation
 
 The "tunnel" itself is fairly simple. As described in the Constructor Update
-RFC, this is how the `create` method on classes works currently:
+RFC, this is how the `create` method on framework classes works currently:
 
 ```js
-class EmberObject {
+class Service extends EmberObject {
   constructor() {
+    super();
     // ..class setup things
   }
 
@@ -154,8 +154,9 @@ class EmberObject {
 We would update this to the following:
 
 ```js
-class EmberObject {
+class Service extends EmberObject {
   constructor(owner) {
+    super();
     setOwner(this, owner);
     // ..class setup things
   }
