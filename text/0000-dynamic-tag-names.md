@@ -89,9 +89,8 @@ Some meaningful example for the docs could look like this (extracted from a real
 <Sidebar @htmlTag="nav">...</Sidebar>
 ```
 
-Since this feature is not very commonly used it is debatable if it should be mentioned in the more beginner-friendly guides,
-but if deemed appropriate the _Components > Customizing a Component's Element_ section is a perfect
-fit.
+Since this feature is not very commonly used, it should not be mentioned in the more beginner-friendly portion
+of the guides. However, the _Components > Customizing a Component's Element_ section is a perfect fit for this.
 
 ## Drawbacks
 
