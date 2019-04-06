@@ -1,5 +1,5 @@
 - Start Date: 2019-02-19
-- Relevant Team(s): Ember.js, Learning
+- Relevant Team(s): Ember.js, Ember Data, Learning
 - RFC PR: https://github.com/emberjs/rfcs/pull/451
 - Tracking:
 
@@ -16,6 +16,13 @@ the following built in framework classes:
 - `Route`
 - `Controller`
 - `Helper`
+
+Along with the following Ember Data classes:
+
+- `Model`
+- `Adapter`
+- `Serializer`
+- `Transform`
 
 ## Terminology
 
@@ -92,6 +99,13 @@ is, framework classes that are provided by Ember:
 - `Route`
 - `Controller`
 - `Helper`
+
+Along with framework clases provided by Ember Data:
+
+- `Model`
+- `Adapter`
+- `Serializer`
+- `Transform`
 
 This RFC does **_not_** aim to provide a single contract for _all_ classes
 registered on the container, in perpetuity. This would lock us into a tight
