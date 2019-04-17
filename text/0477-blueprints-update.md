@@ -132,7 +132,7 @@ Multiple blueprint updates found, which would you like to update?
  * ember-ci
 ```
 
-The reason this is so powerful is any org could create their own _partial_ app blueprint (public or private). This blueprint can make any slight (or massive) tweaks to the official blueprints, and ember-cli-update can keep any app in sync with both the official blueprint and you'r org's blueprints, at the same time.
+The reason this is so powerful is any org could create their own _partial_ project blueprint (public or private). This blueprint can make any slight (or massive) tweaks to the official blueprints, and ember-cli-update can keep any project in sync with both the official blueprint and your org's blueprints, at the same time.
 
 ## How we teach this
 
