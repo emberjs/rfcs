@@ -1,6 +1,6 @@
 - Start Date: 2019-04-17
 - Relevant Team(s): Ember CLI
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/477
 - Tracking: (leave this empty)
 
 # Syncing Blueprints
