@@ -23,7 +23,7 @@ The code is already completed https://github.com/ember-cli/ember-cli-update/pull
 
 Where should the state go?
 
-```
+```js
 // .ember-cli
 {
   "ember-cli-update": {
@@ -37,7 +37,7 @@ Where should the state go?
 }
 ```
 
-```
+```js
 // ember-cli-update.json
 {
   "blueprints": [
@@ -49,7 +49,7 @@ Where should the state go?
 }
 ```
 
-```
+```js
 // package.json
 {
   // ...
@@ -68,7 +68,7 @@ I vote “ember-cli-update.json”. Since the code will be modified by the updat
 
 How should the state be structured?
 
-```
+```js
 {
   "blueprints": [
     {
@@ -79,7 +79,7 @@ How should the state be structured?
 }
 ```
 
-```
+```js
 {
   "blueprints": {
     "my-custom-blueprint": {
@@ -90,7 +90,7 @@ How should the state be structured?
 
 Future-proofing for more options
 
-```
+```js
 {
   "additionalFutureOptions": null,
   "blueprints": {
@@ -106,7 +106,7 @@ Future-proofing for more options
 
 Blueprints could be responsible for injecting the state into projects
 
-```
+```js
 // my-custom-blueprint/blueprints/my-custom-blueprint/files/.ember-cli
 {
   "ember-cli-update": {
@@ -127,9 +127,9 @@ The goal is for when you type `ember-cli-update` in your project, you will get a
 ```
 $ ember-cli-update
 Multiple blueprint updates found, which would you like to update?
-* ember-cli
-* ember-cli-mirage
-* ember-ci
+ * ember-cli
+ * ember-cli-mirage
+ * ember-ci
 ```
 
 The reason this is so powerful is any org could create their own _partial_ app blueprint (public or private). This blueprint can make any slight (or massive) tweaks to the official blueprints, and ember-cli-update can keep any app in sync with both the official blueprint and you'r org's blueprints, at the same time.
