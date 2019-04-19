@@ -1,6 +1,7 @@
 - Start Date: 2017-07-14
+- Relevant Team(s): Ember.js
 - RFC PR: https://github.com/emberjs/rfcs/pull/236
-- Ember Issue: https://github.com/emberjs/ember.js/issues/15624
+- Tracking: https://github.com/emberjs/rfc-tracking/issues/26
 
 # Summary
 

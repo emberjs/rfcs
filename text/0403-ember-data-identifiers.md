@@ -1,5 +1,7 @@
 - Start Date: 2018-11-25
-- RFC PR: #403
+- Relevant Team(s): Ember Data
+- RFC PR: https://github.com/emberjs/rfcs/pull/403
+- Tracking: https://github.com/emberjs/rfc-tracking/issues/31
 
 # Ember Data | Identifiers 
 

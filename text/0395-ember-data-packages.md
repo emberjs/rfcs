@@ -1,6 +1,7 @@
 - Start Date: 2018-10-31
+- Relevant Team(s): Ember Data
 - RFC PR: https://github.com/emberjs/rfcs/pull/395
-- Ember Issue: (leave this empty)
+- Tracking: https://github.com/emberjs/rfc-tracking/issues/11
 
 # Ember Data Packages
 

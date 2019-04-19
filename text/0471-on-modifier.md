@@ -1,7 +1,7 @@
 - Start Date: 2019-03-21
 - Relevant Team(s): Ember.js, Learning
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
-- Tracking: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/471
+- Tracking: https://github.com/emberjs/rfc-tracking/issues/32
 
 # `{{on}}` Modifier
 

@@ -1,6 +1,7 @@
 - Start Date: 2018-05-01
-- RFC PR: (leave this empty)
-- Ember Issue: (leave this empty)
+- Relevant Team(s): Ember Data
+- RFC PR: https://github.com/emberjs/rfcs/pull/329
+- Tracking: https://github.com/emberjs/rfc-tracking/issues/21
 
 # Deprecate Usage of Ember Evented in Ember Data
 

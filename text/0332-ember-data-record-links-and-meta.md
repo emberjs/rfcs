@@ -1,6 +1,7 @@
 - Start Date: 2018-10-24
+- Relevant Team(s): Ember Data
 - RFC PR: https://github.com/emberjs/rfcs/pull/332
-- Ember Issue:
+- Tracking: https://github.com/emberjs/rfc-tracking/issues/19
 
 # Ember Data Record Links & Meta
 
