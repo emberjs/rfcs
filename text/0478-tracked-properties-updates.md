@@ -1112,19 +1112,18 @@ set(maybeProxy, 'firstName', 'Amy');
 
 ## Drawbacks
 
-> Why should we _not_ do this? Please consider the impact on teaching Ember,
-> on the integration of this feature with other existing and planned features,
-> on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+- The interop story here may a bit confusing for users at first. `@watchable`
+  should only be used in some cases, and it could unclear when it should be
+  used. Documentation should help alleviate this, along with clear examples.
+- We're introducing a decorator that will eventually be deprecated and removed
+  as part of this process, which is essentially some tech debt we're taking on.
+  However, we know that this has a timeline for removal, and it is purely a
+  temporary measure for interop, so it's not a significant amount of debt to
+  take on in the meantime.
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
-
-## Unresolved questions
-
-> Optional, but suggested for first drafts. What parts of the design are still
-> TBD?
+- We could not provide `@watchable` instead. This would mean there isn't really
+  an interop path for users who want to depend on native getters from CPs and
+  observers, leaving a large gap that could prevent users from updating
+  altogether.
