@@ -222,7 +222,8 @@ allow it to track any events in its evaluation. It would coalesce these into its
 own tag, which computed properties (and observers) would be able to depend on:
 
 ```js
-import { tracked, watchable } from '@glimmer/tracking';
+import { tracked } from '@glimmer/tracking';
+import { watchable } from '@ember/object';
 
 class Person {
   @tracked firstName;
@@ -242,7 +243,8 @@ const Profile = EmberObject.extend({
 });
 ```
 
-`@watchable` would be imported from `@glimmer/tracking` alongside `@tracked`.
+`@watchable` would be imported from `@ember/object`, since it is used
+specifically in Ember apps for interop with Ember object model abstractions.
 Like other Ember decorators, it would be usable in both classic and native
 classes. When used in classic classes, it will be able to define its underlying
 getter and setter using the same API as computed properties. However, it will
@@ -302,8 +304,8 @@ native and classic classes.
 Native Example:
 
 ```js
-import { tracked, watchable } from '@glimmer/tracking';
-import { computed, set } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
+import { computed, set, watchable } from '@ember/object';
 
 class Person {
   @tracked firstName;
@@ -330,8 +332,8 @@ class Profile {
 Classic Example:
 
 ```js
-import { tracked, watchable } from '@glimmer/tracking';
-import EmberObject, { computed, observer, set } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
+import EmberObject, { computed, observer, set, watchable } from '@ember/object';
 
 const Person = EmberObject.extend({
   firstName: tracked(),
@@ -760,7 +762,7 @@ JavaScript update syntax will invalidate them:
 
 ```js
 import { computed } from '@ember/object';
-import { tracking } from '@glimmer/tracking';
+import { tracked } from '@glimmer/tracking';
 
 class Person {
   @tracked firstName;
@@ -791,7 +793,7 @@ if you set it directly:
 
 ```js
 import { computed } from '@ember/object';
-import { tracking } from '@glimmer/tracking';
+import { tracked } from '@glimmer/tracking';
 
 class Person {
   @tracked firstName;
@@ -847,8 +849,8 @@ getters that need to be watched by computed properties with the `@watchable`
 decorator:
 
 ```js
-import { computed } from '@ember/object';
-import { tracking, watchable } from '@glimmer/tracking';
+import { computed, watchable } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 
 class Person {
   @tracked firstName;
@@ -969,8 +971,8 @@ Computed properties will autotrack when they are accessed from templates or
 through other getters, like tracked properties.:
 
 ```js
-import { computed } from '@ember/object';
-import { tracking, watchable } from '@glimmer/tracking';
+import { computed, watchable } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 
 class Person {
   @tracked firstName;
