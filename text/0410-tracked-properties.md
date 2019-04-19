@@ -1,7 +1,8 @@
 - Start Date: 2018-12-05
 - RFC PR: https://github.com/emberjs/rfcs/pull/410
-- Ember Issue: (leave this empty)
+- Relevant Team(s): Ember.js
 - Authors: Tom Dale, Chris Garrett, Chad Hietala, Yehuda Katz
+- Tracking: https://github.com/emberjs/rfc-tracking/issues/4
 
 # Tracked Properties
 

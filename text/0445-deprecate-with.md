@@ -1,7 +1,7 @@
 - Start Date: 2019-02-13
 - Relevant Teams: Ember.js, Learning
 - RFC PR: https://github.com/emberjs/rfcs/pull/445
-- Tracking: (leave this empty)
+- Tracking: https://github.com/emberjs/rfc-tracking/issues/40
 
 # Deprecate `{{with}}`
 

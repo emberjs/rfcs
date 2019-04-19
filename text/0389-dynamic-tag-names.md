@@ -1,6 +1,7 @@
 - Start Date: 2018-10-14
-- RFC PR: (leave this empty)
-- Ember Issue: (leave this empty)
+- Relevant Team(s): Ember.js
+- RFC PR: https://github.com/emberjs/rfcs/pull/389
+- Tracking: https://github.com/emberjs/rfc-tracking/issues/42
 
 # Dynamic tag names in glimmer templates.
 
