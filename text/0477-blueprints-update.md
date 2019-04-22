@@ -224,6 +224,21 @@ The updater can now generate a project with the correct options.
 ember new my-app -b my-blueprint --option0=false --option1=true --option2="foo"
 ```
 
+**Codemods**
+
+There is no reason why you couldn't provide your own codemods with this system. This would be especially useful for project replacement blueprints. We would use the existing codemod system with version detection, option detection, etc.
+
+```js
+{
+  "blueprints": {
+    "my-blueprint": {
+      "version": "0.0.1",
+      "codemods": "some-server.com/my-blueprint-codemods-manifest.json"
+    }
+  }
+}
+```
+
 ## How we teach this
 
 I’m not sure. It could be a section in the ember-cli-update README, or leave it up to the blueprints that want to support this to document. If this feature takes off in the ecosystem, then it might warrant a guides section on keeping your blueprints up-to-date.
