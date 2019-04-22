@@ -66,6 +66,8 @@ Where should the state go?
 
 I vote “ember-cli-update.json”. Since the code will be modified by the updater, it’s easier to reformat JSON. “.ember-cli” I think supports JS, so it would be hard to modify. “package.json” seems like an abuse to put more metadata in there.
 
+I've found via further testing that mixing a file that is tracked by the default ember-cli blueprint (.ember-cli, package.json) and modified by ember-cli-update (to update the blueprint metadata), it gets cumbersome. Both processes try to edit the same file. So in theory, ember-cli could alter the .ember-cli file in a way that conflicts with what you have in yours. This would give you a git conflict, then the updater can't read it anymore because it is in a state of invalid JS. I think this further supports a separate file.
+
 How should the state be structured?
 
 ```js
