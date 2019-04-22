@@ -86,6 +86,7 @@ How should the state be structured?
   "blueprints": {
     "my-custom-blueprint": {
       "version": "0.0.1"
+    }
   }
 }
 ```
@@ -182,6 +183,45 @@ Multiple blueprint updates found, which would you like to update?
  * ember-cli
  * my-app-blueprint
  * my-addon-blueprint
+```
+
+**Preserving options**
+
+I'm not sure if anyone does it now, but it could be possible to handle options when generating a new project via a custom blueprints.
+
+```
+ember new my-app -b my-blueprint --option1 --option2=foo
+```
+
+```js
+// my-blueprint/files/ember-cli-update.json
+{
+  "blueprints": [
+    {
+      "name": "my-blueprint",
+      "version": "<%= blueprintVersion %>",
+      "options": ["option0=<%= option0 %>", "option1=<%= option1 %>", "option2=\"<%= option2 %>\""]
+    }
+  ]
+}
+```
+
+```js
+// my-app/ember-cli-update.json
+{
+  "blueprints": {
+    "my-blueprint": {
+      "version": "0.0.1",
+      "options": ["option0=false", "option1=true", "option2=\"foo\""]
+    }
+  }
+}
+```
+
+The updater can now generate a project with the correct options.
+
+```
+ember new my-app -b my-blueprint --option0=false --option1=true --option2="foo"
 ```
 
 ## How we teach this
