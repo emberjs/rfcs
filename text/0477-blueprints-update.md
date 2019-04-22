@@ -136,6 +136,54 @@ Multiple blueprint updates found, which would you like to update?
 
 The reason this is so powerful is any org could create their own _partial_ project blueprint (public or private). This blueprint can make any slight (or massive) tweaks to the official blueprints, and ember-cli-update can keep any project in sync with both the official blueprint and your org's blueprints, at the same time.
 
+**Complete vs partial**
+
+We need a way to denote a project replacement blueprint and a supplemental blueprint. A project replacement removes any sort of default ember-cli blueprint tracking, even if it still looks like a normal Ember project (has ember-cli, ember-addon, etc.). A supplemental blueprint is one that piggy-backs on a complete blueprint and makes certain tweaks to files. Think of ember-cli-mirage's extra project configs, or your company's custom settings on top of a normal Ember app.
+
+```js
+{
+  "blueprints": {
+    "my-app-blueprint": {
+      "version": "0.0.1"
+    },
+    "my-addon-blueprint": {
+      "version": "0.0.1",
+      "isPartial": true
+    }
+  }
+}
+```
+
+```
+$ ember-cli-update
+Multiple blueprint updates found, which would you like to update?
+ * my-app-blueprint
+ * my-addon-blueprint
+```
+
+```js
+{
+  "blueprints": {
+    "my-app-blueprint": {
+      "version": "0.0.1",
+      "isPartial": true
+    },
+    "my-addon-blueprint": {
+      "version": "0.0.1",
+      "isPartial": true
+    }
+  }
+}
+```
+
+```
+$ ember-cli-update
+Multiple blueprint updates found, which would you like to update?
+ * ember-cli
+ * my-app-blueprint
+ * my-addon-blueprint
+```
+
 ## How we teach this
 
 I’m not sure. It could be a section in the ember-cli-update README, or leave it up to the blueprints that want to support this to document. If this feature takes off in the ecosystem, then it might warrant a guides section on keeping your blueprints up-to-date.
