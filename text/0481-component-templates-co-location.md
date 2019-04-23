@@ -66,7 +66,7 @@ app
 ## Motivation
 
 Today, a component's JavaScript file is located in the `app/components`
-directory. On the other hand, it's template is located in the
+directory. On the other hand, its template is located in the
 `app/templates/components` directory.
 
 This design decision is a relic of Ember's pre-1.0 days. In those early days,
