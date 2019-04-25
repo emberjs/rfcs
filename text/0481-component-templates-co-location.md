@@ -513,7 +513,7 @@ change.
 1. It should accept a `--component-class` option. This controls which base
    class is used for that component and whether native classes are used. The
    legal values for this option are `@glimmer/component` (aliased as `-gc`),
-   `@ember/component` (aliased as `-ec`), `@ember/component/template-only`
+   `@ember/component` (aliased as `-cc`), `@ember/component/template-only`
    (aliased as `-tc`) or an empty string (aliased as `--no-component-class` and
    `-nc`).
 
