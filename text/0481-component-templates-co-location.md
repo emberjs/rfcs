@@ -143,7 +143,7 @@ template-only components, it is possible to define a component without a class,
 therefore a casual scan of `app/components` will not discover those components.
 With the release of Octane, we expect template-only components to become more
 common. Likewise, albeit less common, it is also possible to define a component
-with *only* a class, making `app/templates/components` potentially incomplete
+with _only_ a class, making `app/templates/components` potentially incomplete
 also.
 
 Therefore, the "correct" way to explore the components in an app is to mentally
@@ -192,7 +192,7 @@ example:
 ```js
 // app/components/foo-bar.js
 
-import MyParentComponent from './my-parent';
+import MyParentComponent from "./my-parent";
 
 export default class FooBarComponent extends MyParentComponent {
   // ...
@@ -212,8 +212,8 @@ in an addon, this is the default output from the blueprint:
 ```js
 // addon/components/foo-bar.js
 
-import Component from '@ember/component';
-import layout from '../templates/components/foo-bar';
+import Component from "@ember/component";
+import layout from "../templates/components/foo-bar";
 
 export default Component.extend({
   layout
@@ -229,7 +229,7 @@ export default Component.extend({
 ```js
 // app/components/foo-bar.js
 
-export { default } from 'my-addon/components/foo-bar';
+export { default } from "my-addon/components/foo-bar";
 ```
 
 First, within the `addon` folder, there is the component class and template.
@@ -305,14 +305,14 @@ associated with the component's JavaScript class at build time.
 
 We propose to introduce the following low-level APIs:
 
-* The `setComponentTemplate` function takes two arguments, the first being the
+- The `setComponentTemplate` function takes two arguments, the first being the
   pre-compiled (wire-format) template, the second being the component class. It
   transparently associates the given template with the component class in a way
   can be retrieved later with the `getComponentTemplate` function described
   below. For convenience, `setComponentTemplate` will return the component
   class (the second argument).
 
-* The `getComponentTemplate` function takes a component class and returns the
+- The `getComponentTemplate` function takes a component class and returns the
   template associated with the given component class, if any, or one of its
   superclasses, if any, or `undefined` if no template association was found.
 
@@ -340,11 +340,10 @@ class Baz extends Bar {}
 
 class Bat {}
 
-
 // USAGE
 
-setComponentTemplate(precompile("foo template"), Foo);
-setComponentTemplate(precompile("baz template"), Baz);
+setComponentTemplate(template("foo template"), Foo);
+setComponentTemplate(template("baz template"), Baz);
 
 getComponentTemplate(Foo); // => foo template
 getComponentTemplate(Bar); // => foo template (inherited)
@@ -381,7 +380,7 @@ files on disk:
 ```js
 // app/components/foo-bar.js
 
-import Component from '@ember/component';
+import Component from "@ember/component";
 
 export default Component.extend({
   // ...
@@ -399,14 +398,14 @@ The build output will be something to the effect of this JavaScript file:
 ```js
 // app/components/foo-bar.js
 
-import Component, { setComponentTemplate } from '@ember/component';
+import Component, { setComponentTemplate } from "@ember/component";
 
-// output of precompile("foo bar!")
-const TEMPLATE = {
+// output of compiling "foo bar!" with ember-cli-htmlbars
+const TEMPLATE = Ember.HTMLBars.template({
   id: "...",
   block: "...",
   meta: { moduleName: "app/components/foo-bar" }
-};
+});
 
 const CLASS = Component.extend({
   // ...
@@ -425,7 +424,7 @@ that is unique to that file. For example, this should be **avoided**:
 ```js
 // app/components/foo-bar.js
 
-import MyParentComponent from './my-parent';
+import MyParentComponent from "./my-parent";
 
 // BAD: don't do this!
 export default MyParentComponent;
@@ -439,7 +438,7 @@ required:
 ```js
 // app/components/foo-bar.js
 
-import MyParentComponent from './my-parent';
+import MyParentComponent from "./my-parent";
 
 // GOOD: do this instead!
 export default class extends MyParentComponent {}
@@ -452,7 +451,7 @@ Most cases of this problem can be linted against easily.
 For template-only components, we propose to introduce the following low-level
 API:
 
-* The `templateOnlyComponent` function takes no arguments and produces a unique
+- The `templateOnlyComponent` function takes no arguments and produces a unique
   value that can be used to represent a template-only component.
 
 Again, this function, though public, is not intended to be called by users
@@ -463,15 +462,15 @@ JavaScript file, the build output will be something similar to the following:
 ```js
 // app/components/foo-bar.js
 
-import Component, { setComponentTemplate } from '@ember/component';
-import templateOnlyComponent from '@ember/component/template-only';
+import Component, { setComponentTemplate } from "@ember/component";
+import templateOnlyComponent from "@ember/component/template-only";
 
-// output of precompile("foo bar!")
-const TEMPLATE = {
+// output of compiling "foo bar!" with ember-cli-htmlbars
+const TEMPLATE = Ember.HTMLBars.template({
   id: "...",
   block: "...",
   meta: { moduleName: "app/components/foo-bar" }
-};
+});
 
 const CLASS = templateOnlyComponent();
 
@@ -621,7 +620,7 @@ Another drawback is that it only address the co-location issue for components,
 not other related types like [[route, controller, route template]] and [[model,
 adapter, serializer]], or even co-location of tests. However, we believe the
 situation with components is unique enough (see the motivation section) that
-they are not merely *related*, but *coupled*. That, along with the fact that
+they are not merely _related_, but _coupled_. That, along with the fact that
 components are much more common, sets them apart from the rest and justifies
 solving the problem first.
 
@@ -642,6 +641,6 @@ some of the Octane features until we find alternative solutions.
 
 ## Unresolved questions
 
-* Where would the build tool changes be implemented? And how?
-* How should the build tool changes interact with "pods" and `template.hbs`?
-* How should the new generator options interact with "pods"?
+- Where would the build tool changes be implemented? And how?
+- How should the build tool changes interact with "pods" and `template.hbs`?
+- How should the new generator options interact with "pods"?
