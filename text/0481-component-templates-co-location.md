@@ -346,9 +346,9 @@ class Bat {}
 setComponentTemplate(precompile("foo template"), Foo);
 setComponentTemplate(precompile("baz template"), Baz);
 
-getComponentTemplate(Foo); // => foo tempalte
-getComponentTemplate(Bar); // => foo tempalte (inherited)
-getComponentTemplate(Baz); // => baz tempalte (overridden)
+getComponentTemplate(Foo); // => foo template
+getComponentTemplate(Bar); // => foo template (inherited)
+getComponentTemplate(Baz); // => baz template (overridden)
 
 getComponentTemplate(Bat); // => undefined
 ```
