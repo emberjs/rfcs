@@ -216,20 +216,20 @@ Native getters are just that - native. They don't have any special autotracking
 behavior, which was part of the benefits of tracked properties. However, this
 means there is nothing to notify computed properties of changes.
 
-To solve this problem, we propose the `@watchable` decorator. This decorator
+To solve this problem, we propose the `@dependencyCompat` decorator. This decorator
 would instrument a native getter with its own autotracking frame, which would
 allow it to track any events in its evaluation. It would coalesce these into its
 own tag, which computed properties (and observers) would be able to depend on:
 
 ```js
 import { tracked } from '@glimmer/tracking';
-import { watchable } from '@ember/object';
+import { dependencyCompat } from '@ember/object/compat';
 
 class Person {
   @tracked firstName;
   @tracked lastName;
 
-  @watchable
+  @dependencyCompat
   get fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
@@ -243,16 +243,16 @@ const Profile = EmberObject.extend({
 });
 ```
 
-`@watchable` would be imported from `@ember/object`, since it is used
+`@dependencyCompat` would be imported from `@ember/object/compat`, since it is used
 specifically in Ember apps for interop with Ember object model abstractions.
 Like other Ember decorators, it would be usable in both classic and native
 classes. When used in classic classes, it will be able to define its underlying
 getter and setter using the same API as computed properties. However, it will
-throw an error if it is used to define more than one getter/setter - watchable
+throw an error if it is used to define more than one getter/setter - dependencyCompat
 macros should be avoided and discouraged.
 
 Observers and computed properties will throw an error if they attempt to watch
-a getter which is not marked as watchable.
+a getter which is not marked as dependencyCompat.
 
 #### Debugging Assertions
 
@@ -273,7 +273,7 @@ allow users to use native setters instead of `set()`.
 
 There are two major points of consideration here:
 
-- How do we teach classic/autotrack interop and `@watchable`
+- How do we teach classic/autotrack interop and `@dependencyCompat`
 - How do we teach `get`/`set` and when they are necessary to use
 
 ### Classic/Autotrack Interop
@@ -285,18 +285,18 @@ whenever a dependent property is updated, as they always have. The following
 table describes what types of values can be depended on, and how they can
 trigger updates:
 
-| Type                        | Updates By                         |
-| --------------------------- | ---------------------------------- |
-| Plain, undecorator property | `set()`                            |
-| Tracked property            | Native setter                      |
-| Computed property           | `set()`, or upstream invalidations |
-| Watchable getter            | Tracked value changes              |
+| Type                          | Updates By                         |
+| ----------------------------- | ---------------------------------- |
+| Plain, undecorator property   | `set()`                            |
+| Tracked property              | Native setter                      |
+| Computed property             | `set()`, or upstream invalidations |
+| Dependency compatible getters | Tracked value changes              |
 
 We should cover each of these in some detail in the main guides.
 
-#### `@watchable` API Docs
+#### `@dependencyCompat` API Docs
 
-`@watchable` is decorator that can be used on _native getters_ that use tracked
+`@dependencyCompat` is decorator that can be used on _native getters_ that use tracked
 properties. It exposes the getter to Ember's classic computed property and
 observer systems, so they can watch it for changes. It can be used in both
 native and classic classes.
@@ -305,13 +305,14 @@ Native Example:
 
 ```js
 import { tracked } from '@glimmer/tracking';
-import { computed, set, watchable } from '@ember/object';
+import { dependencyCompat } from '@ember/object/compat';
+import { computed, set } from '@ember/object';
 
 class Person {
   @tracked firstName;
   @tracked lastName;
 
-  @watchable
+  @dependencyCompat
   get fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
@@ -333,13 +334,14 @@ Classic Example:
 
 ```js
 import { tracked } from '@glimmer/tracking';
-import EmberObject, { computed, observer, set, watchable } from '@ember/object';
+import { dependencyCompat } from '@ember/object/compat';
+import EmberObject, { computed, observer, set } from '@ember/object';
 
 const Person = EmberObject.extend({
   firstName: tracked(),
   lastName: tracked(),
 
-  fullName: watchable(function() {
+  fullName: dependencyCompat(function() {
     return `${this.firstName} ${this.lastName}`;
   }),
 });
@@ -357,15 +359,15 @@ const Profile = EmberObject.extend({
 });
 ```
 
-`watchable()` can receive a getter function or an object containing `get`/`set`
+`dependencyCompat()` can receive a getter function or an object containing `get`/`set`
 methods when used in classic classes, like computed properties.
 
 In general, only properties which you _expect_ to be watched by older, untracked
-clases should be marked as watchable. The decorator is meant as an interop layer
+clases should be marked as dependency compatible. The decorator is meant as an interop layer
 for parts of Ember's older classic APIs, and should not be applied to every
-possible getter/setter in classes. The number of watchable getters should be
+possible getter/setter in classes. The number of dependency compatible getters should be
 _minimized_ wherever possible. New application should not need to use
-`@watchable`, since it is only for interoperation with older code.
+`@dependencyCompat`, since it is only for interoperation with older code.
 
 ### Computed Properties
 
@@ -715,7 +717,7 @@ values as well though. Altogether, the types of values are:
 - Plain, undecorated object properties
 - `@tracked` properties
 - `@computed` properties
-- `@watchable` getters
+- `@dependencyCompat` getters
 - Arrays
 
 We'll talk about each of these individually, and discuss how they are watched
@@ -834,7 +836,7 @@ hero.fullName; // 'Hank Pym'
 hero.legalName; // 'Hank Pym'
 ```
 
-##### Watchable Getters
+##### Dependency Compatible Getters
 
 In modern, fully tracked classes, computed properties aren't recommended
 anymore. However, if you are working in a legacy codebase and converting to
@@ -845,11 +847,12 @@ trigger an error in development mode.
 
 However, this doesn't mean that you need to convert an entire tree of computed
 properties every time you try to update a class! Instead, you can mark native
-getters that need to be watched by computed properties with the `@watchable`
+getters that need to be depended on by computed properties with the `@dependencyCompat`
 decorator:
 
 ```js
-import { computed, watchable } from '@ember/object';
+import { computed } from '@ember/object';
+import { dependencyCompat } from '@ember/object/compat';
 import { tracked } from '@glimmer/tracking';
 
 class Person {
@@ -861,7 +864,7 @@ class Person {
     this.lastName = lastName;
   }
 
-  @watchable
+  @dependencyCompat
   get fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
@@ -882,16 +885,16 @@ class Person {
 
 This decorator exposes the getter to computed properties, but otherwise leaves
 it untouched - it'll operate just like a normal native getter with tracked
-properties. When you have removed all computed properties that are watching the
-getter, you can remove the `@watchable` decorator.
+properties. When you have removed all computed properties that are depending on the
+getter, you can remove the `@dependencyCompat` decorator.
 
-In general, you should try to remove `@watchable` decorators as you convert your
-app. Making getters watchable means that more computeds can be written to watch
+In general, you should try to remove `@dependencyCompat` decorators as you convert your
+app. Making getters compatible with the explicit dependency system means that more computeds can be written to watch
 those getters, and the situation can get _worse_ instead of better over time. If
 you need to write a service or class that needs to interop with modern and
-classic code for some time, try to _minimize_ the number of `@watchable` getters
+classic code for some time, try to _minimize_ the number of `@dependencyCompat` getters
 to just the ones that are the "public API" of the class - the values that are
-expected to be watched from the outside by other classes.
+expected to be depended on from the outside by other classes.
 
 ##### Arrays
 
@@ -968,10 +971,11 @@ joey.friends = [...joey.friends, { name: 'Rachel' }];
 #### Computed Properties and Tracking
 
 Computed properties will autotrack when they are accessed from templates or
-through other getters, like tracked properties.:
+through other getters, like tracked properties:
 
 ```js
-import { computed, watchable } from '@ember/object';
+import { computed } from '@ember/object';
+import { dependencyCompat } from '@ember/object/compat';
 import { tracked } from '@glimmer/tracking';
 
 class Person {
@@ -1028,7 +1032,8 @@ autotracking should automatically figure out what needs to change, and when.
 However, there still are two cases where you _will_ need to use them:
 
 - When accessing and updating plain, undecorated properties on objects
-- When using Ember's `ObjectProxy` class
+- When using Ember's `ObjectProxy` class, or a class that implements the
+  `unknownProperty` function (which allows objects to intercept `get` calls)
 
 Additionally, you will have to continue using _accessor_ functions for arrays if
 you want arrays to update as expected. These functions are covered in more
@@ -1114,7 +1119,7 @@ set(maybeProxy, 'firstName', 'Amy');
 
 ## Drawbacks
 
-- The interop story here may a bit confusing for users at first. `@watchable`
+- The interop story here may a bit confusing for users at first. `@dependencyCompat`
   should only be used in some cases, and it could unclear when it should be
   used. Documentation should help alleviate this, along with clear examples.
 - We're introducing a decorator that will eventually be deprecated and removed
@@ -1125,7 +1130,7 @@ set(maybeProxy, 'firstName', 'Amy');
 
 ## Alternatives
 
-- We could not provide `@watchable` instead. This would mean there isn't really
+- We could not provide `@dependencyCompat` instead. This would mean there isn't really
   an interop path for users who want to depend on native getters from CPs and
   observers, leaving a large gap that could prevent users from updating
   altogether.
