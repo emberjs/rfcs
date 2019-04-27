@@ -554,39 +554,6 @@ change.
    that defaults to `--no-component-class` and `--component-structure=flat`.
    The guides and documentation will assume these settings going forward.
 
-### Timing
-
-We propose to include this change as part of the Octane edition. Admittedly,
-this is a rather late addition. However, there are a few compelling reasons for
-including it:
-
-1. Module Unification was a much-anticipated feature that
-   [did not make it](https://blog.emberjs.com/2019/03/11/update-on-module-unification-and-octane.html)
-   into the Octane edition. Even though it tries to solve a lot of other
-   problems, component co-location is one of the main benefits. This proposal
-   allows us to incrementally deliver a solution one of the biggest pain points
-   while we work out the other issues.
-
-2. The Octane edition will enable template-only components by default, which
-   will encourage its use and intensifies some of the issues enumerated in the
-   motivation section.
-
-3. The Octane edition will highlight Glimmer Components as the main programming
-   model. Without the `setComponentTemplate` API proposed in this RFC, addons
-   authors will not be able to adopt Glimmer Components. This will, over time,
-   significantly increase the barrier to authoring addons, as most Ember
-   developers will no longer be familiar with the classic components API.
-
-4. The Octane edition presents a good opportunity to update the documentation
-   and get the whole community on board with adopting a feature like this. It
-   is important that build tools, linters, codemods, etc take this feature into
-   account, and shipping this as part of the Octane edition is a good way to
-   signal that.x
-
-Even though it is pretty late in the Octane timeframe, we believe this feature
-is relatively limited in scope (compared to, say, `@tracked`) and can be
-implemented relatively quickly.
-
 ## How we teach this
 
 As mentioned above, the learning team will update the guides and API docs to
@@ -609,13 +576,6 @@ would come at a later time than components.
 
 ## Drawbacks
 
-Unlike the rest of the Octane features, this is not as battle-tested. Also, as
-mentioned above, this addition would be quite last-minute. However, it is quite
-normal to discover minor problems (e.g. issues with using Glimmer components in
-addons today) through real-world usage, and that is precisely the point of the
-Octane preview period. Since Octane is all about polish and cohesion, we think
-it is worth addressing these issues before stamping on the quality seal.
-
 Another drawback is that it only address the co-location issue for components,
 not other related types like [[route, controller, route template]] and [[model,
 adapter, serializer]], or even co-location of tests. However, we believe the
@@ -631,13 +591,6 @@ components will end up on disk (e.g. `src/ui/components`), the internal
 structure of that collection will closely match what is proposed in this RFC.
 Ultimately, we expect there to be automatic migrators for these kinds of
 changes anyway, so the cost of the possible churn is contained.
-
-## Alternatives
-
-We can forgo the opportunity to address these problems as part of Octane, and
-instead land this proposal (or something like it) after the edition has
-shipped. That would come at a cost of addon authors not being able to adopt
-some of the Octane features until we find alternative solutions.
 
 ## Unresolved questions
 
