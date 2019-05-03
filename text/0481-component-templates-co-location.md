@@ -541,6 +541,9 @@ change.
    addons, when used with `--component-class=@ember/component`, this will also
    emit the `layout` property workaround.
 
+   When this option is set to `pods` (aliased as `--pods`), it will generate
+   `{app,addon}/components/$name/{component.js,template.hbs}`.
+
 3. Thses options will default to `--component-class=@ember/component` and
    `--component-structure=classic` for backwards compatibility.
 
@@ -602,9 +605,3 @@ components will end up on disk (e.g. `src/ui/components`), the internal
 structure of that collection will closely match what is proposed in this RFC.
 Ultimately, we expect there to be automatic migrators for these kinds of
 changes anyway, so the cost of the possible churn is contained.
-
-## Unresolved questions
-
-- Where would the build tool changes be implemented? And how?
-- How should the build tool changes interact with "pods" and `template.hbs`?
-- How should the new generator options interact with "pods"?
