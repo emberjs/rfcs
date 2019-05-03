@@ -556,8 +556,19 @@ change.
 
 ## How we teach this
 
-As mentioned above, the learning team will update the guides and API docs to
-assume the "flat" co-located layout.
+As mentioned above, we will update the learning resources to assume the "flat"
+co-located layout. Throughout the Ember Guides, the Tutorials, and the CLI
+Addon Tutorial, we would update the file paths in all component examples. Since
+we assume the classic layout today, in most cases only the template paths would
+need to be updated. The prose describing the location of files would also need
+to change.
+
+The API documentation will describe the full set of file layout options
+supported in the major version of Ember. A section should also be added to the
+CLI guides, which describes how to properly import components from addons that
+have a mix of layout types. We will not cover blending file layouts in the
+Ember Guides, since they represent the happy path for an app, but we could link
+to the CLI Guides explanation.
 
 With this layout, it should be much easier for new users to form a mental model
 around components. We can start by teaching that the most basic component is
@@ -571,8 +582,8 @@ not necessary to separate out the topic of "templates" from "components" in the
 guides, but this can be addressed in a future revision of the guides.
 
 We will teach that the `templates` folder is used for route templates. This can
-be introduced at the same time as the `routes` and `controllers` folder, which
-would come at a later time than components.
+be introduced in the Guides at the same time as the `routes` and `controllers`
+folders/topics, which come later in the Table of Contents.
 
 ## Drawbacks
 
