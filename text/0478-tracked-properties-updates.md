@@ -1,7 +1,7 @@
 - Start Date: 2019-04-12
 - Relevant Team(s): Ember.js, Learning
 - RFC PR: https://github.com/emberjs/rfcs/pull/478
-- Tracking: (leave this empty)
+- Tracking: https://github.com/emberjs/rfc-tracking/issues/45
 
 # Tracked Properties Updates
 
