@@ -216,20 +216,20 @@ Native getters are just that - native. They don't have any special autotracking
 behavior, which was part of the benefits of tracked properties. However, this
 means there is nothing to notify computed properties of changes.
 
-To solve this problem, we propose the `@dependencyCompat` decorator. This decorator
+To solve this problem, we propose the `@dependentKeyCompat` decorator. This decorator
 would instrument a native getter with its own autotracking frame, which would
 allow it to track any events in its evaluation. It would coalesce these into its
 own tag, which computed properties (and observers) would be able to depend on:
 
 ```js
 import { tracked } from '@glimmer/tracking';
-import { dependencyCompat } from '@ember/object/compat';
+import { dependentKeyCompat } from '@ember/object/compat';
 
 class Person {
   @tracked firstName;
   @tracked lastName;
 
-  @dependencyCompat
+  @dependentKeyCompat
   get fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
@@ -243,16 +243,16 @@ const Profile = EmberObject.extend({
 });
 ```
 
-`@dependencyCompat` would be imported from `@ember/object/compat`, since it is used
+`@dependentKeyCompat` would be imported from `@ember/object/compat`, since it is used
 specifically in Ember apps for interop with Ember object model abstractions.
 Like other Ember decorators, it would be usable in both classic and native
 classes. When used in classic classes, it will be able to define its underlying
 getter and setter using the same API as computed properties. However, it will
-throw an error if it is used to define more than one getter/setter - dependencyCompat
+throw an error if it is used to define more than one getter/setter - dependentKeyCompat
 macros should be avoided and discouraged.
 
 Observers and computed properties will throw an error if they attempt to watch
-a getter which is not marked as dependencyCompat.
+a getter which is not marked as dependentKeyCompat.
 
 #### Debugging Assertions
 
@@ -273,7 +273,7 @@ allow users to use native setters instead of `set()`.
 
 There are two major points of consideration here:
 
-- How do we teach classic/autotrack interop and `@dependencyCompat`
+- How do we teach classic/autotrack interop and `@dependentKeyCompat`
 - How do we teach `get`/`set` and when they are necessary to use
 
 ### Classic/Autotrack Interop
@@ -294,9 +294,9 @@ trigger updates:
 
 We should cover each of these in some detail in the main guides.
 
-#### `@dependencyCompat` API Docs
+#### `@dependentKeyCompat` API Docs
 
-`@dependencyCompat` is decorator that can be used on _native getters_ that use tracked
+`@dependentKeyCompat` is decorator that can be used on _native getters_ that use tracked
 properties. It exposes the getter to Ember's classic computed property and
 observer systems, so they can watch it for changes. It can be used in both
 native and classic classes.
@@ -305,14 +305,14 @@ Native Example:
 
 ```js
 import { tracked } from '@glimmer/tracking';
-import { dependencyCompat } from '@ember/object/compat';
+import { dependentKeyCompat } from '@ember/object/compat';
 import { computed, set } from '@ember/object';
 
 class Person {
   @tracked firstName;
   @tracked lastName;
 
-  @dependencyCompat
+  @dependentKeyCompat
   get fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
@@ -334,14 +334,14 @@ Classic Example:
 
 ```js
 import { tracked } from '@glimmer/tracking';
-import { dependencyCompat } from '@ember/object/compat';
+import { dependentKeyCompat } from '@ember/object/compat';
 import EmberObject, { computed, observer, set } from '@ember/object';
 
 const Person = EmberObject.extend({
   firstName: tracked(),
   lastName: tracked(),
 
-  fullName: dependencyCompat(function() {
+  fullName: dependentKeyCompat(function() {
     return `${this.firstName} ${this.lastName}`;
   }),
 });
@@ -359,15 +359,15 @@ const Profile = EmberObject.extend({
 });
 ```
 
-`dependencyCompat()` can receive a getter function or an object containing `get`/`set`
+`dependentKeyCompat()` can receive a getter function or an object containing `get`/`set`
 methods when used in classic classes, like computed properties.
 
 In general, only properties which you _expect_ to be watched by older, untracked
 clases should be marked as dependency compatible. The decorator is meant as an interop layer
 for parts of Ember's older classic APIs, and should not be applied to every
 possible getter/setter in classes. The number of dependency compatible getters should be
-_minimized_ wherever possible. New application should not need to use
-`@dependencyCompat`, since it is only for interoperation with older code.
+_minimized_ wherever possible. New application code should not need to use
+`@dependentKeyCompat`, since it is only for interoperation with older code.
 
 ### Computed Properties
 
@@ -717,7 +717,7 @@ values as well though. Altogether, the types of values are:
 - Plain, undecorated object properties
 - `@tracked` properties
 - `@computed` properties
-- `@dependencyCompat` getters
+- `@dependentKeyCompat` getters
 - Arrays
 
 We'll talk about each of these individually, and discuss how they are watched
@@ -847,12 +847,12 @@ trigger an error in development mode.
 
 However, this doesn't mean that you need to convert an entire tree of computed
 properties every time you try to update a class! Instead, you can mark native
-getters that need to be depended on by computed properties with the `@dependencyCompat`
+getters that need to be depended on by computed properties with the `@dependentKeyCompat`
 decorator:
 
 ```js
 import { computed } from '@ember/object';
-import { dependencyCompat } from '@ember/object/compat';
+import { dependentKeyCompat } from '@ember/object/compat';
 import { tracked } from '@glimmer/tracking';
 
 class Person {
@@ -864,7 +864,7 @@ class Person {
     this.lastName = lastName;
   }
 
-  @dependencyCompat
+  @dependentKeyCompat
   get fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
@@ -886,13 +886,13 @@ class Person {
 This decorator exposes the getter to computed properties, but otherwise leaves
 it untouched - it'll operate just like a normal native getter with tracked
 properties. When you have removed all computed properties that are depending on the
-getter, you can remove the `@dependencyCompat` decorator.
+getter, you can remove the `@dependentKeyCompat` decorator.
 
-In general, you should try to remove `@dependencyCompat` decorators as you convert your
+In general, you should try to remove `@dependentKeyCompat` decorators as you convert your
 app. Making getters compatible with the explicit dependency system means that more computeds can be written to watch
 those getters, and the situation can get _worse_ instead of better over time. If
 you need to write a service or class that needs to interop with modern and
-classic code for some time, try to _minimize_ the number of `@dependencyCompat` getters
+classic code for some time, try to _minimize_ the number of `@dependentKeyCompat` getters
 to just the ones that are the "public API" of the class - the values that are
 expected to be depended on from the outside by other classes.
 
@@ -975,7 +975,7 @@ through other getters, like tracked properties:
 
 ```js
 import { computed } from '@ember/object';
-import { dependencyCompat } from '@ember/object/compat';
+import { dependentKeyCompat } from '@ember/object/compat';
 import { tracked } from '@glimmer/tracking';
 
 class Person {
@@ -1119,7 +1119,7 @@ set(maybeProxy, 'firstName', 'Amy');
 
 ## Drawbacks
 
-- The interop story here may a bit confusing for users at first. `@dependencyCompat`
+- The interop story here may a bit confusing for users at first. `@dependentKeyCompat`
   should only be used in some cases, and it could unclear when it should be
   used. Documentation should help alleviate this, along with clear examples.
 - We're introducing a decorator that will eventually be deprecated and removed
@@ -1130,7 +1130,7 @@ set(maybeProxy, 'firstName', 'Amy');
 
 ## Alternatives
 
-- We could not provide `@dependencyCompat` instead. This would mean there isn't really
+- We could not provide `@dependentKeyCompat` instead. This would mean there isn't really
   an interop path for users who want to depend on native getters from CPs and
   observers, leaving a large gap that could prevent users from updating
   altogether.
