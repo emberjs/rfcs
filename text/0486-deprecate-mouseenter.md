@@ -82,7 +82,7 @@ export default Component.extend({
   didInsertElement() {
     this._super(...arguments);
     this._mouseenter = bind(this, this.mouseenter);
-    this.element.addEventListener('mouseenter', handler);
+    this.element.addEventListener('mouseenter', this._mouseenter);
   },
   willDestroyElement() {
     this._super(...arguments);
