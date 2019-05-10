@@ -99,13 +99,7 @@ Before:
 <button {{action "handleMouseEnter" on="mouseenter"}}>Hover</button>
 ```
 
-After:
-
-```hbs
-<button onmouseenter={{action "handleMouseEnter"}}>Hover</button>
-```
-
-or (based on [RFC471](https://github.com/emberjs/rfcs/blob/master/text/0471-on-modifier.md))
+After (based on [RFC471](https://github.com/emberjs/rfcs/blob/master/text/0471-on-modifier.md)):
 
 ```hbs
 <button {{on "mouseenter" this.handleMouseEnter}}>Hover</button>
