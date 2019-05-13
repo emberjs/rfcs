@@ -1,4 +1,4 @@
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
+- Start Date: (YYYY-MM-DD, updated on 2019-05-13)
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
@@ -22,53 +22,124 @@ One of the challenges is that screen reader technology is all closed-source exce
 
 ## Detailed design
 
-After reviewing possible approaches to this problem, it seems like the very first step should be an implementation that, at the very _least_, returns Ember back to the starting line. We could then build on that by providing a more machine-intelligent iteration for an upscaled experience. This iterative approach would give us a better way to tackle the more difficult edge-case scenarios.
+This RFC proposes two different solutions for us to consider. The solution that is determined to be the most appropriate for our use will be made into an officially supported addon, and be included in the Ember blueprints, so it will be part of every new application by default. 
 
-This RFC proposes that we could either implement a two-phase approach (outlined below) OR decide to move directly to the approach outlined in phase two. 
+### Solution #1 - Navigation Message
 
-### Phase One - Return to the starting line
+> "When you learn how to use a screen reader, the first thing you learn how to do, is stop it talking." - a screen reader user. 
 
-This solution proposes the simplest possible solution- implement in Ember what already exists in other traditional websites:
-1. When a browser loads a website, the screen reader starts to read the content of that page
-2. When the user navigates to a new page in that website, the screen reader starts to read the content of that page
-3. (repeat)
+One potential solution is that we don't overwhelm the screen reader user with the contents of the page, but rather inform them that they have successfully transitioned to their desired route. In doing so, we will also reset the focus for them. 
 
-Perhaps we could achieve this by adding a function to set focus on the body element when a route transition has occurred. 
+- A component is created that provides a screen-reader only message, informing the user that "Page transition is complete. You may now navigate as you wish." The text of this component could be internationalized. 
+- Focus is reset to the top left of the page
 
-In order to not break similar solutions that may already exists in other apps or addons, I propose that the solution be implemented as an optional feature/with a flag. The default could be set to on, and if folks already have a solution in their addons/apps, they could then opt-out of this feature. 
+The component template: 
 
-### Phase Two - Intelligent content focus
+```hbs
+<div tabindex="-1" class="ember-sr-only" id="nav-message">
+  Navigation to {{this.currentURL}} is complete. You may now navigate as you wish.
+</div>
+```
 
-It would be even better to have a more intelligent solution, since there are several ways new page content could be introduced in an Ember application.
+The component js:
 
-[Ember-self-focused](https://github.com/linkedin/self-focused/tree/master/packages/ember-self-focused) and [ember-a11y](https://github.com/ember-a11y/ember-a11y) are both examples of community-produced addons that attempt to provide a contextual focus, based on new page content. 
+```js
+import Component from '@ember/component';
+import layout from '../templates/components/navigation-narrator';
+import { inject as service } from '@ember/service';
+import { schedule } from '@ember/runloop';
 
-From the [Ember-self-focused](https://github.com/linkedin/self-focused/tree/master/packages/ember-self-focused) readme: 
-> When UI transitions happen in a SPA (or in any dynamic web application), there is visual feedback; however, for users of screen reading software, there is no spoken feedback by default. Traditionally, screen reading software automatically reads out the content of a web page during page load or page refresh. In single page applications, the UI transitions happen by rewriting the current page, rather than loading entirely new pages from a server; this makes it difficult for screen reading software users to be aware of UI changes (e.g., clicking on the navigation bar to load a new route).
+export default Component.extend({
+  layout,
+  tagName: '',
+  router: service(),
 
-> If the corresponding HTML node of the dynamic content can be focused programmatically, screen reading software will start speaking the textual content of that node. Focusing the corresponding HTML node of the dynamic content can be considered guided focus management. Not only will it facilitate the announcement of the textual content of the focused HTML node, but it will also serve as a guided context switch. Any subsequent “tab” key press will focus the next focusable element within/after this context. 
+  init() {
+    this._super();
 
-The tedious, error-prone task of keeping track of HTML nodes that can/could/would/should have focus is something that Ember could do for you. 
+    this.router.on('routeDidChange', () => {
+      // we need to put this inside of something async so we can make sure it really happens **after everything else**
+      schedule('afterRender', this, function() {
+        document.body.querySelector('#ember-a11y-refocus-nav-message').focus();
+      });
+    })
+  }
+});
+```
 
-A comparable from another JS Ecosystem: [Reach Router](https://reach.tech/router) is available for React apps. 
+The addon style (popular sr-only technique): 
+
+```css
+#ember-a11y-refocus-nav-message {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+```
+
+The addon would attempt to provide a sensible resolution for all involved:
+- the performance gains from `pushState` remain in place
+- users with assistive technology are informed that a page transition has occurred
+- the focus is reset to the message itself, which also resets the focus of the page (as is desired for the screen-reader user)
+- `aria-live` can remain available for things that genuinely need it (a page transition should not need it)
+
+Some [experimentation of this approach can be seen online](https://navigator-message-test-app.netlify.com/). In this example, the message _is_ shown for demonstration purposes, but in the final product, the message would not be shown.  
+
+What do users with screen-readers think? "It works better than I thought it might."
+
+### Solution #2 - Content Focus
+
+What about content-level focus? [Ember-self-focused](https://github.com/linkedin/self-focused/tree/master/packages/ember-self-focused) and [ember-a11y](https://github.com/ember-a11y/ember-a11y) are both examples of community-produced addons that attempt to provide a contextual focus, based on new page content. 
+
+After some research, we discovered that we could provide content-level focus by using (currently private) API to place focus around the content of the application. 
+
+For the template, we could take one of two approaches: 
+
+1. wrap the `{{outlet}}` on application.hbs with an element with the tabindex and id attributes, like this:
+
+```hbs
+<main tabindex="-1" id="ember-primary-application-outlet">
+  {{outlet}}
+</main>
+```
+
+2. change the application.hbs outlet so it is different from the usual `{{outlet}}`, and have it already include what we need:
+
+```hbs
+{{application-outlet}}
+```
+
+In this way, if an application author did not want to use the `{{application-outlet}}`, for whatever reason (maybe they are nesting apps, or maybe they already have a focus solution) they could remove the `application-` and be left with a classic outlet. 
+
+Either way, we'd depend on the private API `renderSettled` to allow us to focus on the application outlet after the route has changed (a little hand-wavy since it's just an idea): 
+
+```js
+export default Route.extend({
+  router: service('router'),
+  init() {
+    this._super(...arguments);
+    this.router.on('routeDidChange', transition => {
+
+      if (transition.to !== null) {
+        emberRequire.renderSettled().then(function() {
+          document.body.querySelector('#ember-primary-application-outlet').focus();
+        });        
+      }
+    });
+  }
+});
+```
+
 
 ## How we teach this
 
-For phase one, the guides should include information about skip links, since the application author will need to add those in themselves (just as they would for a static site). For phase two, we would explain that skip links are no longer needed because we have integrated that functionality in a more machine intelligent way. 
-
-### Skip Links
-A skip link is an internal link at the beginning of a hypertext document that permits users to skip navigational material and quickly access the document's main content. Skip links are particularly useful for users who access a document with screen readers and users who rely on keyboards.
-
-Directly inside the `body` element, place a skip link like this: 
-
-    <a href="#maincontent">Skip to main content</a> 
-
-This allows the user with assistive technology to skip directly to the main content and is useful for not needing to repeatedly navigate through a navbar, for example.  
-
-
-It's possible that this solution is a [spherical cow](https://en.wikipedia.org/wiki/Spherical_cow), and the complexity of route transitions in a framework deserves an accessibility solution that is is equally complex. 
-
 It's possible that enterprise Ember users have already implemented their own solution, since governments in many countries require this by law. An out of the box solution would need to be well-advertised and documented to avoid any potential conflicts for users. 
+
 
 ## Alternatives
 1. We could try to implement something like Apple’s first responder pattern: https://developer.apple.com/documentation/uikit/uiresponder/1621113-becomefirstresponder 
@@ -76,12 +147,9 @@ It's possible that enterprise Ember users have already implemented their own sol
 
 ## Unresolved Questions
 - how would we handle loading states?
-- how does/could/would this fit in with the router helpers work that Chad did?
 
 ## Appendix
 
-### Related RFCs
-- [Route Helpers](https://emberjs.github.io/rfcs/0391-router-helpers.html) by Chad Hietala
 
 ### Related Reading
 - Accessibility APIs
