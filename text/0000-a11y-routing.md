@@ -37,7 +37,7 @@ The component template:
 
 ```hbs
 <div tabindex="-1" class="ember-sr-only" id="nav-message">
-  Navigation to {{this.currentURL}} is complete. You may now navigate as you wish.
+  Page transition is complete. You may now navigate as you wish.
 </div>
 ```
 
