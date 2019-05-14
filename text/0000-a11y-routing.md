@@ -36,7 +36,7 @@ One potential solution is that we don't overwhelm the screen reader user with th
 The component template: 
 
 ```hbs
-<div tabindex="-1" class="ember-sr-only" id="nav-message">
+<div tabindex="-1" class="ember-sr-only" id="ember-a11y-refocus-nav-message">
   Page transition is complete. You may now navigate as you wish.
 </div>
 ```
