@@ -1,17 +1,27 @@
-language: rust
+---
+language: node_js
+node_js:
+  - 12
+
+sudo: false
+dist: trusty
+
+addons:
+  chrome: stable
+
+cache:
+  directories:
+    - $HOME/.npm
+
+env:
+  global:
+    # See https://git.io/vdao3 for details.
+    - JOBS=1
+
+before_install:
+  - npm config set spin false
+
 script:
-  - rev=$(git rev-parse --short HEAD)
-  - (cargo install mdbook --vers 0.0.26 --force || true)
-  - ./generate-book.sh
-
-branches:
-  only:
-    - master
-
-deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  local_dir: ./book/
-  on:
-    branch: master
+  - npm run lint:hbs
+  - npm run lint:js
+  - npm test
