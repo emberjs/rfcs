@@ -6,11 +6,15 @@
 
 ## Summary
 
-Introduce a new type of Ember release, called an _edition_. Periodically, we will declare a new edition of Ember that bundles up accumulated incremental improvements into a cohesive package.
+Introduce named ranges of Ember versions, called _editions_. Editions are a human-centric way to talk about the changes we make to Ember, and help developers inside and outside our community understand how those changes add up to surprisingly transformative improvement over.
 
-Editions give us an opportunity to bring our documentation and marketing up-to-date to reflect the improvements we’ve made since the previous edition. They are also the time to synchronize Ember and the wider ecosystem, including updating default settings, blueprints, addons, and more.
+Editions don't change the existing SemVer-based release process. When a new version of Ember is released, it becomes part of the current edition. If you think of SemVer as communicating when APIs are stable and *can* be used, editions help communicate when new features *should* be used.
 
-Editions also help ensure that Ember users are getting a cohesive, polished experience. The right time to declare a new edition is when:
+While new versions of Ember are released every six weeks, editions are a more curated process. New editions are proposed through an Edition RFC, and the proposed edition becomes the current edition after the RFC is merged.
+
+A new edition is the time to bring guides, marketing, and Ember CLI blueprints up to date with the latest changes. This is also the time for community members to help make sure addons are updated for the upcoming edition.
+
+Editions help ensure that new Ember users are getting a cohesive, polished experience. The right time to declare a new edition is when:
 
 - A significant, coherent set of new features and APIs have all landed in the stable channel.
 - Error messages and the developer ergonomics of those new features have been fully polished.
@@ -31,11 +35,12 @@ For existing Ember users, this release process is easier to keep up with than sp
 - For non-Ember users, it’s not obvious what has changed and whether Ember is worth another look.
 - For Ember contributors, it’s not clear when to update documentation and marketing, because there are always more features in the pipeline.
 
-This RFC proposes a new release concept called “editions”, which provides a lens through which to view these accumulated changes. It also marks an opportunity to synchronize the wider ecosystem with the latest changes to Ember, including updates to defaults, documentation, addons, and more.
+An edition provides a lens through which to view these accumulated changes. It also marks an opportunity to synchronize the wider ecosystem with the latest changes to Ember, including updates to defaults, documentation, addons, and more.
 
 ## Detailed design
 
 ### Edition Names
+
 Each edition should be assigned a new name to help distinguish it from other editions. Names give us an opportunity to create fun, memorable nicknames that communicate the benefits of a new set of improvements in Ember. A new name also clearly communicates to developers outside the Ember community that significant changes have occurred and that it is a good time to re-evaluate Ember.
 
 Editions should be referred to by prefixing their name with "Ember." For example, if we declared an edition named "Octane," we would refer to it in documentation and marketing material as "Ember Octane."
@@ -43,6 +48,7 @@ Editions should be referred to by prefixing their name with "Ember." For example
 In cases where both the edition and version number are needed, the version number should precede the edition name, e.g. "Ember 3.12 Octane". Using the edition name alone is preferred unless the version number is relevant to the context.
 
 ### Editions & Versions
+
 An edition is **not a new version of Ember** and editions do not affect the current system of six-week releases and stable, beta, canary and LTS channels. 
 
 We will propose a new edition whenever a set of related new features and APIs are ready to be used together. Because Ember incrementally lands new features, by the time a new edition is declared, all of the features needed to support it should already have been included in a stable release.
@@ -60,6 +66,7 @@ Note that this doesn't mean that editions _will_ cross major version boundaries.
 Editions are not about communicating API changes, like versions. They're about clearly communicating when a set of new APIs that unlock a new _programming model_ have landed.
 
 ### What is "The Programming Model"?
+
 Applied to Ember, the phrase "programming model" refers to the idiomatic set of abstractions an Ember developer uses to build web applications. These abstractions (and the mental models that go with them) are designed to complement each other. When combined as intended, they should yield code that is fast, consistent, and maintainable.
 
 Concretely, “Ember’s programming model” encompasses how components, templates, helpers, services, controllers, actions, etc. behave and interact, and how they should be used in combination to solve common problems.
@@ -87,6 +94,12 @@ Editions, then, are regular snapshots of the framework at its most coherent, whe
 It may sound scary to hear that Ember is sometimes "incoherent"! But incoherence, in this context, is not bad or undesirable. It's simply a by-product of how Ember achieves stability without stagnation, by landing features incrementally.
 
 Editions touch several parts of the Ember ecosystem, and generally tie together a set of incremental changes with a unifying theme. Most of these changes should come from existing community processes (i.e. RFCs), with editions serving as a higher level conceptual grouping.
+
+### Proposing an Edition
+
+Typically, a new edition will first be proposed as part of the annual Roadmap RFC process (though note that editions are not required to follow a regular cadence, annual or otherwise). At this point, the details of the proposed edition should be considered tenative and "non-binding." Roadmaps are intended to be a statement of intent, not a guarantee.
+
+As a cohesive set of new features take shape, an Edition RFC for the proposed new edition will be submitted.
 
 ### Proposing Editions
 Each edition is proposed via a RFC, which should describe in detail important changes to the programming model, and how to communicate those changes to Ember users. An edition RFC should also include the proposed edition name, as well as any changes in how we talk about and market Ember.
