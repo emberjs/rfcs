@@ -14,42 +14,24 @@ specify whether observers should default to sync or async.
 
 ## Motivation
 
-In the recent work on tracked properties, there have been a number of refactors
-to some of the lowest level code in Ember. In short, with the tracked properties
-canary flag enabled, _chains_ - one of Ember's oldest low level primitives - are
-completely removed and replaced with the modern tag/validator system that
-tracked properties are built on. This refactor has been a long time coming, and
-cleans up a significant amount of technical debt in Ember. In the long run, this
-will allow us to simplify Ember Metal, and slim down the size of the framework
-significantly.
+Observers have been run synchronously in Ember since before v1.0 was released,
+and for about as long it has been an intention of the core team to eventually
+make them asynchronous. There are a two main reasons for why triggering
+observers asynchronously would be better overall:
 
-Chains were how Ember propogated changes to _computed properties_ and
-_observers_ that had dependencies on nested properties (e.g. a computed or
-observer that depends on `foo.bar` is nested/remote, whereas a dependency on
-`foo` would be local). They did this _synchronously_, which is the primary way
-that they differ from tags. Tags only update when they are accessed or read,
-which is perfect for their primary use case - change tracking in templates and
-for computed properties. Converting computeds over to tags was relatively
-seamless.
+- They promote better programming practices. Synchronous observers can be used
+  in a lot of ways to interact with the code they are observing, which puts more
+  code on the "hot-path" and is prone to create a mess of intertangled, loosely
+  related code filled with [spooky action at a distance](<https://en.wikipedia.org/wiki/Action_at_a_distance_(computer_programming)>).
+- It would allow us to clean up a significant chunk of code within Ember
+  itself. There is non-trivial amount of code dedicated to sending change
+  signals synchronously, and that code has been slowly replaced by an
+  alternative system that is lazy. Asynchronous observers would allow us to
+  remove legacy code and tech debt.
 
-By contrast, observers are _never_ truly accessed or checked - the whole point
-is that they represent arbitrary code that should run whenever another value
-changes. While observer usage has been discouraged for some time, there are
-still a few important use cases which can only be solved with observers
-currently, and whose alternative _is_ tracked properties and autotracking, so we
-cannot remove them before we introduce tracked properties.
-
-The solution is to make observers _asynchronous_, something that has been a goal
-since the pre-1.0 era. On every runloop, we schedule a task to check all active
-observers to see if the values they are dependent on have changed, and if so
-fire the observer event. Since there are relatively few observers in most Ember
-apps (because they've been actively discouraged), the performance impact of this
-change should be minimal in most cases - and in some cases it may help since
-observers will be debounced by default and not run on every single property
-change.
-
-We implemented this strategy behind the feature flag, and several community
-members tested it out in their applications. In testing, we found that this was unfortunately too much of a breaking change to do all at once - like it or not,
+We implemented this change behind a feature flag, and several community members
+tested it out in their applications. In testing, we found that this was
+unfortunately too much of a breaking change to do all at once - like it or not,
 the timing semantics of observers are public API.
 
 The proposed solution now is to provide a method for users to specify whether an
@@ -163,10 +145,9 @@ upgrade guide instead.
 
 ## Drawbacks
 
-The biggest drawback is performance. While we haven't been able to do any
-testing on apps that have observers, its reasonable to assume these changes
-might have a significant impact on them, especially apps that have many
-synchronous observers.
+The biggest potential drawback is in performance. While we haven't been able to
+do any testing on apps that have observers, its possible that these changes will
+have an impact on them, especially apps that have many observers.
 
 In theory, this shouldn't impact the majority of Ember apps since observers have
 been discouraged so heavily for such a long time. The impact should also
@@ -175,10 +156,6 @@ tracked properties.
 
 ## Alternatives
 
-- We could attempt to keep the chains system around for a while longer. This
-  would be very undesirable - we're already far beyond the point where having
-  two competing change tracking systems is having a negative impact on
-  developer productivity and shipping new features.
 - We could release Ember v4, and ship asynchronous observers as a breaking
   change. We currently believe this would be a breaking change that would
   prevent many users from adopting Octane or transitioning forward to tracked
