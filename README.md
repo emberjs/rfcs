@@ -91,6 +91,9 @@ Significant modifications may trigger a new final comment period.
 and comments have been made summarizing the rationale for rejection. The RFC 
 will enter a "final comment period to close" lasting 7 days. At the end of the 
 "FCP to close" period, the PR will be closed.
+* An RFC may also be closed by the core teams if it is superseded by a merged
+RFC. In this case, a link to the new RFC should be added in a comment.
+* An RFC author may withdraw their own RFC by closing it themselves.
 * An RFC may be accepted at the close of its final comment period. A [core team]
 member will merge the RFC's associated pull request, at which point the RFC will
 become 'active'.
