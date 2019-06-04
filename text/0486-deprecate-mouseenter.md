@@ -3,11 +3,11 @@
 - RFC PR: https://github.com/emberjs/rfcs/pull/486
 - Tracking: 
 
-# Deprecate support for mouseEnter/Leave Ember events
+# Deprecate support for mouseEnter/Leave/Move Ember events
 
 ## Summary
 
-Deprecate support for `mouseenter`/`mouseleave` events in Ember's EventDispatcher. This affects
+Deprecate support for `mouseenter`, `mouseleave` and `mousemove` events in Ember's EventDispatcher. This affects
 the corresponding event handler methods (`mouseEnter() {}`) in Ember components and 
 `{{action "some" on="mouseenter"}}`. 
 
@@ -40,6 +40,10 @@ the implementation has some performance drawbacks, as it has to process every `m
 *any* element, create fake `mouseenter`/`mouseleave` events and try to dispatch them, even when 
 not a single component/action needs them.  
 
+Deprecating support for `mousemove` is also proposed, which is a (bubbling) event that does not have the higher 
+implementation cost as `mouseenter`/`mouseleave`, but nevertheless requires the EventDispatcher to optimistically handle
+these extremely high-volume events.
+
 While efforts to make this more "pay as you go" are [possible](https://github.com/emberjs/ember.js/pull/17911), 
 the trade-off of keeping support around still seems unfavorable, as these events fire so
 frequently, while they are (most certainly) very rarely used.
@@ -50,7 +54,7 @@ work with event handler methods, and `{{action}}` will eventually fade away in f
 
 ## Transition Path
 
-When a `mouseenter`/`mouseleave` event is dispatched by the EventDispatcher to a component
+When a `mouseenter`/`mouseleave`/`mousemove` event is dispatched by the EventDispatcher to a component
 or `{{action}}` listening to that event type, a deprecation warning will be issued.
 
 The linked migration guide will cover these use cases:
@@ -110,7 +114,7 @@ After (based on [RFC471](https://github.com/emberjs/rfcs/blob/master/text/0471-o
 The deprecation guide should explain the transition path as shown above.
 
 The Guide's [Handling Events](https://guides.emberjs.com/release/components/handling-events/#toc_event-names)
-section must remove the reference to `mouseenter`/`mouseleave`.
+section must remove the reference to `mouseenter`, `mouseleave` and `mousemove.
 
 Other than that, no changes are required, as the replacement APIs are all available and
 well established, and this RFC does not introduce anything new. Also having certain event
@@ -125,13 +129,8 @@ should not be a major issue.
 
 ## Alternatives
 
-* we could keep support in place, and eventually work on optimizations that minimize the 
-performance impact
-
-* we could even go one step further instead, and deprecate support also for `mousemove`, which is a
-(bubbling) event that does not have the higher implementation cost as `mouseenter`/`mouseleave`, 
-but nevertheless requires the EventDispatcher to optimistically handle all those super high-volume
-events which are very rarely needed/dispatched.
+We could keep support in place, and eventually work on optimizations that minimize the 
+performance impact.
 
 ## Unresolved questions
 
