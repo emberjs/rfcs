@@ -32,7 +32,7 @@ a computed property).
 This can often lead to confusion for readers of the template. Upon encountering
 `{{foo}}` in a component's template, the reader has to check all of
 these places: first you need to scan the surrounding lines for block
-params with that name; next you check in the helpers folder to see it there
+params with that name; next you check in the helpers folder to see if there
 is a helper with that name (it could also be coming from an addon!); then you
 check if it is an argument provided by the caller; finally, you check the
 component's JavaScript class to look for a (computed) property. If you _still_

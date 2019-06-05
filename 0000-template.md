@@ -1,8 +1,9 @@
 - Start Date: (fill me in with today's date, YYYY-MM-DD)
-- RFC PR: (leave this empty)
-- Ember Issue: (leave this empty)
+- Relevant Team(s): (fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies)
+- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- Tracking: (leave this empty)
 
-# (RFC title goes here)
+# <RFC title>
 
 ## Summary
 

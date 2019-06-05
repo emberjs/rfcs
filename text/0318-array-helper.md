@@ -1,6 +1,7 @@
 - Start Date: 2018-03-24
+- Relevant Team(s): Ember.js
 - RFC PR: https://github.com/emberjs/rfcs/pull/318
-- Ember Issue: (leave this empty)
+- Tracking: https://github.com/emberjs/rfc-tracking/issues/23
 
 # `array` helper
 
