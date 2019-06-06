@@ -44,6 +44,9 @@ import Service, { inject as service } from '@ember/service';
 import RouterService from '@ember/routing/router-service';
 
 import { tracked } from '@glimmer/tracking';
+// this does use an external dependency
+// it's lightweight though, 3.4kb, according to bundlephobia.com
+// we implement this ourselves, or maybe it already exists somewhere in ember
 import * as qs from 'qs';
 
 interface QueryParams {
@@ -57,7 +60,12 @@ interface QueryParamsByPath {
 export default class QueryParamsService extends Service {
   @service router!: RouterService;
 
+  // the current set of query params for whatever the current route is
   @tracked current!: QueryParams;
+  
+  // stores the "current" query params object for each route based on path.
+  // this allows for restoring query params values when switching 
+  // between routes
   @tracked byPath: QueryParamsByPath = {};
 
   constructor(...args: any[]) {
