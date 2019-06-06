@@ -1,5 +1,5 @@
 - Start Date: 2018-09-21
-- RFC PR: (leave this empty)
+- RFC PR: [https://github.com/emberjs/rfcs/pull/380](https://github.com/emberjs/rfcs/pull/380)
 - Ember Issue: (leave this empty)
 
 # Add `@queryParam` decorator and `QueryParamsService`
@@ -15,6 +15,7 @@ By exposing query params on a new `QueryParamsService`, users will be able to ea
 Modern SPA concepts have converged on the idea that query params should be easily accessible from the object responsible for handling the route.
 Like with the [RouterService](https://github.com/emberjs/rfcs/blob/master/text/0095-router-service.md), 
 it is common to have a need to perform routing behavior from deep down a component tree.
+Additionally, the current query params implementation feels very verbose for "just wanting to access a property". Accessing data within the url **should feel easy**.
 
 ### Examples
 
