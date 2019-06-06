@@ -8,15 +8,17 @@
 
 Access to query params is currently restricted to the controller, and subsequently, the corresponding route. 
 This results in some limitations with which users may consume query param data. 
-By exposing query params as a computed property on the `RouterService`, users will be able to easily access the params from deep down a component tree, removing the need to pass the params down many levels.
+By exposing query params on the `RouterService`, or a separate `QueryParamsService`, users will be able to easily access the params from deep down a component tree, removing the need to pass query-param related data and actions down many layers of components.
 
 ## Motivation
 
 Modern SPA concepts have converged on the idea that query params should be easily accessible from the object responsible for handling the route.
 Like with the [RouterService](https://github.com/emberjs/rfcs/blob/master/text/0095-router-service.md), 
-it is common to have a need to perform routing behavior from deep down a component tree. 
+it is common to have a need to perform routing behavior from deep down a component tree.
 
 ### Examples
+
+An addon has been written to demonstrate usage: https://github.com/NullVoxPopuli/ember-query-params-service
 
 Having query params accessible on the router service would allow users to implement:
 
@@ -27,11 +29,190 @@ Having query params accessible on the router service would allow users to implem
 
 ## Detailed design
 
-Add a computed property that splits out `window.location.search` into an object, which could have deeply nested objects and arrays.
-The computed property must contain a dependent key on the route path, as the same queury parame may be used differently on different routes.
-The computed property must return an object containing computed properties for allowing behavior bound to the value of a query param.
-
+Add a service that maintains properties derived from a split of `window.location.search` into objects, which could have deeply nested objects and arrays.
+The properties must maintain state based on the current route, which mimics the current behavior that the singleton controller's long-lived state provide with respect to maintaining query-param values.
 Ensure that setting any deeply nested value in the query params object computed property also updates the URL.
+A `queryParam` decorator for accessing and updating query params in the URL must exist for short-hand use in components, routes, etc.
+
+The biggest change needed, which could potentially be a breaking change, is that the allow-list on routes' queryParams hash will need to be removed as people transition to this form of queryParams management. The controller-based way is static in that all known query params must be specified on the controller ahead of time. This has been a great deal of frustration amongst many developers, both new and old to ember.
+This is a dynamic way to manage query params which hopefully aligns more with people's mental model of query params. 
+
+Example implementation of the service:
+```ts
+import Service, { inject as service } from '@ember/service';
+import RouterService from '@ember/routing/router-service';
+
+import { tracked } from '@glimmer/tracking';
+import * as qs from 'qs';
+
+interface QueryParams {
+  [key: string]: number | string | undefined | QueryParams;
+}
+
+interface QueryParamsByPath {
+  [key: string]: QueryParams;
+}
+
+export default class QueryParamsService extends Service {
+  @service router!: RouterService;
+
+  @tracked current!: QueryParams;
+  @tracked byPath: QueryParamsByPath = {};
+
+  constructor(...args: any[]) {
+    super(...args);
+
+    this.setupProxies();
+  }
+
+  init() {
+    super.init();
+
+    this.updateParams();
+
+    this.router.on('routeDidChange', () => this.updateParams());
+    this.router.on('routeWillChange', () => this.updateParams());
+  }
+
+  get pathParts() {
+    const [path, params] = (this.router.currentURL || '').split('?');
+
+    return [path, params];
+  }
+
+  private setupProxies() {
+    let [path] = this.pathParts;
+
+    this.byPath[path] = this.byPath[path] || {};
+
+    this.current = new Proxy(this.byPath[path], queryParamHandler);
+  }
+
+  private updateParams() {
+    this.setupProxies();
+
+    const [path, params] = this.pathParts;
+    const queryParams = params && qs.parse(params);
+
+    Object.keys(queryParams || {}).forEach(key => {
+      let value = queryParams[key];
+      let currentValue = this.byPath[path][key];
+
+      if (currentValue === value) {
+        return;
+      }
+
+      this.byPath[path][key] = value;
+    });
+  }
+}
+
+const queryParamHandler = {
+  get(obj: any, key: string, ...rest: any[]) {
+    return Reflect.get(obj, key, ...rest);
+  },
+  set(obj: any, key: string, value: any, ...rest: any[]) {
+    let { protocol, host, pathname } = window.location;
+    let query = qs.stringify({ ...obj, [key]: value });
+    let newUrl = `${protocol}//${host}${pathname}?${query}`;
+
+    window.history.pushState({ path: newUrl }, '', newUrl);
+
+    return Reflect.set(obj, key, value, ...rest);
+  },
+};
+```
+
+Example implementation of the decorator:
+
+```ts
+import { get, set } from '@ember/object';
+import { getOwner } from '@ember/application';
+import { tracked } from '@glimmer/tracking';
+import { default as QueryParamsService } from '../services/query-params';
+
+export interface ITransformOptions<T> {
+  deserialize?: (queryParam: string) => T;
+  serialize?: (queryParam: T) => string;
+}
+
+type Args<T> = [] | [string, ITransformOptions<T>] | [ITransformOptions<T>] | [string];
+
+export function queryParam<T = boolean>(...args: Args<T>) {
+  return (target: any, propertyKey: string, sourceDescriptor?: any) => {
+    const { set: oldSet } = tracked(target, propertyKey, sourceDescriptor);
+    const [propertyPath, options] = extractArgs<T>(args, propertyKey);
+
+    const result = {
+      configurable: true,
+      enumerable: true,
+      get: function(): T {
+        // setupController(this, 'application');
+        const service = ensureService(this);
+        const value = get<any, any>(service, propertyPath);
+        const deserialized = tryDeserialize(value, options);
+
+        return deserialized;
+      },
+      set: function(value: any) {
+        // setupController(this, 'application');
+        const service = ensureService(this);
+        const serialized = trySerialize(value, options);
+
+        set<any, any>(service, propertyPath, serialized);
+        oldSet!.call(this, serialized);
+      },
+    };
+
+    return result as any;
+  };
+}
+
+function extractArgs<T>(args: Args<T>, propertyKey: string): [string, ITransformOptions<T>] {
+  const [maybePathMaybeOptions, maybeOptions] = args;
+
+  let propertyPath: string;
+  let options: ITransformOptions<T>;
+
+  if (typeof maybePathMaybeOptions === 'string') {
+    propertyPath = `current.${maybePathMaybeOptions}`;
+    options = maybeOptions || {};
+  } else {
+    propertyPath = `current.${propertyKey}`;
+    options = maybePathMaybeOptions || {};
+  }
+
+  return [propertyPath, options];
+}
+
+function tryDeserialize<T>(value: any, options: ITransformOptions<T>) {
+  if (!options.deserialize) return value;
+
+  return options.deserialize(value);
+}
+
+function trySerialize<T>(value: any, options: ITransformOptions<T>) {
+  if (!options.serialize) return value;
+
+  return options.serialize(value);
+}
+
+// could there ever be a problem with using only one variable in module-space?
+let qpService: QueryParamsService;
+function ensureService(context: any): QueryParamsService {
+  if (qpService) {
+    return qpService;
+  }
+
+  qpService = getQPService(context);
+
+  return qpService;
+}
+
+function getQPService(context: any) {
+  return getOwner(context).lookup('service:queryParams');
+}
+```
 
 ## How we teach this
 
@@ -53,42 +234,35 @@ export default class extends Controller {
 }
 ```
 
-Having computed properties available from the `RouterService` would look like this:
+Having computed properties available elsewhere will be a shift in thinking that "the controller manages query params" to "the service that allows access to the query params manages the query params"
 
 ```ts
-export default class extends Controller {
-  @service router;
- 
-  @readOnly('router.queryParams') query;
- 
-  @alias('query.articles_category') category;
-  @alias('query.page') page = 1;
-  @alias('query.filter') filter = 'recent';
- 
-  @computed('category', 'model')
-  get filteredArticles() {
-    // do something with category and model as category changes
+import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
+import { alias } from 'ember-query-params-service';
+
+export default class ApplicationRoute extends Route {
+  @service queryParams;
+
+  @alias('queryParams.current.r') isSpeakerNotes;
+  @alias('queryParams.current.slide') slideNumber;
+
+  model() {
+    return {
+      isSpeakerNotes: this.isSpeakerNotes,
+      slideNumber: this.slideNumber
+    }
   }
 }
 ```
 
 ## Drawbacks
 
-Anyone relying on behavior of the current way query params are implemented may not be able to _exactly_ have the same behavior. 
-This couples the query params to the `RouterService`. 
-This may be a good thing, as the current way queryParams are used is somewhat awkward. 
+- This requires tracked properties as the tracking system is perfect for propagating updates whenever the internal queryParam tracking object changes -- in the QueryParamsService's `byPath` and `current` properties. So only the most up-to-date code-bases would be able to benefit.
+- The old behavior of controller-based query params where query params live on the controller that is a singleton and are restored whenever a route is returned to is still possible / implemented with this QueryParamService, but because components can modify query params at any depth, this may introduce hard-to-trace behaviors.
+- Some people may be relying on the controller query-params allow-list.
 
 ## Alternatives
 
 React Router, for example, includes the query params as a string with every Route component via the `location` object.
 They also provide url segments, which may also be handy, but for now, may be outside the scope of this RFC.
-
-The `RouterService` also has a `location` object, which could have the `search` property added to it, 
-like the native [location](https://developer.mozilla.org/en-US/docs/Web/API/HTMLHyperlinkElementUtils/search) has.
-
-If only `search` was exposed, it would allow people to continue to use the controller implementation of query params, 
-and then define a series of computed properties that depend on `'location.search'` to parse out their query param values.
-
-## Unresolved questions
-
-- What behavior are people using with query params that computed properties defined on the `RouterService` would not allow?
