@@ -2,13 +2,13 @@
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
-# Query Params as a Computed Property on the RouterService
+# Add `@queryParam` decorator and `QueryParamsService`
 
 ## Summary
 
 Access to query params is currently restricted to the controller, and subsequently, the corresponding route. 
 This results in some limitations with which users may consume query param data. 
-By exposing query params on the `RouterService`, or a separate `QueryParamsService`, users will be able to easily access the params from deep down a component tree, removing the need to pass query-param related data and actions down many layers of components.
+By exposing query params on a new `QueryParamsService`, users will be able to easily access the params from deep down a component tree, removing the need to pass query-param related data and actions down many layers of components.
 
 ## Motivation
 
