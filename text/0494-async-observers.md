@@ -113,7 +113,7 @@ convert to async observers, or away from observers entirely.
 
 The name of the feature will be `default-async-observers`. Enabling it will
 default all observers to be async, but still allow users to set observers to be
-synchronous manually.
+synchronous manually. This flag will be enabled by default in Ember Octane.
 
 ## How we teach this
 
@@ -142,6 +142,13 @@ if they are asynchronous.
 Observers are not discussed in the post-Octane guides, since we don't want to
 encourage their use. It may make sense to include a section on them in the
 upgrade guide instead.
+
+### Upgrade Guides
+
+We should make a note in the Octane upgrade guides that sync observers are
+discouraged and probably not very performant. We should be up front that this
+will likely be a performance hit, but that we decided it was worth the benefits
+of the change.
 
 ## Drawbacks
 
