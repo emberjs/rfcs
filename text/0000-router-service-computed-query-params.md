@@ -38,6 +38,8 @@ A `queryParam` decorator for accessing and updating query params in the URL must
 The biggest change needed, which could potentially be a breaking change, is that the allow-list on routes' queryParams hash will need to be removed as people transition to this form of queryParams management. The controller-based way is static in that all known query params must be specified on the controller ahead of time. This has been a great deal of frustration amongst many developers, both new and old to ember.
 This is a dynamic way to manage query params which hopefully aligns more with people's mental model of query params. 
 
+Additionally, in order to be backwards-compatible with `{ refreshModel: true }`, the model hook will need to re-run if any tracked properties used within the model hook are changed. 
+
 Example implementation of the service:
 ```ts
 import Service, { inject as service } from '@ember/service';
