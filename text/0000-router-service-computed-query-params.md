@@ -46,9 +46,6 @@ import Service, { inject as service } from '@ember/service';
 import RouterService from '@ember/routing/router-service';
 
 import { tracked } from '@glimmer/tracking';
-// this does use an external dependency
-// it's lightweight though, 3.4kb, according to bundlephobia.com
-// we implement this ourselves, or maybe it already exists somewhere in ember
 import * as qs from 'qs';
 
 interface QueryParams {
@@ -62,12 +59,7 @@ interface QueryParamsByPath {
 export default class QueryParamsService extends Service {
   @service router!: RouterService;
 
-  // the current set of query params for whatever the current route is
   @tracked current!: QueryParams;
-  
-  // stores the "current" query params object for each route based on path.
-  // this allows for restoring query params values when switching 
-  // between routes
   @tracked byPath: QueryParamsByPath = {};
 
   constructor(...args: any[]) {
@@ -82,13 +74,14 @@ export default class QueryParamsService extends Service {
     this.updateParams();
 
     this.router.on('routeDidChange', () => this.updateParams());
-    this.router.on('routeWillChange', () => this.updateParams());
+    this.router.on('routeWillChange', transition => this.updateURL(transition));
   }
 
   get pathParts() {
     const [path, params] = (this.router.currentURL || '').split('?');
+    const absolutePath = path.startsWith('/') ? path : `/${path}`;
 
-    return [path, params];
+    return [absolutePath, params];
   }
 
   private setupProxies() {
@@ -105,11 +98,38 @@ export default class QueryParamsService extends Service {
     const [path, params] = this.pathParts;
     const queryParams = params && qs.parse(params);
 
+    this.setOnPath(path, queryParams);
+  }
+
+  /**
+   * When we have stored query params for a route
+   * throw them on the URL
+   *
+   */
+  private updateURL(transition: any /* Transition doesn't have intent.. some how? */) {
+    const path = transition.intent.url;
+    const { protocol, host, pathname, search } = window.location;
+    const queryParams = this.byPath[path];
+    const existing = qs.parse(search.split('?')[1]);
+    const query = qs.stringify({ ...existing, ...queryParams });
+    const newUrl = `${protocol}//${host}${pathname}?${query}`;
+
+    window.history.replaceState({ path: newUrl }, '', newUrl);
+  }
+
+  private setOnPath(path: string, queryParams: object) {
+    this.byPath[path] = this.byPath[path] || {};
+
     Object.keys(queryParams || {}).forEach(key => {
       let value = queryParams[key];
       let currentValue = this.byPath[path][key];
 
       if (currentValue === value) {
+        return;
+      }
+
+      if (value === undefined) {
+        delete this.byPath[path][key];
         return;
       }
 
@@ -132,6 +152,7 @@ const queryParamHandler = {
     return Reflect.set(obj, key, value, ...rest);
   },
 };
+
 ```
 
 Example implementation of the decorator:
