@@ -25,13 +25,109 @@ This'll explore how controllers are used and how viable alternatives can be for 
    - how are they different from components?
    - controllers may feel like a route-blessed component (hence the prior excitement over the Routable-Components RFC)
    - controllers aren't created by default during `ember g route my-route`, so there is a learning curve around the fact that route templates can't access things on the route, and must create another new file, called a controller.
+ - For handling actions from the UI, component-local actions and actions that live on services are a better long-term maintenance pattern. Dependency injection especially from the store and router services for fetching / updating data as well as contextually redirecting to different routes. 
+ - State and Actions on the controller encourage prop drilling where arguments are passed through many layers of components which make maintenance more difficult.
 
 
 ## Detailed design
 
+### Rendering
+
+The templates used for routes should remain the same. Any context that would go in controllers can be split out to components. This has the advantage of components defining the semantic intent behind what they are rendering, such as in this example application template: [routes/application/template.hbs from emberclear](https://github.com/NullVoxPopuli/emberclear/blob/master/packages/frontend/src/ui/routes/application/template.hbs)
+```hbs
+<TopNav />
+
+<NotificationContainer @position='top-right' />
+
+<OffCanvasContainer class='no-overflow'>
+  <UpdateChecker />
+
+  {{outlet}}
+
+</OffCanvasContainer>
+
+<Modals />
+<AppShellRemover />
+```
+
+This route-level template only defines the layout. Everything is encapsulated in components so that intent is clear as to which part of the template is responsible for what behavior.
+
+In some cases, the route template may be as small as only having some wrapping styles ([routes/contacts/template.hbs from emberclear](https://github.com/NullVoxPopuli/emberclear/blob/master/packages/frontend/src/ui/routes/contacts/template.hbs))
+```hbs
+<section class='section'>
+  <div class='container'>
+    <Header @contacts={{this.model.contacts}} />
+
+    <div class='content'>
+      <ContactTable />
+    </div>
+  </div>
+</section>
+```
+Here, model is the only property that the template has access to. Because this template has a more narrow and specific purpose, it should be referred to explicitly as a "route template".
+
 ### Query Params
 
 In this other RFC that [proposes adding a @queryParam decorator and service to manage query params](https://github.com/emberjs/rfcs/pull/380), query-param management would be pulled out of the controller entirely.
+
+Presently, query params live on controllers, which are singletons, allowing query param values to be set, and unset, when navigation to and away from a route. Query params can have the same behavior implemented on a service, which can be tested out on an addon, [ember-query-params-service](https://github.com/NullVoxPopuli/ember-query-params-service).
+
+Behavior like `replaceState` and `refreshModel: true`, would still live on the route as that behavior is more of a route concern than it is a concern of the value of the query params.
+
+- **Mapping a Query Param to state**
+
+  Old: query params _must_ come from a controller.
+  ```ts
+  import Controller from '@ember/controller';
+
+  export default class SomeController extends Controller {
+    queryParams = ['foo'];
+    foo = null;
+  }
+  ```
+  ```hbs
+  <SomeComponent @foo={{this.foo}} />
+  ```
+
+  New: query params can be used anywhere via dependency injection.
+  ```ts
+  import Component from "@glimmer/component";
+  import { queryParam } from "ember-query-params-service";
+
+  export default class SomeComponent extends Component {
+    @queryParam foo;
+
+    addToFoo() {
+      this.foo = (this.foo || 0) + 1;
+    }
+  }
+  ```
+
+- **Mapping a Query Param to a state of a different name**
+
+  Old:
+  ```ts
+  import Controller from '@ember/controller';
+
+  export default class SomeController extends Controller {
+    queryParams = ['foo'];
+    foo = null;
+  }
+  ```
+
+  New:
+  ```ts
+  import Component from "@glimmer/component";
+  import { queryParam } from "ember-query-params-service";
+
+  export default class SomeComponent extends Component {
+    @queryParam('foo') bar;
+
+    addToFoo() {
+      this.bar = (this.bar || 0) + 1;
+    }
+  }
+  ```
 
 ### Error and Loading States
 
@@ -198,7 +294,7 @@ To date (2019-06-09 at the time of writing this), there has been one roadmap blo
 
 React projects typically use dynamic routing which is only possible to build the full route tree through static analysis of a build tool that doesn't exist (yet?). Ember's Route pattern is immensely powerful, especially for managing the minimally required data for a route.
 
-However, there is a pattern that can be implement using React + React Router which would be good to have an equivelant of in Ember apps.
+However, there is a pattern that can be implement using React + React Router which would be good to have an equivalent of in Ember apps.
 
 The Route override + ErrorBoundary combo.
 
