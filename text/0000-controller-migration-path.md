@@ -52,19 +52,67 @@ users?
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+These changes would require many changes to existing apps, and there likely won't be an ability to codemod people's code to the new way of doing things. This could greatly slow down the migration, or have people opt to not migrate at all. It's very important that every use case for controllers today _can_ be implemented using the aforementioned techniques. If people are willing to share their controller scenarios, we can provide a library of examples of translation so that others may migrate more quickly.
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
+To date (2019-06-09 at the time of writing this), there has been one roadmap blogpost to say to get rid of both routes and controllers and have everything be components, like React.  
 
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
+React projects typically use dynamic routing which is only possible to build the full route tree through static analysis of a build tool that doesn't exist (yet?). Ember's Route pattern is immensely powerful, especially for managing the minimally required data for a route.
+
+However, there is a pattern that can be implement using React + React Router which would be good to have an equivelant of in Ember apps.
+
+The Route override + ErrorBoundary combo.
+
+Consider the following 
+
+```tsx
+import { Route as ReactRouterRoute } from 'react-router-dom';
+import ErrorBoundary from '~/ui/components/errors/error-boundary';
+
+export function Route(passedProps) {
+  const {...props } = passedProps;
+
+  return (
+    <ErrorBoundary>
+      <ReactRouterRoute {...props} />
+    </ErrorBoundary>
+  );
+}
+```
+
+where `ErrorBoundary` is defined as:
+```ts
+import React, { Component } from 'react';
+import PageError from './errors/page';
+
+// https://reactjs.org/docs/error-boundaries.html
+export default class ErrorBoundary extends Componen {
+  state = { hasError: false };
+  // Update state so the next render will show the fallback UI.  
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  // You can also log the error to an error reporting service
+  componentDidCatch(error, info) { console.error(error, info); }
+
+  render() {
+    const { hasError, error } = this.state;
+
+    if (hasError) return <PageError error={error} />;
+
+    return this.props.children;
+  }
+}
+```
+
+what this allows is our apps to on a per-route basis be able to catch _all_ errors within a sub-route and perform some behavior local to that route -- provided that the entire app uses this custom `Route` and no longer uses the default one from `react-router-dom`. This is advantageous for a couple reasons:
+ - whenever implementing a feature, bugfix, or whatever, anything wrong you do will be caught and displayed on the UI, rather than entirely breaking the UI or _causing infinite rendering loops_
+ - Whenever there is an unexpected uncaught exception due to a yet-to-be-fixed bug, the UI for handling the error and displaying that error to the user is implemented _for free_. This helps with error reporting from users as the error will be rendered and there'd be no need to ask for a reproduction with the console open.
+
+ Switching to totally dynamic routing would too big of a paradigm shift and it would remove one of the best features about Ember: the asyncronous state management for required data when entering a route. With dynamic routing, as in react-router, all of that responsibility would be pushed to the user -- every app would have a different way to handle loading and other intermediate state.
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+ - What use cases of controllers are not covered here?
+
