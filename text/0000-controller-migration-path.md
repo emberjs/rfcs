@@ -35,14 +35,145 @@ In this other RFC that [proposes adding a @queryParam decorator and service to m
 
 ### Error and Loading States
 
+According to the routing guides on [error and loading substates](https://guides.emberjs.com/release/routing/loading-and-error-substates/), for both errors and loading state, we need a template in various locations depending on our route structure and, for loading, which routes we think are slow enough to warrant a loading indicator (whether that be a spinner, or fake cards or other elements on the page). Additionally, there is a loading action fired per route that can optionally be customized in order to set parameters on the route's controller. 
 
-> This is the bulk of the RFC.
+Maybe something we could do to make things less configuration-based and also be more explicit is to set properties on routes. 
 
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here.
+For example, maybe we want to set the error and loading UI on a particular route:
+```ts
+import Route from '@ember/routing/route';
+import ErrorComponent from 'my-app/components/error-handler';
+import LoadingComponent from 'my-app/components/loading-spinner';
+
+export default class MyRoute extends Route {
+  onError = ErrorComponent;
+  onLoading = LoadingComponent;
+
+  async model() {
+    const myData = await this.store.findAll('slow-data');
+
+    return { myData };
+  }
+}
+```
+This setting of components to use as the error and loading state render contexts allows us to more intuitively tie in to the dependency injection system as well as have very clear shared resources for this common behavior.
+
+The actions that are called on error and loading could still exist, as those may be useful for maybe redirecting to different places in case of a 401 Unauthorized / 403 Forbidden error
+
+
+Another scenario - maybe someone wants to use the same error and loading 
+configuration for every route:
+
+```ts
+// utils/configured-route.js 
+import Route from '@ember/routing/route';
+import ErrorComponent from 'my-app/components/error-handler';
+import LoadingComponent from 'my-app/components/loading-spinner';
+
+export default class ConfiguredRoute extends Route {
+  onError = ErrorComponent;
+  onLoading = LoadingComponent;
+}
+
+// routes/posts.js
+import Route from 'my-app/utils/configured-route';
+
+export default class PostsRoute extends Route {
+  async model() {
+    const posts = await this.store.findAll('post');
+
+    return { posts };
+  }
+}
+```
+
+This may not end up being a common pattern to have the same loading state of every route, but having at least the same configured Error handling per route could provide a way to display meaningful messages to end-users by default, rather than unexpected uncaught exceptions causing the UI to break unexpectedly.
+
+The last scenario is using a one-off configuration, which would become more ergonomic whenever apps can move away from the 'classic' project structure.
+
+Assuming apps will eventually get something similar to the module unification layout where one-off components can be co-located with routes:
+```ts
+import Route from '@ember/routing/route';
+import ErrorComponent from './-components/error-handler';
+import LoadingComponent from './-components/loading-spinner';
+
+export default class MyRoute extends Route {
+  onError = ErrorComponent;
+  onLoading = LoadingComponent;
+
+  async model() {
+    const myData = await this.store.findAll('slow-data');
+
+    return { myData };
+  }
+}
+```
+This would be most useful for patterns that use fake UI for loading, such as what facebook and linkedin do for their feeds.
+
+
+Ideally, the onError component should catch _any_ error that occurs within the route's subtree. This should catch network errors that occur within the beforeModel, model, or afterModel hooks, and also during rendering. With component centric development, errors can happen anywhere, and it would be fantastic to have a centralized placed to handle those errors -- though this level of error handling may be outside the scope of this RFC.
+
+#### Rendering the Error and Loading components
+
+The loading component should only be rendered if the `onLoading` property is set and the model hook has not yet resolved. It does not need to receive any arguments. 
+
+The error component should only be rendered if the `onError` property is set and an error occurs. It should receive an argument named `error` whos signature is any of, but not limited to, any of the subtypes of [`Error`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error). It'll be up to the application developer to handle how to specifically render the error. 
+
+Example:
+
+```ts
+import Component from '@glimmer/component';
+import { parseError } from 'app-name/utils/errors';
+
+export default class ErrorComponent extends Component {
+  get errorData() {
+    const { error } = this.args;
+
+    return parseError(error);
+  }
+}
+```
+```hbs
+<div class='error-container'>
+  <strong>{{error.title}}</strong>
+
+  {{#if error.body}}
+    <p>{{error.body}}</p>
+  {{/if}}
+</div>
+```
+
+```ts
+// elsewhere, in app-name/utils/errors;
+export function parseError(error: any): ParsedError {
+  if (error instanceof ClientError) {
+    const maybeJsonApiError = getFirstJSONAPIError(error);
+
+    if (Object.keys(maybeJsonApiError).length > 0) {
+      return { title: maybeJsonApiError.title, body: maybeJsonApiError.detail };
+    }
+
+    return {
+      title: error.description,
+      body: error.message,
+    };
+  }
+
+  if (error instanceof NetworkError) {
+    // parse something different for network errors
+  }
+
+  if (error instanceof SomeOtherError) {
+    // parse something different unique to SomeOtherError
+  }
+
+  // All other errors
+  const title = error.message || error;
+  const body = undefined;
+
+  return { title, body };
+```
+
 
 ## How we teach this
 
