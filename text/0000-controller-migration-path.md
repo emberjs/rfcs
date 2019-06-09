@@ -271,19 +271,6 @@ export function parseError(error: any): ParsedError {
 ```
 
 
-## How we teach this
-
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
-
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
-
-> How should this feature be introduced and taught to existing Ember
-users?
-
 ## Drawbacks
 
 These changes would require many changes to existing apps, and there likely won't be an ability to codemod people's code to the new way of doing things. This could greatly slow down the migration, or have people opt to not migrate at all. It's very important that every use case for controllers today _can_ be implemented using the aforementioned techniques. If people are willing to share their controller scenarios, we can provide a library of examples of translation so that others may migrate more quickly.
