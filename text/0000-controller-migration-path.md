@@ -29,6 +29,13 @@ This'll explore how controllers are used and how viable alternatives can be for 
 
 ## Detailed design
 
+### Query Params
+
+In this other RFC that [proposes adding a @queryParam decorator and service to manage query params](https://github.com/emberjs/rfcs/pull/380), query-param management would be pulled out of the controller entirely.
+
+### Error and Loading States
+
+
 > This is the bulk of the RFC.
 
 > Explain the design in enough detail for somebody
