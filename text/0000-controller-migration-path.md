@@ -233,6 +233,7 @@ Given a visit to `/posts`
 - lookup `template:posts`  
   - if a controller exists, the template will be rendered as it is today.  
   - if a controller does not exist, a template-only component will be assumed, passing the `@model` argument. This will make interop between controllers' templates and template-only component / used-for-route template components inconsistent, so controllers' templates should also get a `@model` argument.
+  - if a component by the same name exists, it is ignored and must be invoked manually.
 - lookup a component named "posts", `component:posts` and `template:components/posts`.   
   NOTE: if the `template:posts` template was found, this step does not happen.  
   - this component is invoked _as if_ `template:posts` was defined as `<Posts @model={{this.model}} />`
