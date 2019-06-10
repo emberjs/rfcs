@@ -236,6 +236,7 @@ Given a visit to `/posts`
 2. lookup a component named "posts", `component:posts` and `template:components/posts`.   
   NOTE: if the `template:posts` template was found, this step does not happen.  
   a. this component is invoked _as if_ `template:posts` was defined as `<Posts @model={{this.model}} />`
+3. default to `{{outlet}}` for sub routes
 
 ## Drawbacks
 
