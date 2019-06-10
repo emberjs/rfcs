@@ -230,13 +230,13 @@ For each of these, assume that all parent routes/templates/etc have resolved.
 Because there are 4 or 5 project structure layouts in flux, the notation here is what is used inside the resolver.
 
 Given a visit to `/posts`
-1. lookup `template:posts`  
-  a. if a controller exists, the template will be rendered as it is today.  
-  b. if a controller does not exist, a template-only component will be assumed, passing the `@model` argument. This will make interop between controllers' templates and template-only component / used-for-route template components inconsistent, so controllers' templates should also get a `@model` argument.
-2. lookup a component named "posts", `component:posts` and `template:components/posts`.   
+- lookup `template:posts`  
+  - if a controller exists, the template will be rendered as it is today.  
+  - if a controller does not exist, a template-only component will be assumed, passing the `@model` argument. This will make interop between controllers' templates and template-only component / used-for-route template components inconsistent, so controllers' templates should also get a `@model` argument.
+- lookup a component named "posts", `component:posts` and `template:components/posts`.   
   NOTE: if the `template:posts` template was found, this step does not happen.  
-  a. this component is invoked _as if_ `template:posts` was defined as `<Posts @model={{this.model}} />`
-3. default to `{{outlet}}` or `{{yield}}` for sub routes
+  - this component is invoked _as if_ `template:posts` was defined as `<Posts @model={{this.model}} />`
+- default to `{{outlet}}` or `{{yield}}` for sub routes
 
 ## Drawbacks
 
