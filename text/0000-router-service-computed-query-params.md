@@ -2,35 +2,42 @@
 - RFC PR: [https://github.com/emberjs/rfcs/pull/380](https://github.com/emberjs/rfcs/pull/380)
 - Ember Issue: (leave this empty)
 
-# Add `@queryParam` decorator and `QueryParamsService`
+# Add `queryParams` to the router service
 
 ## Summary
 
+This RFC proposes a new primitive API change to the `RouterService` to allow access to query params from anywhere.
+
 Access to query params is currently restricted to the controller, and subsequently, the corresponding route. 
 This results in some limitations with which users may consume query param data. 
-By exposing query params on a new `QueryParamsService`, users will be able to easily access the params from deep down a component tree, removing the need to pass query-param related data and actions down many layers of components.
+By exposing query params on the [RouterService](https://api.emberjs.com/ember/release/classes/RouterService), users will be able to easily access the query params from deep down a component tree, removing the need to pass query param related data and actions down many layers of components.
+
+
 
 ## Motivation
 
-Modern SPA concepts have converged on the idea that query params should be easily accessible from the object responsible for handling the route.
+Modern SPA concepts have converged on the idea that query params should be easily accessible -- independent from the object responsible for handling the route.
 Like with the [RouterService](https://github.com/emberjs/rfcs/blob/master/text/0095-router-service.md), 
 it is common to have a need to perform routing behavior from deep down a component tree.
-Additionally, the current query params implementation feels very verbose for "just wanting to access a property". Accessing data within the url **should feel easy**.
+Additionally, the current query params implementation feels very verbose for "just wanting to access a property" and has been frustrating to have to explain awkward behavior when on-boarding new devs who may be unfamiliar with Ember. 
 
-### Examples
+Accessing data within the url **should feel easy**.
 
-An addon has been written to demonstrate usage: https://github.com/NullVoxPopuli/ember-query-params-service
+## Detailed Design
 
-Example usage:
+### Accessing Query Params
+
 ```ts
 import Component from "@glimmer/component";
-import { queryParam } from "ember-query-params-service";
+import { inject as service } from '@ember/service';
 
-export default class SomeComponent extends Component {
-  @queryParam foo;
+export default class Pagination extends Component {
+  @service router;
 
-   addToFoo() {
-    this.foo = (this.foo || 0) + 1;
+  get currentPage() {
+    const { page } = this.router.queryParams;
+
+    return page;
   }
 }
 ```
@@ -42,223 +49,121 @@ Having query params accessible on the router service would allow users to implem
  - filter / search components could update the query param property.
  - whatever else query params are used for outside of a SPA.
 
-## Detailed design
+### Transitioning to Add and Remove Query Params
 
-Add a service that maintains properties derived from a split of `window.location.search` into objects, which could have deeply nested objects and arrays.
-The properties must maintain state based on the current route, which mimics the current behavior that the singleton controller's long-lived state provide with respect to maintaining query-param values.
-Ensure that setting any deeply nested value in the query params object computed property also updates the URL.
-A `queryParam` decorator for accessing and updating query params in the URL must exist for short-hand use in components, routes, etc.
+Given there is a route that exists named `avengers.roster`,
 
-The biggest change needed, which could potentially be a breaking change, is that the allow-list on routes' queryParams hash will need to be removed as people transition to this form of queryParams management. The controller-based way is static in that all known query params must be specified on the controller ahead of time. This has been a great deal of frustration amongst many developers, both new and old to ember.
+ - Adding a query param
+    ```ts
+    import Component from "@glimmer/component";
+    import { inject as service } from '@ember/service';
+    import { action } from '@ember/object';
+
+    export default class Pagination extends Component {
+      @service router;
+
+      @action nextPage() {
+        // `this.router.queryParams` is currently an empty object
+        const nextPage = (this.router.queryParams.page || 0) + 1
+
+        this.router.transitionTo('avengers.roster', { queryParams: { page: nextPage } });
+        // after the transition, `this.router.queryParams` is `{ page: 1 }`
+      }
+    }
+    ```
+
+ - Removing all query params
+    ```ts
+    import Component from "@glimmer/component";
+    import { inject as service } from '@ember/service';
+    import { action } from '@ember/object';
+
+    export default class Pagination extends Component {
+      @service router;
+
+      @action reset() {
+        // `this.router.queryParams` is currently `{ page: 1 }`
+
+        this.router.transitionTo('avengers.roster', { queryParams: { /* empty */ } });
+        // after the transition, `this.router.queryParams` is `{ }`
+      }
+    }
+    ```
+
+ - Merging query params
+
+    We have previously been to the route `avengers.roster` with query params `{ page: 1 }`
+    ```ts
+    import Component from "@glimmer/component";
+    import { inject as service } from '@ember/service';
+    import { action } from '@ember/object';
+
+    export default class HeaderNavigation extends Component {
+      @service router;
+
+      @action navigateToRoster() {
+        // `this.router.currentRouteName` is currently `'index'`
+        // `this.router.queryParams` is currently `{ }`
+
+        this.router.transitionTo(`avengers.roster`);
+        // after the transition, `this.router.queryParams` has restored the value of `{ page: 1 }`
+        // from the controller state
+      }
+    }
+    ```
+
+
+The biggest change needed, which could _potentially_ be a breaking change, is that the allow-list on routes' queryParams hash will need to be removed. The controller-based way is static in that all known query params must be specified on the controller ahead of time. This has been a great deal of frustration amongst many developers, both new and old to ember.
 This is a dynamic way to manage query params which hopefully aligns more with people's mental model of query params. 
 
-Additionally, in order to be backwards-compatible with `{ refreshModel: true }`, the model hook will need to re-run if any tracked properties used within the model hook are changed. 
 
-Example implementation of the service:
-```ts
-import Service, { inject as service } from '@ember/service';
-import RouterService from '@ember/routing/router-service';
+### Setting Query Params
 
-import { tracked } from '@glimmer/tracking';
-import * as qs from 'qs';
+Until IE11 support is dropped, we cannot wrap and set query params intuitively as a normal getter/setter as is proposed by this addon: https://github.com/NullVoxPopuli/ember-query-params-service.
 
-interface QueryParams {
-  [key: string]: number | string | undefined | QueryParams;
-}
-
-interface QueryParamsByPath {
-  [key: string]: QueryParams;
-}
-
-export default class QueryParamsService extends Service {
-  @service router!: RouterService;
-
-  @tracked current!: QueryParams;
-  @tracked byPath: QueryParamsByPath = {};
-
-  constructor(...args: any[]) {
-    super(...args);
-
-    this.setupProxies();
-  }
-
-  init() {
-    super.init();
-
-    this.updateParams();
-
-    this.router.on('routeDidChange', () => this.updateParams());
-    this.router.on('routeWillChange', transition => this.updateURL(transition));
-  }
-
-  get pathParts() {
-    const [path, params] = (this.router.currentURL || '').split('?');
-    const absolutePath = path.startsWith('/') ? path : `/${path}`;
-
-    return [absolutePath, params];
-  }
-
-  private setupProxies() {
-    let [path] = this.pathParts;
-
-    this.byPath[path] = this.byPath[path] || {};
-
-    this.current = new Proxy(this.byPath[path], queryParamHandler);
-  }
-
-  private updateParams() {
-    this.setupProxies();
-
-    const [path, params] = this.pathParts;
-    const queryParams = params && qs.parse(params);
-
-    this.setOnPath(path, queryParams);
-  }
-
-  /**
-   * When we have stored query params for a route
-   * throw them on the URL
-   *
-   */
-  private updateURL(transition: any /* Transition doesn't have intent.. some how? */) {
-    const path = transition.intent.url;
-    const { protocol, host, pathname, search } = window.location;
-    const queryParams = this.byPath[path];
-    const existing = qs.parse(search.split('?')[1]);
-    const query = qs.stringify({ ...existing, ...queryParams });
-    const newUrl = `${protocol}//${host}${pathname}?${query}`;
-
-    window.history.replaceState({ path: newUrl }, '', newUrl);
-  }
-
-  private setOnPath(path: string, queryParams: object) {
-    this.byPath[path] = this.byPath[path] || {};
-
-    Object.keys(queryParams || {}).forEach(key => {
-      let value = queryParams[key];
-      let currentValue = this.byPath[path][key];
-
-      if (currentValue === value) {
-        return;
-      }
-
-      if (value === undefined) {
-        delete this.byPath[path][key];
-        return;
-      }
-
-      this.byPath[path][key] = value;
-    });
-  }
-}
-
-const queryParamHandler = {
-  get(obj: any, key: string, ...rest: any[]) {
-    return Reflect.get(obj, key, ...rest);
-  },
-  set(obj: any, key: string, value: any, ...rest: any[]) {
-    let { protocol, host, pathname } = window.location;
-    let query = qs.stringify({ ...obj, [key]: value });
-    let newUrl = `${protocol}//${host}${pathname}?${query}`;
-
-    window.history.pushState({ path: newUrl }, '', newUrl);
-
-    return Reflect.set(obj, key, value, ...rest);
-  },
-};
-
-```
-
-Example implementation of the decorator:
+This is powered by the [Proxy object, here](https://github.com/NullVoxPopuli/ember-query-params-service/blob/master/addon/services/query-params.ts#L49).
 
 ```ts
-import { get, set } from '@ember/object';
-import { getOwner } from '@ember/application';
-import { tracked } from '@glimmer/tracking';
-import { default as QueryParamsService } from '../services/query-params';
+import Component from "@glimmer/component";
+import { queryParam } from "ember-query-params-service";
 
-export interface ITransformOptions<T> {
-  deserialize?: (queryParam: string) => T;
-  serialize?: (queryParam: T) => string;
-}
+export default class SomeComponent extends Component {
+  @queryParam strongestAvenger = 'Hulk';
 
-type Args<T> = [] | [string, ITransformOptions<T>] | [ITransformOptions<T>] | [string];
-
-export function queryParam<T = boolean>(...args: Args<T>) {
-  return (target: any, propertyKey: string, sourceDescriptor?: any) => {
-    const { set: oldSet } = tracked(target, propertyKey, sourceDescriptor);
-    const [propertyPath, options] = extractArgs<T>(args, propertyKey);
-
-    const result = {
-      configurable: true,
-      enumerable: true,
-      get: function(): T {
-        // setupController(this, 'application');
-        const service = ensureService(this);
-        const value = get<any, any>(service, propertyPath);
-        const deserialized = tryDeserialize(value, options);
-
-        return deserialized;
-      },
-      set: function(value: any) {
-        // setupController(this, 'application');
-        const service = ensureService(this);
-        const serialized = trySerialize(value, options);
-
-        set<any, any>(service, propertyPath, serialized);
-        oldSet!.call(this, serialized);
-      },
-    };
-
-    return result as any;
-  };
-}
-
-function extractArgs<T>(args: Args<T>, propertyKey: string): [string, ITransformOptions<T>] {
-  const [maybePathMaybeOptions, maybeOptions] = args;
-
-  let propertyPath: string;
-  let options: ITransformOptions<T>;
-
-  if (typeof maybePathMaybeOptions === 'string') {
-    propertyPath = `current.${maybePathMaybeOptions}`;
-    options = maybeOptions || {};
-  } else {
-    propertyPath = `current.${propertyKey}`;
-    options = maybePathMaybeOptions || {};
+   updateStrongestAvenger() {
+    this.strongestAvenger = 'Thor';
   }
-
-  return [propertyPath, options];
-}
-
-function tryDeserialize<T>(value: any, options: ITransformOptions<T>) {
-  if (!options.deserialize) return value;
-
-  return options.deserialize(value);
-}
-
-function trySerialize<T>(value: any, options: ITransformOptions<T>) {
-  if (!options.serialize) return value;
-
-  return options.serialize(value);
-}
-
-// could there ever be a problem with using only one variable in module-space?
-let qpService: QueryParamsService;
-function ensureService(context: any): QueryParamsService {
-  if (qpService) {
-    return qpService;
-  }
-
-  qpService = getQPService(context);
-
-  return qpService;
-}
-
-function getQPService(context: any) {
-  return getOwner(context).lookup('service:queryParams');
 }
 ```
+
+This is due to the fact that IE11 only supports ES5, which [does not have Proxy support](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy#Browser_compatibility) and [cannot be polyfilled](https://babeljs.io/docs/en/learn#proxies).
+
+> Due to the limitations of ES5, Proxies cannot be transpiled or polyfilled. 
+
+- _[https://babeljs.io/docs/en/learn#proxies](https://babeljs.io/docs/en/learn#proxies)
+
+
+Instead, functions must be defined on the router that would take care of the setting of the query param's value.
+```ts
+// set a single parameter
+this.router.setQueryParameter('strongestAvenger', 'Captain Marvel');
+// set many parameters
+// this'll replace 
+this.router.setQueryParameters({
+  strongestAvenger: 'Carol Danvers',
+  secondStrongest: 'Thor or Hulk?',
+  ['kebab-case-param']: `kebab o' Thanos' armies`,
+});
+```
+
+Just as it is today, setting query params in this way would not trigger a transition.
+The key-value state of set query params would be available on `<RouterService>#queryParams` as well as an existing controller's computed properties as they exist today.
+
+This doesn't change the existing functionality where objects and arrays are still not correctly serialized to their URI-string counterparts.
+
+To address that, a long standing issue from as far back as 2016,
+some new functionality for serialization and deserialization would be powered by [qs](https://www.npmjs.com/package/qs) ([3.4kb (gzip+min)](https://bundlephobia.com/result?p=qs@6.7.0)) -- which would enable the setting of arrays and objects.
+
 
 ## How we teach this
 
@@ -279,23 +184,10 @@ export default class extends Controller {
   }
 }
 ```
-The default happy path should be one  that suggests usage of the `@queryParam` decorator. This is the most flexible, and prevides serialization/deserialization options per-query param if needed. Maybe using [@pzuraq's macro-decorators](https://pzuraq.github.io/macro-decorators/), users could wrap `@queryParam` for different data types.
 
-```ts
-import Component from "@glimmer/component";
-import { queryParam } from "ember-query-params-service";
+This will no longer be true. However, controllers will still manage the long-term state of the query params as they do today.
 
-export default class SomeComponent extends Component {
-  @queryParam foo;
-
-   addToFoo() {
-    this.foo = (this.foo || 0) + 1;
-  }
-}
-```
-
-
-Having computed properties available elsewhere will be a shift in thinking that "the controller manages query params" to "the service that allows access to the query params manages the query params"
+Having query-param-related computed properties available everywhere will be a shift in thinking that "the controller manages query params" to "query params are a routing concern and are on the router service"
 
 ```ts
 import Route from '@ember/routing/route';
@@ -303,10 +195,10 @@ import { inject as service } from '@ember/service';
 import { alias } from 'ember-query-params-service';
 
 export default class ApplicationRoute extends Route {
-  @service queryParams;
+  @service router;
 
-  @alias('queryParams.current.r') isSpeakerNotes;
-  @alias('queryParams.current.slide') slideNumber;
+  @alias('router.queryParams.r') isSpeakerNotes;
+  @alias('router.queryParams.slide') slideNumber;
 
   model() {
     return {
@@ -319,8 +211,6 @@ export default class ApplicationRoute extends Route {
 
 ## Drawbacks
 
-- This requires tracked properties as the tracking system is perfect for propagating updates whenever the internal queryParam tracking object changes -- in the QueryParamsService's `byPath` and `current` properties. So only the most up-to-date code-bases would be able to benefit.
-- The old behavior of controller-based query params where query params live on the controller that is a singleton and are restored whenever a route is returned to is still possible / implemented with this QueryParamService, but because components can modify query params at any depth, this may introduce hard-to-trace behaviors.
 - Some people may be relying on the controller query-params allow-list.
 
 ## Alternatives
