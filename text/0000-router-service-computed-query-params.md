@@ -119,21 +119,12 @@ This is a dynamic way to manage query params which hopefully aligns more with pe
 
 ### Setting Query Params
 
-Until IE11 support is dropped, we cannot wrap and set query params intuitively as a normal getter/setter as is proposed by this addon: https://github.com/NullVoxPopuli/ember-query-params-service.
+Until IE11 support is dropped, we cannot wrap and set query params intuitively as a normal getter/setter as is proposed by this addon. 
 
-This is powered by the [Proxy object, here](https://github.com/NullVoxPopuli/ember-query-params-service/blob/master/addon/services/query-params.ts#L49).
+For example, this is not possible until IE11 support is dropped:
 
 ```ts
-import Component from "@glimmer/component";
-import { queryParam } from "ember-query-params-service";
-
-export default class SomeComponent extends Component {
-  @queryParam strongestAvenger = 'Hulk';
-
-   updateStrongestAvenger() {
-    this.strongestAvenger = 'Thor';
-  }
-}
+this.router.queryParams.strongestAvenger = 'Hulk';
 ```
 
 This is due to the fact that IE11 only supports ES5, which [does not have Proxy support](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy#Browser_compatibility) and [cannot be polyfilled](https://babeljs.io/docs/en/learn#proxies).
