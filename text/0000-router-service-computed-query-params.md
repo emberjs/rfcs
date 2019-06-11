@@ -21,6 +21,20 @@ Additionally, the current query params implementation feels very verbose for "ju
 
 An addon has been written to demonstrate usage: https://github.com/NullVoxPopuli/ember-query-params-service
 
+Example usage:
+```ts
+import Component from "@glimmer/component";
+import { queryParam } from "ember-query-params-service";
+
+export default class SomeComponent extends Component {
+  @queryParam foo;
+
+   addToFoo() {
+    this.foo = (this.foo || 0) + 1;
+  }
+}
+```
+
 Having query params accessible on the router service would allow users to implement:
 
  - query param aware modals that may hide or show depending on the presence of a query param.
@@ -265,6 +279,21 @@ export default class extends Controller {
   }
 }
 ```
+The default happy path should be one  that suggests usage of the `@queryParam` decorator. This is the most flexible, and prevides serialization/deserialization options per-query param if needed. Maybe using [@pzuraq's macro-decorators](https://pzuraq.github.io/macro-decorators/), users could wrap `@queryParam` for different data types.
+
+```ts
+import Component from "@glimmer/component";
+import { queryParam } from "ember-query-params-service";
+
+export default class SomeComponent extends Component {
+  @queryParam foo;
+
+   addToFoo() {
+    this.foo = (this.foo || 0) + 1;
+  }
+}
+```
+
 
 Having computed properties available elsewhere will be a shift in thinking that "the controller manages query params" to "the service that allows access to the query params manages the query params"
 
