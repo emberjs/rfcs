@@ -239,6 +239,17 @@ Given a visit to `/posts`
   - this component is invoked _as if_ `template:posts` was defined as `<Posts @model={{this.model}} />`
 - default to `{{outlet}}` or `{{yield}}` for sub routes
 
+## How we teach this
+
+Since this is a new programming paradigm, we'll want to update the guides and tutorials to reflect a new "happy path".
+ - Remove most mentions of controllers in the guides / tutorials. maybe just leave the bare informational "what controllers are", at least until a deprecation can be figured out.
+ - Swap out the controllers page in the guides for a page that shows examples of how a component is chosen to be the entry point / outlet of the route. Additionally on this page, it should mention that there can be an optional template (like we have today) that receives the `@model` argument that takes priority over any component with the same name as the route and without any template at all, it's just an `{{outlet}}` for subroutes. 
+ 
+    The controllers page for octane has already moved under routing, so talking about just rendering behavior should make things feel simpler.
+    
+ - There is already a separate guides page for query params. Query params should remain on their own page, but just be updated to use the `@queryParam` decorator, as described in [RFC 380](https://github.com/emberjs/rfcs/pull/380)
+
+
 ## Drawbacks
 
 It's very important that every use case for controllers today _can_ be implemented using the aforementioned techniques. If people are willing to share their controller scenarios, we can provide a library of examples of translation so that others may migrate more quickly.
