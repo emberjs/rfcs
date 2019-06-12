@@ -78,7 +78,7 @@ Looking at a template you would have no idea that rendering the `{{link-to}}` wo
 
 ### Does Not Work With Angle Bracket Invocation
 
-Since angle bracket invocation does not support positional params, `{{link-to}}` has to adapt it's public API.
+Since angle bracket invocation does not support positional params, `{{link-to}}` has to adapt its public API.
 
 ### Costly API
 
@@ -317,7 +317,7 @@ The `attribution` in a `Transition` is guaranteed to be carried through the comp
 
 ## Migration Path
 
-Since this RFC does not deprecate `{{link-to}}` you can continue to use it. That being said `{{link-to}}` has static semantics therefore we can write a codemod using [Ember Template Recast](https://github.com/ember-template-lint/ember-template-recast) to migrate the code. Below are numerous before and after examples of how the codemod would migrate. It's important to note that the behavior of the application [will change](#url-generation-helpers) if you are relying on the passing of the in-memory model. Because of this the codemod would need different levels of converstion.
+Since this RFC does not deprecate `{{link-to}}` you can continue to use it. That being said `{{link-to}}` has static semantics therefore we can write a codemod using [Ember Template Recast](https://github.com/ember-template-lint/ember-template-recast) to migrate the code. Below are numerous before and after examples of how the codemod would migrate. It's important to note that the behavior of the application [will change](#url-generation-helpers) if you are relying on the passing of the in-memory model. Because of this the codemod would need different levels of conversion.
 
 ### Basic `{{link-to}}`
 
@@ -399,11 +399,11 @@ If you were to transform all `{{link-to}}`s verbatim in terms of functionality t
   class="{{if (is-active 'profile' model queryParams=(hash foo=bar)) 'active'}} {{if (is-loading 'profile' model queryParams=(hash foo=bar)) 'loading'}} {{if (is-transitioning-in 'profile' model queryParams=(hash foo=bar)) 'ember-transitioning-in'}} {{if (is-transitioning-out 'profile' model queryParams=(hash foo=bar)) 'ember-transitioning-out'}}">Profile</a>
 ```
 
-As the kitchen sink example shows, `{{link-to}}` is packed with functionality. While this convienent, it comes with a cost per `{{link-to}}` and is the reason why addons like [Ember-href-to](https://github.com/intercom/ember-href-to) were created. In reality the vast majority of applications only need a subset of this functionality and in only rare cases need things like the transition and loading states.
+As the kitchen sink example shows, `{{link-to}}` is packed with functionality. While this convienent, it comes with a cost per `{{link-to}}` and is the reason why addons like [Ember-href-to](https://github.com/intercom/ember-href-to) were created. In reality the vast majority of applications only need a subset of this functionality and only in rare cases need things like the transition and loading states.
 
 ## How we teach this
 
-In many ways this vastly simplifies the Ember's approach to linking within the app. It removes the requirement for a proprietary API and instead embraces the power of URLs.
+In many ways this vastly simplifies Ember's approach to linking within the app. It removes the requirement for a proprietary API and instead embraces the power of URLs.
 
 In the cases where you do need to do more complicated things like pass in memory models to a route, things should feel very similar to `{{link-to}}` as they have the exact same signature. In the case of query param serialization, I believe we are actually aligning a mental model as to how URL generation should work.
 
@@ -415,7 +415,7 @@ By proxy this may cause people to encapsulate all of these primitives into a sin
 
 ## Alternatives
 
-We could just start deprecating and removing functionality from `{{link-to}}` it self. That being said, it is hard to understand how much of the community is reliant on certain feature of `{{link-to}}`. This also doesn't help with usecases like the i18n and markdown use cases.
+We could just start deprecating and removing functionality from `{{link-to}}` itself. That being said, it is hard to understand how much of the community is reliant on certain feature of `{{link-to}}`. This also doesn't help with usecases like the i18n and markdown use cases.
 
 ## Unresolved questions
 
