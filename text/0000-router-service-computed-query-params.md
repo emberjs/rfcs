@@ -156,6 +156,8 @@ To address that, a long standing issue from as far back as 2016,
 some new functionality for serialization and deserialization would be powered by [qs](https://www.npmjs.com/package/qs) ([3.4kb (gzip+min)](https://bundlephobia.com/result?p=qs@6.7.0)) -- which would enable the setting of arrays and objects.
 
 
+Alternatively, [URLSearchParams](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams) is a built-in feature of browsers, and there exists a polyfill for IE11. This might be lighter weight than pulling in qs. 
+
 ## How we teach this
 
 Currently, query params _must_ be [specified on the controller](https://guides.emberjs.com/release/routing/query-params/):
