@@ -239,6 +239,8 @@ Given a visit to `/posts`
   - this component is invoked _as if_ `template:posts` was defined as `<Posts @model={{this.model}} />`
 - default to `{{outlet}}` or `{{yield}}` for sub routes
 
+**NOTE** as a side effect of treating the default template in this manner, it would become a requirement, in order to maintain cohesion, that we treat loading and error templates similar to the above lookup rules.
+
 ## How we teach this
 
 Since this is a new programming paradigm, we'll want to update the guides and tutorials to reflect a new "happy path".
