@@ -49,73 +49,77 @@ Having query params accessible on the router service would allow users to implem
  - filter / search components could update the query param property.
  - whatever else query params are used for outside of a SPA.
 
-### Transitioning to Add and Remove Query Params
+### Serialization / Deserialization
 
-Given there is a route that exists named `avengers.roster`,
+Everyone has different query param serialization and deserialization needs depending on a variety of factors.
 
- - Adding a query param
-    ```ts
-    import Component from "@glimmer/component";
-    import { inject as service } from '@ember/service';
-    import { action } from '@ember/object';
+By default, the query params will be serialized and deserialized via the builtin URLSearchParams API, and polyfilled for IE11.
 
-    export default class Pagination extends Component {
-      @service router;
+Should someone decide to customize how serilaization and deserializion transforms the query params, that can be done directly on the router:
 
-      @action nextPage() {
-        // `this.router.queryParams` is currently an empty object
-        const nextPage = (this.router.queryParams.page || 0) + 1
+```ts
+import EmberRouter from '@ember/routing/router';
 
-        this.router.transitionTo('avengers.roster', { queryParams: { page: nextPage } });
-        // after the transition, `this.router.queryParams` is `{ page: 1 }`
-      }
+import config from '../config/environment';
+
+const Router = EmberRouter.extend({
+  location: config.locationType,
+  rootURL: config.rootURL,
+
+  queryParamsConfig: {
+    serialize(queryParams: object): string {
+      // serialize object for query string
+      // default to URLSearchParams, polyfilled for IE11
+    },
+    deserialize(queryString: string): object {
+      // parse to object for use in `injectedRouter.queryString`
+      // also default to URLSerachParams
     }
-    ```
+  }
+});
+```
 
- - Removing all query params
-    ```ts
-    import Component from "@glimmer/component";
-    import { inject as service } from '@ember/service';
-    import { action } from '@ember/object';
 
-    export default class Pagination extends Component {
-      @service router;
+This will address a long standing issues from as far back as 2016,
+some new functionality for serialization and deserialization could be powered by [qs](https://www.npmjs.com/package/qs) ([3.4kb (gzip+min)](https://bundlephobia.com/result?p=qs@6.7.0)) or a lternatively, [URLSearchParams](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams) -- this would enable the setting of arrays and objects which is not possible today.
 
-      @action reset() {
-        // `this.router.queryParams` is currently `{ page: 1 }`
 
-        this.router.transitionTo('avengers.roster', { queryParams: { /* empty */ } });
-        // after the transition, `this.router.queryParams` is `{ }`
-      }
-    }
-    ```
+### Sticky Query Params
 
- - Merging query params
+By default, transitionTo will clear the query params, unless specified inside the transiion.
 
-    We have previously been to the route `avengers.roster` with query params `{ page: 1 }`
-    ```ts
-    import Component from "@glimmer/component";
-    import { inject as service } from '@ember/service';
-    import { action } from '@ember/object';
+If query params are defined ahead of time as sticky, they will persist in the URL between sub routes.
 
-    export default class HeaderNavigation extends Component {
-      @service router;
+This can be configured in the `Router.map` function:
+```ts
+Router.map(function() {
+  this.queryParams('bar');
 
-      @action navigateToRoster() {
-        // `this.router.currentRouteName` is currently `'index'`
-        // `this.router.queryParams` is currently `{ }`
+  this.route('faq');
 
-        this.router.transitionTo(`avengers.roster`);
-        // after the transition, `this.router.queryParams` has restored the value of `{ page: 1 }`
-        // from the controller state
-      }
-    }
-    ```
+  this.route('posts', function() {
+    this.queryParams('foo', 'baz');
+
+    this.route('new');
+    this.route('index');
+    this.route('show');
+  });
+})
+```
+
+This method of dealing with query params implies the following:
+ - All query params, even if not specified are allowed. given the above example, I could use the qp "strongestAvenger" anywhere
+ - Any sort of transition will clear the query params, unless it is defined as a sticky queryParam. So, if I'm on the posts/new route with the query params "foo" and "baz", and transition to posts/show, those query params are still available. but if I navigate to the faq page, foo and baz are cleared from the URL.
+ - The globally defined query params will stick around until cleared manually. If I visit faq?bar=2, and then transition to posts. the bar=2 query param will still be present.
+ - The `this.queryParams` function will be available at every nesting of the route tree.
+
+Notes: 
+ - This does not imply a caching mechanism (like what controllers today allow)
+ - If a certain app wants caching of query params as they exist today, an addon could be made to fill that gap. 
 
 
 The biggest change needed, which could _potentially_ be a breaking change, is that the allow-list on routes' queryParams hash will need to be removed. The controller-based way is static in that all known query params must be specified on the controller ahead of time. This has been a great deal of frustration amongst many developers, both new and old to ember.
 This is a dynamic way to manage query params which hopefully aligns more with people's mental model of query params. 
-
 
 ### Setting Query Params
 
@@ -150,14 +154,6 @@ this.router.setQueryParameters({
 Just as it is today, setting query params in this way would not trigger a transition.
 The key-value state of set query params would be available on `<RouterService>#queryParams` as well as an existing controller's computed properties as they exist today.
 
-This doesn't change the existing functionality where objects and arrays are still not correctly serialized to their URI-string counterparts.
-
-To address that, a long standing issue from as far back as 2016,
-some new functionality for serialization and deserialization would be powered by [qs](https://www.npmjs.com/package/qs) ([3.4kb (gzip+min)](https://bundlephobia.com/result?p=qs@6.7.0)) -- which would enable the setting of arrays and objects.
-
-
-Alternatively, [URLSearchParams](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams) is a built-in feature of browsers, and there exists a polyfill for IE11. This might be lighter weight than pulling in qs. 
-
 ## How we teach this
 
 Currently, query params _must_ be [specified on the controller](https://guides.emberjs.com/release/routing/query-params/):
@@ -177,8 +173,6 @@ export default class extends Controller {
   }
 }
 ```
-
-This will no longer be true. However, controllers will still manage the long-term state of the query params as they do today.
 
 Having query-param-related computed properties available everywhere will be a shift in thinking that "the controller manages query params" to "query params are a routing concern and are on the router service"
 
@@ -205,8 +199,4 @@ export default class ApplicationRoute extends Route {
 ## Drawbacks
 
 - Some people may be relying on the controller query-params allow-list.
-
-## Alternatives
-
-React Router, for example, includes the query params as a string with every Route component via the `location` object.
-They also provide url segments, which may also be handy, but for now, may be outside the scope of this RFC.
+- Some people may be super tied in to controller query params cacheing.
