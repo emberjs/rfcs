@@ -7,23 +7,23 @@
 
 ## Summary
 
+ - Goal: For components to eventually make up the entirety of the view layer
  - Provide alternative APIs that encompass existing behavior currently implemented by controllers.
    1. query params
    2. passing state and handling actions to/from the template
 
  - Out of scope:
-   - Deprecating and eliminating controllers -- but the goal of this RFC is to provide a path to remove controllers from Ember altogether. 
+   - Deprecating and eliminating controllers -- but the goal of this RFC is to provide a _path_ to remove controllers from Ember altogether. 
 
  - Not Proposing
-   - Adding the ability to access more properties than `model` from the route template
    - Adding the ability to invoke actions on the route.
-   - Any changes to the `Route`
+   - Any changes to the `Route` or `Controller` as they exist today
    
 This'll explore how controllers are used and how viable alternatives can be for migrating away from controllers so that they may eventually be removed.
 
 ## Motivation
 
- - Many were excited about [Routable Components](https://github.com/ef4/rfcs/blob/routeable-components/active/0000-routeable-components.md).
+ - Many were excited about [Routable Components](https://github.com/ef4/rfcs/blob/routeable-components/active/0000-routeable-components.md) (This RFC is _not_ "Routable Components").
  - Many agree that controllers are awkward, and should be considered for removal (as mentioned in many #EmberJS2019 Roadmap blogposts).
  - There is, without a doubt, some confusion with respect to controllers:
    - should actions live on controllers?
@@ -48,85 +48,19 @@ All of this behavior can be implemented elsewhere, and most of what controllers 
 
 ### 1. Query Params
 
-In this other RFC that [proposes adding a @queryParam decorator and service to manage query params](https://github.com/emberjs/rfcs/pull/380), query-param management would be pulled out of the controller entirely.
-
-Presently, query params live on controllers, which are singletons, allowing query param values to be set, and unset, when navigation to and away from a route. Query params can have the same behavior implemented on a service, which can be tested out on an addon, [ember-query-params-service](https://github.com/NullVoxPopuli/ember-query-params-service).
-
-Behavior like `replaceState` and `refreshModel: true`, would still live on the route as that behavior is more of a route concern than it is a concern of the value of the query params.
-
-- **Mapping a Query Param to state**
-
-  Old: query params _must_ come from a controller.
-  ```ts
-  import Controller from '@ember/controller';
-
-  export default class SomeController extends Controller {
-    queryParams = ['foo'];
-    foo = null;
-  }
-  ```
-  ```hbs
-  <SomeComponent @foo={{this.foo}} />
-  ```
-
-  New: query params can be used anywhere via dependency injection.
-  ```ts
-  import Component from "@glimmer/component";
-  import { queryParam } from "ember-query-params-service";
-
-  export default class SomeComponent extends Component {
-    @queryParam foo;
-
-    addToFoo() {
-      this.foo = (this.foo || 0) + 1;
-    }
-  }
-  ```
-
-- **Mapping a Query Param to a state of a different name**
-
-  Old: controller must exist to define query params
-  ```ts
-  import Controller from '@ember/controller';
-
-  export default class SomeController extends Controller {
-    queryParams = {foo: 'bar' };
-    bar = null;
-  }
-  ```
-
-  New: No controller exists
-  ```ts
-  import Component from "@glimmer/component";
-  import { queryParam } from "ember-query-params-service";
-
-  export default class SomeComponent extends Component {
-    @queryParam('foo') bar;
-
-    addToFoo() {
-      this.bar = (this.bar || 0) + 1;
-    }
-  }
-  ```
+See this RFC for [adding query params to the router service](https://github.com/emberjs/rfcs/pull/380), query-param management would be pulled out of the controller entirely.
 
 ### 2. Passing State and Handling Actions to/from the Template
 
 In order to fully eliminate the controller, there _must_ be a way to handle computed properties or state along with responding to actions from the template. Components can cover this already, and would be an intuitive way to interact with the view and behavioral layer.
 
 Currently, controllers + templates must be used in the app by having:
- - for classic apps:
-   - `app/controllers/{my-route-name/or-path}.js`
-   - `app/templates/{my-route-name/or-path}.hbs`
- - for pods apps:
-   - `{pod-namespace}/{my-route-name/or-path}/controller.js`
-   - `{pod-namespace}/{my-route-name/or-path}/template.hbs`
- - for MU or (future) MU-inspired layouts:
-   - `src/ui/routes/{my-route-name/or-path}/controller.js`
-   - `src/ui/routes/{my-route-name/or-path}/template.hbs`
+  - `app/controllers/{my-route-name/or-path}.js`
+  - `app/templates/{my-route-name/or-path}.hbs`
 
-The proposed new behavior would be that when a controller is not present, and there is only a template, that template becomes a template-only/stateless component. The template-only/stateless component has a number of advantages as it forces the developer to separate UI layout and to think about the semantic breakdown of the template. Here are some existing examples of template-only/stateless route templates in an app made today:
+The proposed new behavior would be that when a controller is not present, and there is only a route template, that template becomes a template-only/stateless component (no backing js file). The template-only/stateless component has a number of advantages as it forces the developer to separate UI layout and to think about the semantic breakdown of the template. Here are some existing examples of template-only/stateless route templates in an app made today:
 
-from emberclear.io
+from emberclear.io (using module unification)
  - [routes/application/template.hbs](https://github.com/NullVoxPopuli/emberclear/blob/master/packages/frontend/src/ui/routes/application/template.hbs)
  - [routes/contacts/template.hbs](https://github.com/NullVoxPopuli/emberclear/blob/master/packages/frontend/src/ui/routes/contacts/template.hbs)
 
@@ -144,28 +78,23 @@ Sample:
 </section>
 ```
 
-Everything is encapsulated in components so that intent is clear as to which part of the template is responsible for what behavior. However, this is only the simplest use case, where all derived state is handled by the components rendered by the existing template.
+Everything is encapsulated in components so that intent is clear as to which part of the template is responsible for what behavior. 
 
-For the case where we _need_ derived state at the root of our route's tree.
- - for classic apps:
-   - `app/components/{my-route-name/or-path}.js`
-   - `app/templates/{my-route-name/or-path}.hbs`
- - for pods apps:
-   - `{pod-namespace}/{my-route-name/or-path}/component.js`
-   - `{pod-namespace}/{my-route-name/or-path}/template.hbs`
- - for classic apps after [RFC #481](https://github.com/emberjs/rfcs/pull/481) (Colocated Component and Template files)
-   - `app/components/{my-route-name/or-path}.js`
-   - `app/components/{my-route-name/or-path}.hbs`
- - for MU or (future) MU-inspired layouts:
-   - `src/ui/routes/{my-route-name/or-path}/component.js`
-   - `src/ui/routes/{my-route-name/or-path}/template.hbs`
+The reason for explicitly calling out this behavior of template-only components at the route-level is because the template already exists there today, and if we make it a component, that makes future transitions easier.  Making the route template a component _only_ means that instead of only existing a `this.model`, there would be a `@model` argument.
 
-For current classic apps, this may feel a bit like resolution magic, but it's just the same lookup rule as for controllers, just in a different folder. This changes makes more contextual sense with pods and module unification (or some future derivitive of module unification) where the backing context to the template is co-located alongside the template.
+However, this is only the simplest use case, where all derived state is handled by the components rendered by the existing route template.
+
+For the case where we _need_ derived state at the root of our route's tree, we _only_ add a resolution to a component of the same name..
+  - `app/components/{my-route-name/or-path}.js`
+  - `app/templates/{my-route-name/or-path}.hbs`
+ 
+It's just the same lookup rule as for controllers, just in a different folder. If people end up having a ton of top-level state-based components per route, their component sturcture will end up matching their routing structure. This is fine, as it means that certain components are _only_ used for particular routes, which may make the unification of to a new layout more straight forward.
 
 These are not "routable components", but components that are invoked after the `model` hook resolves in the route, recieving only a single property `@model`.
 
  - Before: with controllers
     ```ts
+    // app/routes/some.js
     import Route from '@ember/routing/route';
 
     export default class SomeRoute extends Route {
@@ -177,6 +106,7 @@ These are not "routable components", but components that are invoked after the `
     }
     ```
     ```ts
+    // app/controllers/some.js
     import Controller from '@ember/controller';
 
     export default class SomeController extends Controller {
@@ -188,6 +118,7 @@ These are not "routable components", but components that are invoked after the `
     }
     ```
     ```hbs
+    {{!-- app/templates/some.hbs --}}
     {{#each this.onlineContacts as |contact|}}
       {{contact.name}}
     {{/each}}
@@ -195,6 +126,7 @@ These are not "routable components", but components that are invoked after the `
 
  - After: the controller is swapped for a component 
      ```ts
+    // app/routes/some.js
     import Route from '@ember/routing/route';
 
     export default class SomeRoute extends Route {
@@ -206,6 +138,7 @@ These are not "routable components", but components that are invoked after the `
     }
     ```
     ```ts
+    // app/components/some.js
     import Component from "@glimmer/component";
 
     export default class SomeComponent extends Component {
@@ -219,6 +152,7 @@ These are not "routable components", but components that are invoked after the `
     }
     ```
     ```hbs
+    // app/templates/components/some.js
     {{#each this.onlineContacts as |contact|}}
       {{contact.name}}
     {{/each}}
@@ -239,24 +173,24 @@ Given a visit to `/posts`
   - this component is invoked _as if_ `template:posts` was defined as `<Posts @model={{this.model}} />`
 - default to `{{outlet}}` or `{{yield}}` for sub routes
 
-**NOTE** as a side effect of treating the default template in this manner, it would become a requirement, in order to maintain cohesion, that we treat loading and error templates similar to the above lookup rules.
+**NOTE** as a side effect of treating the default template in this manner, it would become a requirement, in order to maintain cohesion, that we treat loading and error templates similar to the above lookup rules. This means that loading and error components can be used with service injections, and other state.
 
 ## How we teach this
 
 Since this is a new programming paradigm, we'll want to update the guides and tutorials to reflect a new "happy path".
  - Remove most mentions of controllers in the guides / tutorials. maybe just leave the bare informational "what controllers are", at least until a deprecation can be figured out.
- - Swap out the controllers page in the guides for a page that shows examples of how a component is chosen to be the entry point / outlet of the route. Additionally on this page, it should mention that there can be an optional template (like we have today) that receives the `@model` argument that takes priority over any component with the same name as the route and without any template at all, it's just an `{{outlet}}` for subroutes. 
+ 
+ - Swap out the controllers page in the guides for a page that shows examples of how a component is chosen to be the entry point / outlet of the route. Additionally on this page, it should mention that there is a default template (like we have today) that receives the `@model` argument that takes priority over any component with the same name as the route and without any template at all, it's just an `{{outlet}}` for subroutes.  
  
     The controllers page for octane has already moved under routing, so talking about just rendering behavior should make things feel simpler.
     
  - There is already a separate guides page for query params. Query params should remain on their own page, but just be updated to use the `@queryParam` decorator, as described in [RFC 380](https://github.com/emberjs/rfcs/pull/380)
 
-
 ## Drawbacks
 
-It's very important that every use case for controllers today _can_ be implemented using the aforementioned techniques. If people are willing to share their controller scenarios, we can provide a library of examples of translation so that others may migrate more quickly.
+It's important that common use cases for controllers today _can_ be implemented using the aforementioned techniques. If people are willing to share their controller scenarios, we can provide a library of examples of translation so that others may migrate more quickly.
 
-It may be possible to write a codemod to help with the migration as the biggest difference, at leaste in this RFC's initial samples is that `model` is accessed on `this.args` instead of just `this`.  The tool and maybe even a linter rule could look for pre-existing components that have any of the same names as routes, and assert that they handle the `model` argument.
+It may be possible to write a codemod to help with the migration as the biggest difference, at least in this RFC's initial samples is that `model` is accessed on `this.args` instead of just `this`.  The tool and maybe even a linter rule could look for pre-existing components that have any of the same names as routes, and assert that they handle the `model` argument.
 
 
 ## Unresolved questions
