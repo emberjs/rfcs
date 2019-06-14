@@ -173,7 +173,7 @@ Given a visit to `/posts`
   - this component is invoked _as if_ `template:posts` was defined as `<Posts @model={{this.model}} />`
 - default to `{{outlet}}` or `{{yield}}` for sub routes
 
-**NOTE** as a side effect of treating the default template in this manner, it would become a requirement, in order to maintain cohesion, that we treat loading and error templates similar to the above lookup rules. This means that loading and error components can be used with service injections, and other state.
+**NOTE** as a side effect of treating the default template in this manner, it would become a requirement, in order to maintain cohesion, that we treat loading and error templates similar to the above lookup rules. This means that loading and error components can be used with service injections, and other state. The error template currently receive a `this.model`, but that will be changed to `@error` for components and be the error that caused the error template/component to render (existing behavior will not be changed)`
 
 ## How we teach this
 
