@@ -68,7 +68,6 @@ A new map can exist on the registry that can appropriately be wired up to regist
 
 Instead of using strings or inferred injections, the guides should be updated to use the Class definition of a service that it intends to inject.
 
-Eventually, we'll want to introduce a deprecation for string injections to minimize different injection techniques.
 
 ## Drawbacks
 
