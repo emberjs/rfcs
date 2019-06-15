@@ -3,7 +3,7 @@
 - RFC PR: https://github.com/emberjs/rfcs/pull/502
 - Tracking: (leave this empty)
 
-# Explicit Dependency Injection
+# Explicit Service Injection
 
 ## Summary
 
