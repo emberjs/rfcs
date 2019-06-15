@@ -53,7 +53,15 @@ function service(nameOrClass) {
 
 In order for `lookup` to be able to take a class definition as an argument, there will need to be an alternative way to _lookup_ instances of services by the class.
 
-A new map can exist on the registry that can appropriately registers, unregisters, etc by class definition at the same time as the current registry behaves, allowing for backward compatibility with todays injection usage.
+On the `Registry`, there already exists a reference to the class definition when registering an entry to the container.
+
+```ts
+registry.register('model:user', Person, {singleton: false });
+registry.register('fruit:favorite', Orange);
+registry.register('communication:main', Email, {singleton: false});
+```
+
+A new map can exist on the registry that can appropriately be wired up to register, unregister, etc to handle the lookup-by-class-definition at the same time as the current registry behaves, allowing for backward compatibility with todays injection usage.
 
 
 ## How we teach this
