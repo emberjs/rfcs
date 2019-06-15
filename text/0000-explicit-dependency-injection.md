@@ -73,3 +73,16 @@ Eventually, we'll want to introduce a deprecation for string injections to minim
     This would likely result in faster lookup, but would require more upfront work to change how the lookup method works on the `ApplicationInstance` / "owner". This _could_ be a separate RFC, but without benchmarking it's hard to say if this massive of a change would be worth it.
 
  - in C# + asp.net core, dependency injections are resolved in the constructor of a class. This would be _even more verbose_ than what is being proposed in this RFC, as for many situations in Ember, the constructor can be omitted. 
+
+
+ ## Unresolved Questions
+
+ These may be more for implementation, but as I was tracing how injections work.. it looks like the control flow path is:
+  - `@service`
+  - `appInstance.lookup`
+    - `engineInstance.lookup` (Application inherits from Engine) 
+      - registry defined on `RegistryProxyMixin`
+      - instantiated via `this.buildRegistry();`
+      - registry is an instance of `Registry`
+        - defined at `ember.js/packages/@ember/-internals/container/lib/registry.ts` 
+          - in here is where the bulk of the implementation of this RFC would live? (along with updating the type signatures of the methods all the way up the call tree (where not inferred))
