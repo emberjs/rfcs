@@ -1,6 +1,6 @@
 - Start Date: 2019-06-14
 - Relevant Team(s): (fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies)
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/502
 - Tracking: (leave this empty)
 
 # Explicit Dependency Injection
