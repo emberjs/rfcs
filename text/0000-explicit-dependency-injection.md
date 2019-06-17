@@ -63,6 +63,44 @@ registry.register('communication:main', Email, {singleton: false});
 
 A new map can exist on the registry that can appropriately be wired up to register, unregister, etc to handle the lookup-by-class-definition at the same time as the current registry behaves, allowing for backward compatibility with todays injection usage.
 
+Examples: 
+
+(also pardon the naming, as it's for demonstration of the _roles_ that each class definition can have)
+```ts
+// This behaves as the base implementation
+class MyInterface extends Service {
+  @tracked foo = 0;
+
+  add() {
+    this.foo++;
+  }
+}
+
+// registration would look like it is today
+appInstance.register(MyInterface, MyInterface);
+// where we register MyInterface on the *key* MyInterface,
+//  just as today, it would look like
+appInstance.register('service:my-interface', MyInterface);
+```
+Now, where this _IS_ Dependency Injection, and how we aren't just using the concrete class all the time is where you can do things like this
+
+```ts
+class MyImplementation extends MyInterface {
+  add() {
+    this.foo += 2;
+  }
+}
+
+// both stubbing (in a test), or clobbering, would look the same
+appInstance.register(MyInterface, MyImplementation);
+
+const service = appInstance.lookup(MyInstance);
+
+instanceof service === MyImplementation // true
+instanceof service === MyInterface // true
+```
+
+
 
 ## How we teach this
 
