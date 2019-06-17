@@ -96,8 +96,8 @@ appInstance.register(MyInterface, MyImplementation);
 
 const service = appInstance.lookup(MyInstance);
 
-instanceof service === MyImplementation // true
-instanceof service === MyInterface // true
+service instanceof MyImplementation // true
+service instanceof MyInterface // true
 ```
 
 
