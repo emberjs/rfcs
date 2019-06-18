@@ -7,10 +7,16 @@
 
 ## Summary
 
- - Goal: For components to eventually make up the entirety of the view layer
+_The goal is for components to make up the entirety of the view layer_.
+
+ - Requires:
+   - [RFC 496: Handlebars Strict Mode](https://github.com/emberjs/rfcs/pull/496)
+   - [RFC 454: SFC & Template Import Primitives](https://github.com/emberjs/rfcs/pull/454)
+   - [RFC 380: Add queryParams to the router service](https://github.com/emberjs/rfcs/pull/380)
+
  - Provide alternative APIs that encompass existing behavior currently implemented by controllers.
    1. query params
-   2. passing state and handling actions to/from the template
+   2. passing state and handling actions to/from the route, loading, and error templates
 
  - Out of scope:
    - Deprecating and eliminating controllers -- but the goal of this RFC is to provide a _path_ to remove controllers from Ember altogether. 
@@ -58,142 +64,64 @@ Currently, controllers + templates must be used in the app by having:
   - `app/controllers/{my-route-name/or-path}.js`
   - `app/templates/{my-route-name/or-path}.hbs`
 
-The proposed new behavior would be that when a controller is not present, and there is only a route template, that template becomes a template-only/stateless component (no backing js file). The template-only/stateless component has a number of advantages as it forces the developer to separate UI layout and to think about the semantic breakdown of the template. Here are some existing examples of template-only/stateless route templates in an app made today:
+The new behavior would allow components to be imported from anywhere in the app, and assigned to static properties on the Route.
 
-from emberclear.io (using module unification)
- - [routes/application/template.hbs](https://github.com/NullVoxPopuli/emberclear/blob/master/packages/frontend/src/ui/routes/application/template.hbs)
- - [routes/contacts/template.hbs](https://github.com/NullVoxPopuli/emberclear/blob/master/packages/frontend/src/ui/routes/contacts/template.hbs)
+```ts
+import FooComponent, { LoadingComponent, ErrorComponent } from './components/Foo';
+import Route from '@ember/routing/route';
 
-Sample:
+export default class extends Route {
+  static render = FooComponent;
+  static loading = LoadingComponent;
+  static error = ErrorComponent;
 
-```hbs
-<section class='section'>
-  <div class='container'>
-    <Header @contacts={{this.model.contacts}} />
-
-    <div class='content'>
-      <ContactTable />
-    </div>
-  </div>
-</section>
+  async model() {
+    const contacts = await this.store.findAll('contact');
+    
+    return { contacts };
+  }
+}
 ```
 
-Everything is encapsulated in components so that intent is clear as to which part of the template is responsible for what behavior. 
+Everything is encapsulated in components so that intent is clear as to which part of the template is responsible for what behavior.
+Additionally, all three properties may be set to the same component if it was desired to manage loading, error, and success states within components.
 
-The reason for explicitly calling out this behavior of template-only components at the route-level is because the template already exists there today, and if we make it a component, that makes future transitions easier.  Making the route template a component _only_ means that instead of only existing a `this.model`, there would be a `@model` argument.
+This RFC proposes _three_ new static properties on the Route class.
 
-However, this is only the simplest use case, where all derived state is handled by the components rendered by the existing route template.
+#### **render**
 
-For the case where we _need_ derived state at the root of our route's tree, we _only_ add a resolution to a component of the same name..
-  - `app/components/{my-route-name/or-path}.js`
-  - `app/templates/{my-route-name/or-path}.hbs`
- 
-It's just the same lookup rule as for controllers, just in a different folder. If people end up having a ton of top-level state-based components per route, their component sturcture will end up matching their routing structure. This is fine, as it means that certain components are _only_ used for particular routes, which may make the unification of to a new layout more straight forward.
+This is the component that will be rendered after the model hook resolves.
+Today, there is a default template generated per-route that only contains `{{outlet}}`. In order to not break that behavior, the `render` property must not be required until both controllers and the route template are removed from the framework, after a deprecation RFC and the deprecation process).
 
-These are not "routable components", but components that are invoked after the `model` hook resolves in the route, recieving only a single property `@model`.
+If set, and there exists a classic route template, an error will be thrown saying that there is a conflict.
 
- - Before: with controllers
-    ```ts
-    // app/routes/some.js
-    import Route from '@ember/routing/route';
+The render component will receive the `@model` argument, which represents the value of a resolved `model` hook.
 
-    export default class SomeRoute extends Route {
-      async model() {
-        const contacts = await this.store.findAll('contact');
+#### **loading**
 
-        return { contacts };
-      }
-    }
-    ```
-    ```ts
-    // app/controllers/some.js
-    import Controller from '@ember/controller';
+This is the component that will be rendered before the model hook has resolved, if present. 
 
-    export default class SomeController extends Controller {
-      get onlineContacts() {
-        return this.model.contacts.filter(contact => {
-          return contact.onlineStatus === 'online';
-        });
-      }
-    }
-    ```
-    ```hbs
-    {{!-- app/templates/some.hbs --}}
-    {{#each this.onlineContacts as |contact|}}
-      {{contact.name}}
-    {{/each}}
-    ```
+If set, and there exists a classic loading template, an error will be thrown saying that there is a conflict.
 
- - After: the controller is swapped for a component 
-     ```ts
-    // app/routes/some.js
-    import Route from '@ember/routing/route';
+The loading component does not receive any arguments.
 
-    export default class SomeRoute extends Route {
-      async model() {
-        const contacts = await this.store.findAll('contact');
+#### **error**
 
-        return { contacts };
-      }
-    }
-    ```
-    ```ts
-    // app/components/some.js
-    import Component from "@glimmer/component";
+This is the component that will be rendered if an error is thrown as they are thrown today.
 
-    export default class SomeComponent extends Component {
-      get onlineContacts() {
-        const { model } = this.args;
-        
-        return model.contacts.filter(contact => {
-          return contact.onlineStatus === 'online';
-        });
-      }
-    }
-    ```
-    ```hbs
-    // app/templates/components/some.js
-    {{#each this.onlineContacts as |contact|}}
-      {{contact.name}}
-    {{/each}}
-    ```
+If set, and there exists a classic error template, an error will be thrown saying that there is a conflict.
 
-### Lookup Priority Rules
-
-For each of these, assume that all parent routes/templates/etc have resolved.
-Because there are 4 or 5 project structure layouts in flux, the notation here is what is used inside the resolver.
-
-Given a visit to `/posts`
-- lookup `template:posts`  
-  - if a controller exists, the template will be rendered as it is today.  
-  - if a controller does not exist, a template-only component will be assumed, passing the `@model` argument. This will make interop between controllers' templates and template-only component / used-for-route template components inconsistent, so controllers' templates should also get a `@model` argument.
-  - if a component by the same name exists, it is ignored and must be invoked manually.
-- lookup a component named "posts", `component:posts` and `template:components/posts`.   
-  NOTE: if the `template:posts` template was found, this step does not happen.  
-  - this component is invoked _as if_ `template:posts` was defined as `<Posts @model={{this.model}} />`
-- default to `{{outlet}}` or `{{yield}}` for sub routes
-
-**NOTE** as a side effect of treating the default template in this manner, it would become a requirement, in order to maintain cohesion, that we treat loading and error templates similar to the above lookup rules. This means that loading and error components can be used with service injections, and other state. The error template currently receive a `this.model`, but that will be changed to `@error` for components and be the error that caused the error template/component to render (existing behavior will not be changed)`
+The error component will receive the `@error` argument, which will be the error object that is presently passed to the error action.
 
 ## How we teach this
 
-Since this is a new programming paradigm, we'll want to update the guides and tutorials to reflect a new "happy path".
- - Remove most mentions of controllers in the guides / tutorials. maybe just leave the bare informational "what controllers are", at least until a deprecation can be figured out.
- 
- - Swap out the controllers page in the guides for a page that shows examples of how a component is chosen to be the entry point / outlet of the route. Additionally on this page, it should mention that there is a default template (like we have today) that receives the `@model` argument that takes priority over any component with the same name as the route and without any template at all, it's just an `{{outlet}}` for subroutes.  
- 
-    The controllers page for octane has already moved under routing, so talking about just rendering behavior should make things feel simpler.
-    
- - There is already a separate guides page for query params. Query params should remain on their own page, but just be updated to use the `@queryParam` decorator, as described in [RFC 380](https://github.com/emberjs/rfcs/pull/380)
+TODO: write this
 
 ## Drawbacks
 
-It's important that common use cases for controllers today _can_ be implemented using the aforementioned techniques. If people are willing to share their controller scenarios, we can provide a library of examples of translation so that others may migrate more quickly.
-
-It may be possible to write a codemod to help with the migration as the biggest difference, at least in this RFC's initial samples is that `model` is accessed on `this.args` instead of just `this`.  The tool and maybe even a linter rule could look for pre-existing components that have any of the same names as routes, and assert that they handle the `model` argument.
-
+- Routes may feel like they are configuration (this may be fine)
 
 ## Unresolved questions
 
- - What use cases of controllers are not covered here?
-
+ - Should this RFC include the idea that's been floating around recently where `Route` defines an `arguments` getter where those arguments are splatted onto the `render` component, rather than receiving a single `@model` argument. This would mean that the `Route` would need to have a way to manage the resolved model so that `arguments` doesn't need to worry about pending promises.
+ - For error templates today, is `this.model` the error?
