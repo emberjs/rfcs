@@ -402,8 +402,3 @@ In the release that makes these capabilities a default, any pages mentioning the
 ## Drawbacks
 
 - Routes may feel like they are configuration (this may be fine)
-
-## Unresolved questions
-
- - Should this RFC include the idea that's been floating around recently where `Route` defines an `arguments` getter where those arguments are splatted onto the `render` component, rather than receiving a single `@model` argument. This would mean that the `Route` would need to have a way to manage the resolved model so that `arguments` doesn't need to worry about pending promises.
- - For error templates today, is `this.model` the error?
