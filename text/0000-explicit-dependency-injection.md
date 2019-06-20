@@ -142,6 +142,9 @@ Examples:
     } 
 
     // app/components/my-component.js
+    import Component from '@glimmer/component';
+    import { inject as service } from '@ember/service';
+
     class MyComponent extends Component {
       @service(CookieService) cookie;
     }
@@ -150,10 +153,10 @@ Examples:
     import CookieService from 'app-name/services/cookies/cookie-service';
 
     class FastbootCookieService extends CookieService {
-      // ...
       getValue(key: string) {
         return '';
       }
+      // ...
     }
 
     // app/services/cookie/browser-service.js
@@ -166,7 +169,7 @@ Examples:
           url: window.location.href
         })
       }
-      /// ...
+      // ...
     }
 
     // app/instance-initializers/register-cookie-service;
