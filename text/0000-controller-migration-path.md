@@ -86,7 +86,25 @@ export default class extends Route {
 Everything is encapsulated in components so that intent is clear as to which part of the template is responsible for what behavior.
 Additionally, all three properties may be set to the same component if it was desired to manage loading, error, and success states within components.
 
-This RFC proposes _three_ new static properties on the Route class.
+Depending on the state of the model hook, the different components will be rendered at have splatted arguments following this type signature:
+
+```ts
+enum State {
+  Loading = "loading",
+  Resolved = "resolved",
+  Error = "error"
+}
+
+type RouteState<Data, E> =
+  | { state: State.Loading }
+  | { state: State.Resolved, data: Data }
+  | { state: State.Error, error: E };
+```
+
+for non-typescript users, the values of splatted to the components will still adhere to the type signature.
+
+
+This RFC proposes _three_ new static properties on the Route class as well the above mapping for arguments to the components for the static properties.
 
 #### **render**
 
@@ -95,7 +113,7 @@ Today, there is a default template generated per-route that only contains `{{out
 
 If set, and there exists a classic route template, an error will be thrown saying that there is a conflict.
 
-The render component will receive the `@model` argument, which represents the value of a resolved `model` hook.
+The render component will receive the `@state` argument as well as the `@data` argument, which represents the value of a resolved `model` hook.
 
 #### **loading**
 
@@ -103,7 +121,7 @@ This is the component that will be rendered before the model hook has resolved, 
 
 If set, and there exists a classic loading template, an error will be thrown saying that there is a conflict.
 
-The loading component does not receive any arguments.
+The loading component only receives the `@state` argument.
 
 #### **error**
 
@@ -111,11 +129,275 @@ This is the component that will be rendered if an error is thrown as they are th
 
 If set, and there exists a classic error template, an error will be thrown saying that there is a conflict.
 
-The error component will receive the `@error` argument, which will be the error object that is presently passed to the error action.
+The error component will receive the `@state` argument as well as the `@error` argument, which will be the error object that is presently passed to the error action.
+
+
+## Examples
+
+Note that the _after_ paths are made up to just show that components are being imported from anywhere. Additionally, sample rendering in the template comments is for demonstrative purposes only.
+
+- **a loading template related to the route**
+
+  Given
+  ```ts
+  // app/router.js
+  Router.map(function() {
+    this.route('slow-model');
+  });
+  ```
+
+  Before
+  ```ts
+  // app/routes/slow-model.js
+  import Route from '@ember/routing/route';
+
+  export default class extends Route {
+    async model() {
+      const slow = await this.store.findAll('slow-model');
+
+      return { slow }
+    }
+  }
+  ```
+  ```hbs
+  {{! app/routes/slow-model.hbs}}
+  {{this.model.slow}} 
+
+  {{! app/templates/slow-model-loading.hbs}}
+  Loading...
+  ```
+
+  After
+  ```ts
+  // app/routes/slow-model.js
+  import Route from '@ember/routing/route';
+  import LoaderComponent from './components/loader';
+  import ShowModelComponent from './components/show-the-model';
+
+  export default class extends Route {
+    static loading = LoaderComponent;
+    static render = ShowModelComponent;
+
+    async model() {
+      const slow = await this.store.findAll('slow-model');
+
+      return { slow }
+    }
+  }
+
+  ```
+  ```hbs
+  {{! app/routes/components/show-the-model.hbs}}
+  {{@state}}, {{@data.slow}} {{! renders: "resolved", <Array<SlowModel>> }}
+
+  {{! app/routes/components/loader.hbs}}
+  {{@state}} {{! renders: "loading"}}
+  ```
+
+- **an error template related to the route**
+
+  Given
+  ```ts
+  // app/router.js
+  Router.map(function() {
+    this.route('erroring-model');
+  });
+  ```
+
+  Before
+  ```ts
+  // app/routes/erroring-model.js
+  import Route from '@ember/routing/route';
+
+  export default class extends Route {
+    async model() {
+      throw new Error('whoops');
+    }
+  }
+  ```
+  ```hbs
+  {{! app/routes/erroring-model.hbs}}
+  {{this.model.slow}} {{! never renders}}
+
+  {{! app/templates/slow-model-error.hbs}}
+  {{! this.model is the error instance}}
+  {{this.model.message}} {{! renders: "whoops"}}
+  ```
+
+  After
+  ```ts
+  // app/routes/slow-model.js
+  import Route from '@ember/routing/route';
+  import ErrorComponent from 'app-name/components/errors/route-error';
+  import ShowModelComponent from './components/show-the-model';
+
+  export default class extends Route {
+    static error = LoaderComponent;
+    static render = ShowModelComponent;
+
+    async model() {
+      throw new Error('whoops');
+    }
+  }
+
+  ```
+  ```hbs
+  {{! app/routes/components/show-the-model.hbs}}
+  {{@state}}, {{@data.slow}} {{! never renders }}
+
+  {{! app/components/errors/route-error/template.hbs}}
+  {{@state}} {{@error}} {{! renders: "error", <Error#{ message = 'whoops'}>}}
+  ```
+
+- **all async state to be managed in a component**
+
+  Given
+  ```ts
+  // app/router.js
+  Router.map(function() {
+    this.route('slow-model');
+  });
+  ```
+
+  Before
+  ```ts
+  // app/routes/slow-model.js
+  import Route from '@ember/routing/route';
+
+  export default class extends Route {
+    async model() {
+      const slow = await this.store.findAll('slow-model');
+
+      return { slow }
+    }
+  }
+  ```
+  ```hbs
+  {{! app/routes/slow-model.hbs}}
+  {{this.model.slow}} 
+
+  {{! app/templates/slow-model-loading.hbs}}
+  Loading...
+
+  {{! app/templates/slow-model-error.hbs}}
+  {{this.model.error.message}}
+  ```
+
+
+  After
+  ```ts
+  // app/routes/slow-model.js
+  import Route from '@ember/routing/route';
+  import ShowModelComponent from './components/show-the-model';
+
+  export default class extends Route {
+    static error = ShowModelComponent;
+    static render = ShowModelComponent;
+    static loading = ShowModelComponent;
+
+    async model() {
+      throw new Error('whoops');
+    }
+  }
+
+  ```
+  ```hbs
+  {{! app/routes/components/show-the-model.hbs}}
+  {{#if (eq @state 'loading')}}
+    {{@state}} {{! renders: "loading"}}
+  {{else if (eq @state 'error')}}
+    {{@state}} {{@error}} {{! renders: "error", <Error#{ message = 'timeout?'}>}}
+  {{else}}
+    {{@state}}, {{@data.slow}} {{! renders: "resolved", <Array<SlowModel>> }}
+  {{/if}}
+  ```
+
+- **all async state to be managed in a component with backing class**
+  ```ts
+  // app/routes/slow-model.js
+  import Route from '@ember/routing/route';
+  import ShowModelComponent from './components/show-the-model';
+
+  export default class extends Route {
+    static error = ShowModelComponent;
+    static render = ShowModelComponent;
+    static loading = ShowModelComponent;
+
+    async model() {
+      throw new Error('whoops');
+    }
+  }
+
+  // app/routes/components/show-the-model.js;
+  import Component from '@glimmer/component';
+  import { inject as service } from '@ember/service';
+  
+  export default class extends Component {
+    @service router;
+    @tracked readyYet = 'no';
+
+    @action 
+    onUpdate(/* element */) {
+      switch (args.state) {
+        case 'resolved':
+          this.readyYet = 'yes';
+          break;
+        case 'loading':
+          this.readyYet = 'loading!';
+          break;
+        case 'error':
+          this.router.transitionTo('some-other-place');
+          break;
+        default:
+          // can't actually get here
+          break;
+      }
+    }
+  }
+
+  ```
+  ```hbs
+  <div {{did-update this.onUpdate}}>
+    {{this.readeYet}}
+  
+    {{! app/routes/components/show-the-model.hbs}}
+    {{#if (eq @state 'resolved')}}
+      {{@state}}, {{@data.slow}} {{! renders: "resolved", <Array<SlowModel>> }}
+    {{/if}}
+  </div>
+  ```
+
+  The component signature in typescript could be something like this:
+
+  ```ts
+  import Component from '@glimmer/component';
+  import { RouteState } from '@ember/routing/route';
+
+  type Data = {
+    user?: User;
+    slow: SlowModel[]; 
+  };
+
+  type PossibleErrors = ClientError | NetworkError;
+  type Args = RouteState<Data, PossibleErrors>;
+
+  export default class extends Component<Args> {
+    // ...
+  }
+  ```
+
+
 
 ## How we teach this
 
-TODO: write this
+The RFCs, [496](https://github.com/emberjs/rfcs/pull/496) and [454](https://github.com/emberjs/rfcs/pull/454) are mainly required for the conceptual ideas that there can exist a world with no component resolver lookups and that components can be imported explicitly.
+
+The current / classic / old ways of having the resolver _able_ to look up components isn't going to go away any time soon though. For backwards compatibility it most stay for a while. But as this'd be the recommended/explicit path forward, documentation/guides/etc will be updated to show how to use the aforementioned static properties as well as describing how the model hook is mapped to each of the components. 
+
+More specifically recommended will be to use a separate component for each of the three states, but there should still be examples (as above) showing the one-component-does-everything approach.
+
+In the release that makes these capabilities a default, any pages mentioning the controller, or the route template, or the loading/error templates should be removed or updated to fit the new way of using components
+
 
 ## Drawbacks
 
