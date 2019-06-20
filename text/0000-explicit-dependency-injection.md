@@ -51,7 +51,7 @@ function service(nameOrClass) {
 }
 ```
 
-In order for `lookup` to be able to take a class definition as an argument, there will need to be an alternative way to _lookup_ instances of services by the class. Though, when I classes is used for lookup, if there is no existing registration found, lookup _will register the class and instantiate it for you_.
+In order for `lookup` to be able to take a class definition as an argument, there will need to be an alternative way to _lookup_ instances of services by the class. Though, when a class is used for lookup, if there is no existing registration found, lookup _will register the class and instantiate it for you_.
 
 Consider:
 
@@ -80,40 +80,112 @@ A new map can exist on the registry that can appropriately be wired up to regist
 
 Examples: 
 
-(also pardon the naming, as it's for demonstration of the _roles_ that each class definition can have)
-```ts
-// This behaves as the base implementation / abstract class
-class MyInterface extends Service {
-  @tracked foo = 0;
+ - **service registration and override**
+    ```ts
+    class MyFooService extends Service {
+      @tracked foo = 0;
 
-  add() {
-    this.foo++;
-  }
-}
+      add() {
+        this.foo++;
+      }
+    }
 
-// registration would look like it is today
-appInstance.register(MyInterface, MyInterface);
-// where we register MyInterface on the *key* MyInterface,
-//  just as today, it would look like
-appInstance.register('service:my-interface', MyInterface);
-```
-Now, where this _IS_ Dependency Injection, and how we aren't just using the concrete class all the time is where you can do things like this
+    appInstance.register(MyFooService, MyFooService);
+    // this would register MyFooService on the *key* MyFooService,
+    // just as today, it would look like
+    appInstance.register('service:my-foo-service', MyFooService);
+    ```
+    Now, where this _IS_ Dependency Injection, and how we aren't just using the concrete class all the time is where you can do things like this
 
-```ts
-class MyImplementation extends MyInterface {
-  add() {
-    this.foo += 2;
-  }
-}
+    ```ts
+    // note that this must share ancestry with the registered service.
+    class MyFooOverrideService extends MyFooService {
+      add() {
+        this.foo += 2;
+      }
+    }
 
-// both stubbing (in a test), or clobbering, would look the same
-appInstance.register(MyInterface, MyImplementation);
+    // both stubbing (in a test), or clobbering, would look the same
+    appInstance.register(MyFooService, MyFooOverrideService);
 
-const service = appInstance.lookup(MyInstance);
+    const service = appInstance.lookup(MyFooService);
 
-service instanceof MyImplementation // true
-service instanceof MyInterface // true
-```
+    service instanceof MyFooOverrideService // true
+    service instanceof MyFooService // true
+    ```
+
+ - **less typing for lazy registration**
+    ```ts
+    class MyFooService extends Service {
+      @tracked foo = 0;
+
+      add() {
+        this.foo++;
+      }
+    }
+
+    // the above service has not been registered yet
+    const myFooService = appInstance.lookup(MyFooService);
+    // first time lookup without registration will register for you.
+
+    myFooService instanceof MyFooService // true
+    ```
+
+ - **typescript fastboot example with instance initializers**
+  
+    ```ts
+    // app/services/cookie/cookie-service.ts
+    abstract class CookieService {
+      abstract getValue(key: string): string {}
+
+      abstract setValue(key: string, value: string): void {}
+    } 
+
+    // app/components/my-component.js
+    class MyComponent extends Component {
+      @service(CookieService) cookie;
+    }
+
+    // app/services/cookie/fastboot-service.js
+    import CookieService from 'app-name/services/cookies/cookie-service';
+
+    class FastbootCookieService extends CookieService {
+      // ...
+      getValue(key: string) {
+        return '';
+      }
+    }
+
+    // app/services/cookie/browser-service.js
+    import CookieService from 'app-name/services/cookies/cookie-service';
+
+    class BrowserCookieService extends CookieService {
+      getValue(key: string) {
+        return browser.cookies.get({
+          name: key,
+          url: window.location.href
+        })
+      }
+      /// ...
+    }
+
+    // app/instance-initializers/register-cookie-service;
+    import CookieService from 'app-name/services/cookies/cookie-service';
+    import FastbootCookieService from 'app-name/services/cookies/fastboot-service';
+    import BrowserCookieService from 'app-name/services/cookies/browser-service';
+
+    export function initialize(appInstance) {
+      cost fastboot = appInstance.lookup('service:fastboot');
+      
+      if (fastboot.isFastBoot) {
+        appInstance.register(CookieService, FastbootCookieService);
+      } else {
+        appInstance.register(CookieService, BrowserCookieService);
+      }
+    }
+
+    export default { initialize };
+    ```
 
 Logic will be added to the register method to ensure that the lookup type either is the same as the service instance's type or is an ancestor type. This will prevent the ability to register unrelated classes that would break the implied class hierarchy that is assumed with dependency injection. 
 
