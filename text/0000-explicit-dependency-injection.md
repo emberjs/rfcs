@@ -51,7 +51,22 @@ function service(nameOrClass) {
 }
 ```
 
-In order for `lookup` to be able to take a class definition as an argument, there will need to be an alternative way to _lookup_ instances of services by the class.
+In order for `lookup` to be able to take a class definition as an argument, there will need to be an alternative way to _lookup_ instances of services by the class. Though, when I classes is used for lookup, if there is no existing registration found, lookup _will register the class and instantiate it for you_.
+
+Consider:
+
+```ts
+appInstance.register(MyClass, MyClass);
+appInstance.lookup(MyClass);
+```
+
+is the same as 
+```ts
+// no registration
+appInstance.lookup(MyClass);
+```
+
+This will be most handy for decorators or other common abstractions that desire to interact with services (such as the router or store), but have direct access to them from the component or route context.
 
 On the `Registry`, there already exists a reference to the class definition when registering an entry to the container.
 
@@ -67,7 +82,7 @@ Examples:
 
 (also pardon the naming, as it's for demonstration of the _roles_ that each class definition can have)
 ```ts
-// This behaves as the base implementation
+// This behaves as the base implementation / abstract class
 class MyInterface extends Service {
   @tracked foo = 0;
 
@@ -100,12 +115,98 @@ service instanceof MyImplementation // true
 service instanceof MyInterface // true
 ```
 
+Logic will be added to the register method to ensure that the lookup type either is the same as the service instance's type or is an ancestor type. This will prevent the ability to register unrelated classes that would break the implied class hierarchy that is assumed with dependency injection. 
+
+### Usage in testing
+
+#### Acceptance Tests
+
+Given that we have a service:
+```ts
+// app-name/services/my-service
+export default class MyService extends Service {
+  someMethodThatIsInTheSuperClass() {
+    return 'not stubbed';
+  }
+}
+```
+
+And assuming that in a route there is a service injection like the following:
+```ts
+import Route from '@ember/routing/route';
+import ServiceToOverride from 'app-name/services/my-service';
+
+export default class TheRoute extends Route {
+  @service(ServiceToOverride) myService;
+  // ...
+}
+```
+
+During an acceptance test, it can be overwritten by doing the following:
+```ts
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+import { getContext } from '@ember/test-helpers';
+
+import ServiceToOverride from 'app-name/services/my-service';
+
+module('Acceptance | test a thing', function(hooks) {
+  setupApplicationTest(hooks);
+
+  hooks.beforeEach(function() {
+    let { owner } = getContext();
+
+    class MockService extends ServiceToOverride {
+      someMethodThatIsInTheSuperClass() {
+        return 'stubbed';
+      }
+    }
+
+    // register under the same 'key', ServiceToOverride
+    owner.register(ServiceToOverride, MockService);
+
+    // re-inject on the-route
+    owner.application.inject('route:the-route', 'myService', ServiceToOverride);
+  });
+});
+```
+
+### Integration Tests
+
+```ts
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
+import hbs from 'htmlbars-inline-precompile';
+import Service from '@ember/service';
+
+import LocationService from 'app-name/services/location';
+
+class LocationStub extends LocationService {
+  getCurrentCity() {
+    return 'Indianapolis';
+  }
+
+  getCurrentCountry() {
+    return '???';
+  }
+});
+
+module('Integration | Component | location-indicator', function(hooks) {
+  setupRenderingTest(hooks);
+
+  hooks.beforeEach(function(assert) {
+    this.owner.register(LocationService, LocationStub);
+  });
+});
+```
 
 
 ## How we teach this
 
 Instead of using strings or inferred injections, the guides should be updated to use the Class definition of a service that it intends to inject.
 
+Ember Inspector and the unstable-ember-language-server will likely need to be updated to support this kind of lookup.
 
 ## Drawbacks
 
