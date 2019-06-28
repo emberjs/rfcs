@@ -43,6 +43,8 @@ This RFC proposes adding a `@classic` decorator which can be used on classes
 that still use `EmberObject` APIs:
 
 ```js
+import classic from 'ember-classic-decorator';
+
 @classic
 export default class ApplicationController extends Controller {
   init() {
@@ -109,12 +111,13 @@ considered `EmberObject` APIs, since they could be implemented purely in native
 classes, and aren't tied to the way `EmberObject` does inheritance.
 
 If a class, or any of its parent classes, uses one of these methods _without_
-being decorated with `@classic`, a warning will be logged to let users know that
-they are using classic object APIs, and they should either refactor away from
-using those APIs, or use the `@classic` decorator to opt-out of warnings.
+being decorated with `@classic`, a lint rule will log a warning to let users
+know that they are using classic object APIs, and they should either refactor
+away from using those APIs, or use the `@classic` decorator to opt-out of
+warnings.
 
-The `@classic` decorator itself will brand the class it is applied to with a
-symbol, disabling warnings on that instance of the class.
+The `@classic` decorator itself will brand the class it is applied to, disabling
+warnings on that instance of the class.
 
 ### Non-transitionable Base Classes
 
@@ -134,10 +137,10 @@ entirely.
 
 ### Implementation
 
-The decorator and the warnings would be added by an official Ember addon. This
-would allow us to keep the implementation details separate from the main Ember
-codebase, especially specifics like babel transforms for stripping out the
-`@classic` decorator in production builds.
+The decorator and the warnings would be added by an official Ember addon,
+`ember-classic-decorator`. This would allow us to keep the implementation
+details separate from the main Ember codebase, especially specifics like babel
+transforms for stripping out the `@classic` decorator in production builds.
 
 The `@classic` decorator should only be applied in DEBUG mode, and should be
 stripped entirely from production builds. Other than that, the details of the
