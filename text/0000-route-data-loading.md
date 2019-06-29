@@ -7,7 +7,7 @@
 
 ## Summary
 
-#499 proposes an API for rendering a component from a route. This RFC builds on it by proposing an API to pass multiple arguments to a component from a route. It's based off the [design proposed by @chadhietala](https://gist.github.com/chadhietala/50b977a7d3476069892d351c65af418c) and much of the text is lifted from there.
+[#499 An alternative to Controllers](https://github.com/emberjs/rfcs/pull/499) proposes an API for rendering a component from a route. This RFC builds on it by proposing an API to pass multiple arguments to a component from a route. It's based off the [design proposed by @chadhietala](https://gist.github.com/chadhietala/50b977a7d3476069892d351c65af418c) and much of the text is lifted from there.
 
 ## Motivation
 
@@ -15,7 +15,7 @@ The `model()` hook on routes is confusing, because it implies that only one piec
 
 ## Detailed design
 
-This RFC proposes adding a `load()` hook to `Route`. The route is in the 'loading' state while this hook is run. The keys of the object returned from `load()` become the named arguments to the component.
+This RFC proposes adding a `load()` hook to `Route`. The route is in the `loading` state while this hook is run. The keys of the object returned from `load()` become the named arguments to the component.
 
 ```js
 // routes/profile.js
