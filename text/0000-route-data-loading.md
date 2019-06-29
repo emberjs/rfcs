@@ -15,8 +15,7 @@ The `model()` hook on routes is confusing, because it implies that only one piec
 
 ## Detailed design
 
-In a world where we have routes invoking components, we can simply state that routes can fetch data and invoke components with named arguments as defined in the route. This might look like:
-
+This RFC proposes adding a `load()` hook to `Route`. The route is in the 'loading' state while this hook is run. The keys of the object returned from `load()` become the named arguments to the component.
 
 ```js
 // routes/profile.js
@@ -35,8 +34,6 @@ export default class extends Route {
 
 <h1>{{@profile.firstName}} {{@profile.lastName}}</h1>
 ```
-
-So the keys of the object returned from `load()` become the named arguments to the component.
 
 The `load()` hook can also take responsibility for redirection:
 
