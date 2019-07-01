@@ -26,7 +26,7 @@ For example, given the following invocation:
 ```
 ... and the following layout for the `Bar` component:
 ```hbs
-<div>@foo</div>
+<div>{{@foo}}</div>
 ```
 Ember will render the folliwing HTML content:
 ```html
