@@ -404,7 +404,7 @@ The Handlebars macros are:
 - macroMaybeAttrs
 - macroFailBuild
 
-The difference in naming is because the JS macros get explicitly imported from `@ember/macros`, whereas the Handlebars macros do not, so they need an appropriate namespace prefix. (If we land template imports, I'm find with adjusting this RFC to make the names align.)
+The difference in naming is because the JS macros get explicitly imported from `@ember/macros`, whereas the Handlebars macros do not, so they need an appropriate namespace prefix. (If we land template imports, I'm fine with adjusting this RFC to make the names align.)
 
 ### JavaScript Macro: importSync
 
@@ -487,7 +487,7 @@ export default implementation;
 // ===============
 // Or compile down to this if OwnConfig contains { useNewVersion: false }
 let implementation
-implementation = importSync("./new-component");
+implementation = importSync("./old-component");
 export default implementation;
 ```
 
