@@ -11,7 +11,7 @@ and use `disabled` property instead.
 # Motivation
 
 In `link-to` component `disabledWhen` property currently behaves exactly like 
-`disabled` property in other built-in components (like `input`), and while `disabled` property is reserved for internal usage. 
+`disabled` property in other built-in components (like `input`), but instead `disabled` property is reserved for internal usage in `link-to`. 
 
 Therefore in order to bring `link-to` into consistency with other built-in components I suggest to deprecate `disabledWhen` property and use `disabled` property instead. Which also makes things intuitive and straightforward both for new and old users.
 
