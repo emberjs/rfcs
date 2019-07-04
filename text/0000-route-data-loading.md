@@ -15,7 +15,13 @@ The `model()` hook on routes is confusing, because it implies that only one piec
 
 ## Detailed design
 
-This RFC proposes adding a `load()` hook to `Route`. The route is in the `loading` state while this hook is run. The keys of the object returned from `load()` become the named arguments to the component.
+This RFC proposes adding a `load()` hook to `Route`. 
+
+The `load()` hook will receive the same arguments as `model()`.
+
+The route is in the `loading` state while this hook is run. When this hook has finished running and any promises it returns have resolved, the route will change to the `resolved` state (and the `render` component will be rendered).
+
+The keys of the object (what `Object.keys()` would return, i.e. only the own (`hasOwnProperty`) props, and nothing from prototypes) returned from `load()` become the named arguments to the component.
 
 ```js
 // routes/profile.js
@@ -34,6 +40,14 @@ export default class extends Route {
 
 <h1>{{@profile.firstName}} {{@profile.lastName}}</h1>
 ```
+
+If something other than an object is returned, an exception is thrown.
+
+If both `model()` and `load()` are present, an exception is thrown.
+
+As suggested in [Always run model hook #283](https://github.com/emberjs/rfcs/pull/283), the `load()` hook will always be run, even if a model is supplied to `{{link-to}}`.
+
+The `load()` hook will not support the "magic" behavior of the model hook, in which it will make loading work magically in simple scenarios without actually implementing the hook (http://api.emberjs.com/ember/release/classes/Route/methods/model?anchor=model).
 
 The `load()` hook can also take responsibility for redirection:
 
