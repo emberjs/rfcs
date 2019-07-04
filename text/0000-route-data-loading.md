@@ -19,18 +19,20 @@ This RFC proposes adding a `load()` hook to `Route`.
 
 The `load()` hook will receive the same arguments as `model()`.
 
-The route is in the `loading` state while this hook is run. When this hook has finished running and any promises it returns have resolved, the route will change to the `resolved` state (and the `render` component will be rendered).
+The route is in the `loading` state while this hook is run. When this hook has finished running, the route will change to the `resolved` state (and the `render` component will be rendered).
 
 The keys of the object (what `Object.keys()` would return, i.e. only the own (`hasOwnProperty`) props, and nothing from prototypes) returned from `load()` become the named arguments to the component.
 
 ```js
 // routes/profile.js
+import { hash as resolveValues } from 'rsvp';
 export default class extends Route {
   @service store;
   async load({ profile_id }) {
-    return {
-      profile: await this.store.findRecord('profile', profile_id),
-    }
+    return await resolveValues({
+      profile: this.store.findRecord('profile', profile_id),
+      comments: this.store.query('comments', { profile_id })
+    });
   }
 }
 ```
