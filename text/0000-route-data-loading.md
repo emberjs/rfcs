@@ -73,6 +73,8 @@ export default class extends Route {
 
 Should #499 be accepted, this is a fairly straightforward and complementary change that would reduce confusion from the `model()` hook passing in a `@model` argument to a component. The Guides would need to be updated to use `load()` instead of `model()`, `beforeModel()`, and `afterModel()`.
 
+We could also include the `load()` hook in the route blueprint, returning an empty object, to make the hook more easily discoverable.
+
 ## Drawbacks
 
 In a time where a lot is changing in the Ember ecosystem, one might argue that this is too much change happening at once.
