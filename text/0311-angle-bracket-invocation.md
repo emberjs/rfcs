@@ -39,7 +39,7 @@ RFC focused on capitalizing on the opportunity of switching to the new syntax
 as an opt-in to the "new-world" components programming model.
 
 Since then, we have switched to a more iterative approach, favoring smaller
-RFCs focusing on one area of improvment at a time. Collectively, these RFCs
+RFCs focusing on one area of improvement at a time. Collectively, these RFCs
 have largely accomplished the goals in the original RFC without the angle
 bracket opt-in.
 
@@ -66,14 +66,14 @@ This RFC proposes that we adopt the angle bracket invocation syntax to Ember as
 an alternative to the classic ("curlies") invocation syntax.
 
 Unlike the original RFC, the angle bracket invocation syntax proposed here is
-purely syntatical and does not affect the semantics. The invocation style is
+purely syntactical and does not affect the semantics. The invocation style is
 largely transparent to the invokee and can be used to invoke both classic
 components as well as [custom components](https://github.com/emberjs/rfcs/pull/213).
 
 Since the original angle bracket RFC, we have worked on a few experimental
 implementation of the feature, both and in Ember and Glimmer. These experiments
 allowed us to attempt using the feature in real apps, and we have learned some
-valuable insights throught these usage.
+valuable insights throughout these usage.
 
 The original RFC proposed using the `<foo-bar ...>` syntax, which is the same
 syntax used by web components (custom elements). While Ember components and web
@@ -116,7 +116,7 @@ names with a single word, such as `<Button>`, `<Modal>` and `<Tab>`.
 
 The next part of the invocation is passing arguments to the invoked component.
 We propose to use the `@` syntax for this purpose. For example, the invocation
-`<FooBar @foo=... @bar=... />` is equivilant to `{{foo-bar foo=... bar=...}}`.
+`<FooBar @foo=... @bar=... />` is equivalent to `{{foo-bar foo=... bar=...}}`.
 This matches the [named arguments syntax](https://github.com/emberjs/rfcs/pull/276)
 in the component template.
 
@@ -249,7 +249,7 @@ invokable in this manner:
 > [RFC #317](https://github.com/emberjs/rfcs/pull/317) propose to change the
 > block-passing syntax to `<@foo=>...</@foo>` to avoid this conflict.
 
-Notably, based on the rules laied out above, the following is perfectly legal:
+Notably, based on the rules laid out above, the following is perfectly legal:
 
 ```hbs
 {{!-- DON'T DO THIS --}}
@@ -261,7 +261,7 @@ Notably, based on the rules laied out above, the following is perfectly legal:
 ```
 
 From a programming language's perspective, the semantics here is quite clear. A
-local variable is allowed to override ("shadow") another varible on the outer
+local variable is allowed to override ("shadow") another variable on the outer
 scope (the "global" scope, in this case), similar to what is possible in
 JavaScript:
 
@@ -275,7 +275,7 @@ let console = {
 console.log("Hello!"); // shows alert dialog instead of logging to the console
 ```
 
-While this is semantically unambigious, it is obviously very confusing to the
+While this is semantically unambiguous, it is obviously very confusing to the
 human reader, and we don't recommend anyone actually doing this.
 
 A previous version of this RFC recommended statically disallowing these cases.
@@ -286,8 +286,8 @@ more difficult to learn and understand the underlying programming model.
 
 Instead, we recommend [including a template linter](https://github.com/ember-cli/rfcs/pull/114)
 in the default stack and defer to the linter to make such recommendations. At
-minimum, we recommend liniting against invoking local variables with lowercase
-names without a path segment, regarless of whether the name actually collide
+minimum, we recommend linting against invoking local variables with lowercase
+names without a path segment, regardless of whether the name actually collide
 with a known HTML tag – human readers of an Ember template should be able to
 safely assume lowercase tags refer to HTML.
 
@@ -330,7 +330,7 @@ We propose to relax that rule to match the proposed angle bracket invocation
 semantics (i.e. allowing local variables without a dot, as well as `@names`,
 but disallowing implicit `this` lookup).
 
-Second, while Handlebars technically allows `{{foo/bar}}` as an equivilant
+Second, while Handlebars technically allows `{{foo/bar}}` as an equivalent
 alternative to the `{{foo.bar}}` path lookup (and therefore `foo/bar` is
 technically a valid Handlebars path expression), it will not be supported in
 angle bracket invocation. This is both because the `/` conflicts with the HTML
