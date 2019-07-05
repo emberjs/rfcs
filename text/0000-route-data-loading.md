@@ -26,7 +26,7 @@ The keys of the object (what `Object.keys()` would return, i.e. only the own (`h
 ```js
 // routes/profile.js
 import { hash as resolveValues } from 'rsvp';
-export default class extends Route {
+export default class ProfileRoute extends Route {
   @service store;
   async load({ profile_id }) {
     return await resolveValues({
