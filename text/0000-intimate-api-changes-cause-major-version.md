@@ -3,17 +3,15 @@
 - RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
 - Tracking: (leave this empty)
 
-# Intimate API Changes That Warrant Deprecations Should Cause Major Version Releases Upon Their Removal
+# Major Version Release for All Deprecation Removal
 
 ## Summary
 
 When [Ember released its first LTS version](https://blog.emberjs.com/2016/02/25/announcing-embers-first-lts.html), the concept of [editions](https://emberjs.github.io/rfcs/0364-roadmap-2018.html) did not yet exist. Major versions were responsible both for [maintaining backwards compatibility](https://semver.org/) _and_ for [marking a new paradigm](https://github.com/emberjs/rfcs/blob/9c7fe3f4e947b5f79050214334a98673494c25d7/text/0000-editions.md). Today, the latter problem belongs to editions so major version releases no longer need much ceremony. Instead, they can be relegated to marking backwards-incompatible changes.
 
-[Intimate API](https://twitter.com/wycats/status/918644693759488005) changes already [undergo an analysis that sometimes results in deprecation messages](https://blog.emberjs.com/2016/02/25/announcing-embers-first-lts.html) before removal. I propose that in the future, any Intimate API removal that would get a deprecation warning should trigger a major version release upon its removal.
+[Intimate API](https://twitter.com/wycats/status/918644693759488005) changes already [undergo an analysis that sometimes results in deprecation messages](https://blog.emberjs.com/2016/02/25/announcing-embers-first-lts.html) before removal. I propose that in the future, anything (including Intimate APIs) that gets a deprecation warning should trigger a major version release upon its removal.
 
 ## Motivation
-
-Ember.js has followed SemVer for many years. However, SemVer is incomplete in its definition of the term "public API." A while ago, the Ember community identified a gray-area between public and private APIs, which it dubbed "Intimate APIs." These are the parts of Ember.js that are being used by the community, but don't exist (at least completely) in its documentation.
 
 Ember's current release process allows backwards-incompatible changes to Intimate APIs to happen in a minor release. But since the very definition of an Intimate API means that people are using it, this runs the real risk of breaking a production application. Even with the current policy of a deprecation existing for at least one LTS cycle, the following tragic scenario is possible:
 
@@ -29,7 +27,7 @@ Ember's current release process allows backwards-incompatible changes to Intimat
 
 ## Detailed design
 
-In the current process, Intimate API changes already undergo a vetting process to see if they warrant deprecation warnings. This proposal does not suggest any changes to that process. Instead, it suggests that the outcome of the answer, "yes, this needs a deprecation," changes from, "so don't remove it until the next minor release after an LTS," to "so trigger a major version change when it releases."
+In the current process, Intimate API changes already get deprecation warnings in some scenarios. This proposal does not suggest any changes to that process. Instead, it suggests that the outcome of the answer, "yes, this needs a deprecation," changes from, "so don't remove it until the next minor release after an LTS," to "so trigger a major version change when it releases."
 
 This _will_ mean more major versions get released than today; but since Editions now drive paradigm shifts and marketing efforts, it shouldn't greatly affect how people talk about "what's new in Ember."
 
@@ -39,7 +37,7 @@ Finally, this proposal also does not suggest removing deprecated public APIs on 
 
 ## How we teach this
 
-In a way, this is already largely what we teach publicly. Between the language on the [deprecations site](https://deprecations.emberjs.com/), and the content of the [Editions page](https://emberjs.com/editions/), this is how many people who are _not_ active participants in the Ember RFCs process might already expect things to work. And they are a large bulk of the Ember Community -- I work with people who have used Ember for years and have never heard of RFCs.
+In a way, this is already largely what we teach publicly. Between the language on the [deprecations site](https://deprecations.emberjs.com/), and the content of the [Editions page](https://emberjs.com/editions/), this is how many people who are _not_ active participants in the Ember RFCs process might already expect things to work. And they are a large bulk of the Ember Community -- I work with people who have used Ember for years and have never heard of RFCs or Intimate APIs.
 
 The harder part might be teaching core team members and other heavily-enfranchised individuals. Upon reading the title and/or summary of this RFC, they may get gut reactions of visceral fear that this will slow down development (it shouldn't; just release more major versions) or cause lots of teaching problems (it shouldn't; teach "octane" paradigms not "v3" paradigms).
 
@@ -55,4 +53,4 @@ Finally, this proposal makes predicting when a major version will be released mo
 
 ## Alternatives
 
-Instead of releasing a major version when a deprecated Intimate API is removed, we could avoid removing them until the next major version was originally planned to be released. The major problem with this alternative is that it really _could_ slow down development in the framework. These APIs are being removed for good reasons, and delaying their removal delays that value.
+Instead of releasing a major version when a deprecation is removed, we could avoid removing them all until the next major version was originally planned to be released. The major problem with this alternative is that it really _could_ slow down development in the framework. These APIs are being removed for good reasons, and delaying their removal delays that value.
