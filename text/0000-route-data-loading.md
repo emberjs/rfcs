@@ -55,7 +55,7 @@ The `load()` hook can also take responsibility for redirection:
 
 ```js
 // routes/profile.js
-export default class extends Route {
+export default class ProfileRoute extends Route {
   @service store;
   @service router;
   @service user
