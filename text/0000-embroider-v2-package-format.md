@@ -134,7 +134,7 @@ Modules in **Own Javascript** are allowed to use dynamic `import()`, and the spe
 
 This is designed to allow limited pattern matching of possible targets for your dynamic `import()`. The rules ensure that we can always tell which NPM package you are talking about (the `@` rule covers namespaced NPM packages, so you can't depend on `@ember/${whatever}` but you can depend on `@ember/translations/${lang}`). If your pattern matches zero files, we consider that a static build error. (For more background on the thought-process behind this feature, see [Embroider #198: Allow dynamic imports to accept more dynamic inputs](https://github.com/embroider-build/embroider/issues/198).
 
-Modules in **Own Javascript** are allowed to import template files. This is common in today’s addons (they import their own layout to set it on their Component class). But in v2 packages, import specifiers of templates are required to explicitly include the `.hbs` extension.
+Modules in **Own Javascript** are allowed to import template files. This is common in today’s addons (they import their own layout to set it on their Component class). The `.hbs` file extension resolves with lower priority than `.js` (meaning if you have both, the `.js` wins).
 
 ### Own Javascript: Transpilation of imported modules
 
