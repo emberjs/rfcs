@@ -15,15 +15,13 @@ When [Ember released its first LTS version](https://blog.emberjs.com/2016/02/25/
 
 Ember's current release process allows backwards-incompatible changes to Intimate APIs to happen in a minor release. But since the very definition of an Intimate API means that people are using it, this runs the real risk of breaking a production application. Even with the current policy of a deprecation existing for at least one LTS cycle, the following tragic scenario is possible:
 
-> Chandra has an Ember.js application. Her company doesn't follow every best practice out there, so they don't use `package-lock.json` or `yarn.lock` to pin dependencies. Instead, their build system grabs exactly what is specified in `package.json`.
->
-> Chandra reads [Ember's documentation](https://deprecations.emberjs.com/) and finds this: "Until a major revision such as 2.0 lands, code firing such deprecations is still supported by the Ember community. After the next major revision lands, the supporting code may be removed."
+> Chandra has an Ember.js application. She reads [Ember's documentation](https://deprecations.emberjs.com/) and finds this: "Until a major revision such as 2.0 lands, code firing such deprecations is still supported by the Ember community. After the next major revision lands, the supporting code may be removed."
 >
 > Thus, Chandra feels safe setting `"ember-source": "^3.0.0"` in her package.json, comforted by the presence of SemVer to keep her application safe. She deploys her company's application on June 28, 2018. Her app runs on v3.2.2 and all is well. In her `beforeModel` hook, she reads `transition.targetName` (found in [the official Ember documentation](http://api.emberjs.com/ember/3.10/classes/Route/methods?anchor=resetController )) and `transition.queryParams` ([quite](http://shotgundebugging.blogspot.com/2019/02/impersonation-in-emberjs-elegantly.html) well [documented](https://codeandtechno.com/posts/user-impersonation-ember-simple-auth-doorkeeper/) by [community](https://discuss.emberjs.com/t/getting-query-params-and-segment-values-from-parent-route/6628/6) blog [posts]( https://www.tilcode.com/tag/ember-queryparams-tutorial/) and [answers](https://stackoverflow.com/a/26706095) all [over](https://stackoverflow.com/a/43310476)).
 > 
-> Chandra doesn't need to deploy again for a full year, as the application was developed perfectly from the start. But on July 4, 2019 the production server goes down and an automated build process checks out the repository, resolves `"ember-source": "^3.0.0"` to v3.11.0, and [her production application breaks](https://github.com/emberjs/ember.js/pull/17843)!
+> Chandra doesn't need to deploy again for a full year, as the application was developed perfectly from the start. But on July 3, 2019 she hears from a colleague that the latest 3.X version of Ember has some performance improvements that'll really help during the holiday weekend rush. Comforted by SemVer, she upgrades to v3.11.0 and deploys on the way out the door. Little does she know, [her production application broke](https://github.com/emberjs/ember.js/pull/17843)!
 >
-> Chandra never saw the [deprecation warnings](https://deprecations.emberjs.com/v3.x#toc_transition-state), because she never upgraded to v3.6. And now she has to leave her USA Independence Day celebration early, putting down the fireworks with family to fight metaphorical fires at work.
+> Chandra never saw the [deprecation warnings](https://deprecations.emberjs.com/v3.x#toc_transition-state), because she never upgraded to v3.6. When the reports start flowing in the next morning, she has to leave her USA Independence Day celebration early, putting down the fireworks with family to fight metaphorical fires at work.
 
 ## Detailed design
 
