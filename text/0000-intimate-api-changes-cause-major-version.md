@@ -31,15 +31,13 @@ This _will_ mean more major versions get released than today; but since Editions
 
 This proposal also does not suggest any changes to the community's current vocabulary. Intimate APIs are still Intimate APIs, and are considered different from Public APIs. Like today, not all Intimate API changes would warrant a deprecation warning (and therefore a major version change). Intimate APIs can still be taught as a thing to be avoided. The big change here is that in today's world, those who choose not to avoid Intimate APIs are punished by minor version upgrades. In the proposed world, they instead have to deal with breaking changes in a major version but everybody else gets that major version "for free."
 
-Finally, this proposal also does not suggest removing deprecated public APIs on a faster (calendar-based) timeline than we currently have. Many features are marked for deprecation "until 4.0.0" -- but that's a minimum guarantee, not a maximum. If an Intimate API removal causes a version 4.0.0 to be released before the community is ready for the deprecated public features to be removed, then don't remove them yet. Nothing about SemVer requires every major release to 
-
 ## How we teach this
 
 In a way, this is already largely what we teach publicly. Between the language on the [deprecations site](https://deprecations.emberjs.com/), and the content of the [Editions page](https://emberjs.com/editions/), this is how many people who are _not_ active participants in the Ember RFCs process might already expect things to work. And they are a large bulk of the Ember Community -- I work with people who have used Ember for years and have never heard of RFCs or Intimate APIs.
 
 The harder part might be teaching core team members and other heavily-enfranchised individuals. Upon reading the title and/or summary of this RFC, they may get gut reactions of visceral fear that this will slow down development (it shouldn't; just release more major versions) or cause lots of teaching problems (it shouldn't; teach "octane" paradigms not "v3" paradigms).
 
-The important thing when teaching this is to stress that _everything is the same as it has been, except that you bump a different integer when releasing any time a deprecated feature is removed_. **Whether to deprecate an Intimate API removal?** Same as before. **When to release LTS versions?** Same as before. **How many months to leave deprecated features in the framework?** Same as before. (etc.)
+The important thing when teaching this is to stress that _everything is the same as it has been, except that you bump a different integer when releasing any time a deprecated feature is removed_. **Whether to deprecate an Intimate API removal?** Same as before. **When to release LTS versions?** Same as before. (etc.)
 
 ## Drawbacks
 
