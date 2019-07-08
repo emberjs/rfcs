@@ -1,6 +1,6 @@
 - Start Date: 2019-07-08
 - Relevant Team(s): Steering, Ember.js, Ember Data, Ember CLI, Learning
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: [#512](https://github.com/emberjs/rfcs/pull/512)
 - Tracking: (leave this empty)
 
 # Major Version Release for All Deprecation Removal
