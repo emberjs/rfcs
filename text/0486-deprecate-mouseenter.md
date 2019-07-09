@@ -66,33 +66,58 @@ Before:
 ```js
 import Component from '@ember/component';
 
-export default Component.extend({
+export default class MyComponent extends Component {
   mouseEnter(e) {
     // do something
   }
-});
+}
 ```
 
 After:
 
 ```js
 import Component from '@ember/component';
-import { bind } from '@ember/runloop';
+import { action } from '@ember/object';
 
-export default Component.extend({
-  mouseenter(e) {
+export default class MyComponent extends Component {
+  @action
+  handleMouseEnter(e) {
     // do something
-  },
-  didInsertElement() {
-    this._super(...arguments);
-    this._mouseenter = bind(this, this.mouseenter);
-    this.element.addEventListener('mouseenter', this._mouseenter);
-  },
-  willDestroyElement() {
-    this._super(...arguments);
-    this.element.removeEventListener('mouseenter', this._mouseenter);
   }
-});
+  
+  didInsertElement() {
+    super.didInsertElement(...arguments);
+    this.element.addEventListener('mouseenter', this.handleMouseEnter);
+  }
+  
+  willDestroyElement() {
+    super.willDestroyElement(...arguments);
+    this.element.removeEventListener('mouseenter', this.handleMouseEnter);
+  }
+}
+```
+
+An alternative to attaching the event listener in the component class is to opt into outer HTML semantics by making the
+component tag-less and using the `{{on}}` modifier in the template:
+
+```js
+import Component from '@ember/component';
+import { action } from '@ember/object';
+
+export default class MyComponent extends Component {
+  tagName = '';
+  
+  @action
+  handleMouseEnter(e) {
+    // do something
+  }
+}
+```
+
+```hbs
+<div {{on "mouseenter" this.handleMouseEnter}}>
+  ...
+</div>
 ```
 
 #### `{{action}}` modifier
@@ -100,7 +125,7 @@ export default Component.extend({
 Before:
 
 ```hbs
-<button {{action "handleMouseEnter" on="mouseenter"}}>Hover</button>
+<button {{action "handleMouseEnter" on="mouseEnter"}}>Hover</button>
 ```
 
 After (based on [RFC471](https://github.com/emberjs/rfcs/blob/master/text/0471-on-modifier.md)):
