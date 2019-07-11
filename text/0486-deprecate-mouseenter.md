@@ -139,7 +139,7 @@ After (based on [RFC471](https://github.com/emberjs/rfcs/blob/master/text/0471-o
 The deprecation guide should explain the transition path as shown above.
 
 The Guide's [Handling Events](https://guides.emberjs.com/release/components/handling-events/#toc_event-names)
-section must remove the reference to `mouseenter`, `mouseleave` and `mousemove.
+section must remove the reference to `mouseenter`, `mouseleave` and `mousemove`.
 
 Other than that, no changes are required, as the replacement APIs are all available and
 well established, and this RFC does not introduce anything new. Also having certain event
