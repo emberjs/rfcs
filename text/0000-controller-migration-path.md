@@ -19,12 +19,12 @@ _The goal is for components to make up the entirety of the view layer_.
    2. passing state and handling actions to/from the route, loading, and error templates
 
  - Out of scope:
-   - Deprecating and eliminating controllers -- but the goal of this RFC is to provide a _path_ to remove controllers from Ember altogether. 
+   - Deprecating and eliminating controllers -- but the goal of this RFC is to provide a _path_ to remove controllers from Ember altogether.
 
  - Not Proposing
    - Adding the ability to invoke actions on the route.
    - Any changes to the `Route` or `Controller` as they exist today
-   
+
 This'll explore how controllers are used and how viable alternatives can be for migrating away from controllers so that they may eventually be removed.
 
 ## Motivation
@@ -36,13 +36,13 @@ This'll explore how controllers are used and how viable alternatives can be for 
    - how are they different from components?
    - controllers may feel like a route-blessed component (hence the prior excitement over the Routable-Components RFC)
    - controllers aren't created by default during `ember g route my-route`, so there is a learning curve around the fact that route templates can't access things on the route, and must create another new file, called a controller.
- - For handling actions from the UI, component-local actions and actions that live on services are a better long-term maintenance pattern. Dependency injection especially from the store and router services for fetching / updating data as well as contextually redirecting to different routes. 
+ - For handling actions from the UI, component-local actions and actions that live on services are a better long-term maintenance pattern. Dependency injection especially from the store and router services for fetching / updating data as well as contextually redirecting to different routes.
  - State and Actions on the controller encourage prop drilling where arguments are passed through many layers of components which make maintenance more difficult.
 
 
 ## Detailed design
 
-First, what would motivate someone to use a Controller today? Borrowing from [this blog post](https://medium.com/ember-ish/what-are-controllers-used-for-in-ember-js-cba712bf3b3e) by [Jen Weber](https://twitter.com/jwwweber): 
+First, what would motivate someone to use a Controller today? Borrowing from [this blog post](https://medium.com/ember-ish/what-are-controllers-used-for-in-ember-js-cba712bf3b3e) by [Jen Weber](https://twitter.com/jwwweber):
 
 1. You need to use query parameters in the URL that the user sees (such as filters that you use for display or that you need to send with back end requests)  
 
@@ -77,7 +77,7 @@ export default class extends Route {
 
   async model() {
     const contacts = await this.store.findAll('contact');
-    
+
     return { contacts };
   }
 }
@@ -117,7 +117,7 @@ The render component will receive the `@state` argument as well as the `@data` a
 
 #### **loading**
 
-This is the component that will be rendered before the model hook has resolved, if present. 
+This is the component that will be rendered before the model hook has resolved, if present.
 
 If set, and there exists a classic loading template, an error will be thrown saying that there is a conflict.
 
@@ -161,7 +161,7 @@ Note that the _after_ paths are made up to just show that components are being i
   ```
   ```hbs
   {{! app/routes/slow-model.hbs}}
-  {{this.model.slow}} 
+  {{this.model.slow}}
 
   {{! app/templates/slow-model-loading.hbs}}
   Loading...
@@ -232,7 +232,7 @@ Note that the _after_ paths are made up to just show that components are being i
   import ShowModelComponent from './components/show-the-model';
 
   export default class extends Route {
-    static error = LoaderComponent;
+    static error = ErrorComponent;
     static render = ShowModelComponent;
 
     async model() {
@@ -274,7 +274,7 @@ Note that the _after_ paths are made up to just show that components are being i
   ```
   ```hbs
   {{! app/routes/slow-model.hbs}}
-  {{this.model.slow}} 
+  {{this.model.slow}}
 
   {{! app/templates/slow-model-loading.hbs}}
   Loading...
@@ -331,12 +331,12 @@ Note that the _after_ paths are made up to just show that components are being i
   // app/routes/components/show-the-model.js;
   import Component from '@glimmer/component';
   import { inject as service } from '@ember/service';
-  
+
   export default class extends Component {
     @service router;
     @tracked readyYet = 'no';
 
-    @action 
+    @action
     onUpdate(/* element */) {
       switch (args.state) {
         case 'resolved':
@@ -359,7 +359,7 @@ Note that the _after_ paths are made up to just show that components are being i
   ```hbs
   <div {{did-update this.onUpdate}}>
     {{this.readeYet}}
-  
+
     {{! app/routes/components/show-the-model.hbs}}
     {{#if (eq @state 'resolved')}}
       {{@state}}, {{@data.slow}} {{! renders: "resolved", <Array<SlowModel>> }}
@@ -375,7 +375,7 @@ Note that the _after_ paths are made up to just show that components are being i
 
   type Data = {
     user?: User;
-    slow: SlowModel[]; 
+    slow: SlowModel[];
   };
 
   type PossibleErrors = ClientError | NetworkError;
@@ -392,7 +392,7 @@ Note that the _after_ paths are made up to just show that components are being i
 
 The RFCs, [496](https://github.com/emberjs/rfcs/pull/496) and [454](https://github.com/emberjs/rfcs/pull/454) are mainly required for the conceptual ideas that there can exist a world with no component resolver lookups and that components can be imported explicitly.
 
-The current / classic / old ways of having the resolver _able_ to look up components isn't going to go away any time soon though. For backwards compatibility it most stay for a while. But as this'd be the recommended/explicit path forward, documentation/guides/etc will be updated to show how to use the aforementioned static properties as well as describing how the model hook is mapped to each of the components. 
+The current / classic / old ways of having the resolver _able_ to look up components isn't going to go away any time soon though. For backwards compatibility it most stay for a while. But as this'd be the recommended/explicit path forward, documentation/guides/etc will be updated to show how to use the aforementioned static properties as well as describing how the model hook is mapped to each of the components.
 
 More specifically recommended will be to use a separate component for each of the three states, but there should still be examples (as above) showing the one-component-does-everything approach.
 
