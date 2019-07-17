@@ -54,12 +54,11 @@ work with event handler methods, and `{{action}}` will eventually fade away in f
 
 ## Transition Path
 
-When a `mouseenter`/`mouseleave`/`mousemove` event is dispatched by the EventDispatcher to a component
-or `{{action}}` listening to that event type, a deprecation warning will be issued.
-
-The linked migration guide will cover these use cases:
-
 #### Ember.Component
+
+When a component with a `mouseEnter`, `mouseLeave` or `mouseMove` method is created, a deprecation warning will be issued.
+
+The linked migration guide will cover these examples:
 
 Before:
 
@@ -122,6 +121,9 @@ export default class MyComponent extends Component {
 
 #### `{{action}}` modifier
 
+Similarily a deprecation warning will be shown when an instance of `{{action}}` is rendered in a template that listens
+to one of the deprecated events, and will link to a deprecation guide with the following migration example:
+
 Before:
 
 ```hbs
@@ -138,8 +140,9 @@ After (based on [RFC471](https://github.com/emberjs/rfcs/blob/master/text/0471-o
 
 The deprecation guide should explain the transition path as shown above.
 
-The Guide's [Handling Events](https://guides.emberjs.com/release/components/handling-events/#toc_event-names)
-section must remove the reference to `mouseenter`, `mouseleave` and `mousemove`.
+The references to `mouseenter`, `mouseleave` and `mousemove` should be removed from the Guide's 
+[Handling Events](https://guides.emberjs.com/release/components/handling-events/#toc_event-names) section and the API 
+docs for [Components events](https://api.emberjs.com/ember/release/classes/Component).
 
 Other than that, no changes are required, as the replacement APIs are all available and
 well established, and this RFC does not introduce anything new. Also having certain event
