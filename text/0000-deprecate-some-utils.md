@@ -6,17 +6,22 @@
 
 ## Summary
 
-This RFC suggests the deprecation of the following [methods](https://www.emberjs.com/api/ember/3.1/modules/@ember%2Futils):
+This RFC suggests the deprecation of the following [methods](http://api.emberjs.com/ember/release/modules/@ember%2Futils):
 - `Ember.isEmpty`
 - `Ember.isBlank`
 - `Ember.isNone`
 - `Ember.isPresent`
 
+As well as [computed properties](http://api.emberjs.com/ember/release/modules/@ember%2Fobject) that rely on these methods:
+- `notEmpty`
+- `empty`
+- `none`
+
 Once deprecated, these methods will move to an external addon to allow users to still take advantage of the succinctness of these utility methods.
 
 ## Motivation
 
-To further Ember's goal of a svelte core and moving functionality to separate packages, this RFC attempts to deprecate a few utility methods.  A part from the aforementioned goal, in many cases, these utility methods does not add a whole lot of value over writing plain old JavaScript.  Moreover, these methods generally have a negative cognitive impact on the code in question.  In order to reduce code liability and advocate for users to write plain JavaScript, these methods could be removed from Ember core and extracted to an addon.
+To further Ember's goal of a svelte core and moving functionality to separate packages, this RFC attempts to deprecate a few utility methods and extract them to their own addon.  A part from the aforementioned goal, in many cases, these utility methods do not add a whole lot of value over writing plain old JavaScript.  Moreover, these methods generally have a negative cognitive impact on the code in question.  In order to reduce code liability and advocate for users to write plain JavaScript, these methods could be removed from Ember core and extracted to an addon.
 
 A simple example of this cognitive load would be checking for the presence of a variable of type String that can only have four states - `undefined`, `null`, `''` or `'MYSTRING'`.  One might check if the variable is truthy with `!!myVariable`.  However, a utility method such as `isPresent(myVariable)` can increase the cognitive load of the truthy check in question as it checks for many different types.
 
@@ -26,13 +31,13 @@ Lastly, `Ember.isEmpty` documented [here](https://www.emberjs.com/api/ember/rele
 
 ## Detailed design
 
-`Ember.isEmpty`, `Ember.isBlank`, `Ember.isNone`, `Ember.isPresent` will be deprecated at first with an addon that extracts these methods for users that still find value in these utility methods.  Any instantiation of one of these functions will log a deprecation warning, notifying the user that this method is deprecated and provide a link to the supported addon.
+`Ember.isEmpty`, `Ember.isBlank`, `Ember.isNone`, `Ember.isPresent`, `notEmpty`, `empty`, and `none` will be deprecated at first with an addon that extracts these methods for users that still find value in these utility methods.  Any instantiation of one of these functions will log a deprecation warning, notifying the user that this method is deprecated and provide a link to the supported addon.
 
-Addons that previously relied on these utility methods would also be expected to install this package.
+Addons that previously relied on these utility methods would also be expected to install this package. Moreover, to ease adoption of the external addon, a codemod will become available for the community.
 
 ## How we teach this
 
-Since using Ember in IE9, IE10, and PhantomJS is deprecated as of the 3.0 release and ES5/ES6 brings improved language semantics, we have as a community, a guarantee of results across browsers when using plain old JavaScript.  Some of the benefits from these utility methods eminated from a need to guarantee results with ES3 browsers.  With that not a concern anymore, we can nudge users to use JavaScript where needed and install an addon if need be.
+Since using Ember in IE9, IE10, and PhantomJS is deprecated as of the 3.0 release and ES5/ES6 brings improved language semantics, we have, as a community, a guarantee of results across browsers when using plain old JavaScript.  Some of the benefits from these utility methods eminated from a need to guarantee results with ES3 browsers.  Today, we can nudge users to use JavaScript where needed and install an addon in cases where you feel it is necessary.
 
 This would require an update to the guides to indicate that the use of any of these utility methods are now available in an addon.  Moreover, in the README of the addon, we can provide specific examples of when using JavaScript is easier than reaching for one of these utility methods.  Lastly, we can also point them to a utility library like [lodash](https://lodash.com/docs).
 
