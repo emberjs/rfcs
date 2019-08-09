@@ -301,7 +301,7 @@ Having query-param-related computed properties available everywhere will be a sh
 ```ts
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
-import { alias } from 'ember-query-params-service';
+import { alias } from '@ember/object/computed';
 
 export default class ApplicationRoute extends Route {
   @service router;
