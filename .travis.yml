@@ -1,7 +1,7 @@
 language: rust
 script:
   - rev=$(git rev-parse --short HEAD)
-  - (cargo install mdbook --vers 0.0.26 --force || true)
+  - (cargo install mdbook --vers 0.3.1 --force || true)
   - ./generate-book.sh
 
 branches:
