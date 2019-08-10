@@ -2,7 +2,7 @@
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
-# Deprecate Ember.{isEmpty,isBlank,isNone,isPresent}
+# Deprecate Existence Utils & Computed Properties
 
 ## Summary
 
