@@ -1,6 +1,6 @@
 - Start Date: 2019-08-15
 - Relevant Team(s): Ember.js, Learning
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/528
 - Tracking: (leave this empty)
 
 # Deprecate Evented Mixin
