@@ -108,11 +108,11 @@ before the `model` hook is encountered. At that point, explaining that `@model`
 is passed into the component from the route, based on the resolution of the
 async `model` hook, will be quite natural.
 
-For reference, here is a relevant section from the work-in-progress Octane
-tutorial. For context, up until this point, we have taught all the basic
-component concepts above, plus adding a (Glimmer) component class, adding
-instance variables and getters to the component, accessing those with
-`{{this.*}}` in the template, etc.
+For reference, here is a relevant section from the [work-in-progress Octane
+tutorial](https://github.com/ember-learn/guides-source/pull/1002). For context,
+up until this point, we have taught all the basic component concepts above, plus
+adding a (Glimmer) component class, adding instance variables and getters to the
+component, accessing those with `{{this.*}}` in the template, etc.
 
 > So far, we've been hard-coding everything into our `<Rental>` component. But
 > that's probably not very sustainable, since eventually, we want our data to
