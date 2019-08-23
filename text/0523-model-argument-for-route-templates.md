@@ -320,7 +320,9 @@ As for the concrete changes that need to be made in the documentation:
   > template, the router service, etc. Instead, a _route transition_ should be
   > performed.
 
-* Guides and API docs should be updated to prefer `@model` in route templates
+* Guides and API docs should be updated to prefer `@model` in route templates.
+* API docs will still document the `model` property.
+* We will remove any examples that uses `{{this.model}}` in templates, or replace them with `{{@model}}`. i.e. we won’t be documenting using `this.model` in templates, even thought it would “work”.
 
 ## Drawbacks
 
