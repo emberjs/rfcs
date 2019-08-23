@@ -59,7 +59,7 @@ Everyone has different query param serialization and deserialization needs depen
 
 By default, the query params will be serialized and deserialized via the builtin URLSearchParams API, and polyfilled for IE11.
 
-Should someone decide to customize how serilaization and deserializion transforms the query params, that can be done directly on the router:
+Should someone decide to customize how serialization and deserialization transforms the query params, that can be done directly on the router:
 
 ```ts
 import EmberRouter from '@ember/routing/router';
