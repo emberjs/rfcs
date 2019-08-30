@@ -191,4 +191,4 @@ Due to transitioning away from an Ember package and using a third-party library 
 
 ## Unresolved questions
 
-Can this process be somwhat automated by providing a codemod?
+Can this process be somewhat automated by providing a codemod?
