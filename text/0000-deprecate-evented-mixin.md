@@ -9,7 +9,7 @@
 
 Deprecation support for Events within Ember.
 
-This includes deprcating the `Evented` Mixin, and methods exposed in the `@ember/object/events` and `@ember/object/evented` packages
+This includes deprecating the `Evented` Mixin, and methods exposed in the `@ember/object/events` and `@ember/object/evented` packages.
 
 ## Motivation
 
