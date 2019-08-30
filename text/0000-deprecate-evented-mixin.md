@@ -13,7 +13,7 @@ This includes deprcating the `Evented` Mixin, and methods exposed in the `@ember
 
 ## Motivation
 
-Eventing is something that is no longer core to Ember, as eventing is no longer used internally after changes from all the work on Octane.
+Eventing is something that is no longer core to Ember, and is no longer used internally after changes from all the work on Octane.
 
 One pillar of the Ember 2019-2020 roadmap is to "Continue Simplifying Ember". This deprecation aligns with that pillar as deprecating eventing will reduce the surface area of Ember and ensure that Ember is not maintaining a feature that is available and stable in several other libraries.
 
