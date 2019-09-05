@@ -72,6 +72,43 @@ Future-proofing for more options
 }
 ```
 
+**Commands**
+
+***bootstrap***
+
+```
+ember-cli-update bootstrap
+```
+
+This starts an `ember-cli-update.json` file for you with the detected ember-cli blueprint version. It uses the same logic we currently have for detecting the ember-cli blueprint version, but now since the state is stored, we don't have to run the detection logic anymore.
+
+***init***
+
+```
+ember-cli-update init
+ember-cli-update init -b libkit
+ember-cli-update init -b my-custom-blueprint --custom-option-1 --custom-option-2 foo
+```
+
+This is similar to `ember init` or `ember-cli-update --reset`, but also stores the blueprint information in `ember-cli-update.json`. It also stores any options used to create future update diffs.
+
+***install***
+
+```
+ember-cli-update install ember-cli-mirage
+```
+
+This is the same as `ember install ember-cli-mirage` except that it stores the blueprint state for later updating.
+
+***save***
+
+```
+ember-cli-update save libkit --from 0.5.18
+ember-cli-update save ember-cli-mirage --from 0.4.0
+```
+
+This is a helper for saving the state of an old blueprint's run without ember-cli-update. The usefulness of this is questionable, because you have to remember something you did in the past. Its only usefulness is getting a project set up without having to know the `ember-cli-update.json` schema.
+
 **Methods of delivery**
 
 Blueprints could be responsible for injecting the state into projects
@@ -162,6 +199,26 @@ There is no reason why you couldn't provide your own codemods with this system. 
     }
   }
 }
+```
+
+TODO: The options need to be normalized somehow to be used in the codemods system.
+
+`--custom-option foo` vs `--custom-option=foo` vs `--custom-option="foo"`
+
+```js
+// This would probably be bad as `foo` would be treated as an option
+"options": [
+  "--custom-option",
+  "foo"
+]
+// This is better
+"options": [
+  "--custom-option=\"foo\""
+]
+// or maybe this?
+"options": [
+  "customOption=\"foo\""
+]
 ```
 
 ## How we teach this
