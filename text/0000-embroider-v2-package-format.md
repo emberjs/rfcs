@@ -142,7 +142,7 @@ Any module you import, whether from an Ember package or a non-Ember package, get
 
 There is an explicit per-package opt-out for cases where you're _sure_ that transpilation is not needed and not desirable. (See **Build Hooks** for details on the `skipBabel` option.)
 
-## Own Javascript: Supported module formats for non-Ember packages
+### Own Javascript: Supported module formats for non-Ember packages
 
 As already stated, V2 Ember packages must contain only ES modules. However, non-Ember packages in your **allowed dependencies** are allowed to contain ES modules _or_ CommonJS modules. This provides the best compatibility with general-purpose NPM utilities.
 
