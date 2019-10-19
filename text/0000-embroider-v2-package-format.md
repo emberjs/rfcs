@@ -209,7 +209,7 @@ Whenever your package is active, all of its implicit dependencies will be includ
 
 `implicit-modules` and `implicit-test-modules` mean that the app should be built as if someone has explicitly typed ECMA import statements for each of the listed modules.
 
-`implicit-scripts` and `implicit-test-scripts` are for Javascript in a script context. Script context is different from module context (as defined by the ECMA spec). This is how an addon can push things into the equivalent of the traditioanl `vendor.js`, which is in script context.
+`implicit-scripts` and `implicit-test-scripts` are for Javascript in a script context. Script context is different from module context (as defined by the ECMA spec). This is how an addon can push things into the equivalent of the traditional `vendor.js`, which is in script context.
 
 `implicit-styles` and `implicit-test-styles` are for stylesheets. This is how an addon can push things into the equivalent of the traditional vendor.css.
 
@@ -365,9 +365,9 @@ The `configureDependencies` hook is the _only_ way to disable child packages. Th
 skipBabel({ package: string, semverRange?: string }[]): void;
 ```
 
-By default, all imported dependencies (and their recursive importe dependencies) go through the app's babel config. This ensures browser compatibility safety. However, we provide `skipBabel` as an opt-out to work around transpilation problems in cases where the developer has verified that transpilation of a given package isn't needed.
+By default, all imported dependencies (and their recursive imported dependencies) go through the app's babel config. This ensures browser compatibility safety. However, we provide `skipBabel` as an opt-out to work around transpilation problems in cases where the developer has verified that transpilation of a given package isn't needed.
 
-`skipBabel` returns a list of packge names and optionally semver ranges. If no range is included, it defaults to `*`. This is a place where you're allowed to mentioned packages that are _not_ in your **allowed dependencies** because it may be necessary to talk about deeper dependencies within them. The `skipBabel` settings for all active addons are combined and if any addon skips babel for a given package & version, that causes the package to not be transpiled.
+`skipBabel` returns a list of package names and optionally semver ranges. If no range is included, it defaults to `*`. This is a place where you're allowed to mentioned packages that are _not_ in your **allowed dependencies** because it may be necessary to talk about deeper dependencies within them. The `skipBabel` settings for all active addons are combined and if any addon skips babel for a given package & version, that causes the package to not be transpiled.
 
 The semver range is useful to disambiguate if there are multiple versions of the same package involved in the app, and in cases where a developer has manually verified that transpilation isn't needed, it's good practice to use the semver range so that `skipBabel` doesn't accidentally apply to a future version of the package that may indeed need transpilation.
 
@@ -409,13 +409,13 @@ The difference in naming is because the JS macros get explicitly imported from `
 ### JavaScript Macro: importSync
 
 ```js
-import { importSync } from '@ember/macros';
-importSync('some-dependency').default;
+import { importSync } from "@ember/macros";
+importSync("some-dependency").default;
 ```
 
 `importSync` exists to do a thing that standard Javascript does not do: synchronous dynamic import. Ember historically needs synchronous dynamic import (it's what our runtime AMD `require` does). Until some future date at which Ember has migrated away from synchronous module resolution we need `importSync`.
 
-`importSync` is defined as behaving exactly like the standards-complient `import` except instead of returning `Promise<Module>` it returns `Module`.
+`importSync` is defined as behaving exactly like the standards-compliant `import` except instead of returning `Promise<Module>` it returns `Module`.
 
 In this RFC we don't state explicitly what `importSync` compiles to. It compiles to whatever the Javascript bundler we're using supports in order to achieve synchronous dynamic import. For example, if we're internally using Webpack we can compile `importSync("something")` to `require("something")`, because Webpack supports CommonJS `require` anywhere.
 
@@ -423,7 +423,7 @@ In this RFC we don't state explicitly what `importSync` compiles to. It compiles
 
 ```js
 // this example:
-import { getOwnConfig } from '@ember/macros';
+import { getOwnConfig } from "@ember/macros";
 const shouldEnableCoolFeature = getOwnConfig().coolFeature;
 // might compile to:
 const shouldEnableCoolFeature = true;
@@ -436,7 +436,7 @@ You can choose to inline the whole OwnConfig if you want to:
 
 ```js
 // this example:
-import { getOwnConfig } from '@ember/macros';
+import { getOwnConfig } from "@ember/macros";
 const myConfig = getOwnConfig();
 // might compile to:
 const myConfig = { coolFeature: true };
@@ -450,15 +450,15 @@ Since `getOwnConfig` accesses the output of your `configure` build-hook, you hav
 `getConfig` can access the `OwnConfig` of your dependencies.
 
 ```js
-import { getConfig } from '@ember/macros';
-const testSelectorsConfig = getConfig('ember-test-selector');
+import { getConfig } from "@ember/macros";
+const testSelectorsConfig = getConfig("ember-test-selector");
 ```
 
 It supports property chaining the same as `getOwnConfig`.
 
 This is a low-level power tool. It's mostly useful as a compile target for custom Babel plugins. For example, `ember-test-selectors` has a custom Babel plugin that _sometimes_ strips test properties out of your components. But if a V2 package is using ember-test-selectors, it needs to run the custom transform _before publishing_. At that point, it's too soon to decide whether to strip them.
 
-Instead of actually doing the stripping, the ember-test-selector plugin would compile the user's code into code that uses `macroCondition` and `getConfig('ember-test-selectors')`. In this way, we get the powerful custo behavior, but only the standard core macros are needed at the time when the app itself is building.
+Instead of actually doing the stripping, the ember-test-selector plugin would compile the user's code into code that uses `macroCondition` and `getConfig('ember-test-selectors')`. In this way, we get the powerful custom behavior, but only the standard core macros are needed at the time when the app itself is building.
 
 ### JavaScript Macro: macroCondition
 
@@ -498,9 +498,11 @@ It is a build error if `macroCondition` cannot statically determine the truth st
 Here is an example of `macroCondition` in a ternary expression:
 
 ```js
-const flavor = macroCondition(getOwnConfig().prefersChocolate) ? 'chocolate' : 'vanilla';
+const flavor = macroCondition(getOwnConfig().prefersChocolate)
+  ? "chocolate"
+  : "vanilla";
 // could compile down to:
-const flavor = 'chocolate';
+const flavor = "chocolate";
 ```
 
 `macroCondition` is the foundation that lets us choose which code to include in the build. You can choose to inline two different implementations within the branches of an `if` statement, or you can keep them in entirely separate modules and import only the correct one via `importSync`.
@@ -509,9 +511,9 @@ It would also be possible (in the future, when top-level await stabilizes) to us
 
 ```js
 if (macroConditional(getOwnConfig().x)) {
-  await import('x');
+  await import("x");
 } else {
-  await import('y');
+  await import("y");
 }
 ```
 
@@ -524,9 +526,9 @@ A: Because we don't want to leave any confusion over whether branch elimination 
 Allow you to test if an `import` (or `import()` or `importSync()`, since they all accept an argument with identical semantics) would succeed. Always compiles to a boolean literal.
 
 ```js
-import { moduleExists, macroCondition, importSync } from '@ember/macros';
-if (macroCondition(moduleExists('ember-data'))) {
-  const DS = importSync('ember-data').default;
+import { moduleExists, macroCondition, importSync } from "@ember/macros";
+if (macroCondition(moduleExists("ember-data"))) {
+  const DS = importSync("ember-data").default;
   DS.Adapter.extend({
     //
   });
@@ -540,8 +542,8 @@ Remember that you're always only allowed to `import` from your own **allowed dep
 Allows you to test if the given **allowed dependency** satisfies the given semver range. Always compiles to a boolean literal.
 
 ```js
-import { dependencySatisfies, macroCondition } from '@ember/macros';
-if (macroCondition(dependencySatisfies('ember-data', '^3.0.0'))) {
+import { dependencySatisfies, macroCondition } from "@ember/macros";
+if (macroCondition(dependencySatisfies("ember-data", "^3.0.0"))) {
   // include code here for ember-data 3.0 compat
 }
 ```
@@ -553,8 +555,8 @@ The package version will be `semver.coerce`d first, such that non-standard versi
 Allow you to cause a build failure with a custom error message. If `failBuild` isn't eliminated by `macroCondition`'s branch elimination, the build will fail.
 
 ```js
-import { dependencySatisfies, macroCondition, failBuild } from '@ember/macros';
-if (macroCondition(dependencySatisfies('ember-data', '^3.0.0'))) {
+import { dependencySatisfies, macroCondition, failBuild } from "@ember/macros";
+if (macroCondition(dependencySatisfies("ember-data", "^3.0.0"))) {
   // include code here for ember-data 3.0 compat
 } else {
   failBuild(`We don't support ember-data versions other than ^3.0.0`);
@@ -628,7 +630,7 @@ There is one place where `{{#if}}` doesn't work: within "element space". If you 
 
 It can be placed on both HTML elements and angle bracket component invocations.
 
-### Handlebars Macro: macroFailBiuld
+### Handlebars Macro: macroFailBuild
 
 Like the JS `failBuild` macro.
 
@@ -662,7 +664,7 @@ This means that many things addons will try to access from their surrounding env
 
 This also applies recursively -- if your addon wants to use an addon that needs `ember-data`, your addon should also list `ember-data` as a `peerDependency`. The clearest documented description of how recursive peerDependencies should work is in the [Yarn PnP Formal Guarantees](https://github.com/yarnpkg/rfcs/blob/master/accepted/0000-plug-an-play.md#c-formal-plugnplay-guarantees).
 
-`ember-source` provides many "virtual" packages like `@ember/component`. If they were real packages, they would be `peerDependencies`, but having non-real packages in package.json is likely to result in errors. Pedantically, they can be listed in **externals** instead. In practice, they are a well-known set that we can always handle correctly automatically, so it's not very imporant whether an addon includes them in **externals**.
+`ember-source` provides many "virtual" packages like `@ember/component`. If they were real packages, they would be `peerDependencies`, but having non-real packages in package.json is likely to result in errors. Pedantically, they can be listed in **externals** instead. In practice, they are a well-known set that we can always handle correctly automatically, so it's not very important whether an addon includes them in **externals**.
 
 ### Optional Peer Dependencies
 
@@ -706,7 +708,7 @@ Features that apps may not use include:
 
 All these features can appear in v2 _addons_, and the _app_ ensures each one is represented by standards-compliant Javascript within the app’s own code. To illustrate with some examples, the V2 format for an app (as already implemented in Embroider) includes:
 
-- `<script>` tag(s) in index.html and tests/index.html that ensure `implicit-scripts` and `implicit-test-scripts` of all active addons are alreay accounted for.
+- `<script>` tag(s) in index.html and tests/index.html that ensure `implicit-scripts` and `implicit-test-scripts` of all active addons are already accounted for.
 - `<link rel="stylesheet">` tag(s) in index.html and tests/index.html that ensure `implicit-styles` and `implicit-test-styles` are accounted for.
 - actual Javascript `import` statements within the app's code that ensure `implicit-modules` and `implicit-test-modules` are accounted for
 - actual Javascript `import` statements and AMD `define` calls that handle automatic inclusion of resolvable types that cannot be statically ruled out.
@@ -759,7 +761,7 @@ This design does _not_ advocate loudly deprecating any v1 addon features. Doing 
 
 Embroider effectively supersedes both the [Packager RFC](https://github.com/ember-cli/rfcs/blob/master/active/0051-packaging.md) and the [Prebuilt Addons RFC](https://github.com/ember-cli/rfcs/pull/118). So both of those are alternatives to this one.
 
-Packager creates an escape hatch from the existing ember-cli build that is supposed to provide a foundation for many of the same features enabled by this design. The intention was correct, but in my opinion it tries to decompose the build along the wrong abstraction boundaries. It follows the existing pattern within ember-cli of decomposing the build by feature (all app javacript, all addon javascript, all templates, etc) rather than by package (everything from the app, everything from ember-data, everything from ember-power-select, etc), which puts it into direct conflict with the Prebuilt Addons RFC.
+Packager creates an escape hatch from the existing ember-cli build that is supposed to provide a foundation for many of the same features enabled by this design. The intention was correct, but in my opinion it tries to decompose the build along the wrong abstraction boundaries. It follows the existing pattern within ember-cli of decomposing the build by feature (all app javascript, all addon javascript, all templates, etc) rather than by package (everything from the app, everything from ember-data, everything from ember-power-select, etc), which puts it into direct conflict with the Prebuilt Addons RFC.
 
 The API that packager provides is also incomplete compared with this design. For example, to take the packager output and build it using Webpack, Rollup, or Parcel still requires a significant amount of custom code. Whereas taking a collection of v2 formatted Ember packages and building them with any of those tools requires very little Ember-specific code.
 
