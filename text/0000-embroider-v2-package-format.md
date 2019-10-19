@@ -391,6 +391,7 @@ The Javascript macros are:
 - getOwnConfig
 - getConfig
 - macroCondition
+- each
 - moduleExists
 - dependencySatisfies
 - failBuild
@@ -520,6 +521,27 @@ if (macroConditional(getOwnConfig().x)) {
 Q: Why not allow `if (getOwnConfig().thing)` instead of `if (macroCondition(getOwnConfig().thing))`?
 
 A: Because we don't want to leave any confusion over whether branch elimination will be done. Boolean expressions that include a macro like `getOwnConfig` alongside other runtime-only values are perfectly legal. But those expressions would not allow branch elimination. The ambiguity means you might accidentally defeat branch elimination without noticing. `macroCondition` is intended to signal -- both to the reader and to the compile -- that this place absolutely _must_ do branch elimination. It's an error if we can't eliminate one branch or the other.
+
+### JavaScript macro: macroEach
+
+`macroEach` allows you to unroll a loop based on an array value provided by another macro. It behaves like the identity function (returning its argument unchanged), but it provided the special guarantee that if you use it as the argument of a `for ... of` loop, the loop will be unrolled:
+
+```js
+import { getOwnConfig, macroEach, importSync } from "@ember/macros";
+let plugins = [];
+for (let plugin of macroEach(getOwnConfig().registeredPlugins)) {
+  plugins.push(importSync(plugin).default);
+}
+
+// Could compile to this, given OwnConfig
+// containing { registeredPlugins: ['@bigco/bar-chart', '@bigco/line-chart']}
+
+let plugins = [];
+plugins.push(importSync("@bigco/bar-chart").default);
+plugins.push(importSync("@bigco/line-chart").default);
+```
+
+It is a static error if the argument to `macroEach` does not evaluate to a statically known array.
 
 ### JavaScript Macro: moduleExists
 
