@@ -416,7 +416,7 @@ importSync("some-dependency").default;
 
 `importSync` exists to do a thing that standard Javascript does not do: synchronous dynamic import. Ember historically needs synchronous dynamic import (it's what our runtime AMD `require` does). Until some future date at which Ember has migrated away from synchronous module resolution we need `importSync`.
 
-`importSync` is defined as behaving exactly like the standards-compliant `import` except instead of returning `Promise<Module>` it returns `Module`.
+`importSync` is defined as behaving exactly like the standards-compliant `import()` except instead of returning `Promise<Module>` it returns `Module`.
 
 In this RFC we don't state explicitly what `importSync` compiles to. It compiles to whatever the Javascript bundler we're using supports in order to achieve synchronous dynamic import. For example, if we're internally using Webpack we can compile `importSync("something")` to `require("something")`, because Webpack supports CommonJS `require` anywhere.
 
@@ -444,7 +444,7 @@ const myConfig = { coolFeature: true };
 // assuming your ownConfig is `{ coolFeature: true }`.
 ```
 
-Since `getOwnConfig` accesses the output of your `configure` build-hook, you have a place to run arbitrary
+Since `getOwnConfig` accesses the output of your `configure` build-hook, you have a place to run arbitrary build-time code and inject the results into runtime Javascript.
 
 ### Javascript Macro: getConfig
 
@@ -463,7 +463,7 @@ Instead of actually doing the stripping, the ember-test-selector plugin would co
 
 ### JavaScript Macro: macroCondition
 
-`macroCondition` acts like a function that takes a boolean value and returns that same boolean value. But whenever `macroCondition` appears directly inside the predicate of an `if` statement or as the predicate of a ternary expression, it tells the macro system to do branch elimination based on the predicate. Here is an example that combines all three macros we've seen so far:
+`macroCondition` acts like a function that takes a boolean value and returns that same boolean value. But whenever `macroCondition` appears directly inside the predicate of an `if` statement or as the predicate of a ternary expression, it tells the macro system to do branch elimination based on the predicate. Here is an example that combines three of the macros we've seen so far:
 
 ```js
 // This example:
@@ -499,6 +499,7 @@ It is a build error if `macroCondition` cannot statically determine the truth st
 Here is an example of `macroCondition` in a ternary expression:
 
 ```js
+// this example:
 const flavor = macroCondition(getOwnConfig().prefersChocolate)
   ? "chocolate"
   : "vanilla";
@@ -520,20 +521,21 @@ if (macroConditional(getOwnConfig().x)) {
 
 Q: Why not allow `if (getOwnConfig().thing)` instead of `if (macroCondition(getOwnConfig().thing))`?
 
-A: Because we don't want to leave any confusion over whether branch elimination will be done. Boolean expressions that include a macro like `getOwnConfig` alongside other runtime-only values are perfectly legal. But those expressions would not allow branch elimination. The ambiguity means you might accidentally defeat branch elimination without noticing. `macroCondition` is intended to signal -- both to the reader and to the compile -- that this place absolutely _must_ do branch elimination. It's an error if we can't eliminate one branch or the other.
+A: Because we don't want to leave any confusion over whether branch elimination will be done. Boolean expressions that include a macro like `getOwnConfig` alongside other runtime-only values are perfectly legal. But those expressions would not allow branch elimination. The ambiguity means you might accidentally defeat branch elimination without noticing. `macroCondition` is intended to signal -- both to the reader and to the compiler -- that this place absolutely _must_ do branch elimination. It's an error if we can't eliminate one branch or the other.
 
-### JavaScript macro: macroEach
+### JavaScript macro: each
 
-`macroEach` allows you to unroll a loop based on an array value provided by another macro. It behaves like the identity function (returning its argument unchanged), but it provided the special guarantee that if you use it as the argument of a `for ... of` loop, the loop will be unrolled:
+`each` allows you to unroll a loop based on an array value provided by another macro. It behaves like the identity function (returning its argument unchanged), but it provides the special guarantee that if you use it as the argument of a `for ... of` loop, the loop will be unrolled:
 
 ```js
-import { getOwnConfig, macroEach, importSync } from "@ember/macros";
+// This example:
+import { getOwnConfig, each, importSync } from "@ember/macros";
 let plugins = [];
-for (let plugin of macroEach(getOwnConfig().registeredPlugins)) {
+for (let plugin of each(getOwnConfig().registeredPlugins)) {
   plugins.push(importSync(plugin).default);
 }
 
-// Could compile to this, given OwnConfig
+// could compile to this, given OwnConfig
 // containing { registeredPlugins: ['@bigco/bar-chart', '@bigco/line-chart']}
 
 let plugins = [];
@@ -541,7 +543,7 @@ plugins.push(importSync("@bigco/bar-chart").default);
 plugins.push(importSync("@bigco/line-chart").default);
 ```
 
-It is a static error if the argument to `macroEach` does not evaluate to a statically known array.
+It is a static error if the argument to `each` does not evaluate to a statically known array.
 
 ### JavaScript Macro: moduleExists
 
