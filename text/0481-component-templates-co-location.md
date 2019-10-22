@@ -1,6 +1,6 @@
 - Start Date: 2019-04-12
 - Relevant Team(s): Ember.js, Ember CLI
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/481
 - Tracking: (leave this empty)
 
 # Component Templates Co-location
