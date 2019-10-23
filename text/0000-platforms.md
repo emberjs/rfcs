@@ -13,7 +13,7 @@ Ember is a web technology, but use with other technologies allows Ember to becom
 
 Using one framework to create web apps, mobile apps and desktop apps can be very beneficial to people and companies. 
 I believe there is a reason that when you go to any other popular frameworks site i.e https://angular.io or https://reactjs.org there is a reason why the first (or one of the first) things you will see is them talking about using it on many different platforms.
-Ive heard people say "We aren't sure if there is enough interest" while developing Glimmer Native. Well, seeing as how we don't advertise ourselves at all for being a cross platform solution that makes sense. People don't know what we can do if we don't tell them what we have to offer.
+Ive heard people say "We aren't sure if there is enough interest" while developing Glimmer Native. But that is to be expected since we don't advertise ourselves at all for being a cross platform solution. People don't know what we can do if we don't tell them what we have to offer.
 
 ## Detailed design
 
