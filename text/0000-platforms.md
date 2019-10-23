@@ -1,6 +1,6 @@
 - Start Date: 10/22/2019
 - Relevant Team(s): Steering, Learning
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/549
 - Tracking:
 
 # <RFC title>
