@@ -11,7 +11,7 @@ Deprecate support for `getWithDefault` in Ember's Object module (@ember/object) 
 
 ## Motivation
 
-The problem with `getWithDefault` is that its behaviour is confusing to Ember developers. The API will only return the default value when the value of the property retrieved is `undefined`. This behaviour is often overlooked when using the function where a developer might expect that `null` or other falsy values will also return the default value.
+The problem with `getWithDefault` is that its behaviour is confusing to Ember developers. The API will only return the default value when the value of the property retrieved is `undefined`. This behaviour is often overlooked when using the function where a developer might expect that `null` or other _falsy_ values will also return the default value.
 
 Given the JavaScript language will soon (currently in Stage 3) give us the appropriate tool for this use case using the [Nullish Coalescing Operator `??`](https://github.com/tc39/proposal-nullish-coalescing), we can deprecate usage of `getWithDefault` and use that instead.
 
@@ -38,7 +38,7 @@ if (result === undefined) {
 
 ### Nullish Coalescing Operator
 
-The expected behaviour of the function is to only return the default value if it is strictly `undefined` so we cannot codemod usage directly into the nullish coalescing operator.
+The expected behaviour of the `getWithDefault` function is to only return the default value if it is strictly `undefined` so we cannot codemod usage directly into the nullish coalescing operator.
 
 However [Babel](https://babeljs.io/) already supports the [nullish coalescing operator](https://babeljs.io/docs/en/next/babel-plugin-proposal-nullish-coalescing-operator.html) so we can use that for future use cases where we need to check if a property is `null` or `undefined` before applying a default value.
 
@@ -60,11 +60,11 @@ The downside to deprecating `getWithDefault` would be an increase to the line le
 
 ### Adding `null` as a condition
 
-We could add `null` as a condition alongside `undefined` which would return the default value provided. This is similar to what is proposed in [Nullish Coalescing for JavaScript](https://github.com/tc39/proposal-nullish-coalescing). This would however still be a breaking change since people who are depending on it working the way it does for null today will be broken if we change it.
+We could add `null` as a condition alongside `undefined` which would return the default value provided. This is similar to what is proposed in [Nullish Coalescing for JavaScript](https://github.com/tc39/proposal-nullish-coalescing). This would however still be a breaking change since people who are depending on `getWithDefault` to work the way it does for `null` today will be broken if we change it.
 
 ### Do nothing
 
-We could keep support in place, and provide more guidance around using it. There are already [some](https://dockyard.com/blog/2016/03/18/get-with-default) of articles cautioning usage of `getWithDefault` when dealing with null or falsey values.
+We could keep support in place, and provide more guidance around using it. There are already [some](https://dockyard.com/blog/2016/03/18/get-with-default) articles cautioning usage of `getWithDefault` when dealing with `null` or _falsy_ values.
 
 ## Unresolved questions
 
