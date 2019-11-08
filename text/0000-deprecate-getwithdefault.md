@@ -1,6 +1,6 @@
 - Start Date: (fill me in with today's date, YYYY-MM-DD)
 - Relevant Team(s): Ember.js
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/554
 - Tracking: (leave this empty)
 
 # Deprecate getWithDefault
