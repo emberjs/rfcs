@@ -24,6 +24,8 @@ We can codemod our current usage of `getWithDefault` with the equivalent behavio
 Before:
 
 ```js
+import { getWithDefault } from '@ember/object';
+
 let result = getWithDefault(obj, ‘some.key', defaultValue);
 ```
 
