@@ -30,6 +30,8 @@ let result = getWithDefault(obj, ‘some.key', defaultValue);
 After:
 
 ```js
+import { get } from '@ember/object';
+
 let result = get(obj, 'some.key');
 if (result === undefined) {
   result = defaultValue;
