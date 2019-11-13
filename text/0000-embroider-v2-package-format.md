@@ -136,6 +136,8 @@ This is designed to allow limited pattern matching of possible targets for your 
 
 Modules in **Own Javascript** are allowed to import template files. This is common in today’s addons (they import their own layout to set it on their Component class). The `.hbs` file extension resolves with lower priority than `.js` (meaning if you have both, the `.js` wins).
 
+Modules in **Own Javascript** are allowed to import JSON files. This is supported in Node and it's enabled by default in popular Javascript bundlers like Webpack, so it's common to encounter code on NPM that expects it to work. We interpret JSON as an ECMA module whose `default` export is the JSON object.
+
 ### Own Javascript: Transpilation of imported modules
 
 Any module you import, whether from an Ember package or a non-Ember package, gets processed by the app's babel configuration by default. This ensures that the app's `config/targets.js` will always be respected and you won't accidentally break your older supported browsers by importing a dependency that uses newer ECMA features.
