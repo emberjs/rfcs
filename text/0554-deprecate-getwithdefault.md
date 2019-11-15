@@ -7,7 +7,7 @@
 
 ## Summary
 
-Deprecate support for `getWithDefault` in Ember's Object module (@ember/object) because its expected behaviour is confusing to Ember developers.
+Deprecate support for `getWithDefault` in Ember's Object module (@ember/object) – both the [function](https://api.emberjs.com/ember/release/functions/@ember%2Fobject/getWithDefault) and the [class method](https://api.emberjs.com/ember/release/classes/EmberObject/methods/getWithDefault?anchor=getWithDefault) – because its expected behaviour is confusing to Ember developers.
 
 ## Motivation
 
