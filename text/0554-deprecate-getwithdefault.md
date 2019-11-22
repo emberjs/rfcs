@@ -26,7 +26,7 @@ Before:
 ```js
 import { getWithDefault } from '@ember/object';
 
-let result = getWithDefault(obj, ‘some.key', defaultValue);
+let result = getWithDefault(obj, 'some.key', defaultValue);
 ```
 
 After:
@@ -40,13 +40,66 @@ if (result === undefined) {
 }
 ```
 
-### Nullish Coalescing Operator
+#### Using Nullish Coalescing Operator
 
-The expected behaviour of the `getWithDefault` function is to only return the default value if it is strictly `undefined` so we cannot codemod usage directly into the nullish coalescing operator.
+We cannot codemod directly into the nullish coalescing operator since the expected behaviour of `getWithDefault` is to only return the default value if it is strictly `undefined`. The nullish coalescing operator accepts either `null` or `undefined` as _falsey_ values to show the default value.
 
-However [Babel](https://babeljs.io/) already supports the [nullish coalescing operator](https://babeljs.io/docs/en/next/babel-plugin-proposal-nullish-coalescing-operator.html) so we can use that for future use cases where we need to check if a property is `null` or `undefined` before applying a default value.
+The function `getWithDefault` **will not return** the default value if the provided value is `null`. The function will **only return** the default value for `undefined`:
 
-Similarly [TypeScript](https://github.com/microsoft/TypeScript) as of [version 3.7](https://devblogs.microsoft.com/typescript/announcing-typescript-3-7/#nullish-coalescing) also supports the operator so we will not be breaking that flow either.
+```js
+let defaultValue = 1;
+let obj = {
+  nullValue: null,
+};
+
+// Returns defaultValue 1, undefinedKey = 1
+let undefinedValue = getWithDefault(obj, 'undefinedKey', defaultValue);
+
+// Returns null, nullValue = null
+let nullValue = getWithDefault(obj, 'nullValue', defaultValue);
+```
+
+The nullish coalescing operator (`??`) **will return** the default value when the provided value is `undefined` or `null`:
+
+```js
+let defaultValue = 1;
+let obj = {
+  nullValue: null,
+};
+
+// Returns defaultValue 1, undefinedKey = 1
+let undefinedValue = get(obj, 'undefinedKey') ?? defaultValue;
+
+// Returns defaultValue 1, nullValue = 1
+let nullValue = get(obj, 'nullValue') ?? defaultValue;
+```
+
+This can be an option if we are aware that either `null` or `undefined` should return the default value.
+
+Tooling Support:
+
+- [Babel](https://babeljs.io/) already supports the [nullish coalescing operator](https://babeljs.io/docs/en/next/babel-plugin-proposal-nullish-coalescing-operator.html) so we can use that for future use cases where we need to check if a property is `null` or `undefined` before applying a default value.
+
+- [TypeScript](https://github.com/microsoft/TypeScript), similarly, as of [version 3.7](https://devblogs.microsoft.com/typescript/announcing-typescript-3-7/#nullish-coalescing) also supports the operator so we will not be breaking that flow either.
+
+#### Using Object Destructuring With Defaults
+
+If we are only looking to check If both `null` or `undefined` should return the default value in a particular use case, using [object destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment) with defaults can also be an option.
+
+Object destructuring with defaults **will return** the default value when the provided value is `undefined` or `null`:
+
+```js
+let defaultValue = 1;
+let obj = {
+  nullValue: null,
+};
+
+// Returns defaultValue 1, undefinedKey = 1
+let { undefinedKey = defaultValue } = obj;
+
+// Returns defaultValue 1, nullValue = 1
+let { nullValue = defaultValue } = obj;
+```
 
 ## How We Teach This
 
