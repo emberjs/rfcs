@@ -1,6 +1,6 @@
 - Start Date: 2019-11-27
 - Relevant Team(s): Ember.js, Ember Data, Learning
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/557/files
 - Tracking: (leave this empty)
 
 # Deprecate Implicit Record Finding In Routes
