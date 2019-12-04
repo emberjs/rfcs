@@ -50,6 +50,7 @@ The function `getWithDefault` **will not return** the default value if the provi
 let defaultValue = 1;
 let obj = {
   nullValue: null,
+  falseValue: false,
 };
 
 // Returns defaultValue 1, undefinedKey = 1
@@ -57,6 +58,9 @@ let undefinedValue = getWithDefault(obj, 'undefinedKey', defaultValue);
 
 // Returns null, nullValue = null
 let nullValue = getWithDefault(obj, 'nullValue', defaultValue);
+
+// Returns obj's falseValue, falseValue = false
+let falseValue = getWithDefault(obj, 'falseValue', defaultValue);
 ```
 
 The nullish coalescing operator (`??`) **will return** the default value when the provided value is `undefined` or `null`:
@@ -65,6 +69,7 @@ The nullish coalescing operator (`??`) **will return** the default value when th
 let defaultValue = 1;
 let obj = {
   nullValue: null,
+  falseValue: false,
 };
 
 // Returns defaultValue 1, undefinedKey = 1
@@ -72,6 +77,9 @@ let undefinedValue = get(obj, 'undefinedKey') ?? defaultValue;
 
 // Returns defaultValue 1, nullValue = 1
 let nullValue = get(obj, 'nullValue') ?? defaultValue;
+
+// Returns obj's falseValue, falseValue = false
+let falseValue = get(obj, 'falseValue') ?? defaultValue;
 ```
 
 This can be an option if we are aware that either `null` or `undefined` should return the default value.
@@ -84,21 +92,25 @@ Tooling Support:
 
 #### Using Object Destructuring With Defaults
 
-If we would like to return the default value if the existing value is falsey, using [object destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment) with defaults can also be an option.
+If we would like to return the default value if the existing value is `undefined` we can also use [object destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment) with defaults.
 
-Object destructuring with defaults **will return** the default value when the provided value is `undefined` or `null`:
+Object destructuring with defaults **will return** the default value when the provided value is `undefined`:
 
 ```js
 let defaultValue = 1;
 let obj = {
   nullValue: null,
+  falseValue: false,
 };
 
 // Returns defaultValue 1, undefinedKey = 1
 let { undefinedKey = defaultValue } = obj;
 
-// Returns defaultValue 1, nullValue = 1
+// Returns defaultValue 1, nullValue = null
 let { nullValue = defaultValue } = obj;
+
+// Returns obj's falseValue, falseValue = false
+let { falseValue = defaultValue } = obj;
 ```
 
 ## How We Teach This
