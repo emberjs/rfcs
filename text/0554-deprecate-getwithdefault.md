@@ -84,7 +84,7 @@ Tooling Support:
 
 #### Using Object Destructuring With Defaults
 
-If we are only looking to check If both `null` or `undefined` should return the default value in a particular use case, using [object destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment) with defaults can also be an option.
+If we would like to return the default value if the existing value is falsey, using [object destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment) with defaults can also be an option.
 
 Object destructuring with defaults **will return** the default value when the provided value is `undefined` or `null`:
 
