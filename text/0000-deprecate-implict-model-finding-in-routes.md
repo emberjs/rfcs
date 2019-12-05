@@ -12,7 +12,7 @@ For example, if a dynamic segment is `:post_id`, there exists logic to split on 
 
 ## Motivation
 
-Recently, [eslint-plugin-ember](https://github.com/ember-cli/eslint-plugin-ember/issues/410) introduced a lint rule to _enforce_ the `snake_case` convention of dynamic segments. I and a few others don't like `snake_case` in JavaScript, as the convention is `camelCase`. We looked into submitting and RFC for changing the default to `camelCase`, but encountered [this code](https://github.com/emberjs/ember.js/blob/b4456779d0f5f5b99da853c4e1f0688ce96cc27c/packages/%40ember/-internals/routing/lib/system/route.ts#L1167-L1186) that suggests some implicit data loading behavior for `snake_case` params _ending_ in `_id` and if you _happen_ to have a service named `store`.
+Recently, [eslint-plugin-ember](https://github.com/ember-cli/eslint-plugin-ember/issues/410) introduced a lint rule to _enforce_ the `snake_case` convention of dynamic segments. I and a few others don't like `snake_case` in JavaScript, as the convention is `camelCase`. We looked into submitting an RFC for changing the default to `camelCase`, but encountered [this code](https://github.com/emberjs/ember.js/blob/b4456779d0f5f5b99da853c4e1f0688ce96cc27c/packages/%40ember/-internals/routing/lib/system/route.ts#L1167-L1186) that suggests some implicit data loading behavior for `snake_case` params _ending_ in `_id` and if you _happen_ to have a service named `store`.
 
 ## Transition Path
 
