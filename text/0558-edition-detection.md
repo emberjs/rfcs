@@ -154,6 +154,10 @@ Instead of adding the `emberEdition` value to the `package.json` we could add
 it to the existing `.ember-cli` file. However, doing this would **not** satisfy
 the static analysis constraint mentioned in the motivation section (because
 `.ember-cli.js` is transparently supported by `ember-cli`'s build system).
+In addition, any values that are included in `.ember-cli` are automatically
+passed in to every command invocation which would be both unintended (we don't
+want commands to access the edition in this way) and possibly breaking (if the
+command already accepted an option with whatever value we chose).
 
 ## Unresolved questions
 
