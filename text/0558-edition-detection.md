@@ -52,6 +52,13 @@ The value will be expected to be one of the valid edition names (currently
 `classic` and `octane`). Using the `package.json` for this allows us to ensure
 that the value is statically analyzable and easy to discover.
 
+For applications specifying `ember: { edition: 'octane' }` in `package.json` is
+generally all that is needed. In an addon this new property would be specifying
+the edition that the addons own dummy app uses. However, many addons may want
+to test against _multiple_ editions that they support. In order to support
+this, ember-try will be updated to allow specifying (and merging) the `ember`
+property in the `package.json` from their `config/ember-try.js` scenarios.
+
 ### Valid use of the edition value
 
 The edition flag should only be used by addons to determine what blueprint
