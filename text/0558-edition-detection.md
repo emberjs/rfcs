@@ -64,6 +64,23 @@ property in the `package.json` from their `config/ember-try.js` scenarios.
 The edition flag should only be used by addons to determine what blueprint
 output to generate and to provide helpful warnings (or errors) at build time.
 
+Note that the above definition does **not** allow for an addon to detect the
+edition configuration and change its fundamental implementation. This is quite
+intentional!
+
+Instead, addons should rely on feature detection techniques like the following
+to alter implementations:
+
+* Check to see if given methods/properties exist (this is essentially like how
+  browser polyfills work)
+* Use a tool like
+[ember-compatibility-helpers](https://github.com/pzuraq/ember-compatibility-helpers)'s
+`gte` method (e.g. `if (gte('ember-source', '3.14.0')) { }`)
+* Use
+  [@ember/optional-features](https://github.com/emberjs/ember-optional-features)'s
+  [`isFeatureEnabled`
+  method](https://github.com/emberjs/ember-optional-features#at-build-time-from-an-addon)
+
 ### Detecting the edition
 
 The existing `@ember/edition-utils` package will still be used by addons to
