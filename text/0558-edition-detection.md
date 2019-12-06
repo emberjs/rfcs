@@ -97,12 +97,12 @@ their `.ember-cli.js`) a period of time in order to migrate.
 ## How we teach this
 
 The official guides at `https://guides.emberjs.com/release/configuring-ember/`
-will be updated to include documentation of the new `pacakge.json`
+will be updated to include documentation of the new `package.json`
 configuration and clearly explain what the edition flag is used for (warnings
 and blueprints).
 
-This will will not be a difficult concept to teach to folks (most users won't
-care, and will get upgrade as part of a future `ember-cli` blueprint update).
+This will not be a difficult concept to teach to folks (most users won't
+care, and will get upgraded as part of a future `ember-cli` blueprint update).
 
 ## Drawbacks
 
