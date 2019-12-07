@@ -8,7 +8,7 @@
 ## Summary
 
 Introduces a mechanism that an application can use to specify which Edition of
-Ember it is intending to target. This RFC will define:
+Ember it intends to target. This RFC will define:
 
 * How to specify the edition that the application is using
 * How other packages (addons, codemods, etc) can detect the applications intended edition
@@ -16,12 +16,12 @@ Ember it is intending to target. This RFC will define:
 
 ## Motivation
 
-As Ember approaches it's first edition (see
+As Ember approaches its first edition (see
 [emberjs/rfcs#364](https://github.com/emberjs/rfcs/pull/364)) various addons
 need to modify their behavior based on the edition that is being used. An
 initial implementation (done without RFC) used the `setEdition` method from
-`@ember/edition-utils` inside the application's (or addon's) `.ember-cli.js`
-file to specify which edition was to be used. That implementation worked well
+`@ember/edition-utils` inside the application or addon's `.ember-cli.js`
+file to specify which edition to use. That implementation worked well
 enough throughout the intial preview period, but a number of major issues were
 (rightfully!) surfaced by the community:
 
