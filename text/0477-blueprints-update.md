@@ -19,15 +19,20 @@ Projects like [libkit](https://github.com/tildeio/libkit), [@glimmer/blueprint](
 
 Up until now, ember-cli-update could update apps without any configuration, but in order to handle all blueprints and their options, some state has to be stored in the project.
 
-The code is already completed [here](https://github.com/ember-cli/ember-cli-update/pull/552), but I wanted to publish this RFC before releasing it into the wild. I want to make sure the format of these files are agreed upon, because if this is successful, it will probably propagate throughout the ecosystem.
+The code is already completed but opt-in. I wanted to publish this RFC before releasing it into the wild. I want to make sure the format of these files are agreed upon, because if this is successful, it will probably propagate throughout the ecosystem.
 
 ```json
 // config/ember-cli-update.json
 {
-  "blueprints": [
+  "packages": [
     {
       "name": "my-custom-blueprint",
-      "version": "0.0.1"
+      "version": "0.0.1",
+      "blueprints": [
+        {
+          "name": "my-custom-blueprint"
+        }
+      ]
     }
   ]
 }
@@ -37,38 +42,77 @@ The code is already completed [here](https://github.com/ember-cli/ember-cli-upda
 
 How should the state be structured?
 
-```json
-{
-  "blueprints": [
-    {
-      "name": "my-custom-blueprint",
-      "version": "0.0.1"
-    }
-  ]
-}
-```
+```ts
+/**
+  This lives at config/ember-cli-update.json by default.
+*/
+interface BlueprintConfig {
+  /**
+    Keep track of incompatible schema changes.
+  */
+  schemaVersion: number;
 
-```json
-{
-  "blueprints": {
-    "my-custom-blueprint": {
-      "version": "0.0.1"
-    }
-  }
-}
-```
+  /**
+    A package is a collection of blueprints from a single source.
+  */
+  packages: {
+    /**
+      The name of the package.
+    */
+    name: string;
 
-Future-proofing for more options
+    /**
+      Target a blueprint on your local filesystem, monorepo or otherwise.
+    */
+    location?: string;
 
-```json
-{
-  "additionalFutureOptions": null,
-  "blueprints": {
-    "my-custom-blueprint": {
-      "version": "0.0.1",
-      "additionalFutureOptions": null,
-    }
-  }
+    /**
+      The version of the package used for blueprint diffing.
+    */
+    version: string;
+
+    /**
+      The blueprints in the package. Can be a default blueprint having
+      the same name as the package, or a named blueprint like component
+      generators.
+    */
+    blueprints: {
+      /**
+        A base blueprint is the blueprint you started your project with.
+        This could be the ember app blueprint, or a custom blueprint like libkit.
+        If this is missing or false, it is a partial blueprint, like the changes
+        you get when installing an ember addon like ember-cli-mirage.
+        There must be one base blueprint at all times.
+      */
+      isBaseBlueprint?: boolean;
+
+      /**
+        The name of the blueprint to be run.
+      */
+      name: string;
+
+      /**
+        The path inside your project to run in. Think deeply nested
+        component generators. Missing means project root.
+      */
+      cwd?: string;
+
+      /**
+        The location of a codemods manifest if there are codemods
+        associated with this blueprint.
+      */
+      codemodsUrl?: string;
+
+      /**
+        All options should be normalized to match any codemod requirements.
+        The work to normalise them might not be done at first, so users
+        writing the CLI commands are expected to do it. For example,
+        `--no-welcome` should be expanded to `--welcome=false` so that
+        a codemod with a requirement of `[ "--welcome=false" ]` can match it.
+      */
+      options?: string[];
+    }[]
+  }[]
 }
 ```
 
@@ -111,22 +155,6 @@ This is a helper for saving the state of an old blueprint's run without ember-cl
 
 **Methods of delivery**
 
-Blueprints could be responsible for injecting the state into projects
-
-```json
-// my-custom-blueprint/blueprints/my-custom-blueprint/files/config/ember-cli-update.json
-{
-  "blueprints": [
-    {
-      "name": "my-custom-blueprint",
-      "version": "<%= blueprintVersion %>"
-    }
-  ]
-}
-```
-
-or ember-cli-update could manage it itself if the blueprint does not provide this info. You would have to provide the initial blueprint version to start from.
-
 The goal is for when you type `ember-cli-update` in your project, you will get a prompt like
 
 ```
@@ -148,43 +176,27 @@ ember new my-app -b my-blueprint --option1 --option2=foo
 ```
 
 ```json
-// my-blueprint/files/config/ember-cli-update.json
+// my-app/config/ember-cli-update.json
 {
-  "blueprints": [
+  "packages": [
     {
       "name": "my-blueprint",
-      "version": "<%= blueprintVersion %>",
-      "options": [
-        "option0=<%= option0 %>",
-        "option1=<%= option1 %>",
-        "option2=\"<%= option2 %>\""
+      "version": "0.0.1",
+      "blueprints": [
+        {
+          "name": "my-blueprint",
+          "options": [
+            "option1=true",
+            "option2=\"foo\""
+          ]
+        }
       ]
     }
   ]
 }
 ```
 
-```json
-// my-app/config/ember-cli-update.json
-{
-  "blueprints": {
-    "my-blueprint": {
-      "version": "0.0.1",
-      "options": [
-        "option0=false",
-        "option1=true",
-        "option2=\"foo\""
-      ]
-    }
-  }
-}
-```
-
 The updater can now generate a project with the correct options.
-
-```
-ember new my-app -b my-blueprint --option0=false --option1=true --option2="foo"
-```
 
 **Codemods**
 
@@ -192,16 +204,32 @@ There is no reason why you couldn't provide your own codemods with this system. 
 
 ```json
 {
-  "blueprints": {
-    "my-blueprint": {
+  "packages": [
+    {
+      "name": "my-blueprint",
       "version": "0.0.1",
-      "codemods": "some-server.com/my-blueprint-codemods-manifest.json"
+      "blueprints": [
+        {
+          "name": "my-blueprint",
+          "codemodsUrl": "some-server.com/my-blueprint-codemods-manifest.json"
+        }
+      ]
     }
-  }
+  ]
 }
 ```
 
-TODO: The options need to be normalized somehow to be used in the codemods system.
+## How we teach this
+
+I’m not sure. It could be a section in the ember-cli-update README, or leave it up to the blueprints that want to support this to document. If this feature takes off in the ecosystem, then it might warrant a guides section on keeping your blueprints up-to-date.
+
+## Drawbacks
+
+A drawback could be that blueprints start writing this state, but the consumer doesn’t want to use ember-cli-update to keep it in sync. In that case, it’s another file the user has to delete.
+
+## Unresolved questions
+
+The options need to be normalized somehow to be used in the codemods system.
 
 `--custom-option foo` vs `--custom-option=foo` vs `--custom-option="foo"`
 
@@ -221,10 +249,4 @@ TODO: The options need to be normalized somehow to be used in the codemods syste
 ]
 ```
 
-## How we teach this
-
-I’m not sure. It could be a section in the ember-cli-update README, or leave it up to the blueprints that want to support this to document. If this feature takes off in the ecosystem, then it might warrant a guides section on keeping your blueprints up-to-date.
-
-## Drawbacks
-
-A drawback could be that blueprints start writing this state, but the consumer doesn’t want to use ember-cli-update to keep it in sync. In that case, it’s another file the user has to delete.
+For now, we should leave it up to the end-user to normalize the options to match any codemod manifest. This is too hard a problem to nail down on the first iteration.
