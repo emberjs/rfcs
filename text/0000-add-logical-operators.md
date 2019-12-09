@@ -34,14 +34,14 @@ and by short-circuiting we can avoid computing them at all sometimes.
 Add `{{and}}`, `{{or}}` and `{{not}}` helpers.
 
 #### `{{and}}`
-Takes at least two positional arguments, bound or unbound. Raises an error if invoked with less than two arguments.
+Takes at least two positional arguments. Raises an error if invoked with less than two arguments.
 It evaluates arguments left to right, returning the first one that is not _truthy_ (**by handlebar's definition of truthiness**)
 or the right-most arguments if **all** evaluate to _truthy_.
 This is *NOT* equivalent to the `{{and}}` helper from `ember-truth-helpers` because unlike this proposed helper, the one in `ember-truth-helpers`
 uses Javascript's definition of truthiness.
 
 #### `{{or}}`
-Takes at least two positional arguments, bound or unbound. Raises an error if invoked with less than two arguments.
+Takes at least two positional arguments. Raises an error if invoked with less than two arguments.
 It evaluates arguments left to right, returning the first one that is _truthy_ (**by handlebar's definition of truthiness**) or the
 right-most argument if all evaluate to _falsy_.
 This is *NOT* equivalent to the `{{or}}` helper from `ember-truth-helpers` because unlike this proposed helper, the one in `ember-truth-helpers`
