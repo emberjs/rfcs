@@ -20,7 +20,7 @@ other addons that those apps consume.
 The fact that `ember-truth-helpers` is so popular is a good signal that this it is filling a perceived gap in Ember's functionality.
 
 A second reason is that it might help make Ember more approachable to newcomers that have some experience in other frameworks.
-Most if not all web frameworks have some way of comparing numbers in the templates and it's surprising that Ember requires an third party package to perform
+Most if not all web frameworks have some way of performing logical operations in the templates and it's surprising that Ember requires an third party package to perform
 even the most basic operations.
 
 A third reason, this time technical, is that by implementing those helpers at a lower-level, we can make them more performant by making them short-circuit.
