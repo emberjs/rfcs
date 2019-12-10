@@ -89,6 +89,8 @@ Adding new helpers increases the surface area of the framework and the code the 
 ## Alternatives
 
 One alternative path is to not take any action and let users continue to define their own helpers (or install `ember-truth-helpers`).
+Additionally the core could explore ways of making helpers not consume arguments eagerly to allow the implementation
+of short-circuiting helpers in userland.
 
 ## Unresolved questions
 
