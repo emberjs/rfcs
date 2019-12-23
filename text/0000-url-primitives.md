@@ -3,43 +3,133 @@
 - RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
 - Tracking: (leave this empty)
 
-# URL Primitives
+# URL Manager
 
-Supercedes [Add queryParams to the router service](https://github.com/emberjs/rfcs/pull/380)
-
-Notes from rwjblue:
-
-This RFC should include a bit more detail:
-
-a comprehensive list of the ways the current QP system can be used (the use cases at least), and how you would do the same things in the new APIs
-examples of how we would teach the new API (e.g. for the guides)
-examples of how current QP related addons would plausibly function over the new APIs
-
-I'd also like to see an exploration of why the core has to do this at all, what would a minimal API look like to allow this entire RFC to be implementable in user space? From my perspective, there are a few fundamental things that might unblock that:
-
-adding a public API to access Router.map defined metadata
-adding a hook that can be used to customize the target of all .transitionTo / .replaceWith invocations (intercepting the QP properties, and setting state on the QP service)
-adding a hook that can be used to customize how a URL is translated back into router params (intercepting the URL string and setting state on the QP service)
-I'm willing to accept that this might be naive, but it seems like an interesting (smaller, more customizable, and easier to implement) alternative...
+Supersedes [Add queryParams to the router service](https://github.com/emberjs/rfcs/pull/380)
 
 ## Summary
 
-> One paragraph explanation of the feature.
+An URL Manager will provide the ability to manipulate the URL -- 
+both when writing to the `window.location` (serializing), 
+and reading from the `window.location` (deserializing). 
+The ultimate goal of the URL Manager will be to enable 
+app and addon authors to customize the use of the URL -- 
+including i18n'd routes, dynamic segment slugs / aliases, 
+and alternate query params behavior -- though, 
+implementation of those specific things is outside the scope of *this* RFC. 
 
 ## Motivation
 
-> Why are we doing this? What use cases does it support? What is the expected
-outcome?
+There is currently no way to alter the router's behavior around the interpretation of the URL. 
+This means that we are unable to provide internationalized URLs, 
+we cannot customize the (de)serialization of query params 
+(which is important because there is no standard format for query params).
+
+These APIs will also provide an opportunity to iterate on a better default query params implementation that will enable an objectively better development experience for app devs 
+when interacting with query params.
+
+The current URL behavior will be preserved, should the URL Manager be implemented. 
 
 ## Detailed design
 
-> This is the bulk of the RFC.
+The implementation of the URL Manager is 2 parts:
+ - the URL Manager itself
+ - access to the URL Manager / Router.map data from framework-objects
+   - required for preserving existing query params behavior where query params are, by default, allow-list only.
 
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here.
+
+### Examples
+
+Custom URL Manager that implements i18n routes
+```ts
+// app/router.js/ts
+import EmberRouter, { URLManager } from '@ember/routing/router';
+import { inject as service } from '@ember/service';
+import config from 'app-name/config/environment';
+import qs from 'qs';
+
+
+class CustomURLManager extends URLManager {
+  // current language: Korean
+  @service i18n;
+  @service router;
+
+  // interprets the URL
+  deserialize(url: string): RouteInfo { // /블로그/1/게시물/2?foo=bar
+    let [path, query] = url.split('?');
+    let segments = path.split('/');
+    let english = 
+      path.split('/')
+          .segments.map(segment => {
+            return this.i18n.lookup(`routes.from.${segment}`, 'en-us') || segment;
+          })
+          .join('/');
+
+    let routeInfo = this.router.recognize(english);
+    let queryParams = qs.parse(query);
+
+    return {
+      ...routeInfo,
+      queryParams,
+    };
+  }
+
+  // pushes the state to the URL
+  serialize(routeInfo: RouteInfo, dynamicSegments: object) {
+    let { 
+        mapInfo: {
+            segments // [blogs, :blogId, posts, :postId]
+        }, // MapInfo
+        queryParams, // { foo: 'bar' }
+        name, // blog.posts
+    } = routeInfo;
+
+    let url = segments.map(segment => {
+      return dynamicSegments[segment] || this.i18n.t(`routes.${segment}`);
+    }).join('/');
+
+    let query = qs.stringify(queryParams);
+
+    return `/${url}?${query}`; // => /블로그/1/게시물/2?foo=bar
+  }
+}
+
+export default class Router extends EmberRouter {
+  location = config.locationType;
+  rootURL = config.rootURL;
+  urlManager = CustomURLManager;
+});
+
+Router.map(function() {
+
+});
+```
+
+**Accessing Router Map Info**
+[RouteInfo](https://api.emberjs.com/ember/release/classes/RouteInfo)
+ - added property: `mapInfo`:
+    ```ts
+    interface MapInfo {
+      name: string;
+      segments: string[]; // [blogs, :blogId, posts, :postId]
+      options: {
+        path: string;
+
+      };
+      childRoutes: MapInfo[]
+    }
+    ```
+
+
+```ts
+class Post extends Component {
+  @service router;
+
+  get dynamicSegments() {
+      this.router.routeInfo.mapInfo.options;
+  }
+}
+```
 
 ## How we teach this
 
