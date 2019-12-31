@@ -5,8 +5,6 @@
 
 # URL Manager
 
-TODO: check if routeInfo or route has a way to build a URL from routeInfo (need full dynamic segments)
-
 Supersedes [Add queryParams to the router service](https://github.com/emberjs/rfcs/pull/380)
 
 ## Summary
@@ -223,7 +221,8 @@ class CustomURLManager extends URLManager {
 2. Restriction of Query Params on controllers / `<LinkTo />` needs to have a way to opt-out. 
    Today, if a query param is added to a `<LinkTo />` and that query param is not present on the target `route`'s controller, the query param is removed from the link. 
    Query Param allow/deny lists could be re-implemented using the Router `MapInfo` / options.
-3. The router's urlFor should be able to take a RouteInfo / RouteInfo should be able to be converted to an URL
+3. The router's urlFor helper function should be able to take a RouteInfo / RouteInfo should be able to be converted to an URL
+   - delegates to `urlManager.toURL` for `RouteInfo`
 4. Static `MapInfo` object reference added to each `RouteInfo`.
 5. routerService.mapInfoFrom should take: path / url / routeInfo -- uses existing recognize method
 
@@ -250,6 +249,7 @@ class CustomURLManager extends URLManager {
       }
     }
     ```
+4. `transitionTo` and `replaceWith` APIs are unaffected.
 
 ### The Default URL Manager
 
