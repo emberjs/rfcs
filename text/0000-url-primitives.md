@@ -43,7 +43,9 @@ All examples will have the following in common:
 import EmberRouter, { URLManager } from '@ember/routing/router';
 import config from 'app-name/config/environment';
 
-// ... Example CustomURLManager here ...
+class CustomURLManager extends URLManager {
+  // Concrete example implementations are shown in the following sections.
+}
 
 export default class Router extends EmberRouter {
   location = config.locationType;
