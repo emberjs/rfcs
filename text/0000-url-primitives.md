@@ -113,6 +113,7 @@ class CustomURLManager extends URLManager {
 ```
 
 ### i18n routes
+
 In this scenario, we may want to internationalized route segments.
 
 For example, in English, we may want a route to be `/blogs/1/posts/2`, 
