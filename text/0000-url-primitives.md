@@ -65,7 +65,7 @@ Router.map(function() {
 ```
 
 
-### Naiive Query Params without Controllers
+### Naïve Query Params without Controllers
 
 This example proposes the possibility of an alternate strategy for managing query params without the need for controllers. 
 Note that this would not change or alter the existing query param behavior in any way.
