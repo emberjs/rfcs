@@ -50,7 +50,7 @@ class CustomURLManager extends URLManager {
 export default class Router extends EmberRouter {
   location = config.locationType;
   rootURL = config.rootURL;
-  urlManager = CustomURLManager; // Defined in Examples
+  urlManager = CustomURLManager;
 });
 
 Router.map(function() {
