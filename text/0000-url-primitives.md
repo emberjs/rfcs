@@ -227,7 +227,8 @@ class CustomURLManager extends URLManager {
 
 
 ### Changes to Internals
-1. `<LinkTo />` and other related router helpers use `toURL` and `fromURL` from the URL Manager
+
+1. `<LinkTo />` and other related router helpers use `toURL` and `fromURL` from the URL Manager.
    This allows more control over the allow/deny list behavior of query params filtering.
 
 ### Additional APIs / Behavior
