@@ -9,7 +9,7 @@ Supersedes [Add queryParams to the router service](https://github.com/emberjs/rf
 
 ## Summary
 
-An URL Manager will provide the ability to manipulate the URL -- 
+A URL Manager will provide the ability to manipulate the URL, 
 both when writing to the `window.location` (serializing), 
 and reading from the `window.location` (deserializing). 
 The ultimate goal of the URL Manager will be to enable 
