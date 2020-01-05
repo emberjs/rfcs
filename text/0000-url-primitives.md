@@ -171,6 +171,7 @@ class CustomURLManager extends URLManager {
 ```
 
 ### Custom URL Management per-route
+
 There are situations in which links and their routes don't conform to the rest of the application. For these situations, here is an example showing how manage the URL separately for those routes.
 
 ```ts
