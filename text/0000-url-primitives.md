@@ -237,6 +237,7 @@ class CustomURLManager extends URLManager {
   Primary need for this is to access the router service to utilize existing APIs for transforming URLs and `RouteInfo`s
 
 ### Notes
+
 1. `MapInfo` is static or "frozen" -- it is only constructed at the time of router setup.
 2. `MapInfo` represents the optional `object` argument of `Router.map`'s `this.route`. Empty object if not configured.
 3. If needed, the URL Manager may be used from a component: 
