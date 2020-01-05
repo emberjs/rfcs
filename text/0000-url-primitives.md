@@ -32,7 +32,7 @@ If no URL Manager is configured, Ember's current URL behavior will be preserved.
 
 ## Examples
 
-The following examples of the proposed API are written in TypeScript in _userland / application-space_ to better 
+The following examples of the proposed API are written in TypeScript in _userland_/_application-space_ to better 
 demonstrate intended API and available data.
 
 The same naming semantics and conventions in today's router system will still apply. 
