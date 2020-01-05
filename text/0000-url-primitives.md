@@ -13,7 +13,7 @@ A URL Manager will provide the ability to manipulate the URL,
 both when writing to `window.location` (serializing), 
 and reading from `window.location` (deserializing). 
 The ultimate goal of the URL Manager will be to enable 
-app and addon authors to customize the use of the URL -- 
+app and addon authors to customize the use of the URL—
 including internationalized routes, dynamic segment slugs / aliases, 
 and alternative query params behavior—though, 
 implementation of those specific things is outside the scope of *this* RFC. 
