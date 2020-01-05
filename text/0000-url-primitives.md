@@ -1,6 +1,6 @@
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
-- Relevant Team(s): (fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies)
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- Start Date: 2020-01-04
+- Relevant Team(s): Ember.js
+- RFC PR: https://github.com/emberjs/rfcs/pull/570
 - Tracking: (leave this empty)
 
 # URL Manager
