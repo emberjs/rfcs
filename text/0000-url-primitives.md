@@ -341,7 +341,6 @@ module('Unit | Route | blogs/blog/posts/post', function(hooks) {
 Prior Art: 
 - the manager patterns from elsewhere in Ember.
 
-
 ## Unresolved questions
 
 - Should the URL Manager exist as a static config or an instantiable object per-route? The above proposal is a static config / singleton, but allowing an instance per route would allow for more varied state buckets, but could also make debugging harder as there would be an URL Manager for each route segment.
