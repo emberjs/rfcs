@@ -14,7 +14,7 @@ both when writing to `window.location` (serializing),
 and reading from `window.location` (deserializing). 
 The ultimate goal of the URL Manager will be to enable 
 app and addon authors to customize the use of the URL -- 
-including i18n'd routes, dynamic segment slugs / aliases, 
+including internationalized routes, dynamic segment slugs / aliases, 
 and alternate query params behavior -- though, 
 implementation of those specific things is outside the scope of *this* RFC. 
 
