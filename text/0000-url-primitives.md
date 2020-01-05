@@ -149,7 +149,7 @@ class CustomURLManager extends URLManager {
     };
   }
 
-  toURL(routeInfo: RouteInfo) {
+  toURL(routeInfo: RouteInfo): string {
     let { 
       mapInfo: {
         segments // [blogs, :blogId, posts, :postId]
@@ -238,6 +238,25 @@ class CustomURLManager extends URLManager {
 
 1. URLManager is a container-controlled object, so that it may utilize the dependency injection system.
   Primary need for this is to access the router service to utilize existing APIs for transforming URLs and `RouteInfo`s
+  
+`URLManager` has the following API:
+
+```ts
+class URLManager {
+  static create(injections: any) {
+    return new this(injections);
+  }
+
+  constructor(injections: any) {
+    Object.assign(this, injections);
+  }
+  
+  public toURL(routeInfo: RouteInfo, dynamicSegments: object): string;
+  public fromURL(url: string): RouteInfo;
+}
+```
+
+and `toURL` and `fromURL` implement today's URL (de)serialization.
 
 ### Notes
 
