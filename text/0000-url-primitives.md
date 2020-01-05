@@ -217,7 +217,8 @@ class CustomURLManager extends URLManager {
 ## Detailed design
 
 ### Additions to existing public APIs
-1. add full list of dynamicSegments to RouteInfo so that the task of building out the map of dynamic segments to their values isn't in user-space
+
+1. Add full list of dynamicSegments to `RouteInfo` so that the task of building out the map of dynamic segments to their values isn't in userspace;
 2. Restriction of Query Params on controllers / `<LinkTo />` needs to have a way to opt-out. 
    Today, if a query param is added to a `<LinkTo />` and that query param is not present on the target `route`'s controller, the query param is removed from the link. 
    Query Param allow/deny lists could be re-implemented using the Router `MapInfo` / options.
