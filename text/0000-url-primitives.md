@@ -11,7 +11,7 @@ Supersedes [Add queryParams to the router service](https://github.com/emberjs/rf
 
 A URL Manager will provide the ability to manipulate the URL, 
 both when writing to `window.location` (serializing), 
-and reading from the `window.location` (deserializing). 
+and reading from `window.location` (deserializing). 
 The ultimate goal of the URL Manager will be to enable 
 app and addon authors to customize the use of the URL -- 
 including i18n'd routes, dynamic segment slugs / aliases, 
