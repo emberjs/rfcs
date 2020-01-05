@@ -30,7 +30,6 @@ when interacting with query params.
 
 If no URL Manager is configured, Ember's current URL behavior will be preserved.
 
-
 ## Examples
 
 The following examples of the proposed API are written in TypeScript in _userland / application-space_ to better 
