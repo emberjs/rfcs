@@ -71,7 +71,6 @@ Router.map(function() {
 This example proposes the possibility of an alternate strategy for managing query params without the need for controllers. 
 Note that this would not change or alter the existing query param behavior in any way.
 
-
 ```ts
 // app/router.js/ts
 import { inject as service } from '@ember/service';
