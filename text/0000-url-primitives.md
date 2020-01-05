@@ -232,6 +232,7 @@ class CustomURLManager extends URLManager {
    This allows more control over the allow/deny list behavior of query params filtering.
 
 ### Additional APIs / Behavior
+
 1. URLManager is a container-controlled object, so that it may utilize the dependency injection system.
   Primary need for this is to access the router service to utilize existing APIs for transforming URLs and `RouteInfo`s
 
