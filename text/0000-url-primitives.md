@@ -135,11 +135,10 @@ class CustomURLManager extends URLManager {
     // this dosen't have to be english, but it does have to match the names as
     // defined in Router.map(...);
     let english = 
-      path.split('/')
-          .segments.map(segment => {
-            return this.i18n.lookup(`routes.from.${segment}`, 'en-us') || segment;
-          })
-          .join('/');
+      segments.map(segment => {
+        return this.i18n.lookup(`routes.from.${segment}`, 'en-us') || segment;
+      })
+      .join('/');
 
     let routeInfo = this.router.recognize(english);
     let queryParams = qs.parse(query);
