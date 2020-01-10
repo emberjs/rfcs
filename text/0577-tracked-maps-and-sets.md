@@ -1,6 +1,6 @@
 - Start Date: 2020-01-02
 - Relevant Team(s): Ember.js
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/577
 - Tracking: (leave this empty)
 
 # Tracked Maps and Sets
