@@ -364,7 +364,7 @@ The `configureDependencies` hook is the _only_ way to disable child packages. Th
 ### Build Hook: skipBabel
 
 ```ts
-skipBabel({ package: string, semverRange?: string }[]): void;
+skipBabel(): { package: string, semverRange?: string }[]
 ```
 
 By default, all imported dependencies (and their recursive imported dependencies) go through the app's babel config. This ensures browser compatibility safety. However, we provide `skipBabel` as an opt-out to work around transpilation problems in cases where the developer has verified that transpilation of a given package isn't needed.
@@ -463,13 +463,15 @@ This is a low-level power tool. It's mostly useful as a compile target for custo
 
 Instead of actually doing the stripping, the ember-test-selector plugin would compile the user's code into code that uses `macroCondition` and `getConfig('ember-test-selectors')`. In this way, we get the powerful custom behavior, but only the standard core macros are needed at the time when the app itself is building.
 
+Another example is that a package like `fastboot` could expose config that says whether you're in Fastboot vs the browser, so that apps and addons could say `getConfig('fastboot').isFastboot`. Notice that for an addon to do this, it should declare `fastboot` as an optional peerDependency (see **Optional Peer Dependencies** section), because `getConfig` can only see your **Allowed Dependencies**.
+
 ### JavaScript Macro: macroCondition
 
 `macroCondition` acts like a function that takes a boolean value and returns that same boolean value. But whenever `macroCondition` appears directly inside the predicate of an `if` statement or as the predicate of a ternary expression, it tells the macro system to do branch elimination based on the predicate. Here is an example that combines three of the macros we've seen so far:
 
 ```js
 // This example:
-import { macroCondition, getOwnConfig, importSync } from '@ember/macros';
+import { macroCondition, getOwnConfig, importSync } from "@ember/macros";
 
 let implementation;
 
@@ -489,12 +491,12 @@ export default implementation;
 
 // ===============
 // Or compile down to this if OwnConfig contains { useNewVersion: false }
-let implementation
+let implementation;
 implementation = importSync("./old-component");
 export default implementation;
 ```
 
-It is a build error if `macroCondition` cannot statically determine the truth status of its argument.
+It is a build error if `macroCondition` cannot statically determine the truth status of its argument. It's a build error if `macroCondition` appears anywhere other than as the predicate of an if statement or ternary expression.
 
 `macroCondition` supports boolean logic, like `macroCondition(getOwnConfig().a && getOwnConfig().b)`.
 
@@ -562,6 +564,8 @@ if (macroCondition(moduleExists("ember-data"))) {
 ```
 
 Remember that you're always only allowed to `import` from your own **allowed dependencies**. So if an addon wants to optionally use another package only if that package is present, that package must be listed as an **Optional Peer Dependency**.
+
+`moduleExists` differs in one respect from all the other macros: there is no reliable build-time polyfill for it in non-Embroider builds. So when you use it in a non-Embroider build, you get a runtime implementation instead (equivalent to today's `require.has()`. If you need build-time branch elimination, try to use `dependencySatisfies` instead, which works correctly in both Embroider and non-Embroider builds.
 
 ### JavaScript Macro: dependencySatisfies
 
