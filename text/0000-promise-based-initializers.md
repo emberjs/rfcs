@@ -1,6 +1,6 @@
 - Start Date: 2020-01-09
 - Relevant Team(s): Ember.js
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/572
 - Tracking: (leave this empty)
 
 # Promise-based Initializers
