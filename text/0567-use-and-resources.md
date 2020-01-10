@@ -12,7 +12,7 @@ managers. Resources can be used to make a number of common tasks much more
 ergonomic, such as loading data in components, setting up and updating
 subscriptions to external events, and controlling external libraries.
 
-For instance, once could use `@use` and resources to create a `RemoteData`
+For instance, one could use `@use` and resources to create a `RemoteData`
 resource that manages fetching data from a URL, while presenting the state of
 fetching in a declarative way, similar to `ember-concurrency`.
 
@@ -99,7 +99,7 @@ more convoluted:
 ```js
 export default class SearchResults extends Component {
   @task
-  products*(url) {
+  *products(url) {
     let response = yield fetch(url);
     let data = yield response.json();
     return data;
@@ -109,8 +109,8 @@ export default class SearchResults extends Component {
 
 ```hbs
 <div
-  {{did-insert (perform this.loadProducts @searchUrl)}}
-  {{did-update (perform this.loadProducts @searchUrl)}}
+  {{did-insert (perform this.products @searchUrl)}}
+  {{did-update (perform this.products @searchUrl)}}
 >
 </div>
 ```
@@ -154,7 +154,7 @@ With these, we can create the `RemoteData` example at the beginning of this RFC
 like so:
 
 ```js
-export class RemoteData extends Resource {
+class RemoteData {
   @tracked data = null;
   @tracked isLoading = false;
 
@@ -177,13 +177,15 @@ export class RemoteData extends Resource {
     }
   }
 }
+
+export const remoteData = resource(RemoteData);
 ```
 
 And we would use it like so:
 
 ```js
 export default class SearchResults extends Component {
-  @use products = RemoteData.create(this.args.searchUrl);
+  @use products = remoteData(this.args.searchUrl);
 }
 ```
 
@@ -214,7 +216,7 @@ Users can then define the `state` property, which is exposed externally on the
 field that was decorated with `@use`.
 
 ```js
-class Counter extends Resource {
+class Counter {
   @tracked count = 0;
 
   intervalId = null;
@@ -238,9 +240,11 @@ class Counter extends Resource {
   }
 }
 
+const counter = resource(Counter);
+
 // usage
 class MyComponent extends Component {
-  @use counter = Counter.create(this.args.interval);
+  @use counter = counter(this.args.interval);
 
   get counterPlusOne() {
     // `this.counter` is equal to the return value of the `state`
@@ -262,35 +266,30 @@ same way that `start` is. It also receives the updated arguments that `start`
 receives, allowing the `Resource` to respond to external state changes.
 
 ```js
-class Interval extends Resource {
-  // private, internal state
-  currentFn = null;
+class Counter {
+  @tracked count = 0;
+
   currentInterval = null;
   intervalId = null;
 
-  start(fn, interval) {
-    this.currentFn = fn;
-    this.currentInterval = interval;
-
-    this.intervalId = setInterval(() => {
-      this.currentFn();
-    }, this.currentInterval);
+  get state() {
+    return this.count;
   }
 
-  // If `fn` or `interval` ever change, this hook is run again with
-  // the new values.
-  update(fn, interval) {
-    // update the function
-    this.currentFn = fn;
+  start(interval) {
+    this.currentInterval = interval;
+    this.intervalId = setInterval(() => this.count++, interval);
+  }
 
+  // If `interval` ever changes, this hook is run again with
+  // the new values.
+  update(interval) {
     // only update the interval if the time period has changed
     if (interval !== this.currentInterval) {
       clearInterval(this.intervalId);
 
       this.currentInterval = interval;
-      this.intervalId = setInterval(() => {
-        this.currentFn();
-      }, this.currentInterval);
+      this.intervalId = setInterval(() => this.count++, interval);
     }
   }
 
@@ -299,12 +298,94 @@ class Interval extends Resource {
   }
 }
 
+const counter = resource(Counter);
+
 // usage
 class MyComponent extends Component {
-  @use greeter = Interval.create(this.sayHello, this.args.interval);
+  @use counter = counter(this.args.interval);
+}
+```
+
+```hbs
+<!-- this shows the return value of the `state` getter on Counter -->
+{{this.counter}}
+```
+
+Now the counter can maintain its current count even if the interval is increased
+or decreased. Finally, `@use` desugars down to a function which can be used to
+manually add resources, and to start them eagerly.
+
+```js
+class Interval {
+  // private, internal state
+  intervalId = null;
+
+  start(fn, interval) {
+    this.intervalId = setInterval(fn, interval);
+  }
+
+  teardown() {
+    clearInterval(this.intervalId);
+  }
+}
+
+const interval = resource(Interval);
+
+// usage
+class MyComponent extends Component {
+  constructor() {
+    useResource(this, () => interval(this.sayHello, this.args.interval));
+  }
 
   sayHello() {
     console.log('Hello!');
+  }
+}
+```
+
+This could be used to create a simple and generic resource for side-effects,
+like rendering to a [Three.js](https://threejs.org/) scene.
+
+```js
+class Effect {
+  start(fn) {
+    this.destructor = fn();
+  }
+
+  teardown() {
+    this.destructor();
+  }
+}
+
+const effect = resource(Effect);
+
+function useEffect(context, fn) {
+  return useResource(context, () => effect(fn));
+}
+
+// usage
+import THREE from 'three';
+
+let geometry = new THREE.BoxGeometry( 2, 2, 2 );
+let material = new THREE.MeshNormalMaterial();
+
+export default class SceneBoxComponent extends Component {
+  constructor(owner, args) {
+    super(owner, args);
+
+    this.mesh = new THREE.Mesh(geometry, material);
+    this.mesh.position.set(0, 0, 0);
+
+    useEffect(this, () => {
+      let { rotation: r } = args;
+      this.mesh.rotation.set(...rotation);
+    });
+
+    args.scene.add(this.mesh);
+  }
+
+  willDestroy() {
+    this.args.scene.remove(this.mesh);
   }
 }
 ```
@@ -462,12 +543,16 @@ along with a new Helper API at some point in the future.
 
 ## Detailed design
 
-The design of `@use` consists of four parts:
+The design of Resources consists of three parts:
 
 1. The `ResourceManager` interface
-2. The `@use` decorator
-3. The `{{use}}` helper
-4. The `Resource` base class
+2. The `useResource` function for instantiating resources and associating them
+   with a parent.
+3. The `resource` decorator/wrapper for creating resources
+
+
+The `@use` decorator and the `{{use}}` helper wrap `useResource` and provide a
+easier to use and more ergonomic API.
 
 ### `ResourceManager`
 
@@ -481,36 +566,37 @@ terms of this manager, and could also be broken out into its own separate RFC.
 The `ResourceManager` interface has the following signature:
 
 ```ts
-interface ResourceInstance {
-  public state;
+type ManagedResource = object;
+type ResourceDefinition = { resource: ManagedResource };
+
+interface ResourceManagerCapabilities {
+  disableAutotracking: boolean;
 }
 
-interface ResourceManager {
+interface ResourceManager<Bucket> {
   capabilities: ResourceManagerCapabilities;
 
-  startResource(
-    parent: unknown,
-    def: ResourceDefinition,
-    args?: unknown[]
-  ): ResourceInstance;
+  createResource(parent: unknown, def: ResourceDefinition): Bucket;
 
-  updateResource(
-    parent: unknown,
-    definition: ResourceDefinition,
-    args?: unknown[]
-  ): ResourceInstance;
+  getState(bucket: Bucket): unknown;
 
-  teardownResource(parent: unknown, def: ResourceDefinition): void;
+  setupResource(bucket: Bucket): void;
+
+  updateResource(bucket: Bucket): void;
+
+  destroyResource(bucket: Bucket): void;
 }
+
+declare function setResourceManager(
+  managerFactory: (owner: Owner) => ResourceManager,
+  managed: ManagedResource
+);
+
+declare function capabilities(
+  managerAPI: string,
+  options: { disableAutotracking?: boolean }
+): ResourceManagerCapabilities;
 ```
-
-The arguments in these APIs are:
-
-- `parent`: Refers to the parent object that the resource is mounted on.
-- `definition`: Refers to the definition handle itself, the value that the
-  manager was associated with and looked up on.
-- `args`: Refers to the arguments array that was set while creating the resource
-  definition, if one was set.
 
 `parent` is exposed to the manager here to facilitate APIs that would require
 running within the parent's context, such as generator functions:
@@ -531,25 +617,27 @@ built in (a la arrow functions). Passing the parent to the manager prevents
 having to add additional boilerplate for their usage. The default `Resource`
 implementation will not directly expose the parent, however.
 
-Both `startResource` and `updateResource` should return an object that has a `state`
-getter on it. This allows `@use` and `{{use}}` to maintain a reference to the
-internal state of the resource, and get it again whenever it updates. The timing
-semantics of the hooks are as follows:
+Both `setupResource` and `updateResource` should return an object that has a
+`state` getter on it. This allows `@use` and `{{use}}` to maintain a reference
+to the internal state of the resource, and get it again whenever it updates. The
+timing semantics of the hooks are as follows:
 
-#### `startResource`
+#### `createResource`
 
-- Called after the parent class that the resource is defined on is created.
-- Called asynchronously by default, unless the resource is accessed, in
-  which case it is called synchronously before returning its internal state.
-- Called _before_ the equivalent asynchronous creation resources of any parent:
-  - Components
-  - Modifiers
-  - Resources
+- Called to create the resource.
+
+#### `getState`
+
+- Called whenever the state of the resource is accessed.
+
+#### `setupResource`
+
+- Called immediately after the resource is created (using `useResource`).
 
 #### `updateResource`
 
 - Called after the arguments to the resource have changed, or after any
-  values tracked during the previous `startResource` or `updateResource`
+  values tracked during the previous `setupResource` or `updateResource`
   have changed (unless the `disableAutotracking` capability is set to true).
 - Called asynchronously by default, unless the resource is accessed, in
   which case it is called synchronously before returning its internal state.
@@ -558,7 +646,7 @@ semantics of the hooks are as follows:
   - Modifiers
   - Resources
 
-#### `teardownResource`
+#### `destroyResource`
 
 - Called asynchronously after the instance of the parent class that the resource
   is defined on is scheduled for destruction.
@@ -578,7 +666,7 @@ interface ResourceManagerCapabilities {
 
 The effects of these capabilities are as follows:
 
-- `disableAutotracking`: If set to false, then the `startResource` and
+- `disableAutotracking`: If set to false, then the `setupResource` and
   `updateResource` hooks will be autotracked, and changes to the state consumed
   while running them will trigger the `updateResource` hook again. If set to
   true, only changes to the incoming arguments themselves will cause updates.
@@ -596,125 +684,84 @@ setResourceManager(
 Like other managers, this manager will inherit down the prototype hierarchy, so
 it only needs to be set on the base class.
 
-### The `@use` Decorator
+### `useResource`
 
-The `@use` decorator is responsible for capturing the definition of a resource,
-getting its manager, and calling the appropriate lifecycle methods on it at the
-appropriate time.
+`useResource` is responsible for creating a resource and associating it with a
+parent, such as a component, controller, or another resource. It receives two
+arguments, and returns a resource instance.
 
-The internal implementation of the `@use` decorator will be private API, but
-for the purposes of this RFC, it's easier to discuss the design if we can talk
-about what `@use` expands to, so we will use the example below to discuss the
-details of how it works. This should _not_ be considered to be the final
-implementation.
+```ts
+type ManagedResource = object;
+type ResourceDefinition = { resource: ManagedResource };
+type ResourceDefinitionThunk = () => ResourceDefinition;
 
-```js
-@use myState = Resource.create(this.args.foo);
-
-// could expand to
-get myState() {
-  let instance = createOrUpdateUse(this, 'myState', () => Resource.create(this.args.foo));
-
-  return instance.state;
+interface ResourceInstance {
+  state: unknown,
+  teardown(): void;
 }
+
+declare function useResource(
+  context: object,
+  definition: ResourceDefinitionThunk
+): ResourceInstance;
 ```
 
-On initial creation, the first time it is run, the class field initializer
-should always return a handle that has a `ResourceManager` associated with it
-via `setResourceManager`. On subsequent updates, the previous manager that
-was used for that same key will be used again, so a different value can be
-returned instead.
+##### `context`
 
-#### Creating vs Updating
+The `context` argument to `useResource` is the parent of the resource. The
+resource's lifecycle will be entangled with this object, and the resource will
+be destroyed when it is destroyed (e.g. using the [Destroyable API](https://github.com/emberjs/rfcs/blob/destroyables/text/0580-destroyables.md)).
 
-Using initializers with `@use` is very nice for end users, but presents a
-problem for authors of `ResourceManager`s - initializers don't receive
-arguments, so there is no direct way to change behavior between creating a
-resource and updating it. Even if they could, it would also be very unergonomic
-to force users to pass around arguments through their code:
+##### `definition`
+
+The `definition` function should always return an array containing:
+
+1. A value managed by a `ResourceManager` as the first value
+2. Any arguments to pass to the resource as the remaining values
+
+This allows `useResource` to get the correct manager and apply it to the
+resource, and then to pass the arguments to it. This function will be rerun if
+any of the arguments change, in order to get the new argument values.
+
+##### `ResourceInstance`
+
+`useResource` returns the instance of the resource itself, which has a `state`
+property and a `teardown` method. The `state` property can be used to manually
+read the state of the resource, and `teardown` can be used to manually initiate
+the destruction of the resource.
+
+Resources will continue to exist, run, and update as long as their `context` has
+not been destroyed, or until the `teardown` method has been called.
+
+#### `@use`
+
+The `@use` decorator provides a helpful shorthand for the `useResource`
+function, like so:
 
 ```js
-@use myState = (owner, isCreating) => isCreating ?
-  // creating Resource, return a new instance
-  Resource.create(owner, this.args.foo) :
-  // updating Resource, use the previous instance
-  null
-```
+class RemoteData {}
 
-Instead, `@use` will be accompanied by a helper function: `getUseInfo`.
+function resource(Class) {
+  return (...args) => [Class, ...args];
+}
 
-```ts
-declare function getUseInfo(): {
-  owner: Owner;
-  isCreating: boolean;
-  isUpdating: boolean;
-};
-```
+const remoteData = resource(RemoteData);
 
-This information will be populated before calling the initializer, and can be
-called _exactly once_ during initialization. Calling a second time will throw an
-assertion, which is meant to prevent abuse of the API by other code (e.g. other
-classes that are initialized when creating the Resource). For safety, it should
-always be called immediately in `DEBUG` mode by any Resource implementation,
-even if it is not actually needed. Not calling it at all in `DEBUG` mode will
-also throw an assertion to help make sure implementers don't leak it
-accidentally to user code.
+@use data = remoteData(this.args.url);
 
-#### Setting Arguments
-
-Additionally, initializers can only return one value, which is the manager
-handle itself. An important aspect of resources is that they should be able to
-respond to incoming arguments that are consumed while running the initializer,
-and in order to do this, the arguments have to be passed to the manager. In
-order to do this, users can use the `setUseArgs` method.
-
-```ts
-declare function setUseArgs(...args: unknown[]): void;
-```
-
-Like with `getUseInfo`, this function can be used _exactly once_ during the
-initializer's execution to save off the arguments, and not using it in DEBUG
-mode will throw an assertion to help make sure it isn't accidentally leaked to
-user code.
-
-#### Scheduling `@use` Initialization
-
-As mentioned above, the timing semantics of `@use` properties are that they
-start automatically, asynchronously, after the parent class they are defined on
-with is created, or when they are first consumed, whichever is first. Because of
-limitations of Ember's current stage 1/legacy decorators, this is not possible
-just by decorating a class element such as a field or method, since we intend to
-create a getter and not a field. Getters do not run any code on initialization.
-
-As such, Ember will provide a function that can be used to schedule starting any
-`@use` instances defined on the class, `scheduleUseStart()`
-
-```js
-class GlimmerComponent {
-  constructor() {
-    scheduleUseStart(this);
+// desugars to
+get data() {
+  if (!this._data) {
+    // cache the resource to a local key (in a real implementation, this would
+    // be a symbol or a WeakMap)
+    this._data = useResource(this, () => remoteData(this.args.url));
   }
+
+  return this._data.state;
 }
 ```
 
-This method only needs to be called once per instance of a class, and can be
-called by parent classes. It is generally intended to be an implementation
-detail. The following framework provided classes will use this function by
-default:
-
-- `EmberComponent`
-- `GlimmerComponent`
-- `Helper`
-- `Route`
-- `Controller`
-- `Service`
-- `Location`
-- `Resource`
-
-In general, the policy from this RFC forward will be that framework provided
-classes will use this method by default.
-
-### The `{{use}}` Helper
+#### The `{{use}}` Helper
 
 Resources should also be usable without a component class, in cases where they
 don't exist, and for more dynamic use cases. The `{{use}}` helper allows
@@ -724,12 +771,10 @@ resources to be setup based solely on the template.
 {{use SyncDocumentTitle @title}}
 ```
 
-This helper will create and invoke the resource dynamically, with the same
-semantics as `@use`. Since helpers are always consumed, resources used with
-`{{use}}` will always be eager. If the resource definition itself were to
-change, the previous instance of the last resource is completely torn down, and
-a new instance of the new resource is created. The `{{use}}` helper will return
-the value of the `state` getter on the resource.
+This helper will create and invoke the resource dynamically, and return its
+`state` as its value. If the resource definition itself were to change, the
+previous instance of the last resource is completely torn down, and a new
+instance of the new resource is created.
 
 `{{use}}` will not attempt to resolve the resource, instead requiring the actual
 class (or other base implementation of the resource) to be passed as the first
@@ -751,13 +796,16 @@ class TitleSync extends Component {
 The expectation is that once template imports are available, this form of
 invoking resources will be much more usable.
 
-### `Resource`
+### `resource`
 
-The `Resource` base class is a framework provided implementation of a resource
-base class using a `ResourceManager`. It has the following signature:
+The `resource` function is provided by Ember and allows users to create
+resources with a default API. It receives a class, associates the default
+`ResourceManager` with that class and, returns a function that creates a
+`ResourceDefinition` with it:
 
 ```ts
-declare class Resource {
+interface ResourceClass {
+  new(): Resource;
   public state;
   public isDestroying;
   public isDestroyed;
@@ -768,7 +816,11 @@ declare class Resource {
   update?(...args);
   teardown?();
 }
+
+declare function resource(Class: ResourceClass): (...args) => ResourceDefinition;
 ```
+
+The semantics of the class are as follows.
 
 #### `state`
 
@@ -778,7 +830,7 @@ autotracked like usual.
 
 #### `isDestroying` and `isDestroyed`
 
-Public fields that expose the current state of the modifier, whether it is
+Public fields that expose the current state of the resource, whether it is
 destroyed or destroying.
 
 #### `create`
@@ -792,9 +844,7 @@ the Resource. The arguments passed will be stored and passed later on to
 A lifecycle hook that starts the `Resource` and sets up its initial state.
 
 - Runs after a new instance of the `Resource` class has been created.
-- Receives the arguments passed to `Resource.create()`.
-- By default `start` runs asynchronously, but if the state of the instance is
-  consumed it will run synchronously before returning the state.
+- Receives the arguments passed to the resource definition.
 - Is autotracked, and any changes to state that is consumed while running
   `start` will trigger the `update` method if it exists, and the `teardown` hook
   otherwise.
@@ -805,7 +855,7 @@ A lifecycle hook that updates the `Resource` with fresh arguments.
 
 - If defined, runs after the arguments to a `Resource` instance change, or
   after any state tracked in the previous `start` or `update` call has changed.
-- Receives fresh versions of the arguments passed to `Resource.create()`.
+- Receives fresh versions of the arguments passed to the resource definition.
 - By default `update` runs asynchronously, but if the state of the instance is
   consumed it will run synchronously before returning the state.
 - Is autotracked, and any changes to state that is consumed while running
@@ -834,44 +884,55 @@ instead makes the field return the `state` property of that class, it could face
 similar issues here:
 
 ```ts
-class MyState extends Resource {
+class MyState {
   state: number = 123;
 }
 
+let myState = resource(MyState);
+
 class MyComponent extends Component {
-  // This field will be a readonly number, but if `create` is being accurate,
-  // TS will _think_ it is an instance of MyState
-  @use myState = MyState.create();
+  // This field will be a readonly number, but if `myState` is being accurate,
+  // TS will _think_ it is an array
+  @use myState = myState();
 }
 ```
 
 However, we can fudge the types a bit here to make it work better for TS:
 
 ```ts
-declare class Resource<T> {
-  state: T;
+interface Resource<State, Args extends any[] = any[]> {
+  readonly state: State;
 
-  static create(): T;
+  start(...args: Args): void;
+  update?: (...args: Args) => void;
+  teardown?: () => void;
 }
+
+declare function resource<
+  R extends Resource<State, Args>,
+  State,
+  Args extends any[] = any[],
+>(from: R): (args: Args) => R['state'];
 ```
 
-From most user's perspectives, the return value of the static `create` method
-should be opaque anyways, and doing this will allow TS to "just work" with
-TypeScript out of the box.
+From most user's perspectives, the return value of the definition should be
+opaque anyways, and doing this will allow TS to "just work" with TypeScript out
+of the box.
 
 ### Module API
 
-The APIs described in this RFC will be importable from the `@glimmer/tracking`
-package:
+The APIs described in this RFC would be fundamental to any Ember or Glimmer
+application. They also represent a new type of primitive to be introduced to the
+system. As such, they will be importable from the `@glimmer/resource` package:
 
 ```js
-import { use } from '@glimmer/tracking';
-import Resource, {
+import {
+  use,
+  resource,
+  useResource,
   setResourceManager,
-  getUseInfo,
-  setUseArgs,
-  scheduleUseStart,
-} from '@glimmer/tracking/resource';
+  capabilities,
+} from '@glimmer/resource';
 ```
 
 ### Name Choice
