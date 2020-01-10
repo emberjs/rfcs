@@ -1,6 +1,6 @@
 - Start Date: 2020-01-09
 - Relevant Team(s): Ember CLI
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/576
 - Tracking:
 
 # Move http-mock feature into addon
