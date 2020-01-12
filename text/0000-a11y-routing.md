@@ -1,4 +1,4 @@
-- Start Date: (2019-01-18, updated on 2019-05-13)
+- Start Date: (2019-01-18, updated on 2020-01-12)
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
@@ -24,17 +24,13 @@ One of the challenges is that screen reader technology is all closed-source exce
 
 This RFC proposes that we take the first step toward accessible routing by adding an announcement message when the URL has changed. While this will not address the second part of accessible routing, focus, it will move the framework closer to the goal. 
 
-- A component is created that provides a screen-reader only message, informing the user that they have navigated to a new URL. There will be a default message but developers can also set a custom message (those with internationalized apps may likely prefer to do).
+We will implement a live region in the page inside of the body element. The message will be updated when the user interacts with the page in such a way that a new URL is needed (i.e., navigating to a new page, or interacting with an element such as a button that submits a form and moves the user to a confirmation page or similar). We will listen for `routeDidChange` and present the navigation event message to the user at that time. This message will inform the user that they have navigated to a new URL. There will be a default message but developers will also be able to create a custom message (those with internationalized apps will likely prefer to do so).
 
-We would implement a live region in the page inside of the body element. The message will be updated when the user interacts with the page in such a way that a new URL is needed (i.e., navigating to a new page, or interacting with an element such as a button that submits a form and moves the user to a confirmation page or similar). We will listen for `routeDidChange` and present the navigation event message to the user at that time. 
-
-The addon would attempt to provide a sensible resolution for all involved:
-- the performance gains from `pushState` remain in place
-- users with assistive technology are informed that a page transition has occurred
+The addon would attempt to provide a sensible resolution for all involved, as the performance gains from `pushState` remain in place but users with assistive technology will also be informed that a page transition has occurred.
 
 Some important details: 
 - This would be added to the default Ember blueprint and included with all new Ember apps. 
-- The developer would need to opt out of this option entirely to turn it off (but it will not be recommended to do so).
+- The developer would need to opt out of this entirely to turn it off (but it will not be recommended to do so).
 - This will not address focus being reset in the way that users with assistive technology expect. This still needs to be addressed and we will continue to work toward a reasonable solution for this in the future. 
 
 ## How we teach this
