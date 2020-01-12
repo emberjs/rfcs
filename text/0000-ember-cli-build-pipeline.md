@@ -13,9 +13,15 @@ pipelines for each of the trees (app, vendor, public, etc).
 
 ## Motivation
 
-Currently, the only supported way to affect the Broccoli tree during build time is by hooking into
-the `treeFor*` APIs provided by addons. Developers that want to use these APIs are forced to develop
-an addon or in-repo addon. This is problematic for a few reasons:
+Currently, the recommended way to affect the Broccoli tree during build time is by hooking into
+the `treeFor*` APIs provided by addons. Although it is technically possible to [merge additional
+trees by passing in more trees into the `toTree()` method][1] of `EmberApp`in `ember-cli-build.js`,
+this feature is not documented well and it's not clear if the core team would like to see it used.
+
+[1]: https://github.com/ember-cli/ember-cli/blob/v3.15.1/lib/broccoli/ember-app.js#L1791-L1799
+
+Developers that want to use the `treeFor` APIs have to develope an addon or in-repo addon.
+This is problematic for a few reasons:
 
 - An addon is a full npm package. Even if it’s an in-repo addon, it comes with its own name and
 dependency tree. The burden of maintaining another package to write a few lines
