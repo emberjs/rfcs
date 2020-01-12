@@ -18,7 +18,7 @@ fetching in a declarative way, similar to `ember-concurrency`.
 
 ```js
 export default class SearchResults extends Component {
-  @use products = RemoteData.create(this.args.searchUrl);
+  @use products = remoteData(this.args.searchUrl);
 }
 ```
 
@@ -204,12 +204,12 @@ export default class SearchResults extends Component {
 Resources fundamentally revolve around two lifecycle hooks: `start` and
 `teardown`.
 
-After a new instance of a `Resource` is created it runs the `start` method,
-which receives the arguments passed to `Resource.create()` and is used to
+After a new instance of a resource is created it runs the `start` method,
+which receives the arguments passed to the resource function and is used to
 setup the state. This method and its arguments are autotracked, and if anything
 that was consumed in it changes, `teardown` is called to destroy the
-`Resource`, and a new one is created with the new state in its place. When
-the _parent_ of the `Resource` (the class it is `@use`d on) is destroyed,
+resource, and a new one is created with the new state in its place. When
+the _parent_ of the resource (the class it is `@use`d on) is destroyed,
 then its `teardown` hook is called one last time and it is removed completely.
 
 Users can then define the `state` property, which is exposed externally on the
@@ -603,7 +603,7 @@ running within the parent's context, such as generator functions:
 
 ```js
 class MyComponent extends Component {
-  @use filteredModels = Task.create(function*() {
+  @use filteredModels = task(function*() {
     let response = yield fetch(this.args.url);
     let { models } = yield response.json();
 
