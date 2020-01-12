@@ -147,7 +147,7 @@ integrates with autotracking so that users don't have to list out dependencies
 constantly in a repetitive manner. The core of the API consists of:
 
 - The `@use` decorator (and the complementary `{{use}}` helper)
-- The `Resource` base class (implemented via a `ResourceManager`, similar to
+- The resource base class (implemented via a `ResourceManager`, similar to
   both components and modifiers).
 
 With these, we can create the `RemoteData` example at the beginning of this RFC
@@ -259,11 +259,11 @@ class MyComponent extends Component {
 {{this.counter}}
 ```
 
-If users don't want their `Resource` to be torn down and remade for every
+If users don't want their resource to be torn down and remade for every
 change, they can also add an `update` method to the definition. This will be
 called for any changes to consumed state instead, and will be autotracked in the
 same way that `start` is. It also receives the updated arguments that `start`
-receives, allowing the `Resource` to respond to external state changes.
+receives, allowing the resource to respond to external state changes.
 
 ```js
 class Counter {
@@ -538,7 +538,7 @@ which would run with any changes.
 The fact that these concepts are so closely related is not a coincidence - they
 are complementary, and their APIs should likely reflect that. It's beyond the
 scope of this RFC to specify what the final built in Modifier design is, but it
-would make sense for it to match the `Resource` API proposed in this RFC,
+would make sense for it to match the Resource API proposed in this RFC,
 along with a new Helper API at some point in the future.
 
 ## Detailed design
@@ -560,7 +560,7 @@ Like most concepts that have been added to Ember recently, resources will be
 implemented using a manager that is pluggable under the hood. This will ensure
 that the design is flexible in case changes to the API need to be made in the
 future, and allow for experimentation with new resource base classes and APIs
-in general. The `Resource` base class proposed in this RFC is implemented in
+in general. The resource base class proposed in this RFC is implemented in
 terms of this manager, and could also be broken out into its own separate RFC.
 
 The `ResourceManager` interface has the following signature:
@@ -614,7 +614,7 @@ class MyComponent extends Component {
 
 Generators are a powerful syntax, but currently they do not have lexical binding
 built in (a la arrow functions). Passing the parent to the manager prevents
-having to add additional boilerplate for their usage. The default `Resource`
+having to add additional boilerplate for their usage. The default resource
 implementation will not directly expose the parent, however.
 
 Both `setupResource` and `updateResource` should return an object that has a
@@ -824,7 +824,7 @@ The semantics of the class are as follows.
 
 #### `state`
 
-A public field that represents the externally visible state of the `Resource`
+A public field that represents the externally visible state of the resource
 instance. Can be a normal field or a getter, and accesses to it will be
 autotracked like usual.
 
@@ -841,9 +841,9 @@ the Resource. The arguments passed will be stored and passed later on to
 
 #### `start`
 
-A lifecycle hook that starts the `Resource` and sets up its initial state.
+A lifecycle hook that starts the resource and sets up its initial state.
 
-- Runs after a new instance of the `Resource` class has been created.
+- Runs after a new instance of the resource class has been created.
 - Receives the arguments passed to the resource definition.
 - Is autotracked, and any changes to state that is consumed while running
   `start` will trigger the `update` method if it exists, and the `teardown` hook
@@ -851,9 +851,9 @@ A lifecycle hook that starts the `Resource` and sets up its initial state.
 
 #### `update`
 
-A lifecycle hook that updates the `Resource` with fresh arguments.
+A lifecycle hook that updates the resource with fresh arguments.
 
-- If defined, runs after the arguments to a `Resource` instance change, or
+- If defined, runs after the arguments to a resource instance change, or
   after any state tracked in the previous `start` or `update` call has changed.
 - Receives fresh versions of the arguments passed to the resource definition.
 - By default `update` runs asynchronously, but if the state of the instance is
@@ -863,12 +863,12 @@ A lifecycle hook that updates the `Resource` with fresh arguments.
 
 #### `teardown`
 
-A lifecycle hook that tears the `Resource` instance down.
+A lifecycle hook that tears the resource instance down.
 
 - If no `update` method is defined, runs on the previous instance of
-  `Resource` whenever args or state tracked in `start` updates, before a new
-  instance of the `Resource` is created.
-- Runs before the parent that the `Resource` belongs to is destroyed.
+  resource whenever args or state tracked in `start` updates, before a new
+  instance of the resource is created.
+- Runs before the parent that the resource belongs to is destroyed.
 
 #### TypeScript Support
 
@@ -976,7 +976,7 @@ TODO
   capability, with resournces being _only_ scheduled or _only_ consumed, and without
   forking behavior. In practice, it's unclear when this would matter.
 
-- As mentioned above in the detailed design section, the `Resource` base
+- As mentioned above in the detailed design section, the resource base
   class could be broken out into a separate RFC, and this RFC could focus on
   landing the manager. This strategy worked well for component managers, which
   already had a component class that was in common use, but has had mixed
@@ -984,7 +984,7 @@ TODO
   modifier API, so it may be better to land an initial implementation in the
   first pass, especially given the minimal API surface area.
 
-- One `Resource` base class is proposed in this API, but we could have more
+- One resource base class is proposed in this API, but we could have more
   than one for specific use cases - one for producing state, and another for
   reflecting it, for instance.
 
