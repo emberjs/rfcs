@@ -1,4 +1,4 @@
-- Start Date: (2019-01-18, updated on 2020-01-12)
+- Start Date: (2019-01-18, updated on 2019-05-13)
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
@@ -24,9 +24,9 @@ One of the challenges is that screen reader technology is all closed-source exce
 
 This RFC proposes that we take the first step toward accessible routing by adding an announcement message when the URL has changed. While this will not address the second part of accessible routing, focus, it will move the framework closer to the goal. 
 
-We will implement a live region in the page inside of the body element. The message will be updated when the user interacts with the page in such a way that a new URL is needed (i.e., navigating to a new page, or interacting with an element such as a button that submits a form and moves the user to a confirmation page or similar). We will listen for `routeDidChange` and present the navigation event message to the user at that time. This message will inform the user that they have navigated to a new URL. There will be a default message but developers will also be able to create a custom message (those with internationalized apps will likely prefer to do so).
+We will implement a live region in the page inside of the body element. The message will be updated when the user interacts with the page in such a way that a new URL is needed (i.e., navigating to a new page, or interacting with an element such as a button that submits a form and moves the user to a confirmation page or similar). We will listen for `routeDidChange` and present the navigation event message to the screen-reader user at that time. This message will inform the screen-reader user that they have navigated to a new URL. There will be a default message but developers will also be able to create a custom message (those with internationalized apps will likely prefer to do so). Users without a screen reader should not have any change in experience. 
 
-The addon would attempt to provide a sensible resolution for all involved, as the performance gains from `pushState` remain in place but users with assistive technology will also be informed that a page transition has occurred.
+This first step of adding an announcement region would allow us to keep the performance gains from `pushState` while informing users with assistive technology that a page transition has occurred.
 
 Some important details: 
 - This would be added to the default Ember blueprint and included with all new Ember apps. 
@@ -57,4 +57,3 @@ It's possible that enterprise Ember users have already implemented their own sol
   - Linux/Gnome: [Accessibility Toolkit](https://developer.gnome.org/atk/stable/) (ATK) and [Assistive Technology Service Provider Interface](https://developer.gnome.org/libatspi/stable/) (AT-SPI). This case is a little different in that there are actually two separate APIs: one through which browsers and other applications pass information along to (ATK) and one that ATs then call from (AT-SPI).
 - [NVDA Developer Guide](https://www.nvaccess.org/files/nvda/documentation/developerGuide.html)
 - [Structured Negotiation: A Winning Alternative to Lawsuits](https://www.lflegal.com/book/)
-
