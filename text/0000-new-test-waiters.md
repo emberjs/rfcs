@@ -89,6 +89,10 @@ The API used to signal whether an asynchronous operation has begun and ultimatel
 
 This new test waiters system has been through multiple iterations of refinement, and is in use and integrated with the test isolation validation system. Furthermore, it is backwards compatible with the old test waiters system, allowing applications and addons to gradually migrate to using the new system.
 
+## Deprecating the old test waiters
+
+The old test waiters system will be deprecated in its own deprecation RFC.
+
 # How We Teach This
 
 This new test waiters system should be included in the Ember guide's testing section. Information and examples should be provided to allow users to correctly author asynchronous code that can be correctly managed by the testing system.
