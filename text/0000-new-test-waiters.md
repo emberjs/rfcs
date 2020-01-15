@@ -58,7 +58,9 @@ registerWaiter(function() {
 
 While reading the above is straightforward, when writing a test waiter using the old system it's easy to forget what the expected return value is: `true` or `false`. Additionally, it's a bit more cognitive overhead to derive what the intended result of the particular boolean return value is: does returning `true` result in the test waiter waiting or not?
 
-As mentioned before, there's no additional information provided via `registerWaiter`, and capturing stack traces at the call site is currently not implemented. Unmanaged async that 'hangs' can cause your tests to stall and ultimately timeout. Not having stack traces is particularly problematic when trying to identify which of many test waiters has caused this timeout, as it's like looking for a needle in a haystack. The new system captures the stacks lazily, when the waiter's `beginAsync` method is called (more on `beginAsync` later). This allows for identifying the offending code more easily.
+As mentioned before, there's no additional information provided via `registerWaiter`, and capturing stack traces at the call site is currently not implemented. Unmanaged async that 'hangs' can cause your tests to stall and ultimately timeout. Not having stack traces is particularly problematic when trying to identify which of many test waiters has caused this timeout, as it's like looking for a needle in a haystack.
+
+The new system captures an error object when the waiter's `beginAsync` method is called (more on `beginAsync` later), but evaluates the `stack` property lazily, when this value is processed by `@ember/test-helpers`' `getSettledState`. This allows for identifying the offending code more easily.
 
 The new test waiters system looks like this:
 
