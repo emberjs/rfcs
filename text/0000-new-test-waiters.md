@@ -109,7 +109,7 @@ export interface IWaiter {
 - `name`: The name of the test waiter, which is used to help identify it in test isolation validation output.
 - `waitUntil`: Used to determine if the waiter system should still wait for async
 operations to complete. The `waitUntil` method will return `true` to signal completion.
-- `debugInfo`: Returns the `debugInfo` for each item tracking async operations in a waiter. The `debugInfo` for each waiter item is ultimately used in `@ember/test-helpers`' `getSettledState` function, which is ultimately used for test isolation validation output.
+- `debugInfo`: Returns the `debugInfo` for each item tracking async operations in a waiter. The `debugInfo` for each waiter item is ultimately used in `@ember/test-helpers`' `getSettledState` function, which is used for test isolation validation output.
 
 This allows for maximum flexibility when creating your own waiter implementations.
 
