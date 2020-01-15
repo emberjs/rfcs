@@ -58,7 +58,7 @@ registerWaiter(function() {
 
 While reading the above is straightforward, when writing a test waiter using the old system it's easy to forget what the expected return value is: `true` or `false`. Additionally, it's a bit more cognitive overhead to derive what the intended result of the particular boolean return value is: does returning `true` result in the test waiter waiting or not?
 
-As mentioned before, there's no additional information provided via `registerWaiter`, and no way to capture stack traces at the call site. Unmanaged async that 'hangs' can cause your tests to stall and ultimately timeout. This is particularly problematic when trying to identify which of many test waiters has caused this timeout.
+As mentioned before, there's no additional information provided via `registerWaiter`, and capturing stack traces at the call site is currently not implemented. Unmanaged async that 'hangs' can cause your tests to stall and ultimately timeout. Not having stack traces is particularly problematic when trying to identify which of many test waiters has caused this timeout, as it's like looking for a needle in a haystack. The new system captures the stacks lazily, when the waiter's `beginAsync` method is called (more on `beginAsync` later). This allows for identifying the offending code more easily.
 
 The new test waiters system looks like this:
 
@@ -167,6 +167,19 @@ export default class Friendz extends Component {
 ### `waitForPromise`
 
 The `waitForPromise` utility provides a convenience wrapper around the `TestWaiter` class for use with promises. It ensures the `endAsync` call is invoked in the `finally` of the configured promise.
+
+```js
+import Component from '@ember/component';
+import { waitForPromise } from 'ember-test-waiters';
+
+export default class MoreFriendz extends Component {
+  didInsertElement() {
+    waitForPromise(someAsyncWork).then(() => {
+      doOtherThings();
+    });
+  }
+}
+```
 
 This new test waiters system has been through multiple iterations of refinement, and is in use and integrated with the test isolation validation system.
 
