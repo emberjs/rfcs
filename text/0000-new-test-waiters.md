@@ -219,6 +219,12 @@ This new test waiters system should be included in the Ember guide's testing sec
 
 Specifically, calling this out in a separate section will allow readers to understand the intent of the test waiters system from a high level, as test waiters apply broadly to all the associated types in the testing section.
 
+There are a few concepts that we should focus on:
+
+1. What patterns of asynchronous code can lead to issues in testing
+1. How to utilize test waiters to address those asynchronous patterns
+1. How to leverage the built-in test waiters utilities
+
 # Drawbacks
 
 - the new test waiters system ships code to production bundles, though this is quite small
