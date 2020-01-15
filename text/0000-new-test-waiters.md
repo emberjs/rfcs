@@ -104,6 +104,11 @@ export interface IWaiter {
 }
 ```
 
+- `name`: The name of the test waiter, which is used to help identify it in test isolation validation output.
+- `waitUntil`: Used to determine if the waiter system should still wait for async
+operations to complete. The `waitUntil` method will return `true` to signal completion.
+- `debugInfo`: Returns the `debugInfo` for each item tracking async operations in a waiter. The `debugInfo` for each waiter item is ultimately used in `@ember/test-helpers`' `getSettledState` function, which is ultimately used for test isolation validation output.
+
 This allows for maximum flexibility when creating your own waiter implementations.
 
 ### `ITestWaiter`
@@ -118,9 +123,9 @@ export interface ITestWaiter<T = Token> extends IWaiter {
 }
 ```
 
-This interface is used for the two internal concrete types: `TestWaiter` and `NoopTestWaiter`. These types for the basis for the addon, and will likely satisfy the majority of use cases.
+This interface is used for the two internal concrete types: `TestWaiter` and `NoopTestWaiter`. These types form the basis for the addon, and will likely satisfy the majority of use cases.
 
-The most common practice is to import and invoke the `buildWaiter` function to create a new test waiter. The recommendation is to do so at the module level, which allows a single waiter to be created per type. A single waiter is then usable across multiple instances.
+The most common practice is to import and invoke the `buildWaiter` function to create a new test waiter. The recommendation is to do so at the module level, which allows a single waiter to be created per type (this should likely be enforced via a lint rule added to `eslint-plugin-ember`). A single waiter is then usable across multiple instances.
 
 ```ts
 function buildWaiter(name: string): ITestWaiter
@@ -202,7 +207,7 @@ The old test waiters system ultimately should be deprecated in its own deprecati
 
 This new test waiters system should be included in the Ember guide's testing section. Information and examples should be provided to allow users to correctly author asynchronous code that can be correctly managed by the testing system.
 
-Specifically, calling this out in a separate section will allow readers to
+Specifically, calling this out in a separate section will allow readers to understand the intent of the test waiters system from a high level, as test waiters apply broadly to all the associated types in the testing section.
 
 # Drawbacks
 
