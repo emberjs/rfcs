@@ -131,7 +131,7 @@ method should be paired with a preceding `beginAsync` call, which would indicate
 beginning of an async operation.
 - `reset`: Resets the waiter state, clearing items tracking async operations in this waiter.
 
-This interface is used for the two internal concrete types: `TestWaiter` and `NoopTestWaiter`. These types form the basis for the addon, and will likely satisfy the majority of use cases.
+This interface is used for the concrete `TestWaiter` type. This type forms the basis for the addon, and will likely satisfy the majority of use cases.
 
 The most common practice is to import and invoke the `buildWaiter` function to create a new test waiter. The recommendation is to do so at the module level, which allows a single waiter to be created per type (this should likely be enforced via a lint rule added to `eslint-plugin-ember`). A single waiter is then usable across multiple instances.
 
@@ -139,7 +139,7 @@ The most common practice is to import and invoke the `buildWaiter` function to c
 function buildWaiter(name: string): ITestWaiter
 ```
 
-In anything but a production build, this function will return a `TestWaiter` instance. When in production mode, a `NoopTestWaiter` will be returned, which as the name suggests is effectively a noop class. Since test waiters are intended to be called from application or addon code, but are only required to be _active_ when in tests, we use the `NoopTestWaiter` to noop the class' methods when run in production. This has a negligible impact on performance.
+In anything but a production build, this function will return a `TestWaiter` instance. When in production mode, we make this instance _inert_ and essentially no cost to invoke. Since test waiters are intended to be called from application or addon code, but are only required to be _active_ when in tests, this process of making the instance _inert_ is important. Even though code is still invoked, this has a negligible impact on performance.
 
 ### Using the `TestWaiter` class
 
