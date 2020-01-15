@@ -123,6 +123,14 @@ export interface ITestWaiter<T = Token> extends IWaiter {
 }
 ```
 
+- `beginAsync`: Should be used to signal the beginning of an async operation that
+is to be waited for. Invocation of this method should be paired with a subsequent
+`endAsync` call to indicate to the waiter system that the async operation is completed.
+- `endAsync`: Should be used to signal the end of an async operation. Invocation of this
+method should be paired with a preceding `beginAsync` call, which would indicate the
+beginning of an async operation.
+- `reset`: Resets the waiter state, clearing items tracking async operations in this waiter.
+
 This interface is used for the two internal concrete types: `TestWaiter` and `NoopTestWaiter`. These types form the basis for the addon, and will likely satisfy the majority of use cases.
 
 The most common practice is to import and invoke the `buildWaiter` function to create a new test waiter. The recommendation is to do so at the module level, which allows a single waiter to be created per type (this should likely be enforced via a lint rule added to `eslint-plugin-ember`). A single waiter is then usable across multiple instances.
