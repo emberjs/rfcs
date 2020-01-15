@@ -4,7 +4,7 @@
 
 # Summary
 
-Test waiters have been around in Ember in one form or another since version 1.2.0, and provide a way for developers to signal to the testing framework system that async operations are currently active, when to keep waiting, and when those async operations have completed. This allows the active test to wait during the test in a deterministic fashion, and only proceed once the active async is completed,
+Test waiters have been around in Ember in one form or another since version 1.2.0, and provide a way for developers to signal to the testing framework system that async operations are currently active, when to keep waiting, and when those async operations have completed. This allows the active test to wait during the test in a deterministic fashion, and only proceed once the active async is completed.
 
 The current test waiters implementation has a simple but confusing API, and the test waiters themselves lack some key features. This RFC proposes replacing them with a new test waiters system: [ember-test-waiters](https://github.com/rwjblue/ember-test-waiters).
 
@@ -14,20 +14,20 @@ Recently, an updated replacement for the original test waiters API was created. 
 
 The new system will provide a few benefits:
 
-1. A new API that's _explicit_ and _straightforward_
+1. A new API that removes the existing foot guns (e.g. "Do I return `false` or `true` if I want to continue waiting?")
 1. A more robust way to gather debugging information for the test waiter
 1. Default test waiters with the ability to author your own, more complex test waiters
 
 # Detailed design
 
-Ember’s test framework has an internal concept of settledness, that is used by all of its internal helpers. Settledness can be defined as **_all known active async operations have completed, and there’s no outstanding work to be done_**. This is codified in the [settled](https://github.com/emberjs/ember-test-helpers/blob/master/addon-test-support/@ember/test-helpers/settled.ts#L158) helper.
+Ember’s test framework has an internal concept of settledness, that is used by all of its internal helpers. Settledness can be defined as **_all known active async operations have completed, and there’s no outstanding work to be done_**. This is codified in the [settled](https://github.com/emberjs/ember-test-helpers/blob/master/API.md#settled) helper.
 
 The settled helper, as noted, wires itself up to known asynchronous behaviors. Those include whether there
 
 - is an active runloop (more on the runloop)
 - are any pending timers within the runloop (run.later, run.debounce, run.throttle)
 - are any pending test waiters (more on waiters later!)
-- are any pending AJAX requests
+- are any pending `jQuery.ajax` requests
 - are any pending route transitions.
 
 The settled check returns a Promise that is fulfilled when all of the above behaviors return `false`, indicating all async for each behavior is completed. These cover a vast number of async behaviors that are typical in our applications.
@@ -42,7 +42,7 @@ To address this, a new addon was written to experiment on a new test waiter syst
 1. A more robust way to gather debugging information for the test waiter
 1. Default test waiters with the ability to author your own, more complex test waiters
 
-This would allow developers to utilize this new test waiters system to annotate their asynchronous operations not tracked by the settled check, and for those annotations to provide useful debugging information in the event their async extended past the expected duration of the test.
+This allows developers to utilize `ember-test-waiters` to annotate their asynchronous operations that are not tracked by an `await settled()` check, and for those annotations to provide useful debugging information in the event their async extended past the expected duration of the test.
 
 ## Comparison of old waiters system to new
 
@@ -89,13 +89,20 @@ The API used to signal whether an asynchronous operation has begun and ultimatel
 
 This new test waiters system has been through multiple iterations of refinement, and is in use and integrated with the test isolation validation system. Furthermore, it is backwards compatible with the old test waiters system, allowing applications and addons to gradually migrate to using the new system.
 
-## Deprecating the old test waiters
+## Compatibility
 
-The old test waiters system will be deprecated in its own deprecation RFC.
+With the addition of `ember-test-waiters` as the default, older test waiters continue to work. Specifically:
+
+- `registerWaiter` continues to work, and is not deprecated
+- addons using `ember-test-waiters` work _even if consumed in applications that do not use a new enough `ember-test-helpers` version_ (they won't get additional output via test isolation validation such as test waiter names or stack traces)
+
+The old test waiters system ultimately should be deprecated in its own deprecation RFC.
 
 # How We Teach This
 
 This new test waiters system should be included in the Ember guide's testing section. Information and examples should be provided to allow users to correctly author asynchronous code that can be correctly managed by the testing system.
+
+Specifically, calling this out in a separate section will allow readers to
 
 # Drawbacks
 
