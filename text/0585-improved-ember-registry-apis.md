@@ -323,7 +323,7 @@ All existing *static* microsyntax invocations can be straightforwardly migrated 
 
 For example, this (in a test) is migrate-able:
 
-```js
+```diff
 - this.owner.lookup('service:session');
 + this.owner.lookup({ type: 'service', name: 'session' });
 ```
