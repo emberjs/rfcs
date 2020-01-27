@@ -96,7 +96,7 @@ Every registry API will be updated to take a new `Identifier` type in place of t
 
 (TypeScript consumers should see [**Proposed Type Definitions**](#proposed-type-definitions) in the appendix for additional details on type safety and resolution.)
 
-<i>**Note:** the diff views used through are meant to highlight the new APIs compared to the old, *not* to indicate the removal of the deprecated items. They will only be removed at Ember 4.0.</i>
+<i>**Note:** the diff views used throughout are meant to highlight the new APIs compared to the old, *not* to indicate the removal of the deprecated items. They will only be removed at Ember 4.0.</i>
 
 ### `Identifier`
 
