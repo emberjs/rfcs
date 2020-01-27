@@ -301,9 +301,15 @@ The `'<namespace>@<name>'` form is deprecated and will be removed at 4.0. The no
 
     export default class Example {
       @service foo;
-      @service('bar') barRenamed;
-      @service({ name: 'quux' }) quuxViaIdentifier;
-      @service({ namespace: 'baz', name: 'neato' }): neatoNamespaced;
+      
+      @service('bar')
+      barRenamed;
+      
+      @service({ name: 'quux' })
+      quuxViaIdentifier;
+      
+      @service({ namespace: 'baz', name: 'neato' })
+      neatoNamespaced;
     }
     ```
 
