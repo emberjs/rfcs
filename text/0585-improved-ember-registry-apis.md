@@ -497,7 +497,7 @@ lookup('service', 'foo')
 lookup({ type: 'service', name: 'foo'})
 ```
 
-This could be nice from an ergonomics perspective, and introduces only a small amount of extra complexity in the implementation: the resolver `schemaVersion` key still allows the implementation to distinguish between the `lookup('<type>:<name>')` form and the `lookup(type, name)` form.
+This could be nice from an ergonomics perspective, and introduces only a small amount of extra complexity in the implementation: the resolver `capabilities` key still allows the implementation to distinguish between the `lookup('<type>:<name>')` form and the `lookup(type, name)` form.
 
 However, it does require introspection on the arguments passed to the functions (extra implementation overhead), and it comes with confusion and arguments about which form to use: should users prefer the string based version where it is possible, or default to the object version for consistency? It would also means changes (e.g. to introduce a namespace) would become large and more error prone. Finally, as with the alternative where this is the *only* API, it is still less explicit and clear; users have to *remember* that `type` precedes `name`, whereas the object-form eliminates that issue.
 
