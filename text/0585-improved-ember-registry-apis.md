@@ -278,7 +278,7 @@ interface InjectionIdentifier {
 }
 ```
 
-The `inject` (whether `as service` or `as controller`) function now accepts *either* a string representing the  *or* an `InjectionIdentifier`:
+The `inject` (whether `as service` or `as controller`) function now accepts *either* a string representing the local injection name (sans namespace) *or* an `InjectionIdentifier`:
 
 - **Service:**
     ```ts
