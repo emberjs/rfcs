@@ -5,37 +5,6 @@
 
 # Improved Ember Registry APIs
 
-- [Summary](#summary)
-- [Motivation](#motivation)
-  - [Microsyntax problems](#microsyntax-problems)
-  - [TypeScript problems](#typescript-problems)
-  - [Performance benefits?](#performance-benefits)
-- [Detailed design](#detailed-design)
-  - [`Identifier`](#identifier)
-  - [`Resolver`](#resolver)
-  - [Owner APIs](#owner-apis)
-    - [Options](#options)
-    - [`Factory` and `FactoryManager`](#factory-and-factorymanager)
-    - [`Owner` API diff](#owner-api-diff)
-  - [Service and Controller Injections](#service-and-controller-injections)
-  - [Codemod](#codemod)
-  - [Deprecation messaging](#deprecation-messaging)
-    - [Guide](#guide)
-    - [In-app](#in-app)
-  - [Rollout](#rollout)
-- [How we teach this](#how-we-teach-this)
-- [Drawbacks](#drawbacks)
-- [Alternatives](#alternatives)
-  - [Supply just `schema` instead of `capabilities`](#supply-just-schema-instead-of-capabilities)
-  - [A new String-based API](#a-new-string-based-api)
-  - [String-based API as “sugar”](#string-based-api-as-sugar)
-  - [Object-based API](#object-based-api)
-  - [Do nothing](#do-nothing)
-- [Unresolved questions](#unresolved-questions)
-- [Appendix: TypeScript](#appendix-typescript)
-  - [TypeScript motivation](#typescript-motivation)
-  - [Proposed type definitions](#proposed-type-definitions)
-
 ## Summary
 
 Introduce a new, object-based API for all registry APIs; deprecate the current string-based microsyntax registry APIs; and introduce a `capabilities` property to the resolver to safely support existing resolvers. Extend the new API for service and controller injections, and deprecate their microsyntax for namespaced injections.
@@ -69,6 +38,40 @@ class Example {
   session;
 }
 ```
+
+### Table of Contents
+
+- [Summary](#summary)
+  - [Table of Contents](#table-of-contents)
+- [Motivation](#motivation)
+  - [Microsyntax problems](#microsyntax-problems)
+  - [TypeScript problems](#typescript-problems)
+  - [Performance benefits?](#performance-benefits)
+- [Detailed design](#detailed-design)
+  - [`Identifier`](#identifier)
+  - [`Resolver`](#resolver)
+  - [Owner APIs](#owner-apis)
+    - [Options](#options)
+    - [`Factory` and `FactoryManager`](#factory-and-factorymanager)
+    - [`Owner` API diff](#owner-api-diff)
+  - [Service and Controller Injections](#service-and-controller-injections)
+  - [Codemod](#codemod)
+  - [Deprecation messaging](#deprecation-messaging)
+    - [Guide](#guide)
+    - [In-app](#in-app)
+  - [Rollout](#rollout)
+- [How we teach this](#how-we-teach-this)
+- [Drawbacks](#drawbacks)
+- [Alternatives](#alternatives)
+  - [Supply just `schema` instead of `capabilities`](#supply-just-schema-instead-of-capabilities)
+  - [A new String-based API](#a-new-string-based-api)
+  - [String-based API as “sugar”](#string-based-api-as-sugar)
+  - [Object-based API](#object-based-api)
+  - [Do nothing](#do-nothing)
+- [Unresolved questions](#unresolved-questions)
+- [Appendix: TypeScript](#appendix-typescript)
+  - [TypeScript motivation](#typescript-motivation)
+  - [Proposed type definitions](#proposed-type-definitions)
 
 ## Motivation
 
