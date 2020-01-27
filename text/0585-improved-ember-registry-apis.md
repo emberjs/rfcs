@@ -360,6 +360,7 @@ The majority of uses are likely to be codemoddable, but not *all* will.
 >     copyToClipboard(source) {/* no-op */}
 >   }
 > )
+> this.owner.inject('controller', 'session', 'service:session');
 > ```
 >
 > Should be changed to:
