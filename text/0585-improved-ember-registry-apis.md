@@ -302,10 +302,10 @@ The `'<namespace>@<name>'` form is deprecated and will be removed at 4.0. The no
     import { inject as service } from '@ember/service';
 
     export default class Example {
-      @inject foo;
-      @inject('bar') barRenamed;
-      @inject({ name: 'quux' }) quuxViaIdentifier;
-      @inject({ namespace: 'baz', name: 'neato' }): neatoNamespaced;
+      @service foo;
+      @service('bar') barRenamed;
+      @service({ name: 'quux' }) quuxViaIdentifier;
+      @service({ namespace: 'baz', name: 'neato' }): neatoNamespaced;
     }
     ```
 
@@ -315,7 +315,7 @@ The `'<namespace>@<name>'` form is deprecated and will be removed at 4.0. The no
     import { inject as service } from '@ember/service';
 
     export default class Example {
-      @inject('baz@neato') neatoNamespaced;
+      @service('baz@neato') neatoNamespaced;
     }
     ```
 
