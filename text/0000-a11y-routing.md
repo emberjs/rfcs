@@ -1,4 +1,4 @@
-- Start Date: (2019-01-18, updated on 2019-05-13)
+- Start Date: (2019-01-18)
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
