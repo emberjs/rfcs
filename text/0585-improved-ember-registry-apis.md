@@ -223,8 +223,6 @@ Some APIs refer to *factories* and *factory managers*. The API for these classes
  }
 ```
 
-**TODO: nail down what here is public API during RFC discussion.**
-
 #### `Owner` API diff
 
 ```diff
