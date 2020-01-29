@@ -138,6 +138,14 @@ Modules in **Own Javascript** are allowed to import template files. This is comm
 
 Modules in **Own Javascript** are allowed to import JSON files. This is supported in Node and it's enabled by default in popular Javascript bundlers like Webpack, so it's common to encounter code on NPM that expects it to work. We interpret JSON as an ECMA module whose `default` export is the JSON object.
 
+### Own Javascript: Co-located Component Templates
+
+Modules in **Own Javascript** get no _automatic_ component template co-location. They should use Ember's `setComponentTemplate` explicitly. They can access their compiled templates either by importing them or by inlining them via the `hbs` macro provided by ember-cli-htmlbars.
+
+We're assuming that template co-location will be handled by the build step _before_ an addon is published to NPM in V2 format.
+
+Similarly, template-only components must be explicitly present as Javascript modules that invoke Ember's `templateOnlyComponent()` and `setComponentTemplate`.
+
 ### Own Javascript: Transpilation of imported modules
 
 Any module you import, whether from an Ember package or a non-Ember package, gets processed by the app's babel configuration by default. This ensures that the app's `config/targets.js` will always be respected and you won't accidentally break your older supported browsers by importing a dependency that uses newer ECMA features.
