@@ -215,6 +215,8 @@ The old test waiters system ultimately should be deprecated in its own deprecati
 
 # How We Teach This
 
+API documentation should be available at api.emberjs.com.
+
 This new test waiters system should be included in the Ember guide's testing section. Information and examples should be provided to allow users to correctly author asynchronous code that can be correctly managed by the testing system.
 
 Specifically, calling this out in a separate section will allow readers to understand the intent of the test waiters system from a high level, as test waiters apply broadly to all the associated types in the testing section.
@@ -224,6 +226,8 @@ There are a few concepts that we should focus on:
 1. What patterns of asynchronous code can lead to issues in testing
 1. How to utilize test waiters to address those asynchronous patterns
 1. How to leverage the built-in test waiters utilities
+
+Specifically for addon authors, we want to encourage the use of test waiters to prevent async leaks in tests due to unmanaged async. A special section directed at addon authors should be added to help them understand the value to their consumers by adding test waiters, or providing test helpers via `addon-test-support` integrated with test waiters.
 
 # Drawbacks
 
