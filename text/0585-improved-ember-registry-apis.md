@@ -144,6 +144,8 @@ export function capabilities(compatVersion: '3.18', capabilities?: OptionalCapab
 
 The return type of `capabilities` is `unknown` for public consumers; the actual return type is private API and should not be relied on by implementors of custom resolvers.
 
+The `modulesBased` capability rationalizes the existing `moduleBasedResolver` property on the `Resolver` class, integrating it into the new `capabilities` API.
+
 During the 3.x Ember series, if `capabilities` is `undefined`, the legacy behavior of the resolver is maintained. The signature of the `Resolver` type is therefore:
 
 ```ts
