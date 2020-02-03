@@ -398,6 +398,10 @@ Here, the message should substitute the *actual* passed type and name. For examp
 
 > You invoked `Owner.lookup` with a string full name: `'service:session'`. This usage is deprecated and will be removed in Ember 4.0. Instead, pass an identifier object: `{ type: 'service', name: 'session' }`.
 
+If the user tried to look up a service named `session` from the `shared` namespace by invoking `lookup('shared@service:session')` the deprecation will read:
+
+> You invoked `Owner.lookup` with a string full name: `'shared@service:session'`. This usage is deprecated and will be removed in Ember 4.0. Instead, pass an identifier object: `{ namespace: 'shared', type: 'service', name: 'session' }`.
+
 For methods which require a `FactoryTypeIdentifier`, the wording is adjusted appropriately:
 
 > You invoked `Owner.lookup` with a string type name: `'service'`. This usage is deprecated and will be removed in Ember 4.0. Instead, pass a factory type identifier object: `{ type: 'service' }`.
