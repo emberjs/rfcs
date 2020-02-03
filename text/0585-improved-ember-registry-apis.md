@@ -101,12 +101,12 @@ Every registry API will be updated to take a new `Identifier` type in place of t
 
 <i>**Note:** the diff views used throughout are meant to highlight the new APIs compared to the old, *not* to indicate the removal of the deprecated items. They will only be removed at Ember 4.0.</i>
 
-### `Identifier`
+### `Identifier` types
 
-The core new type in the design of the API is an *identifier*, which is always passed as the first argument to resolver APIs.
+The core new type in the design of the API is an *identifier*, which is always passed as the first argument to resolver APIs. There are three kinds of identifiers: `FactoryIdentifier` and `FactoryTypeIdentifier` (discussed here), and `InjectionIdentifier` (discussed below in [**Session and Controller Injections**](#service-and-controller-injections)).
 
 ```ts
-interface Identifier {
+interface FactoryIdentifier {
   type: string;
   name: string;
   namespace?: string;
@@ -151,16 +151,16 @@ During the 3.x Ember series, if `capabilities` is `undefined`, the legacy behavi
 ```ts
 interface Resolver {
   capabilities?: Capabilities;
-  resolve(identifier: string | Identifier);
+  resolve(identifier: string | FactoryIdentifier);
 }
 ```
 
-After Ember 4.0, the type a custom resolver must implement will be updated so that `capabilities` will be required and `resolve` will only accept an `Identifier`:
+After Ember 4.0, the type a custom resolver must implement will be updated so that `capabilities` will be required and `resolve` will only accept a `FactoryIdentifier`:
 
 ```ts
 interface Resolver {
   capabilities: Capabilities;
-  resolve(identifier: Identifier);
+  resolve(identifier: FactoryIdentifier);
 }
 ```
 
@@ -212,7 +212,7 @@ Some APIs refer to *factories* and *factory managers*. The API for these classes
    class?: C;
 -  fullName?: string; // DEPRECATED
 -  normalizedName?: string; // DEPRECATED
-+  identifier: Identifier;
++  identifier: FactoryIdentifier;
    create(props?: { [prop: string]: any }): T;
  }
  
@@ -220,7 +220,7 @@ Some APIs refer to *factories* and *factory managers*. The API for these classes
    readonly class: Factory<T>;
 -  readonly fullName?: string; // DEPRECATED
 -  readonly normalizedName?: string; // DEPRECATED
-+  identifier: Identifier;
++  identifier: FactoryIdentifier;
    create(props?: object): T;
  }
 ```
@@ -230,40 +230,40 @@ Some APIs refer to *factories* and *factory managers*. The API for these classes
 ```diff
  interface Owner {
 -  factoryFor(fullName: string, options: LookupOptions): FactoryManager;
-+  factoryFor(identifier: Identifier, options: LookupOptions): FactoryManager;
++  factoryFor(identifier: FactoryIdentifier, options: LookupOptions): FactoryManager;
 
 -  hasRegistration(fullName: string): boolean;
-+  hasRegistration(identifier: Identifier): boolean;
++  hasRegistration(identifier: FactoryIdentifier): boolean;
 
 -  inject(factoryNameOrType: string, property: string, injectionName: string): void;
-+  inject(factory: Identifier | FactoryTypeIdentifier, property: string, injection: Identifier): void;
++  inject(factory: FactoryIdentifier | FactoryTypeIdentifier, property: string, injection: FactoryIdentifier): void;
 
 -  lookup(fullName: string, options?: LookupOptions): any;
-+  lookup(identifier: Identifier, options?: LookupOptions): any;
++  lookup(identifier: FactoryIdentifier, options?: LookupOptions): any;
 
 -  register(fullName: string, factory: any, options?: RegisterOptions): void;
-+  register(identifier: Identifier, factory: any, options?: RegisterOptions): any;
++  register(identifier: FactoryIdentifier, factory: any, options?: RegisterOptions): any;
 
 -  registerOptions(fullName: string, options: RegisterOptions): void;
-+  registerOptions(identifier: Identifier, options: RegisterOptions): any;
++  registerOptions(identifier: FactoryIdentifier, options: RegisterOptions): any;
 
 -  registerOptionsForType(fullName: string, options: RegisterOptions): void;
 +  registerOptionsForType(identifier: FactoryTypeIdentifier, options: RegisterOptions): any;
 
 -  registeredOption(fullName: string, optionName: string): RegisterOptions;
-+  registeredOption(identifier: Identifier, optionName: string): RegisterOptions;
++  registeredOption(identifier: FactoryIdentifier, optionName: string): RegisterOptions;
 
 -  registeredOptions(fullName: string): RegisterOptions;
-+  registeredOptions(identifier: Identifier): RegisterOptions;
++  registeredOptions(identifier: FactoryIdentifier): RegisterOptions;
 
 -  registeredOptionsForType(type: string): RegisterOptions;
 +  registeredOptionsForType(type: FactoryTypeIdentifier): RegisterOptions;
 
 -  resolveRegistration(type: string): Factory;
-+  resolveRegistration(identifier: Identifier): Factory;
++  resolveRegistration(identifier: FactoryIdentifier): Factory;
 
 -  unregister(fullName: string): void;
-+  unregister(identifier: Identifier): void;
++  unregister(identifier: FactoryIdentifier): void;
  }
 ```
 
@@ -390,7 +390,7 @@ The majority of uses are likely to be codemoddable, but not *all* will.
 
 #### In-app
 
-Invocation of v0 resolver APIs which require an `Identifier` will trigger the following deprecation message (using `lookup` as an example):
+Invocation of v0 resolver APIs which require a `FactoryIdentifier` will trigger the following deprecation message (using `lookup` as an example):
 
 > You invoked `Owner.lookup` with a `string` full name: `'<type>:<name>'`. This usage is deprecated and will be removed in Ember 4.0. Instead, pass an object identifier: `{ type: '<type>', name: '<name>' }`.
 
@@ -422,9 +422,9 @@ For Ember only:
 
 ## How we teach this
 
-- **New concepts:** this RFC introduces the ideas of `Identifier` and `FactoryTypeIdentifier` to define the new identifier types passed as arguments to the various registry functions. The basic shapes of these objects, and perhaps their names (as inline text like “identifier” and “factory type identifier”) will need to be integrated into the guides and API docs. See also [**Unresolved Questions**](#unresolved-questions): there may be other names which work better.
+- **New concepts:** this RFC introduces the concept of an identifier through the `FactoryIdentifier`, `FactoryTypeIdentifier`, and `InjectionIdentifier` types. These define the arguments to the various registry functions. The basic shapes of these objects, and perhaps their names (as inline text like “factory identifier,” “factory type identifier,” and “injection identifier”) will need to be integrated into the guides and API docs. See also [**Unresolved Questions**](#unresolved-questions): there may be other names which work better.
 
-- The existing documentation about dependency injection can unchanged apart from simplifications in certain key areas. Paragraphs explaining the microsyntax can be eliminated or simplified by showing the identifier object type. New Ember users will continue to benefit from the detailed introduction to the concepts in the guides, but will have one fewer concept to learn along the way.
+- The existing documentation about dependency injection can unchanged apart from simplifications in certain key areas. Paragraphs explaining the microsyntax can be eliminated or simplified by showing the identifier object types. New Ember users will continue to benefit from the detailed introduction to the concepts in the guides, but will have one fewer concept to learn along the way.
 
 - All instances of the API documentation will need to be updated to reflect the changes to their signatures.
 
@@ -451,12 +451,12 @@ interface ResolverV0 {
 }
 ```
 
-If `schemaVersion` is `1`, the `resolve` function has a new signature, using the `Identifier` type introduced above:
+If `schemaVersion` is `1`, the `resolve` function has a new signature, using the `FactoryIdentifier` type introduced above:
 
 ```ts
 interface ResolverV1 {
   schemaVersion: 1;
-  resolve(identifier: Identifier)
+  resolve(identifier: FactoryIdentifier)
 }
 ```
 
@@ -540,11 +540,13 @@ Leaving the API as it is remains an option, with both the upsides and downsides 
 
 - Is `@ember/application` the appropriate home for the new exports? Or should they liver somewhere else, such as `@ember/resolver` or `@ember/application/resolver`?
 
-- What is the right name for the parameter and interface for the lookup? `identifier` is a reasonable choice, but does overlap with the notion of identifiers from Ember Data. It is also *quite* generic. We could use any of a number of longer but perhaps clearer names:
+- Is `FactoryIdentifier` the right name for the primary identifier interface? `Identifier` is shorter but overlaps with the notion of identifiers from Ember Data and is perhaps overly generic. We could use any of a number of other names:
     - `RegistrationIdentifier`
     - `RegistryIdentifier`
-    - `FactoryIdentifier`
+    - `FactoryId`
     - `RegistryId`
+    - `RegistrationId`
+    - etc.
 
 - Similarly, is `FactoryTypeIdentifier` the correct name? Alternatives might be:
     - `FactoryRegistrationIdentifier`
@@ -554,6 +556,7 @@ Leaving the API as it is remains an option, with both the upsides and downsides 
     - `FactoryIdentifier` (mutually exclusive with using it as a replacement for `Identifier`
     - `FactoryRegistryId`
     - `FactoryTypeRegistryId`
+    - etc.
 
 - Are `identifier` and `type` the right names for the arguments in the new design?
 
@@ -667,7 +670,7 @@ interface TypeRegistry {
   transform: import('ember-data/types/registries/transform').default;
 }
 
-interface Identifier<
+interface FactoryIdentifier<
   Type extends keyof TypeRegistry,
   Name extends keyof TypeRegistry[Type]
 > {
@@ -715,7 +718,7 @@ interface Owner {
     Type extends keyof TypeRegistry,
     Name extends keyof TypeRegistry[Type]
   >(
-    identifier: Identifier<Type, Name>,
+    identifier: FactoryIdentifier<Type, Name>,
     options?: LookupOptions
   ): FactoryManager<TypeRegistry[Type][Name]>;
 
@@ -723,23 +726,23 @@ interface Owner {
     Type extends keyof TypeRegistry,
     Name extends keyof TypeRegistry[Type]
   >(
-    identifier: Identifier<Type, Name>
+    identifier: FactoryIdentifier<Type, Name>
   ): boolean;
 
   inject<
     Type extends keyof TypeRegistry,
     Name extends keyof TypeRegistry[Type]
   >(
-    factory: Identifier<Type, Name> | FactoryTypeIdentifier<Type>,
+    factory: FactoryIdentifier<Type, Name> | FactoryTypeIdentifier<Type>,
     property: string,
-    injection: Identifier<Type, Name>
+    injection: FactoryIdentifier<Type, Name>
   ): void;
 
   lookup<
     Type extends keyof TypeRegistry,
     Name extends keyof TypeRegistry[Type]
   >(
-    identifier: Identifier<Type, Name>,
+    identifier: FactoryIdentifier<Type, Name>,
     options?: LookupOptions
   ): InstanceOf<TypeRegistry[Type][Name]>;
 
@@ -747,7 +750,7 @@ interface Owner {
     Type extends keyof TypeRegistry,
     Name extends keyof TypeRegistry[Type]
   >(
-    identifier: Identifier<Type, Name>,
+    identifier: FactoryIdentifier<Type, Name>,
     factory: any,
     options?: RegisterOptions
   ): void;
@@ -756,7 +759,7 @@ interface Owner {
     Type extends keyof TypeRegistry,
     Name extends keyof TypeRegistry[Type]
   >(
-    identifier: Identifier<Type, Name>,
+    identifier: FactoryIdentifier<Type, Name>,
     options: RegisterOptions
   ): void;
 
@@ -770,7 +773,7 @@ interface Owner {
     Name extends keyof TypeRegistry[Type],
     OptionName extends keyof RegisterOptions
   >(
-    identifier: Identifier<Type, Name>,
+    identifier: FactoryIdentifier<Type, Name>,
     optionName: OptionName
   ): Pick<RegisterOptions, OptionName>;
 
@@ -778,7 +781,7 @@ interface Owner {
     Type extends keyof TypeRegistry,
     Name extends keyof TypeRegistry[Type]
   >(
-    identifier: Identifier<Type, Name>
+    identifier: FactoryIdentifier<Type, Name>
   ): RegisterOptions;
 
   registeredOptionsForType<Type extends keyof TypeRegistry>(
@@ -789,16 +792,16 @@ interface Owner {
     Type extends keyof TypeRegistry,
     Name extends keyof TypeRegistry[Type]
   >(
-    identifier: Identifier<Type, Name>
+    identifier: FactoryIdentifier<Type, Name>
   ): Factory<TypeRegistry[Type][Name]>;
 
   unregister<
     Type extends keyof TypeRegistry,
     Name extends keyof TypeRegistry[Type]
   >(
-    identifier: Identifier<Type, Name>
+    identifier: FactoryIdentifier<Type, Name>
   ): void;
 }
 ```
 
-[types-demo]: https://www.typescriptlang.org/play/index.html#code/PTAEFpM0BcE8AOBTUBXGBLANhzSDOEU4oIAUGfMqAMID2AdvjAE6oDGMdLAgiwOb4APABUAfKAC8oEaCQAPGEgYATQgyQB3UAAoAdAYCGA-AC5QGBgDMkLUAFUAlFImoGAawZ1NDUAH4HUHMNADdbAG4KKhQASSYYQwZ2JAB5K1EJaVkFJVV1LV0DPWNBc0S4Z0kJSxs7ACV-UAbgpDCWSLIQIihQBBYkcAUMZkt+UH7+YdY4WEQCUE1cAAtQQwQ+uj6MQyVQdiXE-nniEnIySyUWK0Nk0ABlWxCMZLqkSeYWGYBvMlBQfAI+AwjHM0ToVnugOBDEiAF8KBdbNdbvQGKw6FgsLZXu9pqAfn81ggcOwdtDQXNwaAeOsSWTGKj0ZiImR4ec0UibigRHMcVNPvjfv9Hs8kOYHiwni83vy4JE-uxGEysSxzIyWBiVXyPnLWRQuidZshCFwLABbYlIM3KGCwJbDJoAMRo3WgZ0RVy5oBiKhtGCsGFsQiFPOoOWUalA7iQcCpoaQ2umABohQA5QzWuSKCOEaOxiHxxOfADa8YAumQJASjWKZHN5aAGBna+nrQ2m9b8AguX5zB9RnCERzPbdHTcuJ94z6-QGg-Gs7lI3m47yZTqq0LouZ44P2ZdkSgJVKkHEAFZITjQ6do-2BlhCVsocN5KMxqlH0VFuAbv4dlvN9tmy7Hs+1YAc9U6MAFAQbglBUVZCAAA0sc9OEQpNG2beDEIBSVRUQ0AllsFArG4PZGDCBhAySJAyF9dgsGMEi3EvRhhTw5IH2bBcc1ffNIQ4hM12mMQdD-cxH0ccw4mYRJkjSIQP2lXES0fMsxEiejGP6UArBYzA2Nw48uMzZ8lzfCElKElTvx0IUMF9G9Z1VATjzPC8DIYa9MGckykDEMgpO9eI5NSdIrK-Ys1I0od9y9dVNVsdzWK8xyfLvPyeJfZcIQS5kWC-H9MOtCSAKFP9gOSXt-jAhh+F3LSmN0-ToXItENXyzKzNzCzaCVDqtWEz5RPE0BJOkkKaIUvLBpsqLm3UzSL205ikk8trlSDR8svM-iZuxIbbPstLb1sNV+sSlhks87zTvvR8AqCmSEim9J9oKw75utRb9Sg+QYJYOCENAZCGFQmB0OKpBsMVdrLoIoidNIuxYco6jkgoaDYIsYcD1AAAZOg6HcVAEBSBBPMIasgTqrEuAYaqACMiaxRIG0sWSbx2JAmZZpA2aFfA6FQFgqtAlhwN-IDuzFmqJbq3cPTxxNbHJynBT+Gn+DpxheYxfmYXsybMG5vXWcNtkla9MdOG4OAAFlEkMI57xoRj8HwIqGMMD21Xd-AG3Yfpubsv4-ksXBtiwAA1QwsFQAhqurMPQGLABpHG+KpZ7Qum-2xDLaqc9eoQ3Z9z307LBs-nhP4nsm+S3vzxXcet8c7dL-ONb2f2-fLwPg6UUOw4jk2Y7jhP8CToUU-TzOcuCznG878uC6LhuwpXj2xEr6vQFr0B66Xzey+3lu4tuFIfFsbvkQnOBHW4YMU-nbqs4LVcbJTFPtrfhfC0+uWIUokZ4WBOs5aS4CMrxgwg9b+YdNiU2qoTYmpM1bQnwEKIKNt76OybC7UQn9ZSljmGWL6SAfpCgOPgIs9IGDPzDq-bM2VeoAK-qA3+zDdormQJFIBfwQEpwcjOO8kCRFzjmLA5sAU67mGZvrAWRtwYML+EwxcPV+JsNlPAv4nD1HvzrLwwBpDgHDz+HfO2YinLQMkWNaRoAAA+oAcF2ynFAiRyAxA6N6BqZAgM4Di1GN4lCHlyTencfeGBdjrQyMPuYEIdAHIdD+FgImJMEAqMMU+LhGieHWW0Rw7if9WFEJ1CQ5AFYBFmLAeIlyt1fJRLgaAxBGDkFpLQRTDBWCJrHwUlosp5ZyGUL+BMKYQZQFqN4v-UpyZCmmRyQY-p0xykUNMaA4R1izrhNqYQ5AUiYneIsZ8MoDA4DeJaYwKe5gVYsHQZc7poAElJIoCM4SqtOmXMyZMlhmiZmfG8XoqZJSjFzX4aAQRI8IlWPSh4pA+z-LnI+Uwa5bzblIswbIx5iSVDJPGKiu5TBH4sHjLs7J+jpkgtlBC8OULnHt0nHMepNjPGIspii3E7zKYPKeTil5eKOX9BUASr5cwdq5I-pSnUAKikLIpfkgZpDvEEsBT8qkNyCUYvBdUjZMK6kRNJfCrxzSkWPnMMq5sDyAAKzx3BCHVeijC5qYm4tGcwYiQr0UirDLK4F8rZk-xleS31fCTFVPWbSplsLDUPPtZTF1qLoYaqJSS753CJV+uGtUrcdLbYMuQJGyJcxYlBVjRg+NQssBhFoZ5L1ZKgW-Mlf6sOKq01ZJDRUtZQiI36sadIh5LjPikvbRQoZMUhRuFdZcWtYrFl-LOXMutqr03DsqVq8NtToV3QNdE-y3LsW7gNMQGshBkagF9GaOgrpTjAAoN7D2kIPatWrLDD4HAJw6C2CEbmoBvAaBclfP9zgvhshSXQSYDAdCoFwqauWQTejl00NwFQgS6pBUtRqM0wwkBCB5UVV5MARa+HQ3QTDAI9D9ArWEHQXw0DQebBhbsHtEMsHgrCRwegYBEQgzoSoeGw4vv1noVJ-AdAACJ8AcGSB7AAhKJxwe82MNhA7R2w08U5QdsDB-sCshSwl3HewgNJiTPDoe9bujUdIXt9FgcwNGNA7DoHIvmiR94NWWk1OmP7r7-u85ETzAJH2MAHTMaQv7bB6COQ-bg1GazmHEyKZIomMKjXi4Fhgon97ybIJ5h4aXT6EGkAFoEQX6VwD0AZvzSBbRFehAATSQAgKQjYCi5eKwwfLOgwssCy-5qEjBUybBQNIDQ2hWvQg6-J0gYAAAkABRf6HlZssA1CwbLVXhRpdm2aRmtgsAhY2214L5XB5IGo+O3CtnQEaZYDB0TzNGaid06ydjwnLA6AAOT3fexhd7jH8DMZUO9rLZAutCfaQgGL2bROw02iwJLUM4unmMIzLE+AMuKam6AObC3OBLZWxQUHk73UEuHjRqHMOBq2HhylokdJPLo-gaJjmL0TZKEe+x5niRWdIA6KD1JqCIdk7mHFoyopqfNhF319LmWwfgbE-d+Hom-sA7k5EPn4PIfC9ANDi6+VxclW17Tkz9OZdWaQFgNX3nyMEAxFWoadDNfIDixTy6+vayiaN6SE3bHjv8yHtWM3Nnu6-j9452AbBaI12e7zq3-P0mO9rO9l3+VvsI9AO9z3dD3uZYJ1bidqKE+S8Em7yXaX0fA9F8kD7NXGBA8iJX07dmJfp5rwwbPimyAN5i6Nd7rfU8VRlon7WdBGZx3b8D5PKoPuZ88nXsgk-bDd+bxn2kxvoTj8iAvlgS+Dcr+M179fyXpZcnML3kjAxlDgaQBvsgQA
+[types-demo]: https://www.typescriptlang.org/play/index.html#code/PTAEFpM0BcE8AOBTUBXGBLANhzSDOEU4oIAUGfMqAMID2AdvjAE6oDGMdLAgiwOb4APABUAfKAC8oEaCQAPGEgYATQgyQB3UAAoAdAYCGA-AC5QGBgDMkLUAFUAlFImoGAawZ1NDUAH4HUHMNADdbAG4KKhQASSYYQwZ2JAB5K1EJaVkFJVV1LV0DPWNBc0S4Z0kJSxs7ACV-UAbgpDCWSLIQIihQBBYkcAUMZkt+UH7+YdY4WEQCUE1cAAtQQwQ+uj6MQyVQdiXE-nniEnIySyUWK0Nk0ABlWxCMZLqkSeYWGYBvMlBQfAI+AwjHM0ToVnugOBDEiAF8KBdbNdbvQGKw6FgsLZXu9pqAfn81ggcOwdtDQXNwaAeOsSWTGKj0ZiImR4ec0UibigRHMcVNPvjfv9Hs8kOYHiwni83vy4JE-uxGEysSxzIyWBiVXyPnLWRQuidZshCFwLABbYlIM3KGCwJbDJoAMRo3WgZ0RVy5oEdNy4nxiKhtGCsGFsQiFPOoOWUalA7iQcCpkaQ2umABohQA5QzWuSKGOEeOJiHJ1OfADayYAumQJASjWKZHN5aAGDnG9nrS229b8AguX5zB9RnCERzPbcfZxuHBkwGgyGw8m87lY0Wk7yZTq60LouZk6P2ZdkSgJVKkHEAFZITjQ+do4OhlhCTsoaN5OMJqln0VluA7v4ew7dtu3bPsByHVgRz1TowAUBBuCUFRVkIAADSxr04VC01bdtkNQgFJVFVDQCWWwUCsbg9kYMIGFDJIkDIQN2CwYwKLcW9GGFIjkhfdsVwLT9i0hHiUy3aYxB0IDzFfRxzDiZhEmSNIhB-aVcQrV8qzESJmNY-pQCsDjMC4wjzz43N3zXL8ITUsSNP-HQhQwQMH0XVURPPK8bxMhh70wdyLKQMQyDk0AFISBiVLsv9yy0nSx2PL11U1WxvM4vzXICp8goEj91whFLmRYP8ANw60ZJAoUgPA5JB3+KCGH4Q89LYwzjOhai0Q1YrcqswsbNoJUeq1cTPkk6TQFk+T4iU1J0iK0aHLi9ttN0m99PYpJfK65Uw1fPLrOExbsTGxznKyx9bDVYbUpYdLfP8q7n1fEKwoiuaVJOkqzpW601v1OD5AQlgkJQ0B0IYTCYGw8qkHwxVurukiyIMyi7ER2j6OSCh4MQixxxPUAABk6DodxUAQFIEF8wh6yBJqsS4Bh6oAIzJrFEhbSxFIfHYkDZjmkC5oV8DoVAWDqyCWGgwCwP7KWGplprDw9InU1sanacFP4Gf4JnGEFjFhZhZzZr5pQjc5022TVr0pz9OAAFlEkMI5nxoVj8HwMqWMMb21S9-AW3Yfp+acv4-ksXBtiwAA1QwsFQAh6vrSPQHLABpAmhKpD6ooWoOxCrer8+Uwv-Z9rOqxbP54T+d7zfLoRPcrhLbcJ+3fRnFui51vYg8DyuQ7DpQI8j6PMEThOk5T8w08jrOc4K8Km-m3u25Lmbeeb1vvbEava9AevQEbnf173n3Vc724Uh8Wx++RR3HW4cN0+Xfrc5LTcHIzdODs-ivUsv1qxCkkkKKOl13LmAdjOJ6gVkw4Ven-SOmxab1VJuTSmWtoT4CFGFWBnwXZtndqIH+spKxzCrH9JAAMhQHHwGWekDA36Rw-vmfKg1gG-wgVNfigCuHkJ1JQ5ANY-jgPTi5BcT4YHd39FAnKiC+HWhCg3cw7NjYizNtDVhfx2GrgGsJbhsoUF-AARwo6G5kCxVAeI8efwn4zlkdOeR0ilxzCQe2CQAAfb0cjZxzHgYouYYhTG9A1MgUGcBpajDCRhHy5I-EuLgEE9xyBPEqPweYEIdAXIdD+FgMmFMEC6KbFGCxhirH2RMbw8xBiv5lOqcI2xoAJETwUddJJjtUnPiUcg3haDcEYKKdgmmuCsmr3PipYxzSqE0LoX8CYUwwy8P0YJIBQj0y1P4RUhpMzpgiNoWA+xFgOkeUISks5ZD0nKOCmExxnwygMDgGEwZjB8D1Q1iwHB7yJk5LyRQRZ4lNZjPeaUtZnCjGbM+GEup6zBHWJAVQ45vCpFuRkV0uBVy+leNeaCpg5gvk-KYH83JKh8njGBd8-F+AX4sGTNct8uyNmIocm0yBbjzn+LnNikJeLaaEqpcSvBajQD-PJYCyluJyIqGJeCuYh1Knf1ZTU-+Oz6ksqaQc6sYTiVwshVSIlNKUWSLOc47pvKbn9PTm8hgr5zB6vbBMgACs8dwQgjW0xwo6lRFKlnMBlcK+V5SNUIq1TC7ZllmVhpsciuxqKzWYtceitJSAMnBQmZ63BfqqXw2FXShlELLHKvDeddOe4k0BOQD0xlqjT6CuldS2mOaxZYDCEw3ywamWhqhSqnUsL1Xwt7aWw5YjWknLRdlTpFya04syaKi5jLY2iPmQlIUbh-WXC7YqvZ0KXmRu7UOqpy6jnxtNZy81WLOWMvTXWsK4rDwGmIA2Qg6NQCBjNHQV0pxgAUD9t7SE3tOr1kRh8DgfodBbBCPzUA3gNAeTvvB5wXw2QFLoJMBgOhUCEXtUrWJvRK6aG4CoGJTUwrOo1GaYYSAhDirKkCmAEtfAUboFRgEeh+itrCDoL4aAcPthwv2b2RGWDIVhI4PQMAyKYZ0JUejkdQPGz0IU-gOgABE+AODJG9gAQjU44I+4mWyob47YVOvDsO2Fw8OFWQpYSHn-YQGkxJnjMO+v3VqBlP2BiwPPVswsuDqKFokY+LUNptSZrB++CHouREiwCIDjALlSCi-BvQDy4B0p4w2cwGmRTJDUzhSaeXEsMDU8fAzZBIsPFK5fFLCWgRJf8XoRzcWkC2ga9CAAmkgBAKWNDaBq41hgl8dBwdsJV+LUJGCZk2CgaQA3APDdGwZ0gYAAAkABRYGPlNssA1CwKr7XhSlc22aVmtgsAzGkJ1prySWujyQDx9dhF54Wf4xVUAan2aszU3Z1kEmVOWB0AAch+yDnCIOhP4BEyoEHlWyDjZYMpkZCBssVrU4jPaLBCtw1y5eYwrMsT4HK0ZtboAts7c4Htg7FAkccdzbK-F49eMY6xyNWwuPitEjpL5UnKC1M80ilPJQf2JNC8SCLpAHR6eFKwWj1ncxctmVFFz9syvptlYqyjjD6mfu47U9D2H+nIiy9R+jpXX32d3TV59tTPPXN8+195pAWBTfRYZ1x8NzCLfIFy9b4qtvGz29pI76EpOJOhwC09+sLvfP90AgFugoI2CMTrgDmXHu5fFN942EHAeVQQ7x6AEHDvSS+RBxVunHuN1Utzxr0SQeNelYjx0FXyRQe3YYPDyI7eY-F5B13yvRmyB9+y5NQfmui81QVnn-WdBWaJ2HwjgvthQdl+YT3sgq+WDj-VyXjfFeKuRB33vz7pfQ-l+hNP+WXJzCD9YwMZQGGkDL8iEAA
