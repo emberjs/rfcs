@@ -48,7 +48,7 @@ class Example {
   - [TypeScript problems](#typescript-problems)
   - [Performance benefits?](#performance-benefits)
 - [Detailed design](#detailed-design)
-  - [`Identifier`](#identifier)
+  - [`Identifier` types](#identifier-types)
   - [`Resolver`](#resolver)
   - [Owner APIs](#owner-apis)
     - [Options](#options)
