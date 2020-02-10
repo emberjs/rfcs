@@ -164,7 +164,7 @@ interface Resolver {
 }
 ```
 
-This design is completely backwards compatible: it continues working exactly as it does today. (See [**Detailed Design > Rollout**](#rollout) below for details.) Until 4.0, both apps and addons will be able to use the microsyntax-based API *or* the  It also allows for clean interop for existing custom resolvers.
+This design is completely backwards compatible: it continues working exactly as it does today. (See [**Detailed Design > Rollout**](#rollout) below for details.) Until 4.0, both apps and addons will be able to use the microsyntax-based API *or* the new identifier-based API. It also allows for clean interop for existing custom resolvers.
 
 Besides the recent use of capabilities in the modifier and component managers, there is also some prior art for this kind of versioning applied to the resolver specifically: [a similar “stamp”](https://github.com/emberjs/ember.js/pull/9994) was used for accomodating different behaviors when using the modules-based resolver vs. not (back in 2014)!
 
@@ -414,7 +414,7 @@ The rollout will be phased. For both Ember’s `Resolver` API and the default re
 
 - The new API will be introduced in a minor release as normal, *without* introducing the deprecation warning for the microsyntax-based design, and *including* the two codemods required for this API change: one for all Ember users, and one for TypeScript users (see [**Proposed Type Definitions**](#proposed-type-definitions) in the [**TypeScript Appendix**](#appendix-typescript) below.)
 
-- After *at least* one minor version, the deprecation message will be introduced. This will give addons time to adopt the new API *before* requiring 
+- After *at least* one minor version, the deprecation message will be introduced. This will give addons time to adopt the new API *before* their consumers start experience deprecation noise from addon usage.
 
 For Ember only:
 
