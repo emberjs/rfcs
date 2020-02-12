@@ -85,7 +85,7 @@ Another drawback is that this could make certain components harder to read and u
 
 ## Alternatives
 
-Some alternative syntaxs:
+Some alternative syntaxes:
 ```hbs
 <!-- Pretty straightforward, and since both are keywords we can tell pretty easily what goes where -->
 <SubComponent ...attributes ...arguments></SubComponent>
