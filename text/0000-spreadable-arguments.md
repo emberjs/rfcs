@@ -91,13 +91,13 @@ Some alternative syntaxes:
 <SubComponent ...attributes ...arguments></SubComponent>
 
 <!-- Using the same rule on arbitrary spreads though, we no longer have context -->
-<SubComponent ...{{this.someSpecificAttrs}} ...{{this.someSpecificArgs}}></SubCompnoent>
+<SubComponent ...{{this.someSpecificAttrs}} ...{{this.someSpecificArgs}}></SubComponent>
 
 <!-- Maybe prepending `@`? -->
 <SubComponent ...attributes ...@arguments></SubComponent>
 
 <!-- Seems a bit awkward putting it in front of an arbitrary array -->
-<SubComponent ...{{this.someSpecificAttrs}} ...@{{this.someSpecificArgs}}></SubCompnoent>
+<SubComponent ...{{this.someSpecificAttrs}} ...@{{this.someSpecificArgs}}></SubComponent>
 ```
 
 ## Unresolved questions
