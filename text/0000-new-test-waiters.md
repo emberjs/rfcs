@@ -108,7 +108,7 @@ export interface IWaiter {
 
 - `name`: The name of the test waiter, which is used to help identify it in test isolation validation output.
 - `waitUntil`: Used to determine if the waiter system should still wait for async
-operations to complete. The `waitUntil` method will return `true` to signal completion.
+  operations to complete. The `waitUntil` method will return `true` to signal completion.
 - `debugInfo`: Returns the `debugInfo` for each item tracking async operations in a waiter. The `debugInfo` for each waiter item is ultimately used in `@ember/test-helpers`' `getSettledState` function, which is used for test isolation validation output.
 
 This allows for maximum flexibility when creating your own waiter implementations.
@@ -126,11 +126,11 @@ export interface ITestWaiter<T = Token> extends IWaiter {
 ```
 
 - `beginAsync`: Should be used to signal the beginning of an async operation that
-is to be waited for. Invocation of this method should be paired with a subsequent
-`endAsync` call to indicate to the waiter system that the async operation is completed.
+  is to be waited for. Invocation of this method should be paired with a subsequent
+  `endAsync` call to indicate to the waiter system that the async operation is completed.
 - `endAsync`: Should be used to signal the end of an async operation. Invocation of this
-method should be paired with a preceding `beginAsync` call, which would indicate the
-beginning of an async operation.
+  method should be paired with a preceding `beginAsync` call, which would indicate the
+  beginning of an async operation.
 - `reset`: Resets the waiter state, clearing items tracking async operations in this waiter.
 
 This interface is used for the concrete `TestWaiter` type. This type forms the basis for the addon, and will likely satisfy the majority of use cases.
@@ -138,7 +138,7 @@ This interface is used for the concrete `TestWaiter` type. This type forms the b
 The most common practice is to import and invoke the `buildWaiter` function to create a new test waiter. The recommendation is to do so at the module level, which allows a single waiter to be created per type (this should likely be enforced via a lint rule added to `eslint-plugin-ember`). A single waiter is then usable across multiple instances.
 
 ```ts
-function buildWaiter(name: string): ITestWaiter
+function buildWaiter(name: string): ITestWaiter;
 ```
 
 In anything but a production build, this function will return a `TestWaiter` instance. When in production mode, we make this instance _inert_ and essentially no cost to invoke. Since test waiters are intended to be called from application or addon code, but are only required to be _active_ when in tests, this process of making the instance _inert_ is important. Even though code is still invoked, this has a negligible impact on performance.
@@ -213,6 +213,13 @@ Specifically:
 
 The old test waiters system ultimately should be deprecated in its own deprecation RFC.
 
+## Rollout
+
+- Rename `ember-test-waiters` to `@ember/test-waiters`, moving it to the `emberjs` org
+- Add `@ember/test-waiters` to the default app and addon blueprints
+- Add new optional lint rule to `eslint-plugin-ember` that flags usage of legacy test waiters, recommending the new waiters as a replacement
+- Open a new RFC proposing deprecation of legacy test waiters
+
 # How We Teach This
 
 API documentation should be available at `api.emberjs.com`.
@@ -242,7 +249,3 @@ Specifically for addon authors, we want to encourage the use of test waiters to 
 # Alternatives
 
 - the existing test waiters system could be left in place
-
-# Unresolved questions
-
-- what is the correct order of operations to roll a change like this out?
