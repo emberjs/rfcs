@@ -63,10 +63,27 @@ return function(arg) {
 The first argument must *always* have a context. So `{{set foo}}` or `{{set @foo}}` is not valid.
 This aligns with [RFC 0308](https://github.com/emberjs/rfcs/blob/master/text/0308-deprecate-property-lookup-fallback.md).
 
+The fact that the `set` helper somehow needs to know the *context* and the *name* of the
+argument it receives makes it magic syntax that can not be used by a userland helper without
+a AST transformation. But the need for the helper seems big enough to justify this, especially
+when the same magic syntax is already used by the `mut` helper.
+
 ### two argument version
 
 The two argument version `{{set context.property value}}` is a shorthand for
 `{{fn (set context.property) value}}` and will always perform the same.
+
+### dynamic attribute binding
+
+The existing `mut` helper allows to receive the result of the `get` helper to create a 
+[dynamic attribute binding](https://guides.emberjs.com/release/components/built-in-components/#toc_binding-dynamic-attribute):
+
+```hbs
+<Input @value={{mut (get this.person this.field)}}
+```
+
+This use-case is *not* covered by the new `set` helper, however the existing `mut` helper
+can still be used for this.
 
 ## How we teach this
 
