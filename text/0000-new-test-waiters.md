@@ -91,18 +91,18 @@ In the above example, a new test waiter is built that is identified via a `name`
 
 The new test waiters addon is built using low-level primitives that are complimented with some convenience utilities.
 
-### `IWaiter`
+### `Waiter`
 
-At its core, the addon uses an `IWaiter` interface defined as follows:
+At its core, the addon uses an `Waiter` interface defined as follows:
 
 ```ts
 export type WaiterName = string;
 export type Token = unknown;
 
-export interface IWaiter {
+export interface Waiter {
   name: WaiterName;
   waitUntil(): boolean;
-  debugInfo(): ITestWaiterDebugInfo[];
+  debugInfo(): TestWaiterDebugInfo[];
 }
 ```
 
@@ -113,12 +113,13 @@ export interface IWaiter {
 
 This allows for maximum flexibility when creating your own waiter implementations.
 
-### `ITestWaiter`
+### `TestWaiter`
 
-The `IWaiter` interface is built upon to create a more specific interface for a test waiter, `ITestWaiter`:
+The `Waiter` interface is built upon to create a more specific interface for a test waiter, `TestWaiter`:
 
 ```ts
-export interface ITestWaiter<T = Token> extends IWaiter {
+export interface TestWaiter<T extends object | Primitive | unknown = Token>
+  extends Waiter {
   beginAsync(token?: T, label?: string): T;
   endAsync(token: T): void;
   reset(): void;
@@ -138,7 +139,7 @@ This interface is used for the concrete `TestWaiter` type. This type forms the b
 The most common practice is to import and invoke the `buildWaiter` function to create a new test waiter. The recommendation is to do so at the module level, which allows a single waiter to be created per type (this should likely be enforced via a lint rule added to `eslint-plugin-ember`). A single waiter is then usable across multiple instances.
 
 ```ts
-function buildWaiter(name: string): ITestWaiter;
+function buildWaiter(name: string): TestWaiter;
 ```
 
 In anything but a production build, this function will return a `TestWaiter` instance. When in production mode, we make this instance _inert_ and essentially no cost to invoke. Since test waiters are intended to be called from application or addon code, but are only required to be _active_ when in tests, this process of making the instance _inert_ is important. Even though code is still invoked, this has a negligible impact on performance.
