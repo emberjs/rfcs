@@ -10,7 +10,7 @@
 This RFC introduces a new `set` helper like the one provided by
 [`ember-simple-set-helper`](https://github.com/pzuraq/ember-simple-set-helper).
 
-The `set` helper will always return a function that will change a value.
+The `set` helper will always return a function that will change value.
 
 ```hbs
 <SelectCountry @update={{set this.country}} />
@@ -68,9 +68,9 @@ argument it receives makes it magic syntax that can not be used by a userland he
 a AST transformation. But the need for the helper seems big enough to justify this, especially
 when the same magic syntax is already used by the `mut` helper.
 
-### two argument version
+### two arguments version
 
-The two argument version `{{set context.property value}}` is a shorthand for
+The two-argument version `{{set context.property value}}` is a shorthand for
 `{{fn (set context.property) value}}` and will always perform the same.
 
 ### dynamic attribute binding
@@ -87,12 +87,12 @@ can still be used for this.
 
 ## How we teach this
 
-We can teach teach it the same way as we used to tech `mut`.
-We must replace all occurances of `mut` in the guides and replace it by `set`.
+We can teach it the same way as we used to teach `mut`.
+We must replace all occurrences of `mut` in the guides and replace them by `set`.
 
 ## Drawbacks
 
-It increases API surface, and provides two helpers for the same functionallity.
+It increases the API surface and provides two helpers for the same functionality.
 However this can be mitigated by clearly communicating that `set` should be
 used in favor of `mut`.
 
