@@ -99,6 +99,7 @@ First, here’s the list of things a v2 package can provide. More detail on each
 
 - **Own Javascript**: javascript and templates under the package’s own namespace (the v1 equivalent is `/addon/**/*.{js,hbs}/`)
 - **App Javascript**: javascript and templates that must be merged with the consuming app’s namespace (the v1 equivalent is `/app/**/*.{js,hbs}`). Other RFCs are working to move Ember away from needing this feature, but we are not gated on any of those and fully support **App Javascript**.
+- **Fastboot Javascript**: just like **App Javascript**, but only applies when running in Fastboot.
 - **CSS**: available for `@import` by other CSS files (both in the same package and across packages) and by ECMA `import` directives in Javascript modules (both in the same package and across packages).
 - **Implicit Dependencies**: scripts, modules, and stylesheets that should be implicitly included in the app or the app's tests whenever this addon is active. This is a backward-compatibility feature.
 - **Renaming Rules**: allow a package to declare that some of its modules should be available at different import paths than their real, resolvable path. This is a backward-compatibility feature that new addons should not use.
@@ -174,6 +175,10 @@ To provide **App Javascript**, a package includes the `app-js` key in **Ember pa
 Like the **Own Javascript**, templates are in place in hbs format with any AST transforms already applied. Javascript is in ES modules, using only ES latest features. ECMA static and dynamic imports from any **allowed dependency** are supported. (Even though the app javascript will be addressable within the _app's_ module namespace, your own imports still resolve relative to your addon.)
 
 By making `app-js` an explicit key in **Ember package metadata**, our publication format is more durable (you can rearrange the conventional directory structure in the future without breaking the format) and more performant (less filesystem traversal is required to decide whether the package is using the **App Javascript** feature.
+
+## Fastboot Javascript
+
+To provide **Fastboot Javascript**, a package includes the `fastboot-js` key in **Ember package metadata**. This works almost identically to **App Javascript**, except it means the given directory will only be merged into the app's namespace when running in Fastboot (server-side rendering) mode. This key is a backward compatibility feature that allows addons with a `fastboot` directory to express their needs.
 
 ## CSS
 
