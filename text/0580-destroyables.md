@@ -114,15 +114,18 @@ In addition, there is a debug-only mode function used for testing:
 declare function assertDestroyablesDestroyed(): void;
 ```
 
+For the remainder of this RFC, the terms "destroyable" and "destroyable object"
+will be used to mean any object which is a valid `WeakMap` key
+(e.g. `typeof obj === 'object' || typeof obj === 'function'`). Any JS object
+that fulfills this property can be used with this system.
+
 #### `associateDestroyableChild`
 
 This function is used to associate a destroyable object with a parent. When the
 parent is destroyed, all registered children will also be destroyed.
 
-- Attempting to associate a parent or child that has already been destroyed will
-  throw an error.
-- Attempting to associate a child with a parent that is not a destroyable should
-  throw an error.
+- Attempting to associate a parent or child that has already been destroyed
+  should throw an error.
 
 ##### Multiple Inheritance
 
@@ -144,16 +147,15 @@ inheritance baked in in the future, it can be added in a followup RFC.
 
 #### `registerDestructor`
 
-Receives a destroyable and a destructor function, and associates the function
-with it. When the destroyable is destroyed, or when its parent is destroyed, the
-destructor function will be called. Multiple destructors can be associated with
-a given destroyable, and they can be associated over time, allowing libraries
-like `ember-lifeline` to dynamically add destructors as needed.
+Receives a destroyable object and a destructor function, and associates the
+function with it. When the destroyable is destroyed with `destroy`, or when its
+parent is destroyed, the destructor function will be called. Multiple
+destructors can be associated with a given destroyable, and they can be
+associated over time, allowing libraries like `ember-lifeline` to dynamically
+add destructors as needed.
 
 - Registering a destructor on a destroyed object should throw an error.
 - Attempting to register the same destructor multiple times should throw an
-  error.
-- Attempting to register a destructor on a non-destroyable should throw an
   error.
 
 #### `unregisterDestructor`
@@ -164,45 +166,42 @@ destructor from the destroyable.
 - Calling `unregisterDestructor` on a destroyed object should throw an error.
 - Calling `unregisterDestructor` with a destructor that is not associated with
   the object should throw an error.
-- Calling `unregisterDestructor` on a non-destroyable should throw an error.
 
 #### `destroy`
 
-`destroy` manually initiates the destruction of a destroyable. This allows users
-to manually manage the lifecycles of destroyables that are shorter lived than
-their parents (for instance, destroyables that are defined an a service, which
-lives as long as an application does), cleaning them up as needed.
+`destroy` initiates the destruction of an destroyable object. It runs all
+associated destructors, and then destroys all children recursively.
 
-Calling `destroy` multiple times on the same object is safe. It will not throw
-an error, and will not take any further action.
+Destruction via `destroy()` follows these steps:
 
-- Calling `destroy` on a non-destroyable should throw an error.
+1. Mark the destroyable such that `isDestroying(destroyable)` returns `true`
+2. Call the destroyable's destructors
+3. Call `destroy()` on each of the destroyable's associated children
+4. Mark the destroyable such that `isDestroyed(destroyable)` returns `true`
+
+Calling `destroy` multiple times on the same destroyable is safe. It will not
+throw an error, and will not take any further action.
+
+Calling `destroy` with an destroyable that has no destructors or associated children
+will not throw an error, and will do nothing.
 
 #### `isDestroying`
 
-This would return true as soon as the destroyable begins destruction, before any
-of its destructors are called. Returns false otherwise.
-
-- Calling `isDestroying` on a non-destroyable should throw an error.
+Receives an destroyable, and returns `true` if the destroyable has begun
+destroying. Otherwise returns false.
 
 #### `isDestroyed`
 
-This would return true as soon after the destroyable has been fully destroyed,
-including all of its child destroyables. Returns false otherwise.
-
-- Calling `isDestroyed` on a non-destroyable should throw an error.
+Receives an destroyable, and returns `true` if the destroyable has finished
+destroying. Otherwise returns false.
 
 #### `assertDestroyablesDestroyed`
 
-This function asserts that all active destroyables have been destroyed at the
-time it is called. It is meant to be a low level hook that testing frameworks
-like `ember-qunit` and `ember-mocha` can use to hook into and validate that all
-destroyables have in fact been destroyed.
-
-### Timing Semantics
-
-Destroyables first call their own destructors, then destroy their associated
-children.
+This function asserts that all objects which has associated destructors or
+associated children have been destroyed at the time it is called. It is meant to
+be a low level hook that testing frameworks like `ember-qunit` and `ember-mocha`
+can use to hook into and validate that all destroyables have in fact been
+destroyed.
 
 ### Built In Destroyables
 
