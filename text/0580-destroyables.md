@@ -44,7 +44,7 @@ Ember manages the lifecycles and lifetimes of many built in constructs, such as
 components, and does so in a hierarchical way - when a parent component is
 destroyed, all of its children are destroyed as well. This is a well established
 software pattern that is useful for many applications, and there are a variety
-of libraries, such as `ember-lifeline` and `ember-concurrency`, that would
+of libraries, such as [ember-lifeline](https://github.com/ember-lifeline/ember-lifeline) and [ember-concurrency](https://github.com/machty/ember-concurrency), that would
 benefit from having a way to extend this hierarchy, adding their own "children"
 that are cleaned up whenever their parents are removed.
 
