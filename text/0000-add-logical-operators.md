@@ -69,7 +69,7 @@ expand to combinations of `if`s.
 
 ##### `{{or}}`
 - `{{or a b}}` is equivalent to `{{if a a b}}`
-- `{{and a b c}}` is equivalent to  `{{if a a (if b b c)}}`
+- `{{or a b c}}` is equivalent to  `{{if a a (if b b c)}}`
 - and so on
 
 ##### `{{not}}`
