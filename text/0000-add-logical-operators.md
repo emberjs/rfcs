@@ -77,10 +77,18 @@ expand to combinations of `if`s.
 
 ## How we teach this
 
-The introduction of these helpers does not impact the current mental model for Ember applications.
+While the introduction of these helpers doesn't introduce new concepts, as helpers like these could be
+written and in fact were written for a long time, it might affect slightly how we frame some concepts in the guides.
 
-In addition to API and Guides documentation with illustrative examples of usage of the various helpers, stressing out
-where the definition of truthiness of handlebars is different from the one in Javascript.
+Previously users were encouraged to put computed properties in the javascript file of the components, even for
+the most simple tasks like negating a boolean condition using `computed.not` or adding them with `computed.and`.
+
+With the addition of these helpers users don't have to resort to computed properties for simple operations, which sometimes
+forced users to create javascript files for what could have been template-only components.
+
+In addition to documenting the new helpers in the API docs, the Guides should be updated to favour the usage of helpers
+over computed properties where it makes more sense, adding illustrative examples and stressing out where
+the definition of truthiness of handlebars differs from the one of Javascript.
 
 ## Drawbacks
 
