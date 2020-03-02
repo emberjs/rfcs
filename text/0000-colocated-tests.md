@@ -7,11 +7,23 @@
 
 ## Summary
 
-As apps grow, and need to be refactored, the ability to have tests be co-located with their concerned tested behavior enables faster refactors and better overall upkeep as related files are grouped together.
+As apps grow, and need to be refactored, the ability to have tightly-coupled concerns grouped together enables faster refactors and better overall upkeep as related files are grouped together -- as has been demonstrated by co-location of Component class/template, the Pods layout, and Module Unification. This RFC proposes to co-locate tests with their concerned behavior under test (component, controller, service, etc), so that drag-and-drop refactoring is easier.
 
 ## Motivation
 
 Similar to why people choose the Pods layout, or Module Unification (back when it was available in the canary build), and more recently, component class/template co-location, the ability to group tightly coupled things together allows for much quicker implementation, iteration, and maintenance of any unit of work.
+
+In today's project structures,
+
+ - specific tooling is required to be able to quickly jump to a related test (acceptance tests excluded). By co-locating tests, we eliminate the need for tooling-specific functionality.
+ - if you were to mass-migrate a number of files via automation, it is less complex to move and interact with sibling files than it is to try to find the related files in some other top-level directory.
+ - it is not clear where a test is located, or if it even exists. Tests for components, for example, can live anywhere in `tests/`, and finding them could be non-trivial for teams that are mid-migration to/from pods or have less than strict PR reviews. Co-locating gives a clear and quick message to the developer that a something has a test.
+
+This aligns with some of the philosophy of the [Module Unification](https://github.com/emberjs/rfcs/blob/master/text/0143-module-unification.md) RFC:
+
+> Subtrees should be relocatable. If you move a directory to a new place in the tree, its internal structure should all still work.
+
+Which becomes more apparent when each subtree makes use of sibling / descendant imports.
 
 ## Detailed design
 
@@ -150,6 +162,8 @@ It would be benificial to provide a CLI migration tool to automatically move fil
 When moving test files, it's possible that the import paths will be wrong. For example, if someone had `../../app/utils/my-utils.js` in their test file, the path would be wrong if the file moved to a new location.
 
 ## Alternatives
+
+The alternatie is to rely on tooling, and implement more features into the (Unstable) Ember Language Server. This will always have gaps, as there are many editors and IDEs out there, and not everyone uses the same editor.
 
 Prior Art:
  - Jest projects -- where co-location happens everywhere
