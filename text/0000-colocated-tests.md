@@ -123,16 +123,24 @@ While tests may live anywhere in the `app` directory, the default location for a
 
 ## How we teach this
 
+
 > What names and terminology work best for these concepts and why? How is this
 idea best presented? As a continuation of existing Ember patterns, or as a
 wholly new one?
+
+"Test co-location" makes sense, because it's what's used by components' current organization.
 
 > Would the acceptance of this proposal mean the Ember guides must be
 re-organized or altered? Does it change how Ember is taught to new users
 at any level?
 
+The guides would need to update any references to unit/integration tests in the `tests` folder to be in the `app` folder.
+
+
 > How should this feature be introduced and taught to existing Ember
 users?
+
+This RFC does not deprecate the old test location -- it only suggests adding test locations -- so people can take their time migrating or completely avoid migrating altogether and wait for a tool to automatically move (nearly) everything for them.
 
 ## Drawbacks
 
