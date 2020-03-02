@@ -94,7 +94,7 @@ now:
 or using `"componentStructure": "nested"`:
  - `app/components/{component-name}/index.js`
  - `app/components/{component-name}/index.hbs`
- - `app/components/{component-name}/.test.js`
+ - `app/components/{component-name}/index.test.js`
 
 #### Helpers
 
