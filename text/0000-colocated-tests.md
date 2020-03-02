@@ -1,6 +1,6 @@
 - Start Date: 2020-03-02
 - Relevant Team(s): Ember CLI
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: [#599](https://github.com/emberjs/rfcs/pull/599)
 - Tracking: (leave this empty)
 
 # Co-located Tests
