@@ -147,6 +147,8 @@ This RFC does not deprecate the old test location -- it only suggests adding tes
 While the community migrates, there will be a number of apps that either haven't migrated, or will be in the middle of migrating for a while (depending on app size).
 It would be benificial to provide a CLI migration tool to automatically move files from today's standard locations to the new locations.
 
+When moving test files, it's possible that the import paths will be wrong. For example, if someone had `../../app/utils/my-utils.js` in their test file, the path would be wrong if the file moved to a new location.
+
 ## Alternatives
 
 Prior Art:
