@@ -175,9 +175,14 @@ associated destructors, and then destroys all children recursively.
 Destruction via `destroy()` follows these steps:
 
 1. Mark the destroyable such that `isDestroying(destroyable)` returns `true`
-2. Call the destroyable's destructors
-3. Call `destroy()` on each of the destroyable's associated children
-4. Mark the destroyable such that `isDestroyed(destroyable)` returns `true`
+2. Schedule calling the destroyable's destructors
+4. Call `destroy()` on each of the destroyable's associated children
+3. Schedule setting destroyable such that `isDestroyed(destroyable)` returns `true`
+
+This algorithm results in the entire tree of destroyables being first marked as
+destroyed, then having all of their destructors called, and finally all being
+marked as `isDestroyed`. There won't be any in between states where some items
+are marked as `isDestroying` while destroying, while others are not.
 
 Calling `destroy` multiple times on the same destroyable is safe. It will not
 throw an error, and will not take any further action.
