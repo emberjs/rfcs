@@ -169,7 +169,7 @@ destructor from the destroyable.
 
 #### `destroy`
 
-`destroy` initiates the destruction of an destroyable object. It runs all
+`destroy` initiates the destruction of a destroyable object. It runs all
 associated destructors, and then destroys all children recursively.
 
 Destruction via `destroy()` follows these steps:
@@ -182,17 +182,17 @@ Destruction via `destroy()` follows these steps:
 Calling `destroy` multiple times on the same destroyable is safe. It will not
 throw an error, and will not take any further action.
 
-Calling `destroy` with an destroyable that has no destructors or associated children
+Calling `destroy` with a destroyable that has no destructors or associated children
 will not throw an error, and will do nothing.
 
 #### `isDestroying`
 
-Receives an destroyable, and returns `true` if the destroyable has begun
+Receives a destroyable, and returns `true` if the destroyable has begun
 destroying. Otherwise returns false.
 
 #### `isDestroyed`
 
-Receives an destroyable, and returns `true` if the destroyable has finished
+Receives a destroyable, and returns `true` if the destroyable has finished
 destroying. Otherwise returns false.
 
 #### `assertDestroyablesDestroyed`
