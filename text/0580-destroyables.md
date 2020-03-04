@@ -202,7 +202,7 @@ destroying. Otherwise returns false.
 
 #### `assertDestroyablesDestroyed`
 
-This function asserts that all objects which has associated destructors or
+This function asserts that all objects which have associated destructors or
 associated children have been destroyed at the time it is called. It is meant to
 be a low level hook that testing frameworks like `ember-qunit` and `ember-mocha`
 can use to hook into and validate that all destroyables have in fact been
