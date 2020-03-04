@@ -96,7 +96,7 @@ maximizes interoperability in general.
 
 ## Detailed design
 
-The API consists of 6 main functions, imported from `@ember/application`:
+The API consists of 6 main functions, imported from `@ember/destroyable`:
 
 ```ts
 declare function associateDestroyableChild(parent: object, child: object): void;
