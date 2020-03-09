@@ -61,6 +61,14 @@ The `.ember-cli` file provides the option to further nest components' class and 
 This same flexibility should be available for routes, controllers, etc -- but is out of scope for this RFC as other resolver implementations may be in-flight.
 Avoiding implementing `componentStructure` for the rest of the `app` directory does not have any impact on test co-location as the resolver is not involved with finding test file locations. For example, it would be valid to have `app/routes/{route-name}.js` and tests located at `app/routes/__tests__/{route-name}.test.js`.
 
+### Addons, in-repo Addons and Engines
+
+For normal addons, living as their own entire project, the lookup rules for apps will apply.
+For in-repo addons and engines, there is the possibility that the implementation of this feature would enable things not possible today.
+For example, if the "test finder" followed the glob: `**/*(\.test.js|-test.js)`, (excluding node\_modules, etc), that would include tests that are in in-repo addons and engines,
+which today, do not support their own tests -- the in-repo addon or engine still wouldn't support their own tests, exactly, as they would run as part of the parent
+app's test suite. This might be desired behavior as it would allow the in-repo addon and engine to finally co-locate their tests with the behavior that those units implement.
+
 
 ### Reference: Where do the existing tests get migrated to?
 While tests in `app/` could live anywhere, these are to be the default locations for the generators to use.
@@ -172,4 +180,5 @@ Prior Art:
 
 ## Unresolved questions
 
-None (yet).
+- Given that in-repo addons can't have their own tests, can engines?
+- Would bundling all tests in an app into a single test suite have undesirable consequences?
