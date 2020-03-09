@@ -180,5 +180,12 @@ Prior Art:
 
 ## Unresolved questions
 
+- Should the root of test resolution be the project root, or app/addon folder?
+  - if project root,
+    - this gives ultimate flexibility, and people could literally do whatever they want.
+    - but we'd need to also filter out directories, like tmp, dist, node\_modules
+  - if app/addon folders,
+    - then we'd need a more static list of supported folders for test lookup
+      - app, addon, lib, not sure what else
 - Given that in-repo addons can't have their own tests, can engines?
 - Would bundling all tests in an app into a single test suite have undesirable consequences?
