@@ -162,6 +162,18 @@ users?
 
 This RFC does not deprecate the old test location -- it only suggests adding test locations -- so people can take their time migrating or completely avoid migrating altogether and wait for a tool to automatically move (nearly) everything for them.
 
+It should be noted that this RFC is not proposing anything happen with non-test files in the test folder.
+ - `tests/helpers/**`
+ - `tests/index.html`
+ - `tests/test-setup.js`
+
+During migration, the `tests/helpers/**` files should switch to absolute imports, if they are not already.
+
+For apps: `<app-name>/tests/helpers/**`
+
+For addons, these helpers may be moved to `addon-test-support`, but also `<addon-name>/tests/helpers/**` should be feasible as well.
+
+
 ## Drawbacks
 
 While the community migrates, there will be a number of apps that either haven't migrated, or will be in the middle of migrating for a while (depending on app size).
