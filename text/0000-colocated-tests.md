@@ -81,6 +81,9 @@ previously:
 now:
  - `{app,addon}/routes/{route-name}.js`
  - `{app,addon}/routes/{route-name}.test.js`
+pods:
+ - `{pod-namespace}/{route-name}/route.js`
+ - `{pod-namespace}/{route-name}/.test.js`
 
 #### Service
 
@@ -99,6 +102,9 @@ previously:
 now:
  - `{app,addon}/controllers/{controller-name}.js`
  - `{app,addon}/controllers/{controller-name}.test.js`
+pods:
+ - `{pod-namespace}/{controller-name}/controller.js`
+ - `{pod-namespace}/{controller-name}/.test.js`
 
 #### Component
 
@@ -115,6 +121,7 @@ or using `"componentStructure": "nested"`:
  - `{app,addon}/components/{component-name}/index.js`
  - `{app,addon}/components/{component-name}/index.hbs`
  - `{app,addon}/components/{component-name}/index.test.js`
+
 
 #### Helpers
 
