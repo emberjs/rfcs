@@ -31,9 +31,9 @@ Nothing about existing tests needs to change. All tests currently living in the 
 
 Primary changes needed:
 
-When building an ember app, based on if tests are included in the build or not, as they would be for development and test builds, ember-cli must configure broccoli to skip over test files within the `app` directory.
+When building an ember app, based on if tests are included in the build or not, as they would be for development and test builds, ember-cli must configure broccoli to skip over test files within the `{app,addon}` directory.
 
-Additionally, for the test bundle, the `app` directory must be added to search for files that are tests.
+Additionally, for the test bundle, the `{app,addon}` directory must be added to search for files that are tests.
 
 Test files could remain using the current hyphenated suffix that they currently use -- example: `my-component-test.js`.
 But, because the only name part that could be searched for is `-test` at the end of the filename, there is the possibility that valid components, controllers, routes, etc could legitimately end with `-test`, causing files to incorrectly get removed or added to the app or test bundles.
@@ -41,23 +41,23 @@ To counter this conflict, co-located tests must end with `.test`, e.g.: `my-comp
 
 More concisely:
 
-For the app bundle,
+For the app/addon bundle,
  - previously
-   - include: `app/**/*.{js,hbs}`
+   - include: `{app,addon}/**/*.{js,hbs}`
  - now
-   - include: `app/**/*.{js,hbs}`
-   - exclude: `app/**/*.test.{js,ts}`
+   - include: `{app,addon}/**/*.{js,hbs}`
+   - exclude: `{app,addon}/**/*.test.{js,ts}`
 
 For the test bundle,
  - previously
    - include: `tests/**/*.{js}`
  - now
    - include: `tests/**/*.{js}`
-   - include: `app/**/*.test.{js}`
+   - include: `{app,addon}/**/*.test.{js}`
 
 
 Like with component co-location, there will be different preferences with how to group files together. It may be undesirable to have a flat list of 20 routes, and then an additional flat list of 20 tests for those routes all in the same folder.
-The `.ember-cli` file provides the option to further nest components' class and template files as `app/components/{component-name}/index.{js,hbs}` via the `componentStructure` property (set to `nested`).
+The `.ember-cli` file provides the option to further nest components' class and template files as `{app,addon}/components/{component-name}/index.{js,hbs}` via the `componentStructure` property (set to `nested`).
 This same flexibility should be available for routes, controllers, etc -- but is out of scope for this RFC as other resolver implementations may be in-flight.
 Avoiding implementing `componentStructure` for the rest of the `app` directory does not have any impact on test co-location as the resolver is not involved with finding test file locations. For example, it would be valid to have `app/routes/{route-name}.js` and tests located at `app/routes/__tests__/{route-name}.test.js`.
 
@@ -71,40 +71,40 @@ app's test suite. This might be desired behavior as it would allow the in-repo a
 
 
 ### Reference: Where do the existing tests get migrated to?
-While tests in `app/` could live anywhere, these are to be the default locations for the generators to use.
+While tests in `{app,addon}/` could live anywhere, these are to be the default locations for the generators to use.
 
 #### Route
 
 previously:
- - `app/routes/{route-name}.js`
+ - `{app,addon}/routes/{route-name}.js`
  - `tests/unit/{route-name}-test.js`
 now:
- - `app/routes/{route-name}.js`
- - `app/routes/{route-name}.test.js`
+ - `{app,addon}/routes/{route-name}.js`
+ - `{app,addon}/routes/{route-name}.test.js`
 
 #### Service
 
 previously:
- - `app/services/{service-name}.js`
+ - `{app,addon}/services/{service-name}.js`
  - `tests/unit/{service-name}-test.js`
 now:
- - `app/service/{service-name}.js`
- - `app/service/{service-name}.test.js`
+ - `{app,addon}/service/{service-name}.js`
+ - `{app,addon}/service/{service-name}.test.js`
 
 #### Controller
 
 previously:
- - `app/controllers/{controller-name}.js`
+ - `{app,addon}/controllers/{controller-name}.js`
  - `tests/unit/{controller-name}-test.js`
 now:
- - `app/controllers/{controller-name}.js`
- - `app/controllers/{controller-name}.test.js`
+ - `{app,addon}/controllers/{controller-name}.js`
+ - `{app,addon}/controllers/{controller-name}.test.js`
 
 #### Component
 
 previously:
- - `app/components/{component-name}.js`
- - `app/components/{component-name}.hbs`
+ - `{app,addon}/components/{component-name}.js`
+ - `{app,addon}/components/{component-name}.hbs`
  - `tests/integration/components/{component-name}-test.js`
 now:
  - `app/components/{component-name}.js`
@@ -112,33 +112,33 @@ now:
  - `app/components/{component-name}.test.js`
 
 or using `"componentStructure": "nested"`:
- - `app/components/{component-name}/index.js`
- - `app/components/{component-name}/index.hbs`
- - `app/components/{component-name}/index.test.js`
+ - `{app,addon}/components/{component-name}/index.js`
+ - `{app,addon}/components/{component-name}/index.hbs`
+ - `{app,addon}/components/{component-name}/index.test.js`
 
 #### Helpers
 
 previously:
- - `app/helpers/{helper-name}.js`
+ - `{app,addon}/helpers/{helper-name}.js`
  - `tests/integration/helpers/{helper-name}-test.js`
 now:
- - `app/helpers/{helper-name}.js`
- - `app/helpers/{helper-name}.test.js`
+ - `{app,addon}/helpers/{helper-name}.js`
+ - `{app,addon}/helpers/{helper-name}.test.js`
 
 #### Utils
 
 previously:
- - `app/utils/{util-name}.js`
+ - `{app,addon}/utils/{util-name}.js`
  - `tests/unit/{util-name}-test.js`
 now:
- - `app/utils/{util-name}.js`
- - `app/utils/{util-name}.test.js`
+ - `{app,addon}/utils/{util-name}.js`
+ - `{app,addon}/utils/{util-name}.test.js`
 
 #### Acceptance Tests
 
 Acceptance tests do not have a core affiliation with any other file, so co-locating them _may_ not make sense, depending on what a particular test file is doing.
 
-While tests may live anywhere in the `app` directory, the default location for acceptance tests will still be `tests/acceptance/`.
+While tests may live anywhere in the `{app,addon}` directory, the default location for acceptance tests will still be `tests/acceptance/`.
 
 
 ## How we teach this
@@ -154,7 +154,7 @@ wholly new one?
 re-organized or altered? Does it change how Ember is taught to new users
 at any level?
 
-The guides would need to update any references to unit/integration tests in the `tests` folder to be in the `app` folder.
+The guides would need to update any references to unit/integration tests in the `tests` folder to be in the `{app,addon}` folder.
 
 
 > How should this feature be introduced and taught to existing Ember
