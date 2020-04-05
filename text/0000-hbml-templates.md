@@ -117,19 +117,99 @@ follow where different variables come from.
 ### Import Declaration
 
 * `---` must be beginning of file (no comments, whitespaces)
-* Only JS import statements, JS whitespace and JS comments
-* Optional newline after "closing" `---`, not part of content
-* Merged with JS
-* Renamed to avoid conflict with JS imports and preserve JS-side errors
-* Special `import ... from '.';` to "import" from component js file
-* Keywords/syntax does not need to be imported, cannot be passed around
-* New import paths for built-ins?
+  * Only JS import statements, JS whitespace and JS comments
+  * Optional newline after "closing" `---`, not part of content
+* Interactions with components co-location (link to RFC)
+  * Reminder: Tempalte still not separately importable (whatever langauge is used in the other RFC)
+  * To state the obvious: Imports in JS and HBS are separately scoped and will not collide/pollute/hygene something something
+* Give example of how to import from the component file
+  * `import ... from './foo';`
+  * Note: `import ... from '.';` only works the same way as node for "folder" version, so probably don't do it
+* Keywords
+  * Is not a "value", cannot be imported, cannot be passed around
+  * Needed for things currently implemented by AST transforms ("macros")
+  * List of keywords:
+    * action: implicit this magic (too bad this is "easier" to use than `on`)
+    * debugger
+    * each, each-in: the latter AST transforms to each
+    * hasBlock
+    * has-block
+    * has-block-params
+    * if
+    * unless
+    * let
+    * log
+    * mount: but may be nice to be able to tree-shake this?
+    * partial: but it doesn't matter, strict mode doesn't allow it
+    * readonly / mut: probably should figure out the proper path forward here...
+    * outlet
+    * query-params: probably should be deprecated, has ast transform (when passed directly to {{link-to}} we transform to @queryParams=, etc)
+    * unbound
+    * with
+    * yield
+    * -in-element/in-element
+  * List of non-keywords:
+    * array (`import { array } from '@ember/helper`): in future we may just have literals and not need this
+    * component: should be fine?? does it give up any early optimization opportunities?
+    * concat (`import { concat } from '@ember/helper`)
+    * fn (`import { fn } from '@ember/helper`)
+    * get (`import { get } from '@ember/helper`): in future may have a syntax short hand??
+    * hash (`import { hash } from '@ember/helper`): in future we may just have literals and not need this
+    * Input (`import { Input } from '@ember/component`): just a component (check if this is an AST macro somehow?)
+    * LinkTo: just a component
+      * currently importable from `import LinkTo from '@ember/routing/link-component`
+      * proposing "index reexport" from `import { LinkTo } from '@ember/routing`
+    * link-to: that takes p-args has to be a keyword and deprecated
+    * loc: deprecate if not already deprecated
+    * on (`import { on } from '@ember/modifier'`)
+    * textarea
+      * currently importable from `import TextArea from '@ember/component/text-area';`
+      * proposing "index reexport" from `import { TextArea } from '@ember/component';`
+* Say what happens when you look at a built-in non-keyword helper/modifier in JS space
+  * Opaque unique JS value (e.g Symbol)
+* Do we have globals? (on, eq, etc)
+  * Both RJ and GC thinks no
+  * CG wants eq, etc to be easy to use
 * Any issues with other non-core "magic globals" that doesn't have import paths?
+* Suggest packages reexport public API components/helpers/modifiers from their main entry-point
+  * somewhat in conflict with original rfcs#176 stance of "classes are default exports", does this matter?
 * How to use legacy non-co-located components? Does it matter?
+  * RJ thinks "no"
+  * either try to migrate to colocation or import and call `setComponentTemplate`
+
 * `hbml`: no explicit access to import, optional first arg is POJO of imports
+  * Having to type the imports avoid the editor saying undefined reference
+    * In the short term, it makes "Jump to definition" easier
+  * Should `imports` just be inside `options` (so, at the end)
+
+```
+hbml({
+  Foo,
+  Bar,
+  Baz: BazComponent
+}, `
+  <Foo />
+  <Bar />
+  <Baz />
+`, {
+  moduleName: '...'
+});
+
+hbml(template: string);
+hbml(template: string, options: PrecompileOptions);
+hbml(imports: Imports, template: string);
+hbml(imports: Imports, template: string, options: PrecompileOptions);
+```
+
 * `camelCase` for helpers, modifiers, "control-flow" components is the new normal
-* `link-to` positional args may have to be deprecated and/or made into a keyword?
+  * New idiom
+  * Docs, etc should follow this
+  * Should sloppy mode somehow support camelCase everything?
+    * Does that already work? No
+
 * `has-block` vs `hasBlock`?
+  * Always `(hasBlock)`
+
 
 ## TODO
 
