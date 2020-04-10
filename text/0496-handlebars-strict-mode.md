@@ -13,6 +13,16 @@ language. Together, these changes are bundled into a "strict mode" that Ember
 developers can opt-into. In contrast, the non-strict mode (i.e. what developers
 are using today) will be referred to as "sloppy mode" in this RFC.
 
+This RFC aims to introduce and define the semantics of the Handlebars strict
+mode, as well as the low-level primitive APIs to enable it. However, it does
+not introduce any new user-facing syntax or conveniences for opting into this
+mode.
+
+The intention is to unlock experimentation of features such as template
+imports and single-file components, but those features will require further
+design and iterations before they can be proposed and recommended to Ember
+users.
+
 ## Motivation
 
 Ember has been using Handlebars since it was released 7 years ago (!). Over
@@ -28,8 +38,9 @@ We propose the following changes:
 
 1. No implicit globals
 2. No implicit `this` fallback
-3. No dynamic resolution
-4. No evals (no partials)
+3. No implicit invocation of argument-less helpers
+4. No dynamic resolution
+5. No evals (no partials)
 
 ### 1. No implicit globals
 
@@ -89,7 +100,47 @@ All of these problems are all related to implicit globals and/or implicit
 `this` fallback. Since neither of these features are supported in strict mode,
 they are no longer a concern for us.
 
-### 3. No dynamic resolution
+### 3. No implicit invocation of argument-less helpers
+
+In the contextual helpers RFC, we discussed [an issue](https://github.com/emberjs/rfcs/blob/master/text/0432-contextual-helpers.md#relationship-with-globals)
+regarding the invocation of arguments-less helpers in invocation argument
+positions.
+
+In today's semantics, if there is a global helper named `pi`, the following
+template will result it the helper being invoked, and the result of the helper
+invocation will be passed into the component.
+
+```hbs
+<MyComponent @value={{pi}} />
+```
+
+This is not desirable behavior in the value-based semantics proposed in that
+RFC, because it makes it impossible to pass helpers around as values, just as
+it is possible to pass around contextual components today.
+
+The contextaul helper RFC proposed to deprecate this behavior and require
+mandatory parentheses to invoke the helper.
+
+
+```hbs
+{{!-- passing the helper pi to the component --}}
+<MyComponent @value={{pi}} />
+
+{{!-- passing the result of invoking the helper pi to the component --}}
+<MyComponent @value={{(pi)}} />
+```
+
+In strict mode, the current, soon-to-be-deprecated behavior will be removed,
+and the parentheses syntax will be mandatory.
+
+Note that this only affects arguments-less helpers, which are exceedingly rare,
+as most helpers perform self-contained computations based on the provided
+arguments. It also only affect argument positions. In content and attribute
+positions, the intent is clear as it does not make sense to "pass a helper into
+the DOM". The parentheses-less form will continue to work in those positions,
+although the explicit parentheses are also permitted.
+
+### 4. No dynamic resolution
 
 Today, Ember supports passing strings to the `component` helper (as well as the
 `helper` and `modifier` helpers proposed in [RFC #432](https://github.com/emberjs/rfcs/pull/432)).
@@ -112,34 +163,34 @@ result in an error.
 
 In practice, it is almost always the case that these dynamic resolutions are
 switching between a small and bounded number of known components. For this
-purpose, they can be replaced by patterns similar to this (using syntax from
-the [template imports RFC](./0000-template-imports.md)):
+purpose, they can be replaced by patterns similar to this.
+
+```js
+import Component from '@glimmer/component';
+import { First, Second, Third } from './contextual-components';
+
+class ProviderComponent extends Component {
+  get selectedComponent() {
+    switch(this.args.selection) {
+      case "first":
+        return First;
+      case "second":
+        return Second;
+      case "third":
+        return Third;
+    }
+  }
+}
+```
 
 ```hbs
----
-import { eq, get, hash } from '@ember/template/helpers';
-import { First, Second, Third } from './contextual-components';
----
-
-{{#if (eq this.selected "first")}}
-  {{yield First}}
-{{else if (eq this.selected "second")}}
-  {{yield Second}}
-{{else if (eq this.selected "third")}}
-  {{yield Third}}
-{{/if}}
-
-{{!-- alternatively... --}}
-
-{{#let (hash first=First second=Second third=Third) as |options|}}
-  {{yield (get options this.selected)}}
-{{/let}}
+{{yield this.selectedComponent}}
 ```
 
 This will make it clear to the human reader and enable tools to perform
 optimizations, such as tree-shaking, by following the explict dependency graph.
 
-### 4. No evals (no partials)
+### 5. No evals (no partials)
 
 Ember currently supports the `partial` feature. It takes a template name, which
 can either be passed as a literal `{{partial "foo-bar"}}` or passed as a
@@ -164,9 +215,10 @@ variables warning. Whenever the Glimmer VM encounter partials, it has to emit
 a large amount of extra metadata just so they can be "wired up" correctly at
 runtime.
 
-We propose to remove support for partials completely in strict mode. Invoking
-the `{{partial ...}}` keyword in strict mode will be a static (build time)
-error.
+This feature has already been deprecated, and we propose to remove support for
+partials completely in strict mode. Until the feature has been removed from
+Ember itself, invoking the `{{partial ...}}` keyword in strict mode will be a
+static (build time) error.
 
 The use case of extracting pieces of a template into smaller chunks can be
 replaced by [template-only components](https://github.com/emberjs/rfcs/pull/278).
@@ -188,13 +240,17 @@ mode, as well as the low-level primitive APIs to enable it. However, it does
 not introduce any new user-facing syntax or conveniences for opting into this
 mode.
 
-The intention is that the primary way for users to opt-in to strict mode will be
-defined by the [template imports](./0000-template-imports.md) proposal using
-the APIs proposed in this RFC. However, these low-level APIs will also enable
-other build tools (such as [ember-cli-htmlbars-inline-precompile](https://github.com/ember-cli/ember-cli-htmlbars-inline-precompile))
-to provide their own API for users to opt-in. In addition, these APIs will
-allow other experiments to be built in userland, such as explorations for a
-"single-file component" format.
+The intention is to unlock experimentation of features such as template
+imports and single-file components, but those features will require further
+design and iterations before they can be proposed and recommended to Ember
+users.
+
+During this phase of experimentation, these low-level APIs will also enable
+other build tools (such as [ember-cli-htmlbars](https://github.com/ember-cli/ember-cli-htmlbars))
+to provide their own API for users to opt-in. In addition, once this RFC is
+approved and implemented in Ember, these low-level APIs will have the same
+semver guarentees as any other APIs in Ember, allow these experimentations to
+be built on stable grounds.
 
 ### Low-level APIs
 
@@ -319,9 +375,10 @@ references will either cause a static (build-time) error from the linter,
 transpiler (e.g. babel) or packager (e.g. rollup or webpack), or a runtime
 `ReferenceError` when the code is evaluated by a JavaScript engine.
 
-This low-level, primitive feature is mainly useful for building the user-facing
-[template imports](./0000-template-imports.md) feature. The user would likely
-write a template like this:
+This low-level, primitive feature is mainly useful for building user-facing
+template import and single-file component features. While this RFC does not
+propose a user-facing syntax for these features, here is a hypothetical
+template import syntax for the illustrative purposes only:
 
 ```hbs
 ---
@@ -334,7 +391,7 @@ import BlogPost from './components/blog-post';
 {{/let}}
 ```
 
-The build tool can then compile this into a JavaScript module like this:
+The build tool can compile this into a JavaScript module like this:
 
 ```js
 import { createTemplateFactory } from '@ember/template-factory';
@@ -377,9 +434,71 @@ allowed list, it will throw an error with the appropiate location info. It also
 follows that build tools can choose to disable this feature completely by
 passing an empty array.
 
+### Keywords
+
+While most items should be imported into scope explicitly, some of the existing
+constructs in the language are unimportable will be made available as keywords
+instead:
+
+* `action`
+* `debugger`
+* `each-in`
+* `each`
+* `has-block-params`
+* `has-block`
+* `hasBlock`
+* `if`
+* `in-element`
+* `let`
+* `link-to` (non-block form curly invocations)
+* `loc`
+* `log`
+* `mount`
+* `mut`
+* `outlet`
+* `query-params`
+* `readonly`
+* `unbound`
+* `unless`
+* `with`
+* `yield`
+
+These keywords do _not_ have to be imported into scope and will always be
+ambiently available.
+
+On the other hand, the following built-in constructs will need to be imported
+(the current or proposed import paths in parentheses):
+
+* `array` (`import { array } from '@ember/helper`)
+* `concat` (`import { concat } from '@ember/helper`)
+* `fn` (`import { fn } from '@ember/helper`)
+* `get` (`import { get } from '@ember/helper`)
+* `hash` (`import { hash } from '@ember/helper`)
+* `on` (`import { on } from '@ember/modifier'`)
+* `Input` (`import { Input } from '@ember/component`)
+* `LinkTo` (`import { LinkTo } from '@ember/routing`)
+* `TextArea` (`import { TextArea } from '@ember/component'`)
+
+In general, built-ins that can be made importable should be imported. The main
+difference are that some of the keywords uses internal language features (e.g.
+implemented via AST transforms) that requires them to be keywords.
+
+Some of the keywords included in the list are considered legacy, and may be
+deprecated in the future via future RFCs. If that happens before strict mode
+becomes available in a stable release of Ember, those RFC may propose to drop
+support for the legacy keywords in strict mode altogether.
+
 ### Deprecations
 
-Implicit `this` fallback and partials should be deprecated in sloppy mode.
+The following features should be deprecated and removed in sloopy mode:
+
+* Implicit `this` fallback, proposed in [RFC #308](https://github.com/emberjs/rfcs/blob/master/text/0308-deprecate-property-lookup-fallback.md)
+* Implicit invocation of argument-less helpers, proposed in [RFC #432](https://github.com/emberjs/rfcs/blob/master/text/0432-contextual-helpers.md)
+* Partials, proposed in [RFC #449](https://github.com/emberjs/rfcs/blob/master/text/0449-deprecate-partials.md)
+
+When all of these features are removed, the main difference between sloopy mode
+and strict mode will be the precense of globals and the ability to perform
+dynamic runtime resolutions.
 
 ## How we teach this
 
@@ -388,22 +507,28 @@ templates going forward. We anticipate this is going to be a slow transition,
 but once the majority of Ember developers have migrated, we expect them to find
 it clearer, more intuitive and more productive.
 
-Two of the strict mode restrictions—no implicit `this` fallback and no eval—can
-be incrementally adopted in sloppy mode templates. The former is already
-covered by [RFC #432](https://github.com/emberjs/rfcs/pull/432). We should
-continue implementing the transition path laid out by that RFC and encourage
-developers to start adopting the explicit `this` style. The latter (partials)
-should also phased out and deprecated as soon as possible, as suggested in
-[Pre-RFC #390](https://github.com/emberjs/rfcs/issues/390). We should encourage
-developers to transition to components for these use cases.
+Three of the strict mode restrictions—no implicit `this` fallback, no implicit
+invocation of argument-less helpers and no eval—were already proposed in their
+respective RFCs. These features will be deprecated in sloppy mode templates and
+can be fixed incrementally. We should continue implementing these deprecatios
+as already proposed and encouraged adoption. It is quite likely that by the
+time strict mode becomes widely available, these deprecations will have already
+been implemented and fixed in most Ember applications.
 
 On the other hand, implicit globals and dynamic resolutions are not going away
 anytime soon in sloppy mode. These features are intrinsically tied to sloppy
-mode, and we expect developers to migrate to template imports over time (which
-would also opt them into strict mode).
+mode, and we expect developers to migrate to template imports or single-file
+components when those over time, which would also opt them into strict mode,
+when those features become available.
 
-The guides should be updated to feature template imports and therefore strict
-mode. This will be discussed in more details in its own RFC.
+That being said, this RFC does not propose any user-facing changes and there
+will be no official, application-level opt-in to strict mode until either
+template imports or single-file components exit the experimental phase and
+become adopted as official feature in Ember via a future RFC.
+
+Therefore, we do not recommend making any changes to the guides to document the
+strict mode semantics at this stage. Instead, the guides should be updated to
+feature template imports or single-file components when they become available.
 
 As for the low-level APIs, we should update the API documentation to cover the
 new flags (`strict` and `scope`). The documentation should cover the details of
