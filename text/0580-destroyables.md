@@ -145,7 +145,7 @@ class CustomSelect extends Component {
 Returns the associated child for convenience.
 
 - Attempting to associate a parent or child that has already been destroyed
-  should throw an error.
+  or is being destroyed should throw an error.
 
 ##### Multiple Inheritance
 
@@ -214,7 +214,7 @@ class Modal extends Component {
 }
 ```
 
-- Registering a destructor on a destroyed object should throw an error.
+- Registering a destructor on a destroyed object or object that is being destroyed should throw an error.
 - Attempting to register the same destructor multiple times should throw an
   error.
 
@@ -287,9 +287,11 @@ destroying. Otherwise returns false.
 
 ```js
 let obj = {};
-
 isDestroying(obj); // false
 destroy(obj);
+isDestroying(obj); // true
+// ...sometime later, after scheduled destruction
+isDestroyed(obj); // true
 isDestroying(obj); // true
 ```
 
