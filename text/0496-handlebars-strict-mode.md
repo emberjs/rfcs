@@ -11,7 +11,7 @@ In this RFC, we propose a set of changes to Ember's variant of Handlebars that
 are aimed at codifying best practices, improving clarity and simplifying the
 language. Together, these changes are bundled into a "strict mode" that Ember
 developers can opt-into. In contrast, the non-strict mode (i.e. what developers
-are using today) will be referred to as "sloppy mode" in this RFC.
+are using today) will be referred to as "non-strict mode" in this RFC.
 
 This RFC aims to introduce and define the semantics of the Handlebars strict
 mode, as well as the low-level primitive APIs to enable it. However, it does
@@ -490,13 +490,13 @@ support for the legacy keywords in strict mode altogether.
 
 ### Deprecations
 
-The following features should be deprecated and removed in sloopy mode:
+The following features should be deprecated and removed in non-strict mode:
 
 * Implicit `this` fallback, proposed in [RFC #308](https://github.com/emberjs/rfcs/blob/master/text/0308-deprecate-property-lookup-fallback.md)
 * Implicit invocation of argument-less helpers, proposed in [RFC #432](https://github.com/emberjs/rfcs/blob/master/text/0432-contextual-helpers.md)
 * Partials, proposed in [RFC #449](https://github.com/emberjs/rfcs/blob/master/text/0449-deprecate-partials.md)
 
-When all of these features are removed, the main difference between sloopy mode
+When all of these features are removed, the main difference between non-strict mode
 and strict mode will be the precense of globals and the ability to perform
 dynamic runtime resolutions.
 
@@ -509,14 +509,14 @@ it clearer, more intuitive and more productive.
 
 Three of the strict mode restrictions—no implicit `this` fallback, no implicit
 invocation of argument-less helpers and no eval—were already proposed in their
-respective RFCs. These features will be deprecated in sloppy mode templates and
+respective RFCs. These features will be deprecated in non-strict mode templates and
 can be fixed incrementally. We should continue implementing these deprecatios
 as already proposed and encouraged adoption. It is quite likely that by the
 time strict mode becomes widely available, these deprecations will have already
 been implemented and fixed in most Ember applications.
 
 On the other hand, implicit globals and dynamic resolutions are not going away
-anytime soon in sloppy mode. These features are intrinsically tied to sloppy
+anytime soon in non-strict mode. These features are intrinsically tied to non-strict
 mode, and we expect developers to migrate to template imports or single-file
 components when those over time, which would also opt them into strict mode,
 when those features become available.
