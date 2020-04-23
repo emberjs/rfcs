@@ -1,6 +1,6 @@
 - Start Date: 2020-04-23
 - Relevant Team(s): Ember.js, Learning
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: [#619](https://github.com/emberjs/rfcs/pull/619)
 - Tracking: (leave this empty)
 
 # Better environment handling
@@ -58,6 +58,8 @@ We could also add `@glimmer/env` to the Ember API docs, like `@glimmer/component
 We could add something like `TESTING` to `@glimmer/env`. The same concerns as mentioned above apply here too.
 
 We could also do nothing and propose users to continue using `Ember.testing` or a home-grown solution instead. However, I think that these problems are common enough to warrant a nice, built-in solution for them.
+
+We could also use a different module name, or put it into an existing module.
 
 ## Unresolved questions
 
