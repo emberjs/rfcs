@@ -13,8 +13,23 @@ This RFC proposes to add a tiny module similar to `@glimmer/env`, to allow to mo
 
 This RFC tries to solve two common problems:
 
-1. Handling test-specific code. The old way of doing this, `Ember.testing`, is not really ideal and recommended anymore.
-2. Handling debug-specific (=non-production) code. You can use `import { DEBUG } from "@glimmer/env"` for this, or `import { runInDebug } from "@ember/debug"`, although the later [seems to be buggy as of now](https://github.com/emberjs/ember.js/issues/18912).
+1 - **Handling test-specific code**.
+
+The old way of doing this, `Ember.testing`, is not really ideal and recommended anymore.
+
+Example use cases where you might want to use this:
+
+- Disabling polling code in tests
+- Preventing test-breaking code like `window.reload()`
+- Preventing log output in tests
+
+2 - **Handling debug-specific (=non-production) code**.
+
+You can use `import { DEBUG } from "@glimmer/env"` for this, or `import { runInDebug } from "@ember/debug"`, although the later [seems to be buggy as of now](https://github.com/emberjs/ember.js/issues/18912).
+
+An exmaple use case where you might want to use this:
+
+- Auto-signing in a mocked user in development environment
 
 This RFC proposes to provide a more more streamlined, approved and documented way to handle these cases, by introducing an `@ember/env` namespace which can be used like this:
 
@@ -47,6 +62,8 @@ Together with this, we should deprecate (or plan to deprecate) the older functio
 
 This probably doesn't need to be in the guides, just in the API docs for developers looking for this.
 
+As the list of alternatives below shows, there are quite a few ways to _kind of_ achieve this outcome right now, but none of them are really documented right now. In the spirit of Ember, it would be helpful to converge on a single, officially documented & recommended way, which will also make teaching this much easier (as there will be a single point to direct developers to, when they run into these issues).
+
 ## Drawbacks
 
 It slightly extends API surface.
@@ -58,6 +75,10 @@ We could also add `@glimmer/env` to the Ember API docs, like `@glimmer/component
 We could add something like `TESTING` to `@glimmer/env`. The same concerns as mentioned above apply here too.
 
 We could also do nothing and propose users to continue using `Ember.testing` or a home-grown solution instead. However, I think that these problems are common enough to warrant a nice, built-in solution for them.
+
+We can also encourage users to use e.g. `getOwner(this).resolveRegistration('config:environment').environment === 'test'`, however this will not work in plain classes.
+
+We can also encourage users to use `import config from 'my-app/config/environment'`, however that does not work in addons.
 
 We could also use a different module name, or put it into an existing module.
 
