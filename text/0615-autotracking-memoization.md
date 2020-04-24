@@ -13,7 +13,7 @@ respond to changes in autotracked state
 
 ```js
 import { tracked } from '@glimmer/tracking';
-import { memoizeTracked } from '@glimmer/tracking/primitives';
+import { cache } from '@glimmer/tracking/primitives';
 
 let count = 0;
 
@@ -21,7 +21,7 @@ class Person {
   @tracked firstName = 'Jen';
   @tracked lastName = 'Weber';
 
-  fullName = memoizeTracked(() => {
+  fullName = cache(() => {
     count++;
     return `${this.firstName} ${this.lastName}`;
   })
@@ -74,9 +74,9 @@ reactive semantics, could help complex libraries and data layers out immensely.
 This RFC proposes two functions to be added to Ember's public API:
 
 ```ts
-function memoizeTracked<T, Args>(fn: (...args: Args) => T): (...args: Args) => T;
+function cache<T, Args>(fn: (...args: Args) => T): (...args: Args) => T;
 
-function isConst(fn: () => unknown): boolean;
+function isConstCache(fn: () => unknown): boolean;
 ```
 
 These functions are exposed as exports of the `@glimmer/tracking/primitives`
@@ -84,14 +84,14 @@ module:
 
 ```ts
 import {
-  memoizeTracked,
-  isConst
+  cache,
+  isConstCache
 } from '@glimmer/tracking/primitives';
 ```
 
 ### Usage
 
-`memoizeTracked` receives a function, and returns the same function, memoized.
+`cache` receives a function, and returns the same function, memoized.
 The function will only rerun when the tracked values that have been _consumed_
 while it was running have been _dirtied_. Otherwise, it will return the
 previously computed value.
@@ -104,7 +104,7 @@ class State {
 let state = new State();
 let count = 0;
 
-let counter = memoizeTracked(() => {
+let counter = cache(() => {
   // consume the state
   state.value;
 
@@ -121,29 +121,29 @@ counter(); // 2
 
 Memoized functions are wrapped transparently, so they still accept the same
 arguments and return the same value as the original function. This gives
-`memoizeTracked` more flexibility in general and helps to clean up common usage
+`cache` more flexibility in general and helps to clean up common usage
 patterns, such as memoizing a method on a class.
 
 ```js
 import { tracked } from '@glimmer/tracking';
-import { memoizeTracked } from '@glimmer/tracking/primitives';
+import { cache } from '@glimmer/tracking/primitives';
 
 class Person {
   @tracked firstName = 'Jen';
   @tracked lastName = 'Weber';
 
-  fullName = memoizeTracked(() => {
+  fullName = cache(() => {
     return `${this.firstName} ${this.lastName}`;
-  })
+  });
 }
 ```
 
 The results of memoized functions are _also_ consumed, so they can be nested.
 
 ```ts
-let inner = memoizeTracked(() => { /* ... */ })
+let inner = cache(() => { /* ... */ })
 
-let outer = memoizeTracked(() => {
+let outer = cache(() => {
   /* ... */
 
   inner();
@@ -153,13 +153,13 @@ let outer = memoizeTracked(() => {
 In this example, the outer function will be invalidated whenever the inner
 function invalidates. This can be used to optimize a tracked function.
 
-Arguments passed to the function are _not_ memoized. `memoizeTracked` only
+Arguments passed to the function are _not_ memoized. `cache` only
 memoizes based on autotracking, so it may or may not rerun if the same set of
 arguments is passed to the function, or if a different set is passed.
 
 #### Function Name
 
-The `memoizeTracked` name was chose for two main reasons:
+The `cache` name was chose for two main reasons:
 
 1. It's a fairly verbose name, which discourages common usage. It is meant to be
    a low-level API, and shouldn't make its way into common usage in app code.
@@ -176,7 +176,7 @@ they will never recompute.
 ```ts
 let count = 0;
 
-let counter = memoizeTracked(() => {
+let counter = cache(() => {
   return count++;
 });
 
@@ -193,10 +193,10 @@ updating bytecodes if we detect that a memoized function is constant, because
 it means that this piece of DOM will never update.
 
 In order to check if a memoized function is constant or not, users can use the
-`isConst` function:
+`isConstCache` function:
 
 ```ts
-import { memoizeTracked, isConst } from '@glimmer/tracking/primitives';
+import { cache, isConstCache } from '@glimmer/tracking/primitives';
 
 class State {
   @tracked value;
@@ -205,7 +205,7 @@ class State {
 let state = new State();
 let count = 0;
 
-let counter = memoizeTracked(() => {
+let counter = cache(() => {
   // consume the state
   state.value;
 
@@ -213,39 +213,39 @@ let counter = memoizeTracked(() => {
 });
 
 
-let constCounter = memoizeTracked(() => {
+let constCounter = cache(() => {
   return count++;
 });
 
 counter();
 constCounter();
 
-isConst(counter); // false
-isConst(constCounter); // true
+isConstCache(counter); // false
+isConstCache(constCounter); // true
 ```
 
 It is not possible to know whether or not a function is constant before its
-first usage, so `isConst` will throw an error if the function has never been
+first usage, so `isConstCache` will throw an error if the function has never been
 called before.
 
 ```ts
 
-let constCounter = memoizeTracked(() => {
+let constCounter = cache(() => {
   return count++;
 });
 
-isConst(constCounter); // throws an error, `constCounter` has not been used
+isConstCache(constCounter); // throws an error, `constCounter` has not been used
 ```
 
 This helps users avoid missing optimization opportunities by mistake, since most
-optimizations happen on the first run only. If a user calls `isConst` on the
+optimizations happen on the first run only. If a user calls `isConstCache` on the
 function prior to the first run, they may assume that the function is
 non-constant on accident.
 
-If called on a normal, non-memoized function, `isConst` will always return
+If called on a normal, non-memoized function, `isConstCache` will always return
 `false`. This gives the user some flexibility in how they structure their code,
 allowing them to memoize some functions but not others and still optimize them
-with `isConst`.
+with `isConstCache`.
 
 ## How we teach this
 
@@ -270,7 +270,7 @@ Some possibilities include:
 
 ### API Docs
 
-#### `memoizeTracked`
+#### `cache`
 
 Receives a function, and returns a wrapped version of it that memoizes based on
 _autotracking_. The function will only rerun whenever any tracked values used
@@ -278,7 +278,7 @@ within it have changed. Otherwise, it will return the previous value.
 
 ```ts
 import { tracked } from '@glimmer/tracking';
-import { memoizeTracked } from '@glimmer/tracking/primitives';
+import { cache } from '@glimmer/tracking/primitives';
 
 class State {
   @tracked value;
@@ -287,7 +287,7 @@ class State {
 let state = new State();
 let count = 0;
 
-let counter = memoizeTracked(() => {
+let counter = cache(() => {
   // consume the state. Now, `counter` will
   // only rerun if `state.value` changes.
   state.value;
@@ -307,17 +307,17 @@ state.value = 'foo';
 counter(); // 2
 ```
 
-#### `isConst`
+#### `isConstCache`
 
 Can be used to check if a memoized function is _constant_. If no tracked state
 was used while running a memoized function, it will never rerun, because nothing
-can invalidate its result. `isConst` can be used to determine if a memoized
+can invalidate its result. `isConstCache` can be used to determine if a memoized
 function is constant or not, in order to optimize code surrounding that
 function.
 
 ```ts
 import { tracked } from '@glimmer/tracking';
-import { memoizeTracked, isConst } from '@glimmer/tracking/primitives';
+import { cache, isConstCache } from '@glimmer/tracking/primitives';
 
 class State {
   @tracked value;
@@ -326,7 +326,7 @@ class State {
 let state = new State();
 let count = 0;
 
-let counter = memoizeTracked(() => {
+let counter = cache(() => {
   // consume the state
   state.value;
 
@@ -334,18 +334,18 @@ let counter = memoizeTracked(() => {
 });
 
 
-let constCounter = memoizeTracked(() => {
+let constCounter = cache(() => {
   return count++;
 });
 
 counter();
 constCounter();
 
-isConst(counter); // false
-isConst(constCounter); // true
+isConstCache(counter); // false
+isConstCache(constCounter); // true
 ```
 
-If called on a function that is _not_ memoized, `isConst` will always return
+If called on a function that is _not_ memoized, `isConstCache` will always return
 `false`, since that function will always rerun.
 
 If called on a memoized function that hasn't been run yet, it will throw an
@@ -376,9 +376,9 @@ accident.
   to an explosion of high level complexity, as Ember tries to provide every type
   of construct for users to use, rather than
 
-- `memoizeTracked` could return an object with a `value()` function instead of
+- `cache` could return an object with a `value()` function instead of
   the function itself. This would give a more natural place for setting metadata
-  such as `isConst`, but would sacrifice some of the ergonomics of the API. It
+  such as `isConstCache`, but would sacrifice some of the ergonomics of the API. It
   also would require more object creations, and given this is a very commonly
   used, low-level API, it would make sense for it to avoid a design that could
   be limited in terms of performance in this way.
