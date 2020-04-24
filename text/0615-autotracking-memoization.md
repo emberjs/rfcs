@@ -159,13 +159,9 @@ arguments is passed to the function, or if a different set is passed.
 
 #### Function Name
 
-The `cache` name was chose for two main reasons:
-
-1. It's a fairly verbose name, which discourages common usage. It is meant to be
-   a low-level API, and shouldn't make its way into common usage in app code.
-2. The function name begins with `memo` instead of `track`, which means that
-   auto-import completion won't show it when users type `@tracked`. This will
-   make it less likely for users to stumble upon it without any context.
+The `cache` name was chosen because this is effectively what the function
+produces, a cache function. It is unlikely to be mistaken for a decorator, since
+the tense is different, and the import path distinguishes it as a primitive.
 
 ### Constant Functions
 
@@ -353,28 +349,11 @@ error. This is because there's no way to know if the function will be constant
 or not yet, and so this helps prevent missing an optimization opportunity on
 accident.
 
-## Drawbacks
-
-- The usage of the term `memoize` may mislead users. It is a _correct_ usage, as
-  in it meets the definition of memoization:
-
-  > In computing, memoization or memoisation is an optimization technique used primarily to speed up computer programs by storing the results of expensive function calls and returning the cached result when the same inputs occur again.
-
-  The main difference being that most implementations of memoization that users
-  are familiar with consider the inputs to be the _arguments_ to the function.
-  Autotracking takes a somewhat novel approach here by saying it memoizes based
-  on the inputs used _during_ the calculation.
-
-  This terminology difference is teachable, and given this is a low-level API
-  which is not expected to be used commonly by average users, it makes more
-  sense than alternatives like `autotrackedFunction` since it describes what the
-  function becomes - memoized.
-
 ## Alternatives
 
 - Stick with higher level APIs and don't expose the primitives. This could lead
   to an explosion of high level complexity, as Ember tries to provide every type
-  of construct for users to use, rather than
+  of construct for users to use, rather than a low level primitive.
 
 - `cache` could return an object with a `value()` function instead of
   the function itself. This would give a more natural place for setting metadata
