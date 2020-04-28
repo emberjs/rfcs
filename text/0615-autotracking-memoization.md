@@ -13,7 +13,7 @@ respond to changes in autotracked state
 
 ```js
 import { tracked } from '@glimmer/tracking';
-import { cache } from '@glimmer/tracking/primitives';
+import { createCache, getValue } from '@glimmer/tracking/cache-primitive';
 
 let count = 0;
 
@@ -21,22 +21,26 @@ class Person {
   @tracked firstName = 'Jen';
   @tracked lastName = 'Weber';
 
-  fullName = cache(() => {
-    count++;
+  #fullName = createCache(() => {
+    ++count;
     return `${this.firstName} ${this.lastName}`;
   })
+
+  get fullName() {
+    return getValue(this.#fullName);
+  }
 }
 
 let person = new Person();
 
-console.log(person.fullName()); // Jen Weber
+console.log(person.fullName); // Jen Weber
 console.log(count); // 1;
-console.log(person.fullName()); // Jen Weber
+console.log(person.fullName); // Jen Weber
 console.log(count); // 1;
 
 person.firstName = 'Jennifer';
 
-console.log(person.fullName()); // Jennifer Weber
+console.log(person.fullName); // Jennifer Weber
 console.log(count); // 2;
 ```
 
@@ -71,30 +75,39 @@ reactive semantics, could help complex libraries and data layers out immensely.
 
 ## Detailed design
 
-This RFC proposes two functions to be added to Ember's public API:
+This RFC proposes four functions to be added to Ember's public API:
 
 ```ts
-function cache<T, Args>(fn: (...args: Args) => T): (...args: Args) => T;
+interface Cache<T = unknown> {}
 
-function isConstCache(fn: () => unknown): boolean;
+function createCache<T>(fn: () => T): Cache<T>;
+
+function getValue<T>(cache: Cache<T>): T
+
+function isCache(maybeCache: object): boolean;
+
+function isConst(cache: Cache): boolean;
 ```
 
-These functions are exposed as exports of the `@glimmer/tracking/primitives`
+These functions are exposed as exports of the `@glimmer/tracking/primitives/cache`
 module:
 
 ```ts
 import {
-  cache,
-  isConstCache
-} from '@glimmer/tracking/primitives';
+  createCache,
+  getValue,
+  isCache,
+  isConst,
+} from '@glimmer/tracking/primitives/cache';
 ```
 
 ### Usage
 
-`cache` receives a function, and returns the same function, memoized.
-The function will only rerun when the tracked values that have been _consumed_
-while it was running have been _dirtied_. Otherwise, it will return the
-previously computed value.
+`cache` receives a function, and returns an cache instance for that function.
+Users can call `getValue()` on the cache instance to run the function and get
+the value of its output. The cache will then return the same value whenever
+`getValue` is called again, until one of the tracked values that was _consumed_
+while it was running previously has been _dirtied_.
 
 ```ts
 class State {
@@ -104,81 +117,65 @@ class State {
 let state = new State();
 let count = 0;
 
-let counter = cache(() => {
+let counter = createCache(() => {
   // consume the state
   state.value;
 
-  return count++;
+  return ++count;
 });
 
-counter(); // 1
-counter(); // 1
+getValue(counter); // 1
+getValue(counter); // 1
 
 state.value = 'foo';
 
-counter(); // 2
+getValue(counter); // 2
 ```
 
-Memoized functions are wrapped transparently, so they still accept the same
-arguments and return the same value as the original function. This gives
-`cache` more flexibility in general and helps to clean up common usage
-patterns, such as memoizing a method on a class.
-
-```js
-import { tracked } from '@glimmer/tracking';
-import { cache } from '@glimmer/tracking/primitives';
-
-class Person {
-  @tracked firstName = 'Jen';
-  @tracked lastName = 'Weber';
-
-  fullName = cache(() => {
-    return `${this.firstName} ${this.lastName}`;
-  });
-}
-```
-
-The results of memoized functions are _also_ consumed, so they can be nested.
+Getting the value of a cache also _consumes_ the cache. This means caches can be
+nested, and whenever you use a cache inside of another cache, the outer cache
+will dirty if the inner cache dirties.
 
 ```ts
-let inner = cache(() => { /* ... */ })
+let inner = createCache(() => { /* ... */ })
 
-let outer = cache(() => {
+let outer = createCache(() => {
   /* ... */
 
   inner();
 });
 ```
 
-In this example, the outer function will be invalidated whenever the inner
-function invalidates. This can be used to optimize a tracked function.
+This can be used to break up different parts of a execution so that only the
+pieces that changed are rerun.
 
-Arguments passed to the function are _not_ memoized. `cache` only
-memoizes based on autotracking, so it may or may not rerun if the same set of
-arguments is passed to the function, or if a different set is passed.
+The `isCache` function can be used to determine if a value is a cache, in cases
+where it's not possible to know if the value is a cache or not.
 
-#### Function Name
+```js
+let cache = createCache(() => {});
+let notACache = () => {};
 
-The `cache` name was chosen because this is effectively what the function
-produces, a cache function. It is unlikely to be mistaken for a decorator, since
-the tense is different, and the import path distinguishes it as a primitive.
+isCache(cache); // true
+isCache(notACache); // false
+```
 
-### Constant Functions
+### Constant Caches
 
-Memoized functions will only recompute if any of the tracked inputs that were
-consumed previously change. If there _were_ no consumed tracked inputs, then
-they will never recompute.
+Caches will only recompute if any of the tracked inputs that were consumed
+previously change. If there _were_ no consumed tracked inputs, then they will
+never recompute.
 
 ```ts
 let count = 0;
 
-let counter = cache(() => {
-  return count++;
+let counter = createCache(() => {
+  return ++count;
 });
 
-counter(); // 1
-counter(); // 1
-counter(); // 1
+getValue(counter); // 1
+getValue(counter); // 1
+getValue(counter); // 1
 
 // ...
 ```
@@ -189,10 +186,10 @@ updating bytecodes if we detect that a memoized function is constant, because
 it means that this piece of DOM will never update.
 
 In order to check if a memoized function is constant or not, users can use the
-`isConstCache` function:
+`isConst` function:
 
 ```ts
-import { cache, isConstCache } from '@glimmer/tracking/primitives';
+import { createCache, getValue, isConst } from '@glimmer/tracking/primitives/cache';
 
 class State {
   @tracked value;
@@ -201,47 +198,42 @@ class State {
 let state = new State();
 let count = 0;
 
-let counter = cache(() => {
+let counter = createCache(() => {
   // consume the state
   state.value;
 
-  return count++;
+  return ++count;
 });
 
 
-let constCounter = cache(() => {
-  return count++;
+let constCounter = createCache(() => {
+  return ++count;
 });
 
-counter();
-constCounter();
+getValue(counter);
+getValue(constCounter);
 
-isConstCache(counter); // false
-isConstCache(constCounter); // true
+isConst(counter); // false
+isConst(constCounter); // true
 ```
 
-It is not possible to know whether or not a function is constant before its
-first usage, so `isConstCache` will throw an error if the function has never been
-called before.
+It is not possible to know whether or not a cache is constant before its
+first usage, so `isConst` will throw an error if the cache has never been
+accessed before.
 
 ```ts
 
-let constCounter = cache(() => {
+let constCounter = createCache(() => {
   return count++;
 });
 
-isConstCache(constCounter); // throws an error, `constCounter` has not been used
+isConst(constCounter); // throws an error, `constCounter` has not been used
 ```
 
 This helps users avoid missing optimization opportunities by mistake, since most
-optimizations happen on the first run only. If a user calls `isConstCache` on the
+optimizations happen on the first run only. If a user calls `isConst` on the
 function prior to the first run, they may assume that the function is
 non-constant on accident.
-
-If called on a normal, non-memoized function, `isConstCache` will always return
-`false`. This gives the user some flexibility in how they structure their code,
-allowing them to memoize some functions but not others and still optimize them
-with `isConstCache`.
 
 ## How we teach this
 
@@ -274,7 +266,7 @@ within it have changed. Otherwise, it will return the previous value.
 
 ```ts
 import { tracked } from '@glimmer/tracking';
-import { cache } from '@glimmer/tracking/primitives';
+import { createCache, getValue } from '@glimmer/tracking/primitives/cache';
 
 class State {
   @tracked value;
@@ -283,37 +275,70 @@ class State {
 let state = new State();
 let count = 0;
 
-let counter = cache(() => {
+let counter = createCache(() => {
   // consume the state. Now, `counter` will
   // only rerun if `state.value` changes.
   state.value;
 
-  return count++;
+  return ++count;
 });
 
-counter(); // 1
+getValue(counter); // 1
 
 // returns the same value because no tracked state has changed
-counter(); // 1
+getValue(counter); // 1
 
 state.value = 'foo';
 
 // reruns because a tracked value used in the function has changed,
 // incermenting the counter
-counter(); // 2
+getValue(counter); // 2
 ```
 
-#### `isConstCache`
+#### `getValue`
+
+Gets the value of a cache created with `createCache`.
+
+```ts
+import { tracked } from '@glimmer/tracking';
+import { createCache, getValue } from '@glimmer/tracking/primitives/cache';
+
+let count = 0;
+
+let counter = createCache(() => {
+  return ++count;
+});
+
+getValue(counter); // 1
+```
+
+#### `isCache`
+
+Returns whether or not the value is a cache.
+
+```ts
+import { tracked } from '@glimmer/tracking';
+import { createCache, isCache } from '@glimmer/tracking/primitives/cache';
+
+let cache = createCache(() => {});
+let notACache = () => {};
+
+
+isCache(cache); // true
+isCache(notACache); // false
+```
+
+#### `isConst`
 
 Can be used to check if a memoized function is _constant_. If no tracked state
 was used while running a memoized function, it will never rerun, because nothing
-can invalidate its result. `isConstCache` can be used to determine if a memoized
+can invalidate its result. `isConst` can be used to determine if a memoized
 function is constant or not, in order to optimize code surrounding that
 function.
 
 ```ts
 import { tracked } from '@glimmer/tracking';
-import { cache, isConstCache } from '@glimmer/tracking/primitives';
+import { createCache, getValue, isConst } from '@glimmer/tracking/primitives/cache';
 
 class State {
   @tracked value;
@@ -322,7 +347,7 @@ class State {
 let state = new State();
 let count = 0;
 
-let counter = cache(() => {
+let counter = createCache(() => {
   // consume the state
   state.value;
 
@@ -330,21 +355,18 @@ let counter = cache(() => {
 });
 
 
-let constCounter = cache(() => {
+let constCounter = createCache(() => {
   return count++;
 });
 
-counter();
-constCounter();
+getValue(counter);
+getValue(constCounter);
 
-isConstCache(counter); // false
-isConstCache(constCounter); // true
+isConst(counter); // false
+isConst(constCounter); // true
 ```
 
-If called on a function that is _not_ memoized, `isConstCache` will always return
-`false`, since that function will always rerun.
-
-If called on a memoized function that hasn't been run yet, it will throw an
+If called on a cache that hasn't been accessed yet, it will throw an
 error. This is because there's no way to know if the function will be constant
 or not yet, and so this helps prevent missing an optimization opportunity on
 accident.
@@ -355,15 +377,9 @@ accident.
   to an explosion of high level complexity, as Ember tries to provide every type
   of construct for users to use, rather than a low level primitive.
 
-- `cache` could return an object with a `value()` function instead of
-  the function itself. This would give a more natural place for setting metadata
-  such as `isConstCache`, but would sacrifice some of the ergonomics of the API. It
-  also would require more object creations, and given this is a very commonly
-  used, low-level API, it would make sense for it to avoid a design that could
-  be limited in terms of performance in this way.
-
-- `trackedMemoize` is a somewhat more accurate name that may make more sense to
-  the average user. It does however collide with the `tracked` import, and will
-  likely pop up in autocomplete tooling because of this, which would not be
-  ideal. As a low-level API, this function should generally not be very visible
-  to average users.
+- Expose a more functional or more object-oriented API. This would be a somewhat
+  higher level API than the one proposed here, which may be a bit more
+  ergonomic, but also would be less flexible. Since this is a new primitive and
+  we aren't sure what features it may need in the future, the current design
+  keeps the implementation open and lets us experiment without foreclosing on a
+  possible higher level design in the future.
