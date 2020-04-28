@@ -103,7 +103,7 @@ import {
 
 ### Usage
 
-`cache` receives a function, and returns an cache instance for that function.
+`cache` receives a function, and returns a cache instance for that function.
 Users can call `getValue()` on the cache instance to run the function and get
 the value of its output. The cache will then return the same value whenever
 `getValue` is called again, until one of the tracked values that was _consumed_
