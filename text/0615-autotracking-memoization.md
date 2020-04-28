@@ -13,7 +13,7 @@ respond to changes in autotracked state
 
 ```js
 import { tracked } from '@glimmer/tracking';
-import { createCache, getValue } from '@glimmer/tracking/cache-primitive';
+import { createCache, getValue } from '@glimmer/tracking/primitives/cache';
 
 let count = 0;
 
