@@ -6,7 +6,7 @@
 
 ## Summary
 
-Ember's users should be able to look at an RFC and know more about how close it is to being part of a stable release. This proposal introduces explicit stages for RFCs, covering the steps from the initial draft to the shipped result. Inspired by TC39, these stages are a communication and collaboration tool tool. They can give the community greater visibility into Ember's development, encourage participation, and improve cross-team coordination. This RFC does not aim to substantially change the existing process, but rather apply labels to what already happens informally.
+Ember's users should be able to look at an RFC and know more about how close it is to being part of a stable release. This proposal introduces explicit stages for RFCs, covering the steps from the initial draft to the shipped result. Inspired by TC39, these stages are a communication and collaboration tool. They can give the community greater visibility into Ember's development, encourage participation, and improve cross-team coordination. This RFC does not aim to substantially change the existing process, but rather apply labels to what already happens informally.
 
 ## Motivation
 
