@@ -1,0 +1,504 @@
+- Start Date: 2020-04-28
+- Relevant Team(s): Ember.js
+- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- Tracking: (leave this empty)
+
+# Helper Managers
+
+## Summary
+
+Provides a low-level primitive for defining helpers.
+
+## Motivation
+
+Helpers are currently the only template construct in Ember that do not have a
+low-level primitive that is public. With components and modifiers, users can define
+component managers and modifier managers respectively to create their own high
+level APIs, but for helpers the only option currently is to use the high level
+`helper()` wrapper function, or the `Helper` base class.
+
+These APIs are beginning to show their age in Ember Octane, and unlocking
+experimentation via a helper manager would allow us to begin designing a new
+generation of helpers. Some possible areas to explore here would include:
+
+* Using a native base class for helpers, instead of `EmberObject`
+* Adding lifecycle hooks, similar to modifiers, to class-based helpers
+* Adding the ability to inject services to functional helpers
+* Allowing normal functions to operate as helpers
+
+In addition, it would allow us to begin adding new functionality to helpers via
+manager capabilities. This RFC proposes one such capability, `isScheduledEffect`.
+
+### Effect Helpers
+
+Usually, template helpers are supposed to return a value. However, if a helper
+returns `undefined` and rendered in a template, it will produce no output. This
+can be used to accomplish a _side-effect_:
+
+```js
+// app/helpers/title.js
+export default helper(([title]) => {
+  window.document.title = title;
+});
+```
+
+```hbs
+{{title "My Document Title"}}
+```
+
+Addons such as [ember-page-title](https://github.com/adopted-ember-addons/ember-page-title)
+use this to make helpers that can be added to the template to specify
+_app behavior_ declaratively. This is a much better way to approach certain
+types of behavior and APIs, compared to the alternative of using mixins and
+lifecycle hooks to manage them. Its benefits include:
+
+1. Behavior can be _self-contained_. Some APIs need to run at multiple points in
+   based on a component's lifecycle, such as for a plugin that needs to be setup
+   on initialization and torn down upon destruction. Using lifecycle hooks for
+   this forces users to split their API across multiple touch points in a
+   component, which requires a lot of boilerplate and can make it difficult to
+   understand how the whole system works together.
+
+2. It doesn't require _multiple inheritance_. Mixins and strategies like them
+   create complicated inheritance hierarchies that can be difficult to debug.
+   A side-effecting helper does not insert itself into the inheritance
+   hierarchy, it is a child of the template instead, which is much easier to
+   reason about in practice.
+
+3. They are highly _composable_. Helpers, like components, can be used multiple
+   times in a template and can be used within `{{if}}` and `{{each}}` blocks.
+   Combined with their ability to be hold a self contained lifecycle, this makes
+   them a powerful tool for composing declarative behavior.
+
+4. They can be _destroyed_. They tie in naturally to the destruction APIs that
+   we have recently added to Ember, and that allows their lifecycle to be
+   managed in a self contained way.
+
+However, this pattern has some issues today, mostly stemming from the fact that
+they execute _during_ render, which is not an ideal time for side-effecting.
+They can also be abused to modify app state, which can lead to difficult to
+follow code paths reminiscent of observers. These issues stem from a mismatch
+between two different goals, the goal of calculating a result or value, and the
+goal of triggering side-effects.
+
+The `isScheduledEffect` capability would schedule side-effecting helpers to execute
+_after_ render, and would _disable_ Ember's state mutations while they were
+running. This would ensure that side-effecting helpers run at the optimal time,
+and do not enable antipatterns and complicated codepaths.
+
+## Detailed design
+
+This RFC proposes adding the `setHelperManager` and `capabilities` APIs,
+imported from `@ember/helper`. Like `setComponentManager` and
+`setModifierManager`, `setHelperManager` receives a callback that is passed
+the owner, and returns an instance of the helper manager. When a helper
+definition is resolved by Ember, it will look up the manager recursively on the
+definition's prototype chain until it finds a helper manager. If it does not
+find one, it will throw an error.
+
+```ts
+type HelperDefinition = object;
+
+export declare function setHelperManager(
+  factory: (owner: Owner) => HelperManager,
+  definition: HelperDefinition
+): HelperDefinition;
+```
+
+And like the `capabilities` functions for component and modifier managers, the
+`capabilities` function for helper managers receives a version string as the
+first parameter and a options object as the second with optional flags as
+booleans. It produces an opaque `HelperCapabilities` object, which is assigned
+to the helper manager.
+
+```ts
+interface HelperCapabilitiesOptions {
+  hasValue?: boolean;
+  hasDestroyable?: boolean;
+  isScheduledEffect?: boolean;
+}
+
+type HelperCapabilities = Opaque;
+
+export declare function capabilities(
+  version: string,
+  options?: HelperCapabilitiesOptions
+): HelperCapabilities;
+```
+
+Helper managers themselves have the following interface:
+
+```ts
+interface HelperManager<HelperStateBucket> {
+  capabilities: HelperCapabilities;
+
+  createHelper(definition: HelperDefinition, args: TemplateArgs): HelperStateBucket;
+
+  getValue?(bucket: HelperStateBucket, args: TemplateArgs): unknown;
+
+  runEffect?(bucket: HelperStateBucket, args: TemplateArgs): void;
+
+  getDestroyable?(bucket: HelperStateBucket): object;
+}
+```
+
+Let's dig into these hooks one by one:
+
+### Hooks
+
+#### `createHelper`
+
+`createHelper` is a required hook on the HelperManager interface. The hook is
+passed the definition of the helper that is currently being created, and is
+expected to return a _state bucket_. This state bucket is what represents the
+current state of the helper, and will be passed to the other lifecycle hooks at
+appropriate times. It is not necessarily related to the definition of the
+helper itself - for instance, you could return an object _containing_ an
+instance of the helper:
+
+```js
+class MyManager {
+  createHelper(Definition, args) {
+    return {
+      instance: new Definition(args);
+    };
+  }
+}
+```
+
+This allows the manager to store metadata that it doesn't want to expose to the
+user.
+
+This hook has the following timing semantics:
+
+**Always**
+- called as discovered during DOM construction
+- called in definition order in the template
+
+#### `getValue`
+
+`getValue` is an optional hook that should return the value of the helper. This
+is the value that is returned from the helper and passed into the template.
+
+This hook is called when the value is requested from the helper (e.g. when the
+template is rendering and the helper value is needed). The hook is autotracked,
+and will rerun whenever any tracked values used inside of it are updated.
+Otherwise it does not rerun.
+
+> Note: This means that arguments which are not _consumed_ within the hook will
+> not trigger updates.
+
+This hook is only called for helpers with the `hasValue` capability enabled.
+This hook has the following timing semantics:
+
+**Always**
+- called the first time the helper value is requested
+- called after autotracked state has changed
+
+**Never**
+- called if the `hasValue` capability is disabled
+
+#### `runEffect`
+
+`runEffect` is an optional hook that should run the effect that the helper is
+applying, setting it up or updating it.
+
+This hook is scheduled to be called after render. The hook is autotracked, and
+will rerun whenever any tracked values used inside of it are updated. Otherwise
+it does not rerun.
+
+The hook is also run during a time period where state mutations are _disabled_
+in Ember. Any change to any tracked property or tag via `Ember.set` will throw
+an error during this time. This is meant to prevent infinite rerenders and other
+antipatterns.
+
+This hook is only called for helpers with the `isScheduledEffect` capability
+enabled. It has the following timing semantics:
+
+**Always**
+- called after the helper was first created
+- called after autotracked state has changed
+
+**Never**
+- called if the `isScheduledEffect` capability is disabled
+
+#### `getDestroyable`
+
+`getDestroyable` is an optional hook that users can use to register a
+destroyable object for the helper. This destroyable will be registered to the
+containing block or template parent, and will be destroyed when it is destroyed.
+See the [Destroyables RFC](https://github.com/emberjs/rfcs/blob/master/text/0580-destroyables.md)
+for more details.
+
+`getDestroyable` is only called if the `hasDestroyable` capability is enabled.
+
+This hook has the following timing semantics:
+
+**Always**
+- called immediately after the `createHelper` hook is called
+
+**Never**
+- called if the `hasDestroyable` capability is disabled
+
+### Capabilities
+
+There are three proposed capabilities for helper managers:
+
+* `hasDestroyable`
+* `isScheduledEffect`
+* `hasValue`
+
+Out of these capabilities, one of `isScheduledEffect` or `hasValue` _must_ be
+enabled. The other must _not_ be enabled, meaning they are mutually exclusive.
+
+#### `hasDestroyable`
+
+Determines if the helper has a destroyable to include in the destructor
+hierarchy. If enabled, the `getDestroyable` hook will be called, and its result
+will be associated with the destroyable parent block.
+
+#### `hasValue`
+
+Determines if the helper has a value which can be used externally. The helper's
+`getValue` hook will be run whenever the value of the helper is accessed if this
+capability is enabled.
+
+#### `isScheduledEffect`
+
+Determines if the helper is scheduled. If enabled, the helper's `runEffect` hook
+will run after render, and will not allow any type of state mutation when
+running.
+
+### Scheduled Helpers Timing
+
+Scheduled helpers run their effects after render, and after modifiers have been
+applied for a given render, but before paint. The exact timing may shift around,
+and may or may not correspond to a single rendering pass in cases where there
+are multiple rendering passes in a single paint.
+
+In the future different timings may be added as options for scheduling. For
+instance, a timing to call the effect using `requestIdleCallback`, when the
+browser has finished rendering and handling higher priority work, could be
+added. However, this is out of scope for this RFC.
+
+## How we teach this
+
+Helper managers are a low-level construct that is generally only meant to be
+used by experts and addon authors. As such, it will only be taught through API
+documentation. In addition, for precision and clarity, the API docs will include
+snippets of TypeScript interfaces where appropriate.
+
+### API Docs
+
+#### `setHelperManager`
+
+Sets the helper manager for an object or function.
+
+```js
+setHelperManager((owner) => new ClassHelperManager(owner), Helper.prototype)
+```
+
+When a value is used as a helper in a template, the helper manager is looked up
+by on the object by walking up its prototype chain and finding the first helper
+manager. This manager then receives the value and can create and manage an
+instance of a helper from it. This provides a layer of indirection that allows
+users to design high-level helper APIs, without Ember needing to worry about the
+details. High-level APIs can be experimented with and iterated on while the
+core of Ember helpers remains stable, and new APIs can be introduced gradually
+over time to existing code bases.
+
+`setHelperManager` receives two arguments:
+
+1. A factory function, which receives the `owner` and returns an instance of a
+   helper manager.
+2. The object to associate the factory function with.
+
+The first time the object is looked up, the factory function will be called to
+create the helper manager. It will be cached, and in subsequent lookups it the
+cached helper manager will be used instead.
+
+Only one helper manager exists per helper factory, so many helpers will end up
+using the same instance of the helper manager. As such, you should not store any
+state on the helper manager that is related to a single helper instance.
+
+Helper managers must fulfill the following interface (This example uses
+[TypeScript interfaces](https://www.typescriptlang.org/docs/handbook/interfaces.html)
+for precision, you do not need to write helper managers using TypeScript):
+
+```ts
+interface HelperManager<HelperStateBucket> {
+  capabilities: HelperCapabilities;
+
+  createHelper(definition: HelperDefinition, args: TemplateArgs): HelperStateBucket;
+
+  getValue?(bucket: HelperStateBucket, args: TemplateArgs): unknown;
+
+  runEffect?(bucket: HelperStateBucket, args: TemplateArgs): void;
+
+  getDestroyable?(bucket: HelperStateBucket): object;
+}
+```
+
+The capabilities property should be provided using the `capabilities()` function
+imported from the same module as `setHelperManager`:
+
+```js
+import { capabilities } from '@ember/helper';
+
+class MyHelperManager {
+  capabilities = capabilities();
+}
+```
+
+Below is a description of each of the methods on the interface and their
+functions.
+
+> The remaining API docs should be copied from the descriptions in the Detailed
+> Design section of this RFC.
+
+#### `capabilities`
+
+`capabilities` returns a capabilities configuration which can be used to modify
+the behavior of the manager. Manager capabilities _must_ be provided using the
+`capabilities` function, as the underlying implementation can change over time.
+
+The first argument to capabilities is a version string, which is the version of
+Ember that the capabilities were defined in. Ember can add new versions at any
+time, and these may have entirely different behaviors, but it will not remove
+old versions until the next major version.
+
+```js
+capabilities('3.x');
+```
+
+The second argument is an optional object of capabilities and boolean values
+indicating whether they are enabled or disabled.
+
+```js
+capabilities('3.x', {
+  hasValue: true,
+  hasDestructor: true,
+});
+```
+
+If no value is specified, then the default value will be used.
+
+##### `3.x` capabilities
+
+> The remaining API docs should be copied from the descriptions in the Detailed
+> Design section of this RFC. 3.x above should be replaced with the version that
+> helper managers are initially released in.
+
+## Drawbacks
+
+- Adds a layer of indirection to helpers, which could add to complexity and
+  cost in terms of performance. This isn't likely, as we haven't seen this
+  happen with other managers we've introduced.
+
+## Alternatives
+
+- We could continue using the current helper APIs, and try to incrementally
+  migrate them to only use native classes. This wouldn't match the strategy
+  we've taken with other template constructs, like components and modifiers, and
+  would result in less ability for the community to experiment and less
+  flexibility if we chose to change helpers again in the future.
+
+- The `isScheduledEffect` capability could be broken out into a separate RFC.
+  It is mostly separable, except for the impact it has on `getValue`. Value-less
+  and effect-less helpers don't really make sense, so in isolation `getValue`
+  would probably not be an optional hook, and the `hasValue` capability wouldn't
+  exist.
+
+  Capabilities can change from version to version, so this is still not a major
+  issue, but it seems like it would be easier to add from the get go.
+
+## Appendix
+
+### Implementation of Current Helper APIs
+
+The following is an implementation of the current helper APIs using this manager
+API. There are two separate managers, one for class based helpers and one for
+functional helpers:
+
+```js
+import EmberObject from '@ember/object';
+import { tracked } from '@glimmer/tracking';
+import { setHelperManager, capabilities } from '@ember/helper';
+
+const RECOMPUTE = symbol();
+
+export class Helper extends EmberObject {
+  @tracked [RECOMPUTE];
+
+  constructor(...args) {
+    super(...args);
+
+    registerDestructor(this, () => this.destroy());
+  }
+
+  recompute() {
+    // update the value to force a recompute
+    this[RECOMPUTED] = undefined;
+  }
+}
+
+class ClassHelperManager {
+  capabilities = capabilities({
+    hasValue: true,
+    hasDestroyable: true,
+  });
+
+  ownerInjection = {};
+
+  constructor(owner) {
+    setOwner(this.ownerInjection, owner);
+  }
+
+  createHelper(Definition) {
+    let helper = Definition.create(this.ownerInjection);
+
+    return { helper };
+  }
+
+  getValue({ helper }, args) {
+    // Consume the RECOMPUTE tag, so if anyone ever
+    // calls recompute() it'll force a recompute
+    helper[RECOMPUTE];
+
+    return helper.compute(args.positional, args.named);
+  }
+
+  getDestroyable({ helper }) {
+    return helper;
+  }
+}
+
+setHelperManager((owner) => new ClassHelperManager(owner), Helper.prototype);
+```
+
+```js
+import { tracked } from '@glimmer/tracking';
+import { setHelperManager, capabilities } from '@ember/helper';
+
+class FunctionalHelperManager {
+  capabilities = capabilities({
+    hasValue: true,
+  });
+
+  createHelper(fn) {
+    return { fn };
+  }
+
+  getValue({ fn }, args) {
+    return fn(args.positional, args.named);
+  }
+}
+
+const FUNCTIONAL_HELPER_MANAGER = () => new FunctionalHelperManager();
+
+export function helper(fn) {
+  setHelperManager(FUNCTIONAL_HELPER_MANAGER, fn);
+
+  return fn;
+}
+```
