@@ -45,8 +45,8 @@ With the `element` helper proposed in this RFC, this can be accomplished with so
 
 We propose to add a new `element` helper that takes a single positional argument.
 
-* When passed a non-empty string it will generates a contextual component that, when invoked, renders an element with the same tag name as the passed string, along with the passed attributes (if any), modifiers (if any) and yields to given block (if any).
-* When passed an empty string, it will generates a contextual compoment that, when invoked, yields to the given block without wrapping it an element and ignores any passed modifiers and attributes.
+* When passed a non-empty string it generates a contextual component that, when invoked, renders an element with the same tag name as the passed string, along with the passed attributes (if any), modifiers (if any) and yields to given block (if any).
+* When passed an empty string, it generates a contextual compoment that, when invoked, yields to the given block without wrapping it an element and ignores any passed modifiers and attributes.
 * When passed `null` or `undefined`, it will return `null`.
 * When passed any other values (e.g. a boolean or a number), it will result in a development mode assertion.
 
