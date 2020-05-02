@@ -76,12 +76,12 @@ And with literal syntax:
 
 ```handlebars
 <ul>
-    {{#each-in [
+    {{#each-in (
         ember="A framework for ambitious
 web developers."
         angular="One framework. Mobile & desktop."
         vue="The Progressive JavaScript Framework"
-    ] as |framework tagline|}}
+     ) as |framework tagline|}}
         <li>{{framework}}: {{tagline}}</li>
     {{/each}}
 </ul>
