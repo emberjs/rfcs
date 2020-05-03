@@ -45,11 +45,7 @@ The Ember CLI `--help` command should explain what kind of value is expected to 
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+More flags means more combinations of ways to run `ember new` which can be hard to test for and is potentially unsustainable.
 
 ## Alternatives
 
