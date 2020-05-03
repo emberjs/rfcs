@@ -11,15 +11,7 @@ Introduce `--lang` flag as an option for `ember new` within Ember-CLI. This will
 
 ## Motivation
 
-### Why are we doing this?
-
 This will in part address item 4 within issue https://github.com/emberjs/rfcs/issues/595
-
-### What use cases does it support?
-
-Explicitly setting the `lang` attribute on the `html` element. _([W3C - Using the language attribute on the HTML element](https://www.w3.org/WAI/WCAG21/Techniques/html/H57))_
-
-### What is the expected outcome?
 
 > Both assistive technologies and conventional user agents can render text more accurately when the language of the Web page is identified.
 > -- <cite>[W3C - Understanding Success Criterion 3.1.1: Language of Page](https://www.w3.org/WAI/WCAG21/Understanding/language-of-page.html)</cite>
