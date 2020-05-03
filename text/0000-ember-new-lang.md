@@ -49,9 +49,7 @@ More flags means more combinations of ways to run `ember new` which can be hard 
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
+Do nothing.
 
 ## Unresolved questions
 
