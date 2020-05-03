@@ -13,7 +13,7 @@ Introduce `--lang` flag as an option for `ember new` within Ember-CLI. This will
 
 ### Why are we doing this?
 
-This will in part address item 4 within issue #595
+This will in part address item 4 within issue https://github.com/emberjs/rfcs/issues/595
 
 ### What use cases does it support?
 
