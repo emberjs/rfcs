@@ -59,5 +59,5 @@ on the impact of the API churn on existing apps, etc.
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+* Can the default lang value simply be English? ([Valuable discussion points in this issue](https://cli.emberjs.com/release/basic-use/cli-commands/))
+
