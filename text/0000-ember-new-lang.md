@@ -45,16 +45,11 @@ defined here.
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
+The [Ember CLI API documentation](https://ember-cli.com/api/) should be updated to reflect the new flag.
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
+We update the [Ember.js CLI Guides](https://cli.emberjs.com/release/basic-use/cli-commands/) to reflect the new flag much like we demonstrate `--yarn` usage.
 
-> How should this feature be introduced and taught to existing Ember
-users?
+The Ember CLI `--help` command should explain what kind of value is expected to be passed to the new flag.
 
 ## Drawbacks
 
