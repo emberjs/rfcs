@@ -24,6 +24,15 @@ Explicitly setting the `lang` attribute on the `html` element. _([W3C - Using th
 > Both assistive technologies and conventional user agents can render text more accurately when the language of the Web page is identified.
 > -- <cite>[W3C - Understanding Success Criterion 3.1.1: Language of Page](https://www.w3.org/WAI/WCAG21/Understanding/language-of-page.html)</cite>
 
+Having a page language specified should improve the user experience and technical improvements around these areas:
+
+* Screen readers, braille translation software and similar technologies
+* Captions with synchronized media (such as video subtitles)
+* Correct dictionary lookups for translations
+* Assisting search engines
+* Improving typography in certain situations
+* and more... [Source 1](https://www.w3.org/WAI/WCAG21/Techniques/html/H57) [Source 2](https://www.w3.org/WAI/WCAG21/Understanding/language-of-page.html) [Source 3](https://www.w3.org/TR/1999/REC-html401-19991224/struct/dirlang.html#adef-lang)
+
 ## Detailed design
 
 > This is the bulk of the RFC.
