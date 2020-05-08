@@ -9,7 +9,7 @@
 
 Provides a low-level primitive for memoizing the result of a function based on
 autotracking, allowing users to create their own reactive systems that can
-respond to changes in autotracked state
+respond to changes in autotracked state.
 
 ```js
 import { tracked } from '@glimmer/tracking';
@@ -56,7 +56,7 @@ Ember's templating layer.
 An example of where users might want to do this is the [`@cached`](https://github.com/emberjs/rfcs/pull/566)
 decorator for getters. This decorator only reruns its code when the tracked
 state it accessed during its previous computation changes. Currently, it would
-not be possible to build this decorator with public APIs.
+be quite difficult and error prone to build this decorator with public APIs.
 
 For a more involved example, we can take a look at [ember-concurrency](http://ember-concurrency.com/),
 which allows users to define async tasks. Ember Concurrency has an `observes()`
@@ -103,7 +103,7 @@ import {
 
 ### Usage
 
-`cache` receives a function, and returns a cache instance for that function.
+`createCache` receives a function, and returns a cache instance for that function.
 Users can call `getValue()` on the cache instance to run the function and get
 the value of its output. The cache will then return the same value whenever
 `getValue` is called again, until one of the tracked values that was _consumed_
@@ -182,7 +182,7 @@ getValue(counter); // 1
 
 When this happens, it often means that optimizations can be made in the code
 surrounding the computation. For instance, in the Glimmer VM, we don't emit
-updating bytecodes if we detect that a memoized function is constant, because
+updating bytecodes if we detect that a memoized function can never change, because
 it means that this piece of DOM will never update.
 
 In order to check if a memoized function is constant or not, users can use the
@@ -258,7 +258,7 @@ Some possibilities include:
 
 ### API Docs
 
-#### `cache`
+#### `createCache`
 
 Receives a function, and returns a wrapped version of it that memoizes based on
 _autotracking_. The function will only rerun whenever any tracked values used
