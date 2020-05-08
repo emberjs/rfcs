@@ -113,7 +113,7 @@ First, here’s the list of things a v2 package can provide. More detail on each
 
 The public `main` (as defined in `package.json`) of a v2 package points to its **Own Javascript**. The code is formatted as ES modules that follow the **Ember Language Standard** (which is defined later in this RFC). Addon authors can still author in whatever dialect they want, but they must transpile to Ember Language Standard before publishing to NPM.
 
-Templates are in hbs format. No custom AST transforms are supported. Addon authors can still use whatever custom AST transforms they want, but those transforms must have already been applied before publication to NPM.
+Templates are in hbs format. No custom AST transforms are supported. Addon authors can still use custom AST transforms, but those transforms must have already been applied and re-emitted into nhbs source text before publication to NPM. This means that only AST transforms whose output are serializable into hbs source text are permitted.
 
 Unlike v1 addons, there is no `/app` or `/addon` directory that is magically removed from the runtime paths to the modules. All resolution follows the prevailing Node rules.
 
