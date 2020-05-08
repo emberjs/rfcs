@@ -52,13 +52,13 @@ This compile step lets us separate the authoring format (which isn’t changing 
 
 ## Definitions
 
-**package**: every addon and app is a package. Usually synonymous with “NPM package”, but we also include in-repo packages. The most important fact about a package is that it’s often the boundary around code that comes from a particular author, team, or organization, so coordination across packages is a more sensitive design problem than coordination within apps.
+**package**: every addon and app is a **package**. Every "NPM package" is a **package**, but not every **package** is an "NPM package" because we also include in-repo packages. The most important fact about a package is that it’s often the boundary around code that comes from a particular author, team, or organization, so coordination across packages is a more sensitive design problem than coordination within apps.
 
 **app**: a package used at the root of a project.
 
 **addon**: a package not used at the root of a project. Will be an **allowed dependency** of either an **app** or an **addon**.
 
-**allowed dependency**: For **addons**, the **allowed dependencies** are the `dependencies` and `peerDependencies` in `package.json` plus any in-repo addons. For **apps**, the **allowed dependencies** are the `dependencies`, `peerDependencies`, and `devDependencies` in `package.json` plus any in-repo addons.
+**allowed dependency**: For **addons**, the **allowed dependencies** are the **packages** listed in `dependencies` and `peerDependencies` in `package.json` plus any in-repo addons. For **apps**, the **allowed dependencies** are the `dependencies`, `peerDependencies`, and `devDependencies` in `package.json` plus any in-repo addons.
 
 **Ember package metadata**: the `ember-addon` section inside `package.json`. This already exists in v1, we’re going to extend it.
 
@@ -91,6 +91,8 @@ It is understood that all of these are legitimate things for Ember addons to do.
 
 Because we're hyper-focused on backward- and forward-compatibility, there is no harm in progressively converting some addons to v2 (which provides immediate benefits in terms of build performance and reduced fragility under Embroider) while others need to stay as v1 until we offer the features they need.
 
+This RFC is carefully decoupled from other new Ember features (like [strict mode](https://github.com/emberjs/rfcs/pull/496) ), but it is understood that the spec created by this RFC will become a living standard that needs to both influence and be influenced by the rest of Ember's design.
+
 ## Package Public API Overview
 
 The format we are about to describe _is a publication format_. Not necessarily an authoring format. By separating the two, we make it easier to evolve the authoring format without breaking ecosystem-wide compatibility. The publication format is deliberately more explicit and less dynamic that what we may want for an authoring format.
@@ -109,9 +111,9 @@ First, here’s the list of things a v2 package can provide. More detail on each
 
 ## Own Javascript
 
-The public `main` (as defined in `package.json`) of a v2 package points to its **Own Javascript**. The code is formatted as ES modules using ES latest features, meaning: stage 4 features only, unless otherwise explicitly mentioned elsewhere in this spec. (Addon authors can still use whatever custom syntax they want, but those babel plugins must run before publication to NPM.)
+The public `main` (as defined in `package.json`) of a v2 package points to its **Own Javascript**. The code is formatted as ES modules that follow the **Ember Language Standard** (which is defined later in this RFC). Addon authors can still author in whatever dialect they want, but they must transpile to Ember Language Standard before publishing to NPM.
 
-Templates are in hbs format. No custom AST transforms are supported. (Addon authors can still use whatever custom AST transforms they want, but those transforms must have already been applied before publication to NPM.)
+Templates are in hbs format. No custom AST transforms are supported. Addon authors can still use whatever custom AST transforms they want, but those transforms must have already been applied before publication to NPM.
 
 Unlike v1 addons, there is no `/app` or `/addon` directory that is magically removed from the runtime paths to the modules. All resolution follows the prevailing Node rules.
 
@@ -121,23 +123,9 @@ In v1 packages, `main` usually points to a build-time configuration file. That f
 
 ### Own Javascript: Imports
 
-Modules in **Own Javascript** are allowed to use ECMA static `import` to resolve any **allowed dependency**, causing it to be included in the build whenever the importing module is included. This replaces `app.import`. Resolution follows prevailing Node rules. (This usually means the node_modules algorithm, but it could also mean Yarn PnP. The difference shouldn't matter if you are correctly declaring all your **allowed dependencies**.)
+Modules in **Own Javascript** are allowed to use ECMA static `import` and dynamic `import()` to resolve any **allowed dependency**, causing it to be included in the build whenever the importing module is included. This replaces `app.import`. Resolution follows prevailing Node rules. (This usually means the node_modules algorithm, but it could also mean Yarn PnP. The difference shouldn't matter if you are correctly declaring all your **allowed dependencies**.)
 
 Notice that a package’s **allowed dependencies** do not include the package itself. This is consistent with how Node resolution works. To import files from within your own package you must use relative paths. This is different from how run-time AMD module resolution has historically worked in Ember Apps. (`@embroider/compat` implements automatic adjustment for this case when compiling from v1 to v2).
-
-Modules in **Own Javascript** are allowed to use dynamic `import()`, and the specifiers have the same meanings as in static import. However, we impose a restriction on what syntax is supported inside `import()`. The only supported syntax inside `import()` is:
-
-- a string-literal
-- or a template string literal
-  - that begins with a static part
-  - where the static part is required to contain at least one `/`
-  - or at least two `/` when the path starts with `@`.
-
-This is designed to allow limited pattern matching of possible targets for your dynamic `import()`. The rules ensure that we can always tell which NPM package you are talking about (the `@` rule covers namespaced NPM packages, so you can't depend on `@ember/${whatever}` but you can depend on `@ember/translations/${lang}`). If your pattern matches zero files, we consider that a static build error. (For more background on the thought-process behind this feature, see [Embroider #198: Allow dynamic imports to accept more dynamic inputs](https://github.com/embroider-build/embroider/issues/198).
-
-Modules in **Own Javascript** are allowed to import template files. This is common in today’s addons (they import their own layout to set it on their Component class). The `.hbs` file extension resolves with lower priority than `.js` (meaning if you have both, the `.js` wins).
-
-Modules in **Own Javascript** are allowed to import JSON files. This is supported in Node and it's enabled by default in popular Javascript bundlers like Webpack, so it's common to encounter code on NPM that expects it to work. We interpret JSON as an ECMA module whose `default` export is the JSON object.
 
 ### Own Javascript: Co-located Component Templates
 
@@ -149,7 +137,9 @@ Similarly, template-only components must be explicitly present as Javascript mod
 
 ### Own Javascript: Transpilation of imported modules
 
-Any module you import, whether from an Ember package or a non-Ember package, gets processed by the app's babel configuration by default. This ensures that the app's `config/targets.js` will always be respected and you won't accidentally break your older supported browsers by importing a dependency that uses newer ECMA features.
+Any module you import, whether from an Ember package or a non-Ember package, gets transpiled by default such that it will support the app's set of browser targets. This ensures that the app's `config/targets.js` will always be respected and you won't accidentally break your older supported browsers by importing a dependency that uses newer ECMA features.
+
+Today in practice this means everything you import will go through babel-preset-env, and babel-preset-env will use the same configuration that it uses in the app.
 
 There is an explicit per-package opt-out for cases where you're _sure_ that transpilation is not needed and not desirable. (See **Build Hooks** for details on the `skipBabel` option.)
 
@@ -172,13 +162,15 @@ To provide **App Javascript**, a package includes the `app-js` key in **Ember pa
       "app-js": "./app"
     }
 
-Like the **Own Javascript**, templates are in place in hbs format with any AST transforms already applied. Javascript is in ES modules, using only ES latest features. ECMA static and dynamic imports from any **allowed dependency** are supported. (Even though the app javascript will be addressable within the _app's_ module namespace, your own imports still resolve relative to your addon.)
+Like the **Own Javascript**, the code must be authored as ES modules in **Ember Language Standard**. ECMA static and dynamic imports from any **allowed dependency** are supported. Even though the app javascript will be addressable within the _app's_ module namespace, your own imports still resolve relative to your addon.
 
 By making `app-js` an explicit key in **Ember package metadata**, our publication format is more durable (you can rearrange the conventional directory structure in the future without breaking the format) and more performant (less filesystem traversal is required to decide whether the package is using the **App Javascript** feature.
 
 ## Fastboot Javascript
 
 To provide **Fastboot Javascript**, a package includes the `fastboot-js` key in **Ember package metadata**. This works almost identically to **App Javascript**, except it means the given directory will only be merged into the app's namespace when running in Fastboot (server-side rendering) mode. This key is a backward compatibility feature that allows addons with a `fastboot` directory to express their needs.
+
+New v2 packages don't need to use `fastboot-js` because they can use the macro system to branch between browser and server implementations.
 
 ## CSS
 
@@ -354,7 +346,7 @@ configureDependencies(): {
 
 The `configureDependencies` hook is how you send configuration down to your own dependencies. For each package in your **allowed dependencies** you may return either the `PackageOptions` expected by that package, or the string `"disabled"`.
 
-Any dependencies that you don't mention are considered active, but don't receive and configuration from you.
+Any dependencies that you don't mention are considered active, but don't receive any configuration from you.
 
 Any dependency for which you provide `PackageOptions` is active, and will receive those `PackageOptions` in its own `configure` hook.
 
@@ -367,8 +359,8 @@ When and only when a package is active:
 - all **App Javascript** is included in the build.
 - all **Assets** are included in the build.
 - the package's **Active Dependencies** become active recursively.
-  ​​
-  Whether or not a package is active:
+
+Whether or not a package is active:
 
 - directly-imported **Own Javascript** and **CSS** are available to any other package as described in those sections. The rationale for allowing `import` of non-active packages is that (1) we follow node module resolution and node module resolution doesn’t care about our notion of “active”, and (2) `import` is an explicit request to use the module in question. It’s not surprising that it would work, it would be more surprising if it didn’t.
 
@@ -446,7 +438,7 @@ const shouldEnableCoolFeature = true;
 // assuming your ownConfig is `{ coolFeature: true }`.
 ```
 
-`getOwnConfig()` behaves like a function that returns your `OwnConfig`, as determined by the return value of your `configure` **Build Hook**. You're allowed to chain property accesses (including array indices) off of `getOwnConfig()`. Since the `OwnConfig` is required to be JSON-serializable, any subset of it can be accessed this way, and we inline that value directly into the code.
+`getOwnConfig()` behaves like a function that returns your `OwnConfig`, as determined by the return value of your `configure` **Build Hook**. You're allowed to chain property access and optional property access (including array indices) off of `getOwnConfig()`. Since the `OwnConfig` is required to be JSON-serializable, any subset of it can be accessed this way, and we inline that value directly into the code.
 
 You can choose to inline the whole OwnConfig if you want to:
 
@@ -475,8 +467,6 @@ It supports property chaining the same as `getOwnConfig`.
 This is a low-level power tool. It's mostly useful as a compile target for custom Babel plugins. For example, `ember-test-selectors` has a custom Babel plugin that _sometimes_ strips test properties out of your components. But if a V2 package is using ember-test-selectors, it needs to run the custom transform _before publishing_. At that point, it's too soon to decide whether to strip them.
 
 Instead of actually doing the stripping, the ember-test-selector plugin would compile the user's code into code that uses `macroCondition` and `getConfig('ember-test-selectors')`. In this way, we get the powerful custom behavior, but only the standard core macros are needed at the time when the app itself is building.
-
-Another example is that a package like `fastboot` could expose config that says whether you're in Fastboot vs the browser, so that apps and addons could say `getConfig('fastboot').isFastboot`. Notice that for an addon to do this, it should declare `fastboot` as an optional peerDependency (see **Optional Peer Dependencies** section), because `getConfig` can only see your **Allowed Dependencies**.
 
 ### JavaScript Macro: macroCondition
 
@@ -799,6 +789,74 @@ There are also a few V2 package features only supported in apps. These are mostl
 
 Unlike addons, an app’s **Own Javascript** is not limited to only ES latest features. It’s allowed to use any features that work with the config in `babel.filename`. This is an optimization — we _could_ logically require apps to follow the same rule as addons and compile down to ES latest before handing off to a final packager. But the final packager is going to run babel anyway, so we allow apps to do all their transpilation in that final single pass.
 
+## Ember Language Standard
+
+This RFC introduces the idea of `Ember Language Standard` as a way to be explicit about exactly what Javascript dialect we support in shared packages, and exactly what extensions to Javascript are required to understand the complete semantics of Ember apps.
+
+As of this writing, Ember language standard contains the following subset of ECMAScript:
+
+ - all of ECMAScript 2019
+   - with the caveat that if you use un-transpile-able features (like `Proxy`) that aren't supported in all browsers that Ember supports, your package won't support those browsers
+ - [decorators proposal](https://github.com/tc39/proposal-decorators) currently in TC39 stage 2.
+ - [Optional Chaining](https://github.com/tc39/proposal-optional-chaining) and [Nullish Coalescing](https://github.com/tc39/proposal-nullish-coalescing), which are stage 4 (completed) proposals slated for inclusion in es2020.
+ - A subset of [dynamic import](https://github.com/tc39/proposal-dynamic-import), a stage 4 (completed) proposal slated for inclusion in es2020, as detailed below.
+
+We also incorporate the following extensions to Javascript. Our intent here is that this is the minimal set of things that aren't really expressible, even in principle, using Javascript itself:
+
+ - handlebars templates may be imported as if they were ES modules. You get back an ES module with a default export containing an opaque value representing the compiled template. The only public-API for *consuming* the opaque value you get back is to pass it to Ember's `setComponentTemplate()` or set it as the `layout` property on an `Ember.Component`. The `.hbs` extension has lower priority than `.js`, so `import './foo'` will favor `./foo.js` over `./foo.hbs`.
+
+ - CSS files may be imported as if they were ES modules. The `.css` extension is mandatory, unlike `.js` and `.hbs` it is never automatically inferred. We define *no exported value*. The meaning is: if you import a CSS file, the CSS file is guaranteed to be in the DOM before your module evaluates.
+
+    The reason we define no exported value is that it's not clear we want to commit to one long-term standard. By not giving CSS a value in JS, we reserve the right to do so in the future if a web standard emerges. Users who want imported CSS to return a value are free to compile their CSS to actual JS modules *before* publishing their package.
+
+ - JSON files may be imported as if they were ES modules. This is supported in Node and it's enabled by default in popular Javascript bundlers like Webpack, so it's common to encounter code on NPM that expects it to work. We interpret JSON as an ECMA module whose `default` export is the JSON object.
+
+
+### Supported subset of dynamic import syntax
+
+[Dynamic import](https://github.com/tc39/proposal-dynamic-import) aka `import()` is supported. However, we choose to support only a subset of possible syntax inside `import()`. Since we're choosing a strict subset, we can safely expand it later as needed.
+
+First we'll illustrate by examples:
+
+```js
+// ALLOWED: string literal
+import("./some-module")
+
+// ALLOWED: template string with a static prefix containing
+// a relative path
+import(`./locale/${currentLocale}/messages`);
+
+// ALLOWED: template string with a static prefix containing
+// a complete package name
+import(`some-package/${feature}`);
+
+// ALLOWED: template string with a static prefix that clearly
+// contains an absolute URL.
+import(`https://example.com/components/${choice}`);
+
+// FORBIDDEN: any syntax that is not a string literal or template string
+import(arbitraryExpression());
+
+// FORBIDDEN: template string that does not uniquely identify a package
+import(`@ember/${which}`);
+```
+
+To be more precise, the only supported syntax inside `import()` is:
+
+- a string-literal
+- or a template string that begins with a static prefix which falls into one of these allowed cases:
+   - the static prefix matches `/(\w+:)?\/\//`
+     - this detects absolute URLs, both ones with protocols (starting with `http://`) and ones that are protocol-relative (starting with `//`).
+     - in this case, Embroider will leave your `import()` alone so you can access the browser's implementation of `import()`. You are responsible for the contents of the URL, it is beyond the scope of the Embroider build.
+   - the static prefix starts with `@` and contains at least two `/`
+     - this detects a namespaced NPM package name. If the package can't be resolved or it contains zero files that match your pattern, we emit a static build error.
+   - the static prefix does not start with `@` and contains at least one `/`
+     - this covers patterns that start with a non-namespaced NPM package names or a relative path. If the pattern matches zero files, we emit a static build error.
+
+Any other syntax is a static build error.
+
+The rationale for this chosen subset is that we want it to be possible to introduced *controlled*, *intentional* dynamism, without accidentally blowing holes in the static analysis of whole programs. For example, if we simply allowed any non-statically-resolvable module specifier to silently become a runtime `import()`, it would mask many bugs that would otherwise be caught statically at build time. You can opt-in to fully-dynamic runtime `import()`, but you need to say so in a way that is statically legible so we can distinguish it from accidents.
+
 ## Compatibility Strategy
 
 The `@embroider/compat` package exists to compile V1 packages to V2. This allows `@embroider/core` to always assume V2 packages as input, so we don't need to wait until every addon is natively available in V2 before we start getting the benefits of Embroider. However, there is still an incentive to convert as many addons as possible to V2, because they build faster and they will be more stable (the v1-to-v2 compilation isn't flawless, we need heuristics and package-specific rules to deal with some dynamic addon behaviors).
@@ -818,6 +876,8 @@ The impact on addon authors is more significant. This design is fully backward c
 In many cases, converting addons to v2 makes them simpler. For example, today many addons use custom broccoli code to wrap third-party libraries in a fastboot guard that prevents the libraries from trying to load in Node (where they presumably don’t work). In v2, they can drop all that custom build-time code in favor of a macro-guarded `importSync`.
 
 This design does _not_ advocate loudly deprecating any v1 addon features. Doing that all at once would be unnecessarily disruptive. I would rather rely on the carrot of faster builds and Embroider stability than the stick of deprecation warnings. We can choose to deprecate v1 features in stages at a later time.
+
+We should release an officially-supported package (tentatively named `@embroider/addon`) that provides tooling for addon authors who want to publish a V2 package that is backward compatible in non-embroider apps. This package's documentation is a natural starting point for teaching developers what to do.
 
 # Alternative Designs
 
