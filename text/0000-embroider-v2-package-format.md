@@ -60,12 +60,12 @@ This compile step lets us separate the authoring format (which isn’t changing 
 
 **allowed dependency**: For **addons**, the **allowed dependencies** are the **packages** listed in `dependencies` and `peerDependencies` in `package.json` plus any in-repo addons. For **apps**, the **allowed dependencies** are the `dependencies`, `peerDependencies`, and `devDependencies` in `package.json` plus any in-repo addons.
 
-**Ember package metadata**: the `ember-addon` section inside `package.json`. This already exists in v1, we’re going to extend it.
+**Ember package metadata**: the `ember` section inside `package.json`. This already exists in v1 (it's used to set `edition`), we’re going to extend it.
 
 **v2 package**: a package with `package.json` like:
 
     "keywords": [ "ember-addon" ],
-    "ember-addon": {
+    "ember": {
       "version": 2
     }
 
@@ -157,7 +157,7 @@ See **Macro System** for the full details.
 
 To provide **App Javascript**, a package includes the `app-js` key in **Ember package metadata**. For example, to duplicate the behavior of v1 packages, you could say:
 
-    "ember-addon": {
+    "ember": {
       "version": 2,
       "app-js": "./app"
     }
@@ -270,7 +270,7 @@ An example of when you may need `externals` is when you need to consume a script
 To provide **Assets**, a package includes the `public-assets` key in **Ember package metadata**. It's a mapping from local paths to app-relative URLs that should be available in the final app. For example:
 
     "name": "my-addon",
-    "ember-addon": {
+    "ember": {
       "version": 2,
       "public-assets": {
         "./public/image.png": "/my-addon/image.png"
@@ -624,7 +624,7 @@ If you don't pass any arguments, you can get the whole thing (although this make
 
 ### Handlebars Macro: macroGetConfig
 
-The equivalent of the `getConfig` JS macro as a Handlebars helper. Given a dependency `ember-score` exposes this config: 
+The equivalent of the `getConfig` JS macro as a Handlebars helper. Given a dependency `ember-score` exposes this config:
 
 ```json
 {
@@ -865,7 +865,7 @@ It also needs to be possible for an addon published as V2 to work in existing ap
 
 - `ember-auto-import`, which serves as a high-fidelity polyfill for importing directly from NPM. V2 addons natively support importing from NPM, but they should depend on `ember-auto-import` so those imports will have the same meaning when used in classic ember-cli.
 - `@ember/macros`, which shall provide correct semantics regardless of whether the package using them is published as V1 or V2 and regardless of whether the build is being done by classic ember-cli or Embroider. Native V2 packages under Embroider can alway use macros, without an explicit dependency on `@ember/macros`, but they should include the dependency so that macros will work in classic ember-cli.
-- ember-cli already supports a `main` property in **Ember package metadata** and has supported it for many versions. This allows an addon to put its classic `index.js` file in a place other than the package's true `main`. This means that V2 addons can have their runtime `index.js` as `main`, and should point `ember-addon.main` to a `classic.js` file. The `classic.js` file should `require` and `export` a compatibility shim library that we will provide. The compatibility shim will have the classic methods like `treeForAddon`, `treeForPublic` that take the V2-formatted features and present them in a way that classic ember-cli will understand. Since V2 packages are much more static than V1 packages, this shim is expected to not be very complicated.
+- ember-cli already supports a `main` property in under `ember-addon` and has supported it for many versions. This allows an addon to put its classic `index.js` file in a place other than the package's true `main`. This means that V2 addons can have their runtime `index.js` as `main`, and should point `ember-addon.main` to a `classic.js` file. The `classic.js` file should `require` and `export` a compatibility shim library that we will provide. The compatibility shim will have the classic methods like `treeForAddon`, `treeForPublic` that take the V2-formatted features and present them in a way that classic ember-cli will understand. Since V2 packages are much more static than V1 packages, this shim is expected to not be very complicated.
 
 # How we Teach This
 
