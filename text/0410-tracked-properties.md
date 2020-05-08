@@ -503,11 +503,9 @@ const Person = EmberObject.extend({
   firstName: tracked({ value: 'Tom' }),
   lastName: tracked({ value: 'Dale' }),
 
-  fullName: tracked({
-    get() {
-      return `${this.firstName} ${this.lastName}`;
-    },
-  }),
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  },
 });
 ```
 
