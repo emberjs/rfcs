@@ -84,8 +84,6 @@ function createCache<T>(fn: () => T): Cache<T>;
 
 function getValue<T>(cache: Cache<T>): T
 
-function isCache(maybeCache: object): boolean;
-
 function isConst(cache: Cache): boolean;
 ```
 
@@ -148,17 +146,6 @@ let outer = createCache(() => {
 
 This can be used to break up different parts of a execution so that only the
 pieces that changed are rerun.
-
-The `isCache` function can be used to determine if a value is a cache, in cases
-where it's not possible to know if the value is a cache or not.
-
-```js
-let cache = createCache(() => {});
-let notACache = () => {};
-
-isCache(cache); // true
-isCache(notACache); // false
-```
 
 ### Constant Caches
 
@@ -310,22 +297,6 @@ let counter = createCache(() => {
 });
 
 getValue(counter); // 1
-```
-
-#### `isCache`
-
-Returns whether or not the value is a cache.
-
-```ts
-import { tracked } from '@glimmer/tracking';
-import { createCache, isCache } from '@glimmer/tracking/primitives/cache';
-
-let cache = createCache(() => {});
-let notACache = () => {};
-
-
-isCache(cache); // true
-isCache(notACache); // false
 ```
 
 #### `isConst`
