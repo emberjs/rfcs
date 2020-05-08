@@ -15,14 +15,14 @@ respond to changes in autotracked state.
 import { tracked } from '@glimmer/tracking';
 import { createCache, getValue } from '@glimmer/tracking/primitives/cache';
 
-let count = 0;
+let computeCount = 0;
 
 class Person {
   @tracked firstName = 'Jen';
   @tracked lastName = 'Weber';
 
   #fullName = createCache(() => {
-    ++count;
+    ++computeCount;
     return `${this.firstName} ${this.lastName}`;
   })
 
@@ -104,10 +104,10 @@ import {
 ### Usage
 
 `createCache` receives a function, and returns a cache instance for that function.
-Users can call `getValue()` on the cache instance to run the function and get
-the value of its output. The cache will then return the same value whenever
-`getValue` is called again, until one of the tracked values that was _consumed_
-while it was running previously has been _dirtied_.
+Users can call `getValue()` with the cache instance as an argument to run the
+function and get the value of its output. The cache will then return the same
+value whenever `getValue` is called again, until one of the tracked values that
+was _consumed_ while it was running previously has been _dirtied_.
 
 ```ts
 class State {
@@ -115,13 +115,13 @@ class State {
 }
 
 let state = new State();
-let count = 0;
+let computeCount = 0;
 
 let counter = createCache(() => {
   // consume the state
   state.value;
 
-  return ++count;
+  return ++computeCount;
 });
 
 getValue(counter); // 1
@@ -167,10 +167,10 @@ previously change. If there _were_ no consumed tracked inputs, then they will
 never recompute.
 
 ```ts
-let count = 0;
+let computeCount = 0;
 
 let counter = createCache(() => {
-  return ++count;
+  return ++computeCount;
 });
 
 getValue(counter); // 1
@@ -196,18 +196,18 @@ class State {
 }
 
 let state = new State();
-let count = 0;
+let computeCount = 0;
 
 let counter = createCache(() => {
   // consume the state
   state.value;
 
-  return ++count;
+  return ++computeCount;
 });
 
 
 let constCounter = createCache(() => {
-  return ++count;
+  return ++computeCount;
 });
 
 getValue(counter);
@@ -273,14 +273,14 @@ class State {
 }
 
 let state = new State();
-let count = 0;
+let computeCount = 0;
 
 let counter = createCache(() => {
   // consume the state. Now, `counter` will
   // only rerun if `state.value` changes.
   state.value;
 
-  return ++count;
+  return ++computeCount;
 });
 
 getValue(counter); // 1
@@ -303,10 +303,10 @@ Gets the value of a cache created with `createCache`.
 import { tracked } from '@glimmer/tracking';
 import { createCache, getValue } from '@glimmer/tracking/primitives/cache';
 
-let count = 0;
+let computeCount = 0;
 
 let counter = createCache(() => {
-  return ++count;
+  return ++computeCount;
 });
 
 getValue(counter); // 1
@@ -345,18 +345,18 @@ class State {
 }
 
 let state = new State();
-let count = 0;
+let computeCount = 0;
 
 let counter = createCache(() => {
   // consume the state
   state.value;
 
-  return count++;
+  return computeCount++;
 });
 
 
 let constCounter = createCache(() => {
-  return count++;
+  return computeCount++;
 });
 
 getValue(counter);
