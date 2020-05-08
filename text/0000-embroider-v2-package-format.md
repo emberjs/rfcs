@@ -632,6 +632,25 @@ If you don't pass any arguments, you can get the whole thing (although this make
 <SomeComponent @config={{hash items=(array (hash score=42))}} />
 ```
 
+### Handlebars Macro: macroGetConfig
+
+The equivalent of the `getConfig` JS macro as a Handlebars helper. Given a dependency `ember-score` exposes this config: 
+
+```json
+{
+  "items": [{ "score": 42 }]
+}
+```
+
+Then:
+
+```hbs
+<SomeComponent @score={{macroGetConfig "ember-score" "items" 0 "score" }} />
+{{! ⬆️compiles to ⬇️ }}
+<SomeComponent @score={{42}} />
+```
+
+
 ### Handlebars Macro: macroCondition
 
 Used as a helper within a block `{{#if}}` or inline `{{if}}`. Just like the JS `macroCondition`, it ensures that branch elimination will happen.
@@ -668,7 +687,7 @@ There is one place where `{{#if}}` doesn't work: within "element space". If you 
 `macroMaybeAttrs` exists to conditionally compile away attributes and arguments out of element space:
 
 ```hbs
-<div {{macroMaybeAttrs (getConfig "ember-test-selectors" "enabled") data-test-target=@id }} />
+<div {{macroMaybeAttrs (macroGetConfig "ember-test-selectors" "enabled") data-test-target=@id }} />
 ```
 
 It can be placed on both HTML elements and angle bracket component invocations.
@@ -678,7 +697,7 @@ It can be placed on both HTML elements and angle bracket component invocations.
 Like the JS `failBuild` macro.
 
 ```hbs
-{{#if (macroCondition (dependencySatisfies "some-peer-dep" "^3.0.0")) }}
+{{#if (macroCondition (macroDependencySatisfies "some-peer-dep" "^3.0.0")) }}
   <UseTheThing />
 {{else}}
   {{macroFailBuild "You tried to use <MyFancyComponent/> but it requires some-peer-dep ^3.0.0"}}
