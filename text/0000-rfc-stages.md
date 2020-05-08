@@ -1,6 +1,7 @@
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
-- RFC PR: (leave this empty)
-- Ember Issue: (leave this empty)
+- Start Date: 2020-04-22
+- Relevant Team(s): (fill this in with the team(s) to which this RFC applies)
+- RFC PR: https://github.com/emberjs/rfcs/pull/617
+- Tracking: (leave this empty)
 
 # RFC Stages
 
@@ -156,7 +157,7 @@ ever possibly consider making this change, as outlined in the RFC pull request,
 or some semi-obvious variation of it." (When the answer to the latter question
 is "no", then the appropriate response is to close the RFC, not postpone it.)
 
- As of the writing of this RFC, there are over [70 open pull requests](https://github.com/emberjs/rfcs/pulls) for Ember's RFCs. Having so many open PRs is confusing for everyone but the core team, yet simply closing many of these PRs would not reflect the reality of the wish to bring these good ideas into Ember.
+ As of the writing of this RFC, there are over [70 open pull requests](https://github.com/emberjs/rfcs/pulls) for Ember's RFCs. Having so many open PRs is confusing for everyone, yet simply closing many of these PRs would not reflect the reality of the wish to bring these good ideas into Ember.
 
 Another aspect of Rust's process that is relevant is the idea of modification, which is already part of Ember's process, but not widely used:
 
