@@ -52,7 +52,7 @@ _app behavior_ declaratively. This is a much better way to approach certain
 types of behavior and APIs, compared to the alternative of using mixins and
 lifecycle hooks to manage them. Its benefits include:
 
-1. Behavior can be _self-contained_. Some APIs need to run at multiple points in
+1. Behavior can be _self-contained_. Some APIs need to run at multiple points in time
    based on a component's lifecycle, such as for a plugin that needs to be setup
    on initialization and torn down upon destruction. Using lifecycle hooks for
    this forces users to split their API across multiple touch points in a
@@ -115,13 +115,14 @@ to the helper manager.
 interface HelperCapabilitiesOptions {
   hasValue?: boolean;
   hasDestroyable?: boolean;
-  isScheduledEffect?: boolean;
+  hasScheduledEffect?: boolean;
 }
 
 type HelperCapabilities = Opaque;
 
 export declare function capabilities(
-  version: string,
+  // to be replaced with the version of Ember this lands in
+  version: '3.21.0',
   options?: HelperCapabilitiesOptions
 ): HelperCapabilities;
 ```
@@ -299,7 +300,7 @@ setHelperManager((owner) => new ClassHelperManager(owner), Helper.prototype)
 ```
 
 When a value is used as a helper in a template, the helper manager is looked up
-by on the object by walking up its prototype chain and finding the first helper
+on the object by walking up its prototype chain and finding the first helper
 manager. This manager then receives the value and can create and manage an
 instance of a helper from it. This provides a layer of indirection that allows
 users to design high-level helper APIs, without Ember needing to worry about the
@@ -311,10 +312,10 @@ over time to existing code bases.
 
 1. A factory function, which receives the `owner` and returns an instance of a
    helper manager.
-2. The object to associate the factory function with.
+2. A helper definition, which is the object or function to associate the factory function with.
 
 The first time the object is looked up, the factory function will be called to
-create the helper manager. It will be cached, and in subsequent lookups it the
+create the helper manager. It will be cached, and in subsequent lookups the
 cached helper manager will be used instead.
 
 Only one helper manager exists per helper factory, so many helpers will end up
@@ -346,7 +347,9 @@ imported from the same module as `setHelperManager`:
 import { capabilities } from '@ember/helper';
 
 class MyHelperManager {
-  capabilities = capabilities();
+  capabilities = capabilities('3.21.0', { hasValue: true });
+  
+  // ...snip...
 }
 ```
 
