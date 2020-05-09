@@ -585,7 +585,7 @@ setHelperManager((owner) => new EffectHelperManager(owner), Effect.prototype);
 // ember-page-title/addon/services/page-title-list
 
 import Service, { inject as service } from '@ember/service';
-import { getOwner } from '@ember/application
+import { getOwner } from '@ember/application';
 import { scheduleOnce } from '@ember/run';
 
 export default class PageTitleListService extends Service {
@@ -786,7 +786,7 @@ export default class PageTitleListService extends Service {
         return token.title;
       })
       .join('');
-  },
+  }
 
   /**
    * Remove any existing title tags from the head.
@@ -802,7 +802,7 @@ export default class PageTitleListService extends Service {
       let title = titles[i];
       title.parentNode.removeChild(title);
     }
-  },
+  }
 
   _hasFastboot() {
     return !!getOwner(this).lookup('service:fastboot');
@@ -823,7 +823,7 @@ export default class Title extends Effect {
     super(owner, args);
 
     this.pageTitleList.push({ id: guidFor(this) });
-  },
+  }
 
   setup() {
     this.update();
