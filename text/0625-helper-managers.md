@@ -27,7 +27,7 @@ generation of helpers. Some possible areas to explore here would include:
 * Allowing normal functions to operate as helpers
 
 In addition, it would allow us to begin adding new functionality to helpers via
-manager capabilities. This RFC proposes one such capability, `isScheduledEffect`.
+manager capabilities. This RFC proposes one such capability, `hasScheduledEffect`.
 
 ### Effect Helpers
 
@@ -81,7 +81,7 @@ follow code paths reminiscent of observers. These issues stem from a mismatch
 between two different goals, the goal of calculating a result or value, and the
 goal of triggering side-effects.
 
-The `isScheduledEffect` capability would schedule side-effecting helpers to execute
+The `hasScheduledEffect` capability would schedule side-effecting helpers to execute
 _after_ render, and would _disable_ Ember's state mutations while they were
 running. This would ensure that side-effecting helpers run at the optimal time,
 and do not enable antipatterns and complicated codepaths.
@@ -97,6 +97,7 @@ definition's prototype chain until it finds a helper manager. If it does not
 find one, it will throw an error.
 
 ```ts
+// object is used here to mean any valid WeakMap key
 type HelperDefinition = object;
 
 export declare function setHelperManager(
@@ -123,7 +124,7 @@ type HelperCapabilities = Opaque;
 export declare function capabilities(
   // to be replaced with the version of Ember this lands in
   version: '3.21.0',
-  options?: HelperCapabilitiesOptions
+  options: HelperCapabilitiesOptions
 ): HelperCapabilities;
 ```
 
@@ -170,6 +171,13 @@ class MyManager {
 This allows the manager to store metadata that it doesn't want to expose to the
 user.
 
+This hook is _not_ autotracked - changes to tracked values used within this hook
+will _not_ result in a call to any of the other lifecycle hooks. If users do
+want to autotrack some values used during construction, they can either create
+the instance of the helper in `runEffect` or `getValue`, or they can use the
+`cache` API to autotrack the `createHelper` hook themselves. This provides
+maximum flexibility and expressiveness to manager authors.
+
 This hook has the following timing semantics:
 
 **Always**
@@ -209,11 +217,12 @@ will rerun whenever any tracked values used inside of it are updated. Otherwise
 it does not rerun.
 
 The hook is also run during a time period where state mutations are _disabled_
-in Ember. Any change to any tracked property or tag via `Ember.set` will throw
-an error during this time. This is meant to prevent infinite rerenders and other
-antipatterns.
+in Ember. Any tracked state mutation will throw an error during this time,
+including changes to tracked properties, changes made using `Ember.set`, updates
+to computed properties, etc. This is meant to prevent infinite rerenders and
+other antipatterns.
 
-This hook is only called for helpers with the `isScheduledEffect` capability
+This hook is only called for helpers with the `hasScheduledEffect` capability
 enabled. It has the following timing semantics:
 
 **Always**
@@ -221,7 +230,7 @@ enabled. It has the following timing semantics:
 - called after autotracked state has changed
 
 **Never**
-- called if the `isScheduledEffect` capability is disabled
+- called if the `hasScheduledEffect` capability is disabled
 
 #### `getDestroyable`
 
@@ -246,13 +255,15 @@ This hook has the following timing semantics:
 There are three proposed capabilities for helper managers:
 
 * `hasDestroyable`
-* `isScheduledEffect`
 * `hasValue`
+* `hasScheduledEffect`
 
-Out of these capabilities, one of `isScheduledEffect` or `hasValue` _must_ be
+Out of these capabilities, one of `hasScheduledEffect` or `hasValue` _must_ be
 enabled. The other must _not_ be enabled, meaning they are mutually exclusive.
 
 #### `hasDestroyable`
+
+- Default value: false
 
 Determines if the helper has a destroyable to include in the destructor
 hierarchy. If enabled, the `getDestroyable` hook will be called, and its result
@@ -260,15 +271,19 @@ will be associated with the destroyable parent block.
 
 #### `hasValue`
 
+- Default value: false
+
 Determines if the helper has a value which can be used externally. The helper's
 `getValue` hook will be run whenever the value of the helper is accessed if this
 capability is enabled.
 
-#### `isScheduledEffect`
+#### `hasScheduledEffect`
 
-Determines if the helper is scheduled. If enabled, the helper's `runEffect` hook
-will run after render, and will not allow any type of state mutation when
-running.
+- Default value: false
+
+Determines if the helper has a scheduled effect. If enabled, the helper's
+`runEffect` hook will run after render, and will not allow any type of state
+mutation when running.
 
 ### Scheduled Helpers Timing
 
@@ -318,9 +333,9 @@ The first time the object is looked up, the factory function will be called to
 create the helper manager. It will be cached, and in subsequent lookups the
 cached helper manager will be used instead.
 
-Only one helper manager exists per helper factory, so many helpers will end up
-using the same instance of the helper manager. As such, you should not store any
-state on the helper manager that is related to a single helper instance.
+Only one helper manager exists per helper definition, so many helpers will end
+up using the same instance of the helper manager. As such, you should not store
+any state on the helper manager that is related to a single helper instance.
 
 Helper managers must fulfill the following interface (This example uses
 [TypeScript interfaces](https://www.typescriptlang.org/docs/handbook/interfaces.html)
@@ -348,7 +363,7 @@ import { capabilities } from '@ember/helper';
 
 class MyHelperManager {
   capabilities = capabilities('3.21.0', { hasValue: true });
-  
+
   // ...snip...
 }
 ```
@@ -374,8 +389,8 @@ old versions until the next major version.
 capabilities('3.x');
 ```
 
-The second argument is an optional object of capabilities and boolean values
-indicating whether they are enabled or disabled.
+The second argument is an object of capabilities and boolean values indicating
+whether they are enabled or disabled.
 
 ```js
 capabilities('3.x', {
@@ -406,7 +421,7 @@ If no value is specified, then the default value will be used.
   would result in less ability for the community to experiment and less
   flexibility if we chose to change helpers again in the future.
 
-- The `isScheduledEffect` capability could be broken out into a separate RFC.
+- The `hasScheduledEffect` capability could be broken out into a separate RFC.
   It is mostly separable, except for the impact it has on `getValue`. Value-less
   and effect-less helpers don't really make sense, so in isolation `getValue`
   would probably not be an optional hook, and the `hasValue` capability wouldn't
@@ -503,5 +518,328 @@ export function helper(fn) {
   setHelperManager(FUNCTIONAL_HELPER_MANAGER, fn);
 
   return fn;
+}
+```
+
+### Implementation of Ember Page Title using Effects
+
+This adapts the [ember-page-title](https://adopted-ember-addons.github.io/ember-page-title/)
+addon to use the implementation proposed in this RFC. The biggest change to the
+public API is that using `push` and `remove` directly schedules updates to the
+title, so they can in theory be made public. The scheduling could also be moved
+back to the helper itself to avoid that issue, this just cleans it up.
+
+```js
+// ember-awesome-effects/addon/index.js
+import { setHelperManager, capabilities } from '@ember/helper';
+
+export class Effect {
+  constructor(owner, args) {
+    setOwner(this, owner);
+    this.args = args;
+  }
+
+  setup() {}
+  update() {}
+  teardown() {}
+}
+
+class EffectHelperManager {
+  capabilities = capabilities('3.21', {
+    hasScheduledEffect: true,
+  });
+
+  constructor(owner) {
+    this.owner = owner;
+  }
+
+  createHelper(Definition, args) {
+    return {
+      instance:  new Definition(this.owner, args),
+      didSetup: false
+    };
+  }
+
+  runEffect(bucket, args) {
+    let { instance, didSetup } = bucket;
+    instance.args = args;
+
+    if (!didSetup) {
+      instance.setup();
+    } else {
+      instance.update();
+    }
+  }
+
+  getDestroyable({ instance }) {
+    registerDestructor(instance, instance.teardown.bind(instance));
+
+    return instance;
+  }
+}
+
+setHelperManager((owner) => new EffectHelperManager(owner), Effect.prototype);
+```
+
+```js
+// ember-page-title/addon/services/page-title-list
+
+import Service, { inject as service } from '@ember/service';
+import { getOwner } from '@ember/application
+import { scheduleOnce } from '@ember/run';
+
+export default class PageTitleListService extends Service {
+  @service headData;
+
+  tokens = [];
+
+  /**
+    The default separator to use between tokens.
+    @property defaultSeparator
+    @default ' | '
+   */
+  defaultSeparator = ' | ';
+
+  /**
+    The default prepend value to use.
+    @property defaultPrepend
+    @default true
+   */
+  defaultPrepend = true;
+
+  /**
+    The default replace value to use.
+    @property defaultReplace
+    @default null
+   */
+  defaultReplace = null;
+
+  constructor(owner) {
+    super(owner);
+    this._removeExistingTitleTag();
+
+    let config = getOwner(this).resolveRegistration('config:environment');
+    if (config.pageTitle) {
+      ['separator', 'prepend', 'replace'].forEach((key) => {
+        if (isPresent(config.pageTitle[key])) {
+          set(this, `default${capitalize(key)}`, config.pageTitle[key]);
+        }
+      });
+    }
+  }
+
+  applyTokenDefaults(token) {
+    let {
+      defaultSeparator,
+      defaultPrepend,
+      defaultReplace,
+    } = this
+
+    if (token.separator == null) {
+      token.separator = defaultSeparator;
+    }
+
+    if (token.prepend == null && defaultPrepend != null) {
+      token.prepend = defaultPrepend;
+    }
+
+    if (token.replace == null && defaultReplace != null) {
+      token.replace = defaultReplace;
+    }
+  }
+
+  inheritFromPrevious(token) {
+    let { previous } = token;
+
+    if (previous) {
+      if (token.separator == null) {
+        token.separator = previous.separator;
+      }
+
+      if (token.prepend == null) {
+        token.prepend = previous.prepend;
+      }
+    }
+  }
+
+  push(token) {
+    let { tokens } = this;
+    let tokenForIdIndex = tokens.findIndex(({ id }), token.id === id);
+
+    if (tokenForIdIndex) {
+      let tokenForId = tokens[tokenForIdIndex];
+      let { previous, next } = tokenForId;
+
+      token.previous = previous;
+      token.next = next;
+
+      this.inheritFromPrevious(token);
+      this.applyTokenDefaults(token);
+
+      tokens.splice(tokenForIdIndex, 1, token);
+      return;
+    }
+
+    let previous = tokens.slice(-1)[0];
+    if (previous) {
+      token.previous = previous;
+      previous.next = token;
+      this.inheritFromPrevious(token);
+    }
+
+    this.applyTokenDefaults(token);
+
+    tokens.push(token);
+
+    scheduleOnce('actions', this, this.updateTitle);
+  }
+
+  remove(id) {
+    let { tokens } = this;
+
+    let tokenIndex = tokens.findIndex(({ id }), token.id === id);
+    let token = tokens[tokenIndex];
+    let { next, previous } = token;
+
+    if (next) {
+      next.previous = previous;
+    }
+
+    if (previous) {
+      previous.next = next;
+    }
+
+    token.previous = token.next = null;
+    tokens.splice(tokenIndex, 1);
+
+    scheduleOnce('actions', this, this.updateTitle);
+  }
+
+  updateTitle() {
+    if (this.isDestroying || this.isDestroyed) return;
+
+    this.headData.set('title', this.toString());
+  }
+
+  get visibleTokens() {
+    let { tokens } = this;
+
+    let replaceIndex = tokens.length;
+
+    while (replaceIndex--) {
+      if (tokens[replaceIndex].replace) {
+        break;
+      }
+    }
+
+    return tokens.slice(replaceIndex - 1);
+  }
+
+  get sortedTokens() {
+    let visible = this.visibleTokens;
+    let appending = true;
+    let group = [];
+    let groups = [group];
+    let frontGroups = [];
+    visible.forEach((token) => {
+      if (token.front) {
+        frontGroups.unshift(token);
+      } else if (token.prepend) {
+        if (appending) {
+          appending = false;
+          group = [];
+          groups.push(group);
+        }
+        let lastToken = group[0];
+        if (lastToken) {
+          token = copy(token);
+          token.separator = lastToken.separator;
+        }
+        group.unshift(token);
+      } else {
+        if (!appending) {
+          appending = true;
+          group = [];
+          groups.push(group);
+        }
+        group.push(token);
+      }
+    });
+
+    return frontGroups.concat(
+      groups.reduce((E, group) => E.concat(group), [])
+    );
+
+
+  }
+
+  toString() {
+    let tokens = this.sortedTokens;
+
+    return tokens
+      .filter(token => Boolean(token.title))
+      .map((token, index) => {
+        if (index + 1 < tokens.length) {
+          return token.title + token.separator;
+        }
+
+        return token.title;
+      })
+      .join('');
+  },
+
+  /**
+   * Remove any existing title tags from the head.
+   * @private
+   */
+  _removeExistingTitleTag() {
+    if (this._hasFastboot()) {
+      return;
+    }
+
+    let titles = document.getElementsByTagName('title');
+    for (let i = 0; i < titles.length; i++) {
+      let title = titles[i];
+      title.parentNode.removeChild(title);
+    }
+  },
+
+  _hasFastboot() {
+    return !!getOwner(this).lookup('service:fastboot');
+  }
+}
+```
+
+```js
+// ember-page-title/addons/helpers/title
+
+import Effect from 'ember-awesome-effects';
+import { inject as service } from '@ember/service';
+
+export default class Title extends Effect {
+  @service pageTitleList;
+
+  constructor(owner, args) {
+    super(owner, args);
+
+    this.pageTitleList.push({ id: guidFor(this) });
+  },
+
+  setup() {
+    this.update();
+  }
+
+  update() {
+    let token = assign({}, this.args.named, {
+      id: guidFor(this),
+      title: this.args.positional.join(''),
+    });
+
+    this.pageTitleList.push(token);
+  },
+
+  willDestroy() {
+    this.pageTitleList.remove(guidFor(this));
+  }
 }
 ```
