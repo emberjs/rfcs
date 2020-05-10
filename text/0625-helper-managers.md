@@ -578,7 +578,7 @@ class EffectHelperManager {
   }
 }
 
-setHelperManager((owner) => new EffectHelperManager(owner), Effect.prototype);
+setHelperManager((owner) => new EffectHelperManager(owner), Effect);
 ```
 
 ```js
