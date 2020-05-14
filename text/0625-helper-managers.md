@@ -346,9 +346,12 @@ The first time the object is looked up, the factory function will be called to
 create the helper manager. It will be cached, and in subsequent lookups the
 cached helper manager will be used instead.
 
-Only one helper manager exists per helper definition, so many helpers will end
-up using the same instance of the helper manager. As such, you should not store
-any state on the helper manager that is related to a single helper instance.
+Only one helper manager is guaranteed to exist per helper definition, so many
+helpers will end up using the same instance of the helper manager. As such, you
+should not store any state on the helper manager that is related to a single
+helper instance, or all of the instances of a class of helpers. In general, the
+only state that should be stored on the manager directly is the `owner` that was
+passed to it, so it can be passed on to the instances.
 
 Helper managers must fulfill the following interface (This example uses
 [TypeScript interfaces](https://www.typescriptlang.org/docs/handbook/interfaces.html)
