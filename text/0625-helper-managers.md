@@ -11,6 +11,34 @@ Provides a low-level primitive for defining helpers.
 
 ## Motivation
 
+Helpers are a valuable template construct in Ember. They have a number of
+benefits that come from having their lifecycle being managed by the template and
+container, including:
+
+1. Behavior can be _self-contained_. Some APIs need to run at multiple points in
+   time based on a template's lifecycle, such as for a plugin that needs to be setup
+   on initialization and torn down upon destruction. Doing this in components
+   via lifecycle hooks usually forces users to split their API across multiple
+   touch points in a component, which requires a lot of boilerplate and can make
+   it difficult to understand how the whole system works together. Helpers
+   provide a way for these shared concerns to be contained in a single location.
+
+2. It doesn't require _multiple inheritance_. Alternatives for sharing behaviors
+   that touch multiple parts of the lifecycle such as mixins and strategies like
+   them create complicated inheritance hierarchies that can be difficult to debug.
+   Helpers do not insert themselves into the inheritance hierarchy of a class,
+   they are children of the template instead, which is much easier to reason
+   about in practice.
+
+3. They are highly _composable_. Helpers, like components, can be used multiple
+   times in a template and can be used within `{{if}}` and `{{each}}` blocks.
+   Combined with their ability to be hold a self contained lifecycle, this makes
+   them a powerful tool for composing declarative behavior.
+
+4. They can be _destroyed_. They tie in naturally to the destruction APIs that
+   we have recently added to Ember, and that allows their lifecycle to be
+   managed in a self contained way.
+
 Helpers are currently the only template construct in Ember that do not have a
 low-level primitive that is public. With components and modifiers, users can define
 component managers and modifier managers respectively to create their own high
@@ -50,29 +78,7 @@ Addons such as [ember-page-title](https://github.com/adopted-ember-addons/ember-
 use this to make helpers that can be added to the template to specify
 _app behavior_ declaratively. This is a much better way to approach certain
 types of behavior and APIs, compared to the alternative of using mixins and
-lifecycle hooks to manage them. Its benefits include:
-
-1. Behavior can be _self-contained_. Some APIs need to run at multiple points in time
-   based on a component's lifecycle, such as for a plugin that needs to be setup
-   on initialization and torn down upon destruction. Using lifecycle hooks for
-   this forces users to split their API across multiple touch points in a
-   component, which requires a lot of boilerplate and can make it difficult to
-   understand how the whole system works together.
-
-2. It doesn't require _multiple inheritance_. Mixins and strategies like them
-   create complicated inheritance hierarchies that can be difficult to debug.
-   A side-effecting helper does not insert itself into the inheritance
-   hierarchy, it is a child of the template instead, which is much easier to
-   reason about in practice.
-
-3. They are highly _composable_. Helpers, like components, can be used multiple
-   times in a template and can be used within `{{if}}` and `{{each}}` blocks.
-   Combined with their ability to be hold a self contained lifecycle, this makes
-   them a powerful tool for composing declarative behavior.
-
-4. They can be _destroyed_. They tie in naturally to the destruction APIs that
-   we have recently added to Ember, and that allows their lifecycle to be
-   managed in a self contained way.
+lifecycle hooks to manage them.
 
 However, this pattern has some issues today, mostly stemming from the fact that
 they execute _during_ render, which is not an ideal time for side-effecting.
@@ -212,9 +218,14 @@ This hook has the following timing semantics:
 `runEffect` is an optional hook that should run the effect that the helper is
 applying, setting it up or updating it.
 
-This hook is scheduled to be called after render. The hook is autotracked, and
-will rerun whenever any tracked values used inside of it are updated. Otherwise
-it does not rerun.
+This hook is scheduled to be called some time after render and prior to paint.
+There is not a guaranteed, 1-to-1 relationship between a render pass and this
+hook firing. For instance, multiple render passes could occur, and the hook may
+only trigger once. It may also never trigger if it was dirtied in one render
+pass and then destroyed in the next.
+
+The hook is autotracked, and will rerun whenever any tracked values used inside
+of it are updated. Otherwise it does not rerun.
 
 The hook is also run during a time period where state mutations are _disabled_
 in Ember. Any tracked state mutation will throw an error during this time,
@@ -226,8 +237,10 @@ This hook is only called for helpers with the `hasScheduledEffect` capability
 enabled. It has the following timing semantics:
 
 **Always**
-- called after the helper was first created
-- called after autotracked state has changed
+- called after the helper was first created, if the helper has not been
+  destroyed since creation
+- called after autotracked state has changed, if the helper has not been
+  destroyed during render
 
 **Never**
 - called if the `hasScheduledEffect` capability is disabled
@@ -355,7 +368,7 @@ interface HelperManager<HelperStateBucket> {
 }
 ```
 
-The capabilities property should be provided using the `capabilities()` function
+The capabilities property _must_ be provided using the `capabilities()` function
 imported from the same module as `setHelperManager`:
 
 ```js
