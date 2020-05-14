@@ -178,11 +178,16 @@ This allows the manager to store metadata that it doesn't want to expose to the
 user.
 
 This hook is _not_ autotracked - changes to tracked values used within this hook
-will _not_ result in a call to any of the other lifecycle hooks. If users do
-want to autotrack some values used during construction, they can either create
-the instance of the helper in `runEffect` or `getValue`, or they can use the
-`cache` API to autotrack the `createHelper` hook themselves. This provides
-maximum flexibility and expressiveness to manager authors.
+will _not_ result in a call to any of the other lifecycle hooks. This is because
+it is unclear what should happen if it invalidates, and rather than make a
+decision at this point, the initial API is aiming to allow as much expressivity
+as possible. This could change in the future with changes to capabilities and
+their behaviors.
+
+If users do want to autotrack some values used during construction, they can
+either create the instance of the helper in `runEffect` or `getValue`, or they
+can use the `cache` API to autotrack the `createHelper` hook themselves. This
+provides maximum flexibility and expressiveness to manager authors.
 
 This hook has the following timing semantics:
 
@@ -234,7 +239,8 @@ to computed properties, etc. This is meant to prevent infinite rerenders and
 other antipatterns.
 
 This hook is only called for helpers with the `hasScheduledEffect` capability
-enabled. It has the following timing semantics:
+enabled. This hook is also not called in SSR currently, though this could be
+added as a capability in the future. It has the following timing semantics:
 
 **Always**
 - called after the helper was first created, if the helper has not been
@@ -244,6 +250,7 @@ enabled. It has the following timing semantics:
 
 **Never**
 - called if the `hasScheduledEffect` capability is disabled
+- called in SSR
 
 #### `getDestroyable`
 
@@ -324,7 +331,7 @@ snippets of TypeScript interfaces where appropriate.
 Sets the helper manager for an object or function.
 
 ```js
-setHelperManager((owner) => new ClassHelperManager(owner), Helper.prototype)
+setHelperManager((owner) => new ClassHelperManager(owner), Helper)
 ```
 
 When a value is used as a helper in a template, the helper manager is looked up
@@ -346,12 +353,13 @@ The first time the object is looked up, the factory function will be called to
 create the helper manager. It will be cached, and in subsequent lookups the
 cached helper manager will be used instead.
 
-Only one helper manager is guaranteed to exist per helper definition, so many
-helpers will end up using the same instance of the helper manager. As such, you
-should not store any state on the helper manager that is related to a single
-helper instance, or all of the instances of a class of helpers. In general, the
-only state that should be stored on the manager directly is the `owner` that was
-passed to it, so it can be passed on to the instances.
+Only one helper manager is guaranteed to exist per `owner` and per usage of
+`setHelperManager`, so many helpers will end up using the same instance of the
+helper manager. As such, you should only store state that is related to the
+manager itself. If you want to store state specific to a particular helper
+definition, you should assign a unique helper manager to that helper. In
+general, most managers should either be stateless, or only have the `owner` they
+were created with as state.
 
 Helper managers must fulfill the following interface (This example uses
 [TypeScript interfaces](https://www.typescriptlang.org/docs/handbook/interfaces.html)
@@ -544,58 +552,6 @@ addon to use the implementation proposed in this RFC. The biggest change to the
 public API is that using `push` and `remove` directly schedules updates to the
 title, so they can in theory be made public. The scheduling could also be moved
 back to the helper itself to avoid that issue, this just cleans it up.
-
-```js
-// ember-awesome-effects/addon/index.js
-import { setHelperManager, capabilities } from '@ember/helper';
-
-export class Effect {
-  constructor(owner, args) {
-    setOwner(this, owner);
-    this.args = args;
-  }
-
-  setup() {}
-  update() {}
-  teardown() {}
-}
-
-class EffectHelperManager {
-  capabilities = capabilities('3.21', {
-    hasScheduledEffect: true,
-  });
-
-  constructor(owner) {
-    this.owner = owner;
-  }
-
-  createHelper(Definition, args) {
-    return {
-      instance:  new Definition(this.owner, args),
-      didSetup: false
-    };
-  }
-
-  runEffect(bucket, args) {
-    let { instance, didSetup } = bucket;
-    instance.args = args;
-
-    if (!didSetup) {
-      instance.setup();
-    } else {
-      instance.update();
-    }
-  }
-
-  getDestroyable({ instance }) {
-    registerDestructor(instance, instance.teardown.bind(instance));
-
-    return instance;
-  }
-}
-
-setHelperManager((owner) => new EffectHelperManager(owner), Effect);
-```
 
 ```js
 // ember-page-title/addon/services/page-title-list
@@ -829,20 +785,42 @@ export default class PageTitleListService extends Service {
 ```js
 // ember-page-title/addons/helpers/title
 
-import Effect from 'ember-awesome-effects';
 import { inject as service } from '@ember/service';
+import { setHelperManager, capabilities } from '@ember/helper';
 
-export default class Title extends Effect {
+class TitleHelperManager {
+  capabilities = capabilities('3.21', {
+    hasScheduledEffect: true,
+  });
+
+  constructor(owner) {
+    this.owner = owner;
+  }
+
+  createHelper(Title, args) {
+    return new Title(this.owner, args);
+  }
+
+  runEffect(instance, args) {
+    instance.args = args;
+    instance.update();
+  }
+
+  getDestroyable({ instance }) {
+    registerDestructor(instance, () => instance.teardown());
+
+    return instance;
+  }
+}
+
+
+export default class Title {
   @service pageTitleList;
 
   constructor(owner, args) {
     super(owner, args);
 
     this.pageTitleList.push({ id: guidFor(this) });
-  }
-
-  setup() {
-    this.update();
   }
 
   update() {
@@ -854,8 +832,14 @@ export default class Title extends Effect {
     this.pageTitleList.push(token);
   },
 
-  willDestroy() {
+  teardown() {
     this.pageTitleList.remove(guidFor(this));
   }
 }
+
+setHelperManager((owner) => new EffectHelperManager(owner), Title);
+```
+
+```hbs
+{{title "Blog"}}
 ```
