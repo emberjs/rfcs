@@ -80,21 +80,26 @@ be updated to ensure that they satisfy these new linting rules requirements.
 
 #### `package.json` scripts
 
-The `app` and `addon` blueprints will be updated to add the following additional entries to `scripts`:
+The `app` and `addon` blueprints will be updated to add the following
+additional entries to `scripts`:
 
 ```json
 {
   "scripts": {
+    "lint": "npm-run-all --aggregate-output --continue-on-error --parallel 'lint:!(fix)'",
     "lint:fix": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*:fix",
     "lint:js:fix": "eslint . --fix",
     "lint:hbs:fix": "ember-template-lint . --fix"
   }
 }
 ```
+The `lint:fix`, `lint:js:fix`, `lint:hbs:fix` scripts are new (introduced with
+this RFC), and the `lint` script will be updated to ensure that it avoids
+running the new `lint:fix`.
 
-This configuration is specifically intending to allow users to add additional linters
-(e.g. `stylelint` or `markdownlint`) by adding scripts for them, and they would
-automatically be rolled up into `lint:fix`.
+This configuration is specifically intending to allow users to add additional
+linters (e.g. `stylelint` or `markdownlint`) by adding scripts for them, and
+they would automatically be rolled up into `lint:fix`.
 
 ### Codemod
 
