@@ -61,7 +61,7 @@ A new `prettier` section will be added to the `package.json` file with the follo
 ```json
 {
   "prettier": {
-    "singleQuotes": true
+    "singleQuote": true
   }
 }
 ```
