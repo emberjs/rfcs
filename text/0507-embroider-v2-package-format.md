@@ -1,6 +1,6 @@
 - Start Date: 2019-06-21
 - Relevant Team(s): Ember CLI, Ember.js, Learning
-- RFC PR:
+- RFC PR: https://github.com/emberjs/rfcs/pull/507
 - Tracking:
 
 # v2 Addon Format (Embroider Compatibility)
