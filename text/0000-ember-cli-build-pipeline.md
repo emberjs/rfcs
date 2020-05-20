@@ -7,7 +7,7 @@
 
 ## Summary
 
-This RFC proposes adding the `treeFor` and `treeFor*` hooks to the options passed to the `EmberApp` class.
+This RFC proposes adding the `treeFor<Type>` hooks to the options passed to the `EmberApp` class.
 These hooks would run during the build process and allow developers to affect the build
 pipelines for each of the trees (app, vendor, public, etc).
 
@@ -67,7 +67,7 @@ mergeTrees(trees, {
 Each of the individual `trees` (template, style, etc) gathers both explicit and implicit trees
 from each addon. Explicit trees are the return value of the `treeFor()` and `treeFor<Type>` hooks
 in the index.js file, whereas implicit trees are the contents of the correlated directories in the
-addon (e.g. the `public/` directory for the public tree. Currently, the [order that these three sets
+addon (e.g. the `public/` directory for the public tree). Currently, the [order that these three sets
 of trees][4] are gathered is this:
 
 1. Explicit tree from `treeFor` hook
@@ -78,7 +78,7 @@ The `treeFor<Type>` hook receives the implicit tree as an argument.
 
 This RFC proposes that after Ember CLI has merged all addon and app trees for each type (but before
 it calls `postProcessTree` hooks from addons), it call `treeFor<Type>` on the `app` instance and
-pass the merged tree of that type as an argument.
+passes the merged tree of that type as an argument.
 
 The end user experience would look roughly like this:
 
