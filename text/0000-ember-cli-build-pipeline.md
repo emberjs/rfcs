@@ -125,7 +125,7 @@ Wait for Embroider and see what it offers?
 
 ## Unresolved questions
 
-- Would these hooks be run before or after the addon hooks and will that cause any complications?
+None
 
 [1]: https://github.com/ember-cli/ember-cli/blob/v3.15.1/lib/broccoli/ember-app.js#L1791-L1799
 [2]: https://github.com/ember-cli/ember-cli/blob/v3.18.0/lib/broccoli/ember-app.js#L697-L711
