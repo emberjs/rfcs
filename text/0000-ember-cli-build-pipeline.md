@@ -15,10 +15,8 @@ pipelines for each of the trees (app, vendor, public, etc).
 
 Currently, the recommended way to affect the Broccoli tree during build time is by hooking into
 the `treeFor*` APIs provided by addons. Although it is technically possible to [merge additional
-trees by passing in more trees into the `toTree()` method][1] of `EmberApp`in `ember-cli-build.js`,
+trees by passing in more trees into the `toTree()` method][1] of `EmberApp` in `ember-cli-build.js`,
 this feature is not documented well and it's not clear if the core team would like to see it used.
-
-[1]: https://github.com/ember-cli/ember-cli/blob/v3.15.1/lib/broccoli/ember-app.js#L1791-L1799
 
 Developers that want to use the `treeFor` APIs have to develope an addon or in-repo addon.
 This is problematic for a few reasons:
@@ -44,14 +42,69 @@ must first be deployed independently as a module and then wrapped again in an em
 The high level of Ember application build looks like this:
 
 ```js
-const app new EmberApp(defaults, {});
+const app = new EmberApp(defaults, {});
 return app.toTree();
 ```
 
-The `toTree()` method on the Application is responsible for gathering modules from the app
-and addons and outputing the `vendor.js` and an `app.js` file. In addition to creating the final bundle,
-it also runs the `treeFor` hooks from addons. It would be possible to add functionality to refactor
-this into also running `treeFor` hooks on the `EmberApp` instance itself.
+The `toTree()` method gathers the trees of each type from each addon and merges them together [like this][3]:
+
+```js
+const trees = [
+  this.getAddonTemplates(),
+  this.getStyles(),
+  this.getTests(),
+  this.getExternalTree(),
+  this.getPublic(),
+  this.getAppJavascript(this._isPackageHookSupplied),
+].filter(Boolean);
+
+mergeTrees(trees, {
+  overwrite: true,
+  annotation: 'Full Application',
+});
+```
+
+Each of the individual `trees` (template, style, etc) gathers both explicit and implicit trees
+from each addon. Explicit trees are the return value of the `treeFor()` and `treeFor<Type>` hooks
+in the index.js file, whereas implicit trees are the contents of the correlated directories in the
+addon (e.g. the `public/` directory for the public tree. Currently, the [order that these three sets
+of trees][4] are gathered is this:
+
+1. Explicit tree from `treeFor` hook
+1. Implicit tree from directory
+1. Explicit tree from `treeFor<Type>` hook
+
+The `treeFor<Type>` hook receives the implicit tree as an argument.
+
+This RFC proposes that after Ember CLI has merged all addon and app trees for each type (but before
+it calls `postProcessTree` hooks from addons), it call `treeFor<Type>` on the `app` instance and
+pass the merged tree of that type as an argument.
+
+The end user experience would look roughly like this:
+
+```js
+const writeFile = require('broccoli-file-creator');
+const path = require('path')
+const fs = require('fs');
+
+const app = new EmberApp(defaults, {
+  /**
+   * @param tree The merged tree from the app and all addons
+   */
+  treeForPublic(tree) {
+    const dataPath = path.join(tree.outputPath, 'data.json');
+    if (fs.existsSync(dataPath)) {
+      return writeFile('data.json', JSON.stringify({ foo: 'bar' }));
+    }
+  },
+
+  treeForApp(/* tree */) {},
+  treeFor(/* tree */) {},
+  // ...etc
+});
+
+return app.toTree();
+```
 
 ## How we teach this
 
@@ -60,7 +113,7 @@ it explains Ember CLI as an ecosystem of addons, and covers common use cases suc
 and minification. This can make it challenging to dive into the build pipeline, when it is necessary.
 
 Teaching these `treeFor` hooks would require first making the decision to expose the build pipeline
-as a first-class citizen of the Ember CLI ecysostem.
+as a first-class citizen of the Ember CLI ecosystem.
 
 ## Drawbacks
 
@@ -73,3 +126,8 @@ Wait for Embroider and see what it offers?
 ## Unresolved questions
 
 - Would these hooks be run before or after the addon hooks and will that cause any complications?
+
+[1]: https://github.com/ember-cli/ember-cli/blob/v3.15.1/lib/broccoli/ember-app.js#L1791-L1799
+[2]: https://github.com/ember-cli/ember-cli/blob/v3.18.0/lib/broccoli/ember-app.js#L697-L711
+[3]: https://github.com/ember-cli/ember-cli/blob/v3.18.0/lib/broccoli/ember-app.js#L1646-L1649
+[4]: https://github.com/ember-cli/ember-cli/blob/v3.18.0/lib/models/addon.js#L627-L632
