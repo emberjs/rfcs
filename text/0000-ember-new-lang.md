@@ -77,9 +77,9 @@ ember new my-app --language en-UK
 Unrecognised language subtag, "uk".
 ```
 
-#### Common Misunderstandings with --language
+#### Common Misunderstandings
 
-Common misunderstandings will be handled by a friendly error message such as `--language typescript` or `-l glimmer`.
+A developer may encounter the flag and make incorrect assumptions about what it can mean. Such as, `-l typescript` or `-l glimmer`. Such incorrect assumptions will be manually caught by the implementation and the developer will be shown a friendly error message such as the following:
 
 ```bash
 ember new my-app --language typescript
