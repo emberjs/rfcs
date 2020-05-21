@@ -11,7 +11,7 @@ Introduce `--lang` flag as an option for `ember new` within Ember-CLI. This will
 
 ## Motivation
 
-This RFC offers a partial resolution to [this related issue's issue #4](https://github.com/emberjs/rfcs/issues/595). This RFC explicitly does _not_ aim to add a default language, but instead aims to add tooling that offers users a way to specify a language.
+This RFC offers a partial resolution to technical accessibility issue 4 “Missing default language declaration” from the Ember A11y Strike Team’s [“Technical Accessibility Issues for New Ember Apps” list](https://github.com/emberjs/rfcs/issues/595). This RFC explicitly does _not_ aim to add a default language, but instead aims to add tooling that offers users a way to specify a language.
 
 > Both assistive technologies and conventional user agents can render text more accurately when the language of the Web page is identified.
 > -- <cite>[W3C - Understanding Success Criterion 3.1.1: Language of Page](https://www.w3.org/WAI/WCAG21/Understanding/language-of-page.html)</cite>
@@ -54,4 +54,3 @@ Do nothing.
 ## Unresolved questions
 
 * Can the default lang value simply be English? ([Valuable discussion points in this issue](https://cli.emberjs.com/release/basic-use/cli-commands/))
-
