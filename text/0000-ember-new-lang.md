@@ -37,11 +37,9 @@ defined here.
 
 ## How we teach this
 
-The [Ember CLI API documentation](https://ember-cli.com/api/) should be updated to reflect the new flag.
-
-We update the [Ember.js CLI Guides](https://cli.emberjs.com/release/basic-use/cli-commands/) to reflect the new flag much like we demonstrate `--yarn` usage.
-
-The Ember CLI `--help` command should explain what kind of value is expected to be passed to the new flag.
+1. Update the [Ember CLI API documentation](https://ember-cli.com/api/) to reflect the new flag.
+2. Update the [Ember.js CLI Guides](https://cli.emberjs.com/release/basic-use/cli-commands/) to reflect the new flag much like we demonstrate `--yarn` usage.
+3. Update the Ember CLI `--help` command so it explains what kind of value is expected to be passed to the `--lang` flag.
 
 ## Drawbacks
 
