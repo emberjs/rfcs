@@ -45,6 +45,8 @@ defined here.
 
 More flags means more combinations of ways to run `ember new` which can be hard to test for and is potentially unsustainable.
 
+Users may be confused about whether they’re supposed to specify a human language or a programming language (i.e. `--language typescript`).
+
 ## Alternatives
 
 Do nothing.
