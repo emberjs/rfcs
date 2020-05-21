@@ -40,6 +40,8 @@ The above ember-cli command will result in the following `index.html` header cha
 <html lang="en-US">
 ```
 
+The flag is added to relevant ember-cli help commands, such as the following:
+
 ```bash
 ember help new
 ember new <app-name> <options...>
