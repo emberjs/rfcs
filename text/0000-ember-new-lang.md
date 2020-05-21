@@ -27,13 +27,62 @@ Having a page language specified should improve the user experience and technica
 
 ## Detailed design
 
-> This is the bulk of the RFC.
+Link to [candidate implementation](https://github.com/josephdsumner/ember-cli/compare/master...josephdsumner:ember-new-lang-util).
 
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here.
+```bash
+ember new my-app --language en-US
+# -lang or -l are valid aliases as well
+```
+
+The above ember-cli command will result in the following `index.html` header change.
+
+```html
+<html lang="en-US">
+```
+
+```bash
+ember help new
+ember new <app-name> <options...>
+  Creates a new directory and runs ember init in it.
+  --dry-run (Boolean) (Default: false)
+    aliases: -d
+  --verbose (Boolean) (Default: false)
+    aliases: -v
+  --blueprint (String) (Default: app)
+    aliases: -b <value>
+  --skip-npm (Boolean) (Default: false)
+    aliases: -sn
+  --skip-bower (Boolean) (Default: false)
+    aliases: -sb
+  --skip-git (Boolean) (Default: false)
+    aliases: -sg
+  --welcome (Boolean) (Default: true) Installs and uses {{ember-welcome-page}}. Use --no-welcome to skip it.
+  --yarn (Boolean)
+  --directory (String)
+    aliases: -dir <value>
+  --language (String) (Default: "") Sets the base human language of the application via index.html
+    aliases: -l <value>, -lang <value>
+```
+
+### Invalid Language Codes
+
+Language codes are verified against [is-language-code](https://www.npmjs.com/package/is-language-code). (see [examples of valid ISO country codes](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes))
+
+If an invalid language code is given such as `--language en-UK` the indended output should be a shell error that will hault the build.
+
+```bash
+ember new my-app --language en-UK
+Unrecognised language subtag, "uk".
+```
+
+#### Common Misunderstandings with --language
+
+Common misunderstandings will be handled by a friendly error message such as `--language typescript` or `-l glimmer`.
+
+```bash
+ember new my-app --language typescript
+Trying to set the app programming language to typescript? The `--language` flag sets the base human language of the app in index.html
+```
 
 ## How we teach this
 
