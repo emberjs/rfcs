@@ -141,7 +141,23 @@ The largest drawback is generally the cost of the _initial_ migration to Prettie
 
 ## Alternatives
 
-Do nothing.
+> Why not adopt [standard](https://standardjs.com/) instead of Prettier?
+
+Prettier is **much** more popular with [9,249,847 weekly
+downloads](https://www.npmjs.com/package/prettier) vs [265,658 weekly
+downloads](https://www.npmjs.com/package/standard) (we all know these download
+numbers don't mean a ton, but the order of magnitude can tell us something),
+and (aside from the defaulting of `singleQuotes`) is much more aligned with the
+Ember ecosystems inherent preferences.
+
+Additionally, a very large number of the Ember ecosystem
+projects are _already_ using Prettier internally. These include `ember-source`,
+`ember-cli`, `ember-data`, `@ember/test-helpers`, `eslint-plugin-ember`, the
+various packages composing the rendering engine, `@glimmer/component`,
+`ember-template-lint`, and many more. Additionally a large number of community
+maintained addons are also using it already ([here is a
+listing](https://emberobserver.com/code-search?codeQuery=prettier&fileFilter=package.json&sort=score&sortAscending=false)
+using EmberObservers awesome code search feature).
 
 ## Unresolved questions
 
