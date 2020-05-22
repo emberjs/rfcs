@@ -8,7 +8,7 @@
 ## Summary
 
 > In dropping support for IE11 at some point in the future, we will need a new
-browswer support policy. This is the proposed policy.
+browser support policy. This is the proposed policy.
 
 ## Motivation
 
