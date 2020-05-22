@@ -1,6 +1,6 @@
 - Start Date: 2020-05-21
 - Relevant Team(s): All
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/630
 - Tracking: (leave this empty)
 
 # New Browser Support Policy
@@ -24,7 +24,7 @@ browser support policy. This is the proposed policy.
 
     2. Mozilla Firefox
 
-        - The current and previous rapid releases and the latest [ESR](https://support.mozilla.org/en-US/kb/choosing-firefox-update-channel) are supported
+        - The current and previous rapid releases and any [ESR](https://support.mozilla.org/en-US/kb/choosing-firefox-update-channel) versions currently supported by Mozilla are supported
 
     3. MS Edge
 
@@ -38,7 +38,7 @@ browser support policy. This is the proposed policy.
 
     1. Google Chrome
 
-        - The versions coming with all versions of Android released in the past 18 months are supported, as well as the current and most stable releases available via update.
+        - The versions coming with all versions of Android released in the past 36 months are supported, as well as the current and most stable releases available via update.
 
     2. iOS Safari
 
@@ -46,7 +46,7 @@ browser support policy. This is the proposed policy.
 
     3. Android
 
-        - The versions released with all versions of Android released in the past 18 months are supported.
+        - The versions released with all versions of Android released in the past 36 months are supported.
 
 All browsers not listed here may work but are not explicitly supported.
 
