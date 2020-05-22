@@ -133,7 +133,12 @@ and it will replace the previously created commits.
 
 We do not currently discuss linting or stylistic formatting in either guides.emberjs.com or cli.emberjs.com.
 
-This RFC proposes adding a new subsection that discusses linting under [`Basic Use` section of the CLI guides](https://cli.emberjs.com/release/basic-use/).
+This RFC proposes adding a new subsection that discusses linting under [`Basic
+Use` section of the CLI guides](https://cli.emberjs.com/release/basic-use/). In
+addition, when this RFC is implemented we should do a throughough audit of the
+`cli.emberjs.com` and `guides.emberjs.com` content to ensure that all code
+snippets are formatted correctly (e.g. using the Prettier specific formatting
+introduced here).
 
 ## Drawbacks
 
