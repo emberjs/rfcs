@@ -1,6 +1,6 @@
 - Start Date: 2020-05-15
 - Relevant Team(s): All teams
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/627
 - Tracking: (leave this empty)
 
 # Ember 4.0
@@ -8,8 +8,9 @@
 ## Summary
 
 > Ember.js, Ember-Data, and Ember-CLI will release a new major version, 4.0,
-approximately six months from today, somewhere around mid November. Version
-3.23 will be the last version of the 3.x cycle, and will become an LTS release.
+at least six months from today, possibly as soon as December, but this date
+may slip for a variety of reasons.
+The last version in the 3.x cycle of each of these projects will be an LTS.
 In order to prevent a rush of deprecations submitted to Ember prior to the major
 version bump, any new proposed deprecations must target Ember 5.0.
 
@@ -27,12 +28,15 @@ features that IE11 does not support.
 1. Supporting IE11 adds a significant maintenance overhead for the Ember project.
 
 > We are now able to drop support for IE11 since major enterprises such as LinkedIn
-are doing so. However, we are waiting six months in order for companies to notify
+are doing so. However, we are waiting at least six months in order for companies to notify
 clients and make appropriate plans. Developers that still need to support IE11 may
 stay on Ember 3.x indefinitely, and it will be a supported LTS until Ember 4.4 becomes LTS,
 approximately mid May 2021.
 
 ## Detailed design
+
+> In a separate RFC, a new browser support policy will be introduced for the 4.x cycle
+and possibly beyond.
 
 > No new features will be introduced in Ember 4.0. Instead, 
 all deprecated functionality targeting Ember 4.0 may be removed following its release.
