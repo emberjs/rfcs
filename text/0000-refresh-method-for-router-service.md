@@ -7,25 +7,34 @@
 
 ## Summary
 
-> Add a refresh method to the router service that calls refresh on the current route.
+> Add a refresh method to the router service that calls refresh on the route specified by `currentRouteName`.
 
 ## Motivation
 
-> We want to be able to refresh the current route without relying on the send api.
+> We want to be able to call refresh the route specified by `currentRouteName` without relying on the send api, which we would like to deprecate. This enables us to get the latest data from the model hook.
 
 ## Detailed design
 
-```
+```js
 class RouterService {
     refresh() {
-        this.owner.lookup(`route:${this.currentRouteName}`).refresh();
+        this._router._routerMicroLib.refresh();
     }
 }
 ```
 
 ## How we teach this
 
-> Documentation will be added to the method.
+> The following documentation will be added to the method:
+
+```js
+/**
+ * Refreshes the current route, updating it with new data from the model hook.
+ * 
+ * @method refresh
+ * @public
+ */
+```
 
 ## Drawbacks
 
@@ -33,4 +42,6 @@ class RouterService {
 
 ## Alternatives
 
-> We could provide a direct link to the current route via the router service.
+> We could provide a direct link to the current route via the router service. However,
+this would encourage people to use routes to store information and provide methods
+that should be idiomatically placed in a service.
