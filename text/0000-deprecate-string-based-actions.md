@@ -33,7 +33,7 @@ From:
 export default Component.extend({
     someMethod() {
         this.send('actionName');
-    }
+    },
 
     actions: {
         actionName() {
@@ -49,7 +49,7 @@ To:
 export default Component.extend({
     someMethod() {
         this.actionName();
-    }
+    },
 
     actionName() {
         // do something
@@ -86,4 +86,4 @@ seriously considered.
 
 ## Unresolved questions
 
-> Can we also deprecate the use of the `actions` hash?
+> Can we also deprecate the use of the `actions` hash? Can we also deprecate using `this.actions`?
