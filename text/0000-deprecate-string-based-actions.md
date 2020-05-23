@@ -22,6 +22,7 @@ We will deprecate the following:
 
 1. The `send` api.
 2. The use of a string parameter to the `action` helper.
+3. The use of a string parameter to the `action` modifier.
 
 ## Transition Path
 
