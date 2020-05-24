@@ -7,14 +7,14 @@
 
 ## Motivation
 
-> In Ember 1.13 we introduced [closure actions](https://github.com/emberjs/rfcs/blob/00ac2685c86f27d41547012903f485a4ef338d27/active/0000-improved-actions.md) have been recommended over string based actions. This officially deprecates string based actions in favor of closure actions,
+> In Ember 1.13 we introduced [closure actions](https://github.com/emberjs/rfcs/blob/00ac2685c86f27d41547012903f485a4ef338d27/active/0000-improved-actions.md), which have been recommended over string based actions. This officially deprecates string based actions in favor of closure actions,
 which provide many benefits such as
 
 1. simpler passing through components
 2. less need for an actions hash
 3. ability to return a value
 4. typing in TypeScript
-5. compatible with Glimmer Components
+5. more in line with the Octane programming model
 
 ## Detailed Design
 
@@ -23,6 +23,16 @@ We will deprecate the following:
 1. The `send` api.
 2. The use of a string parameter to the `action` helper.
 3. The use of a string parameter to the `action` modifier.
+
+The `send` api may currently be used in components, controllers, and routes.
+It is used to target the `actions` hash. In calling the `actions` hash of the
+same object, `send` can be replaced by a function call once the method is
+moved outside the `actions` hash.
+
+For cases where `send` is used to go from a controller to a route or from
+a route to a parent route, no direct replacement for this "action bubbling"
+behavior will be provided.
+Instead, users are recommended to inject the router service.
 
 ## Transition Path
 
