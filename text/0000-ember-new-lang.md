@@ -88,3 +88,5 @@ Do nothing.
 ## Unresolved questions
 
 * Can the default lang value simply be English? ([Valuable discussion points in this issue](https://cli.emberjs.com/release/basic-use/cli-commands/))
+* Should the attribute be `--language` instead of `--lang`?
+  - We're going with "no". Using `lang` more closely connects this flag with the HTML attribute `lang` and distances itself from the potential drawback, mentioned above, of a user thinking this specifies a programming language.
