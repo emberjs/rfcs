@@ -27,7 +27,7 @@ Having a page language specified should improve the user experience and technica
 
 ## Detailed design
 
-Link to [candidate implementation](https://github.com/josephdsumner/ember-cli/compare/master...josephdsumner:ember-new-lang-util).
+Link to [candidate implementation](https://github.com/josephdsumner/ember-cli/compare/master...ember-new-lang-base).
 
 ```bash
 ember new my-app --lang en-US
