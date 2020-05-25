@@ -83,10 +83,18 @@ Trying to set the app programming language to typescript? The `--lang flag sets 
 
 ## Alternatives
 
-Do nothing.
+* Set the default html lang attribute to `en-US` and assume users will use ember-intl if they choose another language.
+  - [Valuable discussion points in this issue](https://github.com/emberjs/rfcs/issues/595)
+  > The data we already have gives us evidence that most Ember applications are:... in English... use internationalization if other languages are required
+  - We prop up this new default with supporting Ember documentation to describe to users how to use ember-intl to choose another language along with the potential "bug" of an Ember app being interpreted as the wrong language.
+* Do nothing
+  - By having no `lang` attribute an Ember app will default to using the system OS language.
+  - By doing nothing, we may wish to at least update the Ember documentation to include the pro's and con's of setting a language along with how to do so.
 
 ## Unresolved questions
 
-* Can the default lang value simply be English? ([Valuable discussion points in this issue](https://cli.emberjs.com/release/basic-use/cli-commands/))
+* Can the default lang value simply be English?
+  - We're going with "no" here in the RFC prose. Evidence for our "no" is covered in the Motivation section above. We believe that offering the user a chance to intentionally choose a language outweighs the cons of adding an additional step to simply hit the "80% rule".
+  - See above under the Alternatives heading for arguments for "yes".
 * Should the attribute be `--language` instead of `--lang`?
-  - We're going with "no". Using `lang` more closely connects this flag with the HTML attribute `lang` and distances itself from the potential drawback, mentioned above, of a user thinking this specifies a programming language.
+  - We're going with "no" here in the RFC prose. Using `lang` more closely connects this flag with the HTML attribute `lang` and distances itself from the potential drawback, mentioned above, of a user thinking this specifies a programming language.
