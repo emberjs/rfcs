@@ -45,23 +45,7 @@ The flag is added to relevant ember-cli help commands, such as the following:
 ```bash
 ember help new
 ember new <app-name> <options...>
-  Creates a new directory and runs ember init in it.
-  --dry-run (Boolean) (Default: false)
-    aliases: -d
-  --verbose (Boolean) (Default: false)
-    aliases: -v
-  --blueprint (String) (Default: app)
-    aliases: -b <value>
-  --skip-npm (Boolean) (Default: false)
-    aliases: -sn
-  --skip-bower (Boolean) (Default: false)
-    aliases: -sb
-  --skip-git (Boolean) (Default: false)
-    aliases: -sg
-  --welcome (Boolean) (Default: true) Installs and uses {{ember-welcome-page}}. Use --no-welcome to skip it.
-  --yarn (Boolean)
-  --directory (String)
-    aliases: -dir <value>
+  ...
   --lang (String) (Default: "") Sets the base human language of the application via index.html
     aliases: -l <value>, -lang <value>
 ```
