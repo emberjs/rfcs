@@ -30,7 +30,7 @@ Having a page language specified should improve the user experience and technica
 Link to [candidate implementation](https://github.com/josephdsumner/ember-cli/compare/master...josephdsumner:ember-new-lang-util).
 
 ```bash
-ember new my-app --language en-US
+ember new my-app --lang en-US
 # -lang or -l are valid aliases as well
 ```
 
@@ -62,7 +62,7 @@ ember new <app-name> <options...>
   --yarn (Boolean)
   --directory (String)
     aliases: -dir <value>
-  --language (String) (Default: "") Sets the base human language of the application via index.html
+  --lang (String) (Default: "") Sets the base human language of the application via index.html
     aliases: -l <value>, -lang <value>
 ```
 
@@ -70,10 +70,10 @@ ember new <app-name> <options...>
 
 Language codes are verified against [is-language-code](https://www.npmjs.com/package/is-language-code). (see [examples of valid ISO country codes](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes))
 
-If an invalid language code is given such as `--language en-UK` the indended output should be a shell error that will hault the build.
+If an invalid language code is given such as `--lang en-UK` the indended output should be a shell error that will hault the build.
 
 ```bash
-ember new my-app --language en-UK
+ember new my-app --lang en-UK
 Unrecognised language subtag, "uk".
 ```
 
@@ -82,8 +82,8 @@ Unrecognised language subtag, "uk".
 A developer may encounter the flag and make incorrect assumptions about what it can mean. Such as, `-l typescript` or `-l glimmer`. Such incorrect assumptions will be manually caught by the implementation and the developer will be shown a friendly error message such as the following:
 
 ```bash
-ember new my-app --language typescript
-Trying to set the app programming language to typescript? The `--language` flag sets the base human language of the app in index.html
+ember new my-app --lang typescript
+Trying to set the app programming language to typescript? The `--lang flag sets the base human language of the app in index.html
 ```
 
 ## How we teach this
@@ -95,7 +95,7 @@ Trying to set the app programming language to typescript? The `--language` flag 
 ## Drawbacks
 
 * More flags means more combinations of ways to run `ember new` which can be hard to test for and is potentially unsustainable.
-* Users may be confused about whether they’re supposed to specify a human language or a programming language (i.e. `--language typescript`).
+* Users may be confused about whether they’re supposed to specify a human language or a programming language (i.e. `--lang typescript`).
 
 ## Alternatives
 
