@@ -8,13 +8,42 @@
 ## Summary
 
 > In dropping support for IE11 at some point in the future, we will need a new
-browser support policy. This is the proposed policy.
+browser support policy. This is the proposed policy for that point in the future.
+By properly documenting our browser support policy,
+we increase our flexibility and provide explicit clarification of intended support.
 
 ## Motivation
 
-> It should be clear which browsers are supported by Ember.js
+> It should be clear which browsers are supported by Ember.js,
+to eliminate any confusion and decrease the number of decisions
+we're required to make about any feature (existing or new).
 
-## Detailed policy
+## Existing Policy
+
+The existing policy is listed here for documentation purposes.
+
+- Desktop
+
+    1. Google Chrome, Mozilla Firefox, MS Edge, Mac Safari
+
+        - The current and previous stable releases are supported.
+
+    2. Internet Explorer
+
+        - Only Internet Explorer 11 is supported.
+
+- Mobile
+
+    1. All
+
+        - All mobile browsers may work but are not explicitly supported.
+
+Any browsers not listed here may work but are not explicitly supported.
+
+## Proposed policy
+
+This policy drops support for a major browser, and therefore can only be
+implemented with a major version bump.
 
 - Desktop
 
@@ -52,15 +81,26 @@ All browsers not listed here may work but are not explicitly supported.
 
 ## How we teach this
 
-> A blog post explaining the policy with a link to this RFC will be posted.
+- A blog post explaining the policy with a link to this RFC will be posted.
+- Browser support policy will be linked in repo
+- Browser support policy will be added to the website
+- Browser support policy will have an announcement in the Ember Times
 
 ## Drawbacks
 
-- See discussions on this RFC
+- The proposed policy adds significant testing work to make up for
+the dropping of IE11 support. This is more than made up for by clarity.
+In practice our users need to support many of these browsers
+anyway, and without Internet Explorer 11 compatibility requirement
+it is likely that older mobile browsers will become the new limits
+that prevent us from taking advantage of new features.
 
 ## Alternatives
 
-> See discussions on this RFC
+- Keep things as they are.
+- Document the existing policy but do not change it.
+- Support fewer browsers, for a shorter amount of time.
+- Support more browsers, for a longer amount of time.
 
 ## Unresolved questions
 
