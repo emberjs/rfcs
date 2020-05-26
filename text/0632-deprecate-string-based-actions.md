@@ -1,6 +1,6 @@
 - Start Date: 2020-05-23
 - Relevant Team(s): Ember.js
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/632
 - Tracking: (leave this empty)
 
 # Deprecate String Based Actions
@@ -38,7 +38,9 @@ Instead, users are recommended to inject the router service.
 
 Users will transition to closure actions.
 
-From:
+While the action helper and modifiers are still supported with non-string arguments, the refactoring recommendation is to switch to the on modifier and @action decorator directly. It is possible that the action helpers and modifiers will be deprecated in future RFCs.
+
+For example, take this button that sends the foo action with the default click event:
 
 ```js
 export default Component.extend({
@@ -54,7 +56,12 @@ export default Component.extend({
 });
 ```
 
-To:
+```hbs
+<button {{action 'actionName'}}>Action Label</button>
+```
+
+Although this could be refactored to:
+
 
 ```js
 export default Component.extend({
@@ -68,16 +75,45 @@ export default Component.extend({
 });
 ```
 
-From:
-
-```hbs
-<button {{action 'actionName'}}>Action Label</button>
-```
-
-To:
-
 ```hbs
 <button {{action this.actionName}}>Action Label</button>
+```
+
+it is recommended that the code is refactored instead to:
+
+```js
+export default Component.extend({
+    someMethod() {
+        this.actionName();
+    },
+
+    action(function actionName() {
+        // do something
+    })
+});
+```
+
+```hbs
+<button {{on "click" this.actionName}}>Action Label</button>
+```
+
+so that it can eventually become:
+
+```js
+export class extends Component {
+    someMethod() {
+        this.actionName();
+    }
+
+    @action
+    function actionName() {
+        // do something
+    }
+}
+```
+
+```hbs
+<button {{on "click" this.actionName}}>Action Label</button>
 ```
 
 ## How We Teach This
@@ -98,3 +134,4 @@ seriously considered.
 ## Unresolved questions
 
 > Can we also deprecate the use of the `actions` hash? Can we also deprecate using `this.actions`?
+Can the `target` property of `@ember/controller` and `@ember/component` be deprecated?
