@@ -7,7 +7,7 @@
 
 ## Summary
 
-This RFC introduces the `--lang` flag as an option for `ember new` and `ember init` commands within the Ember CLI The new feature targets the ember-cli build process -- specifically, when generating the file for the application's entry point at `app/index.html`. If the flag is used with a valid language code, it will assign the `lang` attribute in the file's root `<html>` element to that code. In operation, the `lang` attribute defines the base human language of an element or a document in a way that can be programmatically understood by assistive technology.
+This RFC introduces the `--lang` flag as an option for `ember new` and `ember init` commands within the Ember CLI. The feature targets the ember-cli build process -- specifically, when generating the file for the application's entry point at `app/index.html`. If the flag is used with a valid language code, it will assign the `lang` attribute in the file's root `<html>` element to that code. In a practical sense, the `lang` attribute defines the base human language of an element or a document in a way that can be programmatically understood by assistive technology.
 
 ## Motivation
 
