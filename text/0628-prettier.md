@@ -56,20 +56,43 @@ The `.eslintrc.js` that is generated will be updated to add:
 
 #### Prettier
 
-A new `prettier` section will be added to the `package.json` file with the following contents:
+A `.prettierrc.js` will be added with the following contents:
 
-```json
-{
-  "prettier": {
-    "singleQuote": true
-  }
-}
+```js
+module.exports = {
+  singleQuote: true,
+};
 ```
 
 There is a [small number of configuration
 options](https://prettier.io/docs/en/options.html) that can be used in this
 file, but we are intentionally avoiding modifying the default values for things
 that are not _nearly_ universally agreed on in the Ember ecosystem.
+
+A `.prettierignore` will be added to match the `.eslintignore` contents:
+
+```
+# unconventional js
+/blueprints/*/files/
+/vendor/
+
+# compiled output
+/dist/
+/tmp/
+
+# dependencies
+/bower_components/
+/node_modules/
+
+# misc
+/coverage/
+!.*
+
+# ember-try
+/.node_modules.ember-try/
+/bower.json.ember-try
+/package.json.ember-try
+```
 
 #### Git
 
