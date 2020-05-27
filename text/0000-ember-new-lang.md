@@ -11,7 +11,7 @@ This RFC introduces the `--lang` flag as an option for `ember new` and `ember in
 
 ## Motivation
 
-The overall motivation for this RFC is the viewpoint that brand-new Ember apps should not immediately fail legal conformance requirements as they pertain to digital accessibility. 
+The overall motivation for this RFC is the viewpoint that brand-new Ember apps should not immediately fail legal conformance requirements as they pertain to digital accessibility.
 
 The solution presented in this RFC offers the first stage of a resolution to one of the issues documented in the framework's [list of long-standing Technical Accessibility Issues for New Ember Apps](https://github.com/emberjs/rfcs/issues/595) -- specifically, *“Missing default language declaration”* (Section #4).
 
