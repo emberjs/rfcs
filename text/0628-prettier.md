@@ -107,6 +107,14 @@ satisfy the default linting configuration of a new Ember application. As such
 the blueprints provided by `ember-cli`, `ember-source`, and `ember-data` will
 be updated to ensure that they satisfy these new linting rules requirements.
 
+In order to ensure blueprint output follows each individual projects custom
+stylistic linting settings as much as possible. The following will be updated
+to run `lint:fix` (when available) after their existing functionality:
+
+* `ember generate`
+* `ember init`
+* `ember-cli-update`
+
 #### `package.json` scripts
 
 The `app` and `addon` blueprints will be updated to add the following
