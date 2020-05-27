@@ -63,7 +63,7 @@ ember new <app-name> <options...>
 
 Language codes are verified against [is-language-code](https://www.npmjs.com/package/is-language-code). (see [examples of valid ISO country codes](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes))
 
-If an invalid language code is given such as `--lang en-UK` the indended output should be a shell error that will hault the build.
+If an invalid language code is given such as `--lang en-UK` the indended output should be a shell error that will halt the build.
 
 ```bash
 ember new my-app --lang en-UK
