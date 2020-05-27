@@ -173,7 +173,7 @@ introduced here).
 
 ## Drawbacks
 
-The largest drawback is generally the cost of the _initial_ migration to Prettier. That migration tends to be quick, but it can cause pain for folks maintaining long lived branches.
+> The largest drawback is generally the cost of the _initial_ migration to Prettier. That migration tends to be quick, but it can cause pain for folks maintaining long lived branches.
 
 ## Alternatives
 
