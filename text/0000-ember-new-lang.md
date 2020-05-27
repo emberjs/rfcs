@@ -30,7 +30,7 @@ When the language of the page cannot be identified, the integrity of the above i
 
 Accordingly, while the primary motivation of this RFC is to address an unresolved digital accessibility issue in Ember, it is expected that a successful implementation of the proposed `--lang` flag solution will provide additional, non-accessibility-related improvements to the baseline quality of new Ember applications.
 
-This is the first of two RFCs intended to improve this specific experience for Ember developers; however this RFC can be approved/implemented on its own and explicitly does not imply that any subsequent RFCs will or should be approved or implemented.
+This is the first of two RFCs intended to improve this specific experience for Ember developers; however this RFC can be approved/implemented on its own and explicitly does not imply that any subsequent RFCs will, or should be, approved and/or implemented.
 
 ## Detailed design
 
