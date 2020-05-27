@@ -8,7 +8,7 @@
 ## Summary
 
 > Ember.js, Ember-Data, and Ember-CLI will release a new major version, 4.0,
-at least six months from today, possibly as soon as December, but this date
+at least six months from today, possibly as soon as December 2021, but this date
 may slip for a variety of reasons.
 The last version in the 3.x cycle of each of these projects will be an LTS.
 In order to prevent a rush of deprecations submitted to Ember prior to the major
@@ -20,12 +20,20 @@ version bump, any new proposed deprecations must target Ember 5.0.
 There are several major reasons for doing this.
 
 1. Supporting IE11 prevents us from using the latest web technologies in Ember,
-such as native proxies.
+such as native proxies, that cannot be polyfilled.
 
 1. Supporting IE11 requires us to ship code to the client that in order to polyfill
 features that IE11 does not support.
 
 1. Supporting IE11 adds a significant maintenance overhead for the Ember project.
+
+1. If separate code is not shipped, IE11 polyfills can cause significant performance issues.
+They do not optimize well in V8 and other JavaScript engines.
+
+1. Many addons do not support IE11 but do not specifically document this. This can lead
+to confusion. Without adequate testing, many applications fail to support IE11 in practice.
+
+1. Many community tools, such as Ember Inspector and Ember Twiddle, do not work in IE11.
 
 > We are now able to drop support for IE11 since major enterprises such as LinkedIn
 are doing so. However, we are waiting at least six months in order for companies to notify
@@ -38,7 +46,7 @@ approximately mid May 2021.
 > In a separate RFC, a new browser support policy will be introduced for the 4.x cycle
 and possibly beyond.
 
-> No new features will be introduced in Ember 4.0. Instead, 
+> No new features will be introduced in Ember 4.0. Instead,
 all deprecated functionality targeting Ember 4.0 may be removed following its release.
 
 > There will be special handling for imports from `@ember/polyfills`. Specifically,
