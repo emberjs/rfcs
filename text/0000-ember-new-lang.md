@@ -30,13 +30,17 @@ When the language of the page cannot be identified, the integrity of the above i
 
 Accordingly, while the primary motivation of this RFC is to address an unresolved digital accessibility issue in Ember, it is expected that a successful implementation of the proposed `--lang` flag solution will provide additional, non-accessibility-related improvements to the baseline quality of new Ember applications.
 
+This is the first of two RFCs intended to improve this specific experience for Ember developers; however this RFC can be approved/implemented on its own and explicitly does not imply that any subsequent RFCs will, or should be, approved and/or implemented.
+
 ## Detailed design
 
 Link to [candidate implementation](https://github.com/josephdsumner/ember-cli/compare/master...ember-new-lang-base).
 
+We have explicitly chosen `--lang` as the flag (vs `--language`) for consistency with the HTML attribute itself. 
+
 ```bash
 ember new my-app --lang en-US
-# -lang or -l are valid aliases as well
+# -l is also a valid alias
 ```
 
 The above ember-cli command will result in the following `index.html` header change.
@@ -52,7 +56,7 @@ ember help new
 ember new <app-name> <options...>
   ...
   --lang (String) (Default: "") Sets the base human language of the application via index.html
-    aliases: -l <value>, -lang <value>
+    alias: -l <value>
 ```
 
 ### Invalid Language Codes
@@ -63,7 +67,7 @@ If an invalid language code is given such as `--lang en-UK` the indended output 
 
 ```bash
 ember new my-app --lang en-UK
-Unrecognised language subtag, "uk".
+Unrecognized language subtag, "uk".
 ```
 
 #### Common Misunderstandings
@@ -80,29 +84,29 @@ Trying to set the app programming language to typescript? The `--lang flag sets 
 1. Update the [Ember CLI API documentation](https://ember-cli.com/api/) to reflect the new flag.
 2. Update the [Ember.js CLI Guides](https://cli.emberjs.com/release/basic-use/cli-commands/) to reflect the new flag much like we demonstrate `--yarn` usage.
 3. Update the Ember CLI `--help` command so it explains what kind of value is expected to be passed to the `--lang` flag.
+4. Update the Super Rental tutorial to include updated information.
 
 ## Drawbacks
 
 * More flags means more combinations of ways to run `ember new` which can be hard to test for and is potentially unsustainable.
-* Users may be confused about whether they’re supposed to specify a human language or a programming language (i.e. `--lang typescript`).
+* Users may be confused about whether or not they are supposed to specify a human language or a programming language (i.e. `--lang typescript`). However, we think we've mitigated this by using the HTML attribute as the l
 
 ## Alternatives
+These are the alternative approaches that we are aware of; if more become apparent in discussion, this RFC will be updated to include them. 
 
-* Set the default html lang attribute to `en-US` and assume users will use ember-intl if they choose another language.
+- Set the default html lang attribute to `en-US` (the language of the Ember.js project) and assume users will either change the `lang` value themselves, or use `ember-intl` for apps that require globalization.
   - [Valuable discussion points in this issue](https://github.com/emberjs/rfcs/issues/595)
-  > The data we already have gives us evidence that most Ember applications are:... in English... use internationalization if other languages are required
+  > The data we already have suggests that most Ember applications are:... in English... use internationalization if other languages are required
+  - We have existing art in other frameworks (Vue sets `lang="en"` by default)
+  - It's consistent with the "80%" rule (solve for 80% of the use cases)
   - We prop up this new default with supporting Ember documentation to describe to users how to use ember-intl to choose another language along with the potential "bug" of an Ember app being interpreted as the wrong language.
-* Do nothing
+- Make no flag change
   - By having no `lang` attribute an Ember app will default to using the system OS language.
-  - By doing nothing, we may wish to at least update the Ember documentation to include the pro's and con's of setting a language along with how to do so.
+  - Update the Ember documentation to include the pro's and con's of setting a language, along with how to do so.
 
 ## Unresolved questions
 
-* Can the default lang value simply be English?
-  - We're going with "no" here in the RFC prose. Evidence for our "no" is covered in the Motivation section above. We believe that offering the user a chance to intentionally choose a language outweighs the cons of adding an additional step to simply hit the "80% rule".
-  - See above under the Alternatives heading for arguments for "yes".
-* Should the attribute be `--language` instead of `--lang`?
-  - We're going with "no" here in the RFC prose. Using `lang` more closely connects this flag with the HTML attribute `lang` and distances itself from the potential drawback, mentioned above, of a user thinking this specifies a programming language.
+No unresolved questions currently but if RFC discussion yields additional unresolved questions, we will add them here.
 
 ## References
 
