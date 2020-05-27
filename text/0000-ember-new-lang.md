@@ -11,19 +11,24 @@ Introduce `--lang` flag as an option for `ember new` within Ember-CLI. This will
 
 ## Motivation
 
-This RFC offers a partial resolution to technical accessibility issue 4 “Missing default language declaration” from the Ember A11y Strike Team’s [“Technical Accessibility Issues for New Ember Apps” list](https://github.com/emberjs/rfcs/issues/595). This RFC explicitly does _not_ aim to add a default language, but instead aims to add tooling that offers users a way to specify a language.
+The overall motivation for this RFC is the viewpoint that brand-new Ember apps should not immediately fail legal conformance requirements as they pertain to digital accessibility.
 
-> Both assistive technologies and conventional user agents can render text more accurately when the language of the Web page is identified.
-> -- <cite>[W3C - Understanding Success Criterion 3.1.1: Language of Page](https://www.w3.org/WAI/WCAG21/Understanding/language-of-page.html)</cite>
+The solution presented in this RFC offers the first stage of a resolution to one of the issues documented in the framework's [long-standing list of Technical Accessibility Issues for New Ember Apps](https://github.com/emberjs/rfcs/issues/595) -- specifically, *“Missing default language declaration”* (Section #4).
 
-Having a page language specified should improve the user experience and technical improvements around these areas:
+This RFC and its proposed approach have both been developed within the Ember.js Accessibility Strike Team with the explicit objective of helping to ensure that Ember applications achieve [WCAG Success Criterion 3.1.1: Language of Page](https://www.w3.org/WAI/WCAG21/Understanding/language-of-page.html) from the moment they are created. The state of the `lang` attribute has a usability impact on the experience of users that require screen-reading assistive technology. When the attribute is properly assigned:
 
-* Screen readers, braille translation software and similar technologies
-* Captions with synchronized media (such as video subtitles)
-* Correct dictionary lookups for translations
-* Assisting search engines
-* Improving typography in certain situations
-* and more... [Source 1](https://www.w3.org/WAI/WCAG21/Techniques/html/H57) [Source 2](https://www.w3.org/WAI/WCAG21/Understanding/language-of-page.html) [Source 3](https://www.w3.org/TR/1999/REC-html401-19991224/struct/dirlang.html#adef-lang)
+> "Both assistive technologies and conventional user agents can render text more accurately when the language of the Web page is identified. Screen readers can load the correct pronunciation rules. Visual browsers can display characters and scripts correctly. Media players can show captions correctly. **As a result, users with disabilities will be better able to understand the content.**"
+>
+> **Source: [WCAG Success Criterion 3.1.1: Intent](https://www.w3.org/WAI/WCAG21/Understanding/language-of-page.html#intent)**
+
+When the language of the page cannot be identified, the integrity of the above information cannot be guaranteed. In this context, it is the users of screen readers, braille translation software, and similar assitive technologies for whom valid page language specifications provide the greatest improvements to user experience and technical operation. It is, however, extremely important to note that that although digital accessibility concerns are the primary motivators for developing formalized page language specifications, achieving WCAG SC-3.1.1 should certainly be considered a global application improvement. The following list contains application use cases that all benefit from having a valid page language specified, but are not strictly tied to digital accessibility requirements or assistive technology:
+
+- Captions with synchronized media (such as video subtitles)
+- Correct dictionary lookups for translations
+- Assisting search engines
+- Improving typography in certain situations
+
+Accordingly, while the primary motivation of this RFC is to address an unresolved digital accessibility issue in Ember, it is expected that a successful implementation of the proposed `--lang` flag solution will provide additional, non-accessibility-related improvements to the baseline quality of new Ember applications.
 
 ## Detailed design
 
