@@ -26,6 +26,8 @@ There are three main ways to solve this, as of now:
 
 This is not really recommended anymore. There is no module export for this (you need to use the `ember` import for it).
 
+It cannot be used in module scope at all (see [no-ember-testing-in-module-scope eslint-plugin-ember rule](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-ember-testing-in-module-scope.md)).
+
 2. `import config from 'my-app/config/environment` && `config.environment === 'test'`
 
 This only works inside of an app. Addons cannot use this approach, as they don't know the application name.
@@ -66,6 +68,8 @@ Finally, we should deprecate these older functions/modules:
 - `Ember.testing`
 - `runInDebug` from `@ember/debug`
 
+We will deprecate them immediately, as the implementation of TESTING will work retroactively - anyone that can use ember-cli-babel@7 would be able to use it, regardless of ember-source version.
+
 ## How we teach this
 
 In addition to adding this to the Ember API docs, a sub page should be added to the Ember.js Guides. This could either live under "Application concerns" or under "Configuration > Configuring your app".
@@ -84,4 +88,4 @@ We can also encourage users to use `import config from 'my-app/config/environmen
 
 ## Unresolved questions
 
-Should we deprecate the older functionality immediately or leave a grace period?
+-
