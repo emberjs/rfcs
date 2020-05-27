@@ -7,7 +7,7 @@
 
 ## Summary
 
-Introduce `--lang` flag as an option for `ember new` within Ember-CLI. This will set the `lang` attribute on the html element. A `lang` attribute defines the language of an element or a document.
+This RFC introduces the `--lang` flag as an option for `ember new` and `ember init` commands within the Ember CLI. The feature targets the ember-cli build process -- specifically, when generating the file for the application's entry point at `app/index.html`. If the flag is used with a valid language code, it will assign the `lang` attribute in the file's root `<html>` element to that code. The `lang` attribute is [formally defined within the current HTML5 specification](https://html.spec.whatwg.org/#the-lang-and-xml:lang-attributes); it is used to specify the base human language of an element or a document in a way that can be programmatically understood by assistive technology.
 
 ## Motivation
 
@@ -103,3 +103,9 @@ Trying to set the app programming language to typescript? The `--lang flag sets 
   - See above under the Alternatives heading for arguments for "yes".
 * Should the attribute be `--language` instead of `--lang`?
   - We're going with "no" here in the RFC prose. Using `lang` more closely connects this flag with the HTML attribute `lang` and distances itself from the potential drawback, mentioned above, of a user thinking this specifies a programming language.
+
+## References
+
+- [Understanding Success Criterion 3.1.1: Language of Page](https://www.w3.org/WAI/WCAG21/Understanding/language-of-page.html)
+- [Technique H57: Using the language attribute on the HTML element](https://www.w3.org/WAI/WCAG21/Techniques/html/H57)
+- [HTML5 Specification: `lang` attribute](https://html.spec.whatwg.org/#the-lang-and-xml:lang-attributes)
