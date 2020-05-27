@@ -87,7 +87,7 @@ export default Component.extend({
         this.actionName();
     },
 
-    action(function actionName() {
+    actionName: action(function() {
         // do something
     })
 });
@@ -106,7 +106,7 @@ export class extends Component {
     }
 
     @action
-    function actionName() {
+    actionName() {
         // do something
     }
 }
