@@ -13,7 +13,7 @@ This RFC introduces the `--lang` flag as an option for `ember new` and `ember in
 
 The overall motivation for this RFC is the viewpoint that brand-new Ember apps should not immediately fail legal conformance requirements as they pertain to digital accessibility.
 
-The solution presented in this RFC offers the first stage of a resolution to one of the issues documented in the framework's [long-standing list of Technical Accessibility Issues for New Ember Apps](https://github.com/emberjs/rfcs/issues/595) -- specifically, *“Missing default language declaration”* (Section #4).
+The solution presented in this RFC offers the first stage of a resolution to one of the issues documented in the framework's [list of long-standing Technical Accessibility Issues for New Ember Apps](https://github.com/emberjs/rfcs/issues/595) -- specifically, *“Missing default language declaration”* (Section #4).
 
 This RFC and its proposed approach have both been developed within the Ember.js Accessibility Strike Team with the explicit objective of helping to ensure that Ember applications achieve [WCAG Success Criterion 3.1.1: Language of Page](https://www.w3.org/WAI/WCAG21/Understanding/language-of-page.html) from the moment they are created. The state of the `lang` attribute has a usability impact on the experience of users that require screen-reading assistive technology. When the attribute is properly assigned:
 
