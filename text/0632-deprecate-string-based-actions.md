@@ -7,7 +7,7 @@
 
 ## Motivation
 
-> In Ember 1.13 we introduced [closure actions](https://github.com/emberjs/rfcs/blob/00ac2685c86f27d41547012903f485a4ef338d27/active/0000-improved-actions.md), which have been recommended over string based actions. This officially deprecates string based actions in favor of closure actions,
+In Ember 1.13 we introduced [closure actions](https://github.com/emberjs/rfcs/blob/00ac2685c86f27d41547012903f485a4ef338d27/active/0000-improved-actions.md), which have been recommended over string based actions. This officially deprecates string based actions in favor of closure actions,
 which provide many benefits such as
 
 1. simpler passing through components
@@ -118,20 +118,20 @@ export class extends Component {
 
 ## How We Teach This
 
-> We already teach closure actions exclusively in the guides. Other than a new
+We already teach closure actions exclusively in the guides. Other than a new
 deprecation guide, no additional material should be necessary.
 
 ## Drawbacks
 
-> Some older applications have thousands of string based actions throughout their codebases.
+Some older applications have thousands of string based actions throughout their codebases.
 We should consider writing a codemod to ease the transition.
 
 ## Alternatives
 
-> Closure actions are now the standard in Ember, so other alternatives have not been
+Closure actions are now the standard in Ember, so other alternatives have not been
 seriously considered.
 
 ## Unresolved questions
 
-> Can we also deprecate the use of the `actions` hash? Can we also deprecate using `this.actions`?
+Can we also deprecate the use of the `actions` hash? Can we also deprecate using `this.actions`?
 Can the `target` property of `@ember/controller` and `@ember/component` be deprecated?
