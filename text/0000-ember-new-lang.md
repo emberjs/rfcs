@@ -49,7 +49,7 @@ Language Defined:
 We then changed the lang attribute value and listened to these buttons in Chinese(zh), Spanish(es) and Russian(ru). Here's what happened:
 
 - in each case, the announcer's voice changed for the content 
-- since the OS wass set to English, the supporting element information that the assistive tech (AT) announces was in the OS language (English)
+- since the OS was set to English, the supporting element information that the assistive tech (AT) announces was in the OS language (English)
 - when set to Chinese, the AT read the English, Chinese and Spanish well enough to understand, but did not read out the Russian; likewise, Russian behaved similarly (read all of them except the Chinese)
 
 We then tested what happens if the `lang` attribute was explicitly defined on each of the buttons with the app language set to English:
