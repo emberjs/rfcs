@@ -13,7 +13,8 @@
 
 > We want to be able to call refresh on all currently active routes from a centralized service
 or from a component. As a side benefit, we will be able to do this without relying on the send api,
-which we would like to deprecate. This enables us to get the latest data from the model hook.
+which is being discussed as a possible deprecation in RFC 632.
+This enables us to get the latest data from the model hook.
 
 ## Detailed design
 
