@@ -63,12 +63,58 @@ It is false in all other cases, like these:
 
 In addition, the `@glimmer/env` module should be added to the [Ember API docs](https://api.emberjs.com/), like `@glimmer/tracking`.
 
-Finally, we should deprecate these older functions/modules:
+### Added deprecations
+
+We deprecate this older functionality:
 
 - `Ember.testing`
 - `runInDebug` from `@ember/debug`
 
 We will deprecate them immediately, as the implementation of TESTING will work retroactively - anyone that can use ember-cli-babel@7 would be able to use it, regardless of ember-source version.
+
+#### Transition path
+
+`Ember.testing` can be replaced by `TESTING`. For example:
+
+```js
+// Before
+import Ember from "ember";
+
+function doSomething() {
+  let time = Ember.testing ? 1 : 5000;
+}
+
+// After
+import { TESTING } from "@glimmer/env";
+
+function doSomething() {
+  let time = TESTING ? 1 : 5000;
+}
+```
+
+`runInDebug()` can be replaced by `DEBUG` like this:
+
+```js
+// Before
+import { runInDebug } from "@ember/debug";
+import { myFunction } from "my-function";
+
+function doSomething() {
+  runInDebug(myFunction);
+}
+
+// After
+import { DEBUG } from "@glimmer/env";
+import { myFunction } from "my-function";
+
+function doSomething() {
+  if (DEBUG) {
+    myFunction();
+  }
+}
+```
+
+This has the added benefit that it will also actually strip the code from production builds (which doesn't happen with`runInDebug()`).
 
 ## How we teach this
 
