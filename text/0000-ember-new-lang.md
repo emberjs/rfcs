@@ -153,7 +153,7 @@ An error will be thrown if the country and region codes are incorrect. Additiona
 ## Drawbacks
 
 * More flags means more combinations of ways to run `ember new` which can be hard to test for and is potentially unsustainable.
-* Users may be confused about whether or not they are supposed to specify a human language or a programming language (i.e. `--lang typescript`). However, we think we've mitigated this by using the HTML attribute as the l
+* Users may be confused about whether or not they are supposed to specify a human language or a programming language (i.e. `--lang typescript`). However, we think we've mitigated this by using the HTML attribute as the flag name, and having helpful error messages that guide developers in the right direction.
 
 ## Alternatives
 These are the alternative approaches that we are aware of; if more become apparent in discussion, this RFC will be updated to include them. 
