@@ -104,7 +104,20 @@ ember new <app-name> <options...>
     alias: -l <value>
 ```
 
-### Invalid Language Codes
+### Misusage and Error Handling
+
+
+Broadly, incorrect usage of the `--lang` flag covers three use-case categories:
+
+- The flag has been specified with a programming language as the argument
+- The flag has been specified with no argument
+- The flag has been specified with an invalid language code
+
+This RFC proposes that these cases cause the build process to halt with a revelant error and help message as opposed to simply reverting to the default value and reporting a message. **The rationale for the recommendation to halt instead of just report is that in these all of these cases, the user has explicitly typed `--lang` into their CLI tool. This is an unambiguous declaration of intent by the user to use the `--lang` flag correctly.**
+
+
+
+#### Invalid Language Codes
 
 Language codes are verified against [is-language-code](https://www.npmjs.com/package/is-language-code). (see [examples of valid ISO country codes](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes))
 
@@ -115,16 +128,58 @@ ember new my-app --lang en-UK
 Unrecognized language subtag, "uk".
 ```
 
-Additionally, if the `--lang` flag is used but no argument is defined, e.g., `ember new my-app --lang`, the build will also be halted. An error message and usage info should be shown in these cases. 
+#### No argument passed
+Additionally, if the `--lang` flag is used but no argument is defined, e.g., `ember new my-app --lang`, the build will also be halted. An error message and usage info should be shown in these cases:
 
-#### Common Misunderstandings
+```bash
+# Detect trailing option (declared)
+ember new my-app --lang --skip-git
+
+An error with the `--lang` flag returned the following message:
+  Detected lang specification starting with command flag `-`.
+  Is `--skip-git` meant to be an ember-cli command option?
+  This issue is likely caused by using the `--lang` flag without a specification.
+Information about using the `--lang` flag:
+  The `--lang` flag sets the base human language of the app in index.html
+  If used, the lang option must specfify a valid language code.
+  For default behavior, remove the flag.
+  See `ember <command> help` for more information.
+```
+
+```bash
+# Detect trailing option (undeclared)
+ember new my-app --lang
+
+An error with the `--lang` flag returned the following message:
+  Detected lang specification starting with command flag `-`.
+  Is `--disable-analytics` meant to be an ember-cli command option?
+  This issue is likely caused by using the `--lang` flag without a specification.
+Information about using the `--lang` flag:
+  The `--lang` flag sets the base human language of the app in index.html
+  If used, the lang option must specfify a valid language code.
+  For default behavior, remove the flag.
+  See `ember <command> help` for more information.
+```
+
+#### Common Misunderstandings: Programming Languages
 
 A developer may encounter the flag and make incorrect assumptions about what it can mean. Such as, `-l typescript` or `-l glimmer`. Such incorrect assumptions will be manually caught by the implementation and the developer will be shown a friendly error message such as the following:
 
+
 ```bash
-ember new my-app --lang typescript
-Trying to set the app programming language to typescript? The `--lang flag sets the base human language of the app in index.html
+ember new my-app --lang=typescript
+
+An error with the `--lang` flag returned the following message:
+  Trying to set the app programming language to `typescript?`
+  This is not the intended usage of the `--lang` flag.
+Information about using the `--lang` flag:
+  The `--lang` flag sets the base human language of the app in index.html
+  If used, the lang option must specfify a valid language code.
+  For default behavior, remove the flag.
+  See `ember <command> help` for more information.
 ```
+
+
 
 ## How we teach this
 
