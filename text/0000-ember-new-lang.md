@@ -188,7 +188,7 @@ Information about using the `--lang` flag:
 3. Update the Ember CLI `--help` command so it explains what kind of value is expected to be passed to the `--lang` flag.
 4. Update the Super Rental tutorial to include updated information.
 
-For the Ember CLI Guides:
+### For the Ember CLI Guides:
 
 The `--lang` flag can be used to set the spoken language of the app or addon.
 
@@ -206,6 +206,9 @@ ember new my-app --lang en-US
 
 An error will be thrown if the country and region codes are incorrect. Additionally, helpful error text has been added in cases where the developer misunderstands the `--lang` flag and thinks that it is the programming language rather than the HTML attribute.
 
+### As this relates to ember-intl
+
+The popular [localization library ember-cli](https://github.com/ember-intl/ember-intl) does not conflict with the addition of this new Ember CLI flag. The addition of this flag offers some out of the box support where it was previously missing for new Ember apps. It is still recommended that globalized apps leverage `ember-intl`.
 
 ## Drawbacks
 
@@ -215,7 +218,7 @@ An error will be thrown if the country and region codes are incorrect. Additiona
 ## Alternatives
 These are the alternative approaches that we are aware of; if more become apparent in discussion, this RFC will be updated to include them. 
 
-- Set the default html lang attribute to `en-US` (the language of the Ember.js project) and assume users will either change the `lang` value themselves, or use `ember-intl` for apps that require globalization.
+- Set the default html lang attribute to `en-US` (the language of the Ember.js project) and assume users will either change the `lang` value themselves, or rely exclusively on `ember-intl` (and not just for apps that require full globalization).
   - [Valuable discussion points in this issue](https://github.com/emberjs/rfcs/issues/595)
   > The data we already have suggests that most Ember applications are:... in English... use internationalization if other languages are required
   - We have existing art in other frameworks (Vue sets `lang="en"` by default)
