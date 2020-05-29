@@ -208,7 +208,7 @@ An error will be thrown if the country and region codes are incorrect. Additiona
 
 ### As this relates to ember-intl
 
-The popular [localization library ember-cli](https://github.com/ember-intl/ember-intl) does not conflict with the addition of this new Ember CLI flag. The addition of this flag offers some out of the box support where it was previously missing for new Ember apps. It is still recommended that globalized apps leverage `ember-intl`.
+The popular [localization library ember-intl](https://github.com/ember-intl/ember-intl) does not conflict with the addition of this new Ember CLI flag. The addition of this flag offers some out of the box support where it was previously missing for new Ember apps. It is still recommended that globalized apps leverage `ember-intl`.
 
 ## Drawbacks
 
