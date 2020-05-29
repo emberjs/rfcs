@@ -25,12 +25,13 @@ This RFC and its proposed approach have both been developed within the Ember.js 
 When the language of the page cannot be identified, the integrity of the above information cannot be guaranteed. 
 Consider the following use case:
 
-the application developer is unaware that Ember now includes the lang attribute
-the application does not require internationalization
-the application's content is in a language that is not English
-an end-user with a screen reader turned on, whose operating system (OS) is set to a different language, navigates to that page with their screen reader turned on
-The screen reader would attempt to read the page in the language that is defined by the lang attribute on the page, but the supporting element information ("button", "link", etc) is read out in the language that is set by the operating system.
+- the application developer is unaware that Ember now includes the lang attribute
+- the application does not require internationalization
+- the application's content is in a language that is not English
+- an end-user with a screen reader turned on, whose operating system (OS) is set to a different language, navigates to that page with their screen reader turned on
+- the screen reader would attempt to read the page in the language that is defined by the lang attribute on the page, but the supporting element information ("button", "link", etc) is read out in the language that is set by the operating system.
 
+### Testing it out
 To see what happens when this information does not match, we created a new Ember application and created four buttons:
 
 ```html
@@ -40,11 +41,15 @@ To see what happens when this information does not match, we created a new Ember
 <button type="button">Нажми на меня</button>
 ```
 
-No Language Defined:
+#### No Language Defined
 
-If no lang attribute is set for the page or the parts, the screen reader defaults to the operating system (OS) language. It reads Spanish in an English accent, and the button element was also still read in English. For the Chinese and Russian letters, it spelled out the letters (i.e., "Cyrillic Letter E")
+If no lang attribute is set for the page or the parts:
 
-Language Defined:
+- the screen reader defaults to the operating system (OS) language
+- it reads Spanish in an English accent, and the button element was also still read in English 
+- for the Chinese and Russian letters, it spelled out the letters (i.e., "Cyrillic Letter E")
+
+#### Language Defined
 
 We then changed the lang attribute value and listened to these buttons in Chinese(zh), Spanish(es) and Russian(ru). Here's what happened:
 
