@@ -115,6 +115,8 @@ ember new my-app --lang en-UK
 Unrecognized language subtag, "uk".
 ```
 
+Additionally, if the `--lang` flag is used but no argument is defined, e.g., `ember new my-app --lang`, the build will also be halted. An error message and usage info should be shown in these cases. 
+
 #### Common Misunderstandings
 
 A developer may encounter the flag and make incorrect assumptions about what it can mean. Such as, `-l typescript` or `-l glimmer`. Such incorrect assumptions will be manually caught by the implementation and the developer will be shown a friendly error message such as the following:
