@@ -101,7 +101,7 @@ export default Component.extend({
 so that it can eventually become, once refactored to native classes:
 
 ```js
-export class extends Component {
+export default class extends Component {
     someMethod() {
         this.actionName();
     }
@@ -164,7 +164,7 @@ In native class syntax, this looks like:
 
 ```js
 // app/controllers/some-route.js
-export class SomeRouteController extends Controller {
+export default class SomeRouteController extends Controller {
     @service router;
 
     someMethod() {
@@ -176,6 +176,44 @@ export class SomeRouteController extends Controller {
         this.router.transitionTo('some.other.route');
     }
 }
+```
+
+If you are using `ember-route-action-helper`, you can instead
+move your action from the route to the controller.
+
+From:
+
+```js
+// app/routes/some-route.js
+export default Route.extend({
+    actions: {
+        someRouteAction() {
+            // do something
+        }
+    }
+}
+```
+
+```hbs
+<!-- app/templates/some-route.hbs -->
+<SomeComponent myAction={{route-action 'someRouteAction'}} />
+```
+
+To:
+
+```js
+// app/routes/some-controller.js
+export default class SomeController extends Controller {
+    @action
+    someAction() {
+        // so something
+    }
+}
+```
+
+```hbs
+<!-- app/templates/some-route.hbs -->
+<SomeComponent myAction={{someAction}} />
 ```
 
 ## How We Teach This
