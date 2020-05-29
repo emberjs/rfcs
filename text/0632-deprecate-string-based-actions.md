@@ -79,6 +79,7 @@ export default Component.extend({
 <button {{action this.actionName}}>Action Label</button>
 ```
 
+Because the action modifier might be deprecated in the future,
 it is recommended that the code is refactored instead to:
 
 ```js
@@ -97,7 +98,7 @@ export default Component.extend({
 <button {{on "click" this.actionName}}>Action Label</button>
 ```
 
-so that it can eventually become:
+so that it can eventually become, once refactored to native classes:
 
 ```js
 export class extends Component {
@@ -114,6 +115,67 @@ export class extends Component {
 
 ```hbs
 <button {{on "click" this.actionName}}>Action Label</button>
+```
+
+For the send api, it is now generally possible to avoid string based actions in the actions
+hash of any route, because the router service has all the methods that were once only
+available in routes. If there are any route actions, it is recommended to move them to a
+component, service, or a controller.
+
+For example, if you currently have a route action accessed by the `send` api like this:
+
+```js
+// app/routes/some-route.js
+
+actions: {
+    myAction() {
+        this.transitionTo('some.other.route');
+    }
+}
+```
+
+and are calling it from using `send` in your controller like this:
+
+```js
+// app/controllers/some-route.js
+someMethod() {
+    this.send('myAction');
+}
+```
+
+You can move the action from the route to the controller:
+
+```js
+// app/controllers/some-route.js
+export default Controller.extend({
+    router: service(),
+
+    someMethod() {
+        this.myAction();
+    }
+
+    myAction: action(function() {
+        this.router.transitionTo('some.other.route');
+    })
+});
+```
+
+In native class syntax, this looks like:
+
+```js
+// app/controllers/some-route.js
+export class SomeRouteController extends Controller {
+    @service router;
+
+    someMethod() {
+        this.myAction();
+    }
+
+    @action
+    myAction() {
+        this.router.transitionTo('some.other.route');
+    }
+}
 ```
 
 ## How We Teach This
