@@ -179,14 +179,13 @@ Information about using the `--lang` flag:
   See `ember <command> help` for more information.
 ```
 
-
-
 ## How we teach this
 
 1. Update the [Ember CLI API documentation](https://ember-cli.com/api/) to reflect the new flag.
 2. Update the [Ember.js CLI Guides](https://cli.emberjs.com/release/basic-use/cli-commands/) to reflect the new flag much like we demonstrate `--yarn` usage.
 3. Update the Ember CLI `--help` command so it explains what kind of value is expected to be passed to the `--lang` flag.
 4. Update the Super Rental tutorial to include updated information.
+5. Update the Guides - specifically the section that discusses the language attribute. 
 
 ### For the Ember CLI Guides:
 
@@ -205,6 +204,18 @@ ember new my-app --lang en-US
 ```
 
 An error will be thrown if the country and region codes are incorrect. Additionally, helpful error text has been added in cases where the developer misunderstands the `--lang` flag and thinks that it is the programming language rather than the HTML attribute.
+
+### For the Ember.js Guides
+
+Specifically, update to https://guides.emberjs.com/release/accessibility/application-considerations/#toc_language-attribute:
+
+Every application must have a primary language declaration. This language declaration is important for assistive technology like screen readers, internationalization tools built into browsers, and search engines.
+
+To indicate the primary language, use the `--lang` flag when generating a new Ember app. This is inherited by all other elements, and will set a default language for the text in the document head element. If app globalization is desired, then consider using the `ember-intl` addon.
+
+If there happens to be any content on the page that is in a different language from that declared in the <html> element, the `lang` attribute can be used on the parent element to indicate a different language.
+
+Note: While an app cannot have multiple language attribute values defined at the same time, the language of specific elements can be defined to be different than the language of an app. For example, a language (e.g., `lang="en"`) could be set on the page's HTML element and then a different language (e.g., `lang="es"`) could be set on a different element in the page content (if appropriate).
 
 ### As this relates to ember-intl
 
