@@ -16,48 +16,22 @@ import Component from '@glimmer/component';
 import Helper from '@ember/component/helper';
 import { invokeHelper } from '@ember/helper';
 
-class FetchTask {
-  @tracked isLoading = true;
-  @tracked isError = false;
-  @tracked result = null;
-
-  constructor(url) {
-    this.run(url);
-  }
-
-  async run(url) {
-    try {
-      let response = await fetch(url);
-      this.result = await response.json();
-    } catch {
-      this.isError = true;
-    } finally {
-      this.isLoading = false;
-    }
+class PlusOne extends Helper {
+  compute([num]) {
+    return number + 1;
   }
 }
 
-class RemoteData extends Helper {
-  compute([url]) {
-    return new FetchTask(url);
-  }
-}
-
-export default class DataLoader extends Component {
-  data = invokeHelper(this, RemoteData, () => {
-    positional: [this.args.url]
+export default class PlusOne extends Component {
+  plusOne = invokeHelper(this, RemoteData, () => {
+    return {
+      positional: [this.args.number],
+    };
   });
 }
 ```
 ```hbs
-<!-- app/components/data-loader.hbs -->
-{{#if this.data.value.isLoading}}
-  Loading...
-{{else if this.data.value.isError}}
-  Something went wrong!
-{{else}}
-  {{this.data.value.result}}
-{{/if}}
+{{this.plusOne.value}}
 ```
 
 ## Motivation
@@ -89,11 +63,13 @@ as such, they have a _lifecycle_. Unlike a function, a component can _update_
 over time, and will be _destroyed_ at some unknown point in the future.
 
 Components previously exposed this lifecycle directly via a number of
-lifeycle hooks, but there were many issues with these hooks. These stemmed from
-the fact that components were the smallest _atom_ for reactive composition. In
-the world of functions, a piece of code can always be broken out into a new
-function, giving the user the ability to extract repeated functionality,
-abstracting common patterns and concepts and reducing brittleness.
+lifeycle hooks, making components the smallest _atom_ for reactive composition.
+This presented an issue for composability in general. In the world of functions,
+a piece of code can always be broken out into a new function, giving the user
+the ability to extract repeated functionality, abstracting common patterns and
+concepts and reducing brittleness. For instance, in the following example we
+extract several portions of the `myProgram` function to make it clearer what
+each section is doing, and isolate its behavior.
 
 ```js
 // before
@@ -142,50 +118,223 @@ function myProgram(data = []) {
 }
 ```
 
-In the reactive model of components, there often is not a way to do this
+Since components are the smallest reactive atom, there often is not a way to do this
 transparently, since the only portions of the code that are reactive are the
 component hooks themselves. This results in related code being spread across
 multiple locations, with the user being forced to keep the relationships between
 these bits of code in their head at all times, and understand the interactions
 between them.
 
+Consider this search component, which updates performs a cancellable fetch
+request and updates the document title whenever the search query is updated:
+
 ```js
 import Component from '@ember/component';
-import { fetchData } from 'data-fetch-library';
+import { fetch, cancelFetch } from 'fetch-with-cancel';
 
 export default class Search extends Component {
   // Args
-  text = '';
-  pollPeriod = 1000;
+  query = '';
+
+  @tracked data;
 
   didReceiveAttrs() {
-    if (this._previousText !== this.text) {
-      this._previousText = this.text;
-      this.data = fetchData(`www.example.com/search?query=${this.text}`);
-    }
+    // Update the document title
+    document.title = `Search Result for "${this.query}"`;
 
-    if (this._pollPeriod !== this.pollPeriod) {
-      this._pollPeriod = this.pollPeriod;
+    // Cancel the previous fetch if it's still running
+    cancelFetch(this.promise);
 
-      cancelInterval(this._intervalId);
-      this._intervalId = setInterval(() => {
-        this.data = fetchData(`www.example.com/search?query=${this.text}`);
-      }, pollPeriod);
-    }
+    // create a new fetch request, and set the data property to the response
+    this.promise = fetch(`www.example.com/search?query=${this.query}`)
+      .then((response) => response.json());
+      .then((data) => this.data = data);
   }
 
   willDestroy() {
-    cancelInterval(this._intervalId);
+    cancelFetch(this.promise);
   }
 }
 ```
 
-There are a few other constructs in templates that have the same reactive
-lifecycle as components - helpers and modifiers. And helpers in particular are
-very useful, because they can receive arguments like components, but they can
-return _any_ value, not just HTML. The only issue is that they can _only_ be
-used in templates, which limits the places where they can be used to extract
-common functionality
+This component mixes two separate concerns in its lifecycle hooks - fetching the
+data, and updating the document title. We can extract these into utility
+functions in some isolated cases, but it becomes difficult when functionality
+covers multiple parts of the lifecycle, like with the fetch logic here:
+
+```js
+import Component from '@ember/component';
+import { fetch, cancelFetch } from 'fetch-with-cancel';
+
+function updateDocumentTitle(title) {
+  document.title = title;
+}
+
+function updateFetch(url, previousPromise) {
+  // Cancel the previous fetch if it's still running
+  cancelFetch(previousPromise);
+
+  // create a new fetch request, and set the data property to the response
+  return fetch(url)
+    .then((response) => response.json());
+    .then((data) => this.data = data);
+}
+
+function teardownFetch(promise) {
+  cancelFetch(promise);
+}
+
+export default class Search extends Component {
+  // Args
+  query = '';
+
+  @tracked data;
+
+  didReceiveAttrs() {
+    updateDocumentTitle(`Search Result for "${this.query}"`)
+
+    this.promise = updateFetch(`www.example.com/search?query=${this.query}`, this.promise);
+  }
+
+  willDestroy() {
+    teardownFetch(this.promise);
+  }
+}
+```
+
+We can see here that we needed to add two separate helper functions to extract
+the data fetching functionality, one to handle updating the fetch, and one to
+handle tearing it down, because those different pieces of code need to run at
+different portions of the component lifecycle. If we want to reuse these
+functions elsewhere, this adds a lot of boilerplate to integrate the functions
+in each lifecycle hook.
+
+There are a few alternatives that would allow us to extract this functionality
+together.
+
+1. We could use mixins, since they allow us to specify multiple functions and
+   mix them into a class. Mixins however introduce a lot of complexity in the
+   inheritance hierarchy and are considered an antipattern, so this is not a
+   good choice overall.
+
+2. We could extract the functionality out to separate components. Components
+   have a contained lifecycle, so they can manage any piece of functionality
+   completely in isolation. This works nicely for the document title, but adds
+   a lot of complexity for the data fetching, since we need to yield the data
+   back out via the template:
+
+    ```js
+    // app/components/doc-title.js
+    import Component from '@ember/component';
+
+    export default class DocTitle extends Component {
+      didReceiveAttrs() {
+        document.title = this.title;
+      }
+    }
+    ```
+    ```js
+    // app/components/fetch-data.js
+    import Component from '@ember/component';
+    import { fetch, cancelFetch } from 'fetch-with-cancel';
+
+    export default class FetchData extends Component {
+      @tracked data;
+
+      didReceiveAttrs() {
+        // Cancel the previous fetch if it's still running
+        cancelFetch(this.promise);
+
+        // create a new fetch request, and set the data property to the response
+        this.promise = fetch(this.url)
+          .then((response) => response.json());
+          .then((data) => this.data = data);
+      }
+
+      willDestroy() {
+        cancelFetch(this.promise);
+      }
+    }
+    ```
+    ```hbs
+    <!-- app/components/fetch-data.hbs -->
+    {{yield this.data}}
+    ```
+    ```hbs
+    <!-- app/components/search.hbs -->
+    <DocTitle @title='Search Result for "{{@query}}"'/>
+
+    <FetchData @url="www.example.com/search?query={{@query}}" as |data|>
+      ...
+    </FetchData>
+    ```
+
+   This structure is also not ideal because the components aren't being used for
+   templating, they're just being used for logic effectively. So, there's no
+   reason to add the overhead of a component here.
+
+3. We could use other template constructs, such as helpers or modifiers. Both
+   helpers and modifiers have lifecycles, like components, and can be used to
+   contain functionality. Modifiers aren't really a good choice here though,
+   because it would require us to add an element that we don't need. So, helpers
+   are the better option.
+
+   Helpers work, but like components they require us to move some of our logic
+   into the template, even if that isn't really necessary:
+
+    ```js
+    // app/helpers/doc-title.js
+    import { helper } from '@ember/component/helper';
+
+    export default helper(([title]) => {
+      document.title = title;
+    });
+    ```
+    ```js
+    // app/helpers/fetch-data.js
+    import Helper from '@ember/component/helper';
+    import { fetch, cancelFetch } from 'fetch-with-cancel';
+
+    export default class FetchData extends Helper {
+      @tracked data;
+
+      compute([url]) {
+        if (this._url !== url) {
+          this.url = url;
+
+          // Cancel the previous fetch if it's still running
+          cancelFetch(this.promise);
+
+          // create a new fetch request, and set the data property to the response
+          this.promise = fetch(url)
+            .then((response) => response.json());
+            .then((data) => this.data = data);
+        }
+
+        return this.data;
+      }
+
+      willDestroy() {
+        cancelFetch(this.promise);
+      }
+    }
+    ```
+    ```hbs
+    <!-- app/components/search.hbs -->
+    {{doc-title 'Search Result for "{{@query}}"'}}
+
+    {{#let (fetch-data "www.example.com/search?query={{@query}}") as |data|}}
+      ...
+    {{/let}}
+    ```
+
+Out of these options, helpers are the closest to what we want - they are low
+overhead, they produce computed values directly without a template, and
+with the recent addition of effect helpers they can be used side-effect to
+accomplish tasks like setting the document title. The only downside is that they
+can only be invoked in templates, so they require you to design your components
+around using them in templates only. This can be difficult to do in many cases,
+where the data wants to be accessed to create derived state for instance.
 
 This RFC proposes adding a way to create helpers within JavaScript directly,
 extending the reactive model in a way that allows users to extract common
@@ -197,69 +346,24 @@ in templates, and they can produce any type of value, making them much more
 flexible.
 
 ```js
-import Component from '@glimmer/component';
-import { remoteData } from '../helpers/fetch';
-import { poll } from '../helpers/remoteData';
-import Helper from '@ember/component/helper';
-
-class FetchTask {
-  @tracked isLoading = true;
-  @tracked isError = false;
-  @tracked result = null;
-
-  constructor(url) {
-    this.url = url;
-    this.run();
-  }
-
-  async run() {
-    try {
-      let response = await fetch(this.url);
-      this.result = await response.json();
-    } catch {
-      this.isError = true;
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
-  refresh() {
-    this.run();
-  }
-}
-
-class RemoteData extends Helper {
-  compute([url]) {
-    return new FetchTask(url);
-  }
-}
-
-
-class Poll extends Helper {
-  intervalId = null;
-
-  compute([callback, pollPeriod]) {
-    cancelInterval(this.intervalId);
-
-    this.intervalId = setInterval(callback, pollPeriod);
-  }
-
-  willDestroy() {
-    cancelInterval(this.intervalId);
-  }
-}
+// app/components/search.js
+import Component from '@ember/component';
 
 export default class Search extends Component {
-  data = invokeHelper(this, RemoteData, () => ({
-    positional: [`www.example.com/search?query=${this.text}`]
-  }));
+  data = invokeHelper(this, FetchData, () => {
+    return {
+      positional: [`www.example.com/search?query=${this.query}`],
+    };
+  });
 
   constructor() {
     super(...arguments);
 
-    invokeHelper(this, Poll, () => ({
-      positional: [() => this.data.value.refresh(), this.pollPeriod]
-    }));
+    invokeHelper(this, DocTitle, () => {
+      return {
+        positional: [`Search Result for "${this.query}"`],
+      };
+    });
   }
 }
 ```
@@ -272,12 +376,12 @@ the future, convenience APIs can be added to make invoking them easier to read:
 
 ```js
 export default class Search extends Component {
-  @use data = remoteData(() => `www.example.com/search?query=${this.text}`);
+  @use data = fetchData(() => `www.example.com/search?query=${this.query}`);
 
   constructor() {
     super(...arguments);
 
-    use(this, poll(() => [() => this.data.refresh(), this.pollPeriod]));
+    use(this, docTitle(() => `Search Result for "${this.query}"`));
   }
 }
 ```
@@ -305,7 +409,7 @@ interface Helper {
 }
 
 function invokeHelper(
-  context: object,
+  parentDestroyable: object,
   definition: HelperDefinition,
   argsGetter?: (context: object) => TemplateArgs
 ): Helper;
@@ -313,12 +417,13 @@ function invokeHelper(
 
 Let's step through the arguments to the function one by one:
 
-#### `context`
+#### `parentDestroyable`
 
-This is the parent context for the helper definition. The helper will be
-associated as a destroyable to this parent context, using the destroyables API,
-so that its lifecycle is tied to the parent. The only requirement of the parent
-is that is an object of some kind that can be destroyed.
+This is the parent for the helper definition. The helper will be associated as a
+destroyable to this parent context, using the destroyables API, so that its
+lifecycle is tied to the parent. The only requirement of the parent is that is
+an object of some kind that can be destroyed. If the parent has an owner, this
+owner will also be passed to the helper manager that it is invoked on.
 
 This allows helper's lifecycles to be entangled correctly with the parent, and
 encourages users to ensure they've properly handled the lifecycle of their
@@ -398,47 +503,27 @@ The `invokeHelper` function can be used to create a helper instance in
 JavaScript.
 
 ```js
+// app/components/data-loader.js
 import Component from '@glimmer/component';
 import Helper from '@ember/component/helper';
 import { invokeHelper } from '@ember/helper';
 
-class FetchTask {
-  @tracked isLoading = true;
-  @tracked isError = false;
-  @tracked result = null;
-
-  constructor(url) {
-    this.url = url;
-    this.run();
-  }
-
-  async run() {
-    try {
-      let response = await fetch(this.url);
-      this.result = await response.json();
-    } catch {
-      this.isError = true;
-    } finally {
-      this.isLoading = false;
-    }
+class PlusOne extends Helper {
+  compute([num]) {
+    return number + 1;
   }
 }
 
-class RemoteData extends Helper {
-  compute([url]) {
-    return new FetchTask(url);
-  }
+export default class PlusOne extends Component {
+  plusOne = invokeHelper(this, RemoteData, () => {
+    return {
+      positional: [this.args.number],
+    };
+  });
 }
-
-export default class Example extends Component {
-  data = invokeHelper(this, RemoteData, () => ({
-    positional: [`www.example.com/search?query=${this.text}`]
-  }));
-
-  get result() {
-    return this.data.value.result;
-  }
-}
+```
+```hbs
+{{this.plusOne.value}}
 ```
 
 It receives three arguments:
