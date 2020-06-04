@@ -170,14 +170,14 @@ function updateDocumentTitle(title) {
   document.title = title;
 }
 
-function updateFetch(url, previousPromise) {
+function updateFetch(url, callback, previousPromise) {
   // Cancel the previous fetch if it's still running
   cancelFetch(previousPromise);
 
   // create a new fetch request, and set the data property to the response
   return fetch(url)
     .then((response) => response.json());
-    .then((data) => this.data = data);
+    .then((data) => callback(data));
 }
 
 function teardownFetch(promise) {
@@ -193,7 +193,11 @@ export default class Search extends Component {
   didReceiveAttrs() {
     updateDocumentTitle(`Search Result for "${this.query}"`)
 
-    this.promise = updateFetch(`www.example.com/search?query=${this.query}`, this.promise);
+    this.promise = updateFetch(
+      `www.example.com/search?query=${this.query}`,
+      (data) => this.data = data,
+      this.promise
+    );
   }
 
   willDestroy() {
@@ -270,8 +274,7 @@ together.
     ```
 
    This structure is also not ideal because the components aren't being used for
-   templating, they're just being used for logic effectively. So, there's no
-   reason to add the overhead of a component here.
+   templating, they're just being used for logic effectively.
 
 3. We could use other template constructs, such as helpers or modifiers. Both
    helpers and modifiers have lifecycles, like components, and can be used to
