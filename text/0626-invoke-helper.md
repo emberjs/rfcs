@@ -331,13 +331,13 @@ together.
     {{/let}}
     ```
 
-Out of these options, helpers are the closest to what we want - they are low
-overhead, they produce computed values directly without a template, and
-with the recent addition of effect helpers they can be used side-effect to
-accomplish tasks like setting the document title. The only downside is that they
-can only be invoked in templates, so they require you to design your components
-around using them in templates only. This can be difficult to do in many cases,
-where the data wants to be accessed to create derived state for instance.
+Out of these options, helpers are the closest to what we want - they produce
+computed values directly without a template, and with the recent addition of
+effect helpers they can be used side-effect to accomplish tasks like setting the
+document title. The only downside is that they can only be invoked in templates,
+so they require you to design your components around using them in templates
+only. This can be difficult to do in many cases, where the data wants to be
+accessed to create derived state for instance.
 
 This RFC proposes adding a way to create helpers within JavaScript directly,
 extending the reactive model in a way that allows users to extract common
@@ -414,7 +414,7 @@ interface Helper {
 function invokeHelper(
   parentDestroyable: object,
   definition: HelperDefinition,
-  argsGetter?: (context: object) => TemplateArgs
+  computeArgs?: (context: object) => TemplateArgs
 ): Helper;
 ```
 
@@ -423,10 +423,10 @@ Let's step through the arguments to the function one by one:
 #### `parentDestroyable`
 
 This is the parent for the helper definition. The helper will be associated as a
-destroyable to this parent context, using the destroyables API, so that its
-lifecycle is tied to the parent. The only requirement of the parent is that is
-an object of some kind that can be destroyed. If the parent has an owner, this
-owner will also be passed to the helper manager that it is invoked on.
+destroyable to this parent context, using the [destroyables API](https://github.com/emberjs/rfcs/blob/master/text/0580-destroyables.md),
+so that its lifecycle is tied to the parent. The only requirement of the parent
+is that it is an object of some kind that can be destroyed. If the parent has an
+owner, this owner will also be passed to the helper manager that it is invoked on.
 
 This allows helper's lifecycles to be entangled correctly with the parent, and
 encourages users to ensure they've properly handled the lifecycle of their
@@ -436,9 +436,9 @@ helper.
 
 This is the helper definition. It can be any object, with the only requirement
 being that a helper manager has been associated with it via the
-`setHelperManager` API.
+[`setHelperManager` API](https://github.com/emberjs/rfcs/blob/master/text/0625-helper-managers.md#detailed-design).
 
-#### `argsGetter`
+#### `computeArgs`
 
 This is an optional function that produces the arguments to the helper. The
 function receives the parent context as an argument, and must return an object
@@ -451,7 +451,7 @@ arguments object change, the helper will be updated, just like in templates.
 
 ### Return Value
 
-The function returns an instance of the helper. The public API of the instance
+The function returns a reference to the helper. The public API of the reference
 consists of a `value` property, which will internally be implemented as a getter
 that triggers the proper lifecycle hooks on the helper and returns its value, if
 it has a value. If it does not, then the helper will do nothing when `value` is
@@ -461,7 +461,7 @@ If the helper has a scheduled effect, there is no public API for users to access
 the effect or run it eagerly. It will run as scheduled, until the helper is
 destroyed.
 
-Using `destroy()` from the destroyables API on the helper instance will trigger
+Using `destroy()` from the destroyables API on the helper reference will trigger
 its destruction early. Users can do this to clean up a helper before the parent
 context is destroyed.
 
@@ -486,7 +486,7 @@ children. This mirrors the timing semantics of modifier hooks in templates.
 
 ### Ergonomics
 
-This is a low-level API for invoking helpers and creating instances. The API is
+This is a low-level API for invoking helpers and creating references. The API is
 meant to be functional, but not particularly readable or ergonomic. This API can
 be wrapped with higher level, more ergonomic APIs in the ecosystem, until we're
 sure what the final API should be.
@@ -497,6 +497,11 @@ This API is meant to be a low-level primitive which will eventually be replaced
 with higher level wrappers, possibly decorators, that will be much easier to use
 and recommend to average app developers. As such, it will only be taught through
 API documentation.
+
+Once community addons are built with higher level APIs that are more ergonomic,
+we should also add a section in the guides that uses them to demonstrate
+techniques for using helpers in JS. This strategy is similar to how modifiers
+are documented today.
 
 ### API Docs
 
@@ -534,14 +539,14 @@ It receives three arguments:
 * `context`: The parent context of the helper. When the parent is torn down and
   removed, the helper will be as well.
 * `definition`: The definition of the helper.
-* `argsGetter`: An optional function that produces the arguments to the helper.
+* `computeArgs`: An optional function that produces the arguments to the helper.
   The function receives the parent context as an argument, and must return an
   object with a `positional` property that is an array and/or a `named`
   property that is an object.
 
-And it returns a helper instance which has a `value` property. This property
-will return the value of the helper, if it has one. If not, it will return
-`undefined`.
+And it returns a reference to the helper which has a `value` property. This
+property will return the value of the helper, if it has one. If not, it will
+return `undefined`.
 
 ## Drawbacks
 
