@@ -389,10 +389,6 @@ export default class Search extends Component {
 }
 ```
 
-## Dependencies
-
-This RFC depends on the [Helper Manager RFC](https://github.com/emberjs/rfcs/pull/625).
-
 ## Detailed design
 
 This RFC proposes adding the `invokeHelper` function, imported from
