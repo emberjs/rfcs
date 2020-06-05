@@ -401,17 +401,13 @@ interface TemplateArgs {
   named?: Record<string, unknown>
 }
 
-type HelperDefinition = object;
+type HelperDefinition<T = unknown> = object;
 
-interface Helper {
-  value: unknown;
-}
-
-function invokeHelper(
+function invokeHelper<T = unknown>(
   parentDestroyable: object,
-  definition: HelperDefinition,
+  definition: HelperDefinition<T>,
   computeArgs?: (context: object) => TemplateArgs
-): Helper;
+): Cache<T>;
 ```
 
 Let's step through the arguments to the function one by one:
@@ -447,19 +443,17 @@ arguments object change, the helper will be updated, just like in templates.
 
 ### Return Value
 
-The function returns a reference to the helper. The public API of the reference
-consists of a `value` property, which will internally be implemented as a getter
-that triggers the proper lifecycle hooks on the helper and returns its value, if
-it has a value. If it does not, then the helper will do nothing when `value` is
-accessed and it will always return `undefined`.
+The function returns a Cache instance, as defined in the [Autotracking Memoization RFC](https://github.com/emberjs/rfcs/blob/master/text/0615-autotracking-memoization.md#detailed-design).
+This cache returns the most recent value of the helper, and will update whenever
+the helper updates. Users can access the value using the `getValue` function for
+caches.
 
-If the helper has a scheduled effect, there is no public API for users to access
-the effect or run it eagerly. It will run as scheduled, until the helper is
-destroyed.
+If the helper has a scheduled effect, using `getValue` on the cache will not run
+it eagerly. It will run as scheduled, until the helper is destroyed.
 
-Using `destroy()` from the destroyables API on the helper reference will trigger
-its destruction early. Users can do this to clean up a helper before the parent
-context is destroyed.
+The cache will be also be destroyable, so that using `destroy()` from the
+destroyables API on it will trigger its destruction early. Users can do this to
+clean up a helper before the parent context is destroyed.
 
 ### Effect Helper Timing Semantics
 
@@ -482,7 +476,7 @@ children. This mirrors the timing semantics of modifier hooks in templates.
 
 ### Ergonomics
 
-This is a low-level API for invoking helpers and creating references. The API is
+This is a low-level API for invoking helpers and creating instances. The API is
 meant to be functional, but not particularly readable or ergonomic. This API can
 be wrapped with higher level, more ergonomic APIs in the ecosystem, until we're
 sure what the final API should be.
@@ -540,9 +534,13 @@ It receives three arguments:
   object with a `positional` property that is an array and/or a `named`
   property that is an object.
 
-And it returns a reference to the helper which has a `value` property. This
-property will return the value of the helper, if it has one. If not, it will
-return `undefined`.
+And it returns a Cache instance that contains the most recent value of the
+helper. You can access the helper using `getValue()` like any other cache. The
+cache is also destroyable, and using the `destroy()` function on it will cause
+the helper to be torn down.
+
+Note that using `getValue()` on helpers that have scheduled effects will not
+trigger the effect early. Effects will continue to run at their scheduled time.
 
 ## Drawbacks
 
