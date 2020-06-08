@@ -11,8 +11,8 @@ Provide a default and convenient way for each project to customize the
 `setupApplicationTest`, `setupRenderingTest`, and `setupTest` functions from
 [RFC #268](https://github.com/emberjs/rfcs/blob/master/text/0268-acceptance-testing-refactor.md)
 and [RFC #232](https://github.com/emberjs/rfcs/blob/master/text/0232-simplify-qunit-testing-api.md).
-The app and addon blueprints will be updated to create a file at `
-tests/helpers/index.js` where those functions will be wrapped and exported, 
+The app and addon blueprints will be updated to create a file at 
+`tests/helpers/index.js` where those functions will be wrapped and exported, 
 creating a local place to edit for each type of test setup. Tests generated 
 using `ember generate` will import the setup functions from that file.
 
