@@ -104,4 +104,5 @@ that prevent us from taking advantage of new features.
 
 ## Unresolved questions
 
-> Should a version of non Chromium MS Edge be supported, and if so for how long?
+- Should a version of non Chromium MS Edge be supported, and if so for how long?
+- How often should this policy be reviewed?
