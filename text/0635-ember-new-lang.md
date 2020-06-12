@@ -1,6 +1,6 @@
 - Start Date: 2020-05-29
 - Relevant Team(s): CLI, Learning
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/635
 - Tracking: (leave this empty)
 - Authors: Joseph Sumner, Ava Wroten, Jamie White, Melanie Sumner
 
