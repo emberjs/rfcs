@@ -88,7 +88,7 @@ generated test are imported from `ember-qunit` or `ember-mocha`. This RFC
 proposes adding a file at `test/helpers/index.js` that would look like:
 
 ```js
-import { setupApplication as upstreamSetupApplicationTest } from 'ember-qunit';
+import { setupApplicationTest as upstreamSetupApplicationTest } from 'ember-qunit';
 export function setupApplicationTest(hooks, options) {
   upstreamSetupApplicationTest(hooks, options);
   // customize here
