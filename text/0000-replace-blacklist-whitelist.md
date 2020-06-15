@@ -1,6 +1,6 @@
 - Start Date: 2020-06-15
 - Relevant Team(s): Ember CLI, Learning
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: [#639](https://github.com/emberjs/rfcs/pull/639)
 - Tracking: (leave this empty)
 
 # Replace terms blacklist & whitelist in Ember CLI
@@ -11,7 +11,11 @@ Ember.js prides itself (rightly) on being an inclusive framework. To further imp
 
 ## Motivation
 
-The terms "blacklist" and "whitelist" are considered racially insenstive. These terms are used in Ember CLI for rather advanced functionality, which should make providing a better alternative naming and deprecating the current one rather easy.
+The terms "blacklist" and "whitelist" can be considered racially insenstive. While the origin of these terms in this context is not in itself racially motivated, the fact that in todays context it _can be considered racially insensitive_ has been discussed frequently - see for example [here](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6148600/), [here](https://bugs.chromium.org/p/chromium/issues/detail?id=981129#c16) or [here](https://www.zdnet.com/article/uk-ncsc-to-stop-using-whitelist-and-blacklist-due-to-racial-stereotyping/).
+
+Other projects have already taken similar steps, for example [Go](https://go-review.googlesource.com/c/go/+/236857/), [Android](<https://android-review.googlesource.com/q/topic:%22soong_inclusive_language%22+(status:open%20OR%20status:merged)>), [curl](https://github.com/curl/curl/pull/5546), [PHPUnit](https://github.com/sebastianbergmann/phpunit/issues/4275), and many more.
+
+These terms are used in Ember CLI for rather advanced functionality, which should make providing a better alternative naming and deprecating the current one rather easy.
 
 ## Detailed design
 
@@ -63,7 +67,13 @@ This might be considered "churn" by some. However, it is a small enough change t
 
 ## Alternatives
 
-Leave it as it is.
+There are also other possible terms that could be used to replace `blacklist` and `whitelist`. For example:
+
+- `allowlist` / `denylist`
+- `allowlist` / `disallowlist`
+- `allow` / `deny`
+- `allowedlist` / `disallowedlist`
+- `safelist` / `blockedlist`
 
 ## Unresolved questions
 
