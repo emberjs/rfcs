@@ -13,7 +13,7 @@ Ember.js prides itself (rightly) on being an inclusive framework. To further imp
 
 The terms "blacklist" and "whitelist" can be considered racially insenstive. While the origin of these terms in this context is not in itself racially motivated, the fact that in todays context it _can be considered racially insensitive_ has been discussed frequently - see for example [here](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6148600/), [here](https://bugs.chromium.org/p/chromium/issues/detail?id=981129#c16) or [here](https://www.zdnet.com/article/uk-ncsc-to-stop-using-whitelist-and-blacklist-due-to-racial-stereotyping/).
 
-Other projects have already taken similar steps, for example [Go](https://go-review.googlesource.com/c/go/+/236857/), [Android](<https://android-review.googlesource.com/q/topic:%22soong_inclusive_language%22+(status:open%20OR%20status:merged)>), [curl](https://github.com/curl/curl/pull/5546), [PHPUnit](https://github.com/sebastianbergmann/phpunit/issues/4275), and many more.
+Other projects have already taken similar steps, for example [Go](https://go-review.googlesource.com/c/go/+/236857/), [Android](<https://android-review.googlesource.com/q/topic:%22soong_inclusive_language%22+(status:open%20OR%20status:merged)>), [curl](https://github.com/curl/curl/pull/5546) or [PHPUnit](https://github.com/sebastianbergmann/phpunit/issues/4275).
 
 These terms are used in Ember CLI for rather advanced functionality, which should make providing a better alternative naming and deprecating the current one rather easy.
 
@@ -55,7 +55,9 @@ let app = new EmberApp(defaults, {
 });
 ```
 
-The old keys (`blacklist` and `whitelist`) should be aliased to the new ones, and show a deprecation warning. Functionally, nothing changes.
+The old keys (`blacklist` and `whitelist`) should be aliased to the new ones, and show a deprecation warning. Functionally, they behave the same.
+
+If both keys are used at the same time (so either `blacklist` AND `exclude` or `whitelist` AND `include`), an error is thrown.
 
 ## How we teach this
 
@@ -72,8 +74,23 @@ There are also other possible terms that could be used to replace `blacklist` an
 - `allowlist` / `denylist`
 - `allowlist` / `disallowlist`
 - `allow` / `deny`
+- `allowed` / `disallowed`
 - `allowedlist` / `disallowedlist`
 - `safelist` / `blockedlist`
+
+For reference, this is how often these terms are used accross the Ember ecosystem according to Ember Observer - all searches done inside of index.js files for easier comparison:
+
+- blacklist: 16 addons
+- whitelist: 20 addons
+- allowlist, allowedlist, denylist, deniedlist, disallowlist, disallowedlist, blockedlist: 0 addons
+- blocklist: 2 addons
+- safelist: 1 addon
+- allow: 4 addons
+- deny: 1 addon
+- allowed: 18 addons
+- disallowed: 1 addon
+- include: 207 addons
+- exclude: 101 addons
 
 ## Unresolved questions
 
