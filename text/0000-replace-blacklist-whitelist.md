@@ -55,7 +55,7 @@ let app = new EmberApp(defaults, {
 });
 ```
 
-The old keys (`blacklist` and `whitelist`) should be aliased to the new ones, and show a deprecation warning. Functionally, they behave the same.
+The old keys (`blacklist` and `whitelist`) should be aliased to the new ones. Functionally, they behave the same.
 
 If both keys are used at the same time (so either `blacklist` AND `exclude` or `whitelist` AND `include`), an error is thrown.
 
