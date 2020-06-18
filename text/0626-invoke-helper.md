@@ -16,14 +16,14 @@ import Component from '@glimmer/component';
 import Helper from '@ember/component/helper';
 import { invokeHelper } from '@ember/helper';
 
-class PlusOne extends Helper {
+class PlusOneHelper extends Helper {
   compute([num]) {
     return number + 1;
   }
 }
 
 export default class PlusOne extends Component {
-  plusOne = invokeHelper(this, RemoteData, () => {
+  plusOne = invokeHelper(this, PlusOneHelper, () => {
     return {
       positional: [this.args.number],
     };
