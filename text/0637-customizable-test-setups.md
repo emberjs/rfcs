@@ -154,6 +154,13 @@ We could leave it to each project, as we do now, to create helpers to customize
 behavior as needed. The downsides of this current state would remain as 
 discussed in [Motivation](#Motivation).
 
+Another alternative would be to create base classes from which test modules could
+extend, similar to how it is done within [`Ember.js`](https://github.com/emberjs/ember.js/blob/master/packages/internal-test-helpers/lib/test-cases/application.js).
+This would be a much larger change to how we write tests in Ember projects and 
+would have many details to be discussed and hashed out. It may be worth exploring 
+but the change proposed in this RFC would still provide value until that idea 
+were realized.
+
 ### Prior Art
 
 A very similar proposal was discussed in
