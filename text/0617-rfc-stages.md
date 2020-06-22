@@ -30,14 +30,14 @@ This proposal aims to build on the success of RFC 300, [RFC (Request for Comment
 
 A successful RFC can move through the following stages. Whenever an RFC moves to the next stage, there is a PR to update it.
 
-| Stage| Description| Criteria to advance to next step | Requires FCP to advance? |
+| Stage| Description| Criteria to advance to next step | Requires FCP to enter? |
 | -----| -----------|----------------------------------| ----- |
 | Proposed | A pull request made to the RFC repository which is open for public comment and core team evaluation. | "The RFC has been in Final Comment Period, and the relevant core team has consensus to merge it, thus accepting the proposal." | no |
-| Exploring | The core team believes the RFC should be pursued right now, but the RFC may still need some more work, discussion, and/or a champion before it can move to the next stage. | The RFC is fully specified, and it is clear who will support the implementation. If there are unanswered questions, we have outlined them and expect that they will be answered before "Ready for Release." | yes |
+| Exploring | The core team believes the RFC should be pursued right now, but the RFC may still need some more work, discussion, and/or a champion before it can move to the next stage. | The RFC is fully specified, and it is clear who will support the implementation. If there are unanswered questions, we have outlined them and expect that they will be answered before "Ready for Release." | no |
 | Accepted | "The work to integrate the proposal into Ember's codebases or materials may begin. An "Accepted" RFC is not necessary in-progress." | "The technical implementation is complete according to plan outlined in the RFC, and is in harmony with any changes in Ember that have occurred since the RFC was first written." | yes |
-| Ready for Release | "The relevant core team reviews the work to determine when it can be included in a stable release. At this stage, features or deprecations may be available for use behind a feature flag, in beta, etc. This is also a time to queue up learning materials, for example." | "The relevant core teams coordinate to include the work in a stable release, and/or publish the materials. If there are any truly critical deviations from the original RFC, they are briefly noted at the top of the RFC." | no |
-| Released | "The work is published. If it is codebase-related work, it adheres to SemVer from this point onward." | If it is a codebase change, it is well documented and has clear migration paths. It is consistent with Ember's mental models." | yes |
-| Recommended | The feature/resource is recommended for general use. | n/a | n/a |
+| Ready for Release | "The relevant core team reviews the work to determine when it can be included in a stable release. At this stage, features or deprecations may be available for use behind a feature flag, in beta, etc. This is also a time to queue up learning materials, for example." | "The relevant core teams coordinate to include the work in a stable release, and/or publish the materials. If there are any truly critical deviations from the original RFC, they are briefly noted at the top of the RFC." | yes |
+| Released | "The work is published. If it is codebase-related work, it adheres to SemVer from this point onward." | If it is a codebase change, it is well documented and has clear migration paths. It is consistent with Ember's mental models." | no |
+| Recommended | The feature/resource is recommended for general use. | n/a | yes |
 
 There are two additional statuses for RFCs that will not move forward:
 
@@ -124,14 +124,14 @@ This RFC does not intend to:
 
 Here is how we could have applied this model to Tracked Properties, which was split across two RFCs: [#410](https://github.com/emberjs/rfcs/blob/master/text/0410-tracked-properties.md) and [#478](https://github.com/emberjs/rfcs/blob/master/text/0478-tracked-properties-updates.md).
 
-| Stage| Description| Criteria to advance to next step | Requires FCP to advance? |
+| Stage| Description| Criteria to advance to next step | Requires FCP to enter? |
 | -----| -----------|----------------------------------| ----- |
 | Proposed | A PR is opened to the RFCs repo for Tracked Properties | The framework team talks about the RFC in the weekly meetings, and there's general agreement to pursue the idea. | no |
-| Exploring | @pzuraz keeps adding details to the RFC, explores the design space, and collaborates with others to get to the final design. | The full story has been thought out. @pzuraq expects to have the time resources to work on implementation. There were no "known unknowns" questions. | yes |
+| Exploring | @pzuraz keeps adding details to the RFC, explores the design space, and collaborates with others to get to the final design. | The full story has been thought out. @pzuraq expects to have the time resources to work on implementation. There were no "known unknowns" questions. | no |
 | Accepted | @pzuraq works on implementation. The feature is enabled in canary under feature flag. We learn that the feature causes a behavior regression in the interop story. @pzuraq works out a new plan to accommodate interop, then opens a PR to update the RFC prose. | The core team has reviewed the updates and has consensus to merge the update PR. | yes |
-| Ready for Release | Determine which version to release the feature in, and finish up final steps like docs. | Ship it! | no |
-| Released | Ember's users begin using the feature, as of v3.13. | Tracked is covered in the guides, and migration path resources are available. | yes |
-| Recommended | Tracked becomes recommended in version 3.15 (the initial version for Octane) | n/a | n/a |
+| Ready for Release | Determine which version to release the feature in, and finish up final steps like docs. | Ship it! | yes |
+| Released | Ember's users begin using the feature, as of v3.13. | Tracked is covered in the guides, and migration path resources are available. | no |
+| Recommended | Tracked becomes recommended in version 3.15 (the initial version for Octane) | n/a | yes |
 
 How was the actual process different from the imaginary case study above? In reality, there were two separate RFCs needed to land the feature, and there were fewer opportunities for people to follow along, give input, and understand the status.
 
