@@ -59,6 +59,8 @@ The old keys (`blacklist` and `whitelist`) should be aliased to the new ones. Fu
 
 If both keys are used at the same time (so either `blacklist` AND `exclude` or `whitelist` AND `include`), an error is thrown.
 
+The old keys should be removed at some point - there should be a dedicated deprecation RFC for this (at a later point), ideally in time for them to be removed in the next major release.
+
 ## How we teach this
 
 We should update the Ember CLI API docs with the new terms.
