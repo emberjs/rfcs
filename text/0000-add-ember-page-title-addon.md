@@ -21,7 +21,7 @@ Adding this addon will provide developers a simple solution to achieve the [WCAG
 
 1. Move ember-page-title to the ember-cli org (?) (already in ember-adopted-addon org)
 2. Add the dependency to the app blueprint here: https://github.com/ember-cli/ember-cli/blob/master/blueprints/app/files/package.json#L19
-3. Update app blueprint to include `{{head-layout}}` on top of https://github.com/ember-cli/ember-cli/blob/master/blueprints/app/files/app/templates/application.hbs
+3. Update app blueprint to include `<HeadLayout />` on top of https://github.com/ember-cli/ember-cli/blob/master/blueprints/app/files/app/templates/application.hbs
 4. Update route blueprint to include `{{page-title "Route name"}}` on top of the route template file
 
 ## How we teach this
