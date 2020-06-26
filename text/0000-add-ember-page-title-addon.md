@@ -22,7 +22,7 @@ Adding this addon will provide developers a simple solution to achieve the [WCAG
 1. Make [`ember-page-title`](https://github.com/adopted-ember-addons/ember-page-title) an official Ember addon by transferring `ember-page-title` repo to the [Ember CLI org](https://github.com/ember-cli) (it's currently in the [Adopted Ember Addons org](https://github.com/adopted-ember-addons))
 2. Add the dependency to the app blueprint here: https://github.com/ember-cli/ember-cli/blob/master/blueprints/app/files/package.json#L19
 3. Update app blueprint to include `<HeadLayout />` at the top of [application.hbs](https://github.com/ember-cli/ember-cli/blob/master/blueprints/app/files/app/templates/application.hbs)
-4. Update route blueprint to include `{{page-title RouteName}}` at the top of the route template file. `RouteName` is the route name provided to the command `ember generate route`
+4. Update route blueprint to include `{{page-title RouteName}}` at the top of the route [template.hbs](https://github.com/emberjs/ember.js/blob/master/blueprints/route/native-files/__root__/__templatepath__/__templatename__.hbs) (this [template.hbs](https://github.com/emberjs/ember.js/blob/master/blueprints/route/files/__root__/__templatepath__/__templatename__.hbs) too) where `RouteName` is the name of the route provided to the `ember generate route` command
 
 ## How we teach this
 
