@@ -24,7 +24,7 @@ acceptance tests, it is often necessary to override services, mock APIs, etc.
 in every test of that type.
 
 A common use-case is `ember-cli-mirage`, which provides a `setupMirage` function
-to be called after `setupAcceptanceTest`. In a project using this, it can be 
+to be called after `setupApplicationTest`. In a project using this, it can be 
 necessary to remember to add that call to every test file.
 
 If it is necessary to add new setup to every test (for example, when adding a 
