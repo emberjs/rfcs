@@ -2,37 +2,41 @@
 - Relevant Team(s): Ember CLI
 - RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
 - Tracking: (leave this empty)
-- Authors: Benjamin Jegard
+- Authors: Benjamin Jegard, Melanie Sumner, Ricardo Mendes
 
-# RFC to add ember-page-title to the default app blueprint
+# Add ember-page-title to the app blueprint
 
 ## Summary
 
-Add https://github.com/adopted-ember-addons/ember-page-title as a default addon for the app blueprints. (addons too ?)
+Add [`ember-page-title`](https://github.com/adopted-ember-addons/ember-page-title) to the default blueprint for new Ember apps as a way to provide improved out-of-the-box (OOB) accessibility for Ember applications.
 
 ## Motivation
 
-This RFC is part of the work made by Ember.js Accessibility Strike Team to ensure that newly created ember apps have no accessibility issues.
+This RFC is part of the work made by the Ember.js Accessibility Strike Team to ensure that newly created ember apps have no accessibility issues.
 
 Users with assistive technology rely on the page title to know if they are on the correct page of a website.
 Adding this addon will provide developers a simple solution to achieve the [WCAG Success Criterion 2.4.2: Page Titled](https://www.w3.org/WAI/WCAG21/Understanding/page-titled.html)
 
 ## Detailed design
 
-1. Move ember-page-title to the ember-cli org (?) (already in ember-adopted-addon org)
+1. Make [`ember-page-title`](https://github.com/adopted-ember-addons/ember-page-title) an official Ember addon by transferring `ember-page-title` repo to the [Ember CLI org](https://github.com/ember-cli) (it's currently in the [Adopted Ember Addons org](https://github.com/adopted-ember-addons))
 2. Add the dependency to the app blueprint here: https://github.com/ember-cli/ember-cli/blob/master/blueprints/app/files/package.json#L19
-3. Update app blueprint to include `<HeadLayout />` on top of https://github.com/ember-cli/ember-cli/blob/master/blueprints/app/files/app/templates/application.hbs
-4. Update route blueprint to include `{{page-title "Route name"}}` on top of the route template file
+3. Update app blueprint to include `<HeadLayout />` at the top of [application.hbs](https://github.com/ember-cli/ember-cli/blob/master/blueprints/app/files/app/templates/application.hbs)
+4. Update route blueprint to include `{{page-title RouteName}}` at the top of the route template file. `RouteName` is the route name provided to the command `ember generate route`
 
 ## How we teach this
 
-Update the "Page Title" section in [Page Template Considerations](https://guides.emberjs.com/release/accessibility/page-template-considerations) to use `ember-page-title`.
+- Update the "Page Title" section in [Page Template Considerations](https://guides.emberjs.com/release/accessibility/page-template-considerations) to use `ember-page-title`.
+- Update code examples in [Building Pages](https://guides.emberjs.com/release/tutorial/part-1/building-pages/) to include uses of `{{page-title}}`. Also explain that updating the page title with the current page name will help users with assistive technology locate themself on the website.
 
 ## Drawbacks
 
-- An additional dependency.
+- An additional dependency to new projects. But, no noticeable size differences it's only all +10kb of js for production builds (not gzipped, ~2kb js gzipped)
+- Add an extra helper `{{page-tile}}` and a new component `<HeadLayout />` (possible name clashing)
 
 ## Alternatives
+
+N/A
 
 ## Unresolved questions
 
