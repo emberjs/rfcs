@@ -33,6 +33,7 @@ Adding this addon will provide developers a simple solution to achieve the [WCAG
 
 - An additional dependency to new projects. But, no noticeable size differences it's only all +10kb of js for production builds (not gzipped, ~2kb js gzipped)
 - Add an extra helper `{{page-tile}}` and a new component `<HeadLayout />` (possible name clashing)
+- Slightly increases the learning curve. Increases the amount of code in a first-starter project, which could become overwhelming.
 
 ## Alternatives
 
