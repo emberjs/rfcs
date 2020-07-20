@@ -39,7 +39,9 @@ Even though we expect to have many "breaking" releases of `@ember/core` during t
 
 If one of the newly-split-off Ember packages depends on another, it will say so in its NPM peerDependencies. We will use exact-version constraints, which is effectively how things already work today.
 
-NPM has historically been loose about peerDependencies, so they are often ignored by developers. We propose that ember-cli should hard error for missing peerDependencies to avoid this problem (most people who think they don't really need to clean up peerDependency warnings are simply mistaken, and have latent bugs).
+NPM has historically been loose about peerDependencies, so they are often ignored by developers. We propose that ember-cli should hard error for missing peerDependencies only in Ember's own packages to avoid this problem (most people who think they don't really need to clean up peerDependency warnings are simply mistaken, and have latent bugs).
+
+An environment variable will be created to suppress the error so that people who are doing advanced debugging of the ember packages themselves can  test scenarios that involve mismatched package versions.
 
 ## Addon dependencies on Ember packages
 
