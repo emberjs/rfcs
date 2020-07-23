@@ -143,7 +143,7 @@ Making updates to past RFCs can generate a lot of  GitHub notifications for peop
 
 This section will cover how other projects have handled this type of tracking, and how we have done it in the past.
 
-## Vue
+### Vue
 
 [Vue's stages](https://github.com/vuejs/rfcs#the-rfc-life-cycle) are concise and to the point. This is worth considering because you don't need to know the process deeply in order to understand it. The lower number of stages equates to less overhead, but also less fidelity.
 
