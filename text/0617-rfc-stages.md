@@ -44,10 +44,6 @@ There are two additional statuses for RFCs that will not move forward:
 - **Discontinued** - a previously Accepted RFC that is either in conflict with Ember's evolving programming model or is superseded by another active RFC.
 - **Closed** - Proposed RFCs that will not be moved into the next stage.
 
-### FCP
-
-FCP stands for "final comment period." Multiple stages may have their own FCPs. An FCP is an opportunity for the community and core team members to weight in before an RFC moves to the next stage.
-
 ### Editing merged RFCs
 
 A merged RFC may be edited via a Pull Request process. Edits may include things like:
@@ -218,3 +214,8 @@ There are some ambiguities because RFCs take many forms. Our process cannot cove
 - Should this RFC describe the process for gathering consensus to move to Release?
 - Should this RFC mention the champion at all? Should they be responsible for moving it through stages? Or was their job over when it was merged?
 - Would a "postponed" stage be accurate for many of our open, stale RFCs? Should there be a postponed stage?
+
+## Glossary
+
+- **FCP**: "final comment period" An FCP is an opportunity for the community and 
+core team members to weight in before an RFC moves a following stage.
