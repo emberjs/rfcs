@@ -122,7 +122,7 @@ stable releases and those packages and versions are noted in the RFC frontmatter
 
 Ember's RFC process can be used for process and work plans that are not about code. 
 Some examples include Roadmap RFCs, this RFC itself, and changes to learning resources.
-When such an RFC is a candidate for Release, the work should be shipped as described, 
+When such an RFC is a candidate for Released, the work should be shipped as described, 
 and the result should presented to the team with the intent of gathering feedback 
 about whether anything is missing. If there is agreement that the work is complete, 
 the RFC may be marked "Released" and a date is provided instead of a version.
@@ -167,7 +167,7 @@ Major changes should have a new RFC. The old RFC is later marked "Discontinued" 
 
 ### Changes to RFC meta
 
-RFC meta is the block of text at the start of an RFC that includes data about its stage, links to relevant info, etc.
+RFC meta ("frontmatter") is the block of text at the start of an RFC that includes data about its stage, links to relevant info, etc.
 
 Before:
 
@@ -179,11 +179,24 @@ Before:
 After:
 
     - Stage: Proposed (later updated to other stages)
-    - Release version/date: Unreleased (later updated with vX.Y.Z or YYYY-MM-DD)
     - Start Date: (fill me in with today's date, YYYY-MM-DD)
+    - Release date: Unreleased (later update with YYYY-MM-DD)
+    - Release Versions: (Include any package with work necessary for the feature, n/a for non-code RFCs)
+      - ember-source: vX.Y.Z
+      - ember-data: vX.Y.Z 
     - Relevant Team(s): (fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies)
-    - RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
-    - Tracking: (URLs to project boards, quest issues, etc. Separate by a comma and space.)
+    - RFC PR: (after opening the Propsoal RFC PR, update this with a link to it and update the file name)
+     
+For RFCs that have moved through to at least the [Accepted](#Accepted) stage, 
+this data will be used to add and update a block at the top of the RFC prose to
+indicate the current stage, with a brief explanation of that stage. It should 
+link to any open PRs to update the stage of the RFC. 
+
+We will make use of automation to add/update a section to the RFC with links to 
+each PR that caused the RFC to move to a new stage.
+
+`Tracking` will be removed for new RFCs. Links that would have appeared here should
+be found on the PR to move the RFC to [Ready for Release](#Ready-for-Release).
 
 ### Reconciling past RFCs
 
@@ -197,6 +210,7 @@ A stage will be applied to all previously merged RFCs.
 - Frontmatter will be added to the template for new RFCs (see below)
 - A blog post will announce the updates to the RFC process
 - Past RFCs should be updated to include their stage and release version, following the description in "Reconciling past RFCs."
+- We will use automation to add helpful links and guidance to the RFC files themselves.
 
 ### Stages as communication tool
 
@@ -302,13 +316,7 @@ Although it is still helpful to have a detailed view into the work being done, o
 
 There are some ambiguities because RFCs take many forms. Our process cannot cover 100% of scenarios, but we should strive to find answers that cover the vast majority of RFCs.
 
-- If we imagine that we did this process during Octane, how would it have helped, or not?
 - For RFCs that have to do with technical features, should the release version indicate when it is in Ember's blueprint, or the name and version of the package itself?
-- How do we resolve disagreements over stage names? Other stage examples include: "Ready to implement," "Active," "Rejected," "Obsolete"
-- Should "Under consideration" be a stage, or a GitHub label on the Pull Request? What are the pros and cons?
-- Should this RFC describe the process for gathering consensus to move to Release?
-- Should this RFC mention the champion at all? Should they be responsible for moving it through stages? Or was their job over when it was merged?
-- Would a "postponed" stage be accurate for many of our open, stale RFCs? Should there be a postponed stage?
 
 ## Glossary
 
