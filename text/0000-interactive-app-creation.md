@@ -29,7 +29,7 @@ Lastly, this RFC is equally motivated by providing 'global' application improvem
 ## Detailed design
 
 ### Prior Art
-It would be remiss to introduce this RFC without mentioning the prior art that we have for wizard-like app creation. In the Ember community, [@gossi](https://gist.github.com/gossi) first introduced this idea with [ember-cli-create](https://github.com/gossi/ember-cli-create). In the wider web community, the Vue community offers this through `vue create` ([see docs](https://cli.vuejs.org/guide/creating-a-project.html#vue-create)).
+It would be remiss to introduce this RFC without mentioning the prior art that we analyzed for wizard-like app creation. In the Ember community, [@gossi](https://gist.github.com/gossi) first introduced this idea with [ember-cli-create](https://github.com/gossi/ember-cli-create). In the wider web community, the Vue community offers this through `vue create` ([see docs](https://cli.vuejs.org/guide/creating-a-project.html#vue-create)).
 
 ### Intro 
 When considering what questions to ask, we considered a few things: 
