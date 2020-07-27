@@ -137,6 +137,5 @@ The general drawback with wizards is that it can lead to a large number of combi
 1. We could set the default language to US English (the default language of the Ember project) and not have an interactive option at all.
 
 ## Unresolved questions
-1. Do we have a good way to make this a good experience for developers who use assistive technology?
 
 As we identify additional unresolved questions, we will add them here. 
