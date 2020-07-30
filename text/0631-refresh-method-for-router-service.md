@@ -15,7 +15,8 @@ or refreshes the descendents of the active route referred to by the pivot route 
 We want to be able to call refresh on all currently active routes, or a subset of them,
 from a centralized service or from a component.
 As a side benefit, we will be able to do this without relying on the send api,
-which is being discussed as a possible deprecation in RFC 632.
+which is being discussed as a possible deprecation in
+[RFC 632](https://github.com/emberjs/rfcs/pull/632).
 This enables us to get the latest data from the model hook.
 
 ## Detailed design
