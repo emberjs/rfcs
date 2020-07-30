@@ -26,7 +26,7 @@ This code implementation is not normative.
 
 ```js
 class RouterService {
-    refresh(pivotRouteName?: string): Promise<Transition> {
+    refresh(pivotRouteName?: string): Transition {
         let pivotRoute = pivotRouteName ?? lookupRoute(pivotRouteName);
         assert("If an argument provided must be the name of an active route", !pivotRouteName || isActiveRoute(pivotRoute));
         return this._router._routerMicroLib.refresh(pivotRoute);
@@ -53,8 +53,8 @@ The following documentation will be added to the method:
  * hooks will be called again. You will get new data from the model hook.
  * 
  * @method refresh
- * @param pivotRouteName?: string
- * @return Promise<Transition>
+ * @param {String} [pivotRouteName] the route to refresh (along with all child routes)
+ * @return Transition
  * @public
  */
 ```
