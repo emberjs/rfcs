@@ -135,7 +135,8 @@ It is consistent with Ember's mental models.
 // TODO: I think this needs more detail and examples.
 
 An RFC is moved into "Recommended" via PR to update the stage. An FCP is required
-to enter this stage.
+to enter this stage. Multiple RFCs may be moved as a batch into "Recommended" with
+the same PR.
 
 #### Closed
 
