@@ -32,16 +32,16 @@ For details of the current RFC process, see the current [README of the RFCs repo
 
 ### Stages
 
-A successful RFC can move through the following stages. Whenever an RFC moves to the next stage, there is a PR to update it.
+A successful RFC can move through the following sequential stages. Whenever an RFC moves to the next stage, there is a PR to update it.
 
 | Stage| Description| Requires FCP to enter? |
 | -----| -----------|----- |
-| [Proposed](#Proposed) | A proposal for a change to Ember or its processes that is offered for community and team evaluation. | no |
-| [Exploring](#Exploring) | An RFC deemed worth pursuing but in need of refinement. | no |
-| [Accepted](#Accepted) | A fully specified RFC. Waiting for or in the process of implementation. | yes |
-| [Ready for Release](#Ready-for-Release) | The implementation of the RFC is complete, including learning materials. | yes |
-| [Released](#Released) | The work is published. If it is codebase-related work, it is in a stable version of the relevant package(s). | no |
-| [Recommended](#Recommended) | The feature/resource is recommended for general use. | yes |
+| [0 - Proposed](#Proposed) | A proposal for a change to Ember or its processes that is offered for community and team evaluation. | no |
+| [1 - Exploring](#Exploring) | An RFC deemed worth pursuing but in need of refinement. | no |
+| [2 - Accepted](#Accepted) | A fully specified RFC. Waiting for or in the process of implementation. | yes |
+| [3 - Ready for Release](#Ready-for-Release) | The implementation of the RFC is complete, including learning materials. | yes |
+| [4 - Released](#Released) | The work is published. If it is codebase-related work, it is in a stable version of the relevant package(s). | no |
+| [5 - Recommended](#Recommended) | The feature/resource is recommended for general use. | yes |
 
 There are two additional statuses for RFCs that will not move forward:
 
@@ -57,10 +57,9 @@ process is discussed in depth in the RFCs repo README.
 
 An RFC's number is the number of it's original proposal PR.
 
-From "Proposed" an RFC may move to [Accepted](#Accepted), [Exploring](#Exploring),
+From "Proposed" an RFC may move to [Exploring](#Exploring),
 or [Closed](#Closed) stages.
 To move to [Closed](#Closed) an FCP is required as in the existing process.
-To move to [Accepted](#Accepted) an FCP is required as in the existing process.
 A "Proposed" RFC may be moved to "Exploring" by consensus of the relevant
 team(s) without an FCP. See [Exploring](#Exploring).
 
@@ -70,14 +69,11 @@ An Exploring RFC is one the Ember team believes should be pursued, but the RFC
 may still need some more work, discussion, answers to open questions, 
 and/or a champion before it can move to the next stage. 
 
-Exploring is an optional stage. RFCs may move from [Proposal](#Proposal) to 
-[Accepted](#Accepted) as they do today. 
-
 An RFC is moved into Exploring with consensus of the relevant team(s). The
 RFC remains a PR and will have an `Exploring` label applied.
 
 An Exploring RFC that is successfully completed can move to [Accepted](#Accepted) 
-in the same manner as a [Proposed](#Proposed) RFC.
+with an FCP is required as in the existing process.
 
 #### Accepted
 
@@ -139,7 +135,8 @@ It is consistent with Ember's mental models.
 // TODO: I think this needs more detail and examples.
 
 An RFC is moved into "Recommended" via PR to update the stage. An FCP is required
-to enter this stage.
+to enter this stage. Multiple RFCs may be moved as a batch into "Recommended" with
+the same PR.
 
 #### Closed
 
