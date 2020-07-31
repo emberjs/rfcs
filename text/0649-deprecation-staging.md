@@ -15,7 +15,7 @@ encountered.
 The initial stages would be:
 
 1. Available
-2. Required
+2. Enabled
 
 ## Motivation
 
@@ -82,11 +82,11 @@ There are two stages that are proposed for deprecations in this RFC:
    Available deprecations are enabled by default in addons, but not in apps.
    This is explained in more detail later.
 
-2. **Required**: Required is the final stage for deprecations. Deprecations
-   should be moved into Required after the replacement APIs have moved into
+2. **Enabled**: Enabled is the final stage for deprecations. Deprecations
+   should be moved into Enabled after the replacement APIs have moved into
    Recommended in the RFC process, and there is generally high confidence that
    the addon ecosystem has absorbed the deprecation for the most part.
-   Required deprecations cannot be disabled.
+   Enabled deprecations cannot be disabled.
 
 Deprecations will progress through these stages linearly. In the future, more
 stages could be added, but the progression will remain linear. Deprecations that
@@ -122,7 +122,7 @@ interface DeprecationOptions {
 + for: string;
 + since: {
 +   available: string;
-+   required: string;
++   enabled: string;
 + }
 }
 ```
@@ -140,7 +140,7 @@ Stepping through the new options individually:
 * `since`: This property contains a set of keys corresponding to
   each deprecation stage. If a value for a stage if present, the value of all
   previous stages must also be present. Each key's value is an exact SemVer
-  value. To start, only two keys (`available` and `required`) will
+  value. To start, only two keys (`available` and `enabled`) will
   be allowed, and the rest will be ignored.
 
   Any SemVer value can be used here, even if it does not correspond to a published
@@ -154,9 +154,9 @@ Stepping through the new options individually:
   more below.
 
 If the `since` key is not provided (as is the case for existing deprecations),
-the deprecation is assumed to be `required`. This RFC also... wait for it... deprecates
+the deprecation is assumed to be `enabled`. This RFC also... wait for it... deprecates
 the usage of the `deprecate()` function without a `since` key. This meta deprecation
-will be required at the same time as it becomes available like this:
+will be enabled at the same time as it becomes available like this:
 
 ```js
 
@@ -169,7 +169,7 @@ deprecate('Calling deprecate() without the \'since\' key is deprecated', false, 
   until: '4.0.0',
   since: {
     available: NEXT_VERSION,
-    required: NEXT_VERSION,
+    enabled: NEXT_VERSION,
   }
 })
 ```
@@ -182,7 +182,7 @@ customized to indicate which versions of an addon the app is compliant with.
 This configuration can be described like this:
 
 ```ts
-type DeprecationStage = 'available' | 'required';
+type DeprecationStage = 'available' | 'enabled';
 type Editions = 'classic' | 'octane';
 
 interface AddonDeprecationConfig {
@@ -205,7 +205,7 @@ interface EmberPackageJSONKey {
 The new `deprecations` key has two keys of its own:
 
 - `display`: which configures the default stage of deprecations the app owner
-  wants to see from their app and all addons. If this config is not provided, it defaults to `'required'`.
+  wants to see from their app and all addons. If this config is not provided, it defaults to `'enabled'`.
 - `addons`: which declares which versions of each library the app is compliant with.
 
     Each key points to an object conforming to the `AddonDeprecationConfig` interface.
@@ -214,7 +214,7 @@ The new `deprecations` key has two keys of its own:
     (by calling `deprecate()` in app code), the top level key is still called `addons`.
     The reasoning is that _most_ of the time, Ember does not need to know about
     deprecations from applications, as it needs no build-time signaling. These deprecations
-    will always be displayed and treated as if they are at the required stage. Because
+    will always be displayed and treated as if they are at the `enabled` stage. Because
     there is no compliance config, they will not be promoted to runtime assertions.
 
 ### AddonDeprecationConfig
@@ -255,7 +255,7 @@ Apps can declare compliance with an addon in two ways:
 - by passing an object conforming to the `AddonDeprecationConfig` interface.
 
 If a declaration is omitted, Ember will assume that the app is compliant with
-all deprecations in the "required" stage, but will not opt the app into any assertions.
+all deprecations in the "enabled" stage, but will not opt the app into any assertions.
 This ensures backwards compatibility with apps that do not add this config.
 
 If a `AddonDeprecationConfig` object is passed, Ember will assume that the app
@@ -263,7 +263,7 @@ is compliant with deprecations of the configured `stage` and later, and the
 configured `version` and earlier. Deprecations that fit this configuration
 will also throw assertions in development builds.
 
-Note that `AddonDeprecationConfig` is required to have both the
+Note that `AddonDeprecationConfig` must have both the
 `version` and the `stage` properties to be be valid. If both are not provided
 a build time error will be thrown.
 
@@ -306,7 +306,7 @@ There are a few common variations of compliance config:
         "deprecations": {
           "addons": {
             "my-awesome-library": {
-              "stage": "required",
+              "stage": "enabled",
               "version": "1.2.3"
             }
           }
@@ -360,7 +360,7 @@ There are a few common variations of compliance config:
     This indicates that the app _is_ compliant with the `my-deprecation-feature` and
     Ember will throw a runtime assertion if this deprecation is invoked.
 
-Now consider that `my-awesome-feature` becomes a required deprecation in 1.5.0:
+Now consider that `my-awesome-feature` becomes a enabled deprecation in 1.5.0:
 
 ```diff
 deprecate('this feature is deprecated!', false, {
@@ -368,7 +368,7 @@ deprecate('this feature is deprecated!', false, {
   for: 'my-awesome-library',
   since: {
     available: '1.2.3',
-+   required: '1.5.0',
++   enabled: '1.5.0',
   },
   until: '2.0.0'
 });
@@ -376,12 +376,12 @@ deprecate('this feature is deprecated!', false, {
 The configurations described above would be affected in the following ways:
 
 - No config: no change
-- Later stage, current version: no change, because it was not required in 1.2.3
+- Later stage, current version: no change, because it was not enabled in 1.2.3
 - Current stage, older version: no change
 - Matching stage and version: no change
 
-In order to opt-in to an assertion for this required config, the app would have
-to update their declaration to match the `since.required` value:
+In order to opt-in to an assertion for this enabled config, the app would have
+to update their declaration to match the `since.enabled` value:
 
 ```json
 {
@@ -389,7 +389,7 @@ to update their declaration to match the `since.required` value:
     "deprecations": {
       "addons": {
         "my-awesome-library": {
-          "stage": "required",
+          "stage": "enabled",
           "version": "1.5.0"
         }
       }
@@ -421,7 +421,7 @@ compliance with libraries other than `ember-source`.
 
 #### Declaration and Defaults
 
-While applications are required to set a `StrictSemVerString` value for
+While applications must set a `StrictSemVerString` value for
 `addons.[packageName].version`, addons can additionally set a special
 value of `"auto"`, to indicate that the addon is compliant with
 deprecations from the _minimum_ version of the SemVer range specified by the
@@ -451,13 +451,13 @@ deprecate('\`isVisble\` is deprecated!', false, {
   until: '4.0.0',
   since: {
     available: '3.15.0',
-    required: '3.16.0', // this is fabricated for this example
+    enabled: '3.16.0', // this is fabricated for this example
   }
 });
 ```
 
 This means that the deprecation for the `isVisible` property became _available_
-in 3.15, but became required in 3.16.
+in 3.15, but became enabled in 3.16.
 
 Now let's consider an addon that has a component that uses `isVisible`, but
 doesn't declare any deprecation compliance. In other words, it does not make
@@ -533,7 +533,7 @@ application would declare the same):
     "deprecations": {
       "addons": {
         "ember-source": {
-          "stage": "required",
+          "stage": "enabled",
           "version": "3.14.3"
         }
       }
@@ -578,7 +578,7 @@ App blueprints will be updated to include the following config:
     "deprecations": {
       "addons": {
         "ember-source": {
-          "stage": "required",
+          "stage": "enabled",
           "version": "<%= version %>"
         }
       }
@@ -621,7 +621,7 @@ Future RFCs may address them individually.
 Advancing a deprecation through stages is conceptually easy to understand.
 Application and addon developers who have no knowledge of this RFC should be
 able to read a deprecation message and understand both that "available" deprecations
-are not urgent and "required" deprecations require an action. This should be
+are not urgent and "enabled" deprecations require an action. This should be
 reflected in the deprecation message that is logged.
 
 New applications will have a much easier time understanding this as blueprints
