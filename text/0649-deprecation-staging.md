@@ -402,7 +402,7 @@ to update their declaration to match the `since.required` value:
 
 Addons are also able to declare their compliance with other libraries in the same
 way as above. A declaration from an addon tells Ember that its _parent_ addon or application
-cannot be declare compliance to a higher version.
+cannot declare compliance to a higher version.
 
 This allows _application_ developers to feel confident that if they declare a
 compliance with a _high_ version, Ember's tooling will tell them early that they
