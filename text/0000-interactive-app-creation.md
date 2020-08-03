@@ -114,6 +114,11 @@ An example of a future RFC that could be specific to addons, would be to add a `
 ### Implementation
 This section is not normative, but provided for extra context for folks who might be new to this idea in general. We could use something like [inquirer.js](https://github.com/SBoudrias/Inquirer.js) to implement this wizard, if the mechanism doesn't already exist within the ember-cli codebase. However, it should be explicitly noted that inquirer is only being used as an example of a library that could be used, and this RFC isn't explicitly defining that inquirer.js should be or will be used. 
 
+### Versioning and Stability Statement
+Because the `ember new` command only affects new apps, it is not subject to the same semver guarantees that official Ember.js framework libraries currently follow. 
+
+The `ember new` interactive workflow SHOULD NOT be used in other scripts; it is the intent of the design to make this workflow flexible and changeable over time. As such, it should not be considered stable enough to be integrated into other automated tooling. Users should continue to make use of the commands available via `ember-cli` for any other integration scripts. 
+
 ## How we teach this
 
 As this is a wholly new idea, it should be documented and added to the guides along with screenshots of the new workflow. Until that prototype exists, this section will largely remain empty. However, we intend to explain it similarly to Vue's documentation for a similar feature (https://cli.vuejs.org/guide/creating-a-project.html#vue-create).  
