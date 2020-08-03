@@ -21,13 +21,13 @@ This enables us to get the latest data from the model hook.
 
 ## Detailed design
 
-The following pseudocode represents what the overall technical design of this method.
+The following pseudocode represents the overall technical design of this method.
 This code implementation is not normative.
 
 ```js
 class RouterService {
     refresh(pivotRouteName?: string): Transition {
-        let pivotRoute = pivotRouteName ?? lookupRoute(pivotRouteName);
+        let pivotRoute = pivotRouteName && lookupRoute(pivotRouteName);
         assert("If an argument provided must be the name of an active route", !pivotRouteName || isActiveRoute(pivotRoute));
         return this._router._routerMicroLib.refresh(pivotRoute);
     }
