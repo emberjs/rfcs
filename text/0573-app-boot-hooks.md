@@ -46,6 +46,15 @@ to expect that two unrelated pieces of code will run in the same order every tim
 be technically true due to the implemented sorting algorithm, it is not guaranteed by Ember, and
 can be messy to grapple with. By using the hooks proposed in the Summary section, Ember developers
 can simply write Javascript and expect that it runs the way they intend it to.
+- **Blocking async code before routing**. Currently, the earliest place an application can write
+asynchronous blocking code is in the `beforeModel` hook of the `ApplicationRoute`.
+In some cases, this is too late. For example, if an application needs to wait for an event
+from its host environment e.g. an iframe or an electron shell, and use it to determine
+the starting URL, it cannot do so.
+- **First Transition**: Similarly, if one wants to add an event listener to the
+`routeWillChange` event,
+it is too late to do that in the beforeModel hook, because the event has already
+been dispatched for the first route transition.
 
 ## Detailed design
 
