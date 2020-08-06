@@ -89,6 +89,11 @@ Good reasons for separate files per initializer are:
 but it would require re-implementing a large part of the interaction between Application and
 ApplicationInstance, it is easily possible for an application to dig itself into a maintenance
 nightmare.
+- Make initializers more robust and allow them to return promises. This was detailed in [RFC #572],
+but the cost of initializers (both in bundle size and maintenance) is already high and it would be
+better to drop them entirely. One benefit of initializers that would we would lose is the ability
+for addons to inject initialization behavior into their host apps implicitly. While this is useful,
+it is also harder to debug this pattern and ultimately makes it harder to maintain Ember apps.
 
 ## Unresolved questions
 
