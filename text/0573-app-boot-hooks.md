@@ -33,28 +33,27 @@ be progressively enhanced.
 
 ## Motivation
 
-- The existing convention of initializer code comes from Ruby on Rails (which has similar
-`config/initializers/*.rb` files). This technique works and can be nice for organizing code, but it
-is a poor onboarding experience and misses out on a teaching opportunity about how Applications work.
-By making it possible to write code as simple as `console.log()` in `app.js`, Ember developers can
-be exposed to the entry point of the application much sooner and avoid the complication of additional
-directories.
-- Currently the order of initializers is not guaranteed without some extra annotations
-(`before`/ `after`) that are both error-prone and not obvious. It can be debated whether
-two separate initializers *should* care about whether the other one has run or not, it is reasonable
-to expect that two unrelated pieces of code will run in the same order every time. This may already
-be technically true due to the implemented sorting algorithm, it is not guaranteed by Ember, and
-can be messy to grapple with. By using the hooks proposed in the Summary section, Ember developers
-can simply write Javascript and expect that it runs the way they intend it to.
+- **Moving away from initializers**. The existing convention of initializer code comes from
+Ruby on Rails (which has similar `config/initializers/*.rb` files). This technique works
+and can be nice for organizing code, but it also has several downsides:
+
+    - bookkeeping code to determine the order of execution
+    - confusing `before`/`after` API to change order of execution
+    - implicit injections from addons by way of merging directories
+    - lack of support for blocking asynchronous behavior for instance-initializers (`{defer|advance}Readiness` exists for initializers)
+    - a poor onboarding experience and misses out on a teaching opportunity about how Ember Applications work.
+
+    By providing a way to hook into the existing, async boot sequence more directly,
+    application developers can write declarative, explicit code about how they want to
+    customize their application.
 - **Blocking async code before routing**. Currently, the earliest place an application can write
 asynchronous blocking code is in the `beforeModel` hook of the `ApplicationRoute`.
 In some cases, this is too late. For example, if an application needs to wait for an event
 from its host environment e.g. an iframe or an electron shell, and use it to determine
 the starting URL, it cannot do so.
 - **First Transition**: Similarly, if one wants to add an event listener to the
-`routeWillChange` event,
-it is too late to do that in the beforeModel hook, because the event has already
-been dispatched for the first route transition.
+`routeWillChange` event, it is too late to do that in the beforeModel hook, because the
+event has already been dispatched for the first route transition.
 
 ## Detailed design
 
