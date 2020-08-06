@@ -108,6 +108,7 @@ it is also harder to debug this pattern and ultimately makes it harder to mainta
 - What constraints, if any, do we want to apply to this free-for-all method?
 - Would it be better if the `onBoot` method implemented `loadInitializers` upstream, and then
 the user `App` is required to call `super` instead?
+- Bundle size improvements? Should we include the deprecation path for initializers?
 
 
 [1]: https://guides.emberjs.com/release/applications/initializers/
