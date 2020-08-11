@@ -3,11 +3,11 @@
 - RFC PR: https://github.com/emberjs/rfcs/pull/566
 - Tracking: (leave this empty)
 
-# @memo
+# @cached
 
 ## Summary
 
-Add a `@memo` decorator for memoizing the result of a getter based on
+Add a `@cached` decorator for memoizing the result of a getter based on
 autotracking. In the following example, `fullName` would only recalculate if
 `firstName` or `lastName` is updated.
 
@@ -16,7 +16,7 @@ class Person {
   @tracked firstName = 'Jen';
   @tracked lastName = 'Weber';
 
-  @memo
+  @cached
   get fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
@@ -41,18 +41,18 @@ their apps when relevant, without adding extra overhead unless necessary.
 
 ## Detailed design
 
-The `@memo` decorator will be exported from `@glimmer/tracking`, alongside
+The `@cached` decorator will be exported from `@glimmer/tracking`, alongside
 `@tracked`. It can be used on native getters to memoize their return values
 based on the tracked state they consume while being calculated.
 
 ```js
-import { tracked, memo } from '@glimmer/tracking';
+import { tracked, cached } from '@glimmer/tracking';
 
 class Person {
   @tracked firstName = 'Jen';
   @tracked lastName = 'Weber';
 
-  @memo
+  @cached
   get fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
@@ -65,14 +65,14 @@ properties are set. This would apply to any autotracking tags consumed while
 calculating the getter, so changes to `EmberArray`s and other tracked
 primitives, for instance, would also cause invalidations.
 
-If used on a non-getter, `@memo` will throw an error in `DEBUG` modes.
+If used on a non-getter, `@cached` will throw an error in `DEBUG` modes.
 Properties can also include a setter, but it won't affect the memoization of the
 getter (except by potentially setting the state that was tracked in the first
 place).
 
 ### Invalidation
 
-`@memo` will propagate invalidations whenever any of the properties it is
+`@cached` will propagate invalidations whenever any of the properties it is
 entangled with are invalidated, causing any downstream state that has consumed
 to be invalidated at the same time.
 
@@ -84,14 +84,14 @@ that it will be recalculated.
 
 ### Cycles
 
-Cycles will not be allowed with `@memo`. The cache will only be activated
+Cycles will not be allowed with `@cached`. The cache will only be activated
 _after_ the getter has fully calculated, so any cycles will cause infinite
 recursion (and eventually, stack overflow), just like un-memoized getters. If a
 cycle is detected in `DEBUG` mode, it will throw an error.
 
 ## How we teach this
 
-`@memo` is not an essential part of the reactivity model, so it shouldn't be
+`@cached` is not an essential part of the reactivity model, so it shouldn't be
 covered during the main component/reactivity guide flow. Instead, it should be
 covered in the intermediate/in-depth guides, and in any performance related
 guides.
@@ -112,9 +112,9 @@ TODO
   be noted in documentation in particular to emphasize this, and discourage
   overuse.
 
-- `@memo` may rerun even if the values themselves have not changed, since
+- `@cached` may rerun even if the values themselves have not changed, since
   tracked properties will always invalidate even if their underlying value did
-  not change. Unfortunately, this is not really something that `@memo` can
+  not change. Unfortunately, this is not really something that `@cached` can
   circumvent, since there's no way to tell if a value has actually changed, or
   to know which values are being accessed when the memoized value is accessed
   until the getter is run.
@@ -131,9 +131,10 @@ TODO
 
 ## Alternatives
 
-- `@cached` or `@memoized` could be alternative names.
+- `@memo` or `@memoized` could be alternative names. Initially `@memo` was used,
+  but it was decided to switch to `@cached`.
 
-- `@memo` could receive arguments of the keys to memoize based on. This would
+- `@cached` could receive arguments of the keys to memoize based on. This would
   bring us back to the ergonomics of computed properties, however, and would not
   be ideal. It also would bring no actual benefits, except being able to exclude
   certain values from recalculation.
