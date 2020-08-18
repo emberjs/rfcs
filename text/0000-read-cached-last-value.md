@@ -10,30 +10,38 @@
 Allow a conventional way for RFC 566's @cached getters to retrieve
 the last-returned value from within the next execution of the getter
 to reduce computation load for complex results that are incremental
-in nature, such as this pattern:
+in nature, such as this example of an online auction where each
+participant can see the bids sourced from the others:
 
 ```js
-import { tracked, CACHED } from '@glimmer/tracking';
+import { tracked } from '@glimmer/tracking';
+import { cached, CACHED } from '...source module?';
 
 class OnlineItemAuction {
   /**
-   Bidders who join this particular item auction.
+   Bidders who have joined this particular item auction - this array
+   is set from elsewhere and grows item by item over time.
    */
   @tracked bidders = [];
   
   /**
-   Each bidder is a source of bids with history that
-   must be maintained for the duration of the auction.
+   Each bidder becomes a source of bids for this auction
+   with history that is displayed locally for the duration
+   of the auction and which initially comes from the server
+   which is expensive, and so this array result should
+   not fully regenerate, but incrementally regenerate instead
+   as new bidders arrive.
    */
   @cached
   get bidSources() {
-    // Available by convention for any @cached getter - has
-    // same key as the getter.
+    // Read the previously returned set of bid sources
+    // so that only new ones need be generated for newly
+    // arrived bidders
     const _prevs = this[CACHED].bidSources || [];
     const bidders = this.bidders;
 
-    // Return prior ones, plus any additional items, each
-    // of which must maintain prior state.
+    // Generate a BidSource from each bidder, but avoid doing
+    // it more than once per bidder.
     return bidders.map(bidder => {
       return _prevs.find(prev => prev.bidder === bidder) ||
         // expensive as it downloads initial state from server
