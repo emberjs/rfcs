@@ -1,6 +1,6 @@
 - Start Date: 2020-08-18
 - Relevant Team(s): Ember.js
-- RFC PR: 
+- RFC PR: https://github.com/emberjs/rfcs/pull/656
 - Tracking: 
 
 # Read Previous Cached Value by Convention from within @cached Getters
