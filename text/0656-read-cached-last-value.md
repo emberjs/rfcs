@@ -3,7 +3,7 @@
 - RFC PR: https://github.com/emberjs/rfcs/pull/656
 - Tracking: 
 
-# Read Previous Cached Value by Convention from within @cached Getters
+# Read Previous @cached value with new @cacheFor Decorator
 
 ## Summary
 
