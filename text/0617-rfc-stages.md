@@ -238,6 +238,7 @@ such as this one, those names, especially of later stages, may seem "off".
 However, it is still  valuable to have a stage for every RFC where the teams and 
 community agree that the RFC has been implemented ([Ready for Release](#Ready-for-Release)) and a 
 stage where the community agree that the RFC has been polished ([Recommended](#Recommended)).
+We may further refine this in a future RFC as we learn more. 
 
 ## How we teach this
 
