@@ -69,7 +69,8 @@ An Exploring RFC is one the Ember team believes should be pursued, but the RFC
 may still need some more work, discussion, answers to open questions, 
 and/or a champion before it can move to the next stage. 
 
-An RFC is moved into Exploring with consensus of the relevant team(s). The
+An RFC is moved into Exploring with consensus of the relevant teams. The 
+relevant team expects to spend time helping to refine the proposal. The
 RFC remains a PR and will have an `Exploring` label applied.
 
 An Exploring RFC that is successfully completed can move to [Accepted](#Accepted) 
@@ -77,10 +78,13 @@ with an FCP is required as in the existing process.
 
 #### Accepted
 
-An RFC that has been "accepted" has complete prose and has sat through an 
-"FCP to Accept" period. The community has weighed in and consensus has been 
-achieved on the direction. The RFC has a champion within one of the relevant 
-team(s). This is equivalent to today's RFCs being merged.
+An RFC that has been "accepted" has complete prose and has successfully passed
+through an "FCP to Accept" period in which the community has weighed in and consensus 
+has been achieved on the direction. The relevant teams believe that the 
+proposal is well-specified and ready for implementation. 
+The RFC has a champion within one of the relevant teams. 
+
+This is equivalent to today's RFCs being merged.
 
 If there are unanswered questions, we have outlined them and expect that they 
 will be answered before [Ready for Release](#Ready-for-Release).
@@ -97,6 +101,8 @@ This includes any necessary learning materials.
 At this stage, features or deprecations may be available for use behind a feature flag,
 or with an optional package, etc. 
 The team reviews the work to determine when it can be included in a stable release.
+The Ember team is ready to commit to the stability of any interfaces exposed by the 
+current implementation of the feature.
 Today, this would be the "go/no-go" decision by a particular team. 
 
 A PR is opened on the repo (see [Accepted](#Accepted)) to move an accepted RFC 
@@ -200,6 +206,15 @@ be found on the PR to move the RFC to [Ready for Release](#Ready-for-Release).
 For codebase-related RFCs that have already been merged, the release version is only required to be added to RFCs whose implementation was released after February 1st, 2018 (near the release of Ember 3). This is to preserve the time and effort of our contributors and volunteers.
 
 A stage will be applied to all previously merged RFCs.
+
+### Non-code RFCs
+
+The names of the stages make the most sense with RFCs that propose features in 
+Ember, with code that will follow a release process. For many non-code RFCs, 
+such as this one, those names, especially of later stages, may seem "off". 
+However, it is still  valuable to have a stage for every RFC where the teams and 
+community agree that the RFC has been implemented ([Ready for Release](#Ready-for-Release)) and a 
+stage where the community agree that the RFC has been polished ([Recommended](#Recommended)).
 
 ## How we teach this
 
