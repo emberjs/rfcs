@@ -265,14 +265,65 @@ This RFC does not intend to:
 
 Here is how we could have applied this model to Tracked Properties, which was split across two RFCs: [#410](https://github.com/emberjs/rfcs/blob/master/text/0410-tracked-properties.md) and [#478](https://github.com/emberjs/rfcs/blob/master/text/0478-tracked-properties-updates.md).
 
-| Stage| Description| Criteria to advance to next step | Requires FCP to enter? |
-| -----| -----------|----------------------------------| ----- |
-| Proposed | A PR is opened to the RFCs repo for Tracked Properties | The framework team talks about the RFC in the weekly meetings, and there's general agreement to pursue the idea. | no |
-| Exploring | @pzuraz keeps adding details to the RFC, explores the design space, and collaborates with others to get to the final design. | The full story has been thought out. @pzuraq expects to have the time resources to work on implementation. There were no "known unknowns" questions. | no |
-| Accepted | @pzuraq works on implementation. The feature is enabled in canary under feature flag. We learn that the feature causes a behavior regression in the interop story. @pzuraq works out a new plan to accommodate interop, then opens a PR to update the RFC prose. | The core team has reviewed the updates and has consensus to merge the update PR. | yes |
-| Ready for Release | Determine which version to release the feature in, and finish up final steps like docs. | Ship it! | yes |
-| Released | Ember's users begin using the feature, as of v3.13. | Tracked is covered in the guides, and migration path resources are available. | no |
-| Recommended | Tracked becomes recommended in version 3.15 (the initial version for Octane) | n/a | yes |
+### 0 - Proposed
+
+A PR is opened to the RFCs repo for Tracked Properties. The framework team talks 
+about the RFC in the weekly meetings, and there's general agreement to pursue the 
+idea. The RFC moves to [Exploring](#Exploring). A label is added to the PR to 
+indicate that stage.
+
+### 1 - Exploring
+
+@pzuraq keeps adding details to the RFC, explores the design space, and 
+collaborates with others to get to the final design. The full story has been 
+thought out. @pzuraq expects to have the time resources to work on implementation. 
+There were no "known unknowns" questions. The RFC reaches consensus. The RFC 
+makes it through a week-long FCP process. The PR is merged and the stage 
+is now [Accepted](#Accepted). 
+
+### 2 - Accepted
+
+@pzuraq works on implementation. The feature is enabled in canary under feature flag. 
+We learn that the feature causes a behavior regression in the interop story. 
+@pzuraq works out a new plan to accommodate interop, then opens a PR to update the RFC prose.
+
+The implementation is complete. There are API docs. A PR is opened to move the proposal to 
+[Ready for Release](#Ready-for-Release). It includes a list of criteria required 
+for this feature to be [Recommended](#Recommended).
+On the PR to move to [Ready for Release], each Ember team is requested as a reviewer. 
+Each team reviews the RFC and implementation, ensuring that any changes to the 
+projects they are responsible for have been completed and that the criteria for
+[Recommended](#Recommended) also considers those areas. After a successful FCP 
+period, the PR is merged and the stage is now [Ready for Release](#Ready-for-Release).
+
+### 3 - Ready for Release
+
+The mechanics of releasing the feature proceed. The feature proceeds through 
+Ember.js' beta cycle. The next stable of Ember.js is released with the feature
+available. The API docs are published. A PR to update the stage to [Released](#Released)
+and the frontmater with release details is opened and merged with the consensus 
+of the framework team.
+
+### 4 - Released
+
+The feature is available for use by users of Ember.js. The learning team works to
+carry through the concepts of 'Tracked Properties' to the tutorial and guides. Changes
+to API doc examples are prepared. Other criteria for moving to Recommended are worked on, as defined
+in the [Ready for Release](#Ready-for-Release) step. This work is documented on
+a PR to move the proposal to [Recommended](#Recommended). This proposal, along with
+several others, are PRed to move to Recommended at the same time, 
+as part of Octane around Ember.js 3.14. It is determined that the features are not 
+yet polished enough and criteria to get to Recommended has not yet
+been met. More work proceeds and the features are again proposed as Recommended
+and put into a "FCP for Recommended", it succeeds and the stages of several 
+proposals are updated to Recommended as part of the Octane Edition.
+
+### 5 - Recommended
+
+The feature is released and suggested for use by the wider Ember community. They
+should encounter a polished feature that has ecosystem support. The feature should
+be well represented in learning materials and the guides, tutorial and API docs 
+use the feature in a consistent manner. 
 
 How was the actual process different from the imaginary case study above? In reality, there were two separate RFCs needed to land the feature, and there were fewer opportunities for people to follow along, give input, and understand the status.
 
@@ -351,8 +402,6 @@ Although it is still helpful to have a detailed view into the work being done, o
 ## Unresolved questions
 
 There are some ambiguities because RFCs take many forms. Our process cannot cover 100% of scenarios, but we should strive to find answers that cover the vast majority of RFCs.
-
-- For RFCs that have to do with technical features, should the release version indicate when it is in Ember's blueprint, or the name and version of the package itself?
 
 ## Glossary
 
