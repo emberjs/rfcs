@@ -101,9 +101,13 @@ This includes any necessary learning materials.
 At this stage, features or deprecations may be available for use behind a feature flag,
 or with an optional package, etc. 
 The team reviews the work to determine when it can be included in a stable release.
-The Ember team is ready to commit to the stability of any interfaces exposed by the 
-current implementation of the feature.
+For codebase changes, there are no open questions that are anticipated to require
+breaking changes; the Ember team is ready to commit to the stability of any 
+interfaces exposed by the current implementation of the feature.
 Today, this would be the "go/no-go" decision by a particular team. 
+
+This stage should include a list of criteria for determining when the proposal 
+can be considered [Recommended](#Recommended) after being [Released](#Released). 
 
 A PR is opened on the repo (see [Accepted](#Accepted)) to move an accepted RFC 
 into this stage. An FCP is required to move into this stage.
@@ -134,11 +138,30 @@ relevant team(s) via PR to update the stage.
 
 #### Recommended
 
-The feature/resource is recommended for general use. If it is a codebase change,
-it is well documented and has clear migration paths. 
-It is consistent with Ember's mental models.
+The "Recommended" stage is the final milestone for an RFC. It provides a signal 
+to the wider community to indicate that a feature has been put through its 
+ecosystem paces and is ready to use.
 
-// TODO: I think this needs more detail and examples.
+The "Recommended" stage is most important for suites of features that are designed 
+as a number of separate RFCs. It allows the Ember maintainers to stabilize individual 
+features once they are technically feature complete, an important goal for maintaining 
+technical velocity.
+
+To reach the "Recommended" stage, the following should be true:
+
+- If appropriate, the feature is integrated into the tutorial and the guides prose.
+API documentation is polished and updates are carried through to other areas of 
+API docs that may not directly pertain to the feature.
+- If the proposal replaces an existing feature, the addon ecosystem has largely
+updated to work with both old and new features. 
+- If the proposal updates or replaces an existing feature, high-quality codemods are 
+available
+- If needed, Ember debugging tools as well as popular IDE support have been
+updated to support the feature.
+- If the feature is part of a suite of features that were designed to work together
+for best ergonomics, the other features are also ready to be "Recommended".
+- Any criteria for "Recommended" for this proposal that were established in the 
+[Ready For Release](#Ready-for-Release) stage have been met.
 
 An RFC is moved into "Recommended" via PR to update the stage. An FCP is required
 to enter this stage. Multiple RFCs may be moved as a batch into "Recommended" with
