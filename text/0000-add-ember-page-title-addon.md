@@ -28,6 +28,7 @@ Adding this addon will provide developers a simple solution to achieve the [WCAG
 
 - Update the "Page Title" section in [Page Template Considerations](https://guides.emberjs.com/release/accessibility/page-template-considerations) to use `ember-page-title`.
 - Update code examples in [Building Pages](https://guides.emberjs.com/release/tutorial/part-1/building-pages/) to include uses of `{{page-title}}`. Also explain that updating the page title with the current page name will help users with assistive technology locate themself on the website.
+- Update [ember-welcome-page](https://github.com/ember-cli/ember-welcome-page) addon and [WelcomePage](https://github.com/ember-cli/ember-welcome-page/blob/master/addon/templates/components/welcome-page.hbs) component to explain the contents of the fresh project a bit better. The component should explain the presence of `{{page-title}}` and link to the "Page Title" section in [Page Template Considerations](https://guides.emberjs.com/release/accessibility/page-template-considerations)
 
 ## Drawbacks
 
