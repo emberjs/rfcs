@@ -15,7 +15,9 @@ Add [`ember-page-title`](https://github.com/adopted-ember-addons/ember-page-titl
 This RFC is part of the work made by the Ember.js Accessibility Strike Team to ensure that newly created ember apps have no accessibility issues.
 
 Users with assistive technology rely on the page title to know if they are on the correct page of a website.
-Adding this addon will provide developers a simple solution to achieve the [WCAG Success Criterion 2.4.2: Page Titled](https://www.w3.org/WAI/WCAG21/Understanding/page-titled.html)
+Adding this addon will provide developers a simple solution to achieve the [WCAG Success Criterion 2.4.2: Page Titled](https://www.w3.org/WAI/WCAG21/Understanding/page-titled.html).
+
+While there're other addons that provide the same capabilities it has been decided to go with [`ember-page-title`](https://github.com/adopted-ember-addons/ember-page-title) because it's the most aligned with the current and future direction taken Ember, which is the template-based solution.
 
 ## Detailed design
 
