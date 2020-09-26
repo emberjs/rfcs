@@ -1,7 +1,11 @@
+- Stage: Proposed (later updated to other stages)
 - Start Date: (fill me in with today's date, YYYY-MM-DD)
+- Release date: Unreleased (later update with YYYY-MM-DD)
+- Release Versions: (Include any package with work necessary for the feature, n/a for non-code RFCs)
+  - ember-source: vX.Y.Z
+  - ember-data: vX.Y.Z
 - Relevant Team(s): (fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies)
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
-- Tracking: (leave this empty)
+- RFC PR: (after opening the Propsoal RFC PR, update this with a link to it and update the file name)
 
 # <RFC title>
 
