@@ -17,7 +17,7 @@ import Helper from '@ember/component/helper';
 import { invokeHelper } from '@ember/helper';
 
 class PlusOneHelper extends Helper {
-  compute([num]) {
+  compute([number]) {
     return number + 1;
   }
 }
