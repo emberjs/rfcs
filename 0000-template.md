@@ -5,7 +5,7 @@
   - ember-source: vX.Y.Z
   - ember-data: vX.Y.Z
 - Relevant Team(s): (fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies)
-- RFC PR: (after opening the Propsoal RFC PR, update this with a link to it and update the file name)
+- RFC PR: (after opening the Proposal RFC PR, update this with a link to it and update the file name)
 
 # <RFC title>
 
