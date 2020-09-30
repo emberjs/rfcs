@@ -74,7 +74,8 @@ relevant team expects to spend time helping to refine the proposal. The
 RFC remains a PR and will have an `Exploring` label applied.
 
 An Exploring RFC that is successfully completed can move to [Accepted](#Accepted) 
-with an FCP is required as in the existing process.
+with an FCP is required as in the existing process. It may also be moved to
+[Closed] with an FCP.
 
 #### Accepted
 
@@ -169,12 +170,12 @@ the same PR.
 
 #### Closed
 
-A [Proposed](#Proposed) RFC may be closed after an FCP period. This is the same 
+A [Proposed](#Proposed) or [Exploring](#Exploring) RFC may be closed after an FCP period. This is the same 
 as the existing process. A closed RFC is discontinued.
 
 #### Discontinued
 
-An previously [Accepted](#Accepted) RFC may be discontinued at any point. The RFC
+A previously [Accepted](#Accepted) RFC may be discontinued at any point. The RFC
 may be superseded, out-of-date, or no longer consistent with the direction of 
 Ember. 
 
