@@ -173,7 +173,7 @@ There is nothing about this proposal that could not be instead implemented in an
 
 ## Alternatives
 
-1. Do nothing; developers can use backing classes for templates that require an ID, and either use elementId in classic components or import guidFor in glimmer components or via a hand-rolled helper.
+1. Do nothing; developers can use backing classes for templates that require an ID, and either use `elementId` in classic components or import `guidFor` in glimmer components or via a hand-rolled helper.
 
 2. Introduce a keyword-style syntax that leverages a build-time AST transform to convert this:
 ```hbs
