@@ -365,8 +365,8 @@ implementations available through the legacy addon.
   designing new capabilities and features to fill some of those gaps.
 
   Other than the problems outlined in this RFC, the built-in components mostly
-  gets the job done adequately, and we feel like there is not a lot of value in
-  taking on the project to reimagine them signaficantly and force the entire
+  get the job done adequately, and we feel like there is not a lot of value in
+  taking on the project to reimagine them significantly and force the entire
   community to migrate to completely new patterns at this moment.
 
   Our preference would therefore be to pare down the existing components to
@@ -377,7 +377,7 @@ implementations available through the legacy addon.
 
   If and when they mature to the point of becoming widely accepted as best
   practices in the ecosystem, we can revisit deprecating and removing any of
-  these built-in components as they become redundant. Braodly speaking, we do
+  these built-in components as they become redundant. Broadly speaking, we do
   not believe we are at that point yet, so in the meantime, we should not stop
   improving what we have.
 
