@@ -15,7 +15,7 @@ In most cases, function arguments should not be optional, but in the rare occasi
 
 ## Transition Path
 
-Ember will start logging deprecation messages for `tryInvoke` usage. 
+Ember will start logging deprecation messages for `tryInvoke` usage. Deprecation text: `Using tryInvoke has been deprecated. Instead, consider using native Javascript optional chaining.`
 
 We can codemod our current usage of `tryInvoke` with the equivalent behaviour using plain JavaScript. The migration guide will cover this example:
 
