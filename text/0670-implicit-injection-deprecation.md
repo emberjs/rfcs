@@ -80,18 +80,26 @@ of the framework. This includes:
 
 Removing implicit injections is not possible until we first issue deprecations for users.
 This helps us maintain our strict semver commitment to not completing a major version bump and
-removing APIs without a deprecation path.
+removing APIs without a deprecation path. As a result, it will take us 3 phases to remove `owner.inject`.
 
-### Deprecation
+### 1. Deprecate implicit injection on target object
 
-The first step will be issuing the deprecation. This can be accomplished by installing a native getter
-and setter on the target object that is receiving the property. Whenever the property is accessed,
-we will check if the property is explicitly injected. If it isn't, we will issue a deprecation with an
-until value, id and url to read more about this deprecation.
+The first step will be issuing a deprecation on the target factory object that is receiving a property. This can be
+accomplished by installing a native getter and setter on the target. Whenever the property is accessed, we will
+check if the property is explicitly injected. If it isn't, we will issue a deprecation with an until value, id and
+url to read more about this deprecation.
 
-### Removal
+### 2. Deprecate `owner.inject`
 
-Ember 4.0 will remove the ability to inject arbitrary properties on Ember's Framework objects.
+The first phase did not actually deprecate the "use" of `owner.inject`.  However, we need to deprecate
+it's use directly before removing. This will follow the standard deprecation path.
+
+### 3. Profit!
+
+Ember 4.0 will remove the ability to utilize `owner.inject` to inject arbitrary properties on Ember's Framework objects.
+
+It is important to consider the timeline of these three phases.  Many addons and apps will need to make minor and major
+changes to their codebase. We need to consider this as we move through each phase.
 
 ## How we teach this
 
@@ -105,9 +113,9 @@ The default blueprints when generating a new Ember application will not change.
 
 ## Alternatives
 
-- Continue with default store injection
+- Continue with use of `owner.inject` but overhaul docs and recommend explicit injection.
 - Provide application level super class with a default store injection provided by `ember-data` and other common examples in the community.
-- Allow injection on a specific factory with a single backing Class instead of a generic factory.
+- Allow injection on a specific factory with a single backing Class instead of a generic factory object (e.g. `route` vs `route.index`).
 
 ## Open Questions
 
