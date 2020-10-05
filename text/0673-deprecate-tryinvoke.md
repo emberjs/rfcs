@@ -3,7 +3,7 @@
 - RFC PR: https://github.com/emberjs/rfcs/pull/673
 - Tracking: (leave this empty)
 
-# <RFC title>
+# Deprecate `tryInvoke`
 
 ## Summary
 
@@ -61,11 +61,13 @@ Tooling Support:
 
 - [Babel](https://babeljs.io/) already supports the [optional chaining operator](https://babeljs.io/docs/en/babel-plugin-proposal-optional-chaining) so we can use that for future use-cases.
 
+- [ember-cli-babel](https://www.npmjs.com/package/ember-cli-babel) all recent versions support optional chaining operator.
+
 - [TypeScript](https://github.com/microsoft/TypeScript), similarly, as of [version 3.7](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#optional-chaining) also supports the operator so we will not be breaking that flow either.
 
 ## How We Teach This
 
-Add the transition path to the [Ember Deprecation Guide](https://deprecations.emberjs.com/).
+Add the transition path to the [Ember Deprecation Guide](https://deprecations.emberjs.com/). Deprecation text: `Using tryInvoke has been deprecated. Instead, consider using native Javascript optional chaining.`
 
 The references to `tryInvoke` will need to be removed from the [API docs](https://api.emberjs.com/ember/release/functions/@ember%2Futils/tryInvoke). 
 
