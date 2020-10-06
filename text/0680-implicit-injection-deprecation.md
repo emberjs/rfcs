@@ -54,21 +54,21 @@ of the framework. This includes:
 1. By entangling specific objects with the whole dependency tree, we might be preventing incremental adoption.
    For example, `ember-data` has laid out its plan for adopting only specific packages in [Project Trim](https://github.com/emberjs/data/issues/6166).
    However, because `store` is injected by default on all Ember.Route and Ember.Controller factory objects,
-   a user cannot easily opt out of `@ember-data/store`. This is a common pattern found in other communities as well.
+   a user cannot easily opt out of `@ember-data/store`. This is a common problem space in other communities as well.
    With previous JetBrains IDE installations, adding plugins required a reload. However, by removing a contructor function
    that injected all the dependencies at once, they were able to avoid reload after installation of a plugin.
 
 2. Eager initialization of the dependency tree from which the property came from prevents tree shaking and incurs a
-   performance hit. If you app does not need `ember-data` to render the entry route, their use of `owner.inject` will
+   performance hit. For example, if you app does not need `ember-data` to render the entry route, the `store` injection will
    take up more CPU cycles than necessary, hurting common user facing metrics.
 
 3. Eager initialization makes it hard to users to write tests that need to take advantage of a stub.
    This is often a silent and annoying hurdle that users have to get around when writing tests.
-   Moreover, users moving from Ember 2.x to 3.x may see new behaviour between each test run.
-   When initializers run has changed and previous attempts to stub out the injected property may not work.
+   Moreover, this is especially apparent for users moving to Ember's new testing APIs in [RFC 232](https://github.com/emberjs/rfcs/blob/master/text/0232-simplify-qunit-testing-api.md) and [RFC 268](https://github.com/emberjs/rfcs/blob/master/text/0268-acceptance-testing-refactor.md),
+   ensuring instance initializers run before each test.
 
-4. Overt injection on commonly used framework objects can lead to deviation of project specific styleguides. For instance,
-   injecting the `router` on the Ember.Component factory objects will certainly lead to instances where the `router` is explicitly
+4. Injection on commonly used framework objects can lead to deviation of project specific styleguides. For instance,
+   injecting the `router` on the Ember.Component factory object will certainly lead to instances where the `router` is explicitly
    injected and other instances where is it implicitly injected.
 
 5. Users have come to associate `Route.model()` with a hook that returns `ember-data` models in the absense of explicit injection.
@@ -78,21 +78,21 @@ of the framework. This includes:
 
 ## Detailed design
 
-Removing implicit injections is not possible until we first issue deprecations for users.
+Removing implicit injections is not possible until we first issue deprecations.
 This helps us maintain our strict semver commitment to not completing a major version bump and
 removing APIs without a deprecation path. As a result, it will take us 3 phases to remove `owner.inject`.
 
 ### 1. Deprecate implicit injection on target object
 
-The first step will be issuing a deprecation on the target factory object that is receiving a property. This can be
-accomplished by installing a native getter and setter on the target. Whenever the property is accessed, we will
-check if the property is explicitly injected. If it isn't, we will issue a deprecation with an until value, id and
-url to read more about this deprecation.
+The first step will be issuing a deprecation on the target factory object that is receiving a property. This will surface the deprecation
+on user's owned objects including transitively through addons like `ember-data`. This can be accomplished by installing a native getter
+and setter on the target. Whenever the property is accessed, we will check if the property is explicitly injected. If it isn't,
+we will issue a deprecation with an until value, id and url to read more about this deprecation.
 
 ### 2. Deprecate `owner.inject`
 
-The first phase did not actually deprecate the "use" of `owner.inject`.  However, we need to deprecate
-it's use directly before removing. This will follow the standard deprecation path.
+The first phase did not actually deprecate the "use" of `owner.inject`.  As a result, we need to deprecate
+it's use directly before removing.
 
 ### 3. Profit!
 
