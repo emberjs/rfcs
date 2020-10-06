@@ -77,7 +77,7 @@ There are no changes needed for the [Ember Guides](https://guides.emberjs.com/re
 
 This change will cause some deprecation noise but could be mitigated with a codemod.
 
-## Alternatives
+## Alternative Solutions
 
 We could check that the function name exists on the object before invocation using an `if` block, but this alternative leaves the developer to have to wrap each function call in an `if` block, making this pattern very cumbersome.
 
@@ -88,6 +88,12 @@ foo() {
   }
 }
 ```
+
+## Alternatives
+
+#### Do nothing
+We could keep support in place, and provide more guidance around using it.
+
 ## Unresolved questions
 
 None at the moment.
