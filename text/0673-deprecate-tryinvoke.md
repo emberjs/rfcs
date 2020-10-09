@@ -69,7 +69,7 @@ Tooling Support:
 
 ### Add to Ember Deprecation Guide
 
-In the [Ember Deprecation Guide](https://deprecations.emberjs.com/) we should add the following text:
+In the [Ember Deprecation Guide](https://deprecations.emberjs.com/) we will add the following text:
 
 Deprecate support for `tryInvoke` in Ember's Utils module (@ember/utils). In most cases, Function arguments should not be optional, but in the rare occasion that it is optional, we can use native JavaScript's [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) as a solution.
 
@@ -97,7 +97,7 @@ The references to `tryInvoke` will need to be removed from the [API docs](https:
 
 ### Add to Ember Guides
 
-In [Ember Guides](https://guides.emberjs.com/release/) under [Arguments](https://guides.emberjs.com/release/components/component-arguments-and-html-attributes/) we should create 2 new sub-headings:
+In [Ember Guides](https://guides.emberjs.com/release/) under [Arguments](https://guides.emberjs.com/release/components/component-arguments-and-html-attributes/) we will create 2 new sub-headings called `Function Arguments` and `Optional Function Arguments`:
 
 #### Function Arguments
 Arguments passed into components can be of type [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions). In most cases, Function arguments should be treated as required arguments and therefore should be invoked with normal Function invocation `()`.
