@@ -67,7 +67,7 @@ Tooling Support:
 
 ## How We Teach This
 
-#### Add to Ember Deprecation Guide
+### Add to Ember Deprecation Guide
 
 In the [Ember Deprecation Guide](https://deprecations.emberjs.com/) we should add the following text:
 
@@ -91,11 +91,11 @@ foo() {
 }
 ```
 
-#### Remove from API docs
+### Remove from API docs
 
 The references to `tryInvoke` will need to be removed from the [API docs](https://api.emberjs.com/ember/release/functions/@ember%2Futils/tryInvoke).
 
-#### Add to Ember Guides
+### Add to Ember Guides
 
 In [Ember Guides](https://guides.emberjs.com/release/) under [Arguments](https://guides.emberjs.com/release/components/component-arguments-and-html-attributes/) we should create 2 new sub-headings:
 
