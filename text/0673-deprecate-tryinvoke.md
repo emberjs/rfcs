@@ -137,7 +137,7 @@ In the rare occasion that a Function argument is optional by design, you can use
 
 ```js
 // app/components/child.js
-foo() {
+fooChild() {
  this.args.bar?.('baz');
 }
 ```
