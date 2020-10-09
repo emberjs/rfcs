@@ -99,7 +99,7 @@ The references to `tryInvoke` will need to be removed from the [API docs](https:
 
 In [Ember Guides](https://guides.emberjs.com/release/) under [Arguments](https://guides.emberjs.com/release/components/component-arguments-and-html-attributes/) we should create 2 new sub-headings:
 
-`Function Arguments`:
+#### Function Arguments
 Arguments passed into components can be of type [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions). In most cases, Function arguments should be treated as required arguments and therefore should be invoked with normal Function invocation `()`.
 
 ```js
@@ -122,7 +122,7 @@ fooChild() {
 }
 ```
 
-`Optional Function Arguments`:
+#### Optional Function Arguments
 In the rare occasion that a Function argument is optional by design, you can use native JavaScript's [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) to invoke the optional Function argument `?.()`.
 
 ```hbs
