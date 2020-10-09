@@ -7,15 +7,15 @@
 
 ## Summary
 
-Deprecate support for `tryInvoke` in Ember's Utils module (@ember/utils) because the Javascript language has [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) for us to use as a native solution.
+Deprecate support for `tryInvoke` in Ember's Utils module (@ember/utils) because the JavaScript language has [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) for us to use as a native solution.
 
 ## Motivation
 
-In most cases, function arguments should not be optional, but in the rare occasion that it is optional, the Javascript language has [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) so we can deprecate the usage of `tryInvoke`.
+In most cases, Function arguments should not be optional, but in the rare occasion that it is optional, the JavaScript language has [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) so we can deprecate the usage of `tryInvoke`.
 
 ## Transition Path
 
-Ember will start logging deprecation messages for `tryInvoke` usage. Deprecation text: `Using tryInvoke has been deprecated. Instead, consider using native Javascript optional chaining.`
+Ember will start logging deprecation messages for `tryInvoke` usage. Deprecation text: `Using tryInvoke has been deprecated. Instead, consider using native JavaScript optional chaining.`
 
 We can codemod our current usage of `tryInvoke` with the equivalent behaviour using plain JavaScript. The migration guide will cover this example:
 
@@ -23,7 +23,7 @@ Before:
 
 ```js
 import { tryInvoke } from '@ember/utils';
- 
+
 foo() {
  tryInvoke(this.args, 'bar', ['baz']);
 }
@@ -39,7 +39,7 @@ foo() {
 
 #### Using Optional Chaining Operator
 
-The optional chaining operator `?.` permits reading the value of a property located deep within a chain of connected objects without having to expressly validate that each reference in the chain is valid. The `?.` operator functions similarly to the `.` chaining operator, except that instead of causing an error if a reference is nullish (`null` or `undefined`), the expression short-circuits with a return value of `undefined`. When used with function calls, it returns `undefined` if the given function does not exist:
+The optional chaining operator `?.` permits reading the value of a property located deep within a chain of connected objects without having to expressly validate that each reference in the chain is valid. The `?.` operator functions similarly to the `.` chaining operator, except that instead of causing an error if a reference is nullish (`null` or `undefined`), the expression short-circuits with a return value of `undefined`. When used with Function calls, it returns `undefined` if the given function does not exist:
 
 ```js
 const adventurer = {
@@ -67,11 +67,80 @@ Tooling Support:
 
 ## How We Teach This
 
-Add the transition path to the [Ember Deprecation Guide](https://deprecations.emberjs.com/). Deprecation text: `Using tryInvoke has been deprecated. Instead, consider using native Javascript optional chaining.`
+#### Add to Ember Deprecation Guide
 
-The references to `tryInvoke` will need to be removed from the [API docs](https://api.emberjs.com/ember/release/functions/@ember%2Futils/tryInvoke). 
+In the [Ember Deprecation Guide](https://deprecations.emberjs.com/) we should add the following text:
 
-There are no changes needed for the [Ember Guides](https://guides.emberjs.com/release/) since we do not use it anywhere.
+Deprecate support for `tryInvoke` in Ember's Utils module (@ember/utils). In most cases, Function arguments should not be optional, but in the rare occasion that it is optional, we can use native JavaScript's [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) as a solution.
+
+Before:
+
+```js
+import { tryInvoke } from '@ember/utils';
+
+foo() {
+ tryInvoke(this.args, 'bar', ['baz']);
+}
+```
+
+After:
+
+```js
+foo() {
+ this.args.bar?.('baz');
+}
+```
+
+#### Remove from API docs
+
+The references to `tryInvoke` will need to be removed from the [API docs](https://api.emberjs.com/ember/release/functions/@ember%2Futils/tryInvoke).
+
+#### Add to Ember Guides
+
+In [Ember Guides](https://guides.emberjs.com/release/) under [Arguments](https://guides.emberjs.com/release/components/component-arguments-and-html-attributes/) we should create 2 new sub-headings:
+
+`Function Arguments`:
+Arguments passed into components can be of type [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions). In most cases, Function arguments should be treated as required arguments and therefore should be invoked with normal Function invocation `()`.
+
+```js
+// app/components/parent.js
+@action
+fooParent() {
+ // ...
+}
+```
+
+```hbs
+{{!-- app/components/parent.hbs --}}
+<Child @bar={{this.fooParent}} />
+```
+
+```js
+// app/components/child.js
+fooChild() {
+ this.args.bar('baz');
+}
+```
+
+`Optional Function Arguments`:
+In the rare occasion that a Function argument is optional by design, you can use native JavaScript's [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) to invoke the optional Function argument `?.()`.
+
+```hbs
+{{!-- app/components/parent.hbs --}}
+<Child @bar={{this.fooParent}} />
+```
+
+```hbs
+{{!-- app/components/some-other-parent.hbs --}}
+<Child />
+```
+
+```js
+// app/components/child.js
+foo() {
+ this.args.bar?.('baz');
+}
+```
 
 ## Drawbacks
 
@@ -79,7 +148,7 @@ This change will cause some deprecation noise but could be mitigated with a code
 
 ## Alternative Solutions
 
-We could check that the function name exists on the object before invocation using an `if` block, but this alternative leaves the developer to have to wrap each function call in an `if` block, making this pattern very cumbersome.
+We could check that the Function name exists on the object before invocation using an `if` block, but this alternative leaves the developer to have to wrap each Function call in an `if` block, making this pattern very cumbersome.
 
 ```js
 foo() {
