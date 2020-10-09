@@ -100,7 +100,7 @@ The references to `tryInvoke` will need to be removed from the [API docs](https:
 In [Ember Guides](https://guides.emberjs.com/release/) under the [Arguments](https://guides.emberjs.com/release/components/component-arguments-and-html-attributes/) section, we will create 2 new sub-headings called `Function Arguments` and `Optional Function Arguments`:
 
 #### Function Arguments
-Arguments passed into components can be of type [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions). In most cases, Function arguments should be treated as required arguments and therefore should be invoked with normal Function invocation `()`.
+Arguments passed into components can be of type [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions). In most cases, Function arguments should be treated as required arguments and therefore should be invoked with normal Function invocation `()`. It is important to intentionally treat Function arguments as required because in the off chance that the Function argument is not passed into the child component correctly, normal Function invocation `()` will cause a runtime exception and produce a stack trace, making it easier for the developer to find the root cause of the bug.
 
 ```js
 // app/components/parent.js
@@ -123,7 +123,7 @@ fooChild() {
 ```
 
 #### Optional Function Arguments
-In the rare occasion that a Function argument is optional by design, you can use native JavaScript's [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) to invoke the optional Function argument `?.()`.
+In the rare occasion that a Function argument is optional by design, you can use native JavaScript's [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) to invoke the optional Function argument `?.()`. We want to avoid unintentionally treating Function arguments as optional because optional chaining invocation has the side effect of failing silently with no stack trace produced. This will cause a difficult debugging experience for the developer.
 
 ```hbs
 {{!-- app/components/parent.hbs --}}
