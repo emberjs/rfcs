@@ -6,7 +6,7 @@
 
 ## Summary
 
-This RFC suggests the deprecation of the following [methods](http://api.emberjs.com/ember/release/modules/@ember%2Futils):
+This RFC proposes the deprecation of the following [methods](http://api.emberjs.com/ember/release/modules/@ember%2Futils):
 - `Ember.isEmpty`
 - `Ember.isBlank`
 - `Ember.isNone`
@@ -17,7 +17,7 @@ As well as [computed properties](http://api.emberjs.com/ember/release/modules/@e
 - `empty`
 - `none`
 
-Once deprecated, these methods will move to an external addon to allow users to still take advantage of the succinctness of these utility methods.
+Once deprecated, these methods will move to an external addon to allow users to still take advantage of the succinctness these utility methods provide.
 
 ## Motivation
 
@@ -27,19 +27,51 @@ A simple example of this cognitive load would be checking for the presence of a 
 
 In addition, when checking whether a primitive value is truthy, a user can choose from `isPresent`, `isBlank`, `isNone`, or `isEmpty`.  This can can lead to some confusion for users as there are many options to do the same thing.
 
-Lastly, `Ember.isEmpty` documented [here](https://www.emberjs.com/api/ember/release/functions/@ember%2Futils/isEmpty) will return false for an empty object.  Defining what an empty object is can be a bit tricky and `isEmpty` provided specific semantics that may not fit a users definition.  This idea of specific semantics that do not fit a users definition also applies to the other utility methods as well.
+Lastly, `Ember.isEmpty` documented [here](https://www.emberjs.com/api/ember/release/functions/@ember%2Futils/isEmpty) will return false for an empty object.  Defining what an empty object is can be a bit tricky and `isEmpty` provided specific semantics that may not fit a users definition.  This problem of specific semantics not fitting a users definition also applies to the other utility methods as well.
 
 ## Detailed design
 
-`Ember.isEmpty`, `Ember.isBlank`, `Ember.isNone`, `Ember.isPresent`, `notEmpty`, `empty`, and `none` will be deprecated at first with an addon that extracts these methods for users that still find value in these utility methods.  Any instantiation of one of these functions will log a deprecation warning, notifying the user that this method is deprecated and provide a link to the supported addon.
+`Ember.isEmpty`, `Ember.isBlank`, `Ember.isNone`, `Ember.isPresent`, `notEmpty`, `empty`, and `none` will be deprecated at first with an addon that extracts these methods for users that still find value in these utility methods.  Any instantiation of one of these functions imported from `@ember/utils` will log a deprecation warning, notifying the user that this method is deprecated and provide a link to the supported addon.
 
 Addons that previously relied on these utility methods would also be expected to install this package. Moreover, to ease adoption of the external addon, a codemod will become available for the community.
 
 ## How we teach this
 
-Since using Ember in IE9, IE10, and PhantomJS is deprecated as of the 3.0 release and ES5/ES6 brings improved language semantics, we have, as a community, a guarantee of results across browsers when using plain old JavaScript.  Some of the benefits from these utility methods eminated from a need to guarantee results with ES3 browsers.  Today, we can nudge users to use JavaScript where needed and install an addon in cases where you feel it is necessary.
+ES5/ES6 brings improved language semantics. Moreover, using Ember in IE9, IE10, and PhantomJS is not supported as of Ember 3.0.  As a result, we as a community can guarantee results across browsers when using just JavaScript.  Some of the benefits from these utility methods eminated from a need to guarantee results with ES3 browsers.  Today, we can nudge users to use JavaScript where needed and install an addon in cases where they feel it is necessary.
 
-This would require an update to the guides to indicate that the use of any of these utility methods are now available in an addon.  Moreover, in the README of the addon, we can provide specific examples of when using JavaScript is easier than reaching for one of these utility methods.  Lastly, we can also point them to a utility library like [lodash](https://lodash.com/docs).
+This would require an update to the guides to indicate that the use of any of these utility methods are now available in an addon.  Moreover, in the README of the addon, we can provide specific examples of when using JavaScript is easier than reaching for one of these utility methods.
+
+```js
+import { isEmpty } from '@ember/utils';
+
+function isTomster(attributes) {
+  if (isEmpty(attributes)) {
+    return false;
+  }
+}
+```
+
+Depending on the source data, this can be migrated to something as simple as the following. Let us assume the shape of attributes is an object:
+
+```js
+function isTomster(attributes?: Record<string, any>): boolean {
+  if (!attributes || Object.keys(attributes).length === 0) {
+    return false;
+  }
+}
+```
+
+If it is an array:
+
+```js
+function isTomster(attributes?: Array<string>): boolean {
+  if (!attributes || attributes.length === 0) {
+    return false;
+  }
+}
+```
+
+Lastly, the guides can also point them to a utility library like [lodash](https://lodash.com/docs).
 
 For many users with existing codebases, it should be as simple as installing the extracted addon.  However, users not utilizing these methods will not have these methods bundled by default.
 
