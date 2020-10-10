@@ -7,11 +7,11 @@
 
 ## Summary
 
-Deprecate support for `tryInvoke` in Ember's Utils module (@ember/utils) because the JavaScript language has [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) for us to use as a native solution.
+Deprecate support for `tryInvoke` in Ember's Utils module (@ember/utils) because native JavaScript has [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) for developers to use as an alternative solution. Deprecating `tryInvoke` will help to reduce Ember API redundancy.
 
 ## Motivation
 
-In most cases, Function arguments should not be optional, but in the rare occasion that it is optional, the JavaScript language has [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) so we can deprecate the usage of `tryInvoke`.
+In most cases, Function arguments should not be optional, but in the rare occasion that a Function argument is intentionally optional by design, we can use native JavaScript's [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) as a solution. Deprecating `tryInvoke` will help to reduce Ember API redundancy.
 
 ## Transition Path
 
@@ -71,7 +71,7 @@ Tooling Support:
 
 In the [Ember Deprecation Guide](https://deprecations.emberjs.com/) we will add the following text:
 
-Deprecate support for `tryInvoke` in Ember's Utils module (@ember/utils). In most cases, Function arguments should not be optional, but in the rare occasion that it is optional, we can use native JavaScript's [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) as a solution. Deprecating `tryInvoke` will help to reduce Ember API redundancy.
+Deprecate support for `tryInvoke` in Ember's Utils module (@ember/utils). In most cases, Function arguments should not be optional, but in the rare occasion that a Function argument is intentionally optional by design, we can use native JavaScript's [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) as a solution. Deprecating `tryInvoke` will help to reduce Ember API redundancy.
 
 Before:
 
@@ -123,7 +123,7 @@ fooChild() {
 ```
 
 #### Optional Function Arguments
-In the rare occasion that a Function argument is optional by design, you can use native JavaScript's [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) to invoke the optional Function argument `?.()`. We want to avoid unintentionally treating Function arguments as optional because optional chaining invocation has the side effect of failing silently with no stack trace logged. This will cause a difficult debugging experience for the developer.
+In the rare occasion that a Function argument is intentionally optional by design, you can use native JavaScript's [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining) to invoke the optional Function argument `?.()`. We want to avoid unintentionally treating Function arguments as optional because optional chaining invocation has the side effect of failing silently with no stack trace logged. This will cause a difficult debugging experience for the developer.
 
 ```hbs
 {{!-- app/components/parent.hbs --}}
