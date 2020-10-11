@@ -42,6 +42,7 @@ ES5/ES6 brings improved language semantics. Moreover, using Ember in IE9, IE10, 
 This would require an update to the guides to indicate that the use of any of these utility methods are now available in an addon.  Moreover, in the README of the addon, we can provide specific examples of when using JavaScript is easier than reaching for one of these utility methods.
 
 ```js
+// Current state
 import { isEmpty } from '@ember/utils';
 
 function isTomster(attributes) {
@@ -51,7 +52,20 @@ function isTomster(attributes) {
 }
 ```
 
-Depending on the source data, this can be migrated to something as simple as the following. Let us assume the shape of attributes is an object:
+If you prefer to install the addon directly, we will provide a codemod to update the import path.
+
+```js
+// With an addon
+import { isEmpty } from 'addon-name';
+
+function isTomster(attributes: any): boolean {
+  if (isEmpty(attributes)) {
+    return false;
+  }
+}
+```
+
+However, depending on the source data, this logic can be migrated to the following. Let us assume the shape of attributes is an object:
 
 ```js
 function isTomster(attributes?: Record<string, any>): boolean {
@@ -71,9 +85,9 @@ function isTomster(attributes?: Array<string>): boolean {
 }
 ```
 
-Lastly, the guides can also point them to a utility library like [lodash](https://lodash.com/docs).
+Lastly, the guides can also point users to a utility library like [lodash](https://lodash.com/docs).
 
-For many users with existing codebases, it should be as simple as installing the extracted addon.  However, users not utilizing these methods will not have these methods bundled by default.
+For many existing codebases, it should be as simple as installing the extracted addon and running the codemod.  However, users not utilizing these methods will not have these methods bundled by default.
 
 ## Drawbacks
 
