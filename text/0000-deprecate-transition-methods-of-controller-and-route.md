@@ -73,8 +73,8 @@ or `RouterService#replaceWith` instead.
   import { inject as service } from '@ember/service';
 
   export default class FooRoute extends Route {
-    @service router;
-+   @service session;
++   @service router;
+    @service session;
 
     beforeModel() {
       if (!this.session.isAuthenticated) {
