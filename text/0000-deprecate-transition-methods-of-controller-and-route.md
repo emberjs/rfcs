@@ -165,6 +165,13 @@ methods only being available on services that need to be injected first, is not
 that easy. Developers not being familar with the API might need to reach out
 to guides or API docs to find them.
 
+Deprecating (and later removing) these four methods will not enforce all
+transitions to be triggered by either `RouterService#transitionTo`,
+`RouterService#replaceWith` or `<LinkTo>`. A transition could be still
+triggered by setting a controller property, which is bound to a query
+parameter. But this should be addressed in a separate RFC, which reworks
+registration of query parameters in general.
+
 ## Alternatives
 
 Three possible alternative are discovered so far:
