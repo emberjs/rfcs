@@ -34,7 +34,7 @@ While there're other addons that provide the same capabilities it has been decid
 ## Drawbacks
 
 - An additional dependency to new projects. But, no noticeable size differences it's only all +10kb of js for production builds (not gzipped, ~2kb js gzipped)
-- Add an extra helper `{{page-tile}}` (possible name clashing)
+- Add an extra helper `{{page-title}}` (possible name clashing)
 - Slightly increases the learning curve. Increases the amount of code in a first-starter project, which could become overwhelming.
 - The addon will have to be maintained by the [Ember CLI org](https://github.com/ember-cli)
 
