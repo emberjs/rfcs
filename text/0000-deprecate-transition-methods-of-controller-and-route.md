@@ -172,6 +172,32 @@ triggered by setting a controller property, which is bound to a query
 parameter. But this should be addressed in a separate RFC, which reworks
 registration of query parameters in general.
 
+Ember Engines [injects `Route#transitionToExternal`, `Route#replaceWithExternal`](https://github.com/ember-engines/ember-engines/blob/v0.8.7/packages/ember-engines/addon/-private/route-ext.js)
+and [`Controller#transitionToExternalRoute`](https://github.com/ember-engines/ember-engines/blob/v0.8.7/packages/ember-engines/addon/-private/controller-ext.js)
+methods. These methods allow the consumer to transition between routes external
+to the engine. Ember Engines [does not provide a service like `RouterService` yet](https://github.com/ember-engines/ember-engines/issues/587)
+to do this. But it's [under active development](https://github.com/ember-engines/ember-engines/pull/669).
+
+Ember Engines uses the methods deprecated by this RFC to implement
+`Route#transitionToExternal`, `Route#replaceWithExternal` and
+`Controller#transitionToExternalRoute`. This will trigger a deprecation warning
+for all users of Ember Engines until Ember Engines is refactored to not use the
+deprecated methods anymore.
+
+While this RFC does not intend to decision how Ember Engines should address
+the deprecations, it will very like force Ember Engines to deprecate
+`Route#transitionToExternal`, `Route#replaceWithExternal` and
+`Controller#transitionToExternalRoute` de facto in mid-term for two reasons:
+
+1. These methods would not align anymore with the method provided by Ember to
+   transition between routes.
+2. Ember Engines would not be able to change the implementations of these
+   methods to not use the methods deprecated by this RFC anymore. Using the
+   `RouterService` would very likely change timing and other details of the
+   methods, which could be seen as breaking changes. Keeping the current
+   timings and other details would require usage of private method of the
+   router.
+
 ## Alternatives
 
 Three possible alternative are discovered so far:
