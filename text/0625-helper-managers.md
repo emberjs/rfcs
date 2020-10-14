@@ -142,9 +142,9 @@ interface HelperManager<HelperStateBucket> {
 
   createHelper(definition: HelperDefinition, args: TemplateArgs): HelperStateBucket;
 
-  getValue?(bucket: HelperStateBucket, args: TemplateArgs): unknown;
+  getValue?(bucket: HelperStateBucket): unknown;
 
-  runEffect?(bucket: HelperStateBucket, args: TemplateArgs): void;
+  runEffect?(bucket: HelperStateBucket): void;
 
   getDestroyable?(bucket: HelperStateBucket): object;
 }
@@ -371,9 +371,9 @@ interface HelperManager<HelperStateBucket> {
 
   createHelper(definition: HelperDefinition, args: TemplateArgs): HelperStateBucket;
 
-  getValue?(bucket: HelperStateBucket, args: TemplateArgs): unknown;
+  getValue?(bucket: HelperStateBucket): unknown;
 
-  runEffect?(bucket: HelperStateBucket, args: TemplateArgs): void;
+  runEffect?(bucket: HelperStateBucket): void;
 
   getDestroyable?(bucket: HelperStateBucket): object;
 }
@@ -496,13 +496,13 @@ class ClassHelperManager {
     setOwner(this.ownerInjection, owner);
   }
 
-  createHelper(Definition) {
+  createHelper(Definition, args) {
     let helper = Definition.create(this.ownerInjection);
 
-    return { helper };
+    return { helper, args };
   }
 
-  getValue({ helper }, args) {
+  getValue({ helper, args }) {
     // Consume the RECOMPUTE tag, so if anyone ever
     // calls recompute() it'll force a recompute
     helper[RECOMPUTE];
@@ -527,11 +527,11 @@ class FunctionalHelperManager {
     hasValue: true,
   });
 
-  createHelper(fn) {
-    return { fn };
+  createHelper(fn, args) {
+    return { fn, args };
   }
 
-  getValue({ fn }, args) {
+  getValue({ fn, args }) {
     return fn(args.positional, args.named);
   }
 }
@@ -785,6 +785,7 @@ export default class PageTitleListService extends Service {
 ```js
 // ember-page-title/addons/helpers/title
 
+import { setOwner } from '@ember/application';
 import { inject as service } from '@ember/service';
 import { setHelperManager, capabilities } from '@ember/helper';
 
@@ -801,8 +802,7 @@ class TitleHelperManager {
     return new Title(this.owner, args);
   }
 
-  runEffect(instance, args) {
-    instance.args = args;
+  runEffect(instance) {
     instance.update();
   }
 
@@ -818,8 +818,8 @@ export default class Title {
   @service pageTitleList;
 
   constructor(owner, args) {
-    super(owner, args);
-
+    setOwner(this, owner);
+    this.args = args;
     this.pageTitleList.push({ id: guidFor(this) });
   }
 
