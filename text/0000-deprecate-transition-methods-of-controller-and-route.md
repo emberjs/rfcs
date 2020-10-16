@@ -30,7 +30,7 @@ in edge cases - even if that's not documented. Changing the timing of the
 methods is considered a breaking change, which makes refactorings difficult.
 
 Supporting different ways to do the same increases complexity without providing
-muh value. Especially if it's not only about true shortcuts. Supporting
+much value. Especially if it's not only about true shortcuts. Supporting
 transitions through `RouterService` and `<LinkTo>` component *only* will reduce
 complexity for maintainers.
 
