@@ -18,7 +18,7 @@ The main motivation is to reduce public API surface related to routing. This
 will make the required refactoring of router easier as soon as the methods
 have been removed.
 
-The router is known to be bad documented and underspecified. Especially timing
+The router is known to be poorly documented and underspecified. Especially timing
 of the different APIs has been an issue in the past. Some timing related bugs
 are open since years.¹
 
