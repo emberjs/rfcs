@@ -325,6 +325,327 @@ and tools alike, we do not intend to "reserve" the built-in component names, so
 if an app provides a component with the same name, they will take precedence
 over the built-in components.
 
+## Transition Path
+
+### Importing and Accessing Globals For Subclassing
+
+Example deprecation message:
+
+```
+Using Ember.Checkbox or importing from '@ember/component/checkbox' has been
+deprecated, install the `ember-legacy-built-in-components` addon and use
+`import { Checkbox } from 'ember-legacy-built-in-components';` instead.
+```
+
+* * *
+
+Example that causes deprecation:
+
+```js
+import Checkbox from '@ember/component/checkbox';
+//                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Using Ember.Checkbox or importing from '@ember/component/checkbox' has been
+// deprecated, install the `ember-legacy-built-in-components` addon and use
+// `import { Checkbox } from 'ember-legacy-built-in-components';` instead.
+
+export class MyCheckbox extends Checkbox {
+  // ...
+}
+```
+
+Fixed example:
+
+```js
+import { Checkbox } from '@ember/legacy-built-in-components';
+
+export class MyCheckbox extends Checkbox {
+  // ...
+}
+```
+* * *
+
+Alternative example that triggers the deprecation:
+
+```js
+export function initialize(owner) {
+  owner.register(
+    'component:my-checkbox',
+    Ember.Checkbox.extend({ /* ... */ })
+//  ~~~~~~~~~~~~~~
+// Using Ember.Checkbox or importing from '@ember/component/checkbox' has been
+// deprecated, install the `ember-legacy-built-in-components` addon and use
+// `import { Checkbox } from 'ember-legacy-built-in-components';` instead.
+  );
+}
+```
+
+Fixed example:
+
+```js
+import { Checkbox } from '@ember/legacy-built-in-components';
+
+export function initialize(owner) {
+  owner.register(
+    'component:my-checkbox',
+    Checkbox.extend({ /* ... */ })
+  );
+}
+```
+
+* * *
+
+Additional prose in the deprecation guide:
+
+> The implementation of the built-in components are no longer based on these
+> legacy classes, so they are now unused by the framework and will be removed
+> in the future.
+>
+> If you have implemented custom subclasses of these components, you can
+> install the `@ember/legacy-built-in-components` addon. This addon vendors the
+> legacy classes and make them available for import. See the addon's README for
+> more details.
+>
+> Note that this addon merely makes the legacy classes available, it does not
+> "restore" the built-in components' implementation to be based on these legacy
+> classes.
+
+### Reopening Legacy Built-in Component Classes
+
+Example deprecation message:
+
+```
+Reopening Ember.Checkbox has been deprecated. Consider implementing your own
+wrapper component or create a custom subclass.
+```
+
+* * *
+
+Example that causes deprecation:
+
+```js
+import Checkbox from '@ember/component/checkbox';
+//                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// This still triggers the deprecation from above
+
+Checkbox.reopen({
+//      ~~~~~~~
+// Reopening Ember.Checkbox has been deprecated. Consider implementing your own
+// wrapper component or create a custom subclass.
+  attributeBindings: ['metadata:data-my-metadata'],
+  metadata: ''
+});
+```
+
+Fixed example:
+
+```hbs
+{{!-- app/components/my-checkbox.hbs --}}
+
+<Input
+  @type="checkbox"
+  @checked={{@checked}}
+  ...attributes
+  data-my-metadata={{@metadata}}
+/>
+```
+
+* * *
+
+Alternative example that triggers the deprecation:
+
+```js
+import Checkbox from '@ember/component/checkbox';
+//                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// This still triggers the deprecation from above
+
+Checkbox.reopen({
+//      ~~~~~~~
+// Reopening Ember.Checkbox has been deprecated. Consider implementing your own
+// wrapper component or create a custom subclass.
+  change(...args) {
+    console.log('changed');
+    this._super(...args);
+  }
+})
+```
+
+Fixed example:
+
+```js
+// app/components/my-checkbox.js
+
+import { Checkbox } from '@ember/legacy-built-in-components';
+
+export default class MyCheckbox extends Checkbox {
+  change(...args) {
+    console.log('changed');
+    super.change(...args);
+  }
+}
+```
+
+* * *
+
+Additional prose in the deprecation guide:
+
+> The implementation of the built-in components are no longer based on these
+> legacy classes, so reopening them will soon have no effect.
+>
+> To customize the behavior of these built-in components, create your own
+> wrapper components as a template-only component and invoke that instead.
+>
+> Alternatively, you may also implement your own customized version of the
+> component installing the `@ember/legacy-built-in-components` addon. This
+> addon vendors the legacy classes and make them available for subclassing. See
+> the addon's README for more details.
+>
+> Note that this addon merely makes the legacy classes available, it does not
+> "restore" the built-in components' implementation to be based on these legacy
+> classes. You cannot simply reopen the classes provided by this addon.
+
+### Reopening Classic Component Super Class
+
+Example deprecation message:
+
+```
+Reopening the Ember.Component super class itself has been deprecated. Consider
+alternatives such as installing event listeners on the document or add the
+customizations to specific subclasses.
+```
+
+* * *
+
+Example that causes deprecation:
+
+```js
+import Component from '@ember/component';
+
+Component.reopen({
+//       ~~~~~~~
+// Reopening the Ember.Component super class itself has been deprecated. Consider
+// alternatives such as installing event listeners on the document or add the
+// customizations to specific subclasses.
+  click() {
+    console.log('Clicked on a classic component');
+  }
+});
+```
+
+Fixed example:
+
+```js
+document.addEventListener('click', event => {
+  if (e.target.classList.contains('ember-view')) {
+    console.log('Clicked on a classic component');
+  }
+});
+```
+
+* * *
+
+Alternative example that triggers the deprecation:
+
+```js
+import Component from '@ember/component';
+
+Component.reopen({
+//       ~~~~~~~
+// Reopening the Ember.Component super class itself has been deprecated. Consider
+// alternatives such as installing event listeners on the document or add the
+// customizations to specific subclasses.
+  attributeBindings: ['metadata:data-my-metadata'],
+  metadata: ''
+});
+```
+
+Fixed example:
+
+```js
+// app/components/base.js
+
+import Component from '@ember/component';
+
+// Subclass from this in your app, instead of subclassing from Ember.Component
+export default Component.extend({
+  attributeBindings: ['metadata:data-my-metadata'],
+  metadata: ''
+});
+```
+
+* * *
+
+Additional prose in the deprecation guide:
+
+> Reopening a the `Ember.Component` super class is dangerous and has
+> far-reaching consequences. For example, it may unexpectedly break addons that
+> are not expecting the changes.
+>
+> To respond to DOM events globally, consider using global event listeners
+> instead.
+>
+> Alternatively, you may create a custom subclass of `Ember.Component` with the
+> behavior you want and subclass from that in your app. That way, only those
+> components which explictly opted into the changes will be affected.
+
+### Runtime Lookups
+
+Example deprecation message:
+
+```
+Looking up `component:input` is deprecated. The implementations of the built-in
+components are considered private and should not be relied upon. In the future,
+the runtime registry will no longer contain entries for built-in components.
+```
+
+* * *
+
+Example that causes deprecation:
+
+```js
+this.owner.lookup('component:input');
+```
+
+Fixed example:
+
+**(None)**
+
+### Partial Registration Override
+
+Example deprecation message:
+
+```
+Registering `component:-checkbox` or having a `app/components/-checkbox`
+module in your app is deprecated. To replace the `<Input>` built-in component,
+you must fully replace it in its entirity, by registering `component:input` or
+defining a `app/components/input` module.
+```
+
+* * *
+
+Example that causes deprecation:
+
+```js
+// app/components/-checkbox.js
+
+import Component from '@glimmer/component';
+
+export default class MyBetterCheckbox extends Component {
+  // ...only handles <Input @type="checkbox" />
+}
+```
+
+Fixed example:
+
+```js
+// app/components/input.js
+
+import Component from '@glimmer/component';
+
+export default class MyBetterInput extends Component {
+  // ...must handle all cases of <Input />
+}
+```
+
 ## How we teach this
 
 The API documentation should be updated to document the built-in components as
