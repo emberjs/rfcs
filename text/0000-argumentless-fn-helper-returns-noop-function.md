@@ -22,6 +22,8 @@ This RFC is driven by two motivations:
 
 1. Provide a built-in way to get a noop function in a template.
 2. Simplify mental model around `{{fn}}` helper.
+3. Harmonize `{{fn}}` helper's API with the APIs provided by `{{array}}` and
+   `{{hash}}` helpers.
 
 ### Use cases for noop functions in templates
 
@@ -162,6 +164,27 @@ it:
 
 This is discussed in *How we teach this* section more in detail.
 
+### Harmonization of `{{fn}}` helper with `{{array}}` and `{{hash}}`
+
+The `{{fn}}` helper could be seen as similar to the `{{array}}` and `{{hash}}`
+helpers. All of them allow a developer to create a new instance of a native
+JavaScript data type: an array, a POJO or a function.
+
+Glimmer template syntax supports creation of JavaScript primitives like
+strings, numbers and boolean values in the template directly. It does not
+support this for [structural types](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures)
+and common data structures like array out of the box. The built-in helpers
+`{{array}}`, `{{hash}}` and `{{fn}}` fill that gap.
+
+All of them allow the developer to pass existing state as positional arguments
+to customize the array, POJO or function returned. This can be used to derive
+state from another state in a template.
+
+`{{array}}` and `{{hash}}` support argumentless versions, which create an
+empty array or a POJO without any properties. Adding an argumentless
+version of `{{fn}}` would harmonize its API with the once of the other
+helpers.
+
 ### Historical context
 
 It may be confusing why this capability was not introduced for `{{fn}}`
@@ -272,6 +295,15 @@ users?
    argument on component invocation similar to how contextual modifiers allow
    conditional invoking a modifier. This would reduce the long-term need for
    noop functions dramatically.
+
+3. Instead of an argumentless version of the `{{fn}}` helper a `{{noop}}`
+   helper like the one provided by ember-composable-helpers could be added.
+   One could argue that `{{noop}}` would be more readable precise than `{{fn}}`
+   in what it does. Doing so would address the motivation of providing a
+   built-in way to get a noop function in a template. But as it would not
+   change the `{{fn}}` helper it would not address the two other motivations:
+   the simplification of mental model around that helper and the harmonization
+   of its API with the APIs of `{{array}}` and `{{hash}}` helpers.
 
 ## Unresolved questions
 
