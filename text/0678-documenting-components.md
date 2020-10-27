@@ -1,6 +1,6 @@
 - Start Date: 2020-10-27
 - Relevant Team(s): Ember.js, Learning (?)
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: [#678](https://github.com/emberjs/rfcs/pull/678)
 - Tracking: (leave this empty)
 
 # Documenting Components
