@@ -1,6 +1,6 @@
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
+- Start Date: 2020-10-20
 - Relevant Team(s): (fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies)
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: [#676](https://github.com/emberjs/rfcs/pull/676)
 - Tracking: (leave this empty)
 
 # Return noop function if {{fn}} helper is invoked without arguments
