@@ -1,16 +1,17 @@
-name: CI
+name: Ensure Filename of RFCs
 
 on:
-  push:
-    branches: [ master ]
-  pull_request: {}
+  pull_request:
+    paths:
+      - 'text/*.md'
 
 jobs:
-  lint-frontmatter:
+  check-filename:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
+      - id: files
+        uses: jitterbit/get-changed-files@v1
       - name: Checkout tools repo
         uses: actions/checkout@v2
         with:
@@ -22,6 +23,8 @@ jobs:
       - run: yarn install
         working-directory: rfcs-tooling
 
-      - name: Lint the frontmatter of all RFCs for informational purposes
-        run: node lint-rfc-frontmatter.js ../text/*.md || true # Don't want to fail on old RFCs just yet
+      - name: Test RFC Filename matches PR Number that adds it
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: node check-filename-matches-pr.js $PR_NUMBER ${{ steps.files.outputs.added }}
         working-directory: rfcs-tooling
