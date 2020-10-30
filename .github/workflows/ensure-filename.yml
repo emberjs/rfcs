@@ -15,7 +15,7 @@ jobs:
       - name: Checkout tools repo
         uses: actions/checkout@v2
         with:
-          repository: kategengler/rfcs-tooling
+          repository: emberjs/rfcs-tooling
           path: rfcs-tooling
 
       - uses: actions/setup-node@v2.1.2
