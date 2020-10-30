@@ -136,7 +136,7 @@ and `Route#replaceWith` as options to trigger a redirect. It doesn't mention
 an option. This two paragraphs should be simplified by naming
 `RouterService#transitionTo` and `RouterService#replaceWith` only.
 
-The same applies to [*transitionTo* paragraph of *query paramters* chapter](https://guides.emberjs.com/release/routing/query-params/#toc_transitionto)
+The same applies to [*transitionTo* paragraph of *query parameters* chapter](https://guides.emberjs.com/release/routing/query-params/#toc_transitionto)
 of routing guides. Instead of `Route#transitionTo` and
 `Controller#transitionToRoute` only `RouterService#transitionTo` should be
 mentioned.
