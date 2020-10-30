@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Checkout tools repo
+        uses: actions/checkout@v2
+        with:
+          repository: kategengler/rfcs-tooling
+          path: rfcs-tooling
+
+      - uses: actions/setup-node@v2.1.2
+
+      - run: yarn install
+        working-directory: rfcs-tooling
+
+      - run: node lint-rfc-frontmatter.js ../text/*.md
+        working-directory: rfcs-tooling
