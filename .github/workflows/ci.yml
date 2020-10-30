@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request: {}
+
+jobs:
+  lint-frontmatter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Checkout tools repo
+        uses: actions/checkout@v2
+        with:
+          repository: emberjs/rfcs-tooling
+          path: rfcs-tooling
+
+      - uses: actions/setup-node@v2.1.2
+
+      - run: yarn install
+        working-directory: rfcs-tooling
+
+      - name: Lint the frontmatter of all RFCs for informational purposes
+        run: node lint-rfc-frontmatter.js ../text/*.md || true # Don't want to fail on old RFCs just yet
+        working-directory: rfcs-tooling
