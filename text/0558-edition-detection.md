@@ -1,7 +1,10 @@
-- Start Date: (2019-11-20)
-- Relevant Team(s): (Ember.js, Ember CLI, Ember Data)
-- RFC PR: https://github.com/emberjs/rfcs/pull/558
-- Tracking: (leave this empty)
+---
+Start Date: (2019-11-20)
+Relevant Team(s): (Ember.js, Ember CLI, Ember Data)
+RFC PR: https://github.com/emberjs/rfcs/pull/558
+Tracking: (leave this empty)
+
+---
 
 # Edition detection
 

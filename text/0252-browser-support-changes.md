@@ -1,8 +1,9 @@
-# Browser Support Changes
+---
+Start Date: 2017-09-25
+RFC PR: (leave this empty)
+Ember Issue: (leave this empty)
 
-- Start Date: 2017-09-25
-- RFC PR: (leave this empty)
-- Ember Issue: (leave this empty)
+---
 
 # Summary
 

@@ -1,6 +1,9 @@
-- Start Date: 2018-05-29
-- RFC PR: https://github.com/emberjs/rfcs/pull/335
-- Ember Issue: (leave this empty)
+---
+Start Date: 2018-05-29
+RFC PR: https://github.com/emberjs/rfcs/pull/335
+Ember Issue: (leave this empty)
+
+---
 
 # Deprecate `.sendAction`
 

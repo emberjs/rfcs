@@ -1,6 +1,9 @@
-- Start Date: 2015-05-20
-- RFC PR: https://github.com/emberjs/rfcs/pull/57
-- Ember Issue: https://github.com/emberjs/data/pull/3303
+---
+Start Date: 2015-05-20
+RFC PR: https://github.com/emberjs/rfcs/pull/57
+Ember Issue: https://github.com/emberjs/data/pull/3303
+
+---
 
 # Summary
 

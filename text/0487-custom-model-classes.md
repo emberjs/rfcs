@@ -1,7 +1,10 @@
-- Start Date: 2019-05-09
-- Relevant Team(s): data 
-- RFC PR: [PR](https://github.com/emberjs/rfcs/pull/487)
-- Tracking: [Tracking](https://github.com/emberjs/rfc-tracking/issues/53)
+---
+Start Date: 2019-05-09
+Relevant Team(s): data
+RFC PR: PR
+Tracking: Tracking
+
+---
 
 # Custom Model Class RFC
 

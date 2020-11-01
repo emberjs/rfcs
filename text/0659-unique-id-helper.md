@@ -1,7 +1,10 @@
-- Start Date: 2020-08-25
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/659
-- Tracking: 
+---
+Start Date: 2020-08-25
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/659
+Tracking: 
+
+---
 
 # {{unique-id}} helper
 

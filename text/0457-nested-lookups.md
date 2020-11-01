@@ -1,7 +1,10 @@
-- Start Date: 2019-03-05
-- Relevant Team(s): Ember.js
-- RFC PR: [#457](https://github.com/emberjs/rfcs/pull/457)
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/37
+---
+Start Date: 2019-03-05
+Relevant Team(s): Ember.js
+RFC PR: #457
+Tracking: https://github.com/emberjs/rfc-tracking/issues/37
+
+---
 
 # Nested Invocations in Angle Bracket Syntax
 

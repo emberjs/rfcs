@@ -1,7 +1,10 @@
-- Start Date: (fill me in with today's date, 2019-08-29)
-- Relevant Team(s): EmberData
-- RFC PR: https://github.com/emberjs/rfcs/pull/521
-- Tracking: (leave this empty)
+---
+Start Date: (fill me in with today's date, 2019-08-29)
+Relevant Team(s): EmberData
+RFC PR: https://github.com/emberjs/rfcs/pull/521
+Tracking: (leave this empty)
+
+---
 
 # [DATA] findRecord/peekRecord via Identifier
 

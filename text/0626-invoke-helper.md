@@ -1,7 +1,10 @@
-- Start Date: 2020-04-30
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/626
-- Tracking: (leave this empty)
+---
+Start Date: 2020-04-30
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/626
+Tracking: (leave this empty)
+
+---
 
 # JavaScript Helper Invocation API
 

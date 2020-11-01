@@ -1,8 +1,11 @@
-- Start Date: 2020-06-24
-- Relevant Team(s): Ember CLI
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
-- Tracking: (leave this empty)
-- Authors: Benjamin Jegard, Melanie Sumner, Ricardo Mendes
+---
+Start Date: 2020-06-24
+Relevant Team(s): Ember CLI
+RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+Tracking: (leave this empty)
+Authors: Benjamin Jegard, Melanie Sumner, Ricardo Mendes
+
+---
 
 # Add ember-page-title to the app blueprint
 

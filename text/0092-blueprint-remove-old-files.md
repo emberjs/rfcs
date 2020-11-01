@@ -1,6 +1,9 @@
-- Start Date: 2016-12-17
-- Relevant Team(s): Ember CLI
-- RFC PR: [#92](https://github.com/ember-cli/rfcs/pull/92)
+---
+Start Date: 2016-12-17
+Relevant Team(s): Ember CLI
+RFC PR: #92
+
+---
 
 # Summary
 

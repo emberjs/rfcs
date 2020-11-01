@@ -1,6 +1,9 @@
-- Start Date: 2019-03-06
-- RFC PR: 461
-- [RFC Tracking Issue #51](https://github.com/emberjs/rfc-tracking/issues/51)
+---
+Start Date: 2019-03-06
+RFC PR: 461
+Tracking: https://github.com/emberjs/rfc-tracking/issues/51
+
+---
 
 # Singleton Record Data
 

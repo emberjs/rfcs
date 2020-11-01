@@ -1,7 +1,10 @@
-- Start Date: June 18, 2020
-- Relevant Team(s): Ember.js, Learning, Steering, Ember CLI
-- RFC PR: https://github.com/emberjs/rfcs/pull/649
-- Tracking:
+---
+Start Date: June 18, 2020
+Relevant Team(s): Ember.js, Learning, Steering, Ember CLI
+RFC PR: https://github.com/emberjs/rfcs/pull/649
+Tracking: 
+
+---
 
 # Deprecation Staging
 

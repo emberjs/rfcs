@@ -1,6 +1,9 @@
-- Start Date: 2016-04-16
-- RFC PR: https://github.com/emberjs/rfcs/pull/136
-- Ember Issue: https://github.com/emberjs/ember.js/pull/13553
+---
+Start Date: 2016-04-16
+RFC PR: https://github.com/emberjs/rfcs/pull/136
+Ember Issue: https://github.com/emberjs/ember.js/pull/13553
+
+---
 
 # Summary
 

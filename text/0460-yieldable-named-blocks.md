@@ -1,7 +1,10 @@
-- Start Date: 2019-03-06
-- Relevant Team(s): Ember.js
-- RFC PR: [#460](https://github.com/emberjs/rfcs/pull/460)
-- Tracking: (leave this empty)
+---
+Start Date: 2019-03-06
+Relevant Team(s): Ember.js
+RFC PR: #460
+Tracking: (leave this empty)
+
+---
 
 # Yieldable Named Blocks
 

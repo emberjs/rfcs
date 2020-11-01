@@ -1,7 +1,10 @@
-- Start Date: 2017-11-20
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/272
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/12
+---
+Start Date: 2017-11-20
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/272
+Tracking: https://github.com/emberjs/rfc-tracking/issues/12
+
+---
 
 # Deprecate Function.prototype.on, Function.prototype.observes and Function.prototype.property
 

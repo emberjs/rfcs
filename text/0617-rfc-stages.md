@@ -1,7 +1,10 @@
-- Start Date: 2020-04-22
-- Relevant Team(s): (fill this in with the team(s) to which this RFC applies)
-- RFC PR: https://github.com/emberjs/rfcs/pull/617
-- Tracking: (leave this empty)
+---
+Start Date: 2020-04-22
+Relevant Team(s): (fill this in with the team(s) to which this RFC applies)
+RFC PR: https://github.com/emberjs/rfcs/pull/617
+Tracking: (leave this empty)
+
+---
 
 # RFC Stages
 

@@ -1,7 +1,10 @@
-- Start Date: 2019-02-14
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/496
-- Tracking: (leave this empty)
+---
+Start Date: 2019-02-14
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/496
+Tracking: (leave this empty)
+
+---
 
 # Handlebars Strict Mode
 

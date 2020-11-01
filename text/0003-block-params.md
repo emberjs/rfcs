@@ -1,9 +1,12 @@
-- Start Date: 2014-08-18
-- RFC PR: https://github.com/emberjs/rfcs/pull/3
-- Issues:
-  - Ember Stream support: emberjs/ember.js#5522
-  - Handlebars parser support: wycats/handlebars.js#906
-  - HTMLBars compiler support: tildeio/htmlbars#147
+---
+Start Date: 2014-08-18
+RFC PR: https://github.com/emberjs/rfcs/pull/3
+Issues:
+  Ember Stream support: emberjs/ember.js#5522
+  Handlebars parser support: wycats/handlebars.js#906
+  HTMLBars compiler support: tildeio/htmlbars#147
+
+---
 
 # Summary
 

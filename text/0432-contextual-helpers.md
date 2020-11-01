@@ -1,7 +1,10 @@
-- Start Date: 2018-12-17
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/432
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/6
+---
+Start Date: 2018-12-17
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/432
+Tracking: https://github.com/emberjs/rfc-tracking/issues/6
+
+---
 
 # Contextual Helpers and Modifiers (a.k.a. "first-class helpers/modifiers")
 

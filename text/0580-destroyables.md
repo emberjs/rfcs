@@ -1,7 +1,10 @@
-- Start Date: 2020-01-10
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/580
-- Tracking: (leave this empty)
+---
+Start Date: 2020-01-10
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/580
+Tracking: (leave this empty)
+
+---
 
 # Destroyables
 

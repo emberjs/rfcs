@@ -1,6 +1,9 @@
-- 2014-11-26
-- RFC PR: https://github.com/emberjs/rfcs/pull/24
-- Ember Issue:
+---
+2014-11-26: 
+RFC PR: https://github.com/emberjs/rfcs/pull/24
+Ember Issue: 
+
+---
 
 # Summary
 
