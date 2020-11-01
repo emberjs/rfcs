@@ -1,8 +1,7 @@
 ---
 Start Date: 2020-01-27
 Relevant Team(s): Ember.js, Learning
-RFC PR: #0585
-Tracking: (leave this empty)
+RFC PR: https://github.com/emberjs/rfcs/pull/585
 
 ---
 

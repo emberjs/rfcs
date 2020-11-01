@@ -2,7 +2,6 @@
 Start Date: 2020-06-01
 Relevant Team(s): Ember-CLI
 RFC PR: https://github.com/emberjs/rfcs/pull/637
-Tracking: (leave this empty)
 
 ---
 

@@ -2,7 +2,6 @@
 Start Date: 2019-11-08
 Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/554
-Tracking: (leave this empty)
 
 ---
 

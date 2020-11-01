@@ -1,7 +1,6 @@
 ---
-2018-03-24: 
-RFC PR: 322
-Ember Issue: (leave this empty)
+Start Date: 2018-03-24 
+RFC PR: https://github.com/emberjs/rfcs/pull/322
 
 ---
 

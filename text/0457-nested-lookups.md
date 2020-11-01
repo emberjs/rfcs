@@ -1,7 +1,7 @@
 ---
 Start Date: 2019-03-05
 Relevant Team(s): Ember.js
-RFC PR: #457
+RFC PR: https://github.com/emberjs/rfcs/pull/457
 Tracking: https://github.com/emberjs/rfc-tracking/issues/37
 
 ---

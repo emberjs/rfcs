@@ -1,8 +1,8 @@
 ---
 Start Date: 2019-02-20
 Relevant Team(s): Ember Data
-RFC PR: 452
-Tracking: Issue
+RFC PR: https://github.com/emberjs/rfcs/pull/452
+Tracking: https://github.com/emberjs/rfc-tracking/issues/50
 
 ---
 

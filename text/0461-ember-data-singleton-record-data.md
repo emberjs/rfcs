@@ -1,6 +1,6 @@
 ---
 Start Date: 2019-03-06
-RFC PR: 461
+RFC PR: https://github.com/emberjs/rfcs/pull/461
 Tracking: https://github.com/emberjs/rfc-tracking/issues/51
 
 ---

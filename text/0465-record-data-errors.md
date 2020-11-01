@@ -5,6 +5,7 @@ RFC PR: https://github.com/emberjs/rfcs/pull/465
 Tracking: https://github.com/emberjs/rfc-tracking/issues/46
 
 ---
+
 # Record Data Errors RFC
 
 ## Summary

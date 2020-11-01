@@ -2,7 +2,6 @@
 Start Date: 2019-07-27
 Relevant Team(s): Ember Data
 RFC PR: https://github.com/emberjs/rfcs/pull/522
-Tracking: 
 
 ---
 

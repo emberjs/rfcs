@@ -1,7 +1,6 @@
 ---
 Start Date: 2017-12-12
 RFC PR: https://github.com/emberjs/rfcs/pull/281
-Ember Issue: (leave this empty)
 
 ---
 

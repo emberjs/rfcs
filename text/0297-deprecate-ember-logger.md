@@ -1,6 +1,6 @@
 ---
-2018-01-17: 
-RFC PR: 0297
+Start Date: 2018-01-17 
+RFC PR: https://github.com/emberjs/rfcs/pull/297
 Ember Issue: https://github.com/emberjs/ember.js/issues/16231
 
 ---

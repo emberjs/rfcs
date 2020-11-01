@@ -1,7 +1,7 @@
 ---
 Start Date: 2018-07-30
 Relevant Team(s): Ember CLI
-RFC PR: #120
+RFC PR: https://github.com/ember-cli/rfcs/pull/120
 
 ---
 

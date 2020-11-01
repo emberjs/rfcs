@@ -1,7 +1,7 @@
 ---
 Start Date: 2016-12-14
-RFC PR: #191
-Ember Issue: #14711
+RFC PR: https://github.com/emberjs/rfcs/pull/191
+Ember Issue: https://github.com/emberjs/ember.js/pull/14711
 
 ---
 

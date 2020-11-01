@@ -2,7 +2,6 @@
 Start Date: 2019-05-20
 Relevant Team(s): Ember.js, Learning
 RFC PR: https://github.com/emberjs/rfcs/pull/491
-Tracking: (leave this empty)
 
 ---
 

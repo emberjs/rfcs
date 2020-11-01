@@ -1,7 +1,6 @@
 ---
 Start Date: 2017-06-13
-RFC PR: emberjs/rfcs#232
-Ember Issue: (leave this empty)
+RFC PR: https://github.com/emberjs/rfcs/pull/232
 
 ---
 
