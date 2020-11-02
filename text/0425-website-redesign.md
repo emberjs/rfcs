@@ -1,7 +1,10 @@
-- Start Date: 2018-12-21
-- Relevant Team(s): Learning, Steering
-- RFC PR: https://github.com/emberjs/rfcs/pull/425
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/35
+---
+Start Date: 2018-12-21
+Relevant Team(s): Learning, Steering
+RFC PR: https://github.com/emberjs/rfcs/pull/425
+Tracking: https://github.com/emberjs/rfc-tracking/issues/35
+
+---
 
 # Website Redesign
 

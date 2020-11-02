@@ -1,7 +1,10 @@
-- Start Date: 2018-12-13
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/415
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/8
+---
+Start Date: 2018-12-13
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/415
+Tracking: https://github.com/emberjs/rfc-tracking/issues/8
+
+---
 
 # Render Element Modifiers
 

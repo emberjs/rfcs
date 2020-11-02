@@ -1,7 +1,9 @@
-- Start Date: 2019-05-30
-- Relevant Team(s): Ember.js, Learning
-- RFC PR: https://github.com/emberjs/rfcs/pull/494
-- Tracking: (leave this empty)
+---
+Start Date: 2019-05-30
+Relevant Team(s): Ember.js, Learning
+RFC PR: https://github.com/emberjs/rfcs/pull/494
+
+---
 
 # Async Observers
 

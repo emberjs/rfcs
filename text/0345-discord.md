@@ -1,6 +1,8 @@
-- Start Date: 07/11/2018
-- RFC PR: https://github.com/emberjs/rfcs/pull/345
-- Ember Issue: (leave this empty)
+---
+Start Date: 2019-07-11
+RFC PR: https://github.com/emberjs/rfcs/pull/345
+
+---
 
 # RFC to move the Ember community chat to Discord
 

@@ -1,7 +1,10 @@
-- Start Date: 2019-03-21
-- Relevant Team(s): Ember.js, Learning
-- RFC PR: https://github.com/emberjs/rfcs/pull/471
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/32
+---
+Start Date: 2019-03-21
+Relevant Team(s): Ember.js, Learning
+RFC PR: https://github.com/emberjs/rfcs/pull/471
+Tracking: https://github.com/emberjs/rfc-tracking/issues/32
+
+---
 
 # `{{on}}` Modifier
 

@@ -1,8 +1,10 @@
-- Start Date: 2020-05-29
-- Relevant Team(s): CLI, Learning
-- RFC PR: https://github.com/emberjs/rfcs/pull/635
-- Tracking: (leave this empty)
-- Authors: Joseph Sumner, Ava Wroten, Jamie White, Melanie Sumner
+---
+Start Date: 2020-05-29
+Relevant Team(s): CLI, Learning
+RFC PR: https://github.com/emberjs/rfcs/pull/635
+Authors: Joseph Sumner, Ava Wroten, Jamie White, Melanie Sumner
+
+---
 
 # Ember New Lang
 

@@ -1,6 +1,8 @@
-- Start Date: 2015-10-02
-- RFC PR: https://github.com/emberjs/rfcs/pull/56
-- Ember Issue: (leave this empty)
+---
+Start Date: 2015-10-02
+RFC PR: https://github.com/emberjs/rfcs/pull/56
+
+---
 
 # Refining the Release Process
 

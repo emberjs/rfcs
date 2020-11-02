@@ -1,6 +1,8 @@
-- Start Date: 2018-06-19
-- RFC PR: https://github.com/emberjs/rfcs/pull/340
-- Ember Issue: (leave this empty)
+---
+Start Date: 2018-06-19
+RFC PR: https://github.com/emberjs/rfcs/pull/340
+
+---
 
 # Deprecate Ember.merge in favor of Ember.assign
 

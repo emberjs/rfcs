@@ -1,8 +1,11 @@
-- Start Date: 2019-03-13
-- Relevant Team(s): data
-- RFC PR: https://github.com/emberjs/rfcs/pull/463
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/47
-    
+---
+Start Date: 2019-03-13
+Relevant Team(s): data
+RFC PR: https://github.com/emberjs/rfcs/pull/463
+Tracking: https://github.com/emberjs/rfc-tracking/issues/47
+
+---
+
 # Record State on Record Data RFC
   
 

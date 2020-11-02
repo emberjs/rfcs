@@ -1,6 +1,8 @@
-- Start Date: 2018-09-10
-- RFC PR: https://github.com/emberjs/rfcs/pull/373
-- Ember Issue: (leave this empty)
+---
+Start Date: 2018-09-10
+RFC PR: https://github.com/emberjs/rfcs/pull/373
+
+---
 
 # Element Modifier Manager
 

@@ -1,6 +1,8 @@
-- Start Date: 2018-03-09
-- RFC PR: https://github.com/emberjs/rfcs/pull/311
-- Ember Issue: (leave this empty)
+---
+Start Date: 2018-03-09
+RFC PR: https://github.com/emberjs/rfcs/pull/311
+
+---
 
 # Angle Bracket Invocation
 

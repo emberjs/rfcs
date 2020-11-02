@@ -1,7 +1,10 @@
-- Start Date: 2019-02-17
-- Relevant Teams: Ember.js, Learning
-- RFC PR: https://github.com/emberjs/rfcs/pull/449
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/38
+---
+Start Date: 2019-02-17
+Relevant Teams: Ember.js, Learning
+RFC PR: https://github.com/emberjs/rfcs/pull/449
+Tracking: https://github.com/emberjs/rfc-tracking/issues/38
+
+---
 
 # Deprecate `{{partial}}`
 

@@ -1,7 +1,10 @@
-- Start Date: 2018-09-06
-- Relevant Team(s): Ember Data
-- RFC PR: https://github.com/emberjs/rfcs/pull/372
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/16
+---
+Start Date: 2018-09-06
+Relevant Team(s): Ember Data
+RFC PR: https://github.com/emberjs/rfcs/pull/372
+Tracking: https://github.com/emberjs/rfc-tracking/issues/16
+
+---
 
 # ember-data | modelFactoryFor
 

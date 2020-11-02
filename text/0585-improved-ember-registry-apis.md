@@ -1,7 +1,9 @@
-- Start Date: 2020-01-27
-- Relevant Team(s): Ember.js, Learning
-- RFC PR: [#0585](https://github.com/emberjs/rfcs/pull/585)
-- Tracking: (leave this empty)
+---
+Start Date: 2020-01-27
+Relevant Team(s): Ember.js, Learning
+RFC PR: https://github.com/emberjs/rfcs/pull/585
+
+---
 
 # Improved Ember Registry APIs
 

@@ -1,7 +1,10 @@
-- Start Date: 2019-04-28
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/486
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/54
+---
+Start Date: 2019-04-28
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/486
+Tracking: https://github.com/emberjs/rfc-tracking/issues/54
+
+---
 
 # Deprecate support for mouseEnter/Leave/Move Ember events
 
