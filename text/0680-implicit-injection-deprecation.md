@@ -43,7 +43,7 @@ further progress the framework while easing the learning curve for all developer
 
 ## Motivation
 
-Implicit injections have long confused developers onboarding Ember projects. Without an
+Implicit injections have long confused developers onboarding into Ember projects. Without an
 explicit injection visible on the class body, developers start to wonder how certain properties got there.
 We can infer from a common implicit injection in `ember-data` to reason about some of the downsides this presents.
 If a project has `ember-data` installed, an initializer at runtime registers the `@ember-data/store` on both
