@@ -29,7 +29,7 @@ export default {
 ```js
 export default class PostRoute extends Route {
   // This proposal seeks to make this service injection explicit
-  // Currently users do no need to specify this injection if ember-data is installed
+  // Currently users do not need to specify this injection if ember-data is installed
   // @service store;
 
   model() {
