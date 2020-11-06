@@ -90,11 +90,17 @@ and setter on the target. Whenever the property is accessed, we will check if th
 we will issue a deprecation in DEBUG builds with an until, id and url value to read more about this deprecation. In production, we will
 not issue this deprecation and continue assigning the property.
 
+To avoid this deprecation, you will need to explicitly add the injected property to the target object.  As an example, you can add
+`@service store` to your route or controller to avert this deprecation.
+
 
 ### 2. Deprecate `owner.inject`
 
 The first phase did not actually deprecate the "use" of `owner.inject`.  As a result, we need to deprecate
 it's use directly before removing.
+
+For users and or addons, you may be able to remove `owner.inject` to avoid this deprecation.  However, for libraries like `@ember/data`, we will not be able to
+remove until `@ember/data` v4.
 
 ### 3. Profit!
 
