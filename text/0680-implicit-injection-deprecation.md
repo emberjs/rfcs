@@ -55,7 +55,7 @@ of the framework. This includes:
    For example, `ember-data` has laid out its plan for adopting only specific packages in [Project Trim](https://github.com/emberjs/data/issues/6166).
    However, because `@ember-data/store` is injected by default on all `@ember/routing/route` and `@ember/controller` factory objects,
    a user cannot easily opt out of `@ember-data/store`. This is a common problem space in other communities as well.
-   With previous JetBrains IDE installations, adding plugins required a reload. However, by removing a contructor function
+   With previous JetBrains IDE installations, adding plugins required a reload. However, by removing a constructor function
    that injected all the dependencies at once, they were able to avoid reload after installation of a plugin.
 
 2. Eager initialization of the dependency tree from which the property came from prevents tree shaking and incurs a
