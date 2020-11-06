@@ -11,7 +11,7 @@ This RFC seeks to deprecate implicit injections on arbitrary Ember Framework obj
 intializer or instance-initializer.
 
 A prevalent example of implicit injection is found in `ember-data` [injecting](https://github.com/emberjs/data/blob/4bd2b327c4cbca831f9e9f8bc6b497200a212f9b/packages/-ember-data/addon/setup-container.js) their default `store` into all
-Ember.Route and Ember.Controller factory objects. Here is a pruned example of how this looks.
+`@ember/routing/route` and `@ember/controller` factory objects. Here is a pruned example of how this looks.
 
 ```js
 // app/initializers/store-inject.js
