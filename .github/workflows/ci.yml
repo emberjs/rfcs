@@ -30,5 +30,6 @@ jobs:
         uses: jitterbit/get-changed-files@v1
 
       - name: Lint added RFCs frontmatter
+        if: ${{ steps.files.outputs.added }}
         run: node lint-rfc-frontmatter.js ${{ steps.files.outputs.added }}
         working-directory: rfcs-tooling
