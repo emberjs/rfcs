@@ -1,7 +1,9 @@
-- Start Date: 2020-10-02
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/673
-- Tracking: (leave this empty)
+--- 
+Start Date: 2020-10-02
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/673
+
+---
 
 # Deprecate `tryInvoke`
 

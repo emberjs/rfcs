@@ -25,3 +25,10 @@ jobs:
       - name: Lint the frontmatter of all RFCs for informational purposes
         run: node lint-rfc-frontmatter.js ../text/*.md || true # Don't want to fail on old RFCs just yet
         working-directory: rfcs-tooling
+
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+
+      - name: Lint added RFCs frontmatter
+        run: node lint-rfc-frontmatter.js ${{ steps.files.outputs.added }}
+        working-directory: rfcs-tooling

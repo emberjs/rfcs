@@ -1,7 +1,9 @@
-- Start Date: 2020-10-12
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/674/
-- Tracking: (leave this empty)
+---
+Start Date: 2020-10-12
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/674
+
+---
 
 # Deprecate transition methods of controller and route
 

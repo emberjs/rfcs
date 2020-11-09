@@ -1,7 +1,24 @@
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
-- Relevant Team(s): (fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies)
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
-- Tracking: (leave this empty)
+---
+Stage: Accepted
+Start Date: 
+Release Date: Unreleased
+Release Versions:
+  ember-source: vX.Y.Z
+  ember-data: vX.Y.Z
+Relevant Team(s): 
+RFC PR: 
+---
+
+<!--- 
+Directions for above: 
+
+Stage: Leave as is
+Start Date: Fill in with today's date, YYYY-MM-DD
+Release Date: Leave as is
+Release Versions: Leave as is
+Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies
+RFC PR: Fill this in with the URL for the Proposal RFC PR
+-->
 
 # <RFC title>
 
