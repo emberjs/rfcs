@@ -1,7 +1,7 @@
 - Start Date: 2020-10-04
 - Relevant Team(s): Ember.js
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
-- Tracking: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/680
+- Tracking: https://github.com/emberjs/rfcs/issues/508
 
 # Implicit Injection Deprecation
 
