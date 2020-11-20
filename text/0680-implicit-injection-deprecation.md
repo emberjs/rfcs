@@ -7,11 +7,9 @@
 
 ## Summary
 
-This RFC seeks to deprecate implicit injections on arbitrary Ember Framework objects. This is commonly done via `owner.inject` in an
-intializer or instance-initializer.
+This RFC seeks to deprecate implicit injections on arbitrary Ember Framework objects. This is commonly done via `owner.inject` in an intializer or instance-initializer.
 
-A prevalent example of implicit injection is found in `ember-data` [injecting](https://github.com/emberjs/data/blob/4bd2b327c4cbca831f9e9f8bc6b497200a212f9b/packages/-ember-data/addon/setup-container.js) their default `@ember-data/store` into all
-`@ember/routing/route` and `@ember/controller` factory objects. Here is a pruned example of how this looks.
+A prevalent example of implicit injection is found in `ember-data` [injecting](https://github.com/emberjs/data/blob/4bd2b327c4cbca831f9e9f8bc6b497200a212f9b/packages/-ember-data/addon/setup-container.js) their default `@ember-data/store` into all `@ember/routing/route` and `@ember/controller` factory objects. Here is a pruned example of how this looks.
 
 ```js
 // app/initializers/store-inject.js
@@ -38,84 +36,50 @@ export default class PostRoute extends Route {
 }
 ```
 
-Ensuring a property is present on Ember's Framework objects should be explicitly defined. This will allow the Ember ecosystem to
-further progress the framework while easing the learning curve for all developers.
+Ensuring a property is present on Ember's Framework objects should be explicitly defined. This will allow the Ember ecosystem to further progress the framework while easing the learning curve for all developers.
 
 ## Motivation
 
-Implicit injections have long confused developers onboarding into Ember projects. Without an
-explicit injection visible on the class body, developers start to wonder how certain properties got there.
-We can infer from a common implicit injection in `ember-data` to reason about some of the downsides this presents.
-If a project has `ember-data` installed, an initializer at runtime registers the `@ember-data/store` on both
-`@ember/routing/route` and `@ember/controller` factory objects.  This is a nice convenience for a project with many routes
-that are used for data fetching. However, it leads to many inconveniences that hinder learning and advancement
-of the framework. This includes:
+Implicit injections have long confused developers onboarding into Ember projects. Without an explicit injection visible on the class body, developers start to wonder how certain properties got there. We can infer from a common implicit injection in `ember-data` to reason about some of the downsides this presents. If a project has `ember-data` installed, an initializer at runtime registers the `@ember-data/store` on both
+`@ember/routing/route` and `@ember/controller` factory objects.  This is a nice convenience for a project with many routes that are used for data fetching. However, it leads to many inconveniences that hinder learning and advancement of the framework. This includes:
 
-1. By entangling specific objects with the whole dependency tree, we might be preventing incremental adoption.
-   For example, `ember-data` has laid out its plan for adopting only specific packages in [Project Trim](https://github.com/emberjs/data/issues/6166).
-   However, because `@ember-data/store` is injected by default on all `@ember/routing/route` and `@ember/controller` factory objects,
-   a user cannot easily opt out of `@ember-data/store`. This is a common problem space in other communities as well.
-   With previous JetBrains IDE installations, adding plugins required a reload. However, by removing a constructor function
-   that injected all the dependencies at once, they were able to avoid reload after installation of a plugin.
+1. By entangling specific objects with the whole dependency tree, we might be preventing incremental adoption. For example, `ember-data` has laid out its plan for adopting only specific packages in [Project Trim](https://github.com/emberjs/data/issues/6166). However, because `@ember-data/store` is injected by default on all `@ember/routing/route` and `@ember/controller` factory objects, a user cannot easily opt out of `@ember-data/store`. This is a common problem space in other communities as well. With previous JetBrains IDE installations, adding plugins required a reload. However, by removing a constructor function that injected all the dependencies at once, they were able to avoid reload after installation of a plugin.
 
-2. Eager initialization of the dependency tree from which the property came from prevents tree shaking and incurs a
-   performance hit. For example, if you app does not need `ember-data` to render the entry route, the `@ember-data/store` injection will
-   take up more CPU cycles than necessary, hurting common user facing metrics.
+2. Eager initialization of the dependency tree from which the property came from prevents tree shaking and incurs a performance hit. For example, if you app does not need `ember-data` to render the entry route, the `@ember-data/store` injection will take up more CPU cycles than necessary, hurting common user facing metrics.
 
-3. Eager initialization makes it hard to users to write tests that need to take advantage of a stub.
-   This is often a silent and annoying hurdle that users have to get around when writing tests.
-   Moreover, this is especially apparent for users moving to Ember's new testing APIs in [RFC 232](https://github.com/emberjs/rfcs/blob/master/text/0232-simplify-qunit-testing-api.md) and [RFC 268](https://github.com/emberjs/rfcs/blob/master/text/0268-acceptance-testing-refactor.md),
-   ensuring instance initializers run before each test.
+3. Eager initialization makes it hard to users to write tests that need to take advantage of a stub. This is often a silent and annoying hurdle that users have to get around when writing tests. Moreover, this is especially apparent for users moving to Ember's new testing APIs in [RFC 232](https://github.com/emberjs/rfcs/blob/master/text/0232-simplify-qunit-testing-api.md) and [RFC 268](https://github.com/emberjs/rfcs/blob/master/text/0268-acceptance-testing-refactor.md), ensuring instance initializers run before each test.
 
-4. Injection on commonly used framework objects can lead to deviation of project specific styleguides. For instance,
-   injecting the `router` on the `@ember/component` factory object will certainly lead to instances where the `router` is explicitly
-   injected and other instances where is it implicitly injected.
+4. Injection on commonly used framework objects can lead to deviation of project specific styleguides. For instance, injecting the `router` on the `@ember/component` factory object will certainly lead to instances where the `router` is explicitly injected and other instances where is it implicitly injected.
 
-5. Users have come to associate `Route.model()` with a hook that returns `ember-data` models in the absense of explicit injection.
-   While this can be true, it is not wholly true. New patterns of data loading are becoming
-   accepted in the community including opting to fetch data in a Component.
+5. Users have come to associate `Route.model()` with a hook that returns `ember-data` models in the absense of explicit injection. While this can be true, it is not wholly true. New patterns of data loading are becoming accepted in the community including opting to fetch data in a Component.
 
 
 ## Detailed design
 
-Removing implicit injections is not possible until we first issue deprecations.
-This helps us maintain our strict semver commitment to not completing a major version bump and
-removing APIs without a deprecation path. As a result, it will take us 3 phases to remove `owner.inject`.
+Removing implicit injections is not possible until we first issue deprecations. For example, `@ember/data` cannot remove its `owner.inject` without it being a breaking change. In doing so, deprecating first helps us maintain our strict semver commitment to not completing a major version bump and removing APIs without a deprecation path. As a result, it will take us 3 phases to remove `owner.inject`.
 
 ### 1. Deprecate implicit injection on target object
 
-The first step will be issuing a deprecation on the target factory object that is receiving a property. This will surface the deprecation
-on user's owned objects including transitively through addons like `ember-data`. This can be accomplished by installing a native getter
-and setter on the target. Whenever the property is accessed, we will check if the property is explicitly injected. If it isn't,
-we will issue a deprecation in DEBUG builds with an until, id and url value to read more about this deprecation. In production, we will
-not issue this deprecation and continue assigning the property.
+Simply deprecating `owner.inject` is not sufficient because it is very difficult to detect if you are relying on implicit injection. As a result, the first step will be issuing a deprecation on the target factory object that is receiving a property. This will surface the deprecation on user's owned objects including transitively through addons like `ember-data`. This can be accomplished by installing a native getter and setter on the target. Whenever the property is accessed, we will check if the property is explicitly injected. If it isn't, we will issue a deprecation in DEBUG builds with an until, id and url value to read more about this deprecation. In production, we will not issue this deprecation and continue assigning the property.
 
-To avoid this deprecation, you will need to explicitly add the injected property to the target object.  As an example, you can add
-`@service store` to your route or controller to avert this deprecation.
-
+To avoid this deprecation, you will need to explicitly add the injected property to the target object.  As an example, you can add `@service store` to your route or controller to avert this deprecation resulting from `@ember/data`'s use of `owner.inject`.
 
 ### 2. Deprecate `owner.inject`
 
-The first phase did not actually deprecate the "use" of `owner.inject`.  As a result, we need to deprecate
-it's use directly before removing.
+The first phase did not actually deprecate the use of `owner.inject`.  As a result, we need to deprecate it's use directly before removing.
 
-For users and or addons, you may be able to remove `owner.inject` to avoid this deprecation.  However, for libraries like `@ember/data`, we will not be able to
-remove until `@ember/data` v4.
+For users and or addons, you may be able to remove `owner.inject` to avoid this deprecation.  However, for libraries like `@ember/data`, we will not be able to remove until `@ember/data` v4.
 
 ### 3. Profit!
 
 Ember 4.0 will remove the ability to utilize `owner.inject` to inject arbitrary properties on Ember's Framework objects.
 
-It is important to consider the timeline of these three phases.  Many addons and apps will need to make minor and major
-changes to their codebase. We need to consider this as we move through each phase.
+
+It is important to consider the timeline of these three phases.  Each step will consist of a minimum of one release cycle.  Many addons and apps will need to make minor and major changes to their codebase. We need to consider this as we move through each phase.
 
 ## How we teach this
 
-The API docs would need to be overhauld in a few spots. First, we need to remove the [docs](https://guides.emberjs.com/release/applications/dependency-injection/#toc_factory-injections) about Factory injections.
-Second, we need to detail explicit injection where currently relying on implicit injection.  Many examples show fetching data
-via `this.store` but do not specifiy how `this.store` arrived as a property on the Route. Also apparent
-disclaimers for people visiting the `ember-data` docs that explicit injection of `@ember-data/store` is necessary
-and has deviated from past behaviour is likely prudent.
+The API docs would need to be overhauld in a few spots. First, we need to remove the [docs](https://guides.emberjs.com/release/applications/dependency-injection/#toc_factory-injections) about Factory injections. Second, we need to detail explicit injection where currently relying on implicit injection.  Many examples show fetching data via `this.store` but do not specifiy how `this.store` arrived as a property on the Route. Also apparent disclaimers for people visiting the `ember-data` docs that explicit injection of `@ember-data/store` is necessary and has deviated from past behaviour is likely prudent.
 
 The default blueprints when generating a new Ember application will not change.
 
