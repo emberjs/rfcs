@@ -1,16 +1,20 @@
 - Start Date: 2018-05-22
-- RFC PR: (leave this empty)
-- Ember Issue: (leave this empty)
+- RFC PR: https://github.com/emberjs/rfcs/pull/334
+- Ember Issue: https://github.com/emberjs/rfcs/issues/333
 
 # Deprecate Existence Utils & Computed Properties
 
 ## Summary
 
-This RFC proposes the deprecation of the following [methods](http://api.emberjs.com/ember/release/modules/@ember%2Futils):
-- `Ember.isEmpty`
+This RFC proposes the deprecation of the following [methods](https://api.emberjs.com/ember/release/modules/@ember%2Futils):
+- `Ember.compare`
 - `Ember.isBlank`
+- `Ember.isEmpty`
+- `Ember.isEqual`
 - `Ember.isNone`
 - `Ember.isPresent`
+- `Ember.tryInvoke`
+- `Ember.typeOf`
 
 As well as [computed properties](http://api.emberjs.com/ember/release/modules/@ember%2Fobject) that rely on these methods:
 - `notEmpty`
@@ -31,7 +35,7 @@ Lastly, `Ember.isEmpty` documented [here](https://www.emberjs.com/api/ember/rele
 
 ## Detailed design
 
-`Ember.isEmpty`, `Ember.isBlank`, `Ember.isNone`, `Ember.isPresent`, `notEmpty`, `empty`, and `none` will be deprecated at first with an addon that extracts these methods for users that still find value in these utility methods.  Any instantiation of one of these functions imported from `@ember/utils` will log a deprecation warning, notifying the user that this method is deprecated and provide a link to the supported addon.
+`Ember.compare`, `Ember.isBlank`, `Ember.isEmpty`, `Ember.isEqual`, `Ember.isNone`, `Ember.isPresent`, `Ember.tryInvoke`, `Ember.typeOf`, `notEmpty`, `empty`, and `none` will be deprecated at first with an addon that extracts these methods for users that still find value in these utility methods.  Any instantiation of one of these functions imported from `@ember/utils` will log a deprecation warning, notifying the user that this method is deprecated and provide a link to the supported addon.
 
 Addons that previously relied on these utility methods would also be expected to install this package. Moreover, to ease adoption of the external addon, a codemod will become available for the community.
 
@@ -56,7 +60,7 @@ If you prefer to install the addon directly, we will provide a codemod to update
 
 ```js
 // With an addon
-import { isEmpty } from 'addon-name';
+import { isEmpty } from 'ember-utils';
 
 function isTomster(attributes: any): boolean {
   if (isEmpty(attributes)) {
@@ -88,6 +92,192 @@ function isTomster(attributes?: Array<string>): boolean {
 Lastly, the guides can also point users to a utility library like [lodash](https://lodash.com/docs).
 
 For many existing codebases, it should be as simple as installing the extracted addon and running the codemod.  However, users not utilizing these methods will not have these methods bundled by default.
+
+## Deprecation Guide
+
+### compare
+
+Install and import `ember-util` to `compare` two types.
+until: 4.0.0
+id: use-ember-util-package--compare
+
+```js
+import { compare } from '@ember/util';
+
+compare(['code'], ['code', 'is', 'lovely']); // -1
+compare(['code'], ['code']); // 0
+compare(['code'], []); // 1
+```
+
+To avoid the `compare` deprecation, you can install the `ember-util` package and do the following
+
+```js
+import { compare } from 'ember-util';
+
+compare(['code'], ['code', 'is', 'lovely']); // -1
+compare(['code'], ['code']); // 0
+compare(['code'], []); // 1
+```
+
+### isBlank
+
+Install and import `ember-util` to check `isBlank` status.
+until: 4.0.0
+id: use-ember-util-package--isBlank
+
+```js
+import { isBlank } from '@ember/util';
+
+isBlank(['code']); // false
+isBlank([]); // true
+```
+
+To avoid the `isBlank` deprecation, you can install the `ember-util` package and do the following
+
+```js
+import { isBlank } from 'ember-util';
+
+isBlank(['code']); // false
+isBlank([]); // true
+```
+
+### isEmpty
+
+Install and import `ember-util` to check `isEmpty` status.
+until: 4.0.0
+id: use-ember-util-package--isEmpty
+
+```js
+import { isEmpty } from '@ember/util';
+
+isEmpty(['code']); // false
+isEmpty([]); // true
+```
+
+To avoid the `isEmpty` deprecation, you can install the `ember-util` package and do the following
+
+```js
+import { isEmpty } from 'ember-util';
+
+isEmpty(['code']); // false
+isEmpty([]); // true
+```
+
+### isEqual
+
+Install and import `ember-util` to check `isEqual` status.
+until: 4.0.0
+id: use-ember-util-package--isEqual
+
+```js
+import { isEqual } from '@ember/util';
+
+isEqual({}, { a: 'key' }); // false
+isEqual({ a: 'key' }, { a: 'key' }); // true
+isEqual(['code'], ['code']); // false
+```
+
+To avoid the `isEqual` deprecation, you can install the `ember-util` package and do the following
+
+```js
+import { isEqual } from 'ember-util';
+
+isEqual({}, { a: 'key' }); // false
+isEqual({ a: 'key' }, { a: 'key' }); // true
+isEqual(['code'], ['code']); // false
+```
+
+### isNone
+
+Install and import `ember-util` to check `isNone` status.
+until: 4.0.0
+id: use-ember-util-package--isNone
+
+```js
+import { isNone } from '@ember/util';
+
+isNone(undefined); // true
+isNone([]); // false
+isNone(''); // false
+```
+
+To avoid the `isNone` deprecation, you can install the `ember-util` package and do the following
+
+```js
+import { isNone } from 'ember-util';
+
+isNone(undefined); // true
+isNone([]); // false
+isNone(''); // false
+```
+
+### isPresent
+
+Install and import `ember-util` to check `isPresent` status.
+until: 4.0.0
+id: use-ember-util-package--isPresent
+
+```js
+import { isPresent } from '@ember/util';
+
+isPresent(undefined); // false
+isPresent([]); // false
+isPresent('hi der'); // true
+```
+
+To avoid the `isPresent` deprecation, you can install the `ember-util` package and do the following
+
+```js
+import { isPresent } from 'ember-util';
+
+isPresent(undefined); // false
+isPresent([]); // false
+isPresent('hi der'); // true
+```
+
+### tryInvoke
+
+Install and import `ember-util` to invoke a method on a target object.
+until: 4.0.0
+id: use-ember-util-package--tryInvoke
+
+```js
+import { tryInvoke } from '@ember/util';
+
+let d = new Date('03/15/2013');
+tryInvoke(d, 'getMilliseconds'); // 0
+```
+
+To avoid the `tryInvoke` deprecation, you can install the `ember-util` package and do the following
+
+```js
+import { tryInvoke } from 'ember-util';
+
+let d = new Date('03/15/2013');
+tryInvoke(d, 'getMilliseconds'); // 0
+```
+
+### typeOf
+
+Install and import `ember-util` to check `typeOf` on an input.
+until: 4.0.0
+id: use-ember-util-package--typeOf
+
+```js
+import { typeOf } from '@ember/util';
+
+let noop = () => {};
+typeOf(noop); // 'function'
+```
+
+To avoid the `typeOf` deprecation, you can install the `ember-util` package and do the following
+
+```js
+import { typeOf } from 'ember-util';
+
+let noop = () => {};
+typeOf(noop); // 'function'
+```
 
 ## Drawbacks
 
