@@ -2,7 +2,7 @@
 - RFC PR: https://github.com/emberjs/rfcs/pull/334
 - Ember Issue: https://github.com/emberjs/rfcs/issues/333
 
-# Deprecate Existence Utils & Computed Properties
+# Deprecate Ember Utils & dependent Computed Properties
 
 ## Summary
 
