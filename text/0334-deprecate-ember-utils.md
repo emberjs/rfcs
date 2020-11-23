@@ -279,6 +279,94 @@ let noop = () => {};
 typeOf(noop); // 'function'
 ```
 
+### notEmpty
+
+Install and import `ember-util` to check `notEmpty` on a property.
+until: 4.0.0
+id: use-ember-util-package--notEmpty
+
+```js
+import { notEmpty } from '@ember/object/computed';
+
+class ToDoList {
+  constructor(todos) {
+    set(this, 'todos', todos);
+  }
+
+  @notEmpty('args.todos') isDone;
+}
+```
+
+To avoid the `notEmpty` deprecation, you can install the `ember-util` package and do the following
+
+```js
+import { notEmpty } from 'ember-util';
+
+class ToDoList {
+  constructor(todos) {
+    set(this, 'todos', todos);
+  }
+
+  @notEmpty('todos') isDone;
+}
+```
+
+### empty
+
+Install and import `ember-util` to check `empty` on a property.
+until: 4.0.0
+id: use-ember-util-package--empty
+
+```js
+import { empty } from '@ember/object/computed';
+
+class ToDoList {
+  constructor(todos) {
+    set(this, 'todos', todos);
+  }
+
+  @empty('todos') isDone;
+}
+```
+
+To avoid the `empty` deprecation, you can install the `ember-util` package and do the following
+
+```js
+import { empty } from 'ember-util';
+
+class ToDoList {
+  constructor(todos) {
+    set(this, 'todos', todos);
+  }
+
+  @empty('todos') isDone;
+}
+```
+
+### none
+
+Install and import `ember-util` to check `none` on a property.
+until: 4.0.0
+id: use-ember-util-package--none
+
+```js
+import { none } from '@ember/object/computed';
+
+class ToDoList {
+  @none('args.todos') isDone;
+}
+```
+
+To avoid the `none` deprecation, you can install the `ember-util` package and do the following
+
+```js
+import { none } from 'ember-util';
+
+class ToDoList {
+  @none('args.todos') isDone;
+}
+```
+
 ## Drawbacks
 
 This change may impact quite a few codebases.  Moreover, users who heavily rely on these utility methods will have to install another addon.  Some users may desire this functionality out of the box.
