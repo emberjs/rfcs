@@ -1,7 +1,13 @@
-- Start Date: 2020-11-28
-- Relevant Team(s): All
-- RFC PR:
-- Tracking: (leave this empty)
+---
+Stage: Accepted
+Start Date: 2020-11-28
+Release Date: Unreleased
+Release Versions:
+  ember-source: vX.Y.Z
+  ember-data: vX.Y.Z
+Relevant Team(s): All
+RFC PR: https://github.com/emberjs/rfcs/pull/685
+---
 
 # New Browser Support Policy
 
