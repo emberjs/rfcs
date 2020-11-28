@@ -214,6 +214,37 @@ function tracked(target, key, { initializer }) {
 }
 ```
 
+### A note on this design
+
+In general, API design and cohesiveness is an important value in Ember. We work
+very hard as a community to develop patterns which are uniform across many
+different types of APIs, which in turn leads to a better DX as developers can
+generally know what to expect from a given API without even needing to read the
+documentation.
+
+The API proposed in this RFC, which uses functions to access and manipulate a
+value via an opaque handle, is an unusual API design when compared to most other
+Ember APIs. It is a pattern which provides extra flexibility to the implementers
+of the API, at the cost of a _severe_ DX penalty for the users of the API,
+because of this unusual-ness.
+
+As such this pattern should be used extremely sparingly, on APIs which meet the
+following criteria:
+
+1. They are not expected to be used by _every_ Ember developer. If the API will
+   be used in the Super Rentals tutorial, or the standard non-advanced sections
+   of the guides, then it should not use this pattern.
+2. They are for extremely core parts of Ember, such as autotracking, where the
+   primitives underlying them could potentially change significantly in the
+   future, and maximum flexibility is desired because of this.
+3. They are for extremely performance critical parts of Ember, with usages in
+   the hundreds of thousands or millions per app, and so maximum flexbility is
+   desired in order to be able to leverage changes to the primitives for
+   optimizing performance.
+
+In general, most Ember APIs will _not_ meet these requirements, and so this API
+design should not be used for them.
+
 ## How we teach this
 
 The API docs for this feature can be taken from the descriptions of the
