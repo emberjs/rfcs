@@ -1,12 +1,12 @@
 ---
 Stage: Accepted
-Start Date:
+Start Date: 2020-11-28
 Release Date: Unreleased
 Release Versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
 Relevant Team(s): Ember.js
-RFC PR:
+RFC PR: https://github.com/emberjs/rfcs/pull/686
 ---
 
 # Deprecate Old Manager Capabilities
