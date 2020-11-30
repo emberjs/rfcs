@@ -131,10 +131,11 @@ matrix for Ember users.
 ### Evergreen browsers
 
 Ember and Ember Data will support **all** versions of evergreen browsers which
-meet either of the following criteria:
+meet any of the following criteria:
 
 1. It is the latest version of the browser.
-2. It has at least **0.25%** marketshare usage, based on
+2. It is the latest LTS/extended support version of the browser (such as Firefox ESR).
+3. It has at least **0.25%** marketshare usage, based on
    [statcounter](https://gs.statcounter.com/).
 
 This policy will allow Ember to generally support the most recent 2-3 versions
