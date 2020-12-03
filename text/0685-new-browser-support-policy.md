@@ -206,7 +206,7 @@ In its own internal code, without needing to worry about polyfills. Of course,
 polyfills can still be provided by Ember applications, and may continue to work -
 they are just not explicitly supported.
 
-## What support means
+### What support means
 
 This policy governs two major aspects of Ember and Ember Data:
 
@@ -234,7 +234,7 @@ available to fix any browser specific issues that occur in:
 For the previous LTS release, only security bugfixes will be supported,
 following the existing LTS policy.
 
-## Future changes to the policy
+### Future changes to the policy
 
 This policy is not meant to be immutable. Over time, new browsers could be added
 to the support matrix, and explicit exceptions could be added for "critical
@@ -255,6 +255,28 @@ implemented.
 
 Future RFCs that amend this policy to _remove_ support for a browser will
 _require_ a major version of Ember to implement.
+
+### Impact on SemVer
+
+While this policy does result in us dropping support for versions of browsers
+with each minor release, this RFC proposes that this should not have an impact
+on our SemVer policy. SemVer is a communication mechanism, which is used to
+communicate to users when impactful changes occur, and what those changes are in
+broad categories: breaking, new features, bugfixes.
+
+While dropping support for an evergreen browser version could be considered
+breaking in the strictest technical sense, it generally is not considered one
+because of the usage patterns that these browsers have in the first place. Their
+users are automatically opted into updating every time they boot the browser,
+which means in almost all cases users update quickly and efficiently. In fact,
+it is often considered a _security issue_ if users are _not_ using the most
+recent version of an evergreen browser.
+
+As such, the fact is that in most cases, if a bug is somehow reported on an
+older version of an unsupported browser, then the fix is usually to tell the
+user to update the browser version, not to patch the application or framework
+for that browser version. In practice, this is how Ember has operated for years,
+and this policy only formalizes this process.
 
 ## Implementation
 
