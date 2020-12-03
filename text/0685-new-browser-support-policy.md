@@ -61,56 +61,42 @@ Depending on which category a browser falls into, different rules will be
 applied. This will allow us to effectively support browsers which release
 frequently, such as Chrome, and browsers which do not, such as Safari.
 
-## Existing Policy
-
-The existing policy is listed here for documentation purposes.
-
-- Desktop
-
-    1. Google Chrome, Mozilla Firefox, MS Edge, Mac Safari
-
-        - The current and previous stable releases are supported.
-
-    2. Internet Explorer
-
-        - Only Internet Explorer 11 is supported.
-
-- Mobile
-
-    1. All
-
-        - All mobile browsers may work but are not explicitly supported.
-
-Any browsers not listed here may work but are not explicitly supported.
-
 ## Proposed policy
 
-In the new support policy, we define two categories of browsers:
+In the new support policy, Ember will support the following browsers:
 
-1. **Evergreen browsers**, which are browsers that:
+- Desktop
+  1. Google Chrome
+  2. Mozilla Firefox
+  3. Microsoft Edge
+  4. Safari
+- Mobile
+  1. Google Chrome
+  2. Mozilla Firefox
+  3. Safari
+- Testing
+  1. Headless Chrome
+  2. Headless Safari
 
-   * Support using the latest version on all supported platforms (e.g. you can
-     use the latest Chrome an any supported version of Windows, macOS, Android,
-     etc. The browser is versioned independently from the operating system).
-   * Automatically update whenever a new version is available.
+Any browser which is not listed here may work, but is not explicitly supported.
 
-2. **Non-evergreen browsers**, which are any browsers which do not meet the
-   criteria of evergreen browsers. For instance, Safari is a supported browser
-   whose version is tied to the version of macOS and iOS that users use. As
-   users will often wait to update their operating system, many users lag behind
-   on the version of Safari they are using, so it cannot be considered
-   evergreen.
-
-Using these categories, Ember will support the following browsers:
+In addition, these browsers have been categorized into _evergreen_ and
+_non-evergreen_ browsers, which have different support policies. This categories
+have been chose arbitrarily, based on the current state of browsers and their
+support policies.
 
 - Evergreen
   - Desktop
-      1. Google Chrome/Chromium
-      2. Mozilla Firefox
-      3. Microsoft Edge
+    1. Google Chrome
+    2. Chromium
+    3. Mozilla Firefox
+    4. Microsoft Edge
   - Mobile
-      1. Google Chrome
-      2. Mozilla Firefox
+    1. Google Chrome
+    2. Mozilla Firefox
+  - Testing
+    1. Headless Chrome
+    2. Headless Safari
 
 - Non-evergreen
   - Desktop
@@ -118,56 +104,67 @@ Using these categories, Ember will support the following browsers:
   - Mobile
     1. Safari
 
-Any browser which is not listed here may work, but is not explicitly supported.
-In addition, in order to recategorize browsers as evergreen or non-evergreen, a
-new RFC must be submitted to update the support policy.
+This categorization will _not_ change without an additional RFC, even if the
+browsers themselves make significant changes to their own release process or
+support system.
 
-So for instance, if Safari were to begin automatically updating its version
-independently of macOS/iOS versions, and thus fulfill the criteria for evergreen
-browsers, it would still be treated as a non-evergreen browser until this policy
-is updated. This will prevent sudden and unexpected changes in the support
-matrix for Ember users.
+#### Heuristics for browser categorization
+
+As mentioned above, the evergreen and non-evergreen categorization is ultimately
+arbitrary. However, there were some heuristics which were used to categorize the
+supported browsers at the time this RFC was made:
+
+1. **Evergreen browsers** are browsers that:
+
+   - Support using the latest version on all supported platforms (e.g. you can
+     use the latest Chrome an any supported version of Windows, macOS, Android,
+     etc. The browser is versioned independently from the operating system).
+   - Automatically update whenever a new version is available.
+
+2. **Non-evergreen browsers** are any browsers which do not meet the
+   criteria of evergreen browsers. For instance, Safari is a supported browser
+   whose version is tied to the version of macOS and iOS that users use. As
+   users will often wait to update their operating system, many users lag behind
+   on the version of Safari they are using, so it cannot be considered
+   evergreen.
 
 ### Evergreen browsers
 
-Ember and Ember Data will support **all** versions of evergreen browsers which
-meet any of the following criteria:
+For a given Ember and Ember Data minor release, the minimum major version
+supported for a given browser is determined using the following formula.
 
-1. It is the latest version of the browser.
-2. It is the latest LTS/extended support version of the browser (such as Firefox ESR).
-3. It has at least **0.25%** marketshare usage, based on
-   [statcounter](https://gs.statcounter.com/).
+- Whichever browser version is greater/more recent out of:
+  1. The lowest/least recent version that fulfills any one of these properties
+    - It is the latest version of the browser.
+    - It is the latest LTS/extended support version of the browser (such as Firefox ESR).
+    - It has at least **0.25%** of global marketshare usage across mobile and
+      desktop, based on [statcounter](https://gs.statcounter.com/).
+  2. The minimum version supported in the previous release
 
-This policy will allow Ember to generally support the most recent 2-3 versions
-of the browser, and account for versions which may become temporary transition
-points. For example, when MS Edge made the switch to the new Chromium-backed
-version, the last non-Chromium version saw higher usage for a slightly longer
-period of time as the update process was not as standard, and required an
-explicit opt-in. These transitionary periods are important, but generally
-speaking temporary, and once the usage drops below the threshold Ember can drop
-support at that point.
+Within a major version of a browser, the latest patch release is the only
+release that is supported.
 
-The supported versions of browsers are determined at the time of each _minor_
-release of Ember and Ember Data. In the release blog post, we will specify
-which versions of browsers are supported for this minor version, to keep users
-informed as usage changes.
+This policy has the following attributes:
 
-_Within_ a minor version, support works as follows:
+- It allows us to generally support the most recent browser versions, which
+  are typically used for some time before everyone upgrades
+- It allows us to support browser versions that become temporary "speedbumps"
+  that take longer for users to update, such as the last non-Chromium version of
+  MS Edge.
+- It prevents backsliding, once a version is no longer supported, it never
+  becomes supported again.
 
-1. Support for a given browser version is _never_ removed.
-2. Support is _added_ for any new versions of a browser that have been released
-   while the minor is still supported.
+Above all else, this policy is easy to communicate - for every minor release, we
+calculate the minimum supported version, and then communicate that we support
+all versions >= that version.
 
-So for instance, if we were to release Ember 4.4 with support for Chrome 92, 93,
-and 94, then bugfixes and security fixes for those versions of Chrome will be
-supported until 4.4 is no longer an LTS, following the LTS support matrix. In
-addition, if Chrome were to release version 95 while 4.4 is still actively
-supported, then 4.4 will also support Chrome 95.
+It is important to note that this policy means that each minor release _may_
+drop support for some major versions of evergreen browsers.
 
 ### Non-evergreen browsers
 
-Ember and Ember Data will support the following versions of non-evergreen
-browsers:
+Ember and Ember Data will support all major versions greater than or equal to
+the following version for non-evergreen browsers:
 
 - Desktop
   - Safari: 14
@@ -178,9 +175,8 @@ These versions will continue to be supported until support is explicitly dropped
 via a new RFC, and dropping support for any version of these browsers will
 require a new **major** release.
 
-In addition, all new major releases of these browsers will be supported as they
-are released. Like with evergreen browsers, support is retroactively added to
-any minor version of Ember which is still supported.
+Within a major version of a browser, the latest patch release is the only
+release that is supported.
 
 #### Note on the versions chosen
 
@@ -262,15 +258,134 @@ _require_ a major version of Ember to implement.
 
 ## Implementation
 
+In order to support this policy while keeping all of our tooling on the same
+page, Ember.js itself will add automation to calculate the current minimum
+supported version of browsers on its main branch, and publish them in an
+accessible format. Each time we branch a release, these versions will stop
+updating, so they will effectively be locked in.
+
+These versions will be used for a variety of use cases, such as generating
+documentation and release blog posts (see below), and generating the default
+`config/targets.js` for new Ember apps and addons.
+
+### Implementation timeline
+
 This policy drops support for a major browser, and therefore can only be
 implemented with a major version bump.
 
 ## How we teach this
 
-- A blog post explaining the policy with a link to this RFC will be posted.
-- Browser support policy will be linked in repo
-- Browser support policy will be added to the website
-- Browser support policy will have an announcement in the Ember Times
+This will be an ongoing process, since the minimum browser versions supported
+change over time. The most important thing here is that users can easily
+determine whether or not a given version of a browser is supported for a given
+Ember release.
+
+The following are the ways we will communicate this:
+
+- For the release blog post for a minor version, we'll include a table which has
+  the list of every supported browser, along with the minimum supported major
+  version of that browser for the release
+- On the [releases page](https://emberjs.com/releases) of the Ember.js website,
+  for each of the listed releases, we will include a table of the supported
+  versions major browsers for that release.
+- The browser support on the releases page for the Stable and LTS branches will
+  be linked in the Ember.js README.
+
+This documentation will be supported by the minimum supported versions that are
+published in the Ember.js package (see above), which will allow them to be
+mostly automated. The supported browser table could look like the following
+(generated using today's usage stats):
+
+### Supported Browsers
+
+#### Desktop
+
+| Chrome | Edge | Firefox  | Safari |
+| ------ | ---- | -------- | ------ |
+| 83     | 18   | 78 (ESR) | 14     |
+
+#### Mobile
+
+| Chrome | Firefox | Safari |
+| ------ | ------- | ------ |
+| 87     | 83      | 14     |
+
+#### Headless
+
+| Chrome | Firefox  |
+| ------ | -------- |
+| 87     | 78 (ESR) |
+
+### "How we determine support" page
+
+In addition, the technical details of the support policy should be documented on
+the Ember website, in a less prominent position (e.g. a link from the supported
+versions table titled "how do we determine browser support?"). This could use
+the following text:
+
+Ember supports the following major browsers:
+
+- Desktop
+  1. Google Chrome
+  2. Mozilla Firefox
+  3. Microsoft Edge
+  4. Safari
+- Mobile
+  1. Google Chrome
+  2. Mozilla Firefox
+  3. Safari
+- Testing
+  1. Headless Chrome
+  2. Headless Safari
+
+Other browsers may work with Ember.js, but are not explicitly supported. If you
+would like to add support for a new browser, please [submit an RFC or RFC issue for discussion](https://github.com/emberjs/rfcs)!
+
+We determine support on a browser-by-browser basis. Browsers are categorized as
+either **evergreen** or **non-evergreen**. The categorization is as follows:
+
+- Evergreen
+  - Desktop
+    1. Google Chrome
+    2. Chromium
+    3. Mozilla Firefox
+    4. Microsoft Edge
+  - Mobile
+    1. Google Chrome
+    2. Mozilla Firefox
+  - Testing
+    1. Headless Chrome
+    2. Headless Safari
+
+- Non-evergreen
+  - Desktop
+    1. Safari
+  - Mobile
+    1. Safari
+
+For evergreen browsers, the minimum version of the browser that we support is
+determined at the time of every minor release, following this formula:
+
+- Whichever browser version is greater/more recent out of:
+  1. The lowest/least recent version that fulfills any one of these properties
+    - It is the latest version of the browser.
+    - It is the latest LTS/extended support version of the browser (such as Firefox ESR).
+    - It has at least **0.25%** of global marketshare usage across mobile and
+      desktop, based on [statcounter](https://gs.statcounter.com/).
+  2. The minimum version supported in the previous release
+
+To simplify, the supported version either moves forward or stays the same for
+each release based on overall usage and LTS/current release versions.
+
+For non-evergreen browsers, support is locked at a specific major version, and
+we support all major versions above that version:
+
+- Desktop
+  - Safari: 14
+- Mobile
+  - Safari: 14
+
+Within a version of a browser, we only support the most recent patch release.
 
 ## Drawbacks
 
@@ -291,3 +406,5 @@ implemented with a major version bump.
 - Document the existing policy but do not change it.
 - Support fewer browsers, for a shorter amount of time.
 - Support more browsers, for a longer amount of time.
+- Drop IE11 but not add more definition to support (keeping it as a case by case
+  determination by the core teams)
