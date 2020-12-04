@@ -265,16 +265,64 @@ matches the existing implementation.
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
+As usual the new feature should be mentioned in the release notes. Doing so
+helps to spread knowledge about the new features across power users. As
+discussed later in detail power users are expected to be main consumers of the
+new feature.
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
+### Api docs
 
-> How should this feature be introduced and taught to existing Ember
-users?
+The API docs for `{{fn}}` helper are currently only focused on passing
+arguments to a function. They do not mention at all that the helper returns
+a new function. They need to be updated to accomplish the include the new
+feature introduced by this RFC. Additionally they should focus more on
+teaching the mental model disussed in *motivations* section of this RFC.
+
+To do so the following paragraph should be added on top of the existing API
+docs:
+
+> The `fn` helper returns a new function. It may takes an existing
+> function and arguments that should be partially applied on it as optional
+> positional arguments. If no positional arguments are given it returs a
+> no-op function.
+
+Afterwards it should continue with the existing content:
+
+> The `fn` helper allows you to ensure a function that you are passing off
+> to another component, helper, or modifier has access to arguments that are
+> available in the template.
+>
+> For example, ...
+
+### Guides
+
+The `{{fn}}` helper is mentioned at several places in the guides:
+
+- In the [quick start](https://guides.emberjs.com/v3.22.0/getting-started/quick-start/#toc_responding-to-user-interactions)
+  section of getting started guides it's discussed as a solution to pass
+  an argument to a function in the template.
+- In *Component* section of the guides this use case is discussed in detail in
+  passing [*Passing Arguments to Actions* chapter](https://guides.emberjs.com/release/components/component-state-and-actions/#toc_passing-arguments-to-actions)
+  of *Component State and Actions* subsection.
+- The [*Passing Arguments*](https://guides.emberjs.com/release/in-depth-topics/patterns-for-actions/#toc_passing-arguments)
+  chapter of *Patterns for Actions* subsection of *In-Depth Topics* section
+  discusses this use case in details. It explains that the technically
+  speaking the `{{fn}}` helper "creates a closure and partially applies the
+  given parameter to the new function".
+
+As this use case is not affected by the RFC there isn't any need to change it.
+
+The Octane upgrade guides contain a dedicated [chapter on `{{fn}}` helper](https://guides.emberjs.com/release/upgrading/current-edition/action-on-and-fn/#toc_the-fn-helper).
+It explains it as "a helper that receives a function and some arguments, and
+returns a new function that combines." This is actually very much inline with
+the mental model of `{{fn}}` helper that this RFC tries to emphasize.
+
+Creating a no-op function in a template is not a common thing most Ember
+developers are facing. As discussed in *use cases* chapter of *motivations*
+section it's only commonly needed if addon developers build components using
+other components. This is not part of the day-to-day work of most Ember
+developers. Therefore it should be sufficent to discuss the no-op feature only
+in the API docs only.
 
 ## Drawbacks
 
