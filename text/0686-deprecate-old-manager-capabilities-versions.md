@@ -93,6 +93,8 @@ are:
    ```js
    // before
    class CustomModifierManager {
+     capabilities = capabilities('3.13');
+
      createModifier(Definition, args) {
        return new Definition.class(args);
      }
@@ -104,6 +106,8 @@ are:
    ```js
    // after
    class CustomModifierManager {
+     capabilities = capabilities('3.22');
+
      createModifier(Definition, args) {
        return new Definition(args);
      }
@@ -132,6 +136,8 @@ are:
    }
 
    class CustomModifierManager {
+     capabilities = capabilities('3.22');
+
      installModifier(bucket, element, args) {
        consumeArgs(args);
 
