@@ -60,22 +60,23 @@ Removing implicit injections is not possible until we first issue deprecations. 
 
 ### 1. Deprecate implicit injection on target object
 
-Simply deprecating `owner.inject` is not sufficient because it is very difficult to detect if you are relying on implicit injection. As a result, the first step will be issuing a deprecation on the target factory object that is receiving a property. This will surface the deprecation on user's owned objects including transitively through addons like `ember-data`. This can be accomplished by installing a native getter and setter on the target. Whenever the property is accessed, we will check if the property is explicitly injected. If it isn't, we will issue a deprecation in DEBUG builds with an until, id and url value to read more about this deprecation. In production, we will not issue this deprecation and continue assigning the property.
+Simply deprecating `owner.inject` is not sufficient because it is very difficult to detect if you are relying on implicit injection. As a result, the first step will be issuing a deprecation on the target factory object that is receiving a property. This will surface the deprecation on user's owned objects including transitively through addons like `ember-data`. This can be accomplished by installing a native getter and setter on the target. Whenever the property is accessed, we will check if the property is explicitly injected. If it isn't, we will issue a deprecation in DEBUG builds with an until, id and url value to read more about this deprecation. In production, we will not issue this deprecation and will continue assigning the property. This deprecation will go `until: 4.0.0`.
 
-To avoid this deprecation, you will need to explicitly add the injected property to the target object.  As an example, you can add `@service store` to your route or controller to avert this deprecation resulting from `@ember/data`'s use of `owner.inject`.
+To avoid this deprecation, you will need to explicitly add the injected property to the target object.  As an example, you can add `@service store` to your route or controller to avert this deprecation resulting from `@ember/data`'s use of `owner.inject`.  Users and addons can remove implicit injections as well.
 
-### 2. Deprecate `owner.inject`
+Ember.js `v4.0.0` will still be released with `owner.inject`. However, it will not doing anything. Effectively a no-op.
 
-The first phase did not actually deprecate the use of `owner.inject`.  As a result, we need to deprecate it's use directly before removing.
+### 2. Deprecate `owner.inject`.
 
-For users and or addons, you may be able to remove `owner.inject` to avoid this deprecation.  However, for libraries like `@ember/data`, we will not be able to remove until `@ember/data` v4.
+The first phase did not actually deprecate the use of `owner.inject`.  As a result, we need to deprecate it's use directly iin `v4.0.0` before removing completely in `v5.0.0`.
+
+For users and or addons, you likely already have removed implicit injections like `owner.inject` before upgrading to Ember.js `v4.0.0`.  However, for libraries like `@ember/data`, we will look to remove sometime in `v4.0.0` to resolve this new deprecation.
 
 ### 3. Profit!
 
-Ember 4.0 will remove the ability to utilize `owner.inject` to inject arbitrary properties on Ember's Framework objects.
+Ember.js `v5.0.0` will finally remove the ability to call `owner.inject` to inject arbitrary properties on Ember's Framework objects.
 
-
-It is important to consider the timeline of these three phases.  Each step will consist of a minimum of one release cycle.  Many addons and apps will need to make minor and major changes to their codebase. We need to consider this as we move through each phase.
+It is important to consider the timeline of these three phases.  The first step will consist of a minimum of one release cycle.  Many addons and apps will need to make minor and major changes to their codebases before `v4.0.0`.
 
 ## How we teach this
 
