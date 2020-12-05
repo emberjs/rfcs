@@ -96,7 +96,7 @@ support policies.
     2. Mozilla Firefox
   - Testing
     1. Headless Chrome
-    2. Headless Safari
+    2. Headless Firefox
 
 - Non-evergreen
   - Desktop
@@ -167,9 +167,9 @@ Ember and Ember Data will support all major versions greater than or equal to
 the following version for non-evergreen browsers:
 
 - Desktop
-  - Safari: 14
+  - Safari: 12
 - Mobile
-  - Safari: 14
+  - Safari: 12
 
 These versions will continue to be supported until support is explicitly dropped
 via a new RFC, and dropping support for any version of these browsers will
@@ -180,31 +180,9 @@ release that is supported.
 
 #### Note on the versions chosen
 
-The versions chosen here are the latest versions of Safari, which having just
-been released this year, do not have 100% adoption. As such, there are still a
-significant number of users who are using previous versions of Safari. However,
-by the time this support policy is enacted and a new major version of Ember is
-released, this number will likely have shifted significantly.
-
-In addition, since Ember will not drop support for any version of Safari until
-the next major release after this policy is enacted (v5), this decision strikes
-a balance between enabling usage of new APIs and patterns, while still providing
-support for users who are stuck on older versions of Safari. While we are
-leaping ahead now, in the coming years the majority of users will upgrade beyond
-this version, and eventually we will be supporting a much older version of
-Safari than is actually used in practice.
-
-Supporting Safari 14 and above means that Ember can safely use the following JS
-features:
-
-- The BigInt data type.
-- Creating custom instances of EventTarget.
-- Logical assignment operators.
-- Public class fields.
-
-In its own internal code, without needing to worry about polyfills. Of course,
-polyfills can still be provided by Ember applications, and may continue to work -
-they are just not explicitly supported.
+iOS Safari 12 has a usage of ~1.5% globally as of the writing of this RFC. Given
+this, and the fact that newer versions of Safari do not introduce any major
+features, 12 seems like an acceptable cutoff at this time.
 
 ### What support means
 
@@ -290,6 +268,12 @@ These versions will be used for a variety of use cases, such as generating
 documentation and release blog posts (see below), and generating the default
 `config/targets.js` for new Ember apps and addons.
 
+### Deprecation
+
+We will add a deprecation to Ember CLI that shows when users have any
+unsupported browser in there `targets.json`, along with a guide for updating to
+modern targets.
+
 ### Implementation timeline
 
 This policy drops support for a major browser, and therefore can only be
@@ -306,7 +290,8 @@ The following are the ways we will communicate this:
 
 - For the release blog post for a minor version, we'll include a table which has
   the list of every supported browser, along with the minimum supported major
-  version of that browser for the release
+  version of that browser for the release. We will also include the underlying
+  engine version.
 - On the [releases page](https://emberjs.com/releases) of the Ember.js website,
   for each of the listed releases, we will include a table of the supported
   versions major browsers for that release.
@@ -324,13 +309,13 @@ mostly automated. The supported browser table could look like the following
 
 | Chrome | Edge | Firefox  | Safari |
 | ------ | ---- | -------- | ------ |
-| 83     | 18   | 78 (ESR) | 14     |
+| 83     | 18   | 78 (ESR) | 12     |
 
 #### Mobile
 
 | Chrome | Firefox | Safari |
 | ------ | ------- | ------ |
-| 87     | 83      | 14     |
+| 87     | 83      | 12     |
 
 #### Headless
 
@@ -403,9 +388,9 @@ For non-evergreen browsers, support is locked at a specific major version, and
 we support all major versions above that version:
 
 - Desktop
-  - Safari: 14
+  - Safari: 12
 - Mobile
-  - Safari: 14
+  - Safari: 12
 
 Within a version of a browser, we only support the most recent patch release.
 
