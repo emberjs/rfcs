@@ -31,5 +31,8 @@ jobs:
 
       - name: Lint added RFCs frontmatter
         if: ${{ steps.files.outputs.added }}
-        run: node lint-rfc-frontmatter.js ${{ steps.files.outputs.added }}
+        run: |
+          for changed_file in ${{ steps.files.outputs.added }}; do
+            node lint-rfc-frontmatter.js ../${changed_file}
+          done
         working-directory: rfcs-tooling
