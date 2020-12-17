@@ -60,7 +60,9 @@ Removing implicit injections is not possible until we first issue deprecations. 
 
 ### 1. Deprecate implicit injection on target object
 
-Simply deprecating `owner.inject` is not sufficient because it is very difficult to detect if you are relying on implicit injection. As a result, the first step will be issuing a deprecation on the target factory object that is receiving a property. This will surface the deprecation on user's owned objects including transitively through addons like `ember-data`. This can be accomplished by installing a native getter and setter on the target. Whenever the property is accessed, we will check if the property is explicitly injected. If it isn't, we will issue a deprecation in DEBUG builds with an until, id and url value to read more about this deprecation. In production, we will not issue this deprecation and will continue assigning the property. This deprecation will go `until: 4.0.0`.
+Simply deprecating `owner.inject` is not sufficient because it is very difficult to detect if you are relying on implicit injection. As a result, the first step will be issuing a deprecation on the target factory object that is receiving a property. This will surface the deprecation on user's owned objects including transitively through addons like `ember-data`. This can be accomplished by installing a native getter and setter on the target.
+
+The _first time_ the property is accessed, either through getting or setting it, we will check if the property is explicitly injected. If it isn't, we will issue a deprecation in DEBUG builds with an until, id and url value to read more about this deprecation. In production, we will not issue this deprecation and will continue assigning the property. This deprecation will go `until: 4.0.0`.
 
 To avoid this deprecation, you will need to explicitly add the injected property to the target object.  As an example, you can add `@service store` to your route or controller to avert this deprecation resulting from `@ember/data`'s use of `owner.inject`.  Users and addons can remove implicit injections as well.
 
@@ -77,6 +79,32 @@ For users and or addons, you likely already have removed implicit injections lik
 Ember.js `v5.0.0` will finally remove the ability to call `owner.inject` to inject arbitrary properties on Ember's Framework objects.
 
 It is important to consider the timeline of these three phases.  The first step will consist of a minimum of one release cycle.  Many addons and apps will need to make minor and major changes to their codebases before `v4.0.0`.
+
+### Impementation Constraints
+
+An important implementation detail of stage 1 of this RFC is that while we want
+to issue a deprecation when the user relies on the implicit injection, we also
+_must_ ensure that the implicit injection still "wins" and is assigned to the
+value on the class, clobbering the explicit injection, for the time being. This
+is the current behavior, and changing it, even in development builds, would be a
+breaking change.
+
+The proposed way to implement this is when an object with implicit injections is
+created, for each implicit injection:
+
+1. If the property already contains the value, do nothing as it has been setup
+   eagerly by the user
+2. If the property is a service injection, check that it is the correct service
+   injection and if it is, do nothing and assign the value like normal
+3. If the property is a native getter/setter, wrap the native getter/setter and
+   the first time the value is accessed, check to see if it is the injected
+   value. If it is, do nothing, otherwise log the deprecation.
+4. If the property is not defined on the object or its prototype, install a
+   getter/setter pair which log the deprecation the first time they are
+   activated.
+
+This should preserve the existing semantics while logging when the user is
+accessing a value that was injected implicitly.
 
 ## How we teach this
 
@@ -210,6 +238,40 @@ export default class ApplicationRoute extends Route {
   }
 }
 ```
+
+In cases where it is not possible to convert a custom injection type into a
+service, the value can be accessed by looking it up directly on the container
+instead using the [lookup](https://api.emberjs.com/ember/3.22/classes/ApplicationInstance/methods/lookup?anchor=lookup)
+method:
+
+```js
+// app/routes/application.js
+import { getOwner } from '@ember/application';
+import { inject as service } from '@ember/service';
+
+export default class ApplicationRoute extends Route {
+  get logger() {
+    if (this._logger === undefined) {
+      this._logger = getOwner(this).lookup('logger:main');
+    }
+
+    return this._logger;
+  }
+
+  set logger(value) {
+    this._logger = value;
+  }
+
+  model() {
+    this.logger.log('fetching application model...');
+    //...
+  }
+}
+```
+
+You should always include a setter until the implicit injection is removed,
+since the container will still attempt to pass it into the class on creation,
+and it will cause errors if it attempts to overwrite a value without a setter.
 
 ### Stage 2
 
