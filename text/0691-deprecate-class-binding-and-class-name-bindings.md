@@ -44,7 +44,7 @@ same semantics.
 {{some-component class="bar" classNameBindings="foo:truthy:falsy"}}
 
 {{! becomes }}
-{{some-component class=(concat "bar" (if this.foo "truthy" "falsy"))}}
+{{some-component class=(concat "bar " (if this.foo "truthy" "falsy"))}}
 ```
 
 Note the conversion of the `foo` string into a path in the local context,
