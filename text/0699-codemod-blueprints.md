@@ -199,4 +199,6 @@ These are some what out of scope for this RFC, but related to the motivation
   provide hooks to transform them, and allow chaining of multiple blueprints,
   we'd need to refactor the [`Blueprint` model](https://github.com/ember-cli/ember-cli/blob/master/lib/models/blueprint.js#L295)
   to collect all the rendered files ahead of time, pass them all to one of the
-  blueprint hooks (or a new hook).
+  blueprint hooks (or a new hook). This would allow chaining of blueprints via
+  the conventional `super` call, rather than needing to lookup and run the
+  `generate-from-blueprint` task.
