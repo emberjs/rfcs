@@ -53,6 +53,11 @@ that the app/addon blueprints don't change _that_ often, being able to
 programmatically work with changes via ASTs has proven maintainable as we have
 utilized codemods for other upgrade efforts within more general app/addon code.
 
+
+The scope of "extending blueprints" may be very large -- as a result this RFC
+is focusing on providing the minimum tools to enable addon authors to experiment
+with codemod blueprint ergonomics.
+
 ## Detailed design
 
 Most of the work would take place in [ember-cli/lib/tasks/generate-from-blueprint.js](https://github.com/ember-cli/ember-cli/blob/master/lib/tasks/generate-from-blueprint.js)
@@ -165,6 +170,8 @@ module.exports = codemodBlueprint({
 
 ## Drawbacks
 
+Out of scope for this RFC, but related to the broader
+
 If mutation of data is required for a transform to have an effect, that could be
 tricky for folks who are used to mutation -- but return a specific shape of data
 from any of the lifecycle hooks could lead to similar problems.
@@ -181,6 +188,15 @@ would be ideal.
 
 ## Unresolved questions
 
+These are some what out of scope for this RFC, but related to the motivation
+
 - Should the transforms happen as a part of beforeInstall?
 - Should the transforms be their own hook (right before beforeInstall if that's
   used, or right after afterInstall)?
+- Should we eliminate file I/O from the process? Right now, a full generate task
+  must run to completion before the addon author has access to any information
+  about the generated files in afterInstall. To generate files in memory, and
+  provide hooks to transform them, and allow chaining of multiple blueprints,
+  we'd need to refactor the [`Blueprint` model](https://github.com/ember-cli/ember-cli/blob/master/lib/models/blueprint.js#L295)
+  to collect all the rendered files ahead of time, pass them all to one of the
+  blueprint hooks (or a new hook).
