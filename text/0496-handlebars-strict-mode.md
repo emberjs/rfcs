@@ -479,7 +479,7 @@ On the other hand, the following built-in constructs will need to be imported
 * `on` (`import { on } from '@ember/modifier'`)
 * `Input` (`import { Input } from '@ember/component`)
 * `LinkTo` (`import { LinkTo } from '@ember/routing`)
-* `TextArea` (`import { TextArea } from '@ember/component'`)
+* `Textarea` (`import { Textarea } from '@ember/component'`)
 
 In general, built-ins that can be made importable should be imported. The main
 difference are that some of the keywords uses internal language features (e.g.

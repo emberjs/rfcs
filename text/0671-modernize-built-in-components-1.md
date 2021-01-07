@@ -310,6 +310,18 @@ the built-in components on these legacy implementaitons, but custom subclasses
 will continue to work. The deprecation message should provide information about
 this legacy addon, or link to the deprecation details page that does.
 
+Note that in accordance with [RFC #496](0496-handlebars-strict-mode.md), the
+following import paths will be made available for use in strict mode:
+
+* `Input` (`import { Input } from '@ember/component`)
+* `LinkTo` (`import { LinkTo } from '@ember/routing`)
+* `Textarea` (`import { Textarea } from '@ember/component'`)
+
+However, unlike the deprecated import paths in group 1, these modules provide
+opaque values that are intended for use in templates only. Since they do not
+expose the implementation details of the built-in components, these new import
+paths do not have the same issue described in this RFC.
+
 The third and forth prevents globally modifiying the behavior of built-in
 components. Users are encouraged to create wrapper components for use in their
 apps or create custom subclasses using the legacy addon.
