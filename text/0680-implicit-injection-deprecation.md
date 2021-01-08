@@ -1,7 +1,13 @@
-- Start Date: 2020-10-04
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/680
-- Tracking: https://github.com/emberjs/rfcs/issues/508
+---
+Stage: Accepted
+Start Date: 2020-10-04
+Release Date: Unreleased
+Release Versions:
+  ember-source: vX.Y.Z
+  ember-data: vX.Y.Z
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/680
+---
 
 # Implicit Injection Deprecation
 
