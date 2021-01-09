@@ -32,7 +32,7 @@ deprecate the `(query-params)` helper, which is only needed when invoking the
 
 ## Motivation
 
-In modern Ember, the idomatic way to invoke most componnts is to use the
+In modern Ember, the idiomatic way to invoke most components is to use the
 [angle bracket syntax](0311-angle-bracket-invocation.md) along with the named
 arguments `@` syntax. On the other hand, curly invocations are now reserved for
 "helper-like" and "control-flow" components.
@@ -63,10 +63,10 @@ in modern Ember codebase.
 
 Given that the feature are now available on all currently-supported Ember
 versions and the community had adequate time to make the transition, this would
-be a good time to deprecate the obselete features to reduce confusion as well
+be a good time to deprecate the obsolete features to reduce confusion as well
 as implementation complexity.
 
-In particular, some of the obselete features required capabilities not usually
+In particular, some of the obsolete features required capabilities not usually
 available to other components, such as knowing whether a block was passed or
 not and relies on "AST transforms" to normalize some of the differences. These
 implementation strategies introduces unnecessary complexity in the internals
@@ -159,7 +159,7 @@ These migrations can be automated using the [angle brackets codemod](https://git
 
 The Octane learning materials have already been updated to use the latest
 idioms, so no changes are necessary. The API documentation should be updated
-to mark the obselete features and the `(query-params)` helper as deprecated.
+to mark the obsolete features and the `(query-params)` helper as deprecated.
 
 A deprecation guide will need to be written using the same examples from the
 [Transition Path](#transition-path) section. The guide should also promote the
