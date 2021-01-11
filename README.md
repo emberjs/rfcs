@@ -118,15 +118,14 @@ The RFC Process requires finding a champion from the relevant core teams. The
 champion is responsible for representing the RFC in team meetings, and for 
 shepherding its progress. [Read more about the Champion's job](#champion-responsibilities)
  
-- Discord
+- *Find one via Discord.* 
 The `dev-rfc` channel on the [Ember Discord](https://discord.gg/emberjs) is 
-reserved for the discussion of RFCs.
-We highly recommend circulating early drafts of your RFC in this channel to both 
-receive early feedback and to find a champion.  
+reserved for the discussion of RFCs. We highly recommend circulating early drafts of 
+your RFC in this channel to both receive early feedback and to find a champion.
 
-- Request on an issue in the RFC repo or on the RFC
-We monitor the RFC repository. We will circulate requests for champions but highly 
-recommend discussing the RFC in Discord.  
+- *Ask for a champion via an issue, or in the RFC itself.*
+We monitor the RFC repository. We will circulate requests for champions, but highly 
+recommend discussing the RFC in Discord.
 
 ## The RFC life-cycle
 
@@ -179,10 +178,10 @@ not to the pull-request.
 
 ### Champion Responsibilities
 
-* achieving consensus from the team(s) to move the RFC through the stages of 
+* Achieving consensus from the team(s) to move the RFC through the stages of 
 the RFC process.
-* ensuring the RFC follows the RFC process.
-* shepherding the planning and implementation of the RFC. Before the RFC is 
+* Ensuring the RFC follows the RFC process.
+* Shepherding the planning and implementation of the RFC. Before the RFC is 
 accepted, the champion may remove themselves. The champion may find a replacement 
 champion at any time.
 
@@ -217,7 +216,7 @@ go stale when the branch or fork is deleted)
 - [ ] Ensure relevant teams plan out what is necessary to implement
 - [ ] Put relevant issues on the tracking
 
-**Ember's RFC process owes its inspiration to the [Rust RFC process]**
+*Ember's RFC process owes its inspiration to the [Rust RFC process]*
 
 [Rust RFC process]: https://github.com/rust-lang/rfcs
 [core team]: http://emberjs.com/team/
