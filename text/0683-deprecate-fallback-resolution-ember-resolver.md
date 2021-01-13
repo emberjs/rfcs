@@ -29,7 +29,7 @@ Modifiers
 Templates
 ember-strict-resolver defines a stricter and therefore much faster version of these lookups, which results in a 1:1 instead of 1:N resolution.
 
-In the flagship web app at LinkedIn, adopting ember-strict-resolver resulted in the following improvements (per a TracerBench analysis):
+In the flagship web app at LinkedIn, adopting ember-strict-resolver resulted in the following improvements (per a [TracerBench](https://www.tracerbench.com/) analysis):
 
 boot phase estimated difference -188ms [-195ms to -181ms]
 transition phase estimated difference -42ms [-57ms to -27ms]
