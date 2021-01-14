@@ -128,7 +128,7 @@ After:
 
 ```hbs
 <MyComponent
-  @class="
+  class="
     {{if this.foo "bar"}}
     {{if this.some.boundProperty "bound-property"}}
     {{if this.isValid "is-valid" "is-invalid"}}
@@ -136,11 +136,10 @@ After:
 >
 ```
 
-Note that we are passing in the `@class` argument, not the `class` attribute.
-This is to maintain the existing behavior exactly, but in most cases it will be
-safe to convert to using the `class` attribute as well. It is only unsafe if you
-were directly referencing the value of the `@class` argument anywhere in your
-component.
+Note that we are passing in the `class` attribute, not the `class` argument. In
+most cases, this should work exactly the same as previously. If you referenced
+the `class` argument inside of your component, however, you will need to pass
+`@class` instead.
 
 If you do not want to convert to angle bracket syntax for some reason, the same
 thing can be accomplished with the `(concat)` helper in curly invocation.
