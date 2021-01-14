@@ -83,8 +83,8 @@ Deprecating the loose-model in ember-resolver should happen in the next major ve
 
 ### Questions
 
-can an app turn on the strict resolver before all of its addons have migrated?
-can addons switch to using the strict resolver internally and still be consumed by an app using the classic resolver?
+* can an app turn on the strict resolver before all of its addons have migrated?
+* can addons switch to using the strict resolver internally and still be consumed by an app using the classic resolver?
 
 ## How we teach this
 
