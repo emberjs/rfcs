@@ -10,10 +10,10 @@ Tracking: (leave this empty)
 ## Summary
 
 Currently we have multiple fallback lookup paths in ember-resolver. As we continue to migrate towards a more strict future where imports are verified at build time (https://github.com/emberjs/rfcs/pull/454) it will be helpful to remove non-strict lookups from ember-resolver, which support many-to-one lookups, in favor of a one-to-one mechanism. This will enable us to make codemods to migrate to:
-Strict Mode (https://github.com/emberjs/rfcs/pull/496)
-the v2 addon format (https://github.com/emberjs/rfcs/pull/507)
-the slimming down the ember-cli build pipeline (https://github.com/emberjs/rfcs/pull/578)
-strict service lookups (https://github.com/emberjs/rfcs/pull/585)
+* Strict Mode (https://github.com/emberjs/rfcs/pull/496)
+* the v2 addon format (https://github.com/emberjs/rfcs/pull/507)
+* the slimming down the ember-cli build pipeline (https://github.com/emberjs/rfcs/pull/578)
+* strict service lookups (https://github.com/emberjs/rfcs/pull/585)
 
 ## Motivation
 
