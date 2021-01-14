@@ -9,48 +9,54 @@ Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/689
 ---
 
-# Deprecate `{{hasBlock}}` in templates
+# Deprecate `{{hasBlock}}` and `{{hasBlockParams}}` in templates
 
 ## Summary
 
-Deprecate the `{{hasBlock}}` property in templates in favor of the
-`{{has-block}}` helper keyword.
+Deprecate the `{{hasBlock}}` and `{{hasBlockParams}}` properties in templates in
+favor of the `{{has-block}}` and `{{has-block-params}}` keywords.
 
 ## Motivation
 
 `{{hasBlock}}` is a way to check if component has a default block provided to
-it. It is effectively an alias to calling `{{has-block}}` without providing a
-template name, or calling `{{has-block "default"}}`. It is also not called, and
-acts like a template fallback lookup instead.
+it, and `{{hasBlockParams}}` is a way to check if that default block has block
+parameters. They are effectively aliases for calling `{{has-block}}` and
+`{{has-block-params}}` respectively, without providing a block name or with the
+block name `"default"`. They are also not called, and acts like a template
+fallback lookup instead.
 
 ```hbs
-{{! hasBlock can be referenced directly }}
-{{#if hasBlock}}
+{{! hasBlock and hasBlockParams can be referenced directly }}
+{{#if hasBlock}}{{/if}}
 
-{{/if}}
+{{#if hasBlockParams}}{{/if}}
 
 
-{{! has-block is a helper that must be called }}
-{{#if (has-block)}}
+{{! has-block and has-block-params must be called }}
+{{#if (has-block)}}{{/if}}
 
-{{/if}}
+{{#if (has-block-params)}}{{/if}}
 ```
 
 Having two ways of accomplishing this task is confusing, and with the property
 form it is not possible to check if other blocks exist, such as named blocks. As
-such, this RFC proposes that we deprecated `{{hasBlock}}` and recommend that
-users switch to using `{{has-block}}`.
+such, this RFC proposes that we deprecate `{{hasBlock}}` and
+`{{hasBlockParams}}` and recommend that users switch to using `{{has-block}}`
+and `{{has-block-params}}`.
 
 ## Transition Path
 
-Users who are currently using `{{hasBlock}}` will need to replace all of their
-usages with `{{has-block}}`. This is generally a very codemoddable change, so
-it should be pretty straightforward to accomplish, and we will attempt to make
-a codemod to help out with the transition.
+Users who are currently using `{{hasBlock}}` or `{{hasBlockParams}}` will need
+to replace all of their usages with `{{has-block}}`/`{{has-block-params}}`
+respectively. This is generally a very codemoddable change, so it should be
+pretty straightforward to accomplish, and we will attempt to make a codemod to
+help out with the transition.
 
 ## How We Teach This
 
 ### Deprecation Guide
+
+#### `{{hasBlock}}`
 
 The `{{hasBlock}}` property is true if the component was given a default block,
 and false otherwise. To transition away from it, you can use the `(has-block)`
@@ -83,9 +89,43 @@ The name corresponding to the block that `{{hasBlock}}` represents is "default".
 Calling `(has-block)` without any arguments is equivalent to calling
 `(has-block "default")`.
 
+#### `{{hasBlockParams}}`
+
+The `{{hasBlockParams}}` property is true if the component was given a default block,
+and false otherwise. To transition away from it, you can use the `(has-block-params)`
+helper instead.
+
+```hbs
+{{hasBlockParams}}
+
+{{! becomes }}
+{{has-block-params}}
+```
+
+Unlike `{{hasBlockParams}}`, the `(has-block-params)` helper must be called, so in nested
+positions you will need to add parentheses around it:
+
+```hbs
+{{#if hasBlockParams}}
+
+{{/if}}
+
+
+{{! becomes }}
+{{#if (has-block-params)}}
+
+{{/if}}
+```
+
+You may optionally pass a name to `(has-block-params)`, the name of the block to check.
+The name corresponding to the block that `{{hasBlockParams}}` represents is "default".
+Calling `(has-block-params)` without any arguments is equivalent to calling
+`(has-block-params "default")`.
+
 ## Drawbacks
 
 - Introduces some churn.
+
 - `(has-block)` is dasherized, which is not inline with the future of strict
   mode and template imports. Dasherized strings are not valid identifiers in
   JavaScript, so helpers and modifiers will likely switch to camel case when
@@ -99,4 +139,4 @@ Calling `(has-block)` without any arguments is equivalent to calling
 
 ## Alternatives
 
-- Keep the existing syntax as an alias for `(has-block)`.
+- Keep the existing syntax as an alias for `(has-block)`/`(has-block-params)`.
