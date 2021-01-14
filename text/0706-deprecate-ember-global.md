@@ -45,10 +45,11 @@ This ensures there is an _explicit_ dependency if it is used, and which will
 allow us to treeshake in the future if nothing imports `Ember`. In time, we will
 be able to deprecate the `Ember` object altogether.
 
-## Detailed design
+## Transition Path
 
 When the `Ember` object is defined on the global, we will create a getter for it
-that also issues a deprecation.
+that also issues a deprecation. Users who currently use the global will have to
+add `import Ember from 'ember';` at the top of the files in which they use it.
 
 ## How we teach this
 
