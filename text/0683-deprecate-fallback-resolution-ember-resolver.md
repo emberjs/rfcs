@@ -22,11 +22,13 @@ As the community is moving forward with strict lookups having this done in ember
 Switching to the strict resolver by default and deprecating the classic resolver opens a migration path for applications that want to ensure compatibility with the new v2 package format. Additionally, apps using the strict resolver will see significant boot-up performance wins, because lookup costs become O(1) instead of O(n).
 
 Ember apps and addons currently default to using https://github.com/ember-cli/ember-resolver to lookup values from the registry. These values include:
-Services
-Components
-Helpers
-Modifiers
-Templates
+
+* Services
+* Components
+* Helpers
+* Modifiers
+* Templates
+
 ember-strict-resolver defines a stricter and therefore much faster version of these lookups, which results in a 1:1 instead of 1:N resolution.
 
 In the flagship web app at LinkedIn, adopting ember-strict-resolver resulted in the following improvements (per a [TracerBench](https://www.tracerbench.com/) analysis):
