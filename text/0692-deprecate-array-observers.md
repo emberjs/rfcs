@@ -177,7 +177,7 @@ class ToStringArray extends ArrayProxy {
     return this.content.map((value) => value.toString());
   }
 
-  objectAtContent() {
+  objectAtContent(index) {
     return this._content.objectAt(index);
   }
 }
