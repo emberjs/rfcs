@@ -31,9 +31,9 @@ ember-strict-resolver defines a stricter and therefore much faster version of th
 
 In the flagship web app at LinkedIn, adopting ember-strict-resolver resulted in the following improvements (per a [TracerBench](https://www.tracerbench.com/) analysis):
 
-boot phase estimated difference -188ms [-195ms to -181ms]
-transition phase estimated difference -42ms [-57ms to -27ms]
-render phase estimated difference -23ms [-37ms to -9ms]
+* `boot` phase estimated difference -188ms [-195ms to -181ms]
+* `transition` phase estimated difference -42ms [-57ms to -27ms]
+* `render` phase estimated difference -23ms [-37ms to -9ms]
 
 ## Detailed design
 
