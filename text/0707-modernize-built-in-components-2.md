@@ -177,7 +177,7 @@ the following (may not be a complete list):
 
 These arguments are no longer necessary – with angle bracket invocations, HTML
 attributes can be passed directly. An invocation passing one or more of these
-named arguments shall trigger a deprecation warning simialr to this:
+named arguments shall trigger a deprecation warning similar to this:
 
 ```
 <Input @placeholder="Ember.js" />
@@ -288,7 +288,7 @@ the following (may not be a complete list):
 These arguments are no longer necessary – with angle bracket invocations, DOM
 event listeners can be registered directly using the `{{on}}` modifier. An
 invocation passing one or more of these named arguments shall trigger a
-deprecation warning simialr to this:
+deprecation warning similar to this:
 
 ```
 <Input @click={{this.onClick}} />
