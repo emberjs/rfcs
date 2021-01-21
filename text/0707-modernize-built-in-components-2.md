@@ -23,7 +23,6 @@ components *except* the following:
   * `@models`
   * `@query`
   * `@replace`
-  * `@preventDefault`
   * `@disabled`
   * `@current-when`
   * `@activeClass`
@@ -57,7 +56,6 @@ The following named arguments should be explicitly documented as public:
   * `@models`
   * `@query`
   * `@replace`
-  * `@preventDefault`
   * `@disabled`
   * `@current-when`
   * `@activeClass`
@@ -387,7 +385,14 @@ cases that calls for using a different element, refactor to use the router
 service inside a custom event handler instead.
 ```
 
-Note that while the `<Input>` and `<Textarea>` element also accepted the
+With the ability to modify `@tagName` being deprecated, the previously private
+`@eventName` and `@preventDefault` arguments on `<LinkTo>` should be removed as
+well. These arguments were ocationally useful when the element is something
+other than an `<a>` element, but in the case of an `<a>` element, the default
+browser action is to navigate to the `href` via a full-page refresh. If that is
+not prevented, it would defeat the purpose of using the `<LinkTo>` component.
+
+Note that while the `<Input>` and `<Textarea>` components also accepted the
 `@tagName` argument, it was never supported and its behavior is undefined. This
 may stop "working" at any point without warning and should not be relied upon.
 
@@ -398,7 +403,7 @@ implementation details. Due to the nature of classic components' arguments
 being set on its instance, any internal properties and methods could have been
 clobbered by a named argument with the same name.
 
-Some examples include private properties like `@active` and `@eventName` on
+Some examples include private properties like `@active` and `@loading` on
 `<LinkTo>`, `@bubbles` and `@cancel` on `<Input>` and `<Textarea>`, lifecycle
 hooks inherited from the classic component super class like `@didRender`,
 `@willDestroy` and so on.
