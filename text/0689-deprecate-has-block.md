@@ -54,6 +54,10 @@ help out with the transition.
 
 ## How We Teach This
 
+Currently, `{{hasBlock}}` and `{{hasBlockParams}}` are documented in the API docs,
+but `{{has-block}}` and `{{has-block-params}}` are not. The new keywords should
+be thoroughly documented.
+
 ### Deprecation Guide
 
 #### `{{hasBlock}}`
