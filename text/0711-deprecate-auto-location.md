@@ -69,13 +69,14 @@ if (
 
 ## Transition Path
 
-We'll begin with deprecating history, in next major release we
+We'll begin with deprecating auto, in next major release we
 set history as the default. Since auto is default today,
 and almost always resolve to history, most users won't need
-to do a thing and they'll still get history behavior in the
-next major release.
+to do a thing and they'll still get history location in the
+next major release (but set directly, without auto resolving
+to it).
 
-There are two groups to consider:
+There are two groups to consider though:
 
 1. People who need auto-detection (hash/history switching) and
 2. Those that have explicitly set location to 'auto'.
@@ -105,7 +106,7 @@ to anyway.
 ### Deprecated or already private (should also be removed)
 - Remove the `create` method on Location (replaced by registry)
 - `registerImplementation` method on `Location`
-- `supportsHistory` exported in location/utils.ts
+- `supportsHistory` function exported in location/utils.ts
 
 ## How We Teach This
 
