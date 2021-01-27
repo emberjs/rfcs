@@ -91,8 +91,8 @@ is _consistent_. Changing a query param from a controller, route, component, ser
 can change and access the query params the exact same way. No need to force prop-drilling patterns
 by passing controller properties down many layers of components.
 
-For example, assume there is a compnoent 10+ component layers deep. Instead of passing `@category` and
-`@updateCategory` through each and every one of those component layers, the component can do do:
+For example, assume there is a component 10+ component layers deep. Instead of passing `@category` and
+`@updateCategory` through each and every one of those component layers, the component can do:
 
 ```js
 import Component from '@glimmer/controller';
