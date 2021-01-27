@@ -103,7 +103,7 @@ export default class MyDeeplyNestedComponent extends Component {
   @service router;
 
   get category() {
-    return this.router.currentRouter.queryParams.category;
+    return this.router.currentRoute.queryParams.category;
   }
 
   @action
