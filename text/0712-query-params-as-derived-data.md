@@ -76,7 +76,7 @@ export default class ArticlesController extends Controller {
   queryParams = ['category'];
 
   get categoryFromQueryParams() {
-    return this.router.currentRouter.queryParams.category;
+    return this.router.currentRoute.queryParams.category;
   }
 
   @action
