@@ -9,11 +9,11 @@ Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/561
 ---
 
-# Adding Numeric Comparison Operators to Templates
+# Adding Comparison Operators to Templates
 
 ## Summary
 
-Add new built-in template `{{lt}}` and `{{gt}}` helpers to perform basic numeric comparison operations in templates, similar to those included in `ember-truth-helpers`.
+Add new built-in template `{{lt}}`, `{{lte}}`, `{{gt}}`, and `{{gte}}` keywords to perform basic numeric comparison operations in templates, similar to those included in `ember-truth-helpers`.
 
 This RFC is a subset of the changes proposed in #388.
 
@@ -32,20 +32,31 @@ even the most basic operations.
 
 ## Detailed design
 
-Add `{{lt}}` and `{{gt}}` helpers.
+The new comparison operators will be made keywords, so they are easily accessible in current and future templates without needing to be imported.
 
 #### `{{lt}}`
+
 Binary operation. Throws an error if not called with exactly two arguments.
 Equivalent of <arg1> < <arg2>
 This is identical to the `{{lt}}` helper in `ember-truth-helpers`
 
+#### `{{lte}}`
+
+Binary operation. Throws an error if not called with exactly two arguments.
+Equivalent of <arg1> <= <arg2>
+This is identical to the `{{lte}}` helper in `ember-truth-helpers`
+
 #### `{{gt}}`
+
 Binary operation. Throws an error if not called with exactly two arguments.
 Equivalent of <arg1> > <arg2>
 This is identical to the `{{gt}}` helper in `ember-truth-helpers`, except for the name.
 
-This RFC intentionally leaves the implementation details unspecified, those could be implemented in Glimmer VM or
-in a higher level in Ember itself.
+#### `{{gte}}`
+
+Binary operation. Throws an error if not called with exactly two arguments.
+Equivalent of <arg1> >= <arg2>
+This is identical to the `{{gte}}` helper in `ember-truth-helpers`, except for the name.
 
 ## How we teach this
 
