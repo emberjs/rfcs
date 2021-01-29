@@ -9,18 +9,7 @@ Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/711
 ---
 
-<!---
-Directions for above:
-
-Stage: Leave as is
-Start Date: Fill in with today's date, YYYY-MM-DD
-Release Date: Leave as is
-Release Versions: Leave as is
-Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies
-RFC PR: Fill this in with the URL for the Proposal RFC PR
--->
-
-# <RFC title>
+# Deprecate AutoLocation
 
 ## Summary
 
@@ -41,7 +30,12 @@ The Ember Router can use different mechanisms to serialize its state.
 The two common ones are 'history' and 'hash'. There is also a special
 location called 'auto' which does feature detection, preferring 'history'.
 
-Basically all browsers will get 'history':
+When the special 'auto' location was added (and made default), less than
+half of browsers supported the (then) new history location API. For seamless
+upgrade to history API when available, Ember created the special auto location.
+
+These days (many years later), basically all browsers will get 'history',
+since the History Location API is very widely supported, even by IE 11:
 https://caniuse.com/mdn-api_history_pushstate
 
 The check 'auto' is basically doing this:
@@ -69,20 +63,23 @@ if (
 
 ## Transition Path
 
-We'll begin with deprecating auto, in next major release we
-set history as the default. Since auto is default today,
-and almost always resolve to history, most users won't need
-to do a thing and they'll still get history location in the
-next major release (but set directly, without auto resolving
-to it).
+We'll begin with deprecating auto (explicitly or implicitly set).
 
-There are two groups to consider though:
+In next major release we change the default to 'history'.
+Since auto is default today, and almost always resolve to history,
+most users can change to 'history' and it's done.
+
+We also need to update the template in ember-cli blueprint,
+so that 'history' will be the default value for `locationType`
+in environment.js.
+
+There are two groups to consider:
 
 1. People who need auto-detection (hash/history switching) and
-2. Those that have explicitly set location to 'auto'.
+2. those with location set to 'auto' (this will be most people).
 
-For the first group the solution is fairly trivial. Simply
-implement feature detection, via e.g. Modernizr[1], like this:
+The first group can implement feature detection,
+via e.g. Modernizr[1], like this:
 
 ```js
 // app/router.js
@@ -92,14 +89,14 @@ export default class Router extends EmberRouter {
 }
 ```
 
-For the second group, they simply need to replace their explicit choice
+For the second group, they need to replace their choice
 of 'auto' for 'history' in `locationType` in environment.js (or
-`location` in router.js), since history is what their 'auto' resolves
-to anyway.
+`location` in router.js), since history is what 'auto' mostly
+resolves to anyway.
 
 ### What To Deprecate (and later remove)
 
-- The HistoryLocation class
+- The AutoLocation class
 - The method `detect` from the `Location` interface
 - Explicitly setting 'auto' as the preferred location.
 
