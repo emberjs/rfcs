@@ -95,7 +95,7 @@ For example, assume there is a component 10+ component layers deep. Instead of p
 `@updateCategory` through each and every one of those component layers, the component can do:
 
 ```js
-import Component from '@glimmer/controller';
+import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 
