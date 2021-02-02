@@ -64,6 +64,52 @@ The introduction of these helpers does not impact the current mental model for E
 
 In addition to API and Guides documentation with illustrative examples of usage of the various helpers.
 
+### API Docs
+
+#### `{{lt}}`
+
+The `{{lt}}` helper can be used to compare two values in a template. It returns `true` if the first value is
+less than the second value, and `false` otherwise. It is equivalent to the `<` operator in JavaScript.
+
+```hbs
+{{#if (lt @number 5)}}
+  The number is less than 5!
+{{/if}}
+```
+
+#### `{{lte}}`
+
+The `{{lte}}` helper can be used to compare two values in a template. It returns `true` if the first value is
+less than or equal to the second value, and `false` otherwise. It is equivalent to the `<=` operator in JavaScript.
+
+```hbs
+{{#if (lte @number 5)}}
+  The number is less than or equal to 5!
+{{/if}}
+```
+
+#### `{{gt}}`
+
+The `{{gt}}` helper can be used to compare two values in a template. It returns `true` if the first value is
+greater than the second value, and `false` otherwise. It is equivalent to the `>` operator in JavaScript.
+
+```hbs
+{{#if (gt @number 5)}}
+  The number is greater than 5!
+{{/if}}
+```
+
+#### `{{gte}}`
+
+The `{{gte}}` helper can be used to compare two values in a template. It returns `true` if the first value is
+greater than or equal the second value, and `false` otherwise. It is equivalent to the `>=` operator in JavaScript.
+
+```hbs
+{{#if (gte @number 5)}}
+  The number is greater than or equal to 5!
+{{/if}}
+```
+
 ## Drawbacks
 
 Adding new helpers increases the surface area of the framework and the code the core team commits to support long term.
