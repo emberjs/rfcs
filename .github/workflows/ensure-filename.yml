@@ -10,8 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - id: files
-        uses: jitterbit/get-changed-files@v1
+
+      - name: Get Changed Files
+        uses: lots0logs/gh-action-get-changed-files@2.1.4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Filter Added Files to Added RFCs
+        id: files
+        run: |
+          added_files=`jq -r '[.[] | select(startswith("text/"))] | join(" ")' ${HOME}/files_added.json`
+          echo "::set-output name=added::$added_files"
+
       - name: Checkout tools repo
         uses: actions/checkout@v2
         with:
