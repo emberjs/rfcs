@@ -49,14 +49,14 @@ This is identical to the `{{lte}}` helper in `ember-truth-helpers`
 #### `{{gt}}`
 
 Binary operation. Throws an error if not called with exactly two arguments.
-Equivalent of <arg1> > <arg2>
-This is identical to the `{{gt}}` helper in `ember-truth-helpers`, except for the name.
+Equivalent of `<arg1> > <arg2>`
+This is identical to the `{{gt}}` helper in `ember-truth-helpers`.
 
 #### `{{gte}}`
 
 Binary operation. Throws an error if not called with exactly two arguments.
-Equivalent of <arg1> >= <arg2>
-This is identical to the `{{gte}}` helper in `ember-truth-helpers`, except for the name.
+Equivalent of `<arg1> >= <arg2>`.
+This is identical to the `{{gte}}` helper in `ember-truth-helpers`.
 
 ## How we teach this
 
