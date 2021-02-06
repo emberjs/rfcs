@@ -49,7 +49,7 @@ bracket syntax, on the other hand, accepts named arguments exclusively.
 Another downside to the positional arguments syntax was it required the use of
 the `(query-params)` helper to distinguish query params from model arguments.
 
-Finally, the meaning of the positional arugments also changes slightly when the
+Finally, the meaning of the positional arguments also changes slightly when the
 component is invoked with or without a block, which made things needlessly
 confusing.
 
