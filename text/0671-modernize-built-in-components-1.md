@@ -309,7 +309,7 @@ In order to support apps that have implemented custom components by subclassing
 these built-in classes, the current implementations of the `Ember.Checkbox`,
 `Ember.LinkComponent`, `Ember.TextArea` and `Ember.TextField` classes will be
 moved to a legacy addon and remain "frozen" in there. Future versions of Ember
-will stop basing the built-in components on these legacy implementaitons, but
+will stop basing the built-in components on these legacy implementations, but
 custom subclasses will continue to work. The deprecation message should provide
 information about the legacy addon, or link to the deprecation details page
 with the relevant information.
