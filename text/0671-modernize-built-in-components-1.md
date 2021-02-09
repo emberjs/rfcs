@@ -23,6 +23,7 @@ propose to:
    3. `Ember.TextArea`
    4. `Ember.TextField`
    5. `Ember.TextSupport` (already private, no import path available)
+   6. `Ember.TargetActionSupport` (already private, no import path available)
 3. Deprecate calling `reopen` or `reopenClass` on the classes and mixins listed
    above, whether they were obtained through an import or the `Ember` global
 4. Deprecate calling `reopen` or `reopenClass` on the `Ember.Component` super
@@ -175,8 +176,8 @@ learning materials (this is currently being addressed).
 In addition, for a variety of historical reasons, the implementation of the
 built-in components, that is, the `Checkbox`, `LinkComponent`, `TextArea` and
 `TextField` component classes were documented as public API, as well as the
-`TextSupport` mixin, which is considered private but is well-documented and is
-accessible through the `Ember` global.
+`TextSupport` and `TargetActionSupport` mixins, which are considered private
+but are well-documented and accessible through the `Ember` global.
 
 Because of this, the fact that they are implemented as `Ember.Component`
 subclasses are highly observable. Some common use cases and consequences are:
@@ -272,6 +273,7 @@ This RFC proposes the following deprecations:
    3. `Ember.TextArea`
    4. `Ember.TextField`
    5. `Ember.TextSupport` (already private, no import path available)
+   6. `Ember.TargetActionSupport` (already private, no import path available)
 3. Deprecate calling `reopen` or `reopenClass` on the classes and mixins listed
    above, whether they were obtained through an import or the `Ember` global
 4. Deprecate calling `reopen` or `reopenClass` on the `Ember.Component` super
@@ -304,11 +306,15 @@ The first two sets of deprecations removes the classes themselves from being
 public APIs.
 
 In order to support apps that have implemented custom components by subclassing
-these built-in classes, the current implementations will be moved to a legacy
-addon and remain "frozen" in there. Future versions of Ember will stop basing
-the built-in components on these legacy implementaitons, but custom subclasses
-will continue to work. The deprecation message should provide information about
-this legacy addon, or link to the deprecation details page that does.
+these built-in classes, the current implementations of the `Ember.Checkbox`,
+`Ember.LinkComponent`, `Ember.TextArea` and `Ember.TextField` classes will be
+moved to a legacy addon and remain "frozen" in there. Future versions of Ember
+will stop basing the built-in components on these legacy implementations, but
+custom subclasses will continue to work. The deprecation message should provide
+information about the legacy addon, or link to the deprecation details page
+with the relevant information.
+
+The private mixins, on the other hand, will be deprecated without replacement.
 
 Note that in accordance with [RFC #496](0496-handlebars-strict-mode.md), the
 following import paths will be made available for use in strict mode:
