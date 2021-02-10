@@ -1,7 +1,13 @@
-- Start Date: 2020-09-26
-- Relevant Team(s): Ember.js
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
-- Tracking: (leave this empty)
+---
+Stage: Accepted
+Start Date: 2020-09-26
+Release Date: Unreleased
+Release Versions:
+  ember-source: vX.Y.Z
+  ember-data: vX.Y.Z
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/669
+---
 
 # Tracked Storage Primitives
 
