@@ -1,7 +1,13 @@
-- Start Date: 2019-12-22
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/566
-- Tracking: (leave this empty)
+---
+Stage: Accepted
+Start Date: 2019-12-22
+Release Date: Unreleased
+Release Versions:
+  ember-source: vX.Y.Z
+  ember-data: vX.Y.Z
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/566
+---
 
 # @cached
 
