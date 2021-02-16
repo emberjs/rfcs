@@ -20,26 +20,31 @@ Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to w
 RFC PR: Fill this in with the URL for the Proposal RFC PR
 -->
 
-# Implicit Application Query Params
+# Arbitrary Query Params
 
 ## Summary
 
-This RFC doesn't aim to change existing behavior but does aim to allow opting
-developers to use *any* Query Param passed to `transitionTo`. This will hopefully
-improve the ergonomics of using query params in most default situations.
+This RFC aims to add opt-in behavior that would allow developers to use *any*
+Query Param passed to `transitionTo`. This will hopefully improve the ergonomics
+of using query params in most default situations.
 
 ## Motivation
 
-Query Params currently require a bit of ceremony to be used at all. If Query
-Params today opted you out of the current restrictive-query-params implementation
-then the default experience with query params would "just work", improving the
-learning experience as well for new developers once they learn about `transitionTo`.
-
+Query Params require configuration to use today, which is counter to our
+"convention over configuration" philosophy. This RFC proposes an opt-in change to
+allow for query params to _always_ be used in transitions and links, and no longer
+require the allow-list that controllers currently implement today.
 
 ## Detailed design
 
-This may require an optional feature to be non-breaking for folks that rely on
-forbidding all query params by default.
+Arbitrary Query Params will need to be guarded by an optional feature, because:
+ - controllers are allow-list only, and the ability to allow all query params
+   by default conflicts with the feature set of a controller's allow-list.
+ - query param values will not be stored on any controller, whereas the
+   controller is the only place tracked-access to query params exists.
+
+
+### Example
 
 Query Params as they work today are allow-list only, and block all other Query Params.
 
@@ -53,27 +58,43 @@ export default class ArticlesController extends Controller {
 With `queryParams` specified, only `category` will be allowed on the route for
 this controller.
 
-This RFC only proposes a change only to this scenario:
+This RFC only proposes a change for this scenario:
 ```js
 // Empty or default controller
 export default class ArticlesController extends Controller {
 }
 ```
 
-where now `<RouterService>#transitionTo({ queryParams: { category: 'anything' } })`
+where `<RouterService>#transitionTo({ queryParams: { category: 'anything' } })`
 and LinkTo will _not_ strip away the `category` Query Param.
 
-The way this would work is that _all_ Query Params detected during a transition
-would live on the `ApplicationController`, as if the `queryParams` array somehow
-knew of all possible Query Params.
+### Migration Path
 
+1. Update optional-features.json
+
+    ```
+    // config/optional-features.json
+    {
+      "arbitrary-query-params": true
+    }
+    ```
+
+2. Delete Query Param allow lists
+
+    ```diff
+     export default class ArticlesController extends Controller {
+    -  queryParams = ['category'];
+     }
+
+    ```
 
 ## How we teach this
 
 The current guides would need updating teach that query params could be used without
 modifying controllers. While the existing Query Params behavior would still work,
-and provide much more utility than lumping everything on the `ApplicationController`
-implicitly, it would be more of an "Advanced Topic".
+and provide much more utility than always arbitrary query params, it would be more
+of an "Advanced Topic".
+
 
 ## Drawbacks
 
