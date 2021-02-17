@@ -8,17 +8,6 @@ Relevant Team(s): Ember CLI
 RFC PR: https://github.com/emberjs/rfcs/pull/702
 ---
 
-<!---
-Directions for above:
-
-Stage: Leave as is
-Start Date: Fill in with today's date, YYYY-MM-DD
-Release Date: Leave as is
-Release Versions: Leave as is
-Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies
-RFC PR: Fill this in with the URL for the Proposal RFC PR
--->
-
 # Add eslint-plugin-qunit to ember-cli blueprint
 
 ## Summary
@@ -74,7 +63,7 @@ We do not currently discuss linting in either guides.emberjs.com or cli.emberjs.
 
 Users will be able to find documentation for the new rules on the [eslint-plugin-qunit](https://github.com/platinumazure/eslint-plugin-qunit) GitHub page. Many IDEs will provide a link directly to the rule documentation on highlighted lint violations.
 
-Any violations of the new rules will be detected by `yarn lint:js` and in some cases autofixed by `yarn lint:js:fix`.
+Any violations of the new rules will be detected by `yarn lint` and in some cases autofixed by `yarn lint:fix`.
 
 ## Drawbacks
 
