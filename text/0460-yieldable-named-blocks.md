@@ -187,7 +187,7 @@ AngleBracketWithBlock :
   "</" ComponentTag ">"
 
 AngleBracketWithBlocks :
-  "<" ComponentTag ComponentArgs? BlockParams? ">"
+  "<" ComponentTag ComponentArgs? ">"
   NamedBlock+
   "</" ComponentTag ">"
 
