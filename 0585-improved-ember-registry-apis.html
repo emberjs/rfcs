@@ -1,0 +1,897 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>0585-improved-ember-registry-apis - </title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="affix"><a href="introduction.html">Introduction</a></li><li><a href="0001-transform-attribute-meta-parameter.html">0001-transform-attribute-meta-parameter</a></li><li><a href="0003-block-params.html">0003-block-params</a></li><li><a href="0003-cli-ember-doctor.html">0003-cli-ember-doctor</a></li><li><a href="0010-engines.html">0010-engines</a></li><li><a href="0011-improved-cp-syntax.html">0011-improved-cp-syntax</a></li><li><a href="0012-help-json-output.html">0012-help-json-output</a></li><li><a href="0015-the-road-to-ember-2-0.html">0015-the-road-to-ember-2-0</a></li><li><a href="0020-sri-default.html">0020-sri-default</a></li><li><a href="0023-command-line-completion.html">0023-command-line-completion</a></li><li><a href="0024-bound-attributes.html">0024-bound-attributes</a></li><li><a href="0028-app-import-output-file.html">0028-app-import-output-file</a></li><li><a href="0029-addon-black-and-whitelist-for-apps.html">0029-addon-black-and-whitelist-for-apps</a></li><li><a href="0045-internet-explorer.html">0045-internet-explorer</a></li><li><a href="0046-cli-improved-release-process.html">0046-cli-improved-release-process</a></li><li><a href="0046-registry-reform.html">0046-registry-reform</a></li><li><a href="0050-cli-production-code-stripping.html">0050-cli-production-code-stripping</a></li><li><a href="0050-improved-actions.html">0050-improved-actions</a></li><li><a href="0053-helpers.html">0053-helpers</a></li><li><a href="0055-anonymous-amd.html">0055-anonymous-amd</a></li><li><a href="0056-improved-release-cycle.html">0056-improved-release-cycle</a></li><li><a href="0057-ember-data-reference-unification.html">0057-ember-data-reference-unification</a></li><li><a href="0058-helper-listing.html">0058-helper-listing</a></li><li><a href="0061-ember-data-background-fetch.html">0061-ember-data-background-fetch</a></li><li><a href="0064-contextual-component-lookup.html">0064-contextual-component-lookup</a></li><li><a href="0065-deprecation-warning-handlers.html">0065-deprecation-warning-handlers</a></li><li><a href="0080-serve-file-api.html">0080-serve-file-api</a></li><li><a href="0086-firefox-in-ci.html">0086-firefox-in-ci</a></li><li><a href="0090-addon-tree-caching.html">0090-addon-tree-caching</a></li><li><a href="0091-cli-addon-instrumentation-experimental-hooks.html">0091-cli-addon-instrumentation-experimental-hooks</a></li><li><a href="0091-weakmap.html">0091-weakmap</a></li><li><a href="0092-blueprint-remove-old-files.html">0092-blueprint-remove-old-files</a></li><li><a href="0095-cli-standardise-targets.html">0095-cli-standardise-targets</a></li><li><a href="0095-router-service.html">0095-router-service</a></li><li><a href="0096-enable-yarn-usage.html">0096-enable-yarn-usage</a></li><li><a href="0101-ember-data-friendly-errors.html">0101-ember-data-friendly-errors</a></li><li><a href="0105-addons-optionalDependencies.html">0105-addons-optionalDependencies</a></li><li><a href="0108-add-custom-transform.html">0108-add-custom-transform</a></li><li><a href="0110-packaging.html">0110-packaging</a></li><li><a href="0114-add-template-lint-addon.html">0114-add-template-lint-addon</a></li><li><a href="0116-qunit-dom.html">0116-qunit-dom</a></li><li><a href="0120-cli-guides.html">0120-cli-guides</a></li><li><a href="0120-route-serializers.html">0120-route-serializers</a></li><li><a href="0121-remove-ember-cli-eslint.html">0121-remove-ember-cli-eslint</a></li><li><a href="0136-contains-to-includes.html">0136-contains-to-includes</a></li><li><a href="0139-isHtmlSafe.html">0139-isHtmlSafe</a></li><li><a href="0143-module-unification.html">0143-module-unification</a></li><li><a href="0150-factory-for.html">0150-factory-for</a></li><li><a href="0176-javascript-module-api.html">0176-javascript-module-api</a></li><li><a href="0178-deprecate-ember-k.html">0178-deprecate-ember-k</a></li><li><a href="0181-deprecate-ember-data-initializers.html">0181-deprecate-ember-data-initializers</a></li><li><a href="0186-track-unique-history-location-state.html">0186-track-unique-history-location-state</a></li><li><a href="0191-deprecate-component-lifecycle-hook-args.html">0191-deprecate-component-lifecycle-hook-args</a></li><li><a href="0194-deprecate-custom-event-manager.html">0194-deprecate-custom-event-manager</a></li><li><a href="0213-custom-components.html">0213-custom-components</a></li><li><a href="0225-ember-engines-mount-params.html">0225-ember-engines-mount-params</a></li><li><a href="0226-named-blocks.html">0226-named-blocks</a></li><li><a href="0229-deprecate-testing-restricted-resolver.html">0229-deprecate-testing-restricted-resolver</a></li><li><a href="0232-simplify-qunit-testing-api.html">0232-simplify-qunit-testing-api</a></li><li><a href="0236-deprecation-ember-string.html">0236-deprecation-ember-string</a></li><li><a href="0237-deprecation-ember-map.html">0237-deprecation-ember-map</a></li><li><a href="0240-es-classes.html">0240-es-classes</a></li><li><a href="0252-browser-support-changes.html">0252-browser-support-changes</a></li><li><a href="0268-acceptance-testing-refactor.html">0268-acceptance-testing-refactor</a></li><li><a href="0272-deprecation-native-function-prototype-extensions.html">0272-deprecation-native-function-prototype-extensions</a></li><li><a href="0276-named-args.html">0276-named-args</a></li><li><a href="0278-template-only-components.html">0278-template-only-components</a></li><li><a href="0280-remove-application-wrapper.html">0280-remove-application-wrapper</a></li><li><a href="0281-es5-getters.html">0281-es5-getters</a></li><li><a href="0286-block-let-template-helper.html">0286-block-let-template-helper</a></li><li><a href="0287-promote-in-element-to-public-api.html">0287-promote-in-element-to-public-api</a></li><li><a href="0293-record-data.html">0293-record-data</a></li><li><a href="0294-optional-jquery.html">0294-optional-jquery</a></li><li><a href="0297-deprecate-ember-logger.html">0297-deprecate-ember-logger</a></li><li><a href="0300-rfc-process-update.html">0300-rfc-process-update</a></li><li><a href="0308-deprecate-property-lookup-fallback.html">0308-deprecate-property-lookup-fallback</a></li><li><a href="0311-angle-bracket-invocation.html">0311-angle-bracket-invocation</a></li><li><a href="0318-array-helper.html">0318-array-helper</a></li><li><a href="0322-deprecate-copy-copyable.html">0322-deprecate-copy-copyable</a></li><li><a href="0324-deprecate-component-isvisible.html">0324-deprecate-component-isvisible</a></li><li><a href="0326-ember-data-filter-deprecation.html">0326-ember-data-filter-deprecation</a></li><li><a href="0329-deprecated-ember-evented-in-ember-data.html">0329-deprecated-ember-evented-in-ember-data</a></li><li><a href="0331-deprecate-globals-resolver.html">0331-deprecate-globals-resolver</a></li><li><a href="0332-ember-data-record-links-and-meta.html">0332-ember-data-record-links-and-meta</a></li><li><a href="0335-deprecate-send-action.html">0335-deprecate-send-action</a></li><li><a href="0337-native-class-constructor-update.html">0337-native-class-constructor-update</a></li><li><a href="0340-deprecate-ember-merge.html">0340-deprecate-ember-merge</a></li><li><a href="0345-discord.html">0345-discord</a></li><li><a href="0364-roadmap-2018.html">0364-roadmap-2018</a></li><li><a href="0369-deprecate-computed-clobberability.html">0369-deprecate-computed-clobberability</a></li><li><a href="0370-deprecate-computed-volatile.html">0370-deprecate-computed-volatile</a></li><li><a href="0372-ember-data-model-factory-for.html">0372-ember-data-model-factory-for</a></li><li><a href="0373-Element-Modifier-Managers.html">0373-Element-Modifier-Managers</a></li><li><a href="0375-deprecate-computed-property-modifier.html">0375-deprecate-computed-property-modifier</a></li><li><a href="0386-remove-jquery.html">0386-remove-jquery</a></li><li><a href="0389-dynamic-tag-names.html">0389-dynamic-tag-names</a></li><li><a href="0391-router-helpers.html">0391-router-helpers</a></li><li><a href="0392-deprecate-component-manager-string-lookup.html">0392-deprecate-component-manager-string-lookup</a></li><li><a href="0395-ember-data-packages.html">0395-ember-data-packages</a></li><li><a href="0398-RouteInfo-Metadata.html">0398-RouteInfo-Metadata</a></li><li><a href="0403-ember-data-identifiers.html">0403-ember-data-identifiers</a></li><li><a href="0408-decorators.html">0408-decorators</a></li><li><a href="0410-tracked-properties.html">0410-tracked-properties</a></li><li><a href="0415-render-element-modifiers.html">0415-render-element-modifiers</a></li><li><a href="0416-glimmer-components.html">0416-glimmer-components</a></li><li><a href="0418-deprecate-route-render-methods.html">0418-deprecate-route-render-methods</a></li><li><a href="0421-deprecate-application-controller-props.html">0421-deprecate-application-controller-props</a></li><li><a href="0425-website-redesign.html">0425-website-redesign</a></li><li><a href="0431-guides-restructure.html">0431-guides-restructure</a></li><li><a href="0432-contextual-helpers.html">0432-contextual-helpers</a></li><li><a href="0435-modifier-splattributes.html">0435-modifier-splattributes</a></li><li><a href="0440-decorator-support.html">0440-decorator-support</a></li><li><a href="0445-deprecate-with.html">0445-deprecate-with</a></li><li><a href="0446-contribution-guides.html">0446-contribution-guides</a></li><li><a href="0449-deprecate-partials.html">0449-deprecate-partials</a></li><li><a href="0451-injection-parameter-normalization.html">0451-injection-parameter-normalization</a></li><li><a href="0452-ember-data-medium-term-plan.html">0452-ember-data-medium-term-plan</a></li><li><a href="0457-nested-lookups.html">0457-nested-lookups</a></li><li><a href="0459-angle-bracket-built-in-components.html">0459-angle-bracket-built-in-components</a></li><li><a href="0460-yieldable-named-blocks.html">0460-yieldable-named-blocks</a></li><li><a href="0461-ember-data-singleton-record-data.html">0461-ember-data-singleton-record-data</a></li><li><a href="0463-record-data-state.html">0463-record-data-state</a></li><li><a href="0465-record-data-errors.html">0465-record-data-errors</a></li><li><a href="0466-request-state-service.html">0466-request-state-service</a></li><li><a href="0468-classic-decorator.html">0468-classic-decorator</a></li><li><a href="0470-fn-helper.html">0470-fn-helper</a></li><li><a href="0471-on-modifier.html">0471-on-modifier</a></li><li><a href="0477-blueprints-update.html">0477-blueprints-update</a></li><li><a href="0478-tracked-properties-updates.html">0478-tracked-properties-updates</a></li><li><a href="0481-component-templates-co-location.html">0481-component-templates-co-location</a></li><li><a href="0486-deprecate-mouseenter.html">0486-deprecate-mouseenter</a></li><li><a href="0487-custom-model-classes.html">0487-custom-model-classes</a></li><li><a href="0491-deprecate-disconnect-outlet.html">0491-deprecate-disconnect-outlet</a></li><li><a href="0494-async-observers.html">0494-async-observers</a></li><li><a href="0496-handlebars-strict-mode.html">0496-handlebars-strict-mode</a></li><li><a href="0507-embroider-v2-package-format.html">0507-embroider-v2-package-format</a></li><li><a href="0519-2019-2020-roadmap.html">0519-2019-2020-roadmap</a></li><li><a href="0521-find-by-identifier.html">0521-find-by-identifier</a></li><li><a href="0522-default-serializers-and-adapters.html">0522-default-serializers-and-adapters</a></li><li><a href="0523-model-argument-for-route-templates.html">0523-model-argument-for-route-templates</a></li><li><a href="0554-deprecate-getwithdefault.html">0554-deprecate-getwithdefault</a></li><li><a href="0558-edition-detection.html">0558-edition-detection</a></li><li><a href="0560-add-equality-operators.html">0560-add-equality-operators</a></li><li><a href="0561-add-numeric-comparison-operators.html">0561-add-numeric-comparison-operators</a></li><li><a href="0562-add-logical-operators.html">0562-add-logical-operators</a></li><li><a href="0566-memo-decorator.html">0566-memo-decorator</a></li><li><a href="0580-destroyables.html">0580-destroyables</a></li><li><a href="0581-new-test-waiters.html">0581-new-test-waiters</a></li><li><a href="0585-improved-ember-registry-apis.html" class="active">0585-improved-ember-registry-apis</a></li><li><a href="0615-autotracking-memoization.html">0615-autotracking-memoization</a></li><li><a href="0617-rfc-stages.html">0617-rfc-stages</a></li><li><a href="0625-helper-managers.html">0625-helper-managers</a></li><li><a href="0626-invoke-helper.html">0626-invoke-helper</a></li><li><a href="0628-prettier.html">0628-prettier</a></li><li><a href="0631-refresh-method-for-router-service.html">0631-refresh-method-for-router-service</a></li><li><a href="0635-ember-new-lang.html">0635-ember-new-lang</a></li><li><a href="0637-customizable-test-setups.html">0637-customizable-test-setups</a></li><li><a href="0638-interactive-app-creation.html">0638-interactive-app-creation</a></li><li><a href="0639-replace-blacklist-whitelist.html">0639-replace-blacklist-whitelist</a></li><li><a href="0645-add-ember-page-title-addon.html">0645-add-ember-page-title-addon</a></li><li><a href="0649-deprecation-staging.html">0649-deprecation-staging</a></li><li><a href="0659-unique-id-helper.html">0659-unique-id-helper</a></li><li><a href="0669-tracked-storage-primitive.html">0669-tracked-storage-primitive</a></li><li><a href="0671-modernize-built-in-components-1.html">0671-modernize-built-in-components-1</a></li><li><a href="0673-deprecate-tryinvoke.html">0673-deprecate-tryinvoke</a></li><li><a href="0674-deprecate-transition-methods-of-controller-and-route.html">0674-deprecate-transition-methods-of-controller-and-route</a></li><li><a href="0680-implicit-injection-deprecation.html">0680-implicit-injection-deprecation</a></li><li><a href="0685-new-browser-support-policy.html">0685-new-browser-support-policy</a></li><li><a href="0686-deprecate-old-manager-capabilities-versions.html">0686-deprecate-old-manager-capabilities-versions</a></li><li><a href="0689-deprecate-has-block.html">0689-deprecate-has-block</a></li><li><a href="0690-deprecate-attrs-in-templates.html">0690-deprecate-attrs-in-templates</a></li><li><a href="0691-deprecate-class-binding-and-class-name-bindings.html">0691-deprecate-class-binding-and-class-name-bindings</a></li><li><a href="0692-deprecate-array-observers.html">0692-deprecate-array-observers</a></li><li><a href="0698-deprecate-link-to-positional-arguments.html">0698-deprecate-link-to-positional-arguments</a></li><li><a href="0702-eslint-plugin-qunit.html">0702-eslint-plugin-qunit</a></li><li><a href="0704-deprecate-octane-optional-features.html">0704-deprecate-octane-optional-features</a></li><li><a href="0705-deprecate-jquery-optional-feature.html">0705-deprecate-jquery-optional-feature</a></li><li><a href="0706-deprecate-ember-global.html">0706-deprecate-ember-global</a></li><li><a href="0707-modernize-built-in-components-2.html">0707-modernize-built-in-components-2</a></li><li><a href="0711-deprecate-auto-location.html">0711-deprecate-auto-location</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title"></h1>
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <hr />
+<p>Start Date: 2020-01-27
+Relevant Team(s): Ember.js, Learning
+RFC PR: https://github.com/emberjs/rfcs/pull/585</p>
+<hr />
+<h1><a class="header" href="#improved-ember-registry-apis" id="improved-ember-registry-apis">Improved Ember Registry APIs</a></h1>
+<h2><a class="header" href="#summary" id="summary">Summary</a></h2>
+<p>Introduce a new, object-based API for all registry APIs; deprecate the current string-based microsyntax registry APIs; and introduce a <code>capabilities</code> property to the resolver to safely support existing resolvers. Extend the new API for service and controller injections, and deprecate their microsyntax for namespaced injections.</p>
+<p>Today the registry APIs are all of shapes roughly like this:</p>
+<pre><code class="language-js">getOwner(this).lookup('service:session');
+</code></pre>
+<p>This RFC proposes that they would instead be written like this:</p>
+<pre><code class="language-js">getOwner(this).lookup({ type: 'service', name: 'session' })
+</code></pre>
+<p>Service and controller injections which include a namespace currently look like this:</p>
+<pre><code class="language-js">class Example {
+  @service('global@session')
+  session;
+}
+</code></pre>
+<p>This RFC proposes that these would instead be written like this:</p>
+<pre><code class="language-js">class Example {
+  @service({ namespace: 'global', name: 'session' })
+  session;
+}
+</code></pre>
+<h3><a class="header" href="#table-of-contents" id="table-of-contents">Table of Contents</a></h3>
+<ul>
+<li><a href="#summary">Summary</a>
+<ul>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+</ul>
+</li>
+<li><a href="#motivation">Motivation</a>
+<ul>
+<li><a href="#microsyntax-problems">Microsyntax problems</a></li>
+<li><a href="#typescript-problems">TypeScript problems</a></li>
+<li><a href="#performance-benefits">Performance benefits?</a></li>
+</ul>
+</li>
+<li><a href="#detailed-design">Detailed design</a>
+<ul>
+<li><a href="#identifier-types"><code>Identifier</code> types</a></li>
+<li><a href="#resolver"><code>Resolver</code></a></li>
+<li><a href="#owner-apis">Owner APIs</a>
+<ul>
+<li><a href="#options">Options</a></li>
+<li><a href="#factory-and-factorymanager"><code>Factory</code> and <code>FactoryManager</code></a></li>
+<li><a href="#owner-api-diff"><code>Owner</code> API diff</a></li>
+</ul>
+</li>
+<li><a href="#service-and-controller-injections">Service and Controller Injections</a></li>
+<li><a href="#codemod">Codemod</a></li>
+<li><a href="#deprecation-messaging">Deprecation messaging</a>
+<ul>
+<li><a href="#guide">Guide</a></li>
+<li><a href="#in-app">In-app</a></li>
+</ul>
+</li>
+<li><a href="#rollout">Rollout</a></li>
+</ul>
+</li>
+<li><a href="#how-we-teach-this">How we teach this</a></li>
+<li><a href="#drawbacks">Drawbacks</a></li>
+<li><a href="#alternatives">Alternatives</a>
+<ul>
+<li><a href="#supply-just-schema-instead-of-capabilities">Supply just <code>schema</code> instead of <code>capabilities</code></a></li>
+<li><a href="#a-new-string-based-api">A new String-based API</a></li>
+<li><a href="#string-based-api-as-sugar">String-based API as “sugar”</a></li>
+<li><a href="#object-based-api">Object-based API</a></li>
+<li><a href="#do-nothing">Do nothing</a></li>
+</ul>
+</li>
+<li><a href="#unresolved-questions">Unresolved questions</a></li>
+<li><a href="#appendix-typescript">Appendix: TypeScript</a>
+<ul>
+<li><a href="#typescript-motivation">TypeScript motivation</a></li>
+<li><a href="#proposed-type-definitions">Proposed type definitions</a></li>
+</ul>
+</li>
+</ul>
+<h2><a class="header" href="#motivation" id="motivation">Motivation</a></h2>
+<p>There are two primary motivations here: replacing the string-based microsyntax with an idiomatic JavaScript API, and making the API more amenable to correct types for TypeScript users.</p>
+<h3><a class="header" href="#microsyntax-problems" id="microsyntax-problems">Microsyntax problems</a></h3>
+<p>The current design has worked well enough for a long time, but it adds conceptual overhead to learning how to use Ember. JavaScript has a lightweight and easy way of defining sets of related data: plain old JavaScript objects. By contrast, the existence of this Ember-specific microsyntax requires users to learn a new string-based syntax (which is <em>not</em> used elsewhere in the JavaScript community) and internalize how it works when they first encounter the registry APIs.</p>
+<p>This need often comes relatively early in the learning process: the first time a user needs to write a unit test for a service. We currently devote <a href="https://guides.emberjs.com/release/applications/dependency-injection/#toc_factory-registrations">an entire section of the guides</a> to explaining how factory registrations work, including a paragraph devoted to explaining the microsyntax. A normal JavaScript API would simplify this entire section.</p>
+<p>Changing to a normal JavaScript-object-based API means tooling can provide in-editor benefits around autocompletion for the API, which is simply not possible for the microsyntax. Finally, a non-microsyntax API will be more amenable to future codemods if this should need to change in the future.</p>
+<h3><a class="header" href="#typescript-problems" id="typescript-problems">TypeScript problems</a></h3>
+<p>For TypeScript users, the current API is not type-safe, and can be made so only with considerable extra work by developers and the Typed Ember maintainers. Blueprint maintenance and end users’ mental overhead associated with existing solutions for Ember’s stringly-typed APIs would effectively have to <em>double</em> to provide type safety for today’s registry APIs. For details, see <a href="#appendix-typescript"><strong>Appendix: Typescript</strong></a>.</p>
+<h3><a class="header" href="#performance-benefits" id="performance-benefits">Performance benefits?</a></h3>
+<p>Finally, there <em>may</em> be some very small performance wins here, since in this schema there is no need to parse a string. This is not considered to be a significant motivator, however, since the tradeoffs between object allocation (memory utilization) and string parsing (CPU utilization) are likely to be largely irrelevant in practice for this API.</p>
+<h2><a class="header" href="#detailed-design" id="detailed-design">Detailed design</a></h2>
+<p>Every registry API will be updated to take a new <code>Identifier</code> type in place of the string microsyntax, while maintaining backwards compatibility by introducing versioning to the resolver. A codemod will be provided to allow users to migrate directly to the new API. The legacy resolver APIs are deprecated until Ember 4.0.</p>
+<p>(TypeScript consumers should see <a href="#proposed-type-definitions"><strong>Proposed Type Definitions</strong></a> in the appendix for additional details on type safety and resolution.)</p>
+<p><i><strong>Note:</strong> the diff views used throughout are meant to highlight the new APIs compared to the old, <em>not</em> to indicate the removal of the deprecated items. They will only be removed at Ember 4.0.</i></p>
+<h3><a class="header" href="#identifier-types" id="identifier-types"><code>Identifier</code> types</a></h3>
+<p>The core new type in the design of the API is an <em>identifier</em>, which is always passed as the first argument to resolver APIs. There are three kinds of identifiers: <code>FactoryIdentifier</code> and <code>FactoryTypeIdentifier</code> (discussed here), and <code>InjectionIdentifier</code> (discussed below in <a href="#service-and-controller-injections"><strong>Session and Controller Injections</strong></a>).</p>
+<pre><code class="language-ts">interface FactoryIdentifier {
+  type: string;
+  name: string;
+  namespace?: string;
+}
+</code></pre>
+<p>Here the <code>type</code> corresponds to the prefix component of the legacy API, and <code>name</code> to the postfix component of the legacy API: <code>service:foo</code> becomes <code>{ type: 'service', name: 'foo' }</code>.</p>
+<p>The <code>namespace</code> field allows for identifiers to be restricted to a particular namespace, as in looking up a resolution from an addon. It is optional since it is not required in normal usage, as is the case in the microsyntax today, where it may be provided via a prefix and delimited with <code>@</code>: <code>&lt;namespace&gt;@&lt;type&gt;:&lt;name&gt;</code>. This also supports experimental tools which namespace lookups for addons (e.g. <a href="https://github.com/rwjblue/ember-holy-futuristic-template-namespacing-batman">ember-holy-futuristic-template-namespacing-batman</a>).</p>
+<p>We also introduce <code>FactoryTypeIdentifier</code> to distinguish between injections for <em>all factories of a given type</em> (<code>FactoryTypeIdentifier</code>) and <em>specific factories</em> (<code>Identifier</code>):</p>
+<pre><code class="language-ts">interface FactoryTypeIdentifier {
+  type: string;
+}
+</code></pre>
+<p>As is the case in the microsyntax-based design, these factory type injections may not be namespaced.</p>
+<h3><a class="header" href="#resolver" id="resolver"><code>Resolver</code></a></h3>
+<p>Ember’s <code>Resolver</code> function is public API, designed to be customized and overridden. To support backwards compatibility with existing custom resolvers, and following the lead of the <a href="https://github.com/emberjs/rfcs/blob/master/text/0213-custom-components.md#capabilities">Custom Components RFC (#0213)</a> and the <a href="https://github.com/emberjs/rfcs/blob/master/text/0373-Element-Modifier-Managers.md#capabilities">Element Modifiers RFC (#0373)</a>, we introduce a <code>capabilities</code> property to the <code>Resolver</code> API, which may be <code>undefined</code> or the return value of a new <code>capabilities</code> function, which defines a <code>Capabilities</code> type.</p>
+<p>The <code>capabilities</code> function is a public export of the <code>@ember/application</code> module:</p>
+<pre><code class="language-ts">interface OptionalCapabilities {
+  modulesBased?: boolean;
+  disableMicrosyntax?: boolean;
+}
+
+export function capabilities(compatVersion: '3.18', capabilities?: OptionalCapabilities): unknown;
+</code></pre>
+<p>The return type of <code>capabilities</code> is <code>unknown</code> for public consumers; the actual return type is private API and should not be relied on by implementors of custom resolvers.</p>
+<p>The <code>modulesBased</code> capability rationalizes the existing <code>moduleBasedResolver</code> property on the <code>Resolver</code> class, integrating it into the new <code>capabilities</code> API.</p>
+<p>During the 3.x Ember series, if <code>capabilities</code> is <code>undefined</code>, the legacy behavior of the resolver is maintained. The signature of the <code>Resolver</code> type is therefore:</p>
+<pre><code class="language-ts">interface Resolver {
+  capabilities?: Capabilities;
+  resolve(identifier: string | FactoryIdentifier);
+}
+</code></pre>
+<p>After Ember 4.0, the type a custom resolver must implement will be updated so that <code>capabilities</code> will be required and <code>resolve</code> will only accept a <code>FactoryIdentifier</code>:</p>
+<pre><code class="language-ts">interface Resolver {
+  capabilities: Capabilities;
+  resolve(identifier: FactoryIdentifier);
+}
+</code></pre>
+<p>This design is completely backwards compatible: it continues working exactly as it does today. (See <a href="#rollout"><strong>Detailed Design &gt; Rollout</strong></a> below for details.) Until 4.0, both apps and addons will be able to use the microsyntax-based API <em>or</em> the new identifier-based API. It also allows for clean interop for existing custom resolvers.</p>
+<p>Besides the recent use of capabilities in the modifier and component managers, there is also some prior art for this kind of versioning applied to the resolver specifically: <a href="https://github.com/emberjs/ember.js/pull/9994">a similar “stamp”</a> was used for accomodating different behaviors when using the modules-based resolver vs. not (back in 2014)!</p>
+<h3><a class="header" href="#owner-apis" id="owner-apis">Owner APIs</a></h3>
+<p>The owner APIs all change to use <code>Identifier</code> (or <code>FactoryTypeIdentifier</code> as appropriate) instead of strings. </p>
+<p>Throughout, for the purposes of registration lookup, we use deep object value equality, <em>not</em> object identity. This specifically applies to:</p>
+<ul>
+<li><code>Owner.factoryFor</code></li>
+<li><code>Owner.lookup</code></li>
+<li><code>Owner.registerOptions</code></li>
+<li><code>Owner.registerOptionsForType</code></li>
+<li><code>Owner.registeredOption</code></li>
+<li><code>Owner.registeredOptions</code></li>
+<li><code>Owner.registeredOptionsForType</code></li>
+<li><code>Owner.resolveRegistration</code></li>
+</ul>
+<h4><a class="header" href="#options" id="options">Options</a></h4>
+<p>Some <code>Owner</code> registry APIs take lookup or registration options. This RFC does not propose changing these options in any way, but their definitions are provided here for completeness:</p>
+<pre><code class="language-ts">export interface LookupOptions {
+  singleton?: boolean;
+  instantiate?: boolean;
+}
+
+interface RegisterOptions {
+  singleton?: boolean;
+  instantiate?: boolean;
+}
+</code></pre>
+<h4><a class="header" href="#factory-and-factorymanager" id="factory-and-factorymanager"><code>Factory</code> and <code>FactoryManager</code></a></h4>
+<p>Some APIs refer to <em>factories</em> and <em>factory managers</em>. The API for these classes adds a new <code>identifier</code> field and deprecates the <code>fullName</code> and <code>normalizedName</code> fields:</p>
+<pre><code class="language-diff"> interface FactoryClass {
+   positionalParams?: string | string[] | undefined | null;
+ }
+ 
+ interface Factory&lt;T, C extends FactoryClass | object = FactoryClass&gt; {
+   class?: C;
+-  fullName?: string; // DEPRECATED
+-  normalizedName?: string; // DEPRECATED
++  identifier: FactoryIdentifier;
+   create(props?: { [prop: string]: any }): T;
+ }
+ 
+ interface FactoryManager&lt;T = object&gt; {
+   readonly class: Factory&lt;T&gt;;
+-  readonly fullName?: string; // DEPRECATED
+-  readonly normalizedName?: string; // DEPRECATED
++  identifier: FactoryIdentifier;
+   create(props?: object): T;
+ }
+</code></pre>
+<h4><a class="header" href="#owner-api-diff" id="owner-api-diff"><code>Owner</code> API diff</a></h4>
+<pre><code class="language-diff"> interface Owner {
+-  factoryFor(fullName: string, options: LookupOptions): FactoryManager;
++  factoryFor(identifier: FactoryIdentifier, options: LookupOptions): FactoryManager;
+
+-  hasRegistration(fullName: string): boolean;
++  hasRegistration(identifier: FactoryIdentifier): boolean;
+
+-  inject(factoryNameOrType: string, property: string, injectionName: string): void;
++  inject(factory: FactoryIdentifier | FactoryTypeIdentifier, property: string, injection: FactoryIdentifier): void;
+
+-  lookup(fullName: string, options?: LookupOptions): any;
++  lookup(identifier: FactoryIdentifier, options?: LookupOptions): any;
+
+-  register(fullName: string, factory: any, options?: RegisterOptions): void;
++  register(identifier: FactoryIdentifier, factory: any, options?: RegisterOptions): any;
+
+-  registerOptions(fullName: string, options: RegisterOptions): void;
++  registerOptions(identifier: FactoryIdentifier, options: RegisterOptions): any;
+
+-  registerOptionsForType(fullName: string, options: RegisterOptions): void;
++  registerOptionsForType(identifier: FactoryTypeIdentifier, options: RegisterOptions): any;
+
+-  registeredOption(fullName: string, optionName: string): RegisterOptions;
++  registeredOption(identifier: FactoryIdentifier, optionName: string): RegisterOptions;
+
+-  registeredOptions(fullName: string): RegisterOptions;
++  registeredOptions(identifier: FactoryIdentifier): RegisterOptions;
+
+-  registeredOptionsForType(type: string): RegisterOptions;
++  registeredOptionsForType(type: FactoryTypeIdentifier): RegisterOptions;
+
+-  resolveRegistration(type: string): Factory;
++  resolveRegistration(identifier: FactoryIdentifier): Factory;
+
+-  unregister(fullName: string): void;
++  unregister(identifier: FactoryIdentifier): void;
+ }
+</code></pre>
+<h3><a class="header" href="#service-and-controller-injections" id="service-and-controller-injections">Service and Controller Injections</a></h3>
+<p>The other major examples of registry interactions are service and controller injections. This RFC proposes to normalize both to support the same identifier-based lookup as the <code>Owner</code> APIs.</p>
+<p>We introduce an <code>InjectionIdentifier</code> type, representing the service or controller to be injected:</p>
+<pre><code class="language-ts">interface InjectionIdentifier {
+  name: string;
+  namespace?: string;
+}
+</code></pre>
+<p>The <code>inject</code> (whether <code>as service</code> or <code>as controller</code>) function now accepts <em>either</em> a string representing the local injection name (sans namespace) <em>or</em> an <code>InjectionIdentifier</code>:</p>
+<ul>
+<li>
+<p><strong>Service:</strong></p>
+<pre><code class="language-ts">export function inject(name: string): Service;
+export function inject(identifier: InjectionIdentifier): Service;
+</code></pre>
+</li>
+<li>
+<p><strong>Controller:</strong></p>
+<pre><code class="language-ts">export function inject(name: string): Controller;
+export function inject(identifier: InjectionIdentifier): Controller;
+</code></pre>
+</li>
+</ul>
+<p>The <code>'&lt;namespace&gt;@&lt;name&gt;'</code> form is deprecated and will be removed at 4.0. The no-argument form, and the name-only string form are still allowed. Users <em>may</em> invoke using <code>{ name: '&lt;name&gt;' }</code> but are not required to.</p>
+<ul>
+<li>
+<p><strong>Good</strong> (using services as an example):</p>
+<pre><code class="language-js">import { inject as service } from '@ember/service';
+
+export default class Example {
+  @service foo;
+  
+  @service('bar')
+  barRenamed;
+  
+  @service({ name: 'quux' })
+  quuxViaIdentifier;
+  
+  @service({ namespace: 'baz', name: 'neato' })
+  neatoNamespaced;
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Deprecated:</strong></p>
+<pre><code class="language-js">import { inject as service } from '@ember/service';
+
+export default class Example {
+  @service('baz@neato') neatoNamespaced;
+}
+</code></pre>
+</li>
+</ul>
+<h3><a class="header" href="#codemod" id="codemod">Codemod</a></h3>
+<p>All existing <em>static</em> microsyntax invocations can be straightforwardly migrated to the new syntax with a codemod. Some dynamic invocations will not be possible to migrate this way.</p>
+<p>For example, this (in a test) is migrate-able:</p>
+<pre><code class="language-diff">- this.owner.lookup('service:session');
++ this.owner.lookup({ type: 'service', name: 'session' });
+</code></pre>
+<p>But this is not:</p>
+<pre><code class="language-js">function buildLookup(type, name) {
+  return `${type}:${name}`;
+}
+
+this.owner.lookup(buildLookup('service', 'session'));
+</code></pre>
+<p>The majority of uses are likely to be codemoddable, but not <em>all</em> will.</p>
+<h3><a class="header" href="#deprecation-messaging" id="deprecation-messaging">Deprecation messaging</a></h3>
+<h4><a class="header" href="#guide" id="guide">Guide</a></h4>
+<blockquote>
+<h4><a class="header" href="#deprecate-registry-string-based-microsyntax" id="deprecate-registry-string-based-microsyntax">Deprecate registry string-based microsyntax</a></h4>
+<h5><a class="header" href="#until-400" id="until-400">until: 4.0.0</a></h5>
+<h5><a class="header" href="#id-ember-resolverstring-based-microsyntax" id="id-ember-resolverstring-based-microsyntax">id: ember-resolver.string-based-microsyntax</a></h5>
+<p>Ember has historically supported a string-based microsyntax of the format <code>'&lt;namespace&gt;@&lt;type&gt;:&lt;name&gt;'</code> (where both <code>&lt;namespace&gt;@</code> and <code>:&lt;name&gt;</code> are optional) for registering, resolving, looking up, and injecting items into Ember’s dependency injection container. These have been replaced with an object-based API where each part of the registry identifier is named explicitly.</p>
+<p>You should replace calls using the string-based microsyntax with the new API. For example, these lookups in a test context:</p>
+<pre><code class="language-js">this.owner.lookup('service:session');
+this.owner.register(
+  'shared@service:clipboard',
+  class Clipboard {
+    copyToClipboard(source) {/* no-op */}
+  }
+)
+this.owner.inject('controller', 'session', 'service:session');
+</code></pre>
+<p>Should be changed to:</p>
+<pre><code class="language-js">this.owner.lookup({ type: 'service', name: 'session' });
+this.owner.register(
+  { namespace: 'shared', type: 'service', name: 'clipboard' },
+  class Clipboard {
+    copyToClipboard(source) {/* no-op */}
+  }
+);
+this.owner.inject(
+  { type: 'controller' },
+  'session',
+  { type: 'service', name: 'session' }
+);
+</code></pre>
+</blockquote>
+<h4><a class="header" href="#in-app" id="in-app">In-app</a></h4>
+<p>Invocation of v0 resolver APIs which require a <code>FactoryIdentifier</code> will trigger the following deprecation message (using <code>lookup</code> as an example):</p>
+<blockquote>
+<p>You invoked <code>Owner.lookup</code> with a <code>string</code> full name: <code>'&lt;type&gt;:&lt;name&gt;'</code>. This usage is deprecated and will be removed in Ember 4.0. Instead, pass an object identifier: <code>{ type: '&lt;type&gt;', name: '&lt;name&gt;' }</code>.</p>
+</blockquote>
+<p>Here, the message should substitute the <em>actual</em> passed type and name. For example, if the user tried to look up a service named <code>session</code> by invoking <code>lookup('service:session')</code> the deprecation will read:</p>
+<blockquote>
+<p>You invoked <code>Owner.lookup</code> with a string full name: <code>'service:session'</code>. This usage is deprecated and will be removed in Ember 4.0. Instead, pass an identifier object: <code>{ type: 'service', name: 'session' }</code>.</p>
+</blockquote>
+<p>If the user tried to look up a service named <code>session</code> from the <code>shared</code> namespace by invoking <code>lookup('shared@service:session')</code> the deprecation will read:</p>
+<blockquote>
+<p>You invoked <code>Owner.lookup</code> with a string full name: <code>'shared@service:session'</code>. This usage is deprecated and will be removed in Ember 4.0. Instead, pass an identifier object: <code>{ namespace: 'shared', type: 'service', name: 'session' }</code>.</p>
+</blockquote>
+<p>For methods which require a <code>FactoryTypeIdentifier</code>, the wording is adjusted appropriately:</p>
+<blockquote>
+<p>You invoked <code>Owner.lookup</code> with a string type name: <code>'service'</code>. This usage is deprecated and will be removed in Ember 4.0. Instead, pass a factory type identifier object: <code>{ type: 'service' }</code>.</p>
+</blockquote>
+<p>Methods which support either <code>Identifier</code>s or <code>FactoryTypeIdentifier</code>s should display the appropriate variant of the message according to what the user actually supplied.</p>
+<h3><a class="header" href="#rollout" id="rollout">Rollout</a></h3>
+<p>The rollout will be phased. For both Ember’s <code>Resolver</code> API and the default resolver supplied with <code>ember-resolver</code>:</p>
+<ul>
+<li>
+<p>The new API will be introduced in a minor release as normal, <em>without</em> introducing the deprecation warning for the microsyntax-based design, and <em>including</em> the two codemods required for this API change: one for all Ember users, and one for TypeScript users (see <a href="#proposed-type-definitions"><strong>Proposed Type Definitions</strong></a> in the <a href="#appendix-typescript"><strong>TypeScript Appendix</strong></a> below.)</p>
+</li>
+<li>
+<p>After <em>at least</em> one minor version, the deprecation message will be introduced. This will give addons time to adopt the new API <em>before</em> their consumers start experience deprecation noise from addon usage.</p>
+</li>
+</ul>
+<p>For Ember only:</p>
+<ul>
+<li>We will supply a polyfill for the new behavior, supporting <em>at least</em> the current LTS. The behavior here can be polyfilled to many if not all existing LTS releases; we would likely limit this slightly, but would support <em>many</em> LTS releases.</li>
+</ul>
+<h2><a class="header" href="#how-we-teach-this" id="how-we-teach-this">How we teach this</a></h2>
+<ul>
+<li>
+<p><strong>New concepts:</strong> this RFC introduces the concept of an identifier through the <code>FactoryIdentifier</code>, <code>FactoryTypeIdentifier</code>, and <code>InjectionIdentifier</code> types. These define the arguments to the various registry functions. The basic shapes of these objects, and perhaps their names (as inline text like “factory identifier,” “factory type identifier,” and “injection identifier”) will need to be integrated into the guides and API docs. See also <a href="#unresolved-questions"><strong>Unresolved Questions</strong></a>: there may be other names which work better.</p>
+</li>
+<li>
+<p>The existing documentation about dependency injection can unchanged apart from simplifications in certain key areas. Paragraphs explaining the microsyntax can be eliminated or simplified by showing the identifier object types. New Ember users will continue to benefit from the detailed introduction to the concepts in the guides, but will have one fewer concept to learn along the way.</p>
+</li>
+<li>
+<p>All instances of the API documentation will need to be updated to reflect the changes to their signatures.</p>
+</li>
+<li>
+<p>The deprecation message must be added to Ember’s deprecation page and tooling.</p>
+</li>
+<li>
+<p>For the duration of Ember 3.x releases, the Guides and API docs will need explanations of the previous, deprecated APIs. These explanations should be brief, focused on how to migrate away from them preferably via the supplied codemod, rather than diving into the details of how the legacy system worked.</p>
+</li>
+</ul>
+<h2><a class="header" href="#drawbacks" id="drawbacks">Drawbacks</a></h2>
+<ul>
+<li>
+<p>The existing APIs have served Ember well for a long time. Introducing any new change involves some risk, particularly in areas so core to how Ember behaves.</p>
+</li>
+<li>
+<p>The proposed API here deprioritizes brevity in favor of clarity, readability, maintainability, tooling support, and being “normal” JavaScript. <code>'service:session'</code> is many fewer characters to type than <code>{ type: 'service', name: 'session' }</code>. (While many people highly value brevity and we should avoid overly verbose APIs, long experience suggests that <em>reading</em> and <em>changing</em> are more important than <em>first writing</em> code.)</p>
+</li>
+</ul>
+<h2><a class="header" href="#alternatives" id="alternatives">Alternatives</a></h2>
+<h3><a class="header" href="#supply-just-schema-instead-of-capabilities" id="supply-just-schema-instead-of-capabilities">Supply just <code>schema</code> instead of <code>capabilities</code></a></h3>
+<p>Instead of the manager-inspired <code>capabilities</code> API, we could implement a simpler design with simply supplies a <code>schemaVersion</code> (or just <code>schema</code>) property on the <code>Resolver</code> type. This is less flexible, but also simpler.</p>
+<pre><code class="language-ts">interface ResolverV0 {
+  schemaVersion?: 0;
+  resolve(fullName: string);
+}
+</code></pre>
+<p>If <code>schemaVersion</code> is <code>1</code>, the <code>resolve</code> function has a new signature, using the <code>FactoryIdentifier</code> type introduced above:</p>
+<pre><code class="language-ts">interface ResolverV1 {
+  schemaVersion: 1;
+  resolve(identifier: FactoryIdentifier)
+}
+</code></pre>
+<p>The public API is <em>either</em> of the Resolver variants:</p>
+<pre><code class="language-ts">type Resolver = ResolverV0 | ResolverV1;
+</code></pre>
+<p>The other registry API changes may also be implemented in terms of the new resolver <code>schemaVersion</code> check.</p>
+<h3><a class="header" href="#a-new-string-based-api" id="a-new-string-based-api">A new String-based API</a></h3>
+<p>Instead of providing an object-based API, we could provide a new string-based API. The <code>lookup</code> method, then, would have a signature like this:</p>
+<pre><code class="language-ts">interface Owner {
+  lookup(type: string, name: string, options: Options);
+}
+</code></pre>
+<p>This has the advantage of being a smaller diff from today’s world, and cutting down on the extra typing of the new API design:</p>
+<pre><code class="language-diff">- lookup('service:foo')
++ lookup('service', 'foo')
+</code></pre>
+<p>vs.</p>
+<pre><code class="language-diff">- lookup('service:foo');
++ lookup({ type: 'service', name: 'foo' })
+</code></pre>
+<p>This is a less flexible proposal, and—more importantly—it has a significant downside for usability beyond the simplest case. Supporting namespaces here would require <em>another</em> string argument, and functions with multiple arguments of the same type are notoriously easy to misuse. (“Wait, what’s the order? Namespace first or type first? Does namespace come after type, or after name?” etc.)</p>
+<h3><a class="header" href="#string-based-api-as-sugar" id="string-based-api-as-sugar">String-based API as “sugar”</a></h3>
+<p>While this RFC recommends the object-based API as the <em>primary</em> API, we could supply the string-based API outlined above for the simple and most common case, so that this—</p>
+<pre><code class="language-js">lookup('service', 'foo')
+</code></pre>
+<p>—would be equivalent to this:</p>
+<pre><code class="language-js">lookup({ type: 'service', name: 'foo'})
+</code></pre>
+<p>This could be nice from an ergonomics perspective, and introduces only a small amount of extra complexity in the implementation: the resolver <code>capabilities</code> key still allows the implementation to distinguish between the <code>lookup('&lt;type&gt;:&lt;name&gt;')</code> form and the <code>lookup(type, name)</code> form.</p>
+<p>However, it does require introspection on the arguments passed to the functions (extra implementation overhead), and it comes with confusion and arguments about which form to use: should users prefer the string based version where it is possible, or default to the object version for consistency? It would also means changes (e.g. to introduce a namespace) would become large and more error prone. Finally, as with the alternative where this is the <em>only</em> API, it is still less explicit and clear; users have to <em>remember</em> that <code>type</code> precedes <code>name</code>, whereas the object-form eliminates that issue.</p>
+<h3><a class="header" href="#object-based-api" id="object-based-api">Object-based API</a></h3>
+<p>Another brief syntax might use the type as the key and the name as its value:</p>
+<pre><code class="language-js">lookup({ service: 'foo' })
+</code></pre>
+<p>While this initially seems nice from the perspective of the consumer of the API, it muddies the API substantially and makes the implementation worse as well. </p>
+<p>On the API front, for example, what would this mean?</p>
+<pre><code class="language-js">lookup({ service: 'foo', route: 'bar' });
+</code></pre>
+<p>The API proposed by the RFC avoids this confusing scenario entirely!</p>
+<p>As far as implementation goes, this would be more complex and have much worse performance: the lookup would have to iterate over all keys on the object passed every time, mapping those keys to the <em>known</em> identifer interface and then checking the others against the registry. This also makes the TypeScript implementation considerably more difficult, for similar reasons to the runtime implementation, but at compile time. (Implementer concerns should not be <em>primary</em>, but they are important, and here they have performance implications that, while not dramatic, can easily be avoided by other proposals.)</p>
+<h3><a class="header" href="#do-nothing" id="do-nothing">Do nothing</a></h3>
+<p>Leaving the API as it is remains an option, with both the upsides and downsides of the <em>status quo</em>.</p>
+<h2><a class="header" href="#unresolved-questions" id="unresolved-questions">Unresolved questions</a></h2>
+<ul>
+<li>
+<p>Is <code>@ember/application</code> the appropriate home for the new exports? Or should they liver somewhere else, such as <code>@ember/resolver</code> or <code>@ember/application/resolver</code>?</p>
+</li>
+<li>
+<p>Is <code>FactoryIdentifier</code> the right name for the primary identifier interface? <code>Identifier</code> is shorter but overlaps with the notion of identifiers from Ember Data and is perhaps overly generic. We could use any of a number of other names:</p>
+<ul>
+<li><code>RegistrationIdentifier</code></li>
+<li><code>RegistryIdentifier</code></li>
+<li><code>FactoryId</code></li>
+<li><code>RegistryId</code></li>
+<li><code>RegistrationId</code></li>
+<li>etc.</li>
+</ul>
+</li>
+<li>
+<p>Similarly, is <code>FactoryTypeIdentifier</code> the correct name? Alternatives might be:</p>
+<ul>
+<li><code>FactoryRegistrationIdentifier</code></li>
+<li><code>FactoryTypeRegistrationIdentifier</code></li>
+<li><code>FactoryRegistryIdentifier</code></li>
+<li><code>FactoryTypeRegistryIdentifier</code></li>
+<li><code>FactoryIdentifier</code> (mutually exclusive with using it as a replacement for <code>Identifier</code></li>
+<li><code>FactoryRegistryId</code></li>
+<li><code>FactoryTypeRegistryId</code></li>
+<li>etc.</li>
+</ul>
+</li>
+<li>
+<p>Are <code>identifier</code> and <code>type</code> the right names for the arguments in the new design?</p>
+</li>
+</ul>
+<h2><a class="header" href="#appendix-typescript" id="appendix-typescript">Appendix: TypeScript</a></h2>
+<p>This design is motivated in part by a desire for the API to better support type-safe TypeScript usage. This appendix explains the motivation and design as it impacts the declarations maintained by the Typed Ember team. The big idea here is to make registry lookups type-safe, including support for autocomplete and refactoring, while not making the boilerplate situation <em>worse</em> (eliminating it entirely is unfortunately not yet possible).</p>
+<h3><a class="header" href="#typescript-motivation" id="typescript-motivation">TypeScript motivation</a></h3>
+<p>The type definitions for Ember currently make use of a pattern we call a “type registry”: a mapping of <em>strings</em> to <em>types</em>. This allows the types to safely represent string-based lookups like <code>story.findRecord('some-model')</code> or <code>service('session')</code>.</p>
+<p>For example, to make service lookups work with the classic API, users had to write something like this:</p>
+<pre><code class="language-ts">import Service from '@ember/service';
+
+export default class Session extends Service {
+  login(email: string, password: string) {
+    // ...
+  }
+  
+  logout() {
+    // ...
+  }
+}
+
+declare module '@ember/service' {
+  interface Registry {
+    session: Session;
+  }
+}
+</code></pre>
+<p>Then, users could write fairly idiomatic Ember and have the types resolve correctly:</p>
+<pre><code class="language-ts">import Component from '@ember/component';
+import { inject as service } from '@ember/service';
+
+export default Component.extend({
+  session: service('session'), // type: `Session`
+})
+</code></pre>
+<p>The Typed Ember blueprints generate that boilerplate for users, which (hopefully) minimizes the pain of working with these definitions. However, to make this work for the registry APIs, users (and therefore the blueprints) would have to add <em>another</em> declaration to the bottom of the file:</p>
+<pre><code class="language-diff">  import Service from '@ember/service';
+  
+  export default class Session extends Service {
+    login(email: string, password: string) {
+      // ...
+    }
+    
+    logout() {
+      // ...
+    }
+  }
+  
+  declare module '@ember/service' {
+    interface Registry {
+      session: Session;
+    }
+  }
+  
++ declare module 'TBD-some-registry-spot' {
++   interface Registry {
++     'service:session': typeof Session;
++   }
++ }
+</code></pre>
+<p>This <em>works</em>, but is additional boilerplate and, more importantly, <em>duplication of information</em>, which can get out of sync. Both of these problems are avoided by the new design proposed by this RFC. With the new design, users would still need the same boilerplate required today, but the types for <code>lookup</code> and other registry APIs can be extended in a way transparent to users so that they “just work” with <em>zero</em> additional effort, as covered in the next section.</p>
+<h3><a class="header" href="#proposed-type-definitions" id="proposed-type-definitions">Proposed type definitions</a></h3>
+<p>If we were to ship this, we would make one significant change to the <em>existing</em> types on DefinitelyTyped, supplying a codemod for ember-cli-typescript users. Where today, the various type registries refer to the class types, we would update them to refer to the <em>constructor</em> type for the class. For example, for the service registry:</p>
+<pre><code class="language-diff"> interface Registry {
+-  session: Session;
++  session: typeof Session;
+ }
+</code></pre>
+<p>This single change unlocks the ability to rigorously and exhaustively supply types for the API proposed above, with no further changes to existing user code.</p>
+<p>We would introduce the following types at DefinitelyTyped for the new API, along with rigorous type tests to guarantee they provide the guarantees they specify. (A basic working demo of this is available on <a href="https://www.typescriptlang.org/play/index.html#code/PTAEFpM0BcE8AOBTUBXGBLANhzSDOEU4oIAUGfMqAMID2AdvjAE6oDGMdLAgiwOb4APABUAfKAC8oEaCQAPGEgYATQgyQB3UAAoAdAYCGA-AC5QGBgDMkLUAFUAlFImoGAawZ1NDUAH4HUHMNADdbAG4KKhQASSYYQwZ2JAB5K1EJaVkFJVV1LV0DPWNBc0S4Z0kJSxs7ACV-UAbgpDCWSLIQIihQBBYkcAUMZkt+UH7+YdY4WEQCUE1cAAtQQwQ+uj6MQyVQdiXE-nniEnIySyUWK0Nk0ABlWxCMZLqkSeYWGYBvMlBQfAI+AwjHM0ToVnugOBDEiAF8KBdbNdbvQGKw6FgsLZXu9pqAfn81ggcOwdtDQXNwaAeOsSWTGKj0ZiImR4ec0UibigRHMcVNPvjfv9Hs8kOYHiwni83vy4JE-uxGEysSxzIyWBiVXyPnLWRQuidZshCFwLABbYlIM3KGCwJbDJoAMRo3WgZ0RVy5oEdNy4nxiKhtGCsGFsQiFPOoOWUalA7iQcCpkaQ2umABohQA5QzWuSKGOEeOJiHJ1OfADayYAumQJASjWKZHN5aAGDnG9nrS229b8AguX5zB9RnCERzPbcfZxuHBkwGgyGw8m87lY0Wk7yZTq60LouZk6P2ZdkSgJVKkHEAFZITjQ+do4OhlhCTsoaN5OMJqln0VluA7v4ew7dtu3bPsByHVgRz1TowAUBBuCUFRVkIAADSxr04VC01bdtkNQgFJVFVDQCWWwUCsbg9kYMIGFDJIkDIQN2CwYwKLcW9GGFIjkhfdsVwLT9i0hHiUy3aYxB0IDzFfRxzDiZhEmSNIhB-aVcQrV8qzESJmNY-pQCsDjMC4wjzz43N3zXL8ITUsSNP-HQhQwQMH0XVURPPK8bxMhh70wdyLKQMQyDk0AFISBiVLsv9yy0nSx2PL11U1WxvM4vzXICp8goEj91whFLmRYP8ANw60ZJAoUgPA5JB3+KCGH4Q89LYwzjOhai0Q1YrcqswsbNoJUeq1cTPkk6TQFk+T4iU1J0iK0aHLi9ttN0m99PYpJfK65Uw1fPLrOExbsTGxznKyx9bDVYbUpYdLfP8q7n1fEKwoiuaVJOkqzpW601v1OD5AQlgkJQ0B0IYTCYGw8qkHwxVurukiyIMyi7ER2j6OSCh4MQixxxPUAABk6DodxUAQFIEF8wh6yBJqsS4Bh6oAIzJrFEhbSxFIfHYkDZjmkC5oV8DoVAWDqyCWGgwCwP7KWGplprDw9InU1sanacFP4Gf4JnGEFjFhZhZzZr5pQjc5022TVr0pz9OAAFlEkMI5nxoVj8HwMqWMMb21S9-AW3Yfp+acv4-ksXBtiwAA1QwsFQAh6vrSPQHLABpAmhKpD6ooWoOxCrer8+Uwv-Z9rOqxbP54T+d7zfLoRPcrhLbcJ+3fRnFui51vYg8DyuQ7DpQI8j6PMEThOk5T8w08jrOc4K8Km-m3u25Lmbeeb1vvbEava9AevQEbnf173n3Vc724Uh8Wx++RR3HW4cN0+Xfrc5LTcHIzdODs-ivUsv1qxCkkkKKOl13LmAdjOJ6gVkw4Ven-SOmxab1VJuTSmWtoT4CFGFWBnwXZtndqIH+spKxzCrH9JAAMhQHHwGWekDA36Rw-vmfKg1gG-wgVNfigCuHkJ1JQ5ANY-jgPTi5BcT4YHd39FAnKiC+HWhCg3cw7NjYizNtDVhfx2GrgGsJbhsoUF-AARwo6G5kCxVAeI8efwn4zlkdOeR0ilxzCQe2CQAAfb0cjZxzHgYouYYhTG9A1MgUGcBpajDCRhHy5I-EuLgEE9xyBPEqPweYEIdAXIdD+FgMmFMEC6KbFGCxhirH2RMbw8xBiv5lOqcI2xoAJETwUddJJjtUnPiUcg3haDcEYKKdgmmuCsmr3PipYxzSqE0LoX8CYUwwy8P0YJIBQj0y1P4RUhpMzpgiNoWA+xFgOkeUISks5ZD0nKOCmExxnwygMDgGEwZjB8D1Q1iwHB7yJk5LyRQRZ4lNZjPeaUtZnCjGbM+GEup6zBHWJAVQ45vCpFuRkV0uBVy+leNeaCpg5gvk-KYH83JKh8njGBd8-F+AX4sGTNct8uyNmIocm0yBbjzn+LnNikJeLaaEqpcSvBajQD-PJYCyluJyIqGJeCuYh1Knf1ZTU-+Oz6ksqaQc6sYTiVwshVSIlNKUWSLOc47pvKbn9PTm8hgr5zB6vbBMgACs8dwQgjW0xwo6lRFKlnMBlcK+V5SNUIq1TC7ZllmVhpsciuxqKzWYtceitJSAMnBQmZ63BfqqXw2FXShlELLHKvDeddOe4k0BOQD0xlqjT6CuldS2mOaxZYDCEw3ywamWhqhSqnUsL1Xwt7aWw5YjWknLRdlTpFya04syaKi5jLY2iPmQlIUbh-WXC7YqvZ0KXmRu7UOqpy6jnxtNZy81WLOWMvTXWsK4rDwGmIA2Qg6NQCBjNHQV0pxgAUD9t7SE3tOr1kRh8DgfodBbBCPzUA3gNAeTvvB5wXw2QFLoJMBgOhUCEXtUrWJvRK6aG4CoGJTUwrOo1GaYYSAhDirKkCmAEtfAUboFRgEeh+itrCDoL4aAcPthwv2b2RGWDIVhI4PQMAyKYZ0JUejkdQPGz0IU-gOgABE+AODJG9gAQjU44I+4mWyob47YVOvDsO2Fw8OFWQpYSHn-YQGkxJnjMO+v3VqBlP2BiwPPVswsuDqKFokY+LUNptSZrB++CHouREiwCIDjALlSCi-BvQDy4B0p4w2cwGmRTJDUzhSaeXEsMDU8fAzZBIsPFK5fFLCWgRJf8XoRzcWkC2ga9CAAmkgBAKWNDaBq41hgl8dBwdsJV+LUJGCZk2CgaQA3APDdGwZ0gYAAAkABRYGPlNssA1CwKr7XhSlc22aVmtgsAzGkJ1prySWujyQDx9dhF54Wf4xVUAan2aszU3Z1kEmVOWB0AAch+yDnCIOhP4BEyoEHlWyDjZYMpkZCBssVrU4jPaLBCtw1y5eYwrMsT4HK0ZtboAts7c4Htg7FAkccdzbK-F49eMY6xyNWwuPitEjpL5UnKC1M80ilPJQf2JNC8SCLpAHR6eFKwWj1ncxctmVFFz9syvptlYqyjjD6mfu47U9D2H+nIiy9R+jpXX32d3TV59tTPPXN8+195pAWBTfRYZ1x8NzCLfIFy9b4qtvGz29pI76EpOJOhwC09+sLvfP90AgFugoI2CMTrgDmXHu5fFN942EHAeVQQ7x6AEHDvSS+RBxVunHuN1Utzxr0SQeNelYjx0FXyRQe3YYPDyI7eY-F5B13yvRmyB9+y5NQfmui81QVnn-WdBWaJ2HwjgvthQdl+YT3sgq+WDj-VyXjfFeKuRB33vz7pfQ-l+hNP+WXJzCD9YwMZQGGkDL8iEAA">this TypeScript playground</a>.)</p>
+<p><strong>Note:</strong> the injection types for service and controller are <em>slightly</em> simplified here to demonstrate how they work in practice; in fact they will include the appropriate <code>PropertyDecorator</code> semantics (as they do today).</p>
+<pre><code class="language-ts">// ----- type utilities ----- //
+
+type ConstructorArgs&lt;T&gt; = T extends new (...args: infer U) =&gt; unknown ? U : never;
+
+type InstanceOf&lt;T&gt; = T extends new (...args: any) =&gt; infer R ? R : never;
+
+// ----- types to implement this RFC ----- //
+
+// NOTE: some of these lookups will be newly defined as part of this
+//       project, e.g. the registries for routes and components.
+interface TypeRegistry {
+  service: import('@ember/service').Registry;
+  controller: import('@ember/controller').Registry;
+  route: import('@ember/routing/route').Registry;
+  component: import('@typed-ember/component').Registry;
+  adapter: import('ember-data/types/registries/adapter').default;
+  model: import('ember-data/types/registries/model').default;
+  serializer: import('ember-data/types/registries/serializer').default;
+  transform: import('ember-data/types/registries/transform').default;
+}
+
+interface FactoryIdentifier&lt;
+  Type extends keyof TypeRegistry,
+  Name extends keyof TypeRegistry[Type]
+&gt; {
+  type: Type;
+  name: Name;
+  namespace?: string;
+}
+
+interface FactoryTypeIdentifier&lt;Type extends keyof TypeRegistry&gt; {
+  type: Type;
+}
+
+export interface LookupOptions {
+  singleton?: boolean;
+  instantiate?: boolean;
+  source?: string;
+  namespace?: string;
+}
+
+interface RegisterOptions {
+  singleton?: boolean;
+  instantiate?: boolean;
+}
+
+interface FactoryManager&lt;Class&gt; {
+  class: Class;
+  create(
+    initialValues?: {
+      [K in keyof InstanceOf&lt;Class&gt;]?: InstanceOf&lt;Class&gt;[K];
+    }
+  ): InstanceOf&lt;Class&gt;;
+}
+
+interface Factory&lt;Class&gt; {
+  class: Class;
+  create(
+    initialValues?: {
+      [K in keyof InstanceOf&lt;Class&gt;]?: InstanceOf&lt;Class&gt;[K];
+    }
+  ): InstanceOf&lt;Class&gt;;
+}
+
+interface Owner {
+  factoryFor&lt;
+    Type extends keyof TypeRegistry,
+    Name extends keyof TypeRegistry[Type]
+  &gt;(
+    identifier: FactoryIdentifier&lt;Type, Name&gt;,
+    options?: LookupOptions
+  ): FactoryManager&lt;TypeRegistry[Type][Name]&gt;;
+
+  hasRegistration&lt;
+    Type extends keyof TypeRegistry,
+    Name extends keyof TypeRegistry[Type]
+  &gt;(
+    identifier: FactoryIdentifier&lt;Type, Name&gt;
+  ): boolean;
+
+  inject&lt;
+    Type extends keyof TypeRegistry,
+    Name extends keyof TypeRegistry[Type]
+  &gt;(
+    factory: FactoryIdentifier&lt;Type, Name&gt; | FactoryTypeIdentifier&lt;Type&gt;,
+    property: string,
+    injection: FactoryIdentifier&lt;Type, Name&gt;
+  ): void;
+
+  lookup&lt;
+    Type extends keyof TypeRegistry,
+    Name extends keyof TypeRegistry[Type]
+  &gt;(
+    identifier: FactoryIdentifier&lt;Type, Name&gt;,
+    options?: LookupOptions
+  ): InstanceOf&lt;TypeRegistry[Type][Name]&gt;;
+
+  register&lt;
+    Type extends keyof TypeRegistry,
+    Name extends keyof TypeRegistry[Type]
+  &gt;(
+    identifier: FactoryIdentifier&lt;Type, Name&gt;,
+    factory: any,
+    options?: RegisterOptions
+  ): void;
+
+  registerOptions&lt;
+    Type extends keyof TypeRegistry,
+    Name extends keyof TypeRegistry[Type]
+  &gt;(
+    identifier: FactoryIdentifier&lt;Type, Name&gt;,
+    options: RegisterOptions
+  ): void;
+
+  registerOptionsForType&lt;Type extends keyof TypeRegistry&gt;(
+    identifier: FactoryTypeIdentifier&lt;Type&gt;,
+    options: RegisterOptions
+  ): void;
+
+  registeredOption&lt;
+    Type extends keyof TypeRegistry,
+    Name extends keyof TypeRegistry[Type],
+    OptionName extends keyof RegisterOptions
+  &gt;(
+    identifier: FactoryIdentifier&lt;Type, Name&gt;,
+    optionName: OptionName
+  ): Pick&lt;RegisterOptions, OptionName&gt;;
+
+  registeredOptions&lt;
+    Type extends keyof TypeRegistry,
+    Name extends keyof TypeRegistry[Type]
+  &gt;(
+    identifier: FactoryIdentifier&lt;Type, Name&gt;
+  ): RegisterOptions;
+
+  registeredOptionsForType&lt;Type extends keyof TypeRegistry&gt;(
+    type: FactoryTypeIdentifier&lt;Type&gt;
+  ): RegisterOptions;
+
+  resolveRegistration&lt;
+    Type extends keyof TypeRegistry,
+    Name extends keyof TypeRegistry[Type]
+  &gt;(
+    identifier: FactoryIdentifier&lt;Type, Name&gt;
+  ): Factory&lt;TypeRegistry[Type][Name]&gt;;
+
+  unregister&lt;
+    Type extends keyof TypeRegistry,
+    Name extends keyof TypeRegistry[Type]
+  &gt;(
+    identifier: FactoryIdentifier&lt;Type, Name&gt;
+  ): void;
+}
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="0581-new-test-waiters.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="0615-autotracking-memoization.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="0581-new-test-waiters.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="0615-autotracking-memoization.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

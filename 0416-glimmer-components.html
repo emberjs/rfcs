@@ -1,0 +1,1394 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>0416-glimmer-components - </title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="affix"><a href="introduction.html">Introduction</a></li><li><a href="0001-transform-attribute-meta-parameter.html">0001-transform-attribute-meta-parameter</a></li><li><a href="0003-block-params.html">0003-block-params</a></li><li><a href="0003-cli-ember-doctor.html">0003-cli-ember-doctor</a></li><li><a href="0010-engines.html">0010-engines</a></li><li><a href="0011-improved-cp-syntax.html">0011-improved-cp-syntax</a></li><li><a href="0012-help-json-output.html">0012-help-json-output</a></li><li><a href="0015-the-road-to-ember-2-0.html">0015-the-road-to-ember-2-0</a></li><li><a href="0020-sri-default.html">0020-sri-default</a></li><li><a href="0023-command-line-completion.html">0023-command-line-completion</a></li><li><a href="0024-bound-attributes.html">0024-bound-attributes</a></li><li><a href="0028-app-import-output-file.html">0028-app-import-output-file</a></li><li><a href="0029-addon-black-and-whitelist-for-apps.html">0029-addon-black-and-whitelist-for-apps</a></li><li><a href="0045-internet-explorer.html">0045-internet-explorer</a></li><li><a href="0046-cli-improved-release-process.html">0046-cli-improved-release-process</a></li><li><a href="0046-registry-reform.html">0046-registry-reform</a></li><li><a href="0050-cli-production-code-stripping.html">0050-cli-production-code-stripping</a></li><li><a href="0050-improved-actions.html">0050-improved-actions</a></li><li><a href="0053-helpers.html">0053-helpers</a></li><li><a href="0055-anonymous-amd.html">0055-anonymous-amd</a></li><li><a href="0056-improved-release-cycle.html">0056-improved-release-cycle</a></li><li><a href="0057-ember-data-reference-unification.html">0057-ember-data-reference-unification</a></li><li><a href="0058-helper-listing.html">0058-helper-listing</a></li><li><a href="0061-ember-data-background-fetch.html">0061-ember-data-background-fetch</a></li><li><a href="0064-contextual-component-lookup.html">0064-contextual-component-lookup</a></li><li><a href="0065-deprecation-warning-handlers.html">0065-deprecation-warning-handlers</a></li><li><a href="0080-serve-file-api.html">0080-serve-file-api</a></li><li><a href="0086-firefox-in-ci.html">0086-firefox-in-ci</a></li><li><a href="0090-addon-tree-caching.html">0090-addon-tree-caching</a></li><li><a href="0091-cli-addon-instrumentation-experimental-hooks.html">0091-cli-addon-instrumentation-experimental-hooks</a></li><li><a href="0091-weakmap.html">0091-weakmap</a></li><li><a href="0092-blueprint-remove-old-files.html">0092-blueprint-remove-old-files</a></li><li><a href="0095-cli-standardise-targets.html">0095-cli-standardise-targets</a></li><li><a href="0095-router-service.html">0095-router-service</a></li><li><a href="0096-enable-yarn-usage.html">0096-enable-yarn-usage</a></li><li><a href="0101-ember-data-friendly-errors.html">0101-ember-data-friendly-errors</a></li><li><a href="0105-addons-optionalDependencies.html">0105-addons-optionalDependencies</a></li><li><a href="0108-add-custom-transform.html">0108-add-custom-transform</a></li><li><a href="0110-packaging.html">0110-packaging</a></li><li><a href="0114-add-template-lint-addon.html">0114-add-template-lint-addon</a></li><li><a href="0116-qunit-dom.html">0116-qunit-dom</a></li><li><a href="0120-cli-guides.html">0120-cli-guides</a></li><li><a href="0120-route-serializers.html">0120-route-serializers</a></li><li><a href="0121-remove-ember-cli-eslint.html">0121-remove-ember-cli-eslint</a></li><li><a href="0136-contains-to-includes.html">0136-contains-to-includes</a></li><li><a href="0139-isHtmlSafe.html">0139-isHtmlSafe</a></li><li><a href="0143-module-unification.html">0143-module-unification</a></li><li><a href="0150-factory-for.html">0150-factory-for</a></li><li><a href="0176-javascript-module-api.html">0176-javascript-module-api</a></li><li><a href="0178-deprecate-ember-k.html">0178-deprecate-ember-k</a></li><li><a href="0181-deprecate-ember-data-initializers.html">0181-deprecate-ember-data-initializers</a></li><li><a href="0186-track-unique-history-location-state.html">0186-track-unique-history-location-state</a></li><li><a href="0191-deprecate-component-lifecycle-hook-args.html">0191-deprecate-component-lifecycle-hook-args</a></li><li><a href="0194-deprecate-custom-event-manager.html">0194-deprecate-custom-event-manager</a></li><li><a href="0213-custom-components.html">0213-custom-components</a></li><li><a href="0225-ember-engines-mount-params.html">0225-ember-engines-mount-params</a></li><li><a href="0226-named-blocks.html">0226-named-blocks</a></li><li><a href="0229-deprecate-testing-restricted-resolver.html">0229-deprecate-testing-restricted-resolver</a></li><li><a href="0232-simplify-qunit-testing-api.html">0232-simplify-qunit-testing-api</a></li><li><a href="0236-deprecation-ember-string.html">0236-deprecation-ember-string</a></li><li><a href="0237-deprecation-ember-map.html">0237-deprecation-ember-map</a></li><li><a href="0240-es-classes.html">0240-es-classes</a></li><li><a href="0252-browser-support-changes.html">0252-browser-support-changes</a></li><li><a href="0268-acceptance-testing-refactor.html">0268-acceptance-testing-refactor</a></li><li><a href="0272-deprecation-native-function-prototype-extensions.html">0272-deprecation-native-function-prototype-extensions</a></li><li><a href="0276-named-args.html">0276-named-args</a></li><li><a href="0278-template-only-components.html">0278-template-only-components</a></li><li><a href="0280-remove-application-wrapper.html">0280-remove-application-wrapper</a></li><li><a href="0281-es5-getters.html">0281-es5-getters</a></li><li><a href="0286-block-let-template-helper.html">0286-block-let-template-helper</a></li><li><a href="0287-promote-in-element-to-public-api.html">0287-promote-in-element-to-public-api</a></li><li><a href="0293-record-data.html">0293-record-data</a></li><li><a href="0294-optional-jquery.html">0294-optional-jquery</a></li><li><a href="0297-deprecate-ember-logger.html">0297-deprecate-ember-logger</a></li><li><a href="0300-rfc-process-update.html">0300-rfc-process-update</a></li><li><a href="0308-deprecate-property-lookup-fallback.html">0308-deprecate-property-lookup-fallback</a></li><li><a href="0311-angle-bracket-invocation.html">0311-angle-bracket-invocation</a></li><li><a href="0318-array-helper.html">0318-array-helper</a></li><li><a href="0322-deprecate-copy-copyable.html">0322-deprecate-copy-copyable</a></li><li><a href="0324-deprecate-component-isvisible.html">0324-deprecate-component-isvisible</a></li><li><a href="0326-ember-data-filter-deprecation.html">0326-ember-data-filter-deprecation</a></li><li><a href="0329-deprecated-ember-evented-in-ember-data.html">0329-deprecated-ember-evented-in-ember-data</a></li><li><a href="0331-deprecate-globals-resolver.html">0331-deprecate-globals-resolver</a></li><li><a href="0332-ember-data-record-links-and-meta.html">0332-ember-data-record-links-and-meta</a></li><li><a href="0335-deprecate-send-action.html">0335-deprecate-send-action</a></li><li><a href="0337-native-class-constructor-update.html">0337-native-class-constructor-update</a></li><li><a href="0340-deprecate-ember-merge.html">0340-deprecate-ember-merge</a></li><li><a href="0345-discord.html">0345-discord</a></li><li><a href="0364-roadmap-2018.html">0364-roadmap-2018</a></li><li><a href="0369-deprecate-computed-clobberability.html">0369-deprecate-computed-clobberability</a></li><li><a href="0370-deprecate-computed-volatile.html">0370-deprecate-computed-volatile</a></li><li><a href="0372-ember-data-model-factory-for.html">0372-ember-data-model-factory-for</a></li><li><a href="0373-Element-Modifier-Managers.html">0373-Element-Modifier-Managers</a></li><li><a href="0375-deprecate-computed-property-modifier.html">0375-deprecate-computed-property-modifier</a></li><li><a href="0386-remove-jquery.html">0386-remove-jquery</a></li><li><a href="0389-dynamic-tag-names.html">0389-dynamic-tag-names</a></li><li><a href="0391-router-helpers.html">0391-router-helpers</a></li><li><a href="0392-deprecate-component-manager-string-lookup.html">0392-deprecate-component-manager-string-lookup</a></li><li><a href="0395-ember-data-packages.html">0395-ember-data-packages</a></li><li><a href="0398-RouteInfo-Metadata.html">0398-RouteInfo-Metadata</a></li><li><a href="0403-ember-data-identifiers.html">0403-ember-data-identifiers</a></li><li><a href="0408-decorators.html">0408-decorators</a></li><li><a href="0410-tracked-properties.html">0410-tracked-properties</a></li><li><a href="0415-render-element-modifiers.html">0415-render-element-modifiers</a></li><li><a href="0416-glimmer-components.html" class="active">0416-glimmer-components</a></li><li><a href="0418-deprecate-route-render-methods.html">0418-deprecate-route-render-methods</a></li><li><a href="0421-deprecate-application-controller-props.html">0421-deprecate-application-controller-props</a></li><li><a href="0425-website-redesign.html">0425-website-redesign</a></li><li><a href="0431-guides-restructure.html">0431-guides-restructure</a></li><li><a href="0432-contextual-helpers.html">0432-contextual-helpers</a></li><li><a href="0435-modifier-splattributes.html">0435-modifier-splattributes</a></li><li><a href="0440-decorator-support.html">0440-decorator-support</a></li><li><a href="0445-deprecate-with.html">0445-deprecate-with</a></li><li><a href="0446-contribution-guides.html">0446-contribution-guides</a></li><li><a href="0449-deprecate-partials.html">0449-deprecate-partials</a></li><li><a href="0451-injection-parameter-normalization.html">0451-injection-parameter-normalization</a></li><li><a href="0452-ember-data-medium-term-plan.html">0452-ember-data-medium-term-plan</a></li><li><a href="0457-nested-lookups.html">0457-nested-lookups</a></li><li><a href="0459-angle-bracket-built-in-components.html">0459-angle-bracket-built-in-components</a></li><li><a href="0460-yieldable-named-blocks.html">0460-yieldable-named-blocks</a></li><li><a href="0461-ember-data-singleton-record-data.html">0461-ember-data-singleton-record-data</a></li><li><a href="0463-record-data-state.html">0463-record-data-state</a></li><li><a href="0465-record-data-errors.html">0465-record-data-errors</a></li><li><a href="0466-request-state-service.html">0466-request-state-service</a></li><li><a href="0468-classic-decorator.html">0468-classic-decorator</a></li><li><a href="0470-fn-helper.html">0470-fn-helper</a></li><li><a href="0471-on-modifier.html">0471-on-modifier</a></li><li><a href="0477-blueprints-update.html">0477-blueprints-update</a></li><li><a href="0478-tracked-properties-updates.html">0478-tracked-properties-updates</a></li><li><a href="0481-component-templates-co-location.html">0481-component-templates-co-location</a></li><li><a href="0486-deprecate-mouseenter.html">0486-deprecate-mouseenter</a></li><li><a href="0487-custom-model-classes.html">0487-custom-model-classes</a></li><li><a href="0491-deprecate-disconnect-outlet.html">0491-deprecate-disconnect-outlet</a></li><li><a href="0494-async-observers.html">0494-async-observers</a></li><li><a href="0496-handlebars-strict-mode.html">0496-handlebars-strict-mode</a></li><li><a href="0507-embroider-v2-package-format.html">0507-embroider-v2-package-format</a></li><li><a href="0519-2019-2020-roadmap.html">0519-2019-2020-roadmap</a></li><li><a href="0521-find-by-identifier.html">0521-find-by-identifier</a></li><li><a href="0522-default-serializers-and-adapters.html">0522-default-serializers-and-adapters</a></li><li><a href="0523-model-argument-for-route-templates.html">0523-model-argument-for-route-templates</a></li><li><a href="0554-deprecate-getwithdefault.html">0554-deprecate-getwithdefault</a></li><li><a href="0558-edition-detection.html">0558-edition-detection</a></li><li><a href="0560-add-equality-operators.html">0560-add-equality-operators</a></li><li><a href="0561-add-numeric-comparison-operators.html">0561-add-numeric-comparison-operators</a></li><li><a href="0562-add-logical-operators.html">0562-add-logical-operators</a></li><li><a href="0566-memo-decorator.html">0566-memo-decorator</a></li><li><a href="0580-destroyables.html">0580-destroyables</a></li><li><a href="0581-new-test-waiters.html">0581-new-test-waiters</a></li><li><a href="0585-improved-ember-registry-apis.html">0585-improved-ember-registry-apis</a></li><li><a href="0615-autotracking-memoization.html">0615-autotracking-memoization</a></li><li><a href="0617-rfc-stages.html">0617-rfc-stages</a></li><li><a href="0625-helper-managers.html">0625-helper-managers</a></li><li><a href="0626-invoke-helper.html">0626-invoke-helper</a></li><li><a href="0628-prettier.html">0628-prettier</a></li><li><a href="0631-refresh-method-for-router-service.html">0631-refresh-method-for-router-service</a></li><li><a href="0635-ember-new-lang.html">0635-ember-new-lang</a></li><li><a href="0637-customizable-test-setups.html">0637-customizable-test-setups</a></li><li><a href="0638-interactive-app-creation.html">0638-interactive-app-creation</a></li><li><a href="0639-replace-blacklist-whitelist.html">0639-replace-blacklist-whitelist</a></li><li><a href="0645-add-ember-page-title-addon.html">0645-add-ember-page-title-addon</a></li><li><a href="0649-deprecation-staging.html">0649-deprecation-staging</a></li><li><a href="0659-unique-id-helper.html">0659-unique-id-helper</a></li><li><a href="0669-tracked-storage-primitive.html">0669-tracked-storage-primitive</a></li><li><a href="0671-modernize-built-in-components-1.html">0671-modernize-built-in-components-1</a></li><li><a href="0673-deprecate-tryinvoke.html">0673-deprecate-tryinvoke</a></li><li><a href="0674-deprecate-transition-methods-of-controller-and-route.html">0674-deprecate-transition-methods-of-controller-and-route</a></li><li><a href="0680-implicit-injection-deprecation.html">0680-implicit-injection-deprecation</a></li><li><a href="0685-new-browser-support-policy.html">0685-new-browser-support-policy</a></li><li><a href="0686-deprecate-old-manager-capabilities-versions.html">0686-deprecate-old-manager-capabilities-versions</a></li><li><a href="0689-deprecate-has-block.html">0689-deprecate-has-block</a></li><li><a href="0690-deprecate-attrs-in-templates.html">0690-deprecate-attrs-in-templates</a></li><li><a href="0691-deprecate-class-binding-and-class-name-bindings.html">0691-deprecate-class-binding-and-class-name-bindings</a></li><li><a href="0692-deprecate-array-observers.html">0692-deprecate-array-observers</a></li><li><a href="0698-deprecate-link-to-positional-arguments.html">0698-deprecate-link-to-positional-arguments</a></li><li><a href="0702-eslint-plugin-qunit.html">0702-eslint-plugin-qunit</a></li><li><a href="0704-deprecate-octane-optional-features.html">0704-deprecate-octane-optional-features</a></li><li><a href="0705-deprecate-jquery-optional-feature.html">0705-deprecate-jquery-optional-feature</a></li><li><a href="0706-deprecate-ember-global.html">0706-deprecate-ember-global</a></li><li><a href="0707-modernize-built-in-components-2.html">0707-modernize-built-in-components-2</a></li><li><a href="0711-deprecate-auto-location.html">0711-deprecate-auto-location</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title"></h1>
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <hr />
+<p>Start Date: 2018-12-13
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/416
+Tracking: https://github.com/emberjs/rfc-tracking/issues/2</p>
+<hr />
+<h1><a class="header" href="#glimmer-components" id="glimmer-components">Glimmer Components</a></h1>
+<h2><a class="header" href="#summary" id="summary">Summary</a></h2>
+<p>Glimmer components are a simpler, more ergonomic, and more declarative approach
+to building components. They represent the sum of multiple years of design and
+feature work by the community, which stemmed from the original RFCs and
+discussions surrounding &quot;angle-bracket components&quot;.</p>
+<p>This RFC proposes adding Glimmer components to Ember's public API, and making
+them the default new app experience in Ember Octane.</p>
+<h2><a class="header" href="#attribution" id="attribution">Attribution</a></h2>
+<p>The Glimmer components API presented in this RFC was designed in cooperation
+between @tomdale, @rwjblue, @krisselden, @pzuraq, and others.</p>
+<h2><a class="header" href="#first-a-bit-of-history" id="first-a-bit-of-history">First, a Bit of History</a></h2>
+<p>As components became the standard for Single Page Apps (SPAs) several years ago,
+and the Ember community began adopting them in earnest and converting from Ember
+1's primarily MVC oriented approach, there were many small and large issues that
+cropped up with Ember's component API and usage: <code>{{curly-bracket}}</code> syntax felt
+dated with the introduction of Web Components and other major frameworks; the
+inability to specify or override HTML attributes led to explosions in API
+complexity; the implicit wrapper element and customization fields (<code>tagName</code>,
+<code>classNames</code>, et al.) felt burdensome and made templates difficult to read
+compared to other frameworks; two way data-binding led to strange, hard to
+predict data cycles within apps; and so on.</p>
+<p>From this came the original <a href="https://github.com/emberjs/rfcs/blob/0b32059b3704836e52c906a0ead64ac186c844d8/active/0000-component-unification.md">Angle Bracket component
+RFC</a>.
+The idea was simple: switch to the superior <code>&lt;angle-bracket&gt;</code> syntax of web
+components, and solve all the other problems! Seems easy enough, right?</p>
+<p>As you can imagine, it was <em>not</em> that easy. There was a flurry of discussion on
+the original RFC, and many ideas were thrown around. This was seen as the <em>one</em>
+chance Ember had to &quot;fix&quot; its component API, and the community did not want to
+get it wrong and lock us into yet <em>another</em> set of painful papercuts. After much
+debate and lots of back and forth with the design, it was ultimately decided
+that attempting to redesign components all at once, monolithically, was too
+much. Instead, the individual ideas from that discussion could be broken out and
+implemented in isolation, in a backwards compatible way, both incrementally
+building a new, well thought out component API <em>and</em> laying the groundwork in
+the framework for future redesigns.</p>
+<p>A lot of the foundational work that arose from these discussions and paves the
+way for Glimmer components has already landed in Ember, including: Angle-bracket
+invocation, named arguments, element modifiers, and component managers.</p>
+<p>Glimmer components represent the final piece of that's required to enable the
+&quot;ember octane&quot; programming model. They include the last of the major features
+that were discussed during the original Angle Brackets RFC, and holistically, we
+feel those features make a much simpler and more ergonomic component API. Taken
+alone, they are an incremental change. Their individual features aren't <em>that</em>
+much more than what we currently have in Ember today. But as a whole they
+represent the culmination of multiple years of design work and discussion by the
+Ember community, and the collective attention to detail and care of all of our
+community members.</p>
+<h2><a class="header" href="#terminology" id="terminology">Terminology</a></h2>
+<ul>
+<li>The <strong>Glimmer VM</strong> is the underlying rendering engine which is used by
+<em>Ember.js</em> and <em>Glimmer.js</em>.</li>
+<li><strong>Glimmer.js</strong> is a thin wrapper on top of the <em>Glimmer VM</em> which exposes a
+much simpler API compared to Ember. Historically it has been used to
+experiment with ideas and implementations before bringing them into Ember via
+RFC, and has been used to write applications which don't require the full
+feature set of Ember.</li>
+<li><strong>Glimmer components</strong> are a newly proposed component API which draw from the
+experimental APIs provided in Glimmer.js, and Ember.js via
+<a href="https://github.com/rwjblue/sparkles-component">sparkles-component</a>.</li>
+<li><strong>Classic components</strong> refer to the standard component API at the time of this
+RFC, which have been available in Ember in some form since v1.</li>
+<li><strong>Tracked properties</strong> refer to a new method of change tracking which is being
+proposed in a separate RFC, parallel to this one.</li>
+</ul>
+<h2><a class="header" href="#motivation" id="motivation">Motivation</a></h2>
+<p><code>GlimmerComponent</code> is a simpler base component class that enables smaller class
+definitions, stronger conventions for lifecycle hooks and properties, and
+unidirectional data flow. We aim to design them to be easier understand in
+isolation, and require less knowledge of the framework to use effectively.</p>
+<p>This example shows a component written with the classic component API:</p>
+<pre><code class="language-hbs">&lt;!-- templates/components/post.hbs --&gt;
+{{#if (eq type 'image'}}
+  &lt;img src={{post.imageUrl}} title={{post.imageTitle}}&gt;
+{{/if}}
+
+{{post.text}}
+</code></pre>
+<pre><code class="language-js">// components/post.js
+export default Component.extend({
+  tagName: 'section',
+  classNames: ['post'],
+  classNameBindings: ['type'],
+  ariaRole: 'region',
+
+  /* Arguments */
+  post: null,
+
+  type: readOnly('post.type'),
+
+  didInsertElement() {
+    this._super(...arguments);
+    if (this.type === 'image') {
+      setupImageOverlay(this.element.querySelector('img'));
+    }
+  }
+});
+</code></pre>
+<p>And here is an equivalent component written with the Glimmer component API:</p>
+<pre><code class="language-hbs">&lt;!-- templates/components/post.hbs --&gt;
+&lt;section ...attributes role=&quot;region&quot; type={{@post.type}} class=&quot;post {{@post.type}}&quot;&gt;
+  {{#if (eq @post.type 'image')}}
+    &lt;img
+      {{did-insert this.didInsertImage}}
+      src={{@post.imageUrl}}
+      title={{@post.imageTitle}}
+    /&gt;
+  {{/if}}
+
+  {{@post.text}}
+&lt;/section&gt;
+</code></pre>
+<pre><code class="language-js">// components/post.js
+export default class PostComponent extends GlimmerComponent {
+  @action
+  didInsertImage(element) {
+    setupImageOverlay(element);
+  }
+}
+</code></pre>
+<p>Glimmer components eliminate many of the common paper cuts that cause confusion
+with classic components, and align more closely with modern template syntax and
+features.</p>
+<h3><a class="header" href="#outer-html-semantics" id="outer-html-semantics">Outer HTML Semantics</a></h3>
+<p>The biggest change Glimmer components make is defaulting to outer HTML
+semantics. In the classic component API, components had a implicit wrapper
+element. Given this component template:</p>
+<pre><code class="language-hbs">Hello, world!
+</code></pre>
+<p>The output by <em>default</em> would be something like:</p>
+<pre><code class="language-html">&lt;!-- OUTPUT --&gt;
+&lt;div id=&quot;ember-1234&quot; class=&quot;ember-view&quot;&gt;
+  Hello, world!
+&lt;/div&gt;
+</code></pre>
+<p>But we can't know that for sure unless we look at the component definition. If
+we do, we might see that the outer wrapping element is actually a <code>section</code>, and
+it has a <code>.hello-world</code> class:</p>
+<pre><code class="language-js">export default Component.extend({
+  tagName: 'section',
+  classNames: ['hello-world']
+});
+</code></pre>
+<pre><code class="language-html">&lt;!-- OUTPUT --&gt;
+&lt;section id=&quot;ember-1234&quot; class=&quot;hello-world ember-view&quot;&gt;
+  Hello, world!
+&lt;/section&gt;
+</code></pre>
+<p>This behavior means that the template for a component is missing crucial
+information and context. Even for the simplest component, users must check the
+class definition to know with certainty what the full template of the component
+is. And unlike bindings, there is no hint to the user that there may be
+something dynamic that they should check on - without advanced knowledge of
+Ember's APIs, there is no way of knowing about this behavior.</p>
+<p>By contrast, Glimmer components have no wrapping outer element - What you see in
+the template is what you get in the output. There is no need to define class
+names, class name bindings, attribute bindings, or any other DOM element values
+<em>from the component class</em>; developers can achieve the equivalent result using
+the same techniques they're familiar with from working with <code>Ember.Component</code>
+templates. The template is the single source of truth for the output of a
+component, and any dynamic values are explicitly stated in it.</p>
+<pre><code class="language-hbs">&lt;!-- template.hbs --&gt;
+&lt;section class=&quot;hello-world&quot;&gt;
+  Hello, world!
+&lt;/section&gt;
+</code></pre>
+<pre><code class="language-html">&lt;!-- OUTPUT --&gt;
+&lt;section class=&quot;hello-world&quot;&gt;
+  Hello, world!
+&lt;/section&gt;
+</code></pre>
+<p>We can immediately see that this is a simple component with no bindings, no
+dynamic values, and no meaningful state. Even if there was a component
+definition, we know that it is not in any way affecting the output of this
+template. Special element ids and classes are also not present, making the
+output appear less magical.</p>
+<p>This micro change makes a macro difference:</p>
+<ul>
+<li>
+<p>Users can spend less time switching back and forth between reading template
+and class code, and can get a better idea of the structure of an app from its
+declarative templates.</p>
+</li>
+<li>
+<p>Component customization code becomes less imperative and more declarative,
+meaning users no longer need to keep the state of bindings, class names, and
+other class code in their heads.</p>
+</li>
+<li>
+<p>The gap between template-only components - which are analogous to React and
+other frameworks' functional components - and components with a backing class
+is reduced, making them a more viable pattern.</p>
+</li>
+</ul>
+<h3><a class="header" href="#namespaced-arguments" id="namespaced-arguments">Namespaced Arguments</a></h3>
+<p>In classic components, arguments are set as properties directly on the class
+instance. This means that class methods and properties can be completely
+overwritten by incoming arguments, which can have surprising and problematic
+side effects. For example, let's say we have a component that has a <code>fullName</code>
+computed property and expects <code>firstName</code> and <code>lastName</code> arguments:</p>
+<pre><code class="language-js">// components/person.js
+export default Component.extend({
+  firstName: null,
+  lastName: null,
+
+  fullName: computed('firstName', 'lastName', function() {
+    return `${this.firstName} ${this.lastName}`;
+  })
+});
+</code></pre>
+<p>The public API of this component is <em>supposed</em> to just be those two arguements.
+However, a developer may realize that they can pass <code>fullName</code> directly to the
+component, overriding the computed property:</p>
+<pre><code class="language-hbs">&lt;Person @fullName={{this.fullNameWithMiddle}}&gt;
+</code></pre>
+<p>This is clearly a bad pattern, but it shows that in effect that most details of
+a component's implementation are not truly private, and any property or value
+can be overriden from external contexts. In most common day-to-day scenarios
+developers just have to be careful that they are following the intended public
+API of a component, but this also has the potential for misuse and enables
+antipatterns.</p>
+<p>Glimmer components assign their arguments to the <code>args</code> property on their
+instance, preventing namespace collisions from happening in the first place.
+This allows component authors to define a clear public API for a component which
+<em>cannot</em> be circumvented.</p>
+<h3><a class="header" href="#immutable-arguments" id="immutable-arguments">Immutable Arguments</a></h3>
+<p>In classic components argument values on the component are also <em>mutable</em>. This
+can lead to some confusing behavior, because argument values in the <em>class</em> can
+change, but named arguments in <em>templates</em> cannot. For instance, given this
+component:</p>
+<pre><code class="language-js">// components/welcome.js
+export default Component.extend({
+  firstName: 'Jen',
+  lastName: 'Weber'
+});
+</code></pre>
+<pre><code class="language-hbs">&lt;!-- templates/components/welcome.hbs  --&gt;
+Hey there, {{@firstName}} {{@lastName}}!
+</code></pre>
+<p>And this invocation:</p>
+<pre><code class="language-hbs">&lt;Welcome /&gt;
+</code></pre>
+<p>You might expect that the result would be:</p>
+<pre><code class="language-hbs">Hey there, Jen Weber!
+</code></pre>
+<p>However, <code>{{@firstName}}</code> and <code>{{@lastName}}</code> would actually be empty values.
+They refer <em>directly</em> to the arguments passed into the <em>invocation</em> of the
+component, and to get the results we wanted, we would have to invoke it like so:</p>
+<pre><code class="language-hbs">&lt;Welcome @firstName=&quot;Jen&quot; @lastName=&quot;Weber&quot; /&gt;
+</code></pre>
+<p>The advantage in this is that named arguments are fully transparent. When seen
+in a template, users can know without a doubt that the named argument was a
+value passed in from the invocation. Likewise, when they see a standard binding
+to a value like <code>{{this.firstName}}</code> or <code>{{firstName}}</code>, they know this is a
+value defined on the component - it could a computed property, it could come
+from a service, it could be a random value, but it is <em>not</em> an argument.</p>
+<p>Glimmer components align their argument access with named args by making
+arguments available exclusively on a (shallow) frozen object, <code>this.args</code>.
+Attempting to modify <code>this.args</code> will hard error, meaning that like templates,
+users will always be able to refer to <code>this.args</code> as the canonical state of the
+values passed to the component invocation.</p>
+<p>Immutable arguments make reasoning about the state of a component simpler (&quot;Was
+that a user provided value or a default/mutated/computed value?&quot; becomes &quot;Was it
+an argument or not?&quot;), and encourages use of <code>{{@arg}}</code> syntax in templates
+where appropriate. At scale, this makes reading templates even easier, since
+more information is encoded in the template itself. One way data flow also
+encourages the Data Down, Actions Up pattern, and normalizes the way that data
+flows through apps, making reasoning about app state easier.</p>
+<h3><a class="header" href="#minimal-classes" id="minimal-classes">Minimal Classes</a></h3>
+<p>Classic components are large classes, with lots of built up functionality and
+debt from over the years. The total list of default properties and hooks
+(including inherited ones) includes:</p>
+<ul>
+<li><strong>13</strong> Standard lifecycle hooks, such as
+<code>didInsertElement</code>/<code>willDestroyElement</code> and <code>didUpdate</code>.</li>
+<li><strong>29</strong> Event handlers, such as <code>click</code>, <code>mouseEnter</code>, and <code>dragStart</code>.</li>
+<li><strong>9</strong> element/element customization properties, such as <code>element</code> and
+<code>tagName</code>.</li>
+<li><strong>21</strong> standard framework functions, such as <code>get</code>/<code>set</code>,
+<code>addObserver</code>/<code>removeObserver</code> and <code>toggleProperty</code>.</li>
+</ul>
+<p>Coming from a class hierarchy that is 4 levels deep (<code>Component</code> -&gt; <code>CoreView</code>
+-&gt; <code>EmberObject</code> -&gt; <code>CoreObject</code>, with about 19 mixins included along the way).</p>
+<p>This is a large API surface to become acquainted with, and namespace
+collisions are possible with new Ember users - collisions on <code>destroy</code>
+were the original reason for adding the <code>actions</code> object to classes, and every
+so often a user will pop in on <code>#help</code> wondering why their <code>click</code> or <code>submit</code>
+methods trigger automagically, or why their component disappeared when they
+added an <code>isVisible</code> property. Even putting aside the possibility of collisions,
+the sheer amount of choice can sometimes be overwhelming: Do I put my
+initialization logic in <code>init</code> or <code>didInsertElement</code>? Do I use an action or the
+<code>click</code> handler? Which update method should I use - <code>didRender</code>, <code>didUpdate</code>,
+<code>didReceiveAttrs</code>?</p>
+<p>Glimmer components have a constructor, <strong>2</strong> lifecycle hooks, and <strong>3</strong>
+properties. They only extend from the Glimmer Component base class -- a simple
+ES6 class that does not extend from <code>EmberObject</code>. They don't have any
+element/DOM based properties, hooks, event handler functions, whose
+responsibilities have been passed on to element modifiers. This <em>dramatically</em>
+simplifies what users need to learn in order to start using the bread-and-butter
+class of Ember, and enforces a single conventional location for each of the
+possible hooks in classic components, allowing users to focus on productivity
+out of the box.</p>
+<h3><a class="header" href="#glimmerjs-compatibility" id="glimmerjs-compatibility">Glimmer.js Compatibility</a></h3>
+<p>One of the goals for future versions of Ember, post Ember Octane, will be to
+enable lighter-weight applications to be built using the framework. Breaking
+Ember apart into smaller, fully independent and optional pieces is the core idea
+behind the &quot;install your way to Ember&quot; goal, which will enable Ember to be used
+in more constrained environments that smaller frameworks such as React, Preact,
+Vue, and more excel in. It will also allow users who are size-conscious to adopt
+Ember incrementally, adding functionality when it is <em>needed</em> rather than having
+all-or-nothing.</p>
+<p>This will take time though. Progress has been made, but parts of Ember are still
+monolithic. And while it isn't Ember, Glimmer.js is a lightweight wrapper of the
+Glimmer VM that enables users to drop that weight and begin writing much more
+minimal apps today.</p>
+<p>Glimmer components aren't just based on the Glimmer.js component API - they are
+one and the same. They will be a shared package, which will be importable and
+usable by the users of both frameworks. Not only will users be able to write
+better components in Ember, those components will also be cross-compatible with
+Glimmer apps (assuming they don't use Ember specific functionality).</p>
+<p>It is important to note that while Glimmer components will be versioned
+independently from Glimmer and Ember <em><strong>they will abide by the Ember RFC process
+for any and all changes to user APIs</strong></em>. The implementations for their component
+managers in Glimmer and Ember may change to keep them compatible, but they will
+not make major changes without first getting community input, and will be
+considered part of the public API of Ember.</p>
+<h2><a class="header" href="#prior-art" id="prior-art">Prior Art</a></h2>
+<p>Part of the challenge in the original Angle Bracket components RFC was
+attempting to design without implementation, testing, usage, and feedback.
+Glimmer.js provided an early method to experiment, but because it was not widely
+adopted there wasn't much feedback from larger-scale usage. This in part
+motivated the <a href="https://github.com/emberjs/rfcs/blob/master/text/0213-custom-components.md">component manager
+RFC</a>,
+which enabled experimentation in Ember directly, and set us up for having
+multiple implementations of component APIs which were interchangeable.</p>
+<p>As such, we now have two reference implementations which can be referred to:</p>
+<ul>
+<li><a href="https://glimmerjs.com/">Glimmer.js</a>, the framework that this component API is
+based on, and will be cross-compatible with.</li>
+<li><a href="https://github.com/rwjblue/sparkles-component">sparkles-component</a>, an an
+implementation of the Glimmer.js component API using Ember's component
+managers. It is usable in Ember today.</li>
+</ul>
+<p>Both of these have minor differences from the API proposed in this RFC, mainly
+because they were made before the <a href="https://github.com/emberjs/rfcs/blob/master/text/0373-Element-Modifier-Managers.md">element modifier manager
+RFC</a>
+was accepted and opened up additional design possibilities. However, they serve
+as valuable data points for the viability of a simpler component API, and inform
+the design accordingly.</p>
+<h2><a class="header" href="#detailed-design" id="detailed-design">Detailed design</a></h2>
+<p>Glimmer components have the following interface:</p>
+<pre><code class="language-ts">interface GlimmerComponent&lt;T = object&gt; {
+  args: T;
+
+  isDestroying: boolean;
+  isDestroyed: boolean;
+
+  constructor(owner: Opaque, args: T): void;
+  willDestroy(): void;
+}
+</code></pre>
+<p>This class will be importable from <code>@glimmer/component</code>;</p>
+<pre><code class="language-js">import Component from '@glimmer/component';
+</code></pre>
+<h3><a class="header" href="#constructor" id="constructor">Constructor</a></h3>
+<p>The constructor for Glimmer components receives two arguments: The owner
+instance and the named arguments object. Both of these arguments should
+conventionally be passed to <code>super</code> immediately, and then accessed through
+decorated service properties, <code>getOwner</code>, and <code>this.args</code>:</p>
+<pre><code class="language-js">class PersonComponent extends GlimmerComponent {
+  @service profile;
+
+  constructor() {
+    super(...arguments);
+
+    let owner = getOwner(this);
+    let profileService = this.profile;
+
+    let firstName = this.args.firstName;
+  }
+}
+</code></pre>
+<p>These arguments are passed to the constructor so that they can be used for
+initial setup of the component. Service injections and args being available in
+this way also makes them available to class field initializers, which run
+immediately <em>after</em> the call to <code>super</code>:</p>
+<pre><code class="language-js">class PersonComponent extends GlimmerComponent {
+  @service time;
+
+  // Use the values of args in an initializer
+  fullName = `${this.args.firstName} ${this.args.lastName}`;
+
+  // Access a service in an initializer
+  currentTime = this.time.now();
+}
+</code></pre>
+<p>The <code>args</code> argument will be shallow-frozen (in development mode only) to prevent
+users from modifying them.</p>
+<h4><a class="header" href="#type-injections" id="type-injections">Type Injections</a></h4>
+<p>Ember's dependency injection system allows defining injections across an entire
+type via
+<a href="https://www.emberjs.com/api/ember/3.5/classes/ApplicationInstance/methods/inject?anchor=inject">RegistryProxy#inject</a> - for
+instance, Ember Data's store, which is available by default as
+<code>this.store</code> on all Routes and Controllers. These injections add a layer of
+implicit state to objects, since users must know what the default injections are
+ahead of time.</p>
+<p>By contrast, service getters (decorated with <code>@service</code>) clearly and explicitly
+state the dependencies of a class within its definition. The benefit of having
+an explicit dependencies list within each class has proven to be invaluable in
+practice since <code>inject.service()</code> was introduced.</p>
+<p>Glimmer components will only receive the owner directly, and as such will <em>not</em>
+support type injections. This cuts down on the implicit knowledge developers
+must have when writing a component.</p>
+<h3><a class="header" href="#properties" id="properties">Properties</a></h3>
+<p>Glimmer components have 3 properties: <code>args</code>, <code>isDestroying</code>, and <code>isDestroyed</code>.</p>
+<h4><a class="header" href="#args" id="args"><code>args</code></a></h4>
+<p>As discussed in the motivation section, <code>args</code> is an object with the values of
+the named arguments passed to the component. This property will be updated
+whenever the arguments change. It will be shallow-frozen in development mode to
+prevent users from setting values on it.</p>
+<h4><a class="header" href="#isdestroying" id="isdestroying"><code>isDestroying</code></a></h4>
+<p>This property will be set to <code>true</code> when component teardown has been initiated,
+<em>before</em> the component's <code>willDestroy</code> hook is run, along with any other
+components which are currently being torn down. This allows the entire component
+tree to be marked before user code is run. It can be used by users to
+conditionally prevent asynchronous code from running, and to check on the
+teardown state of the component in general.</p>
+<h4><a class="header" href="#isdestroyed" id="isdestroyed"><code>isDestroyed</code></a></h4>
+<p>This property will be set after any <code>willDestroy</code> hooks have run, and the
+component has been fully torn down. It can be used by users to conditionally
+prevent asynchronous code from running, and to check on the teardown state of
+the component in general.</p>
+<h3><a class="header" href="#lifecycle-hooks" id="lifecycle-hooks">Lifecycle Hooks</a></h3>
+<p>Classic components have 13 major lifecycle hooks that run during 3 major phases
+of the component lifecycle, with some hooks running during multiple phases:</p>
+<ol>
+<li>
+<p><strong>Initialization and Initial Render:</strong></p>
+<ul>
+<li><code>init</code></li>
+<li><code>willInsertElement</code></li>
+<li><code>didInsertElement</code>,</li>
+<li><code>didReceiveAttrs</code></li>
+<li><code>willRender</code></li>
+<li><code>didRender</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Rerenders and Updates:</strong></p>
+<ul>
+<li><code>didReceiveAttrs</code></li>
+<li><code>didUpdateAttrs</code></li>
+<li><code>willUpdate</code></li>
+<li><code>didUpdate</code></li>
+<li><code>willRender</code></li>
+<li><code>didRender</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Destruction:</strong></p>
+<ul>
+<li><code>willDestroyElement</code></li>
+<li><code>didDestroyElement</code></li>
+<li><code>destroy</code></li>
+<li><code>willDestroy</code></li>
+</ul>
+</li>
+</ol>
+<p>Many of these hooks have overlapping or redundant functionality, and it's fairly
+confusing when to use which and what the differences are. We can simplify this
+cycle in a number of ways:</p>
+<ul>
+<li>
+<p>Hooks that run during multiple phases such as <code>didRender</code> and
+<code>didRecieveAttrs</code> can be convenient at times, but also add mental overhead and
+redundancy. We can remove these in favor of clearly delineated hooks which
+only run during <em>one</em> phase.</p>
+</li>
+<li>
+<p>&quot;Bookend&quot; methods (<code>did*</code> and <code>will*</code>) can be confusing, since they require
+some specific knowledge of what the &quot;bookended&quot; functionality is. For
+instance, users almost <em>always</em> want to use <code>didInsertElement</code> and
+<code>willDestroyElement</code>, but the existence of their opposite bookends can make
+this confusing. Additionally, the fact that <code>didReceiveAttrs</code> and
+<code>didUpdateAttrs</code> do <em>not</em> have opposing bookends is inconsistent with this
+pattern.</p>
+</li>
+<li>
+<p>Hooks that are used to update derived state, such as <code>didUpdate</code> and
+<code>didUpdateAttrs</code>, can be generally be replaced with tracked or computed
+properties that pull the required values as they are used, rather than eagerly
+as they are updated. This is more inline with Glimmer's pull-based change
+tracking system, and encourages better practices that are easier to optimize.</p>
+</li>
+<li>
+<p>Hooks which are used to manipulate elements or the DOM in general can be
+removed in favor of element modifiers, which are discussed in detail in the
+next section.</p>
+</li>
+</ul>
+<p>Based on these considerations, we can reduce these hooks to just a setup and
+teardown method: <code>constructor</code> and <code>willDestroy</code>.</p>
+<h4><a class="header" href="#constructor-1" id="constructor-1"><code>constructor</code></a></h4>
+<p>The native <code>constructor</code> method for the class can be used for initial setup of
+the component. This effectively replaces <code>init</code>, and allows users to setup state
+before <em>any</em> renders occur. It has the following timing semantics:</p>
+<ul>
+<li><strong>Always</strong>
+<ul>
+<li>called when a component is created</li>
+<li>called <em>before</em> any child components are created</li>
+<li>called <em>before</em> any element modifiers with install hooks in the component's
+template</li>
+</ul>
+</li>
+</ul>
+<p>In many cases, using the <code>constructor</code> directly will not be necessary due to
+class fields, whose initializers run during instance construction.</p>
+<pre><code class="language-js">class Person {
+  constructor() {
+    this.name = 'Tomster';
+  }
+}
+</code></pre>
+<p>Is the same as:</p>
+<pre><code class="language-js">class Person {
+  name = 'Tomster';
+}
+</code></pre>
+<p>Class fields are assigned <em>after</em> the call to <code>super</code> in the constructor, but
+<em>before</em> any of the user's code runs, allowing their values to be accessed by
+users as well.</p>
+<h4><a class="header" href="#willdestroy" id="willdestroy"><code>willDestroy</code></a></h4>
+<p>This hook runs when the component is being destroyed, and can be used for
+cleanup code. It has the following timing semantics:</p>
+<ul>
+<li><strong>Always</strong>
+<ul>
+<li>called when a component is removed</li>
+<li>called <em>after</em> any child component <code>willDestroy</code> hooks</li>
+<li>called <em>after</em> any element modifiers with destroy hooks in the component's
+template</li>
+<li>called <em>after</em> <code>isDestroying</code> has been set to <code>true</code>, and <em>before</em>
+<code>isDestroyed</code> has been set to <code>true</code></li>
+<li>called <em>after</em> the DOM has been fully removed and is inaccessible</li>
+</ul>
+</li>
+<li><strong>May or May Not</strong>
+<ul>
+<li>be called in a stable order relative to sibling component <code>willDestroy</code>
+hooks</li>
+</ul>
+</li>
+</ul>
+<h3><a class="header" href="#element-modifiers" id="element-modifiers">Element Modifiers</a></h3>
+<p>DOM manipulation is a hard problem for component-oriented frameworks. We spend a
+lot of time crafting elegant, functional, template oriented abstractions that
+work very well, up until the point where we have to use an imperative native API
+like <code>addEventListener</code> or <code>MutationObserver</code>. This is not a problem unique to
+Ember - the recent introduction of the React Hooks API, and the <a href="https://nikgraf.github.io/react-hooks/">various flavors
+of hooks that exist</a>, many of which
+accomplish the same thing in slightly different ways, suggests that this is a
+<em>fundamentally difficult problem</em> no matter how you tackle it.</p>
+<p>This is also evidenced by the sheer <em>number</em> of hooks which have been added to
+classic Ember components over time to handle various different use cases, and
+the fact that there does not appear to be a general consensus on best practices
+for using these hooks. In our audit, we observed the following:</p>
+<ol>
+<li><code>didInsertElement</code> was commonly used for setting up component state which had
+nothing to do with the element and could have been accomplished in <code>init</code>.</li>
+<li><code>didRender</code> was often used for setting up DOM state once on initial render
+only, instead of <code>didInsertElement</code>.</li>
+<li><code>didRender</code> and <code>didReceiveAttrs</code> (or <code>didUpdate</code> and <code>didUpdateAttrs</code>) were
+used interchangeably for setting up and updating DOM state based on incoming
+argument changes, without strong conventions on when to use one or the other,
+or consideration for which ones fire in SSR (<code>didReceiveAttrs</code> and
+<code>didUpdateAttrs</code>) and which do not.</li>
+<li>Libraries like
+<a href="https://github.com/ember-lifeline/ember-lifeline">ember-lifeline</a> were not
+uncommon for managing the extra state that using hooks inevitably creates,
+and imply that it is not always intuitive or well understood that you must
+clean up that state.</li>
+<li>Guards for SSR appear sporadically throughout various hooks, since some
+(<code>didInsertElement</code>, <code>willDestroyElement</code>) do <em>not</em> run in SSR, but others
+(<code>didReceiveAttrs</code>, <code>didUpdateAttrs</code>) do. This adds <em>another</em> layer of state
+that developers must be aware of as they are using lifecycle hooks. Often
+times these guards occured even in hooks which <em>did not run</em> in SSR, implying
+that it is difficult to remember which hooks are best to use in either
+situation.</li>
+<li>Hooks such as <code>didRender</code> had many different potential use cases. It was used
+for reacting to changes to component arguments in some cases, but in others
+it was used as a more general purpose &quot;bloom filter&quot;, allowing the component
+to react to <em>any</em> changes to the DOM subtree. The variety of use cases seemed
+to add to the confusion about which hooks should be used in which
+circumstances.</li>
+<li>Another disadvantage of the flexibility of these hooks was that often
+developers had to add additional validation steps for their specific use
+case. For instance, if a developer wanted to react to a change to a specific
+argument in <code>didRender</code> or <code>didReceiveAttrs</code>, they had to add cacheing and
+comparison logic manually to do so for each property.</li>
+</ol>
+<p>In summary, lifecycle hooks attempted to provide on general solution to the
+problem of DOM manipulation for <em>all</em> use-cases, and in doing so provided a
+solution that solves each individual problem and use-case in a mediocre way.
+Rather than continue these patterns in Glimmer components, we believe that they
+should lean instead on <em>Element Modifiers</em>.</p>
+<p>Modifiers provide a single unified way to define multiple <em>different</em> APIs for
+interacting with the DOM. Individual modifiers can be targeted toward specific
+use cases, such as adding an event listener or <code>MutationObserver</code>, triggering a
+callback during certain lifecycle events, capturing element references for use
+in components, and more. Importantly, modifiers are <em>easy to compose</em> and
+<em>self-contained</em>, meaning that it will be possible for general purpose addons to
+be built for various use cases, and for them all to be used together without
+difficulty.</p>
+<h4><a class="header" href="#conversion-and-path-forward" id="conversion-and-path-forward">Conversion and Path Forward</a></h4>
+<p>Modifiers may be the general purpose solution for writing DOM APIs, but average
+Ember developers should not have to <em>write</em> a modifier very often. This is a key
+distinction - it means that beginner Ember developers will not need to learn the
+ins and outs of modifiers as soon as they need to use DOM, and that they will be
+able to instead rely on established patterns from established libraries, similar
+to helpers. This combined with the fact that DOM manipulation was on average a
+<em>rare</em> occurence in our audits means they won't be overwhelming to learn.</p>
+<p>However, while we have merged the <a href="https://github.com/emberjs/rfcs/blob/master/text/0373-Element-Modifier-Managers.md">Modifier Manager
+RFC</a>,
+the final API for modifiers themselves is still in RFC, and the community hasn't
+had a chance to experiment with them and develop patterns yet. We also want to
+be able to provide straightforward upgrade and migration guides for users who
+want to convert from classic component lifecycle hooks to modifiers. In order to
+cover this gap while the community is still absorbing the new APIs, the
+modifiers proposed in the <a href="https://github.com/emberjs/rfcs/pull/415">Render Element Modifiers
+RFC</a> will be released as an official
+Ember addon. These essentially expose the three hooks of modifiers to users
+directly, allowing them to pass callbacks from their components:</p>
+<pre><code class="language-hbs">&lt;div
+  {{did-insert this.setupElement @arg1 @arg2}}
+  {{did-update this.updateElement @arg1 @arg2}}
+  {{will-destroy this.teardownElement}}
+&gt;
+  ...
+&lt;/div&gt;
+</code></pre>
+<p>These modifiers should allow users to approximate most of the existing lifecycle
+hooks, and in most cases should be pretty straightforward to update to. The
+Ember guides will provide migration examples for a variety of use cases to
+assist in converting to these modifiers. Over time, as addons and libraries are
+released that target specific use cases, the guides should be updated to include
+popular patterns and demonstrate the most effective and conventional ways to
+solve <em>specific</em> problems with DOM manipulation.</p>
+<h3><a class="header" href="#lifecycle-hook-audit" id="lifecycle-hook-audit">Lifecycle Hook Audit</a></h3>
+<p>In the design process of this RFC, we wanted to provide the minimal set of
+functionality that covered the previous use cases of classic components. The
+final API of Glimmer components as proposed in this RFC is very small, cutting
+out almost all existing hooks in favor of a handful of conventional hooks and
+element modifiers.</p>
+<p>In order to be sure that these hooks and modifiers would cover existing use
+cases, we did an audit of a few popular addons: <a href="https://miguelcobain.github.io/ember-paper/">Ember
+Paper</a>,
+<a href="https://github.com/sandydoo/ember-google-maps">ember-google-maps</a>, and
+<a href="https://github.com/ember-animation/liquid-fire">liquid-fire</a>. These libraries
+were chosen because they represent a large mix of both common use cases and edge
+cases, and give us a decent cross-section of what the hooks are used for today.</p>
+<p>We also did a less formal audit of a variety of addons and open source apps,
+including <a href="https://github.com/miguelcobain/ember-leaflet">ember-leaflet</a>,
+<a href="https://github.com/cibernox/ember-power-select">ember-power-select</a>,
+<a href="https://github.com/cibernox/ember-basic-dropdown">ember-basic-dropdown</a>,
+<a href="https://github.com/Addepar/ember-table">ember-table</a>,
+<a href="https://github.com/html-next/vertical-collection">vertical-collection</a>,
+<a href="https://github.com/miguelcobain/ember-composability-tools">ember-composablity-tools</a>,
+<a href="https://github.com/travis-ci/travis-web">Travis Web</a>, <a href="https://github.com/TryGhost/Ghost-Admin">the Ghost admin
+app</a>, and <a href="https://github.com/HospitalRun/hospitalrun-frontend">Hospital
+Run</a>, along with general
+code searches through Ember Observer.</p>
+<p>In all of these, the only use case we found that was <em>not</em> covered was the
+ability to run a hook whenever a render occurs in the subtree of a component
+using <code>didRender</code> or <code>didUpdate</code>. The only instance we found of this was in
+<a href="https://github.com/sandydoo/ember-google-maps/blob/d901864e9198c1d4956d5ba9629147f64e4ae6b7/addon/templates/components/g-map/overlay.hbs#L6">ember-google-maps</a>,
+where it was used detect when an
+<a href="https://ember-google-maps.sandydoo.me/docs/overlays">overlay</a> component has
+rendered and needs to be repositioned. For this rare case, we believe a
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">MutationObserver</a>
+set to detect mutations to the DOM subtreemay be more appropriate.
+Alternatively, a component can be defined with a custom component manager, which
+still retains this ability.</p>
+<p>The usages from the audit and their equivalent solution in Glimmer components
+have been included in this RFC in an appendix.</p>
+<h3><a class="header" href="#actions" id="actions">Actions</a></h3>
+<p>In classic components, actions are defined on the <code>actions</code> hash, and can be
+referenced in templates using strings passed to the <code>{{action}}</code> helper:</p>
+<pre><code class="language-js">export default Component.extend({
+  actions: {
+    buttonPressed() {
+      // ...
+    }
+  }
+})
+</code></pre>
+<pre><code class="language-hbs">&lt;button onclick={{action 'buttonPressed'}}&gt;Press Me!&lt;/button&gt;
+</code></pre>
+<p>This form of action sending is based on the <code>ActionHandler</code> mixin and requires
+that the component class have a <code>send</code> method. Glimmer components will <em>not</em>
+implement this API, and as such will not support string based action helpers.
+In development mode a special error will be thrown instead, informing users of
+alternatives.</p>
+<p>Instead, users should use helpers or decorators to bind functions to the
+component instance. The <code>action</code> helper and modifier do this in templates, as
+does the <code>bind</code> helper provided by the <a href="https://github.com/Serabe/ember-bind-helper">ember-bind-helper</a> addon:</p>
+<pre><code class="language-js">export default class ButtonComponent extends Component {
+  buttonPressed() {
+    // ...
+  }
+}
+</code></pre>
+<pre><code class="language-hbs">&lt;button onclick={{action this.buttonPressed}}&gt;Press Me!&lt;/button&gt;
+</code></pre>
+<p>Alternatively, a decorator could be used to bind the helper to the instance,
+such as the <code>@action</code> decorator proposed in the <a href="https://github.com/emberjs/rfcs/pull/408">Decorators RFC</a>.</p>
+<pre><code class="language-js">export default class ButtonComponent extends Component {
+  @action
+  buttonPressed() {
+    // ...
+  }
+}
+</code></pre>
+<pre><code class="language-hbs">&lt;button onclick={{this.buttonPressed}}&gt;Press Me!&lt;/button&gt;
+</code></pre>
+<p>However, one method for binding methods which should be discouraged is assigning
+an arrow function to class fields:</p>
+<pre><code class="language-js">export default class ButtonComponent extends Component {
+  buttonPressed = () =&gt; {
+    // ...
+  }
+}
+</code></pre>
+<p>This is messy for a few reasons:</p>
+<ul>
+<li>The method is no longer available on the prototype, making it difficult to
+mock</li>
+<li>It breaks <code>super</code> and inheritance, meaning subclasses have no way to override
+the arrow function</li>
+<li>Values such as <code>arguments</code> will not be set since it is an arrow function</li>
+</ul>
+<p>For more details, see <a href="https://github.com/tc39/proposal-decorators/blob/master/bound-decorator-rationale.md">this document explaining the rationale for decorators</a>
+over class fields for binding.</p>
+<h2><a class="header" href="#dependencies" id="dependencies">Dependencies</a></h2>
+<p>In it's current form this RFC is dependent on 2 of 3 open RFCs being accepted:</p>
+<ul>
+<li>
+<p>The <a href="https://github.com/emberjs/rfcs/pull/408">Decorators RFC</a> must be
+accepted, because Glimmer components cannot be defined using classic class
+syntax. If it is not accepted this RFC will have to be amended to add a way
+for users to define Glimmer components with classic classes.</p>
+</li>
+<li>
+<p>The <a href="https://github.com/emberjs/rfcs/pull/415">Render Element Modifiers RFC</a>
+must be accepted, since Glimmer components currently do not have any render
+lifecycle hooks or ways to interact with the DOM.</p>
+<p>If it is not accepted, this RFC will have to explore some of the alternatives
+listed below (<code>{{capture-element}}</code>, <code>bounds</code>, and render hooks).</p>
+</li>
+</ul>
+<h2><a class="header" href="#how-we-teach-this" id="how-we-teach-this">How we teach this</a></h2>
+<p>Teaching Glimmer components is intrinsically tied to a wider shift in the Ember
+programming model - the Ember Octane edition. From a teaching perspective, this
+edition will be completely overhauling the guides and updating all of the best
+practices as they stand. New users should see Glimmer components as the
+<em>default</em>, and should not ever have to write a classic component or see one in
+the main guides.</p>
+<p>Classic components will of course be widely used for some time however, so a
+classic section which includes conversion guides and relevant codemods should be
+made available in the guides, and maintained for as long as classic components
+are supported by Ember.</p>
+<p>Breaking down the public API of Glimmer components, we need to cover:</p>
+<ul>
+<li>Native class syntax, including the <code>constructor</code> and class fields</li>
+<li>Arguments</li>
+<li>Lifecycle hooks and properties</li>
+<li>Element modifiers</li>
+</ul>
+<h3><a class="header" href="#native-class-syntax" id="native-class-syntax">Native class syntax</a></h3>
+<p>One of the benefits of native class syntax is that it is used outside of Ember,
+so as time goes on we will be able to assume there is more general knowledge of
+it, and provide links to documentation for it for users who are not familiar.
+During this transitionary period though we should add a more thorough primer of
+the syntax to our guides, and explicitly call out the differences between
+classic class syntax and native class syntax, including:</p>
+<ul>
+<li>
+<p>Usage of <code>constructor</code> in classes which <em>do not</em> extend from classic classes.
+Otherwise, always use <code>init</code>. This will be tricky, because even when using
+native classes to extend from classic classes, you should still use <code>init</code>.</p>
+</li>
+<li>
+<p>Nuances of class fields - they run <em>after</em> <code>super</code>, and <em>before</em> user code.</p>
+</li>
+<li>
+<p>Benefits of class field initializers, and how they can be used to do much of
+the work that would otherwise be done in the <code>constructor</code> or <code>init</code></p>
+</li>
+<li>
+<p>Expense of class fields - new objects and functions are created for every
+instance, so users should also be careful with them.</p>
+</li>
+<li>
+<p>What ends up on the prototype and what's on the instance</p>
+</li>
+<li>
+<p>How do property initializers work</p>
+</li>
+<li>
+<p>What's the default behavior of a constructor, as it pertains to <code>super()</code> and passing arguments</p>
+</li>
+<li>
+<p>The risks of anonymous classes and class factories (i.e, you get poor stack traces)</p>
+</li>
+<li>
+<p>How to implement &quot;default values&quot; in ES6</p>
+</li>
+<li>
+<p>The risks of writing decorators in user-land code (until TC39 stage 4)</p>
+</li>
+<li>
+<p>Methods vs arrow function member values</p>
+</li>
+<li>
+<p>Getting ahold of prototypes if/when you need them</p>
+</li>
+</ul>
+<h3><a class="header" href="#arguments" id="arguments">Arguments</a></h3>
+<p>For arguments, namespacing makes sense in general as an API choice and is common
+in other frameworks (<code>props</code> in React, etc.). We should be sure to cover this
+thoroughly for users who are used to classic components, but it shouldn't
+require too much explaining.</p>
+<p>Immutability will be a bigger sticking point in general, in particular the
+inability to provide default argument values. This is easy enough to work around
+using an <code>{{or}}</code> helper in templates:</p>
+<pre><code class="language-hbs">Hello, {{or @firstName &quot;friend&quot;}}!
+</code></pre>
+<p>Or a defaulting alias getter in the class:</p>
+<pre><code class="language-hbs">Hello, {{this.firstName}}!
+</code></pre>
+<pre><code class="language-js">export default class Greeting extends GlimmerComponent {
+  @tracked
+  get firstName() {
+    return this.args.firstName || 'friend';
+  }
+}
+</code></pre>
+<p>But does add a bit of boilerplate to components. Users will also have to be
+careful when attempting to override these &quot;defaults&quot; in subclasses, since it is
+not as simple as overriding a class field or property. We can guide users to
+use template-only components to &quot;partially applied&quot; components when trying to
+provide defaults in subclasses instead, leveraging the outer HTML semantics of
+Glimmer components:</p>
+<pre><code class="language-hbs">&lt;!-- components/button.hbs --&gt;
+&lt;button class=&quot;button {{@type}}&quot;&gt;
+  &lt;i class=&quot;icon {{@type}}&quot;&gt;&lt;/i&gt;
+  {{yield}}
+&lt;/button&gt;
+</code></pre>
+<pre><code class="language-hbs">&lt;!-- component/success-button.hbs --&gt;
+&lt;Button @type=&quot;success&quot;&gt;{{yield}}&lt;/Button&gt;
+</code></pre>
+<pre><code class="language-hbs">&lt;!-- component/danger-button.hbs --&gt;
+&lt;Button @type=&quot;danger&quot;&gt;{{yield}}&lt;/Button&gt;
+</code></pre>
+<p>Or to explore possibilities using decorators, such as those in the
+<a href="https://github.com/gossi/sparkles-decorators">sparkles-decorators</a> addon.</p>
+<h4><a class="header" href="#lifecycle-hooks-and-properties" id="lifecycle-hooks-and-properties">Lifecycle hooks and properties</a></h4>
+<p>For users without framework experience, and users of other frameworks, lifecycle
+hooks will be very minimal and fairly easy to understand. The lack of render
+hooks may be the more difficult part to understand, and we'll have to lean on
+the documentation for element modifiers and make sure that is <em>really</em> excellent
+to get the concepts there across.</p>
+<p>For existing users, who are used to having a variety of hooks to choose from
+when coordinating lifecycle events, the hooks may be fairly confusing. The
+bullet points here are:</p>
+<ul>
+<li>Tracked properties/computed properties are the primary place to react to
+argument changes for any values that can be computed directly via getters.
+Ideally, most logic for derived state is conventionally in tracked or computed
+properties.</li>
+<li><code>willDestroy</code> is the correct place for all teardown code, like in classic
+components.</li>
+<li><code>didReceiveAttrs</code>, <code>willRender</code>, and <code>didRender</code> code should be extracted into
+functions which are then passed to <code>{{did-insert}}</code> and <code>{{did-update}}</code></li>
+<li><code>willDestroyElement</code> code should be extracted into functions which are then
+passed to <code>{{will-destroy}}</code></li>
+</ul>
+<p>Additionally, we should make sure we cover <code>isDestroying</code> and <code>isDestroyed</code>
+pretty thoroughly. Users should know that they can (and probably should) check
+these flags if they are doing anything asynchronous that could happen after the
+component has been torn down.</p>
+<h4><a class="header" href="#element-modifiers-1" id="element-modifiers-1">Element modifiers</a></h4>
+<p>The render element modifiers will be the most different part of Glimmer
+components for users. The strategy for teaching these is <a href="https://github.com/emberjs/rfcs/blob/b9f390cb98f560d9cf876e3b1d67226fe0e1613b/text/0000-render-element-modifiers.md#how-we-teach-this">included in their
+RFC</a>,
+but the key points are:</p>
+<ol>
+<li>
+<p>Teaching modifiers as a concept first, so users understand that what they're
+looking at is a <em>general</em> tool, and that the render modifiers are an official
+addon provided by Ember.</p>
+</li>
+<li>
+<p>Providing <em>lots</em> of examples for various use cases, especially for users
+transitioning from classic components.</p>
+</li>
+</ol>
+<h3><a class="header" href="#template-only-components" id="template-only-components">Template-Only Components</a></h3>
+<p><a href="https://github.com/emberjs/rfcs/blob/master/text/0278-template-only-components.md">Template-only components</a>
+are not strictly speaking related to the <code>GlimmerComponent</code> class proposed in
+this RFC. However, conceptually they will probably be much easier to teach in
+relation to Glimmer components, and will be an important part of Octane that we
+should be sure to cover in depth. Additionally, the name of the optional feature
+flag, <code>template-only-glimmer-components</code>, would make teaching the differences
+between Glimmer components and template-only components much more difficult and
+confusing.</p>
+<p>As such, when writing the documentation for Glimmer components, we should ensure
+that we cover template-only components in some detail as well.</p>
+<h2><a class="header" href="#drawbacks" id="drawbacks">Drawbacks</a></h2>
+<h3><a class="header" href="#multiple-component-apis" id="multiple-component-apis">Multiple component APIs</a></h3>
+<p>One major drawback to Glimmer components is that they add a separate API for
+components, meaning that for the forseeable future Ember users will likely
+need to learn how to use both interchangeably. This introduces a fair amount of
+mental overhead for users, but the benefits of Glimmer components and their
+simplicity should make this less problematic.</p>
+<h3><a class="header" href="#heavy-reliance-on-element-modifiers" id="heavy-reliance-on-element-modifiers">Heavy reliance on element modifiers</a></h3>
+<p>Glimmer components as proposed in this RFC are heavily reliant on element
+modifiers for element manipulation. Element modifiers are a relatively new
+concept in Ember, and as such will likely be unfamiliar to users and require
+more learning than normal to get used to. This also means that users will not
+be able to rely on well established patterns, and will have to develop new ones
+for dealing with element manipulation.</p>
+<h3><a class="header" href="#lack-of-positional-parameter-support" id="lack-of-positional-parameter-support">Lack of positional parameter support</a></h3>
+<p>Glimmer components are meant to cover <em>most</em> common use cases, but are also
+meant to be as minimal as possible. As such, they do <em>not</em> have support for
+positional parameters. Positional parameters are already unusable with any
+component invoked using angle bracket syntax, but Glimmer components will also
+not support them even when using curly bracket invocation.</p>
+<p>The use cases for positional parameters are very uncommon, so it doesn't make
+sense to add them to the main component class as an option. Instead, we should
+make alternative component classes which support positional parameters, perhaps
+exclusively (e.g. asserting if positional parameters are <em>not</em> defined).</p>
+<h2><a class="header" href="#alternatives" id="alternatives">Alternatives</a></h2>
+<h3><a class="header" href="#render-lifecycle-hooks" id="render-lifecycle-hooks">Render lifecycle hooks</a></h3>
+<p>The ommission of <code>didRender</code>,  <code>didUpdate</code>, <code>didInsertElement</code>,
+<code>willDestroyElement</code>, and other render oriented hooks could be confusing to
+users. These were staples of classic components, are common in other frameworks,
+and make it easy for users to orient themselves when looking at a component
+class. They are part of the &quot;standard lifecycle&quot; that make up many component
+rendering systems, and make components easier to teach. They also allow users to
+place most of their element manipulation logic inside their components, which is
+a benefit for users who prefer lighter templates with less logic in them.</p>
+<p>Element modifiers, by contrast, are a very new concept in Ember and will require
+users to learn a fair amount more just to get started. They force more logic
+into the template, and mean users have to look at the template to know if a
+method is an element lifecycle hook or an internal method.</p>
+<p>Adding the standard element lifecycle hooks would allow users to follow the
+patterns they are currently used to, and that are used in other frameworks. If
+added without <code>{{capture-element}}</code> or <code>bounds</code> (see below), they could be used
+with <code>{{did-insert}}</code> and <code>{{will-destroy}}</code> for registering elements:</p>
+<pre><code class="language-hbs">&lt;div {{did-render this.registerElement}}&gt;&lt;/div&gt;
+</code></pre>
+<pre><code class="language-js">class ExampleComponent extends Component {
+  @action
+  registerElement(element) {
+    this.element = element;
+  }
+
+  didRender() {
+    setupElement(this.element);
+  }
+}
+</code></pre>
+<h3><a class="header" href="#add-a-capture-element-modifier" id="add-a-capture-element-modifier">Add a <code>{{capture-element}}</code> modifier</a></h3>
+<p>This alternative would go hand in hand with having render lifecycle hooks.
+Rather than relying solely on element modifiers for DOM manipulation, we could
+add a modifier that allows users to specify elements which they want to
+reference in their component class:</p>
+<pre><code class="language-hbs">&lt;div {{capture-element this}}&gt;&lt;/div&gt;
+</code></pre>
+<pre><code class="language-js">class ExampleComponent extends Component {
+  didRender() {
+    setupElement(this.elements.main);
+  }
+}
+</code></pre>
+<p>This would have to take into account multiple usages, and variations of usages.
+For instance, how would using <code>capture-element</code> in an <code>if</code> or <code>each</code> work?</p>
+<pre><code class="language-hbs">&lt;div {{capture-element this}}&gt;
+  {{#if someBool}}
+    &lt;div {{capture-element this 'conditionalElement'}}&gt;
+  {{/if}}
+
+  {{#each items as |item|}}
+    &lt;div {{capture-element this 'itemElements'}}&gt;
+  {{/each}}
+&lt;/div&gt;
+</code></pre>
+<pre><code class="language-js">class ExampleComponent extends Component {
+  didRender() {
+    this.elements.main; // the main outer div
+    this.elements.conditionalElement; // the conditional element
+    this.elements.itemElements; // An array of all the items that are rendered
+  }
+}
+</code></pre>
+<p>This would also mean a fair amount of additional code would need to be added for
+reacting to changes in the DOM compared to <code>{{did-insert}}</code> and
+<code>{{will-destroy}}</code>. For instance, if the case of conditionally captured element,
+additional validation code will have to exist in <code>didRender</code>:</p>
+<pre><code class="language-js">class ExampleComponent extends Component {
+  didRender() {
+    let { conditionalElement } = this.elements;
+
+    if (conditionalElement) {
+      this._previousConditionalElement = conditionalElement;
+
+      setupPlugin(conditionalElement);
+    } else {
+      teardownPlugin(this._previousConditionalElement);
+    }
+  }
+}
+</code></pre>
+<p>This problem is compounded in collections, where any number of elements may be
+added or removed.</p>
+<h3><a class="header" href="#add-element-or-bounds-on-the-component" id="add-element-or-bounds-on-the-component">Add <code>element</code> or <code>bounds</code> on the component</a></h3>
+<p>We could attempt to add DOM references back to the component, instead of adding
+the <code>{{did-insert}}</code> and <code>{{will-destroy}}</code> modifiers. This would require us to
+handle a number of edge-cases (0 element, multi element), and would open up some
+intimate details of the Glimmer VM to user code (<code>bounds</code> nodes). If in the
+future the VM wanted to change these details, it could be problematic.</p>
+<p>Element modifiers are less invasive, more declarative, and handle a lot of
+boilerplate type code (checking to see if an element exists, for instance).
+However, they are also very new to Ember users as a concept (aside from
+<code>{{action}}</code>) and could be difficult to teach.</p>
+<h3><a class="header" href="#init-vs-constructor" id="init-vs-constructor"><code>init</code> vs <code>constructor</code></a></h3>
+<p>Recent changes to the way native classes extend from <code>EmberObject</code> made it so
+users have to use <code>init</code> instead of the <code>constructor</code>. This is a pretty
+universal caveat currently, so it's fairly teachable - there is a <code>constructor</code>,
+but use <code>init</code> instead (see the <a href="https://github.com/emberjs/rfcs/blob/master/text/0337-native-class-constructor-update.md">Native Class Constructor
+RFC</a>)</p>
+<p>With the current design of Glimmer components, we are introducing the first base
+class which doesn't extend from <code>EmberObject</code>, and requires users to use
+<code>constructor</code> instead. This could be confusing, and will have to be <em>very</em>
+clearly documented at the least.</p>
+<p>We could alternatively include an <code>init</code> hook, or have both. This would allow
+users to follow one rule for object initialization, but would also lock us into
+the supporting the <code>init</code> hook for the forseeable future.</p>
+<h3><a class="header" href="#no-owner-in-constructor" id="no-owner-in-constructor">No owner in constructor</a></h3>
+<p>Sparkles components do not provide access to the owner or injections in the
+constructor, though it is a requested feature. Instead of passing the owner to
+the constructor, we could add a <code>willCreate</code> or <code>init</code> hook which allows users
+to setup the instance after the owner has been assigned.</p>
+<p>Alternatively, the exact method by which the owner is passed to the constructor
+can be changed (on an object vs directly) or all injections could be passed,
+enabling typed injections.</p>
+<h2><a class="header" href="#appendix-lifecycle-hook-audit" id="appendix-lifecycle-hook-audit">Appendix: Lifecycle Hook Audit</a></h2>
+<h3><a class="header" href="#a-hrefhttpsmiguelcobaingithubioember-paperember-papera" id="a-hrefhttpsmiguelcobaingithubioember-paperember-papera"><a href="https://miguelcobain.github.io/ember-paper/">ember-paper</a></a></h3>
+<h4><a class="header" href="#didupdateattrs" id="didupdateattrs"><code>didUpdateAttrs</code></a></h4>
+<table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-autocomplete-trigger.js#L37">link</a></td><td>Setup component state based on incoming arguments</td><td>Tracked properties</td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-grid-tile.js#L41">link</a></td><td>Setup component state based on incoming arguments</td><td>Tracked properties</td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-slider.js#L69">link</a></td><td>Element setup/update code based on incoming arguments</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-switch.js#L75">link</a></td><td>Element setup/update code based on incoming arguments</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-toast-inner.js#L65">link</a></td><td>Element setup/update code based on incoming arguments</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
+</tbody></table>
+<h4><a class="header" href="#didreceiveattrs" id="didreceiveattrs"><code>didReceiveAttrs</code></a></h4>
+<table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-autocomplete.js#L93">link</a></td><td>Setup component state based on incoming arguments</td><td>Tracked properties and <code>constructor</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-card-actions.js#L17">link</a></td><td>Setup component state based on incoming arguments</td><td>Tracked properties and <code>constructor</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-input.js#L76">link</a></td><td>Setup component state based on incoming arguments, validate incoming arguments</td><td>Tracked properties and <code>constructor</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-progress-circular.js#L126">link</a></td><td>Animate based on incoming arguments</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-select.js#L40">link</a></td><td>Trigger validations</td><td>Tracked properties and <code>constructor</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-sidenav-inner.js#L55">link</a></td><td>Element update code and sending an action</td><td>Tracked properties and <code>{{did-insert}}</code> with args</td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-virtual-repeat.js#L131">link</a></td><td>Updating logic and element update code</td><td>Tracked properties and <code>{{did-insert}}</code> with args</td></tr>
+</tbody></table>
+<h4><a class="header" href="#willinsertelement" id="willinsertelement"><code>willInsertElement</code></a></h4>
+<table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-toast.js#L91">link</a></td><td>Container setup code on initialization</td><td><code>{{did-insert}}</code></td></tr>
+</tbody></table>
+<h4><a class="header" href="#didinsertelement" id="didinsertelement"><code>didInsertElement</code></a></h4>
+<table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-dialog-inner.js#L39">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-dialog.js#L64">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-grid-list.js#L52">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-input.js#L89">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-menu-content-inner.js#L26">link</a></td><td>Set focus after initial render</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-progress-circular.js#L118">link</a></td><td>Setup animation based on arguments</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-select-menu-inner.js#L29">link</a></td><td>Set focus after initial render</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-select-options.js#L14">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-sidenav-inner.js#L48">link</a></td><td>Element setup code on initialization (partially based on args)</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-slider.js#L62">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-switch.js#L56">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-tab.js#L44">link</a></td><td>Measure element on initialization</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-tabs.js#L71">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-toast-inner.js#L58">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-toast.js#L96">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-tooltip-inner.js#L24">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-tooltip.js#L67">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-virtual-repeat-scroller.js#L8">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-virtual-repeat.js#L8">link</a></td><td>Measure element on initialization</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/mixins/ripple-mixin.js#L8">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/mixins/translate3d-mixin.js#L8">link</a></td><td>Element animation on setup</td><td><code>{{did-insert}}</code></td></tr>
+</tbody></table>
+<h4><a class="header" href="#willdestroyelement" id="willdestroyelement"><code>willDestroyElement</code></a></h4>
+<table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-dialog-inner.js#L51">link</a></td><td>Element teardown code on destruction</td><td><code>{{will-destroy}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-dialog.js#L79">link</a></td><td>Element teardown code on destruction</td><td><code>{{will-destroy}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-grid-list.js#L64">link</a></td><td>Element teardown code on destruction</td><td><code>{{will-destroy}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-input.js#L104">link</a></td><td>Element teardown code on destruction</td><td><code>{{will-destroy}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-progress-circular.js#L153">link</a></td><td>Teardown animations on destruction</td><td><code>{{will-destroy}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-slider.js#L81">link</a></td><td>Element teardown code on destruction</td><td><code>{{will-destroy}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-switch.js#L70">link</a></td><td>Element teardown code on destruction</td><td><code>{{will-destroy}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-tabs.js#L102">link</a></td><td>Element teardown code on destruction</td><td><code>{{will-destroy}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-toast-inner.js#L77">link</a></td><td>Element teardown code on destruction</td><td><code>{{will-destroy}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-toast.js#L118">link</a></td><td>Element teardown code on destruction</td><td><code>{{will-destroy}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-tooltip.js#L110">link</a></td><td>Element teardown code on destruction</td><td><code>{{will-destroy}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-virtual-repeat-scroller.js#L17">link</a></td><td>Element teardown code on destruction</td><td><code>{{will-destroy}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/mixins/child-mixin.js#L30">link</a></td><td>Unregister child class from parent</td><td><code>willDestroy</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/mixins/translate3d-mixin.js#L30">link</a></td><td>Teardown animations on destruction</td><td><code>{{will-destroy}}</code></td></tr>
+</tbody></table>
+<h4><a class="header" href="#didupdate" id="didupdate"><code>didUpdate</code></a></h4>
+<table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-grid-list.js#L57">link</a></td><td>Reapply styles based on changes to args</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
+</tbody></table>
+<h4><a class="header" href="#didrender" id="didrender"><code>didRender</code></a></h4>
+<table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-input.js#L97">link</a></td><td>Resize component based on changes to args</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code>, or <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">MutationObserver</a></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-speed-dial-action-action.js#L34">link</a></td><td>Animate component based on changes to arguments</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-speed-dial.js#L32">link</a></td><td>Set <code>elementDidRender</code> boolean on instance</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-tab.js#L52">link</a></td><td>Measure component on render</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code>, or <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">MutationObserver</a></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-tabs.js#L96">link</a></td><td>Resize component based on changes to size</td><td><code>{{did-insert}}</code> with args, or <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">MutationObserver</a></td></tr>
+<tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-virtual-repeat.js#L156">link</a></td><td>Measure element sizes based on changes to args</td><td><code>{{did-insert}}</code> with args</td></tr>
+</tbody></table>
+<h3><a class="header" href="#a-hrefhttpsgithubcomsandydooember-google-mapsember-google-mapsa" id="a-hrefhttpsgithubcomsandydooember-google-mapsember-google-mapsa"><a href="https://github.com/sandydoo/ember-google-maps">ember-google-maps</a></a></h3>
+<h4><a class="header" href="#didupdateattrs-1" id="didupdateattrs-1"><code>didUpdateAttrs</code></a></h4>
+<table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/components/g-map.js#L103">link</a></td><td>Synchronize options with Google maps</td><td>Refactor to use actions to modify data, or use a modifier</td></tr>
+<tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/components/g-map/map-component.js#L54">link</a></td><td>Update component based on changes to arguments</td><td>Refactor to use actions to modify data, or use a modifier</td></tr>
+</tbody></table>
+<h4><a class="header" href="#didreceiveattrs-1" id="didreceiveattrs-1"><code>didReceiveAttrs</code></a></h4>
+<table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/components/g-map/waypoint.js#L20">link</a></td><td>Register component with parent</td><td><code>constructor</code></td></tr>
+</tbody></table>
+<h4><a class="header" href="#didinsertelement-1" id="didinsertelement-1"><code>didInsertElement</code></a></h4>
+<table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/components/g-map/map-component.js#L46">link</a></td><td>Register component with parent and initialize</td><td><code>constructor</code> and parent component <code>{{did-insert}}</code></td></tr>
+</tbody></table>
+<h4><a class="header" href="#willdestroyelement-1" id="willdestroyelement-1"><code>willDestroyElement</code></a></h4>
+<table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/components/g-map/map-component.js#L60">link</a></td><td>Element teardown code on destruction (and potentially destruction of parent)</td><td><code>willDestroy</code> and parent component <code>{{will-destroy}}</code></td></tr>
+<tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/components/g-map/waypoint.js#L26">link</a></td><td>Unregister element from parent</td><td><code>willDestroy</code> and parent component <code>{{will-destroy}}</code></td></tr>
+<tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/mixins/process-options.js#L26">link</a></td><td>Teardown class state</td><td><code>willDestroy</code></td></tr>
+<tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/mixins/register-events.js#L26">link</a></td><td>Teardown class state</td><td><code>willDestroy</code></td></tr>
+</tbody></table>
+<h4><a class="header" href="#didrender-1" id="didrender-1"><code>didRender</code></a></h4>
+<table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/master/addon/templates/components/g-map/overlay.hbs#L6">link</a></td><td>Detect changes to subtree and reposition overlay</td><td><a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">MutationObserver</a> or custom component that can trigger actions on subtree rerenders</td></tr>
+</tbody></table>
+<h3><a class="header" href="#a-hrefhttpsgithubcomember-animationliquid-fireliquid-firea" id="a-hrefhttpsgithubcomember-animationliquid-fireliquid-firea"><a href="https://github.com/ember-animation/liquid-fire">liquid-fire</a></a></h3>
+<h4><a class="header" href="#didreceiveattrs-2" id="didreceiveattrs-2"><code>didReceiveAttrs</code></a></h4>
+<table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/illiquid-model.js#L7">link</a></td><td>Capture argument as component state</td><td><code>constructor</code></td></tr>
+<tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-outlet.js#L23">link</a></td><td>Capture argument as component state</td><td><code>constructor</code></td></tr>
+<tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-versions.js#L15">link</a></td><td>Run update code for changing versions (and animating)</td><td><code>constructor</code> and tracked properties or element modifiers</td></tr>
+</tbody></table>
+<h4><a class="header" href="#didinsertelement-2" id="didinsertelement-2"><code>didInsertElement</code></a></h4>
+<table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-child.js#L12">link</a></td><td>Trigger animation</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-container.js#L44">link</a></td><td>Set did render</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-measured.js#L15">link</a></td><td>Element setup code on insertion</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-spacer.js#L11">link</a></td><td>Element setup code on insertion</td><td><code>{{did-insert}}</code></td></tr>
+<tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-sync.js#L8">link</a></td><td>Pause animations on insertion (continue later via action)</td><td><code>{{did-insert}}</code></td></tr>
+</tbody></table>
+<h4><a class="header" href="#willdestroyelement-2" id="willdestroyelement-2"><code>willDestroyElement</code></a></h4>
+<table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-measured.js#L37">link</a></td><td>Element teardown code on destruction</td><td><code>{{will-destroy}}</code></td></tr>
+</tbody></table>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="0415-render-element-modifiers.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="0418-deprecate-route-render-methods.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="0415-render-element-modifiers.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="0418-deprecate-route-render-methods.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

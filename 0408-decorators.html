@@ -1,0 +1,1348 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>0408-decorators - </title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="affix"><a href="introduction.html">Introduction</a></li><li><a href="0001-transform-attribute-meta-parameter.html">0001-transform-attribute-meta-parameter</a></li><li><a href="0003-block-params.html">0003-block-params</a></li><li><a href="0003-cli-ember-doctor.html">0003-cli-ember-doctor</a></li><li><a href="0010-engines.html">0010-engines</a></li><li><a href="0011-improved-cp-syntax.html">0011-improved-cp-syntax</a></li><li><a href="0012-help-json-output.html">0012-help-json-output</a></li><li><a href="0015-the-road-to-ember-2-0.html">0015-the-road-to-ember-2-0</a></li><li><a href="0020-sri-default.html">0020-sri-default</a></li><li><a href="0023-command-line-completion.html">0023-command-line-completion</a></li><li><a href="0024-bound-attributes.html">0024-bound-attributes</a></li><li><a href="0028-app-import-output-file.html">0028-app-import-output-file</a></li><li><a href="0029-addon-black-and-whitelist-for-apps.html">0029-addon-black-and-whitelist-for-apps</a></li><li><a href="0045-internet-explorer.html">0045-internet-explorer</a></li><li><a href="0046-cli-improved-release-process.html">0046-cli-improved-release-process</a></li><li><a href="0046-registry-reform.html">0046-registry-reform</a></li><li><a href="0050-cli-production-code-stripping.html">0050-cli-production-code-stripping</a></li><li><a href="0050-improved-actions.html">0050-improved-actions</a></li><li><a href="0053-helpers.html">0053-helpers</a></li><li><a href="0055-anonymous-amd.html">0055-anonymous-amd</a></li><li><a href="0056-improved-release-cycle.html">0056-improved-release-cycle</a></li><li><a href="0057-ember-data-reference-unification.html">0057-ember-data-reference-unification</a></li><li><a href="0058-helper-listing.html">0058-helper-listing</a></li><li><a href="0061-ember-data-background-fetch.html">0061-ember-data-background-fetch</a></li><li><a href="0064-contextual-component-lookup.html">0064-contextual-component-lookup</a></li><li><a href="0065-deprecation-warning-handlers.html">0065-deprecation-warning-handlers</a></li><li><a href="0080-serve-file-api.html">0080-serve-file-api</a></li><li><a href="0086-firefox-in-ci.html">0086-firefox-in-ci</a></li><li><a href="0090-addon-tree-caching.html">0090-addon-tree-caching</a></li><li><a href="0091-cli-addon-instrumentation-experimental-hooks.html">0091-cli-addon-instrumentation-experimental-hooks</a></li><li><a href="0091-weakmap.html">0091-weakmap</a></li><li><a href="0092-blueprint-remove-old-files.html">0092-blueprint-remove-old-files</a></li><li><a href="0095-cli-standardise-targets.html">0095-cli-standardise-targets</a></li><li><a href="0095-router-service.html">0095-router-service</a></li><li><a href="0096-enable-yarn-usage.html">0096-enable-yarn-usage</a></li><li><a href="0101-ember-data-friendly-errors.html">0101-ember-data-friendly-errors</a></li><li><a href="0105-addons-optionalDependencies.html">0105-addons-optionalDependencies</a></li><li><a href="0108-add-custom-transform.html">0108-add-custom-transform</a></li><li><a href="0110-packaging.html">0110-packaging</a></li><li><a href="0114-add-template-lint-addon.html">0114-add-template-lint-addon</a></li><li><a href="0116-qunit-dom.html">0116-qunit-dom</a></li><li><a href="0120-cli-guides.html">0120-cli-guides</a></li><li><a href="0120-route-serializers.html">0120-route-serializers</a></li><li><a href="0121-remove-ember-cli-eslint.html">0121-remove-ember-cli-eslint</a></li><li><a href="0136-contains-to-includes.html">0136-contains-to-includes</a></li><li><a href="0139-isHtmlSafe.html">0139-isHtmlSafe</a></li><li><a href="0143-module-unification.html">0143-module-unification</a></li><li><a href="0150-factory-for.html">0150-factory-for</a></li><li><a href="0176-javascript-module-api.html">0176-javascript-module-api</a></li><li><a href="0178-deprecate-ember-k.html">0178-deprecate-ember-k</a></li><li><a href="0181-deprecate-ember-data-initializers.html">0181-deprecate-ember-data-initializers</a></li><li><a href="0186-track-unique-history-location-state.html">0186-track-unique-history-location-state</a></li><li><a href="0191-deprecate-component-lifecycle-hook-args.html">0191-deprecate-component-lifecycle-hook-args</a></li><li><a href="0194-deprecate-custom-event-manager.html">0194-deprecate-custom-event-manager</a></li><li><a href="0213-custom-components.html">0213-custom-components</a></li><li><a href="0225-ember-engines-mount-params.html">0225-ember-engines-mount-params</a></li><li><a href="0226-named-blocks.html">0226-named-blocks</a></li><li><a href="0229-deprecate-testing-restricted-resolver.html">0229-deprecate-testing-restricted-resolver</a></li><li><a href="0232-simplify-qunit-testing-api.html">0232-simplify-qunit-testing-api</a></li><li><a href="0236-deprecation-ember-string.html">0236-deprecation-ember-string</a></li><li><a href="0237-deprecation-ember-map.html">0237-deprecation-ember-map</a></li><li><a href="0240-es-classes.html">0240-es-classes</a></li><li><a href="0252-browser-support-changes.html">0252-browser-support-changes</a></li><li><a href="0268-acceptance-testing-refactor.html">0268-acceptance-testing-refactor</a></li><li><a href="0272-deprecation-native-function-prototype-extensions.html">0272-deprecation-native-function-prototype-extensions</a></li><li><a href="0276-named-args.html">0276-named-args</a></li><li><a href="0278-template-only-components.html">0278-template-only-components</a></li><li><a href="0280-remove-application-wrapper.html">0280-remove-application-wrapper</a></li><li><a href="0281-es5-getters.html">0281-es5-getters</a></li><li><a href="0286-block-let-template-helper.html">0286-block-let-template-helper</a></li><li><a href="0287-promote-in-element-to-public-api.html">0287-promote-in-element-to-public-api</a></li><li><a href="0293-record-data.html">0293-record-data</a></li><li><a href="0294-optional-jquery.html">0294-optional-jquery</a></li><li><a href="0297-deprecate-ember-logger.html">0297-deprecate-ember-logger</a></li><li><a href="0300-rfc-process-update.html">0300-rfc-process-update</a></li><li><a href="0308-deprecate-property-lookup-fallback.html">0308-deprecate-property-lookup-fallback</a></li><li><a href="0311-angle-bracket-invocation.html">0311-angle-bracket-invocation</a></li><li><a href="0318-array-helper.html">0318-array-helper</a></li><li><a href="0322-deprecate-copy-copyable.html">0322-deprecate-copy-copyable</a></li><li><a href="0324-deprecate-component-isvisible.html">0324-deprecate-component-isvisible</a></li><li><a href="0326-ember-data-filter-deprecation.html">0326-ember-data-filter-deprecation</a></li><li><a href="0329-deprecated-ember-evented-in-ember-data.html">0329-deprecated-ember-evented-in-ember-data</a></li><li><a href="0331-deprecate-globals-resolver.html">0331-deprecate-globals-resolver</a></li><li><a href="0332-ember-data-record-links-and-meta.html">0332-ember-data-record-links-and-meta</a></li><li><a href="0335-deprecate-send-action.html">0335-deprecate-send-action</a></li><li><a href="0337-native-class-constructor-update.html">0337-native-class-constructor-update</a></li><li><a href="0340-deprecate-ember-merge.html">0340-deprecate-ember-merge</a></li><li><a href="0345-discord.html">0345-discord</a></li><li><a href="0364-roadmap-2018.html">0364-roadmap-2018</a></li><li><a href="0369-deprecate-computed-clobberability.html">0369-deprecate-computed-clobberability</a></li><li><a href="0370-deprecate-computed-volatile.html">0370-deprecate-computed-volatile</a></li><li><a href="0372-ember-data-model-factory-for.html">0372-ember-data-model-factory-for</a></li><li><a href="0373-Element-Modifier-Managers.html">0373-Element-Modifier-Managers</a></li><li><a href="0375-deprecate-computed-property-modifier.html">0375-deprecate-computed-property-modifier</a></li><li><a href="0386-remove-jquery.html">0386-remove-jquery</a></li><li><a href="0389-dynamic-tag-names.html">0389-dynamic-tag-names</a></li><li><a href="0391-router-helpers.html">0391-router-helpers</a></li><li><a href="0392-deprecate-component-manager-string-lookup.html">0392-deprecate-component-manager-string-lookup</a></li><li><a href="0395-ember-data-packages.html">0395-ember-data-packages</a></li><li><a href="0398-RouteInfo-Metadata.html">0398-RouteInfo-Metadata</a></li><li><a href="0403-ember-data-identifiers.html">0403-ember-data-identifiers</a></li><li><a href="0408-decorators.html" class="active">0408-decorators</a></li><li><a href="0410-tracked-properties.html">0410-tracked-properties</a></li><li><a href="0415-render-element-modifiers.html">0415-render-element-modifiers</a></li><li><a href="0416-glimmer-components.html">0416-glimmer-components</a></li><li><a href="0418-deprecate-route-render-methods.html">0418-deprecate-route-render-methods</a></li><li><a href="0421-deprecate-application-controller-props.html">0421-deprecate-application-controller-props</a></li><li><a href="0425-website-redesign.html">0425-website-redesign</a></li><li><a href="0431-guides-restructure.html">0431-guides-restructure</a></li><li><a href="0432-contextual-helpers.html">0432-contextual-helpers</a></li><li><a href="0435-modifier-splattributes.html">0435-modifier-splattributes</a></li><li><a href="0440-decorator-support.html">0440-decorator-support</a></li><li><a href="0445-deprecate-with.html">0445-deprecate-with</a></li><li><a href="0446-contribution-guides.html">0446-contribution-guides</a></li><li><a href="0449-deprecate-partials.html">0449-deprecate-partials</a></li><li><a href="0451-injection-parameter-normalization.html">0451-injection-parameter-normalization</a></li><li><a href="0452-ember-data-medium-term-plan.html">0452-ember-data-medium-term-plan</a></li><li><a href="0457-nested-lookups.html">0457-nested-lookups</a></li><li><a href="0459-angle-bracket-built-in-components.html">0459-angle-bracket-built-in-components</a></li><li><a href="0460-yieldable-named-blocks.html">0460-yieldable-named-blocks</a></li><li><a href="0461-ember-data-singleton-record-data.html">0461-ember-data-singleton-record-data</a></li><li><a href="0463-record-data-state.html">0463-record-data-state</a></li><li><a href="0465-record-data-errors.html">0465-record-data-errors</a></li><li><a href="0466-request-state-service.html">0466-request-state-service</a></li><li><a href="0468-classic-decorator.html">0468-classic-decorator</a></li><li><a href="0470-fn-helper.html">0470-fn-helper</a></li><li><a href="0471-on-modifier.html">0471-on-modifier</a></li><li><a href="0477-blueprints-update.html">0477-blueprints-update</a></li><li><a href="0478-tracked-properties-updates.html">0478-tracked-properties-updates</a></li><li><a href="0481-component-templates-co-location.html">0481-component-templates-co-location</a></li><li><a href="0486-deprecate-mouseenter.html">0486-deprecate-mouseenter</a></li><li><a href="0487-custom-model-classes.html">0487-custom-model-classes</a></li><li><a href="0491-deprecate-disconnect-outlet.html">0491-deprecate-disconnect-outlet</a></li><li><a href="0494-async-observers.html">0494-async-observers</a></li><li><a href="0496-handlebars-strict-mode.html">0496-handlebars-strict-mode</a></li><li><a href="0507-embroider-v2-package-format.html">0507-embroider-v2-package-format</a></li><li><a href="0519-2019-2020-roadmap.html">0519-2019-2020-roadmap</a></li><li><a href="0521-find-by-identifier.html">0521-find-by-identifier</a></li><li><a href="0522-default-serializers-and-adapters.html">0522-default-serializers-and-adapters</a></li><li><a href="0523-model-argument-for-route-templates.html">0523-model-argument-for-route-templates</a></li><li><a href="0554-deprecate-getwithdefault.html">0554-deprecate-getwithdefault</a></li><li><a href="0558-edition-detection.html">0558-edition-detection</a></li><li><a href="0560-add-equality-operators.html">0560-add-equality-operators</a></li><li><a href="0561-add-numeric-comparison-operators.html">0561-add-numeric-comparison-operators</a></li><li><a href="0562-add-logical-operators.html">0562-add-logical-operators</a></li><li><a href="0566-memo-decorator.html">0566-memo-decorator</a></li><li><a href="0580-destroyables.html">0580-destroyables</a></li><li><a href="0581-new-test-waiters.html">0581-new-test-waiters</a></li><li><a href="0585-improved-ember-registry-apis.html">0585-improved-ember-registry-apis</a></li><li><a href="0615-autotracking-memoization.html">0615-autotracking-memoization</a></li><li><a href="0617-rfc-stages.html">0617-rfc-stages</a></li><li><a href="0625-helper-managers.html">0625-helper-managers</a></li><li><a href="0626-invoke-helper.html">0626-invoke-helper</a></li><li><a href="0628-prettier.html">0628-prettier</a></li><li><a href="0631-refresh-method-for-router-service.html">0631-refresh-method-for-router-service</a></li><li><a href="0635-ember-new-lang.html">0635-ember-new-lang</a></li><li><a href="0637-customizable-test-setups.html">0637-customizable-test-setups</a></li><li><a href="0638-interactive-app-creation.html">0638-interactive-app-creation</a></li><li><a href="0639-replace-blacklist-whitelist.html">0639-replace-blacklist-whitelist</a></li><li><a href="0645-add-ember-page-title-addon.html">0645-add-ember-page-title-addon</a></li><li><a href="0649-deprecation-staging.html">0649-deprecation-staging</a></li><li><a href="0659-unique-id-helper.html">0659-unique-id-helper</a></li><li><a href="0669-tracked-storage-primitive.html">0669-tracked-storage-primitive</a></li><li><a href="0671-modernize-built-in-components-1.html">0671-modernize-built-in-components-1</a></li><li><a href="0673-deprecate-tryinvoke.html">0673-deprecate-tryinvoke</a></li><li><a href="0674-deprecate-transition-methods-of-controller-and-route.html">0674-deprecate-transition-methods-of-controller-and-route</a></li><li><a href="0680-implicit-injection-deprecation.html">0680-implicit-injection-deprecation</a></li><li><a href="0685-new-browser-support-policy.html">0685-new-browser-support-policy</a></li><li><a href="0686-deprecate-old-manager-capabilities-versions.html">0686-deprecate-old-manager-capabilities-versions</a></li><li><a href="0689-deprecate-has-block.html">0689-deprecate-has-block</a></li><li><a href="0690-deprecate-attrs-in-templates.html">0690-deprecate-attrs-in-templates</a></li><li><a href="0691-deprecate-class-binding-and-class-name-bindings.html">0691-deprecate-class-binding-and-class-name-bindings</a></li><li><a href="0692-deprecate-array-observers.html">0692-deprecate-array-observers</a></li><li><a href="0698-deprecate-link-to-positional-arguments.html">0698-deprecate-link-to-positional-arguments</a></li><li><a href="0702-eslint-plugin-qunit.html">0702-eslint-plugin-qunit</a></li><li><a href="0704-deprecate-octane-optional-features.html">0704-deprecate-octane-optional-features</a></li><li><a href="0705-deprecate-jquery-optional-feature.html">0705-deprecate-jquery-optional-feature</a></li><li><a href="0706-deprecate-ember-global.html">0706-deprecate-ember-global</a></li><li><a href="0707-modernize-built-in-components-2.html">0707-modernize-built-in-components-2</a></li><li><a href="0711-deprecate-auto-location.html">0711-deprecate-auto-location</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title"></h1>
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <hr />
+<p>Start Date: 2018-10-20
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/408
+Tracking: https://github.com/emberjs/rfc-tracking/issues/7</p>
+<hr />
+<h1><a class="header" href="#decorators" id="decorators">Decorators</a></h1>
+<h2><a class="header" href="#summary" id="summary">Summary</a></h2>
+<p>Native classes are now officially supported in Ember, but currently their usage
+is very limited. Core Ember features such as computed properties, actions, and
+service injections have no publicly supported APIs to be used with native class
+syntax.</p>
+<p>Decorators provide a way to abstract functionality and improve the developer
+experience of working with native classes.  This RFC outlines the implementation
+and rollout plan for bringing decorators to Ember's computed properties (and
+other behavior) for use in native classes.</p>
+<h3><a class="header" href="#a-note-on-decorator-stability" id="a-note-on-decorator-stability">A Note on Decorator Stability</a></h3>
+<p><a href="https://github.com/tc39/proposal-decorators">Decorators</a> are important to
+adopting native class syntax. They are a formalization of the patterns we have
+been using as a community for years, and it will not be possible to use native
+classes ergonomically without them unless a number of major concepts (computed
+properties, injections, actions) are rethought. That said, as of today (01/03/19)
+decorators are still a <a href="https://tc39.github.io/process-document"><em>stage 2</em> proposal</a>
+in TC39, which means that while they are fully defined as a spec, they are not
+yet considered a candidate for inclusion in the language, and may have
+incremental changes that could be breaking if/when moved to stage 3. As such,
+merging support for them now would pose some risk. Additionally, <a href="https://github.com/tc39/proposal-class-fields">class
+fields</a> are also required for
+effective use of decorators, and while they are stage 3 in the process, they
+have not yet been fully accepted either.</p>
+<p>Ember cannot guarantee that the spec won't change, and such changes cannot apply
+to Ember's normal semver guarantees. But it can make the following guarantees:</p>
+<ol>
+<li>
+<p>If there are changes to the spec, and it <em><strong>is</strong></em> possible to avoid changing
+the public APIs of decorators, then Ember will make the changes necessary to
+avoid public API changes.</p>
+</li>
+<li>
+<p>If there are changes to the spec, and it <em><strong>is not</strong></em> possible to avoid
+breaking changes, Ember will minimize the changes as much as possible, and
+will provide a codemod to convert from the previous version of the spec to
+the next.</p>
+</li>
+<li>
+<p>If the spec is dropped from TC39 altogether, Ember would have to continue to
+provide support for decorators via babel transforms until they are deprecated
+following the standard RFC process, and removed according to SemVer. Reverse
+codemods which translate decorators and native class syntax back to classic
+class syntax <em>will</em> be made, and alternatives for native class syntax will be
+explored.</p>
+</li>
+<li>
+<p>Classic class syntax will continue to be supported <em>at least</em> until these
+features have been stabilized in the JavaScript language, to allow us to
+revert these changes if necessary. They will most likely be supported for
+longer to allow a smooth transition for users who do not want to adopt native
+classes until they are completely stable.</p>
+</li>
+</ol>
+<p>This RFC is being made with the assumption that decorators will be moved to
+stage 3 in the near future, <em>before</em> this RFC is implemented in Ember,
+dramatically reducing the risk of adopting decorators. If this RFC is accepted
+and decorators are not advanced in a timely manner, a followup RFC should be
+made to determine whether or not decorators should be adopted in stage 2, and
+what the support for them would look like.</p>
+<h2><a class="header" href="#terminology" id="terminology">Terminology</a></h2>
+<p>For the purposes of this RFC, we'll use the following terminology:</p>
+<ul>
+<li>The <strong>Octane programming model</strong> refers to the new programming model
+established by the Ember Octane edition. It includes <em>native classes</em>,
+<em>tracked properties</em> and <em>Glimmer components</em>, and more generally refers to
+features that will be considered <em>core to Ember</em> in the future.</li>
+<li>The <strong>classic programming model</strong> refers to the traditional programming model.
+It includes <em>classic classes</em>, <em>computed properties</em>, <em>event listeners</em>,
+<em>observers</em>, <em>property notifications</em>, and <em>classic components</em>, and more
+generally refers to features that will not be central to Ember Octane.</li>
+<li><strong>Native classes</strong> are classes defined using the JavaScript <code>class</code> keyword</li>
+<li><strong>Classic classes</strong> are classes defined by subclassing from <code>EmberObject</code>
+using the static <code>extend</code> method.</li>
+</ul>
+<h2><a class="header" href="#motivation" id="motivation">Motivation</a></h2>
+<p>Native JavaScript class syntax has been evolving for the past three years, filling in
+the cracks and providing better, more standardized ways to write classes for the
+web. They will be a key part of the Octane programming model, and the ES Classes
+RFC was the first step toward enabling Ember users to use native class syntax,
+but there are still key features of Ember that are not usable with <code>class</code>
+syntax today, including <em>computed properties</em>, <em>actions</em>, and <em>injections</em>.</p>
+<p>These features cannot be used ergonomically with native classes as it stands.
+The only options are to either use Ember's <code>defineProperty</code> function directly,
+or to define these values in an anonymous class. Both of these options are hard
+to read, and will be difficult to codemod in the future:</p>
+<pre><code class="language-js">// Using define property
+import { computed, defineProperty } from '@ember/object';
+
+class Person {
+  constructor() {
+    this.firstName = 'Melanie';
+    this.lastName = 'Sumner';
+  }
+}
+
+// define a computed property
+defineProperty(
+  Person.prototype,
+  'fullName',
+  computed('firstName', 'lastName', {
+    get() {
+      return `${this.firstName} ${this.lastName}`;
+    }
+  })
+);
+
+// Using intermediate extends
+import EmberObject, { computed } from '@ember/object';
+
+class Person extends EmberObject.extend({
+  fullName: computed('firstName', 'lastName', function() {
+    return `${this.firstName} ${this.lastName}`;
+  })
+}) {
+  constructor() {
+    super(...arguments);
+    this.firstName = 'Melanie';
+    this.lastName = 'Sumner';
+  }
+}
+</code></pre>
+<p>Another method which was used for some time was to assign these values using
+class field initializers. This practice is problematic however as it creates a
+new instance of the computed property per <em>instance</em> of the class, and does not
+work with native getters either:</p>
+<pre><code class="language-ts">import EmberObject, { computed } from '@ember/object';
+
+export default class Person extends EmberObject {
+  firstName = 'Melanie';
+  lastName = 'Sumner';
+
+  fullName = computed('firstName', 'lastName', function() {
+    return `${this.firstName} ${this.lastName}`;
+  });
+}
+
+new Profile().fullName; // returns the CP instance, not 'Melanie Sumner'
+</code></pre>
+<p>The missing piece of functionality that we need here are <em>decorators</em>, and in
+fact that is not a coincidence. The roots of the current TC39 decorator proposal
+can be traced back to Ember (Yehuda having worked on the first few drafts of it)
+specifically because computed properties, observers, and so on <em>are</em> decorators.
+We've been using them for years in Ember, just with a non-standard,
+slightly-less-clean syntax.</p>
+<pre><code class="language-ts">import Component from '@ember/component';
+import { computed } from '@ember/object';
+
+export default class Profile extends Component {
+  firstName = 'Melanie';
+  lastName = 'Sumner';
+
+  @computed('firstName', 'lastName')
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+</code></pre>
+<p>Native decorators bring a more natural way of declaring computed properties to
+native classes than the current computed macros.</p>
+<h2><a class="header" href="#prior-art" id="prior-art">Prior Art</a></h2>
+<p>The <a href="http://ember-decorators.github.io/ember-decorators/">Ember Decorators</a>
+project has been experimenting with using decorators within Ember for some time
+now, with the goal of reaching feature parity with the classic object model, and
+the learnings from that project will be used to inform the API design in this
+RFC.</p>
+<h2><a class="header" href="#detailed-design" id="detailed-design">Detailed design</a></h2>
+<p>This RFC proposes that:</p>
+<ol>
+<li><code>Ember.computed</code>, the <code>inject</code> macros, and the computed property macros be
+updated to return a standard JavaScript decorator. Internally, the classic
+object model will be made aware of these decorators, and know how to apply
+them. This will allow the same exact imports to continue working as both
+native decorators and classic decorators. This decorator <em>will</em> be compatible
+with classes that extend from <code>EmberObject</code> and classes which do not.</li>
+<li>A new <code>@action</code> decorator be added to allow the definition of actions on
+classes. This decorator will <em>only</em> be compatible with classes that are
+action handlers.</li>
+</ol>
+<p>This does leave out some features from the classic programming model which are
+currently provided by Ember Decorators. This is both to minimize decorators' API
+surface area, and because they will not be a major part of Ember Octane's
+programming model. Addressing them individually:</p>
+<ul>
+<li><strong>Observers and event listeners</strong>, which have long been considered an
+antipattern.</li>
+<li><strong>Classic component</strong> functionality such as <code>classNames</code>, <code>classNameBindings</code>,
+<code>attributeBindings</code>, etc. will be unnecessary with Glimmer components.</li>
+<li><strong>Ember Data</strong> provides computed properties which had to be manually wrapped
+in decorators. With the changes proposed in this RFC, however, they should
+continue to work without any additional changes. In fact, all computed
+property macros will.</li>
+</ul>
+<p>Users who want these features will still be able to rely on addons such as Ember
+Decorators, which will provide decorator support for them for the forseeable
+future. Moving forward, this RFC breaks down into <em>computed properties</em> and
+<em>actions</em>.</p>
+<h3><a class="header" href="#computed-properties" id="computed-properties">Computed Properties</a></h3>
+<p>As mentioned before, computed properties essentially <em>are</em> decorators. However,
+they are not spec compliant. Currently, <code>computed()</code> returns an instance of the
+<code>ComputedProperty</code> class, which contains all of the meta information about the
+decorated property. Native decorators, by contrast, are functions which receive
+a descriptor and modify it as necessary.</p>
+<p>Unfortunately, there's no way for us to know <em>ahead of time</em> when a computed
+property is going to be used as a native decorator in a native class, and when
+it is going to be used in a classic class. Consider the following:</p>
+<pre><code class="language-js">class Person {
+  @alias('prefix') title;
+}
+</code></pre>
+<p>Really, what's going on there is <em>not</em> that we are invoking the <code>@alias</code>
+decorator with parameters. We are invoking a function which <em>returns</em> a
+decorator, so it desugars to:</p>
+<pre><code class="language-js">const aliasForPrefix = alias('prefix');
+
+class Person {
+  @aliasForPrefix title;
+}
+</code></pre>
+<p>Therefore, the <code>alias</code> function <em>must</em> itself return a decorator function.
+However, this conflicts with usage in the classic programming model:</p>
+<pre><code class="language-js">const Person = EmberObject.extend({
+  title: alias('prefix')
+})
+</code></pre>
+<p>We just established that <code>alias</code> must return a decorator function, but here it
+is with the exact same arguments, and it needs to return a <code>ComputedProperty</code>
+instance. There is nothing we can branch on here - in both cases, <code>alias</code> only
+receives the string <code>'prefix'</code>, so it has no context for how it will be used.</p>
+<p>The native class piece of this puzzle is completely inflexible. A decorator must
+be a function, there is no choice about it. However, the <em>Ember</em> piece is <em>very</em>
+flexible. The classic object model just needs a way to get the meta information
+for the property when the class is being finalized. We can either assign the
+meta information to the decorator function directly, or we can associate it via
+a <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/WeakMap"><code>WeakMap</code></a>.</p>
+<p>The benefit of doing this is that the entire Ember ecosystem will get decorator
+support with no extra work required. Because standard <code>computed</code> definitions
+will work as decorators, existing macros will also work as decorators with no
+changes to existing code.</p>
+<p>All of Ember's built in computed macros in the <code>@ember/object/computed</code> module
+will also become decorators with no extra work. However, the injection macros
+will require slight updates as they use a subclass of the <code>ComputedProperty</code>
+class. These updates should be relatively minor, and will follow the same
+strategy as <code>computed()</code>.</p>
+<h4><a class="header" href="#usage-and-api" id="usage-and-api">Usage and API</a></h4>
+<p>The API for <code>computed</code> will remain mostly the same. The key differences will be:</p>
+<ol>
+<li>The result of <code>computed</code> will be a decorator which can be applied directly to
+native <em>getters</em>, <em>setters</em>, and <em>class fields</em>.</li>
+<li>The <code>ComputedPropertyConfig</code> (the getter/setter functions) argument provided
+to <code>computed</code> will now be optional when used as a decorator on a native
+getter or setter, and the native getter/setter will be used instead.</li>
+</ol>
+<pre><code class="language-ts">function computed(...args: (string | ComputedPropertyConfig)[]): PropertyDecorator;
+</code></pre>
+<p>The function signatures of all existing macros, including <code>inject</code> macros, would
+change in the same way.</p>
+<p>In general usage, these three definitions are equivalent:</p>
+<pre><code class="language-js">import EmberObject, { computed } from '@ember/object';
+
+const Person = EmberObject.extend({
+  fullName: computed('firstName', 'lastName', {
+    get() {
+      return `${this.firstName} ${this.lastName}`;
+    }
+  })
+});
+
+class Person {
+  @computed('firstName', 'lastName')
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+
+class Person {
+  @computed('firstName', 'lastName', {
+    get() {
+      return `${this.firstName} ${this.lastName}`;
+    }
+  })
+  fullName;
+}
+</code></pre>
+<p>That last example may seem confusing at first, but this is actually the same as
+defining a computed property macro:</p>
+<pre><code class="language-js">import EmberObject, { computed } from '@ember/object';
+
+function join(...dependentKeys) {
+  return computed(...dependentKeys, {
+    get() {
+      return dependentKeys.map(key =&gt; this[key]).join(' ');
+    }
+  });
+}
+
+class Person {
+  @join('firstName', 'lastName')
+  fullName;
+}
+</code></pre>
+<p>Notably, using <code>@computed</code> as a decorator <em>directly</em>, without parenthesis, will
+not be supported. This is to prevent a parameter check on a critical path:</p>
+<pre><code class="language-js">class Person {
+  @computed
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+</code></pre>
+<p>The most common use case for this form in classic classes was to provide a new
+instance of an object or array per instance of the class. This use case is
+solved in native classes by class fields:</p>
+<pre><code class="language-js">const Person = EmberObject.extend({
+  cache: computed(function() {
+    return {};
+  })
+})
+
+class Person {
+  cache = {};
+}
+</code></pre>
+<p>For other use cases, such as lazy evaluation and caching, it will still be
+possible to call <code>@computed</code> with no arguments:</p>
+<pre><code class="language-js">class Person {
+  @computed()
+  get cache() {
+    return {};
+  };
+}
+</code></pre>
+<h4><a class="header" href="#preventing-incoherent-usage" id="preventing-incoherent-usage">Preventing Incoherent Usage</a></h4>
+<p>Making the <code>ComputedPropertyConfig</code> optional opens up lots of room for
+accidents. A computed property without a getter or setter does not make sense,
+nor does a computed propery with <em>two</em> getters or setters. The new decorator
+will assert at <em>decorator application</em> time to ensure it is being used
+correctly:</p>
+<pre><code class="language-js">import EmberObject, { computed } from '@ember/object';
+
+// This will throw because the user attempted to define a CP without a getter
+const Person = EmberObject.extend({
+  fullName: computed()
+});
+
+// This will also throw because it is missing a getter
+class Person {
+  @computed('firstName', 'lastName')
+  fullName;
+}
+
+// This will throw because a getter was already defined
+class Person {
+  @computed('firstName', 'lastName', {
+    get() {
+      return `${this.firstName} ${this.lastName}`;
+    }
+  })
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+</code></pre>
+<p>Effectively, if <code>computed</code> is passed a <code>ComputedPropertyConfig</code>, it returns a
+class field decorator. Otherwise, it returns an accessor (getter/setter)
+decorator.</p>
+<h4><a class="header" href="#property-modifiers" id="property-modifiers">Property Modifiers</a></h4>
+<p>Almost all computed property modifiers have been deprecated at this point, but
+they are still in use today and will still be available until Ember v4. As such,
+their syntax needs to remain available and unchanged:</p>
+<pre><code class="language-js">import EmberObject, { computed } from '@ember/object';
+
+const Person = EmberObject.extend({
+  fullName: computed('firstName', {
+    get() {
+      return `${this.firstName} ${this.lastName}`;
+    }
+  }).readOnly().volatile().property('lastName') // a very strange combination
+});
+</code></pre>
+<p>The decorator returned from <code>computed()</code> will need to have these chainable
+methods available, and they will need to set the state of the decorator. This
+should not be too difficult to accomplish.</p>
+<p>Usage in native decorator syntax is a little bit trickier. In the current
+proposal, only simple chaining is allowed in a decorator invocation. You may not
+chain on the result of a function:</p>
+<pre><code class="language-js">import { computed } from '@ember/object';
+
+const fullName = computed('firstName', 'lastName', function() {
+  return `${this.firstName} ${this.lastName}`;
+});
+
+class Person {
+  @computed('firstName', 'lastName').readOnly() // this is invalid JS decorator syntax
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+
+  @fullName.readOnly() // this is valid because it's a simple chain
+  otherFullName;
+}
+</code></pre>
+<p>Luckily, there is one other form of invocation which is available - wrapping the
+entire decorator expression in parenthesis:</p>
+<pre><code class="language-js">import { computed } from '@ember/object';
+
+class Person {
+  @(computed('firstName', 'lastName').readOnly()) // this is valid
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+</code></pre>
+<p>This is clearly <em>not</em> ideal for commonly used features, and while <code>volatile()</code>
+and <code>property()</code> are not very well known, <code>readOnly()</code> is generally considered
+best practice, and is used all over the place. However, it <em>is</em> deprecated, and
+in the future computed properties will be read only by default. Rather than
+attempt to write a different API for decorators, this RFC proposes that we
+accept the current syntax, and focus instead on the implementation of Svelte.
+This will allow users to enable default read only CPs much sooner, and prevent
+the need to use <code>readOnly()</code> at all.</p>
+<h5><a class="header" href="#a-tale-of-two-readonlys" id="a-tale-of-two-readonlys">A Tale of Two <code>readOnly</code>s</a></h5>
+<p>You may be wondering why we can't add more decorators to Ember to take the place
+of these modifiers. The crux of the issue is the <code>readOnly()</code> modifier, and the
+<code>readOnly()</code> macro. These share a name, and when macros become decorators as
+well they will collide. The only difference would be the import paths, and this
+would result in awkward renaming which would likely <em>not</em> be conventional:</p>
+<pre><code class="language-js">import { readOnly, computed } from '@ember/object';
+import { readOnly as readOnlyAlias } from '@ember/object/computed';
+
+class Person {
+  @readOnly
+  @computed('firstName', 'lastName')
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+
+  @readOnlyAlias('fullName')
+  otherFullName;
+}
+</code></pre>
+<p>Ember Decorators made the decision to attempt renaming the macros themselves,
+since <code>reads</code>, <code>readOnly</code>, and <code>oneWay</code> were all poorly named (arguably, <code>reads</code>
+should have been <code>readOnly</code> since it is the more common use case) but this is
+not a possibility in Ember, since this would cause collisions and confusion
+within the macros namespace.</p>
+<p>All of this would be to support a deprecated feature, which can still be used
+(albeit, with a less-than-ideal syntax). Accepting the current syntax would also
+prevent us from polluting the decorator namespace - we may want to use
+<code>@readOnly</code> or <code>@volatile</code> in the future with tracked properties instead.</p>
+<h3><a class="header" href="#actions" id="actions">Actions</a></h3>
+<p>Actions are special in Ember because they are namespaced within a class on the
+<code>actions</code> object, despite being able to reference the class directly using
+<code>this</code> when called, and otherwise behaving like standard methods. The reason for
+this stems from the early days of Ember, when users would accidentally name an
+action something that conflicted with existing lifecycle and event hooks (e.g.
+<code>destroy</code>, or <code>click</code>). The <code>actions</code> namespace was added as a convenience to
+prevent these collisions, and to separate them from the rest of the class body
+organizationally.</p>
+<p>This namespace is problematic for native classes for a number of reasons:</p>
+<ol>
+<li>The namespace cannot be defined using class field syntax, since that would
+assign a copy of the object to every instance of the class, and there is no
+other native way to easily assign it.</li>
+<li>Actions must inherit from the parent, which means that the <code>actions</code> object
+must have its prototype set to the parent class's <code>actions</code> object.</li>
+<li>It is not possible to use <code>super</code> within non-class methods, meaning an
+alternative would have to be developed specifically for the namespace.</li>
+</ol>
+<p>With these constraints, a decorator would be necessary to maintain the current
+namespacing functionality. The options for such a decorator are limited. It
+could:</p>
+<ol>
+<li>
+<p>Decorate a class field, placing the value on the class prototype and setting
+up inheritance/super functionality. This would necessarily result in either
+some amount of repetition in the decorator name and field name, or a
+redundant field name:</p>
+<pre><code class="language-js">class Foo {
+  @actions actions = {
+    onClick() { /* ... */ }
+  }
+}
+</code></pre>
+</li>
+<li>
+<p>Decorate the class itself with the actions object as a parameter. This would
+be awkward, since actions would be removed from the class definition:</p>
+<pre><code class="language-js">@actions({
+  onClick() { /* ... */ }
+})
+class Foo {}
+</code></pre>
+</li>
+<li>
+<p>Decorate the class itself, with the expectation that the <code>actions</code> class
+field exists and is an object. This leads to a disconnect between the
+decoration and the definition that is easy to miss, and could be
+counterintuitive to newcomers:</p>
+<pre><code class="language-js">@actionHandler
+class Foo {
+  actions = {
+    onClick() { /* ... */ }
+  }
+}
+</code></pre>
+</li>
+</ol>
+<p>None of these options is ergonomic in the least. Instead, it is much cleaner and
+easier to decorate method definitions that are directly on the class body:</p>
+<pre><code class="language-js">class Foo {
+  @action
+  onClick() { /* ... */ }
+}
+</code></pre>
+<p>This would be implemented by creating the class's <code>actions</code> object and assigning
+the method to it, setting up inheritance and such in the process. The decorator
+leaves the method definition on the class, where it can be called like a normal
+method would, including <code>super</code> functionality. This maintains compatibility with
+the classic object model, while making the <code>actions</code> namespace an
+<em>implementation</em> detail rather than something users need to know about.</p>
+<p>This does mean that actions can once again collide with actual lifecycle and
+event hooks on the class, since they are no longer namespaced. The decorator
+<em>could</em> remove the method from the class definition entirely, but this would be
+confusing for users not familiar with the old <code>actions</code> namespace - why does
+this method disappear from the class? It would also break <code>super</code> functionality,
+so it would not be ideal to do this.</p>
+<p>The <code>@action</code> decorator <em>could</em> warn users when it collides with a lifecycle
+hook. However, hooks may vary from class type to class type, which presents a
+design challenge. We could either:</p>
+<ol>
+<li>Allow classes to specify lifecycle hooks, and throw whenever <code>@action</code>
+collides with a specified hook.</li>
+<li>Only throw on hooks that are shared across all classes, such as <code>init</code> and
+<code>destroy</code>.</li>
+<li>Do nothing, and leave it to user's to know which lifecycle hooks exist.</li>
+</ol>
+<p>Specifying hooks for each class would be time consuming and could fall out of
+sync with the implementations. Throwing on &quot;universal&quot; hooks only is
+inconsistent, and could lead users to think that they are safe when they are
+not. This RFC suggests that we choose option 3 for this reason. When the actions
+namespace was introduced, lifecycle hooks like <code>destroy</code> and <code>click</code> were less
+commonly known and used (event listeners were not uncommon). Most Ember users
+know they exist now, and will be aware that implementing an action with the same
+name is not recommended. In addition, eslint rules can be added to hint against
+these collisions.</p>
+<h3><a class="header" href="#method-binding" id="method-binding">Method Binding</a></h3>
+<p><code>@action</code> will also bind the function to the class instance, allowing it to be
+used in templates and elsewhere without having to be bound:</p>
+<pre><code class="language-js">export default class ButtonComponent extends Component {
+  @action
+  onClick() {
+    // handle click
+  }
+}
+</code></pre>
+<pre><code class="language-hbs">&lt;button onclick={{this.onClick}}&gt;Click me!&lt;/button&gt;
+</code></pre>
+<h4><a class="header" href="#usage-and-api-1" id="usage-and-api-1">Usage and API</a></h4>
+<p>The API for this new decorator would be much simpler than the computed API,
+since it is only used as a decorator without parameters.</p>
+<pre><code class="language-ts">// Technically `action` is a function, but we can't type it transparently that way
+const action: MethodDecorator;
+</code></pre>
+<p>Attempting to pass any parameters to the decorator, or to apply the decorator to
+anything other than a class method, will throw an error.</p>
+<h2><a class="header" href="#how-we-teach-this" id="how-we-teach-this">How we teach this</a></h2>
+<p>Teaching decorators is intrinsically tied to a wider shift in the Ember
+programming model - the Ember Octane edition. From a teaching perspective, this
+edition will be completely overhauling the guides and updating all of the best
+practices as they stand. New users should see native class syntax with
+decorators as the <em>default</em>, and should not ever have to write a classic class
+or see an example for one.</p>
+<p>With this RFC, the majority of existing examples in the Ember guides will be
+updatable to native class syntax. The exception would be examples of classic
+components, which would be addressed separately by updating the guides to
+Glimmer Components (proposed in a separate RFC). Otherwise, all examples in the
+guides should be updated.</p>
+<h3><a class="header" href="#updating-and-interop" id="updating-and-interop">Updating and Interop</a></h3>
+<p>For existing users, or users who have to interact with classic code from a modern
+context, it'll be important to have a reference for the classic object model.
+The current section on the object model in the guides can be moved to a classic
+section, and a section on updating should be added. Links to relevant codemods,
+such as the
+<a href="https://github.com/scalvert/ember-es6-class-codemod">ember-es6-class-codemod</a>,
+should be included. This section should remain updated and included in the main
+guides for as long as <code>EmberObject</code> is a part of Ember's public API.</p>
+<h2><a class="header" href="#acceptance-commitments" id="acceptance-commitments">Acceptance Commitments</a></h2>
+<blockquote>
+<p>This section serves to capture the various commitments accepting this RFC
+would entail.</p>
+</blockquote>
+<ul>
+<li>Adds support for decorators and class fields to Ember's public API. Transforms
+would be included out of the box as well.</li>
+<li>Allows computed properties to work as a native decorators on native classes.</li>
+<li>Adds the <code>@action</code> decorator for defining actions on native classes.</li>
+</ul>
+<h2><a class="header" href="#drawbacks" id="drawbacks">Drawbacks</a></h2>
+<ul>
+<li>
+<p>The <code>ComputedProperty</code> class has long been considered intimate API. Even with
+recent changes as part of the native getter RFC to make it more private, these
+changes could still cause breakage.</p>
+</li>
+<li>
+<p>The strategy for converting <code>computed</code> to decorators has one major drawback,
+which is that decorator macros cannot easily be customized and will require a
+bit of boilerplate in some cases. For instance, currently in Ember Decorators
+it is possible to apply the <code>map</code> and <code>reduce</code> macros directly to a <em>method</em>,
+which becomes the method to map or reduce by:</p>
+<pre><code class="language-js">@map('array')
+mappedArray() {}
+
+@map('array', function() {}) mappedArray;
+</code></pre>
+<p>With this method, only the second form would be usable. Likewise, by default
+addons like Ember Data would need to write thin decorator wrappers around
+macros that may be called <em>without</em> parameters, or which require key
+reflection:</p>
+<pre><code class="language-js">@attr name; // This would not work OOTB
+@attr('string') name; // This would
+
+@belongsTo user; // This would not work OOTB
+@belongsTo('user') user; // This would
+</code></pre>
+</li>
+</ul>
+<h2><a class="header" href="#alternatives" id="alternatives">Alternatives</a></h2>
+<h3><a class="header" href="#no-decorators" id="no-decorators">No Decorators</a></h3>
+<p>We could not have official Ember support for any aspects of the classic
+programming model. This essentially means computed properties, since <code>@action</code>
+and the injection helpers are still needed for the Octane model. This would
+leave many users in limbo, unable to update to native class syntax fully because
+it would mean rewriting large amounts of classes and components, and would make
+libraries like <code>@ember-decorators</code> essential.</p>
+<h3><a class="header" href="#namespaced-decorators" id="namespaced-decorators">Namespaced Decorators</a></h3>
+<p>We could include decorators as a separate package, such as <code>@ember/decorators</code>.
+This is not ideal as it would force users to remember more import paths, and it
+would make eventual deprecation of the classic form much more difficult. It would
+also mean that the wider ecosystem would have to do much more work to adopt
+decorator syntax.</p>
+<h3><a class="header" href="#full-compatibility-decorators" id="full-compatibility-decorators">Full Compatibility Decorators</a></h3>
+<p>We could include decorators for the remaining classic features: Observers, event
+listeners, and classic components. These would add extra weight, and may
+encourage users to continue using these features, which would not be ideal.</p>
+<p>Instead, we can recommend that users wanting to update to native class syntax
+use external packages that implement these features, such as
+<code>@ember-decorators</code>. The native class codemod will detect and automatically
+include these packages if they are necessary.</p>
+<h3><a class="header" href="#default-read-only-decorator" id="default-read-only-decorator">Default Read Only Decorator</a></h3>
+<p>In this proposal, computeds used as decorators match the semantics of computeds
+used in classic classes exactly. This is true even in the unfortunate case of
+computed overridability:</p>
+<pre><code class="language-js">class Person {
+  firstName = 'Stefan';
+  lastName = 'Penner';
+
+  @computed('firstName', 'lastName')
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+
+let person = new Person;
+
+person.fullName; // 'Tom Dale'
+
+person.set('firstName', 'Kris');
+person.set('lastName', 'Selden');
+
+person.set('fullName', 'Melanie Sumner'); // overrides the setter
+
+person.fullName; // 'Melanie Sumner'
+</code></pre>
+<p>We could, instead, make decorators apply computeds as <em>readOnly by default</em>,
+since this is a new usage of them and not a breaking change. This would require
+us to add a new <code>overridable()</code> modifier to opt-out of readOnly behavior by
+default, for backwards compatibility, and would add a fair amount of complexity
+to codemods. Either way, this behavior will be the default in Ember v4, and
+deprecations will begin appearing when this happens soon.</p>
+<h3><a class="header" href="#allow-action-to-rename-actions" id="allow-action-to-rename-actions">Allow <code>@action</code> to Rename Actions</a></h3>
+<p>If the namespace collisions caused by actions becoming standard methods are
+difficult to refactor around or codemod, we can consider allowing the <code>@action</code>
+helper to receive an alternative action name:</p>
+<pre><code class="language-js">export default class ButtonComponent extends GlimmerComponent {
+  @action('destroy')
+  destroyAction() {
+    // handle click
+  }
+}
+</code></pre>
+<pre><code class="language-hbs">&lt;button {{action 'destroy'}}&gt;Click me!&lt;/button&gt;
+</code></pre>
+<p>This could be added later by a followup RFC, so it is not part of this proposal.
+Ideally it won't be necessary.</p>
+<h2><a class="header" href="#unresolved-questions" id="unresolved-questions">Unresolved questions</a></h2>
+<p>As stated in the introduction, this RFC is being made with the assumption that
+decorators will be moved to stage 3 before this RFC is actually implemented. If
+they are <em>not</em> moved to stage 3, we will have to decide if decorators should be
+supported in while they are in stage 2.</p>
+<p>If they are supported while in stage 2, there are some additional questions:</p>
+<ul>
+<li>Should stage 2 transforms continue to be supported after decorators move to
+stage 3? Would removing stage 2 support require a major version bump?</li>
+<li>Should Typescript's stage 1-like decorators be supported, since Typescript
+will not implement new decorator transforms until they reach stage 3?</li>
+</ul>
+<h2><a class="header" href="#appendix-a" id="appendix-a">Appendix A</a></h2>
+<p>This appendix contains the list of affected APIs and new APIs for quick reference.</p>
+<table><thead><tr><th><code>@ember/controller</code></th></tr></thead><tbody>
+<tr><td><code>inject</code></td></tr>
+</tbody></table>
+<table><thead><tr><th><code>@ember/object</code></th></tr></thead><tbody>
+<tr><td><code>computed</code></td></tr>
+<tr><td><em><code>action</code></em></td></tr>
+</tbody></table>
+<table><thead><tr><th><code>@ember/object/computed</code></th></tr></thead><tbody>
+<tr><td><code>alias</code></td></tr>
+<tr><td><code>and</code></td></tr>
+<tr><td><code>bool</code></td></tr>
+<tr><td><code>collect</code></td></tr>
+<tr><td><code>deprecatingAlias</code></td></tr>
+<tr><td><code>empty</code></td></tr>
+<tr><td><code>equal</code></td></tr>
+<tr><td><code>filter</code></td></tr>
+<tr><td><code>filterBy</code></td></tr>
+<tr><td><code>gt</code></td></tr>
+<tr><td><code>gte</code></td></tr>
+<tr><td><code>intersect</code></td></tr>
+<tr><td><code>lt</code></td></tr>
+<tr><td><code>lte</code></td></tr>
+<tr><td><code>map</code></td></tr>
+<tr><td><code>mapBy</code></td></tr>
+<tr><td><code>match</code></td></tr>
+<tr><td><code>max</code></td></tr>
+<tr><td><code>min</code></td></tr>
+<tr><td><code>none</code></td></tr>
+<tr><td><code>not</code></td></tr>
+<tr><td><code>notEmpty</code></td></tr>
+<tr><td><code>oneWay</code></td></tr>
+<tr><td><code>or</code></td></tr>
+<tr><td><code>readOnly</code></td></tr>
+<tr><td><code>reads</code></td></tr>
+<tr><td><code>setDiff</code></td></tr>
+<tr><td><code>sort</code></td></tr>
+<tr><td><code>sum</code></td></tr>
+<tr><td><code>union</code></td></tr>
+<tr><td><code>uniq</code></td></tr>
+<tr><td><code>uniqBy</code></td></tr>
+</tbody></table>
+<table><thead><tr><th><code>@ember/service</code></th></tr></thead><tbody>
+<tr><td><code>inject</code></td></tr>
+</tbody></table>
+<h2><a class="header" href="#appendix-b" id="appendix-b">Appendix B</a></h2>
+<p>This appendix contains a full list of changed APIs and their old and new signatures.</p>
+<h3><a class="header" href="#embercontroller" id="embercontroller"><strong><code>@ember/controller</code></strong></a></h3>
+<ul>
+<li><code>inject</code>
+<pre><code class="language-ts">// old
+function inject(): ComputedProperty&lt;Controller&gt;;
+function inject&lt;K extends keyof ControllerRegistry&gt;(
+    name: K
+): ComputedProperty&lt;ControllerRegistry[K]&gt;;
+
+// new
+function inject(): PropertyDecorator;
+function inject&lt;K extends keyof ControllerRegistry&gt;(
+    name: K
+): PropertyDecorator;
+</code></pre>
+</li>
+</ul>
+<h3><a class="header" href="#emberobject" id="emberobject"><strong><code>@ember/object</code></strong></a></h3>
+<ul>
+<li>
+<p><code>computed</code></p>
+<pre><code class="language-ts">// old
+function computed(...args: (string | ComputedPropertyConfig&lt;T&gt;)[]): ComputedProperty&lt;T&gt;;
+
+// new
+function computed(...args: (string | ComputedPropertyConfig)[]): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>action</code></p>
+<pre><code class="language-ts">// old
+// N/A
+
+// new
+const action: MethodDecorator;
+</code></pre>
+</li>
+</ul>
+<h3><a class="header" href="#emberobjectcomputed" id="emberobjectcomputed">**<code>@ember/object/computed</code></a></h3>
+<ul>
+<li>
+<p><code>alias</code></p>
+<pre><code class="language-ts">// old
+function alias(dependentKey: string): ComputedProperty&lt;any&gt;;
+
+// new
+function alias(dependentKey: string): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>and</code></p>
+<pre><code class="language-ts">// old
+function and(...dependentKeys: string[]): ComputedProperty&lt;boolean&gt;;
+
+// new
+function and(...dependentKeys: string[]): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>bool</code></p>
+<pre><code class="language-ts">// old
+function bool(dependentKey: string): ComputedProperty&lt;boolean&gt;;
+
+// new
+function bool(dependentKey: string): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>collect</code></p>
+<pre><code class="language-ts">// old
+function collect(...dependentKeys: string[]): ComputedProperty&lt;any[]&gt;;
+
+// new
+function collect(...dependentKeys: string[]): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>deprecatingAlias</code></p>
+<pre><code class="language-ts">// old
+function deprecatingAlias(
+  dependentKey: string,
+  options: { id: string; until: string }
+): ComputedProperty&lt;any&gt;;
+
+// new
+function deprecatingAlias(
+  dependentKey: string,
+  options: { id: string; until: string }
+): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>empty</code></p>
+<pre><code class="language-ts">// old
+function empty(dependentKey: string): ComputedProperty&lt;boolean&gt;;
+
+// new
+function empty(dependentKey: string): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>equal</code></p>
+<pre><code class="language-ts">// old
+function equal(dependentKey: string, value: any): ComputedProperty&lt;boolean&gt;;
+
+// new
+function equal(dependentKey: string, value: any): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>filter</code></p>
+<pre><code class="language-ts">// old
+function filter(
+  dependentKey: string,
+  callback: (value: any, index: number, array: any[]) =&gt; boolean
+): ComputedProperty&lt;any[]&gt;;
+
+// new
+function filter(
+  dependentKey: string,
+  callback: (value: any, index: number, array: any[]) =&gt; boolean
+): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>filterBy</code></p>
+<pre><code class="language-ts">// old
+function filterBy(
+  dependentKey: string,
+  propertyKey: string,
+  value?: any
+): ComputedProperty&lt;any[]&gt;;
+
+// new
+function filterBy(
+  dependentKey: string,
+  propertyKey: string,
+  value?: any
+): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>gt</code></p>
+<pre><code class="language-ts">// old
+function gt(dependentKey: string, value: number): ComputedProperty&lt;boolean&gt;;
+
+// new
+function gt(dependentKey: string, value: number): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>gte</code></p>
+<pre><code class="language-ts">// old
+function gte(dependentKey: string, value: number): ComputedProperty&lt;boolean&gt;;
+
+// new
+function gte(dependentKey: string, value: number): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>intersect</code></p>
+<pre><code class="language-ts">// old
+function intersect(...propertyKeys: string[]): ComputedProperty&lt;any[]&gt;;
+
+// new
+function intersect(...propertyKeys: string[]): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>lt</code></p>
+<pre><code class="language-ts">// old
+function lt(dependentKey: string, value: number): ComputedProperty&lt;boolean&gt;;
+
+// new
+function lt(dependentKey: string, value: number): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>lte</code></p>
+<pre><code class="language-ts">// old
+function lte(dependentKey: string, value: number): ComputedProperty&lt;boolean&gt;;
+
+// new
+function lte(dependentKey: string, value: number): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>map</code></p>
+<pre><code class="language-ts">// old
+function map&lt;U&gt;(
+  dependentKey: string,
+  callback: (value: any, index: number, array: any[]) =&gt; U
+): ComputedProperty&lt;U[]&gt;;
+
+// new
+function map&lt;U&gt;(
+  dependentKey: string,
+  callback: (value: any, index: number, array: any[]) =&gt; U
+): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>mapBy</code></p>
+<pre><code class="language-ts">// old
+function mapBy(dependentKey: string, propertyKey: string): ComputedProperty&lt;any[]&gt;;
+
+// new
+function mapBy(dependentKey: string, propertyKey: string): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>match</code></p>
+<pre><code class="language-ts">// old
+function match(dependentKey: string, regexp: RegExp): ComputedProperty&lt;boolean&gt;;
+
+// new
+function match(dependentKey: string, regexp: RegExp): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>max</code></p>
+<pre><code class="language-ts">// old
+function max(dependentKey: string): ComputedProperty&lt;number&gt;;
+
+// new
+function max(dependentKey: string): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>min</code></p>
+<pre><code class="language-ts">// old
+function min(dependentKey: string): ComputedProperty&lt;number&gt;;
+
+// new
+function min(dependentKey: string): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>none</code></p>
+<pre><code class="language-ts">// old
+function none(dependentKey: string): ComputedProperty&lt;boolean&gt;;
+
+// new
+function none(dependentKey: string): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>not</code></p>
+<pre><code class="language-ts">// old
+function not(dependentKey: string): ComputedProperty&lt;boolean&gt;;
+
+// new
+function not(dependentKey: string): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>notEmpty</code></p>
+<pre><code class="language-ts">// old
+function notEmpty(dependentKey: string): ComputedProperty&lt;boolean&gt;;
+
+// new
+function notEmpty(dependentKey: string): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>oneWay</code></p>
+<pre><code class="language-ts">// old
+function oneWay(dependentKey: string): ComputedProperty&lt;any&gt;;
+
+// new
+function oneWay(dependentKey: string): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>or</code></p>
+<pre><code class="language-ts">// old
+function or(...dependentKeys: string[]): ComputedProperty&lt;boolean&gt;;
+
+// new
+function or(...dependentKeys: string[]): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>readOnly</code></p>
+<pre><code class="language-ts">// old
+function readOnly(dependentKey: string): ComputedProperty&lt;any&gt;;
+
+// new
+function readOnly(dependentKey: string): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>reads</code></p>
+<pre><code class="language-ts">// old
+function reads(dependentKey: string): ComputedProperty&lt;any&gt;;
+
+// new
+function reads(dependentKey: string): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>setDiff</code></p>
+<pre><code class="language-ts">// old
+function setDiff(setAProperty: string, setBProperty: string): ComputedProperty&lt;any[]&gt;;
+
+// new
+function setDiff(setAProperty: string, setBProperty: string): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>sort</code></p>
+<pre><code class="language-ts">// old
+function sort(
+  itemsKey: string,
+  sortDefinition: string | ((itemA: any, itemB: any) =&gt; number)
+): ComputedProperty&lt;any[]&gt;;
+
+// new
+function sort(
+  itemsKey: string,
+  sortDefinition: string | ((itemA: any, itemB: any) =&gt; number)
+): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>sum</code></p>
+<pre><code class="language-ts">// old
+function sum(dependentKey: string): ComputedProperty&lt;number&gt;;
+
+// new
+function sum(dependentKey: string): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>union</code></p>
+<pre><code class="language-ts">// old
+function union(...propertyKeys: string[]): ComputedProperty&lt;any[]&gt;;
+
+// new
+function union(...propertyKeys: string[]): PropertyDecorator
+</code></pre>
+</li>
+<li>
+<p><code>uniq</code></p>
+<pre><code class="language-ts">// old
+function uniq(propertyKey: string): ComputedProperty&lt;any[]&gt;;
+
+// new
+function uniq(propertyKey: string): PropertyDecorator;
+</code></pre>
+</li>
+<li>
+<p><code>uniqBy</code></p>
+<pre><code class="language-ts">// old
+function uniqBy(dependentKey: string, propertyKey: string): ComputedProperty&lt;any[]&gt;;
+
+// new
+function uniqBy(dependentKey: string, propertyKey: string): PropertyDecorator;
+</code></pre>
+</li>
+</ul>
+<h3><a class="header" href="#emberservice" id="emberservice"><strong><code>@ember/service</code></strong></a></h3>
+<ul>
+<li><code>inject</code>
+<pre><code class="language-ts">// old
+function inject(): ComputedProperty&lt;Service&gt;;
+function inject&lt;K extends keyof ServiceRegistry&gt;(
+    name: K
+): ComputedProperty&lt;ServiceRegistry[K]&gt;;
+
+// new
+function inject(): PropertyDecorator;
+function inject&lt;K extends keyof ServiceRegistry&gt;(
+    name: K
+): PropertyDecorator;
+</code></pre>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="0403-ember-data-identifiers.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="0410-tracked-properties.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="0403-ember-data-identifiers.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="0410-tracked-properties.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

@@ -1,0 +1,709 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>0481-component-templates-co-location - </title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="affix"><a href="introduction.html">Introduction</a></li><li><a href="0001-transform-attribute-meta-parameter.html">0001-transform-attribute-meta-parameter</a></li><li><a href="0003-block-params.html">0003-block-params</a></li><li><a href="0003-cli-ember-doctor.html">0003-cli-ember-doctor</a></li><li><a href="0010-engines.html">0010-engines</a></li><li><a href="0011-improved-cp-syntax.html">0011-improved-cp-syntax</a></li><li><a href="0012-help-json-output.html">0012-help-json-output</a></li><li><a href="0015-the-road-to-ember-2-0.html">0015-the-road-to-ember-2-0</a></li><li><a href="0020-sri-default.html">0020-sri-default</a></li><li><a href="0023-command-line-completion.html">0023-command-line-completion</a></li><li><a href="0024-bound-attributes.html">0024-bound-attributes</a></li><li><a href="0028-app-import-output-file.html">0028-app-import-output-file</a></li><li><a href="0029-addon-black-and-whitelist-for-apps.html">0029-addon-black-and-whitelist-for-apps</a></li><li><a href="0045-internet-explorer.html">0045-internet-explorer</a></li><li><a href="0046-cli-improved-release-process.html">0046-cli-improved-release-process</a></li><li><a href="0046-registry-reform.html">0046-registry-reform</a></li><li><a href="0050-cli-production-code-stripping.html">0050-cli-production-code-stripping</a></li><li><a href="0050-improved-actions.html">0050-improved-actions</a></li><li><a href="0053-helpers.html">0053-helpers</a></li><li><a href="0055-anonymous-amd.html">0055-anonymous-amd</a></li><li><a href="0056-improved-release-cycle.html">0056-improved-release-cycle</a></li><li><a href="0057-ember-data-reference-unification.html">0057-ember-data-reference-unification</a></li><li><a href="0058-helper-listing.html">0058-helper-listing</a></li><li><a href="0061-ember-data-background-fetch.html">0061-ember-data-background-fetch</a></li><li><a href="0064-contextual-component-lookup.html">0064-contextual-component-lookup</a></li><li><a href="0065-deprecation-warning-handlers.html">0065-deprecation-warning-handlers</a></li><li><a href="0080-serve-file-api.html">0080-serve-file-api</a></li><li><a href="0086-firefox-in-ci.html">0086-firefox-in-ci</a></li><li><a href="0090-addon-tree-caching.html">0090-addon-tree-caching</a></li><li><a href="0091-cli-addon-instrumentation-experimental-hooks.html">0091-cli-addon-instrumentation-experimental-hooks</a></li><li><a href="0091-weakmap.html">0091-weakmap</a></li><li><a href="0092-blueprint-remove-old-files.html">0092-blueprint-remove-old-files</a></li><li><a href="0095-cli-standardise-targets.html">0095-cli-standardise-targets</a></li><li><a href="0095-router-service.html">0095-router-service</a></li><li><a href="0096-enable-yarn-usage.html">0096-enable-yarn-usage</a></li><li><a href="0101-ember-data-friendly-errors.html">0101-ember-data-friendly-errors</a></li><li><a href="0105-addons-optionalDependencies.html">0105-addons-optionalDependencies</a></li><li><a href="0108-add-custom-transform.html">0108-add-custom-transform</a></li><li><a href="0110-packaging.html">0110-packaging</a></li><li><a href="0114-add-template-lint-addon.html">0114-add-template-lint-addon</a></li><li><a href="0116-qunit-dom.html">0116-qunit-dom</a></li><li><a href="0120-cli-guides.html">0120-cli-guides</a></li><li><a href="0120-route-serializers.html">0120-route-serializers</a></li><li><a href="0121-remove-ember-cli-eslint.html">0121-remove-ember-cli-eslint</a></li><li><a href="0136-contains-to-includes.html">0136-contains-to-includes</a></li><li><a href="0139-isHtmlSafe.html">0139-isHtmlSafe</a></li><li><a href="0143-module-unification.html">0143-module-unification</a></li><li><a href="0150-factory-for.html">0150-factory-for</a></li><li><a href="0176-javascript-module-api.html">0176-javascript-module-api</a></li><li><a href="0178-deprecate-ember-k.html">0178-deprecate-ember-k</a></li><li><a href="0181-deprecate-ember-data-initializers.html">0181-deprecate-ember-data-initializers</a></li><li><a href="0186-track-unique-history-location-state.html">0186-track-unique-history-location-state</a></li><li><a href="0191-deprecate-component-lifecycle-hook-args.html">0191-deprecate-component-lifecycle-hook-args</a></li><li><a href="0194-deprecate-custom-event-manager.html">0194-deprecate-custom-event-manager</a></li><li><a href="0213-custom-components.html">0213-custom-components</a></li><li><a href="0225-ember-engines-mount-params.html">0225-ember-engines-mount-params</a></li><li><a href="0226-named-blocks.html">0226-named-blocks</a></li><li><a href="0229-deprecate-testing-restricted-resolver.html">0229-deprecate-testing-restricted-resolver</a></li><li><a href="0232-simplify-qunit-testing-api.html">0232-simplify-qunit-testing-api</a></li><li><a href="0236-deprecation-ember-string.html">0236-deprecation-ember-string</a></li><li><a href="0237-deprecation-ember-map.html">0237-deprecation-ember-map</a></li><li><a href="0240-es-classes.html">0240-es-classes</a></li><li><a href="0252-browser-support-changes.html">0252-browser-support-changes</a></li><li><a href="0268-acceptance-testing-refactor.html">0268-acceptance-testing-refactor</a></li><li><a href="0272-deprecation-native-function-prototype-extensions.html">0272-deprecation-native-function-prototype-extensions</a></li><li><a href="0276-named-args.html">0276-named-args</a></li><li><a href="0278-template-only-components.html">0278-template-only-components</a></li><li><a href="0280-remove-application-wrapper.html">0280-remove-application-wrapper</a></li><li><a href="0281-es5-getters.html">0281-es5-getters</a></li><li><a href="0286-block-let-template-helper.html">0286-block-let-template-helper</a></li><li><a href="0287-promote-in-element-to-public-api.html">0287-promote-in-element-to-public-api</a></li><li><a href="0293-record-data.html">0293-record-data</a></li><li><a href="0294-optional-jquery.html">0294-optional-jquery</a></li><li><a href="0297-deprecate-ember-logger.html">0297-deprecate-ember-logger</a></li><li><a href="0300-rfc-process-update.html">0300-rfc-process-update</a></li><li><a href="0308-deprecate-property-lookup-fallback.html">0308-deprecate-property-lookup-fallback</a></li><li><a href="0311-angle-bracket-invocation.html">0311-angle-bracket-invocation</a></li><li><a href="0318-array-helper.html">0318-array-helper</a></li><li><a href="0322-deprecate-copy-copyable.html">0322-deprecate-copy-copyable</a></li><li><a href="0324-deprecate-component-isvisible.html">0324-deprecate-component-isvisible</a></li><li><a href="0326-ember-data-filter-deprecation.html">0326-ember-data-filter-deprecation</a></li><li><a href="0329-deprecated-ember-evented-in-ember-data.html">0329-deprecated-ember-evented-in-ember-data</a></li><li><a href="0331-deprecate-globals-resolver.html">0331-deprecate-globals-resolver</a></li><li><a href="0332-ember-data-record-links-and-meta.html">0332-ember-data-record-links-and-meta</a></li><li><a href="0335-deprecate-send-action.html">0335-deprecate-send-action</a></li><li><a href="0337-native-class-constructor-update.html">0337-native-class-constructor-update</a></li><li><a href="0340-deprecate-ember-merge.html">0340-deprecate-ember-merge</a></li><li><a href="0345-discord.html">0345-discord</a></li><li><a href="0364-roadmap-2018.html">0364-roadmap-2018</a></li><li><a href="0369-deprecate-computed-clobberability.html">0369-deprecate-computed-clobberability</a></li><li><a href="0370-deprecate-computed-volatile.html">0370-deprecate-computed-volatile</a></li><li><a href="0372-ember-data-model-factory-for.html">0372-ember-data-model-factory-for</a></li><li><a href="0373-Element-Modifier-Managers.html">0373-Element-Modifier-Managers</a></li><li><a href="0375-deprecate-computed-property-modifier.html">0375-deprecate-computed-property-modifier</a></li><li><a href="0386-remove-jquery.html">0386-remove-jquery</a></li><li><a href="0389-dynamic-tag-names.html">0389-dynamic-tag-names</a></li><li><a href="0391-router-helpers.html">0391-router-helpers</a></li><li><a href="0392-deprecate-component-manager-string-lookup.html">0392-deprecate-component-manager-string-lookup</a></li><li><a href="0395-ember-data-packages.html">0395-ember-data-packages</a></li><li><a href="0398-RouteInfo-Metadata.html">0398-RouteInfo-Metadata</a></li><li><a href="0403-ember-data-identifiers.html">0403-ember-data-identifiers</a></li><li><a href="0408-decorators.html">0408-decorators</a></li><li><a href="0410-tracked-properties.html">0410-tracked-properties</a></li><li><a href="0415-render-element-modifiers.html">0415-render-element-modifiers</a></li><li><a href="0416-glimmer-components.html">0416-glimmer-components</a></li><li><a href="0418-deprecate-route-render-methods.html">0418-deprecate-route-render-methods</a></li><li><a href="0421-deprecate-application-controller-props.html">0421-deprecate-application-controller-props</a></li><li><a href="0425-website-redesign.html">0425-website-redesign</a></li><li><a href="0431-guides-restructure.html">0431-guides-restructure</a></li><li><a href="0432-contextual-helpers.html">0432-contextual-helpers</a></li><li><a href="0435-modifier-splattributes.html">0435-modifier-splattributes</a></li><li><a href="0440-decorator-support.html">0440-decorator-support</a></li><li><a href="0445-deprecate-with.html">0445-deprecate-with</a></li><li><a href="0446-contribution-guides.html">0446-contribution-guides</a></li><li><a href="0449-deprecate-partials.html">0449-deprecate-partials</a></li><li><a href="0451-injection-parameter-normalization.html">0451-injection-parameter-normalization</a></li><li><a href="0452-ember-data-medium-term-plan.html">0452-ember-data-medium-term-plan</a></li><li><a href="0457-nested-lookups.html">0457-nested-lookups</a></li><li><a href="0459-angle-bracket-built-in-components.html">0459-angle-bracket-built-in-components</a></li><li><a href="0460-yieldable-named-blocks.html">0460-yieldable-named-blocks</a></li><li><a href="0461-ember-data-singleton-record-data.html">0461-ember-data-singleton-record-data</a></li><li><a href="0463-record-data-state.html">0463-record-data-state</a></li><li><a href="0465-record-data-errors.html">0465-record-data-errors</a></li><li><a href="0466-request-state-service.html">0466-request-state-service</a></li><li><a href="0468-classic-decorator.html">0468-classic-decorator</a></li><li><a href="0470-fn-helper.html">0470-fn-helper</a></li><li><a href="0471-on-modifier.html">0471-on-modifier</a></li><li><a href="0477-blueprints-update.html">0477-blueprints-update</a></li><li><a href="0478-tracked-properties-updates.html">0478-tracked-properties-updates</a></li><li><a href="0481-component-templates-co-location.html" class="active">0481-component-templates-co-location</a></li><li><a href="0486-deprecate-mouseenter.html">0486-deprecate-mouseenter</a></li><li><a href="0487-custom-model-classes.html">0487-custom-model-classes</a></li><li><a href="0491-deprecate-disconnect-outlet.html">0491-deprecate-disconnect-outlet</a></li><li><a href="0494-async-observers.html">0494-async-observers</a></li><li><a href="0496-handlebars-strict-mode.html">0496-handlebars-strict-mode</a></li><li><a href="0507-embroider-v2-package-format.html">0507-embroider-v2-package-format</a></li><li><a href="0519-2019-2020-roadmap.html">0519-2019-2020-roadmap</a></li><li><a href="0521-find-by-identifier.html">0521-find-by-identifier</a></li><li><a href="0522-default-serializers-and-adapters.html">0522-default-serializers-and-adapters</a></li><li><a href="0523-model-argument-for-route-templates.html">0523-model-argument-for-route-templates</a></li><li><a href="0554-deprecate-getwithdefault.html">0554-deprecate-getwithdefault</a></li><li><a href="0558-edition-detection.html">0558-edition-detection</a></li><li><a href="0560-add-equality-operators.html">0560-add-equality-operators</a></li><li><a href="0561-add-numeric-comparison-operators.html">0561-add-numeric-comparison-operators</a></li><li><a href="0562-add-logical-operators.html">0562-add-logical-operators</a></li><li><a href="0566-memo-decorator.html">0566-memo-decorator</a></li><li><a href="0580-destroyables.html">0580-destroyables</a></li><li><a href="0581-new-test-waiters.html">0581-new-test-waiters</a></li><li><a href="0585-improved-ember-registry-apis.html">0585-improved-ember-registry-apis</a></li><li><a href="0615-autotracking-memoization.html">0615-autotracking-memoization</a></li><li><a href="0617-rfc-stages.html">0617-rfc-stages</a></li><li><a href="0625-helper-managers.html">0625-helper-managers</a></li><li><a href="0626-invoke-helper.html">0626-invoke-helper</a></li><li><a href="0628-prettier.html">0628-prettier</a></li><li><a href="0631-refresh-method-for-router-service.html">0631-refresh-method-for-router-service</a></li><li><a href="0635-ember-new-lang.html">0635-ember-new-lang</a></li><li><a href="0637-customizable-test-setups.html">0637-customizable-test-setups</a></li><li><a href="0638-interactive-app-creation.html">0638-interactive-app-creation</a></li><li><a href="0639-replace-blacklist-whitelist.html">0639-replace-blacklist-whitelist</a></li><li><a href="0645-add-ember-page-title-addon.html">0645-add-ember-page-title-addon</a></li><li><a href="0649-deprecation-staging.html">0649-deprecation-staging</a></li><li><a href="0659-unique-id-helper.html">0659-unique-id-helper</a></li><li><a href="0669-tracked-storage-primitive.html">0669-tracked-storage-primitive</a></li><li><a href="0671-modernize-built-in-components-1.html">0671-modernize-built-in-components-1</a></li><li><a href="0673-deprecate-tryinvoke.html">0673-deprecate-tryinvoke</a></li><li><a href="0674-deprecate-transition-methods-of-controller-and-route.html">0674-deprecate-transition-methods-of-controller-and-route</a></li><li><a href="0680-implicit-injection-deprecation.html">0680-implicit-injection-deprecation</a></li><li><a href="0685-new-browser-support-policy.html">0685-new-browser-support-policy</a></li><li><a href="0686-deprecate-old-manager-capabilities-versions.html">0686-deprecate-old-manager-capabilities-versions</a></li><li><a href="0689-deprecate-has-block.html">0689-deprecate-has-block</a></li><li><a href="0690-deprecate-attrs-in-templates.html">0690-deprecate-attrs-in-templates</a></li><li><a href="0691-deprecate-class-binding-and-class-name-bindings.html">0691-deprecate-class-binding-and-class-name-bindings</a></li><li><a href="0692-deprecate-array-observers.html">0692-deprecate-array-observers</a></li><li><a href="0698-deprecate-link-to-positional-arguments.html">0698-deprecate-link-to-positional-arguments</a></li><li><a href="0702-eslint-plugin-qunit.html">0702-eslint-plugin-qunit</a></li><li><a href="0704-deprecate-octane-optional-features.html">0704-deprecate-octane-optional-features</a></li><li><a href="0705-deprecate-jquery-optional-feature.html">0705-deprecate-jquery-optional-feature</a></li><li><a href="0706-deprecate-ember-global.html">0706-deprecate-ember-global</a></li><li><a href="0707-modernize-built-in-components-2.html">0707-modernize-built-in-components-2</a></li><li><a href="0711-deprecate-auto-location.html">0711-deprecate-auto-location</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title"></h1>
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <hr />
+<p>Start Date: 2019-04-12
+Relevant Team(s): Ember.js, Ember CLI
+RFC PR: https://github.com/emberjs/rfcs/pull/481</p>
+<hr />
+<h1><a class="header" href="#component-templates-co-location" id="component-templates-co-location">Component Templates Co-location</a></h1>
+<h2><a class="header" href="#summary" id="summary">Summary</a></h2>
+<p>We propose to place a component's JavaScript file (the class) and its template
+in the same directory on the file system.</p>
+<p>Today:</p>
+<pre><code>app
+├── components
+│   ├── just-class.js
+│   ├── my-widget.js
+│   ├── nested
+│   │   └── another-widget.js
+│   └── ...
+├── models
+│   └── ...
+├── routes
+│   └── ...
+├── services
+│   └── ...
+├── templates
+│   ├── components
+│   │   ├── just-template.hbs
+│   │   ├── my-widget.hbs
+│   │   ├── nested
+│   │   │   └── another-widget.hbs
+│   │   └── ...
+│   ├── some-route.hbs
+│   └── ...
+└── ...
+</code></pre>
+<p>Proposed:</p>
+<pre><code>app
+├── components
+│   ├── just-class.js
+│   ├── just-template.hbs
+│   ├── my-widget.hbs
+│   ├── my-widget.js
+│   ├── nested
+│   │   ├── another-widget.hbs
+│   │   └── another-widget.js
+│   └── ...
+├── models
+│   └── ...
+├── routes
+│   └── ...
+├── services
+│   └── ...
+├── templates
+│   ├── some-route.hbs
+│   └── ...
+└── ...
+</code></pre>
+<h2><a class="header" href="#motivation" id="motivation">Motivation</a></h2>
+<p>Today, a component's JavaScript file is located in the <code>app/components</code>
+directory. On the other hand, its template is located in the
+<code>app/templates/components</code> directory.</p>
+<p>This design decision is a relic of Ember's pre-1.0 days. In those early days,
+before components were even conceived, &quot;views&quot; were the primary building blocks
+in Ember's UI programming model. Like components, they consist of a view class
+located in <code>app/views/$NAME.js</code> (subclassing <code>Ember.View</code>), and/or a template
+located in <code>app/templates/$NAME.hbs</code>. In other words, every template in Ember
+could optionally have an associated view class, and vice versa.</p>
+<p>Similar to components, they can be &quot;invoked&quot; in other templates using either
+the <code>{{view &quot;$NAME&quot;}}</code> or <code>{{#view &quot;$NAME&quot;}}...{{/view}}</code> syntax. At the time,
+this was how Ember developers create reusable pieces of UI in their app.</p>
+<p>Unlike components, when a view is &quot;invoked&quot;, the view instance does not become
+the <code>this</code> context of its template. Instead, the <code>this</code> from the calling side
+will persist (similar to partials), while properties on the view instance are
+accessible from within the template with <code>{{view.someProperty}}</code> syntax.</p>
+<p>Over time, this programming model has gone through several iterations of
+refinements (remember the short-lived &quot;controls&quot;? 😀), eventually evolved into
+the component-based programming model as we know it today.</p>
+<p>When components were introduced, it was decided that they would live in a
+separate &quot;namespace&quot; than views: their JavaScript files are located in
+<code>app/components</code> instead of <code>app/views</code>, and it uses the now-familiar curly
+invocation syntax instead of the <code>view</code> keyword.</p>
+<p>This decision causes two problems. First, given a template file, such as
+<code>app/templates/foo-bar.hbs</code>, how do we know if it belongs to a component or a
+view? Furthermore, since they live in different namespaces, it is totally legal
+to have unrelated components and views with the same names, which could result
+in naming collisions if their templates were both located in <code>app/templates</code>.
+To solve this problem, component templates were also given a separate namespace
+<code>app/templates/components</code>, as opposed to sharing <code>app/templates</code> with views.</p>
+<p>Over the course of the Ember 1.x release series, components have taken over as
+the primary UI programming primitive. Views were eventually deprecated and
+removed from Ember's API entirely in Ember 2.0. Despite that, the ramifications
+of that era are still around us.</p>
+<p>We argue that the current file system layout for component files is one such
+example. Given how much Ember has evolved since its early days, most of the
+design constraints we had at the time no longer apply. On the other hand, new
+features in the framework – such as the introduction of Ember CLI and the addon
+ecosystem – has brought new capabilities and constraints to the table. As a
+result, this design has caused a lot of &quot;ergonomics papercuts&quot;, which we have
+enumerated below. While each of these may feel inconsequential on their own,
+together they cause a lot of unnecessary friction and feel out-of-place in the
+modern Ember experience.</p>
+<h3><a class="header" href="#1-component-classtemplate-coupling" id="1-component-classtemplate-coupling">1. Component class/template coupling</a></h3>
+<p>The JavaScript class and template of a component are not just <em>related</em> but
+fundamentally <em>coupled</em>. Together, they provide the whole implementation of
+the component. It is impossible to understand one of them without the other.
+When one file is changed, the other likely need to be updated as well. Placing
+these files physically far apart on the file system fails to communicate this
+tight coupling, in addition to causing a lot of inconveniences when navigating
+a project.</p>
+<h3><a class="header" href="#2-no-single-enumeration-of-components" id="2-no-single-enumeration-of-components">2. No single enumeration of components</a></h3>
+<p>Given the importance of components in modern Ember apps, when navigating a
+large-scale or otherwise unfamiliar project, some of the most common task for
+Ember developers is to enumerate all components from the given app or to
+determine whether there exists a component with a specific name. The former is
+useful for getting a general sense of the scope, scale and coding style, and
+the latter is sometimes necessary to disambiguate components from helpers or
+to determine whether a component is part of the app or provided by an addon.</p>
+<p>Unfortunately, under the current filesystem layout, neither <code>app/components</code> or
+<code>app/templates/components</code> provide a complete view for those purposes. With
+template-only components, it is possible to define a component without a class,
+therefore a casual scan of <code>app/components</code> will not discover those components.
+With the release of Octane, we expect template-only components to become more
+common. Likewise, albeit less common, it is also possible to define a component
+with <em>only</em> a class, making <code>app/templates/components</code> potentially incomplete
+also.</p>
+<p>Therefore, the &quot;correct&quot; way to explore the components in an app is to mentally
+merge the contents of both folders, which is difficult and counterproductive.</p>
+<h3><a class="header" href="#3-deviation-from-route-template-conventions" id="3-deviation-from-route-template-conventions">3. Deviation from route template conventions</a></h3>
+<p>In the view-centric days of Ember, <code>app/templates</code> was a &quot;kitchen-sink&quot; folder
+without much internal structure – it mixes route templates with reusable view
+templates, as well as component templates, each of which could be grouped into
+their own deeper nesting structure.</p>
+<p>With Ember 2.0 removing views, and therefore view templates, <code>app/templates</code>
+now has a clear purpose and internal structure: each template file corresponds
+to a route, and each folder corresponding to a nested route. For example,
+<code>app/templates/post.hbs</code> is the template for the top-level <code>post</code> route, and
+<code>app/templates/admin/authors/new.hbs</code> is the template for <code>admin.authors.new</code>.</p>
+<p>Of course, there is one prominent exception to this: <code>app/templates/components</code>
+breaks the otherwise clear convention. Unlike other folders in <code>app/templates</code>,
+<code>app/templates/components</code> does not represent a nested route. Furthermore, its
+internal structure (if any) also differs from its siblings: folders represent
+arbitrary logical/domain groupings, rather than sub-routes.</p>
+<p>Since <code>app/templates/components</code> did not start with a special character (e.g.
+<code>app/templates/-components</code>), it shows up in the middle between its routes
+siblings in most apps, due to lexicographical sorting of the filenames.</p>
+<p>This inconsistency causes confusion and prevents us from teaching the otherwise
+clear convention crisply.</p>
+<h3><a class="header" href="#4-lack-of-single-import" id="4-lack-of-single-import">4. Lack of single import</a></h3>
+<p>Even though the JavaScript class and template of a component are fundamentally
+coupled and inseparable pieces, this relationship is only very loosely encoded
+in Ember today. In fact – the only thing that ties them together is their name:
+when Ember tries to render a component, it will separately lookup the class and
+template by name through the resolver. These elements can both be present at
+the same time, or in the cases of template-only or class-only components, one
+of the resolutions will return a negative result. Only when both elements are
+missing would Ember declare the component missing and raise an error.</p>
+<p>This setup falls short when designing components meant for subclassing. For
+example:</p>
+<pre><code class="language-js">// app/components/foo-bar.js
+
+import MyParentComponent from &quot;./my-parent&quot;;
+
+export default class FooBarComponent extends MyParentComponent {
+  // ...
+}
+</code></pre>
+<p>As far as Ember can tell, this file defines a class-only component by the name
+of <code>foo-bar</code>. The fact that it inherits from <code>my-parent</code> is an irrelevant and
+unobservable detail. While the developer may expect this to also inherit the
+parent component's template (<code>app/templates/components/my-parent.hbs</code>), Ember
+has no way to know that the two are related.</p>
+<p>Because of this problem, addons typically use the <code>layout</code> property from the
+classic component API to get around this problem. When generating a component
+in an addon, this is the default output from the blueprint:</p>
+<pre><code class="language-js">// addon/components/foo-bar.js
+
+import Component from &quot;@ember/component&quot;;
+import layout from &quot;../templates/components/foo-bar&quot;;
+
+export default Component.extend({
+  layout
+});
+</code></pre>
+<pre><code class="language-hbs">{{!-- addon/templates/components/foo-bar.hbs --}}
+
+{{yield}}
+</code></pre>
+<pre><code class="language-js">// app/components/foo-bar.js
+
+export { default } from &quot;my-addon/components/foo-bar&quot;;
+</code></pre>
+<p>First, within the <code>addon</code> folder, there is the component class and template.
+Having these files in the <code>addon</code> folder allow them to be imported from
+JavaScript (e.g. <code>import FooBar from 'my-addon/components/foo-bar';</code>) for
+subclassing. However, as mentioned above, this does not also bring along the
+component's template.</p>
+<p>To avoid developers having to also import the template, the addon component
+blueprint sets the <code>layout</code> property on the component's class. At runtime,
+when Ember fail to find a template associated with the component, it will
+then fall back to this property.</p>
+<p>Finally, it re-exports the component in the <code>app</code> folder, which is merged with
+the app's <code>app</code> folder, allowing the component to be resolved by the resolver
+and invoked from Handlebars.</p>
+<p>This workaround gets the job done, but has several major drawbacks.</p>
+<p>First, it adds a significant amount of boilerplate to addon components, which
+could be puzzling even to seasoned addon developers. In fact, the problem it
+solves is unique to addons – there is nothing wrong with using inheritance in
+apps – we just didn't think we could justify adding this amount of boilerplate
+to every app and putting them in Ember's &quot;happy path&quot;.</p>
+<p>Second, the <code>layout</code> property in classic component uses a feature in Glimmer VM
+called &quot;late-bound layout&quot;, in which we must assume a different template for
+each <em>instance</em> of the component (the <code>layout</code> property can be set in <code>init</code>).
+This is fundamentally more difficult to optimize and excludes the component
+from key optimizations (and opportunities for future optimizations).</p>
+<p>Most importantly, Glimmer components do not have the equivalent of the <code>layout</code>
+property, meaning that addons (or components designed for inheritance in mind)
+cannot be written using Glimmer components today.</p>
+<p>To solve these problems once and for all, we need to change things such that
+component templates are automatically associated with their JavaScript class at
+build time, and importing the JavaScript class should result in a value that
+has this metadata associated with it, which needs to survive subclassing as
+well. Solving this problem is also essential for unblocking template imports.</p>
+<p>We believe the technical design for allowing co-location will solve this
+problem nicely.</p>
+<h2><a class="header" href="#detailed-design" id="detailed-design">Detailed design</a></h2>
+<h3><a class="header" href="#high-level-design" id="high-level-design">High-level design</a></h3>
+<p>We propose to allow placing a component's template adjacent to its JavaScript
+file in <code>app/components</code>. For example, for a component named <code>foo-bar</code>, it will
+be <code>app/components/foo-bar.js</code> and <code>app/components/foo-bar.hbs</code>.</p>
+<p>In addition, per the node resolution convention, we propose to allow <code>index</code>
+files inside a directory to have the equivalent semantics. In the example
+above, it could also be structured as <code>app/components/foo-bar/index.js</code> and
+<code>app/components/foo-bar/index.hbs</code>. This allows additional files related to the
+component (such as a <code>README.md</code> file) to be co-located on the filesystem.</p>
+<p>For template-only components, they can be either <code>app/components/foo-bar.hbs</code>
+or <code>app/components/foo-bar/index.hbs</code> without a corresponding JavaScript file.</p>
+<p>Similarly, for addons, templates can be placed inside <code>addon/components</code> with
+the same rules laid out above.</p>
+<p>In all of these case, if a template file is present in <code>app/components</code> or
+<code>addon/components</code>, it will take precedence over any corresponding template
+files in <code>app/templates</code>, the <code>layout</code> property on classic components, or a
+template with the same name that is made available with the resolver API.
+Instead of being resolved at runtime, a template in <code>app/components</code> will be
+associated with the component's JavaScript class at build time.</p>
+<h3><a class="header" href="#low-level-primitives" id="low-level-primitives">Low-level primitives</a></h3>
+<p>We propose to introduce the following low-level APIs:</p>
+<ul>
+<li>
+<p>The <code>setComponentTemplate</code> function takes two arguments, the first being the
+pre-compiled (wire-format) template, the second being the component class. It
+transparently associates the given template with the component class in a way
+can be retrieved later with the <code>getComponentTemplate</code> function described
+below. For convenience, <code>setComponentTemplate</code> will return the component
+class (the second argument).</p>
+</li>
+<li>
+<p>The <code>getComponentTemplate</code> function takes a component class and returns the
+template associated with the given component class, if any, or one of its
+superclasses, if any, or <code>undefined</code> if no template association was found.</p>
+</li>
+</ul>
+<p>This is one possible way to implement these functions:</p>
+<pre><code class="language-js">function setComponentTemplate(template, componentClass) {
+  Object.defineProperty(componentClass, &quot;__template__&quot;, {
+    configurable: true,
+    enumerable: false,
+    writable: false,
+    value: template
+  });
+
+  return componentClass;
+}
+
+function getComponentTemplate(componentClass) {
+  return componentClass.__template__;
+}
+
+class Foo {}
+class Bar extends Foo {}
+class Baz extends Bar {}
+
+class Bat {}
+
+// USAGE
+
+setComponentTemplate(template(&quot;foo template&quot;), Foo);
+setComponentTemplate(template(&quot;baz template&quot;), Baz);
+
+getComponentTemplate(Foo); // =&gt; foo template
+getComponentTemplate(Bar); // =&gt; foo template (inherited)
+getComponentTemplate(Baz); // =&gt; baz template (overridden)
+
+getComponentTemplate(Bat); // =&gt; undefined
+</code></pre>
+<p>In an actual implementation, we would probably want to avoid polluting the
+component class with a string key (<code>__template__</code> in this example) and use a
+<code>Symbol</code> or <code>WeakMap</code> based strategery.</p>
+<p>For performance reason, changing the template is not allowed once set. It is
+also illegal to call <code>setComponentTemplate</code> on a component class that has
+already been rendered, or once <code>getComponentTemplate</code> has been called on it.
+Together, these rules ensure the results from calling <code>getComponentTemplate</code>
+can be reliably cached, either by the internals of <code>getComponentTemplate</code>
+itself or by one of its callers.</p>
+<p>While the default export of a component's JavaScript file is usually a class,
+it is not a strict requirement with custom component managers. To accommodate
+this, <code>setComponentTemplate</code> can be passed any JavaScript <code>Object</code>.</p>
+<h3><a class="header" href="#build-time-transformations" id="build-time-transformations">Build-time transformations</a></h3>
+<p>The low-level <code>setComponentTemplate</code> and <code>getComponentTemplate</code> APIs are not
+intended to be called by end-users directly, even though they will be public
+and part of our semver stability guarantee. Instead, they are meant to be used
+primarily in the output emitted by build tools. At build time, any template
+files found in <code>{app,addon}/components</code> will be inlined into the component's
+JavaScript file and removed from the build output. For example, given these
+files on disk:</p>
+<pre><code class="language-js">// app/components/foo-bar.js
+
+import Component from &quot;@ember/component&quot;;
+
+export default Component.extend({
+  // ...
+});
+</code></pre>
+<pre><code class="language-hbs">{{!-- app/components/foo-bar.hbs --}}
+
+foo bar!
+</code></pre>
+<p>The build output will be something to the effect of this JavaScript file:</p>
+<pre><code class="language-js">// app/components/foo-bar.js
+
+import Component, { setComponentTemplate } from &quot;@ember/component&quot;;
+
+// output of compiling &quot;foo bar!&quot; with ember-cli-htmlbars
+const TEMPLATE = Ember.HTMLBars.template({
+  id: &quot;...&quot;,
+  block: &quot;...&quot;,
+  meta: { moduleName: &quot;app/components/foo-bar&quot; }
+});
+
+const CLASS = Component.extend({
+  // ...
+});
+
+export default setComponentTemplate(TEMPLATE, CLASS);
+</code></pre>
+<p>The variables are named here for clarity, but the actual build output would
+be careful to avoid introducing hygiene issues and other observable semantic
+changes to the JavaScript file.</p>
+<p>One caveat here is that each component JavaScript file should export a value
+that is unique to that file. For example, this should be <strong>avoided</strong>:</p>
+<pre><code class="language-js">// app/components/foo-bar.js
+
+import MyParentComponent from &quot;./my-parent&quot;;
+
+// BAD: don't do this!
+export default MyParentComponent;
+</code></pre>
+<p>This is problematic because <code>setComponentTemplate</code> will be called on
+<code>MyParentComponent</code> directly, affecting the parent component and all of its
+descendants. This can be avoided by subclassing, even when no customization is
+required:</p>
+<pre><code class="language-js">// app/components/foo-bar.js
+
+import MyParentComponent from &quot;./my-parent&quot;;
+
+// GOOD: do this instead!
+export default class extends MyParentComponent {}
+</code></pre>
+<p>Most cases of this problem can be linted against easily.</p>
+<h3><a class="header" href="#template-only-components" id="template-only-components">Template-only components</a></h3>
+<p>For template-only components, we propose to introduce the following low-level
+API:</p>
+<ul>
+<li>The <code>templateOnlyComponent</code> function takes no arguments and produces a unique
+value that can be used to represent a template-only component.</li>
+</ul>
+<p>Again, this function, though public, is not intended to be called by users
+directly. It is primarily used in the output emitted by build tools. When a
+template is found in <code>{app,addon}/components</code> but without a corresponding
+JavaScript file, the build output will be something similar to the following:</p>
+<pre><code class="language-js">// app/components/foo-bar.js
+
+import Component, { setComponentTemplate } from &quot;@ember/component&quot;;
+import templateOnlyComponent from &quot;@ember/component/template-only&quot;;
+
+// output of compiling &quot;foo bar!&quot; with ember-cli-htmlbars
+const TEMPLATE = Ember.HTMLBars.template({
+  id: &quot;...&quot;,
+  block: &quot;...&quot;,
+  meta: { moduleName: &quot;app/components/foo-bar&quot; }
+});
+
+const CLASS = templateOnlyComponent();
+
+export default setComponentTemplate(TEMPLATE, CLASS);
+</code></pre>
+<p>In addition to build tooling, addon authors may also find this function
+useful. Currently, the only way to create a &quot;true&quot; template-only component
+is by enabling an optional feature in the app. Since addons cannot assume the
+value of that flag in the consuming app, they currently cannot take advantage
+of the feature. By providing this function, addon authors can work around this
+problem by explicitly defining a JavaScript file with <code>templateOnlyComponent()</code>
+as the default export.</p>
+<p>On the other hand, app developers, should <em>not</em> have any reason to use this
+function directly in their app, since they could just as easily enable the
+optional feature across the board.</p>
+<h3><a class="header" href="#codemod" id="codemod">Codemod</a></h3>
+<p>A codemod will be provided to seamlessly migrate component templates.</p>
+<p>Such a &quot;codemod&quot; will essentially just merges <code>app/templates/components</code> into
+<code>app/components</code>. For a quick &quot;taste test&quot; of what the resulting tree will look
+like in your app, the following commands give a close approximation:</p>
+<pre><code class="language-bash">$ rsync --archive --remove-source-files app/templates/components/ app/components/
+$ rm -rf app/templates/components/
+</code></pre>
+<p>Of course, the resulting output won't &quot;work&quot;, but it can be useful for getting
+a sense of what it's like to work with the new layout on editors, Github, etc.</p>
+<h3><a class="header" href="#generator" id="generator">Generator</a></h3>
+<p>We propose to make some updates to the components generator to accompany this
+change.</p>
+<ol>
+<li>
+<p>It should accept a <code>--component-class</code> option. This controls which base
+class is used for that component and whether native classes are used. The
+legal values for this option are <code>@glimmer/component</code> (aliased as <code>-gc</code>),
+<code>@ember/component</code> (aliased as <code>-cc</code>), <code>@ember/component/template-only</code>
+(aliased as <code>-tc</code>) or an empty string (aliased as <code>--no-component-class</code> and
+<code>-nc</code>).</p>
+<p>The latter two differ in that <code>@ember/component/template-only</code> would
+generate an explicit JavaScript file with <code>templateOnlyComponent()</code> as the
+default export, which is useful for addons, whereas <code>--no-component-class</code>
+would skip generating a JavaScript file altogether.</p>
+<p>This option may be extended in the future to allow other custom components
+to provide their own blueprints, but for now, passing anything other than
+the allowed values will result in an error.</p>
+</li>
+<li>
+<p>It should accept a <code>--component-structure</code> option.</p>
+<p>When this option is set to <code>flat</code> (aliased as <code>-fs</code>), the component's JavaScript and template files will both be generated at the root of
+<code>{app,addon}/components</code>.</p>
+<p>When this option is set to <code>nested</code> (aliased as <code>-ns</code>), a folder will be
+generated for the component in <code>{app,addon}/components</code>, and the component's
+JavaScript and template files will be generated as <code>index.{js,hbs}</code> inside
+the folder.</p>
+<p>When this option is set to <code>classic</code> (aliased as <code>-cs</code>), the component's
+template file will be generated in <code>{app,addon}/templates/components</code>. For
+addons, when used with <code>--component-class=@ember/component</code>, this will also
+emit the <code>layout</code> property workaround.</p>
+<p>When this option is set to <code>pods</code> (aliased as <code>--pods</code>), it will generate
+<code>{app,addon}/components/$name/{component.js,template.hbs}</code>.</p>
+</li>
+<li>
+<p>Thses options will default to <code>--component-class=@ember/component</code> and
+<code>--component-structure=classic</code> for backwards compatibility.</p>
+<p>However, the default values can be overridden in <code>.ember-cli</code> as usual, and
+teams are encouraged to do so as they see fit. Due to a limitation in how
+the system works, the names for these options are chosen such that they are
+unlikely to conflict with options on other <code>ember</code> commands, which is why
+they are a bit verbose.</p>
+<p>For Octane apps, the default app blueprint will include a <code>.ember-cli</code> file
+that defaults to <code>--no-component-class</code> and <code>--component-structure=flat</code>.
+The guides and documentation will assume these settings going forward.</p>
+</li>
+</ol>
+<h2><a class="header" href="#how-we-teach-this" id="how-we-teach-this">How we teach this</a></h2>
+<p>As mentioned above, we will update the learning resources to assume the &quot;flat&quot;
+co-located layout. Throughout the Ember Guides, the Tutorials, and the CLI
+Addon Tutorial, we would update the file paths in all component examples. Since
+we assume the classic layout today, in most cases only the template paths would
+need to be updated. The prose describing the location of files would also need
+to change.</p>
+<p>The API documentation will describe the full set of file layout options
+supported in the major version of Ember. A section should also be added to the
+CLI guides, which describes how to properly import components from addons that
+have a mix of layout types. We will not cover blending file layouts in the
+Ember Guides, since they represent the happy path for an app, but we could link
+to the CLI Guides explanation.</p>
+<p>With this layout, it should be much easier for new users to form a mental model
+around components. We can start by teaching that the most basic component is
+just a reusable piece of markup (template-only components), but can &quot;upgraded&quot;
+to have dynamic content by taking arguments using the <code>@name</code> syntax, and
+further &quot;upgraded&quot; to keep internal states by creating a JavaScript file next
+to the template and finally add interactivity with element modifiers.</p>
+<p>Because template-only component is such a light-weight concept, it is arguably
+not necessary to separate out the topic of &quot;templates&quot; from &quot;components&quot; in the
+guides, but this can be addressed in a future revision of the guides.</p>
+<p>We will teach that the <code>templates</code> folder is used for route templates. This can
+be introduced in the Guides at the same time as the <code>routes</code> and <code>controllers</code>
+folders/topics, which come later in the Table of Contents.</p>
+<h2><a class="header" href="#drawbacks" id="drawbacks">Drawbacks</a></h2>
+<p>Another drawback is that it only address the co-location issue for components,
+not other related types like [[route, controller, route template]] and [[model,
+adapter, serializer]], or even co-location of tests. However, we believe the
+situation with components is unique enough (see the motivation section) that
+they are not merely <em>related</em>, but <em>coupled</em>. That, along with the fact that
+components are much more common, sets them apart from the rest and justifies
+solving the problem first.</p>
+<p>There is a small risk that we will subject the community to another migration
+when we finalize the replacement of Module Unification (the &quot;New File Layout&quot;).
+However, we feel pretty confident that regardless of where the collection of
+components will end up on disk (e.g. <code>src/ui/components</code>), the internal
+structure of that collection will closely match what is proposed in this RFC.
+Ultimately, we expect there to be automatic migrators for these kinds of
+changes anyway, so the cost of the possible churn is contained.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="0478-tracked-properties-updates.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="0486-deprecate-mouseenter.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="0478-tracked-properties-updates.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="0486-deprecate-mouseenter.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>
