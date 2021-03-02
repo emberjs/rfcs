@@ -207,13 +207,13 @@ With this code, we have established the following behaviors:
    `setupController`, etc.); it will only update the URL.
 
 
-### <LinkTo /> component
+### &lt;LinkTo /&gt; component
 
 TODO
 
 ### transitionTo
 
-TODO
+Unchanged
 
 ### Opting in to a full transition
 
@@ -240,7 +240,8 @@ Questions from [RFC #715](https://github.com/emberjs/rfcs/pull/715), which takes
 this (#712) RFC a step further and removes the reliance on controllers for query
 params:
 
-Most "fancy features" of query params would be implemented in user-space:
+Most "fancy features" of query params would be implemented in user-space or in
+supplemental addons, such as ember-parachute.
 
 ### Sticky Query Params
 
@@ -320,7 +321,7 @@ export default MyRoute extends Route {
 }
 ```
 
-### Does <Route>#refrosh() retain query params?
+### Does &lt;Route&gt;#refrosh() retain query params?
 
 yes
 
