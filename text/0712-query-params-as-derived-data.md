@@ -120,26 +120,299 @@ This pattern already works so all that would need updating are the Guides.
 
 ## How we teach this
 
+These changes will need to be made to the guides:
+
+### Query Parameters / Intro
+
+Unchanged
+
+### Specifying Query Parameters
+
+Query params are declared on route-driven controllers. For example, to
+configure query params that are active within the `articles` route,
+they must be declared on `controller:articles`.
+
+To add a `category`
+query parameter that will filter out all the articles that haven't
+been categorized as popular we'd specify `'category'`
+as one of `controller:articles`'s `queryParams`:
+
+```javascript {data-filename=app/controllers/articles.js}
+import Controller from '@ember/controller';
+import { inject as service } from '@ember/service';
+
+export default class ArticlesController extends Controller {
+  queryParams = ['category'];
+
+  @service router;
+
+  get category() {
+    return this.router.currentRoute.queryParams.category;
+  }
+}
+```
+
+This sets up an allow list of query params on that only permits the `category`
+query param in the URL, In other words, no other query params are allowed
+on `controller:articles`. Any changes to the `category` query param in the URL
+will update the query params on the `currentRoute` of the `router` which will
+then be reflected in the `category` getter on the controller.
+
+Note that you can't make `queryParams` be a dynamically generated property
+(neither computed property, nor property getter); they have to be values.
+
+Also Note that to change the URL programatically,
+`this.router.transitionTo({ queryParams: { category: 'next category' } })`
+can be used.
+
+Now we need to define a getter for our category-filtered
+array, which the `articles` template will render.
+
+```javascript {data-filename=app/controllers/articles.js}
+import Controller from '@ember/controller';
+import { inject as service } from '@ember/service';
+import { tracked } from '@glimmer/tracking';
+
+export default class ArticlesController extends Controller {
+  queryParams = ['category'];
+
+  @service router;
+
+  get category() {
+    return this.router.currentRoute.queryParams.category;
+  }
+
+  get filteredArticles() {
+    let category = this.category;
+    let articles = this.model;
+
+    if (category) {
+      return articles.filterBy('category', category);
+    } else {
+      return articles;
+    }
+  }
+}
+```
+
+With this code, we have established the following behaviors:
+
+1. If the user navigates to `/articles`, `category` will be `undefined`, so
+   the articles won't be filtered.
+2. If the user navigates to `/articles?category=recent`,
+   `category` will be set to `"recent"`, so articles will be filtered.
+3. Once inside the `articles` route, `transitionTo` may be used to change
+   the `category` query param. By default, a query param property change won't
+   cause a full router transition (i.e. it won't call `model` hooks and
+   `setupController`, etc.); it will only update the URL.
+
+
+### <LinkTo /> component
+
 TODO
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
+### transitionTo
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
+TODO
 
-> How should this feature be introduced and taught to existing Ember
-users?
+### Opting in to a full transition
+
+TODO
+
+### Update URL with 'replaceState' instead
+
+TODO
+
+### Map a controller's property to a different query param key
+
+Removed
+
+### Default values and (de)serialization
+
+TODO
+
+### Sticky Query Param Values
+
+------------------------------------
+
+
+Questions from [RFC #715](https://github.com/emberjs/rfcs/pull/715), which takes
+this (#712) RFC a step further and removes the reliance on controllers for query
+params:
+
+Most "fancy features" of query params would be implemented in user-space:
+
+### Sticky Query Params
+
+Sticky query params are supported by controllers by default, but but if someone
+wanted to manage that state themselves (for additional features, or providing
+different behavior), they may be able to implement it like this:
+
+```ts
+// app/services/query-params.ts
+const CACHE = new Map<Record<string, string>>();
+
+function getForUrl(url: string) {
+  let existing = CACHE.get(url);
+
+  if (!existing) {
+    CACHE.set(url, {});
+
+    return existing;
+  }
+
+  return existing;
+}
+
+class QueryParamsService extends Service {
+  @service router;
+
+  setQP(qpName, value) {
+    let cacheForUrl = getForUrl(this.router.currentURL);
+
+    cacheForUrl[qpName] = value;
+  }
+
+  getQP(qpName) {
+    return getForUrl(this.router.currentURL)[qpName];
+  }
+}
+```
+
+```js
+// some route
+export default MyRoute extends Route {
+  @service router;
+  @service queryParams;
+
+  async beforeModel({ to: { queryParams }}) {
+    let category = this.queryParams.getQP('category');
+
+    // if transitioning to a route with explicit query params,
+    // update the query param cache
+    if (stickyQPs.category && category !== queryParams.category) {
+      this.queryParams.setQP('category', queryParams.category);
+    }
+
+    // because the URL must reflect the state query params, we must transition
+    if (!queryParams.category && category) {
+      this.router.transitionTo({ queryParams: { category }});
+    }
+  }
+}
+```
+
+### Default Query Params
+
+Controllers also support default query params, but encourage the use of a
+query param property, which is two-way-bound. To have a one-way dataflow
+from the URL, default query params may look like this:
+
+```js
+export default MyRoute extends Route {
+  @service router;
+
+  async beforeModel({ to: { queryParams }}) {
+    if (!queryParams.category) {
+      this.router.transitionTo({ queryParams: { category: 'default value' }});
+    }
+  }
+}
+```
+
+### Does <Route>#refrosh() retain query params?
+
+yes
+
+### Does the route model hook receive query params?
+
+yes, on `transition.to.queryParams`
+
+### How could sticky query params in links handled in user-space?
+
+If sticky query params are managed on a service, a custom `LinkTo` component could
+inject that service and look up if query params have been set for a particular
+route target -- and the implementation could decide if the query params should be
+sticky with or without the dynamic segments. A primitive implementation that uses
+the full href + dynamic segments might look like:
+
+```ts
+const CACHE = new Map<Record<string, string>>();
+
+function getForUrl(url: string) {
+  let existing = CACHE.get(url);
+
+  if (!existing) {
+    CACHE.set(url, {});
+
+    return existing;
+  }
+
+  return existing;
+}
+
+class QueryParamsService extends Service {
+  @service router;
+
+  @action
+  cacheQP(qpName, value) {
+    let cacheForUrl = getForUrl(this.router.currentURL);
+
+    cacheForUrl[qpName] = value;
+  }
+
+  @action
+  getQP(qpName) {
+    return getForUrl(this.router.currentURL)[qpName];
+  }
+
+  @action
+  forUrl(url: string) {
+    return getForUrl(url);
+  }
+}
+```
+
+```ts
+// your custom link component
+interface Args {
+  href: string;
+}
+
+export default class MyLink extends Component<Args> {
+  @service router;
+  @service queryParams;
+
+  get href() {
+    // or this.router.urlFor(...);
+    let { href } = this.args;
+    let qps = stickyQPsToQueryString(this.queryParams.forUrl(href));
+
+    return `${href}?${qps}`;
+  }
+}
+
+function stickyQPsToQueryString(queryParams: Record<string, string>) {
+  let search = new URLSearchParams();
+
+  for (let qp in queryParams) {
+    let value = queryParams[qp];
+
+    search.add(qp, value);
+  }
+
+  return search.toString();
+}
+```
+```hbs
+<a href={{this.href}} ...attributes>{{yield}}</a>
+```
+
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+This is a major change in how we think about query params and could be jarring
+for folks, and could take some getting used to.
 
 ## Alternatives
 
