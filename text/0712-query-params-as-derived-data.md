@@ -247,6 +247,9 @@ supplemental addons, such as ember-parachute.
 
 ### Sticky Query Params
 
+[Demo Ember Twiddle](https://ember-twiddle.com/7e472191b3f5021433b8552158a4379e?openFiles=controllers.articles%5C.js%2C)
+_Note that RFC 715 would significantly simplify the implementation_
+
 Sticky query params are supported by controllers by default, but but if someone
 wanted to manage that state themselves (for additional features, or providing
 different behavior), they may be able to implement it like this:
