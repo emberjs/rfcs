@@ -51,7 +51,7 @@ expost const ELEMENT_DESCRIPTOR = Symbol('element descriptor');
 
 export interface IElementDescriptor {
   element: Element | null;
-  elements: Element[];
+  elements?: Element[];
   description?: string;
 }
 
@@ -128,11 +128,28 @@ class SelectorDOMQuery implements IElementDescriptorFactory {
 
 This RFC proposes to extend `@ember/test-helpers`'s DOM helpers and `qunit-dom`'s DOM assertions to accept arguments of type `IElementDescriptor` and `IElementDescriptorFactory` anywhere they accept a selector or an `Element`.
 
-### Why two interfaces?
+### Why a symbol and two interfaces?
 
-It would be possible to only have the `IElementDescriptor` interface and not the `IElementDescriptorFactory` interface. The short answer is that one of the use cases this RFC is aiming to address involves page objects implementing these interfaces, which means that the interface properties/methods would be in the same namespace as user-defined properties on the page objects. So the `IElementDescriptorFactory` interface exists to allow such page objects to only have to reserve one property name (`elementDescriptor`), rather than three (`element`, `elements`, and `description`).
+It would be possible to only have the `IElementDescriptor` interface and not the `IElementDescriptorFactory` interface, and do away with the `ELEMENT_DESCRIPTOR` symbol. The short answer for why we have them is that one of the use cases this RFC is aiming to address involves page objects implementing these interfaces, which means that the interface properties/methods would be in the same namespace as user-defined properties on the page objects. So the `IElementDescriptorFactory` interface and `ELEMENT_DESCRIPTOR` symbol exist to allow such page objects to avoid namespace conflicts.
 
 This is further discussed in the alternatives section of this RFC.
+
+### New use cases
+
+Page objects:
+
+```js
+await click(pageObject.listItems[2].checkbox);
+assert.dom(pageObject.listItems[2].checkbox).isChecked();
+```
+
+Ad-hoc descriptors:
+
+```js
+let element = someOtherLibrary.getGraphElement();
+await click({ element, description: 'graph element' });
+assert.dom({ element, description: 'graph element' }).hasClass('selected');
+```
 
 ### Where does this live?
 
@@ -148,13 +165,30 @@ The Ember guides would not need to be updated, as the default Ember testing meth
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+* This would increase the complexity of the DOM helper and assertion APIs
+* This would add a small amount of extra maintenance cost to those libraries as all new code does
 
 ## Alternatives
+
+### Do nothing
+
+This mainly improves developer ergonomics by allowing for better error/failure messaging and a simpler/more natural semantics when passing page objects to DOM helper/assertion methods. The only new functionality it enables is the ability for DOM helper/assertion methods to accept multi-element descriptors of types other than selectors. So we could do nothing and say what we have now is good enough.
+
+### One interface, three symbols
+
+We could get rid of the `IElementDescriptorProvider` interface and modify the `IElementDescriptor` interface to have symbol property keys instead of string property keys. This would simplify the overall picture, but would make implementing ad-hoc descriptors less ergonomic:
+
+```js
+let element = someOtherLibrary.getGraphElement();
+await click({ element, description: 'graph element' });
+```
+
+vs.
+
+```js
+let element = someOtherLibrary.getGraphElement();
+await click({ [ELEMENT]: element, [DESCRIPTION]: 'graph element' });
+```
 
 > What other designs have been considered? What is the impact of not doing this?
 
@@ -162,5 +196,4 @@ on the impact of the API churn on existing apps, etc.
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+* What do we call the new library?
