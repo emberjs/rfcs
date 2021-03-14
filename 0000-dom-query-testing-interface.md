@@ -42,26 +42,109 @@ We can solve these by defining an DOM element descriptor interface that allows p
 
 ## Detailed design
 
-> This is the bulk of the RFC.
+### The interfaces
 
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here.
+This RFC proposes implementing a very lightweight library that exports one `Symbol` and two interfaces:
+
+```ts
+expost const ELEMENT_DESCRIPTOR = Symbol('element descriptor');
+
+export interface IElementDescriptor {
+  element: Element | null;
+  elements: Element[];
+  description?: string;
+}
+
+export interface IElementDescriptorFactory {
+  [ELEMENT_DESCRIPTOR]: IElementDescriptor;
+}
+```
+
+Then any API method that accepts a selector or element can also accept an `IElementDescriptor` or an `IElementDescriptorFactory`. For example a `click()` method like the one in `@ember/test-helpers` could be implemented as
+
+```ts
+function click(target: string | Element | IElementDescriptor | IElementDescriptorFactory) {
+  if (!target) {
+    throw new Error('Must pass an element or selector to `click`.');
+  }
+  
+  let element;
+  if (target instanceof Element) {
+    element = target;
+  } else if (typeof target === 'string') {
+    element = document.querySelector(target);
+    if (!element) {
+      throw new Error(`element not found when calling \`click(${selector})\`.`);
+    }
+  } else {
+    // IElementDescriptor or IElementDescriptorFactory
+    let descriptor = target[ELEMENT_DESCRIPTOR];
+    if (!descriptor) {
+      descriptor = target;
+    }
+    
+    let element = descriptor.element;
+    if (!element) {
+      let description = descriptor.description;
+      if (description) {
+        throw new Error(`element not found when calling \`click()\` with descriptor: ${description}`);
+      } else {
+        throw new Error(`element not found when calling \`click()\` with descriptor`);
+      }
+    }
+  }
+
+  element.click();
+}
+```
+
+To further illustrate, this is an (unnecessary) implementation of a descriptor and descriptor factory that just wrap a selector:
+
+```ts
+class SelectorDescriptor implements IElementDescriptor {
+  constructor(private selector: string) {}
+  
+  get element(): Element | null {
+    return document.querySelector(this.selector);
+  }
+  
+  get elements(): Element[] {
+    return document.querySelectorAll(this.selector);
+  }
+  
+  get description(): string {
+    return this.selector;
+  }
+}
+
+class SelectorDOMQuery implements IElementDescriptorFactory {
+  public elementDescriptor: IElementDescriptor;
+
+  constructor(selector: string) {
+    this.elementDescriptor = new SelectorDescriptor(selector);
+  }
+}
+```
+
+This RFC proposes to extend `@ember/test-helpers`'s DOM helpers and `qunit-dom`'s DOM assertions to accept arguments of type `IElementDescriptor` and `IElementDescriptorFactory` anywhere they accept a selector or an `Element`.
+
+### Why two interfaces?
+
+It would be possible to only have the `IElementDescriptor` interface and not the `IElementDescriptorFactory` interface. The short answer is that one of the use cases this RFC is aiming to address involves page objects implementing these interfaces, which means that the interface properties/methods would be in the same namespace as user-defined properties on the page objects. So the `IElementDescriptorFactory` interface exists to allow such page objects to only have to reserve one property name (`elementDescriptor`), rather than three (`element`, `elements`, and `description`).
+
+This is further discussed in the alternatives section of this RFC.
+
+### Where does this live?
+
+This would live in a new library, since it defines interfaces for integration between existing libraries, and is not actually dependent on/tied to Ember in any way. The library export the `ELEMENT_DESCRIPTOR` symbol and types of the interfaces.
+
+It could also potentially provide other types and helpers, such a `string | Element | IElementDescriptor | IElementDescriptorFactory` type or a `findElement()` method similar to the one in `@ember/test-helpers` that implements most of the element-finding logic in the `click()` example in the [the interfaces](#the-interfaces) section of this RFC.
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
+This is primarily taught through the API documentation of the various libraries that accept the interfaces, such as `@ember/test-helpers` and `qunit-dom`, and that implement the interfaces, such as `fractal-page-object`. In addition the new library proposed in this RFC would have documentation explaining the interfaces and how to author objects that implement them.
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
-
-> How should this feature be introduced and taught to existing Ember
-users?
+The Ember guides would not need to be updated, as the default Ember testing methodology would be unaffected -- this would be added functionality for users using page object libraries, or implementing ad-hoc element descriptors in their tests.
 
 ## Drawbacks
 
