@@ -211,7 +211,12 @@ With this code, we have established the following behaviors:
 
 ### &lt;LinkTo /&gt; component
 
-TODO
+Unchanged unless RFC 715 is accepted
+ - Due to the sticky-by-default nature of today's query params,
+   the only way to get rid of query params in the URL is to set all query params
+   in a LinkTo to their default values.
+   This can be worked around by not using `<LinkTo>` and instead using the router service's
+   transitionTo method while specifying a `href`-like path.
 
 ### transitionTo
 
@@ -219,19 +224,35 @@ Unchanged
 
 ### Opting in to a full transition
 
-TODO
+Unchanged - this is a route-specific config
 
 ### Update URL with 'replaceState' instead
 
-TODO
+Unchanged - this is a route-specific config
 
 ### Map a controller's property to a different query param key
 
-Removed
+Will need to add a note about getters and other properties in the controller cannot be named the same
+as a query param.
 
 ### Default values and (de)serialization
 
-TODO
+Both default values and deserialization can be handled in getters.
+
+Default value:
+```js
+get category() {
+  return this.router.currentRoute.queryParams.category ?? 'Default Value';
+}
+```
+
+Deserialization:
+```js
+get category() {
+  return parseQP(this.router.currentRoute.queryParams.category);
+}
+```
+`parseQP` defined elsewhere. Receives a string as query params are only ever strings
 
 ### Sticky Query Param Values
 
@@ -247,7 +268,7 @@ supplemental addons, such as ember-parachute.
 
 ### Sticky Query Params
 
-[Demo Ember Twiddle](https://ember-twiddle.com/7e472191b3f5021433b8552158a4379e?openFiles=controllers.articles%5C.js%2C)
+[Demo Ember Twiddle](https://ember-twiddle.com/7e472191b3f5021433b8552158a4379e?openFiles=routes.articles%5C.js%2C&route=%2Farticles)
 _Note that RFC 715 would significantly simplify the implementation_
 
 Sticky query params are supported by controllers by default, but but if someone
