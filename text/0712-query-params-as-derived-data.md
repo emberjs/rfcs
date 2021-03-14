@@ -128,6 +128,8 @@ Unchanged
 
 ### Specifying Query Parameters
 
+[Demo Ember Twiddle](https://ember-twiddle.com/9c261e95e3817306711e2107372cd398?openFiles=controllers.articles%5C.js%2C)
+
 Query params are declared on route-driven controllers. For example, to
 configure query params that are active within the `articles` route,
 they must be declared on `controller:articles`.
