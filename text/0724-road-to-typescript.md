@@ -6,7 +6,7 @@ Release Versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
 Relevant Team(s): Ember.js, Ember Data, Ember CLI, Learning, Steering
-RFC PR: https://github.com/emberjs/rfcs/pull/722
+RFC PR: https://github.com/emberjs/rfcs/pull/724
 
 ---
 
