@@ -323,7 +323,7 @@ export default MyRoute extends Route {
 }
 ```
 
-### Does &lt;Route&gt;#refrosh() retain query params?
+### Does &lt;Route&gt;#refresh() retain query params?
 
 yes
 
