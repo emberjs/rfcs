@@ -258,76 +258,12 @@ get category() {
 
 ------------------------------------
 
+#### `{ scope: 'controller' }`
 
-Questions from [RFC #715](https://github.com/emberjs/rfcs/pull/715), which takes
-this (#712) RFC a step further and removes the reliance on controllers for query
-params:
+[Demo Ember Twiddle](https://ember-twiddle.com/567b7acf47448cee1f63fcb36e82cd66?openFiles=controllers.articles%5C.js%2C)
 
-Most "fancy features" of query params would be implemented in user-space or in
-supplemental addons, such as ember-parachute.
+This config is not in conflict with derived data.
 
-### Sticky Query Params
-
-[Demo Ember Twiddle](https://ember-twiddle.com/7e472191b3f5021433b8552158a4379e?openFiles=routes.articles%5C.js%2C&route=%2Farticles)
-_Note that RFC 715 would significantly simplify the implementation_
-
-Sticky query params are supported by controllers by default, but but if someone
-wanted to manage that state themselves (for additional features, or providing
-different behavior), they may be able to implement it like this:
-
-```ts
-// app/services/query-params.ts
-const CACHE = new Map<Record<string, string>>();
-
-function getForUrl(url: string) {
-  let existing = CACHE.get(url);
-
-  if (!existing) {
-    CACHE.set(url, {});
-
-    return existing;
-  }
-
-  return existing;
-}
-
-class QueryParamsService extends Service {
-  @service router;
-
-  setQP(qpName, value) {
-    let cacheForUrl = getForUrl(this.router.currentURL);
-
-    cacheForUrl[qpName] = value;
-  }
-
-  getQP(qpName) {
-    return getForUrl(this.router.currentURL)[qpName];
-  }
-}
-```
-
-```js
-// some route
-export default MyRoute extends Route {
-  @service router;
-  @service queryParams;
-
-  async beforeModel({ to: { queryParams }}) {
-    let category = this.queryParams.getQP('category');
-
-    // if transitioning to a route with explicit query params,
-    // update the query param cache
-    if (stickyQPs.category && category !== queryParams.category) {
-      this.queryParams.setQP('category', queryParams.category);
-    }
-
-    // because the URL must reflect the state query params, we must transition
-    if (!queryParams.category && category) {
-      this.router.transitionTo({ queryParams: { category }});
-    }
-  }
-}
-```
 
 ### Default Query Params
 
