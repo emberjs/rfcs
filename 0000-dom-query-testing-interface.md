@@ -30,7 +30,7 @@ RFC PR: Fill this in with the URL for the Proposal RFC PR
 
 In this RFC we'll use **DOM element descriptor** to mean a Javascript value that can be used to retrieve one or more `Element`s from a rendered DOM. Examples include a string containing a CSS selector, a direct reference to an `Element`, a function that returns an `Element` or `null`, a function that returns an array of `Element`s, etc.
 
-In this RFC we'll use **DOM helper** to mean an API that is passed a DOM element descriptor, and performs some actions based on the element or elements the descriptor describes. Examples include `@ember/test-helpers`' DOM helper methods such as `click()` and `triggerEvent`, and `qunit-dom`'s assertion factory api, i.e. `assert.dom()`.
+In this RFC we'll use **DOM helper** to mean an API that is passed a DOM element descriptor, and performs some actions based on the element or elements the descriptor describes. Examples include `@ember/test-helpers`' DOM helper methods such as `click()` and `triggerEvent`, and `qunit-dom`'s assertion factory API, i.e. `assert.dom()`.
 
 Ember's testing ecosystem has converged on a single set of recommended DOM helpers. `@ember/test-helpers` provides the core value of implementing DOM interactions, while `qunit-dom` provides the core value of making assertions about DOM query results. They do _not_ (nor should they) provide the core value of advanced DOM querying -- they act on DOM elements, and do the simple baseline of supporting two kinds of DOM element descriptors, CSS selector strings and `Element` references.
 
