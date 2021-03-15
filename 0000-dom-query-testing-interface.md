@@ -53,23 +53,23 @@ We can solve these by formalizing the notion of DOM element descriptors in an in
 This RFC proposes implementing a very lightweight library that exports one `Symbol` and two interfaces:
 
 ```ts
-expost const ELEMENT_DESCRIPTOR = Symbol('element descriptor');
+export const ELEMENT_DESCRIPTOR = Symbol('element descriptor');
 
 export interface IElementDescriptor {
   element: Element | null;
-  elements?: Element[];
+  elements: Element[];
   description?: string;
 }
 
-export interface IElementDescriptorFactory {
+export interface IElementDescriptorProvider {
   [ELEMENT_DESCRIPTOR]: IElementDescriptor;
 }
 ```
 
-Then any API method that accepts a selector or element can also accept an `IElementDescriptor` or an `IElementDescriptorFactory`. For example a `click()` method like the one in `@ember/test-helpers` could be implemented as
+Then any API method that accepts a selector or element can also accept an `IElementDescriptor` or an `IElementDescriptorProvider`. For example a `click()` method like the one in `@ember/test-helpers` could be implemented as
 
 ```ts
-function click(target: string | Element | IElementDescriptor | IElementDescriptorFactory) {
+function click(target: string | Element | IElementDescriptor | IElementDescriptorProvider) {
   if (!target) {
     throw new Error('Must pass an element or selector to `click`.');
   }
@@ -83,7 +83,7 @@ function click(target: string | Element | IElementDescriptor | IElementDescripto
       throw new Error(`element not found when calling \`click(${selector})\`.`);
     }
   } else {
-    // IElementDescriptor or IElementDescriptorFactory
+    // IElementDescriptor or IElementDescriptorProvider
     let descriptor = target[ELEMENT_DESCRIPTOR];
     if (!descriptor) {
       descriptor = target;
@@ -123,7 +123,7 @@ class SelectorDescriptor implements IElementDescriptor {
   }
 }
 
-class SelectorDOMQuery implements IElementDescriptorFactory {
+class SelectorDOMQuery implements IElementDescriptorProvider {
   public elementDescriptor: IElementDescriptor;
 
   constructor(selector: string) {
@@ -132,11 +132,11 @@ class SelectorDOMQuery implements IElementDescriptorFactory {
 }
 ```
 
-This RFC proposes to extend `@ember/test-helpers`'s DOM helpers and `qunit-dom`'s DOM assertions to accept arguments of type `IElementDescriptor` and `IElementDescriptorFactory` anywhere they accept a selector or an `Element`.
+This RFC proposes to extend `@ember/test-helpers`'s DOM helpers and `qunit-dom`'s DOM assertions to accept arguments of type `IElementDescriptor` and `IElementDescriptorProvider` anywhere they accept a selector or an `Element`.
 
-### Why a symbol and two interfaces?
+### Why a symbol? Why two interfaces?
 
-It would be possible to only have the `IElementDescriptor` interface and not the `IElementDescriptorFactory` interface, and do away with the `ELEMENT_DESCRIPTOR` symbol. The short answer for why we have them is that one of the use cases this RFC is aiming to address involves page objects implementing these interfaces, which means that the interface properties/methods would be in the same namespace as user-defined properties on the page objects. So the `IElementDescriptorFactory` interface and `ELEMENT_DESCRIPTOR` symbol exist to allow such page objects to avoid namespace conflicts.
+It would be possible to only have the `IElementDescriptor` interface and not the `IElementDescriptorProvider` interface, and do away with the `ELEMENT_DESCRIPTOR` symbol. The short answer for why we have them is that one of this RFC's target use cases is page objects providing element descriptors, and if they _were_ element descriptors then the element descriptor interface properties/methods would be in the same namespace as user-defined properties on the page objects (e.g. a user might want to implement a `description` property on an album page object containing the text of the album's description, and this would conflict with the `description` property on the `IElementDescriptor` interface). So the `IElementDescriptorProvider` interface and `ELEMENT_DESCRIPTOR` symbol exist to allow such page objects to avoid namespace conflicts.
 
 This is further discussed in the alternatives section of this RFC.
 
@@ -153,15 +153,24 @@ Ad-hoc descriptors:
 
 ```js
 let element = someOtherLibrary.getGraphElement();
-await click({ element, description: 'graph element' });
-assert.dom({ element, description: 'graph element' }).hasClass('selected');
+await click({ element, elements: element ? [element] : [], description: 'graph element' });
+assert.dom({ element, elements: element ? [element] : [], description: 'graph element' }).hasClass('selected');
 ```
+
+It would probably make sense to implement some factory functions for ad-hoc descriptors, e.g.
+
+```ts
+function descriptorFromElement(element: Element | null, description?: string): IElementDescriptor;
+function descriptorFromElements(elements: Element[], description?: string): IElementDescriptor;
+```
+
+but that's an implementation decision that's outside the scope of this RFC.
 
 ### Where does this live?
 
-This would live in a new library, since it defines interfaces for integration between existing libraries, and is not actually dependent on/tied to Ember in any way. The library export the `ELEMENT_DESCRIPTOR` symbol and types of the interfaces.
+This would live in a new library, since it defines interfaces for integration between existing libraries, and is not actually dependent on/tied to Ember in any way. The library would export the `ELEMENT_DESCRIPTOR` symbol and types for the `IElementDescriptor` and `IElementDescriptorProvider` interface.
 
-It could also potentially provide other types and helpers, such a `string | Element | IElementDescriptor | IElementDescriptorFactory` type or a `findElement()` method similar to the one in `@ember/test-helpers` that implements most of the element-finding logic in the `click()` example in the [the interfaces](#the-interfaces) section of this RFC.
+It could also potentially provide other types and helpers, such a `string | Element | IElementDescriptor | IElementDescriptorProvider` type, a `findElement()` method similar to the one in `@ember/test-helpers` that implements most of the element-finding logic in the `click()` example in the [the interfaces](#the-interfaces) section of this RFC, and/or the factory functions described in the [new use cases](#new-use-cases) section, but these are implementation details outside the scope of this RFC.
 
 ## How we teach this
 
@@ -178,27 +187,47 @@ The Ember guides would not need to be updated, as the default Ember testing meth
 
 ### Do nothing
 
-This mainly improves developer ergonomics by allowing for better error/failure messaging and a simpler/more natural semantics when passing page objects to DOM helper/assertion methods. The only new functionality it enables is the ability for DOM helper/assertion methods to accept multi-element descriptors of types other than selectors. So we could do nothing and say what we have now is good enough.
+This mainly improves developer ergonomics by allowing for better error/failure messaging and a simpler/more natural semantics when passing page objects to DOM helper/assertion methods. We could decide that the status quo is good enough, and the improved ergonomics are not worth the cost.
 
 ### One interface, three symbols
 
 We could get rid of the `IElementDescriptorProvider` interface and modify the `IElementDescriptor` interface to have symbol property keys instead of string property keys. This would simplify the overall picture, but would make implementing ad-hoc descriptors less ergonomic:
 
 ```js
-let element = someOtherLibrary.getGraphElement();
-await click({ element, description: 'graph element' });
+let elements = someOtherLibrary.getGraphElements();
+let element = elements.length > 0 ? elements[0] : null;
+await click({ element, elements, description: 'graph element' });
 ```
 
 vs.
 
 ```js
-let element = someOtherLibrary.getGraphElement();
-await click({ [ELEMENT]: element, [DESCRIPTION]: 'graph element' });
+let elements = someOtherLibrary.getGraphElements();
+let element = elements.length > 0 ? elements[0] : null;
+await click({ [ELEMENT]: element, [ELEMENTS]: elements, [DESCRIPTION]: 'graph element' });
 ```
 
-> What other designs have been considered? What is the impact of not doing this?
+although this would be largely mitigated by the factory functions described in the [new use cases](#new-use-cases) section.
 
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
+### WeakMap
+
+To address the namespace conflicts in page objects, we could use a WeakMap instead of a symbol and two interfaces. The new library could provide
+
+```ts
+const descriptorMap = new WeakMap<object, IElementDescriptor>();
+
+export function registerDescriptorProvider(provider: object, descriptor: IElementDescriptor): void {
+  descriptorMap.set(provider, descriptor);
+}
+
+export function getDescriptor(provider: object): IElementDescriptor? {
+  return descriptorMap.get(provider);
+}
+```
+
+and page objects (and the like) could register their element descriptors, allowing DOM helpers to retrieve the descriptors when needed.
+
+This would also solve the namespace conflict, but seems to have limited benefits compared to the symbol solution and introduces extra complexity to the solution.
 
 ## Unresolved questions
 
