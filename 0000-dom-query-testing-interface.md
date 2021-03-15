@@ -57,7 +57,7 @@ export const ELEMENT_DESCRIPTOR = Symbol('element descriptor');
 
 export interface IElementDescriptor {
   element: Element | null;
-  elements: Element[];
+  elements: NodeListOf<Element> | Iterable<Element>;
   description?: string;
 }
 
@@ -69,38 +69,45 @@ export interface IElementDescriptorProvider {
 Then any API method that accepts a selector or element can also accept an `IElementDescriptor` or an `IElementDescriptorProvider`. For example a `click()` method like the one in `@ember/test-helpers` could be implemented as
 
 ```ts
-function click(target: string | Element | IElementDescriptor | IElementDescriptorProvider) {
+function click(
+  target: string | Element | IElementDescriptor | IElementDescriptorProvider
+) {
   if (!target) {
     throw new Error('Must pass an element or selector to `click`.');
   }
-  
-  let element;
+
+  let element: Element | null;
   if (target instanceof Element) {
     element = target;
   } else if (typeof target === 'string') {
-    element = document.querySelector(target);
+    let selector = target as string;
+    element = document.querySelector(selector);
     if (!element) {
       throw new Error(`element not found when calling \`click(${selector})\`.`);
     }
   } else {
     // IElementDescriptor or IElementDescriptorProvider
-    let descriptor = target[ELEMENT_DESCRIPTOR];
+    let descriptor = (target as IElementDescriptorProvider)[ELEMENT_DESCRIPTOR];
     if (!descriptor) {
-      descriptor = target;
+      descriptor = target as IElementDescriptor;
     }
-    
+
     let element = descriptor.element;
     if (!element) {
       let description = descriptor.description;
       if (description) {
-        throw new Error(`element not found when calling \`click()\` with descriptor: ${description}`);
+        throw new Error(
+          `element not found when calling \`click()\` with descriptor: ${description}`
+        );
       } else {
-        throw new Error(`element not found when calling \`click()\` with descriptor`);
+        throw new Error(
+          `element not found when calling \`click()\` with descriptor`
+        );
       }
     }
   }
 
-  element.click();
+  element!.click();
 }
 ```
 
@@ -109,25 +116,25 @@ To further illustrate, this is an (unnecessary) implementation of a descriptor a
 ```ts
 class SelectorDescriptor implements IElementDescriptor {
   constructor(private selector: string) {}
-  
-  get element(): Element | null {
+
+  get element() {
     return document.querySelector(this.selector);
   }
-  
-  get elements(): Element[] {
+
+  get elements() {
     return document.querySelectorAll(this.selector);
   }
-  
+
   get description(): string {
     return this.selector;
   }
 }
 
-class SelectorDOMQuery implements IElementDescriptorProvider {
-  public elementDescriptor: IElementDescriptor;
+class SelectorDescriptorProvider implements IElementDescriptorProvider {
+  public [ELEMENT_DESCRIPTOR]: IElementDescriptor;
 
   constructor(selector: string) {
-    this.elementDescriptor = new SelectorDescriptor(selector);
+    this[ELEMENT_DESCRIPTOR] = new SelectorDescriptor(selector);
   }
 }
 ```
@@ -153,15 +160,32 @@ Ad-hoc descriptors:
 
 ```js
 let element = someOtherLibrary.getGraphElement();
-await click({ element, elements: element ? [element] : [], description: 'graph element' });
-assert.dom({ element, elements: element ? [element] : [], description: 'graph element' }).hasClass('selected');
+await click({
+  element,
+  elements: element ? [element] : [],
+  description: 'graph element',
+});
+assert
+  .dom({
+    element,
+    elements: element ? [element] : [],
+    description: 'graph element',
+  })
+  .hasClass('selected');
 ```
 
 It would probably make sense to implement some factory functions for ad-hoc descriptors, e.g.
 
 ```ts
-function descriptorFromElement(element: Element | null, description?: string): IElementDescriptor;
-function descriptorFromElements(elements: Element[], description?: string): IElementDescriptor;
+function descriptorFromElement(
+  element: Element | null,
+  description?: string
+): IElementDescriptor;
+
+function descriptorFromElements(
+  elements: NodeListOf<Element> | Iterable<Element>,
+  description?: string
+): IElementDescriptor;
 ```
 
 but that's an implementation decision that's outside the scope of this RFC.
@@ -193,7 +217,7 @@ This mainly improves developer ergonomics by allowing for better error/failure m
 
 We could get rid of the `IElementDescriptorProvider` interface and modify the `IElementDescriptor` interface to have symbol property keys instead of string property keys. This would simplify the overall picture, but would make implementing ad-hoc descriptors less ergonomic:
 
-```js
+```ts
 let elements = someOtherLibrary.getGraphElements();
 let element = elements.length > 0 ? elements[0] : null;
 await click({ element, elements, description: 'graph element' });
@@ -201,10 +225,14 @@ await click({ element, elements, description: 'graph element' });
 
 vs.
 
-```js
+```ts
 let elements = someOtherLibrary.getGraphElements();
 let element = elements.length > 0 ? elements[0] : null;
-await click({ [ELEMENT]: element, [ELEMENTS]: elements, [DESCRIPTION]: 'graph element' });
+await click({
+  [ELEMENT]: element,
+  [ELEMENTS]: elements,
+  [DESCRIPTION]: 'graph element',
+});
 ```
 
 although this would be largely mitigated by the factory functions described in the [new use cases](#new-use-cases) section.
@@ -216,12 +244,15 @@ To address the namespace conflicts in page objects, we could use a WeakMap inste
 ```ts
 const descriptorMap = new WeakMap<object, IElementDescriptor>();
 
-export function registerDescriptorProvider(provider: object, descriptor: IElementDescriptor): void {
+export function registerDescriptorProvider(
+  provider: object,
+  descriptor: IElementDescriptor
+): void {
   descriptorMap.set(provider, descriptor);
 }
 
-export function getDescriptor(provider: object): IElementDescriptor? {
-  return descriptorMap.get(provider);
+export function getDescriptor(provider: object): IElementDescriptor | null {
+  return descriptorMap.get(provider) || null;
 }
 ```
 
