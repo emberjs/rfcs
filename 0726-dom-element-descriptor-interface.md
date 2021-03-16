@@ -48,157 +48,139 @@ We can solve these by formalizing the notion of DOM element descriptors in an in
 
 ## Detailed design
 
-### The interfaces
-
-This RFC proposes implementing a very lightweight library that exports one `Symbol` and two interfaces:
-
-```ts
-export const ELEMENT_DESCRIPTOR = Symbol('element descriptor');
-
-export interface IElementDescriptor {
-  element: Element | null;
-  elements: NodeListOf<Element> | Iterable<Element>;
-  description?: string;
-}
-
-export interface IElementDescriptorProvider {
-  [ELEMENT_DESCRIPTOR]: IElementDescriptor;
-}
-```
-
-Then any API method that accepts a selector or element can also accept an `IElementDescriptor` or an `IElementDescriptorProvider`. For example a `click()` method like the one in `@ember/test-helpers` could be implemented as
-
-```ts
-function click(
-  target: string | Element | IElementDescriptor | IElementDescriptorProvider
-) {
-  if (!target) {
-    throw new Error('Must pass an element or selector to `click`.');
-  }
-
-  let element: Element | null;
-  if (target instanceof Element) {
-    element = target;
-  } else if (typeof target === 'string') {
-    let selector = target as string;
-    element = document.querySelector(selector);
-    if (!element) {
-      throw new Error(`element not found when calling \`click(${selector})\`.`);
-    }
-  } else {
-    // IElementDescriptor or IElementDescriptorProvider
-    let descriptor = (target as IElementDescriptorProvider)[ELEMENT_DESCRIPTOR];
-    if (!descriptor) {
-      descriptor = target as IElementDescriptor;
-    }
-
-    let element = descriptor.element;
-    if (!element) {
-      let description = descriptor.description;
-      if (description) {
-        throw new Error(
-          `element not found when calling \`click()\` with descriptor: ${description}`
-        );
-      } else {
-        throw new Error(
-          `element not found when calling \`click()\` with descriptor`
-        );
-      }
-    }
-  }
-
-  element!.click();
-}
-```
-
-To further illustrate, this is an (unnecessary) implementation of a descriptor and descriptor factory that just wrap a selector:
-
-```ts
-class SelectorDescriptor implements IElementDescriptor {
-  constructor(private selector: string) {}
-
-  get element() {
-    return document.querySelector(this.selector);
-  }
-
-  get elements() {
-    return document.querySelectorAll(this.selector);
-  }
-
-  get description(): string {
-    return this.selector;
-  }
-}
-
-class SelectorDescriptorProvider implements IElementDescriptorProvider {
-  public [ELEMENT_DESCRIPTOR]: IElementDescriptor;
-
-  constructor(selector: string) {
-    this[ELEMENT_DESCRIPTOR] = new SelectorDescriptor(selector);
-  }
-}
-```
-
-This RFC proposes to extend `@ember/test-helpers`'s DOM helpers and `qunit-dom`'s DOM assertions to accept arguments of type `IElementDescriptor` and `IElementDescriptorProvider` anywhere they accept a selector or an `Element`.
-
-### Why a symbol? Why two interfaces?
-
-It would be possible to only have the `IElementDescriptor` interface and not the `IElementDescriptorProvider` interface, and do away with the `ELEMENT_DESCRIPTOR` symbol. The short answer for why we have them is that one of this RFC's target use cases is page objects providing element descriptors, and if they _were_ element descriptors then the element descriptor interface properties/methods would be in the same namespace as user-defined properties on the page objects (e.g. a user might want to implement a `description` property on an album page object containing the text of the album's description, and this would conflict with the `description` property on the `IElementDescriptor` interface). So the `IElementDescriptorProvider` interface and `ELEMENT_DESCRIPTOR` symbol exist to allow such page objects to avoid namespace conflicts.
-
-This is further discussed in the alternatives section of this RFC.
-
 ### New use cases
 
-Page objects:
+We're seeking to address two specific new use cases, although the design should be extensible to other unforeseen use cases as well.
+
+#### Page objects
+
+Page objects can be used as DOM element descriptors and passed directly to DOM helpers:
 
 ```js
+assert.dom(pageObject.listItems).exists({ count: 4 });
+
 await click(pageObject.listItems[2].checkbox);
+
 assert.dom(pageObject.listItems[2].checkbox).isChecked();
 ```
 
-Ad-hoc descriptors:
+This will enable more ergonomic integrations of libraries like `ember-cli-page-object` and `fractal-page-object` with DOM helpers.
 
-```js
-let element = someOtherLibrary.getGraphElement();
-await click({
-  element,
-  elements: element ? [element] : [],
-  description: 'graph element',
-});
-assert
-  .dom({
-    element,
-    elements: element ? [element] : [],
-    description: 'graph element',
-  })
-  .hasClass('selected');
-```
+#### Ad-hoc descriptors
 
-It would probably make sense to implement some factory functions for ad-hoc descriptors, e.g.
+DOM element descriptors can be constructed directly from `Element`s:
 
 ```ts
-function descriptorFromElement(
-  element: Element | null,
-  description?: string
-): IElementDescriptor;
+let element = someOtherLibrary.getGraphElement();
+let descriptor = createDOMDescriptor({ element, description: 'graph element' });
 
-function descriptorFromElements(
-  elements: NodeListOf<Element> | Iterable<Element>,
-  description?: string
-): IElementDescriptor;
+await click(descriptor);
+
+assert.dom(descriptor).hasClass('selected');
 ```
 
-but that's an implementation decision that's outside the scope of this RFC.
+or from simple classes for lazy DOM lookups:
 
-### Where does this live?
+```ts
+class MyDescriptor {
+  get element() {
+    return document.querySelectorAll('.list-item')[2];
+  }
+  description = 'second list item';
+}
+let descriptor = new MyDescriptor();
 
-This would live in a new library, since it defines interfaces for integration between existing libraries, and is not actually dependent on/tied to Ember in any way. The library would export the `ELEMENT_DESCRIPTOR` symbol and types for the `IElementDescriptor` and `IElementDescriptorProvider` interface.
+assert.dom(descriptor).doesNotExist();
 
-It could also potentially provide other types and helpers, such a `string | Element | IElementDescriptor | IElementDescriptorProvider` type, a `findElement()` method similar to the one in `@ember/test-helpers` that implements most of the element-finding logic in the `click()` example in the [the interfaces](#the-interfaces) section of this RFC, and/or the factory functions described in the [new use cases](#new-use-cases) section, but these are implementation details outside the scope of this RFC.
+await click('.add-list-item');
+
+assert.dom(descriptor).exists();
+```
+
+This will enable more flexible queries than CSS selectors support without losing descriptive debug/assertion messages.
+
+### Namespacing constraints
+
+The page object use case introduces a significant constraint. Page objects are necessarily extensible, allowing users to define their own properties on them, so a DOM element descriptor interface that relies on properties stored on the object implementing the interface risks conflicts with user-defined properties. For example, if a user implements an album info page object for a page that shows information on an album, it might have a `description` property exposing the rendered text of the album's description, which would mean that it could not also implement an interface that requires it to expose the DOM element descriptor's description under a `description` property.
+
+To address this, we conceive of DOM element descriptors as arbitrary objects whose descriptor data is registered and stored in some private fashion that avoids namespace concerns (e.g. in a `WeakMap`).
+
+### The design
+
+This RFC proposes implementing a library that exports two core functions, and several other convenience methods to improve ergonomics.
+
+#### Core functions
+
+```ts
+interface IDOMElementDescriptor {}
+
+interface DescriptorData {
+  element?: Element | null;
+  elements?: Element[];
+  description?: string;
+}
+
+function registerDescriptorData(descriptor: IDOMElementDescriptor, data: DescriptorData): void;
+function lookupDescriptorData(descriptor: IDOMElementDescriptor): DescriptorData;
+```
+
+(the interfaces have been simplified a bit for illustrative purposes -- in particular, `DescriptorData` would need to enforce that at least one of `element` and `elements` is defined)
+
+`IDOMElementDescriptor` is a "no-op interface" -- it has no properties or methods, and only exists to support typing. So typescript concerns aside, it can be thought of as just `object`.
+
+`DescriptorData` is a type that contains an `element` property and/or an `elements` property, and also an optional `description` property. The `element` and `elements` properties exist to support usage in both single-element contexts (the equivalent of passing a selector to `querySelector()`) and multi-element contexts (the equivalent of passing a selector to `querySelectorAll()`). At least one of them must be defined, and both may be defined. If only the `element` property is defined, then multi-element contexts should act as if the `elements` property were defined to be either an empty array or a singleton array, depending on whether the `element` property evaluates to `null` or an `Element`. If only the `elements` property is defined, then single-element contexts should act as if `element` were defined to be the first element of the `elements` property, or `null` if the `elements` property evaluates to an empty array. To illustrate further, here are two possible implementations of functions to resolve descriptors to DOM elements:
+
+```ts
+function getDescriptorElement(data: DescriptorData): Element | null {
+  if (data.element !== undefined) {
+    return data.element;
+  } else {
+    return data.elements[0] || null;
+  }
+}
+
+function getDescriptorElements(data: DescriptorData): Element[] {
+  if (data.elements) {
+    return data.elements;
+  } else {
+    let element = data.element;
+    return element ? [element] : [];
+  }
+}
+```
+
+It would be possible to only support an `elements` property and always have single-element contexts determine their element as described above, but since the vast majority of current DOM helpers are single-element, we allow `DescriptorData` instances to define both to allow optimizations, e.g. a class implementing `element` and `elements` as getters could call `querySelector()` instead of `querySelectorAll()` when `element` is accessed.
+
+Producers of DOM element descriptors, like page objects or test code producing ad-hoc DOM element descriptors, will use `registerDescriptorData()` to associate data with descriptors, and DOM helpers that are passed descriptors will use `lookupDescriptorData()` to retrieve the data for a given descriptor.
+
+#### Convenience methods
+
+The library will include a convenience function for creating ad-hoc DOM element descriptors:
+
+```ts
+function createDescriptor(data: DescriptorData): IDOMElementDescriptor
+```
+
+which would create an `IDOMElementDescriptor`, use it to register the data, then return it. No equivalent is required for page objects, as the expectation is that they will themselves be `IDOMElementDescriptors`, so they will only need to perform the registration step from their constructor.
+
+The library will also include some functions for use by DOM helpers when using DOM element descriptors to access the DOM. They can use `lookupDescriptorData()` directly, but as mentioned above, that would involve some "boilerplate" code for resolving the data to actual DOM elements in single- or multi-element contexts, since the descriptor data might only have one of `element` or `elements` defined. So the library will implement
+
+```ts
+function resolveDOMElement(target: IDOMElementDescriptor | DescriptorData): Element | null;
+function resolveDOMElements(target: IDOMElementDescriptor | DescriptorData): Element[];
+```
+
+It may make sense to implement some kind of
+
+```ts
+function getDescription(target: IDOMElementDescriptor | DescriptorData): string;
+```
+
+function for returning the descriptor's `description` or deriving some kind of reasonable default description from the descriptors elements, but that's outside the scope of this RFC, and only mentioned here to help paint the broader picture. It may also make sense to implement additional types and helpers to streamline the boilerplate arguments-resolving logic in DOM helpers that accept `Element`s, CSS selector `string`s, and `IDOMElementDescriptors`.
 
 ## How we teach this
 
-This is primarily taught through the API documentation of the various libraries that accept the interfaces, such as `@ember/test-helpers` and `qunit-dom`, and that implement the interfaces, such as `fractal-page-object`. In addition the new library proposed in this RFC would have documentation explaining the interfaces and how to author objects that implement them.
+This is primarily taught through the API documentation of the various libraries that implement compliant DOM helpers, such as `@ember/test-helpers` and `qunit-dom`, and libraries that produce DOM element descriptors, such as `fractal-page-object`. In addition the new library proposed in this RFC would have documentation explaining the infrastructure and how to use it.
 
 The Ember guides would not need to be updated, as the default Ember testing methodology would be unaffected -- this would be added functionality for users using page object libraries, or implementing ad-hoc element descriptors in their tests.
 
@@ -213,52 +195,33 @@ The Ember guides would not need to be updated, as the default Ember testing meth
 
 This mainly improves developer ergonomics by allowing for better error/failure messaging and a simpler/more natural semantics when passing page objects to DOM helper/assertion methods. We could decide that the status quo is good enough, and the improved ergonomics are not worth the cost.
 
+### Symbol for data storage
+
+Instead of using a private data storage to associate the descriptor data with the `IDOMElementDescriptor`s, we could export a `Symbol` to solve the namespacing problem:
+
+```ts
+export const DESCRIPTOR_DATA = Symbol('descriptor data');
+
+export interface IDOMElementDescriptor {
+  [DESCRIPTOR_DATA]: DescriptorData;
+}
+```
+
+This is maybe a slightly more familiar pattern to some, and might make debugging slightly easier, but doesn't seem to confer any real benefits. Moreover, the internal implementation of `registerDescriptorData` and `lookupDescriptorData` could store the state on the `IDOMElementDescriptor` object using a private `Symbol` if that were discovered to be advantageous in the future.
+
 ### One interface, three symbols
 
-We could get rid of the `IElementDescriptorProvider` interface and modify the `IElementDescriptor` interface to have symbol property keys instead of string property keys. This would simplify the overall picture, but would make implementing ad-hoc descriptors less ergonomic:
+We could get rid of the `DescriptorData` type entirely and modify the `IDOMElementDescriptor` interface to store `element`, `elements`, and `description` on properties keyed by three different public `Symbol`s. This doesn't seem to confer any real benefits that aren't captured by the primary proposal or the `Symbol for data storage` alternative, and makes ad-hoc descriptors less ergonomic:
 
 ```ts
-let elements = someOtherLibrary.getGraphElements();
-let element = elements.length > 0 ? elements[0] : null;
-await click({ element, elements, description: 'graph element' });
-```
-
-vs.
-
-```ts
-let elements = someOtherLibrary.getGraphElements();
-let element = elements.length > 0 ? elements[0] : null;
-await click({
+let element = someOtherLibrary.getGraphElement();
+let descriptor = {
   [ELEMENT]: element,
-  [ELEMENTS]: elements,
-  [DESCRIPTION]: 'graph element',
-});
+  [DESCRIPTION]: 'graph element'
+};
+await click(descriptor);
+assert.dom(descriptor).hasClass('selected');
 ```
-
-although this would be largely mitigated by the factory functions described in the [new use cases](#new-use-cases) section.
-
-### WeakMap
-
-To address the namespace conflicts in page objects, we could use a WeakMap instead of a symbol and two interfaces. The new library could provide
-
-```ts
-const descriptorMap = new WeakMap<object, IElementDescriptor>();
-
-export function registerDescriptorProvider(
-  provider: object,
-  descriptor: IElementDescriptor
-): void {
-  descriptorMap.set(provider, descriptor);
-}
-
-export function getDescriptor(provider: object): IElementDescriptor | null {
-  return descriptorMap.get(provider) || null;
-}
-```
-
-and page objects (and the like) could register their element descriptors, allowing DOM helpers to retrieve the descriptors when needed.
-
-This would also solve the namespace conflict, but seems to have limited benefits compared to the symbol solution and introduces extra complexity to the solution.
 
 ## Unresolved questions
 
