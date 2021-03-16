@@ -82,13 +82,13 @@ assert.dom(descriptor).hasClass('selected');
 or from simple classes for lazy DOM lookups:
 
 ```ts
-class MyDescriptor {
+class MyDescriptorData {
   get element() {
     return document.querySelectorAll('.list-item')[2];
   }
   description = 'second list item';
 }
-let descriptor = new MyDescriptor();
+let descriptor = createDOMDescriptor(new MyDescriptorData());
 
 assert.dom(descriptor).doesNotExist();
 
