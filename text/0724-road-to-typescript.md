@@ -14,9 +14,9 @@ RFC PR: https://github.com/emberjs/rfcs/pull/724
 
 ## Summary <!-- omit in toc -->
 
-TypeScript has become a key part of the front-end development ecosystem over the past several years, and powers many of the best developer experiences in the front-end ecosystem. Ember was a relatively early TypeScript adopter for its internals, and there is widespread usage in the ecosystem with community support, but to date Ember has not provided “out of the box” or official support for authoring apps or addons in TypeScript.
+TypeScript has become a key part of the front-end development ecosystem over the past several years, and powers many of the best developer experiences in the front-end ecosystem. Ember was a relatively early TypeScript adopter for its internals, and there is widespread usage in the ecosystem with community support from the Typed Ember team, but to date Ember has not provided “out of the box” or official support for authoring apps or addons in TypeScript.
 
-This RFC declares our intent to make TypeScript a first-class citizen of the Ember ecosystem, as a peer to JavaScript, in a way which makes the developer experience better for *all* Ember developers. It outlines the key constraints and goals for the effort, details a roadmap for accomplishing those goals, and provides the following definition of official support (from [Detailed Design: Defining Official Support](#defining-official-support)):
+This RFC declares our intent to officially support TypeScript as the framework level, as a peer to JavaScript, in a way which makes the developer experience better for *all* Ember developers. It outlines the key constraints and goals for the effort, details a roadmap for accomplishing those goals, and provides the following definition of official support (from [Detailed Design: Defining Official Support](#defining-official-support)):
 
 > Ember officially supporting TypeScript means: _**All libraries which are installed as part of the default blueprint must ship accurate and up-to-date type definitions for the current edition. These types will uphold a Semantic Versioning commitment which includes a definition of SemVer for TypeScript types as well as a specification of supported compiler versions and settings, so that TypeScript will receive the same stability commitments as the rest of Ember.**_
 
