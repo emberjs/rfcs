@@ -6,7 +6,7 @@ Release Versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
 Relevant Team(s): Ember.js
-RFC PR:
+RFC PR: https://github.com/emberjs/rfcs/pull/728
 ---
 
 # Deprecate using tracked in classic classes
