@@ -39,7 +39,7 @@ Users who are currently using the `{{unbound}}` helper for its freeze functional
 ```hbs
 {{! app/templates/user.hbs }}
 
-<User @name={{this.user.name}}>
+<User @name={{this.user.name}} />
 ```
 
 ```hbs
@@ -53,7 +53,7 @@ Users who are currently using the `{{unbound}}` helper for its freeze functional
 ```hbs
 {{! app/templates/user.hbs }}
 
-<User @name={{this.user.name}}>
+<User @name={{this.user.name}} />
 ```
 
 ```js
