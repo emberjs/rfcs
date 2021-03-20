@@ -28,13 +28,23 @@ There's also an [`ember-template-lint` rule](https://github.com/ember-template-l
 
 ## Transition Path
 
-Users who are currently using the `{{unbound}}` helper for performance benefits, should be able to remove the helper without any other needed changes.
+At build time, a deprecation warning will be displayed for each use of the `{{unbound}}` helper. Doing this at build time allows us to include the line and column number of where the `{{unbound}}` helper is used.
 
-Users who are currently using the `{{unbound}}` helper for its freeze functionality (because they are only interested in the initial value) need to update their code to provide this functionality themselves.
+The deprecation warning will be:
 
-### Example
+```
+Using the `{{unbound}}` helper is deprecated. Please see the deprecation guide at <deprecation-guide-url>.`
+```
 
-#### Before
+## Deprecation Guide
+
+Using the `{{unbound}}` helper is deprecated.
+
+If you are currently using the `{{unbound}}` helper for performance benefits, you should be able to remove the helper without any other needed changes.
+
+If you are currently using the `{{unbound}}` helper for its freeze functionality (because you are only interested in the initial value), you need to update your code to provide this functionality yourself.
+
+### Before
 
 ```hbs
 {{! app/templates/user.hbs }}
@@ -48,7 +58,7 @@ Users who are currently using the `{{unbound}}` helper for its freeze functional
 {{unbound @name}}
 ```
 
-#### After
+### After
 
 ```hbs
 {{! app/templates/user.hbs }}
@@ -70,6 +80,30 @@ export default class UserComponent extends Component {
 {{! app/components/user.hbs }}
 
 {{this.name}}
+```
+
+If you are using normal Ember components, your component could look like this:
+
+```js
+// app/components/user.js
+
+import Component from '@ember/component';
+
+export default class UserComponent extends Component {
+  initialName = '';
+  
+  init() {
+    super.init(...arguments);
+    
+    this.set('initialName', this.name);
+  }
+}
+```
+
+```hbs
+{{! app/components/user.hbs }}
+
+{{this.initialName}}
 ```
 
 ## How We Teach This
