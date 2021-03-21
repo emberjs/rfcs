@@ -122,7 +122,7 @@ A code search on [Ember Observer](https://emberobserver.com/) returns the follow
 
 The first search seems to be the most accurate as the second search also returns a lot of matches in JavaScript files.
 
-At first glance, most addons seem to use the `{{unbound}}` helper for its freeze functionality, which can be addressed using a similar approach to the one suggested in the [Transition Path - Example](#example) section.
+At first glance, most addons seem to use the `{{unbound}}` helper for its freeze functionality, which can be addressed using a similar approach to the one suggested in the [Deprecation Guide](#deprecation-guide).
 
 More notably, [vertical-collection](https://github.com/html-next/vertical-collection) uses the `{{unbound}}` helper as well. I assume `vertical-collection` does (did?) mainly use the `{{unbound}}` helper for performance reasons. At this moment, it's unclear to me what the alternative approach would be in this case.
 
