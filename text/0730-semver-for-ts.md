@@ -18,7 +18,7 @@ This RFC proposes a definition of [Semantic Versioning][semver] for managing cha
 
 [semver]: https://semver.org
 
-While this RFC is being authored in the context of Ember.js’ [adoption of TypeSccript as a first-class supported language][RFC #0724], its recommendations are intentionally general, in hopes that these recommendations can be widely adopted by the broader TypeScript community.
+While this RFC is being authored in the context of Ember.js’ [adoption of TypeScript as a first-class supported language][RFC #0724], its recommendations are intentionally general, in hopes that these recommendations can be widely adopted by the broader TypeScript community.
 
 [RFC #0724]: https://github.com/emberjs/rfcs/pull/724
 
