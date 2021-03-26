@@ -134,7 +134,7 @@ apps. As such, it will not be included in the guides.
 
 ### API Docs
 
-`setRouteTemplate` can be used to associate a component with a route. When
+`setRouteComponent` can be used to associate a component with a route. When
 associated, this component will be rendered instead of the route's template. The
 component receives the `@model` and `@controller` arguments,  which correspond
 to the model returned from the route's `model` hook and the instance of the
