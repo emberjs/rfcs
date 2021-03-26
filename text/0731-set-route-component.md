@@ -85,13 +85,55 @@ This takes us one step further into the pit of incoherence, with the goal of
 better defining how to move forward in two major areas that we are aiming for in
 the next peak of coherence.
 
+### Exploration directions unlocked by this API
+
+There are a number of exploration directions that are unlocked by this API,
+including:
+
+- **Alternatives to controllers**: As mentioned above, this API will allow users
+  to explore building Ember apps without using controllers. Removing controllers
+  has been an agenda item on the roadmap for some time, they can be confusing to
+  the modern Octane mental model and are a stumbling block for new users.
+- **Alternative directory structures**: Allowing routes to render components
+  will also unlock exploring colocating templates with routes in various ways.
+  Components could be defined in the `app/routes` directory alongside routes,
+  or even potentially in the same file, using the strict mode primitives.
+- **More flexible testing setups**: Allowing route to render a component may
+  also have the advantage of allowing that component integration-tested without
+  the need to boot an entire Ember app or require the setup of a router. This
+  could lead to better testing patterns in the future.
+- **Alternative learning paths and structures**: In other frontend frameworks
+  such as React, components are used in conjunction with a router to render
+  pages – supporting similar functionality would allow a workflow familiar
+  to developers coming from other disciplines, and may make it easier for us
+  to teach Ember to a wider audience.
+
+### History with Routable Components
+
+This RFC mirrors a past RFC to make [components routable](https://github.com/ef4/rfcs/blob/routeable-components/active/0000-routeable-components.md).
+Routeable components was an RFC that was first opened during the Ember v1
+era, and it's scope was very large. At the time, Ember lacked a lot of the
+foundational primitives that have since been added to the framework, and each
+potential change in the router API required many other changes in other parts
+of the framework overall. There were many other initiatives at the time
+(angle bracket components, named arguments, named blocks), so it ultimately was
+not finished. However, the idea was still considered a good idea, and the hope
+was that we would return to it at some point in the future.
+
+This RFC is the first step toward returning to the ideas behind "routeable
+components". Unlike the original proposal, however, it is intentionally limited
+in scope and focuses on adding a single piece of specific functionality. In
+time, we can continue to add more functionality, and eventually make using
+components with routes the default.
+
+
 ## Detailed design
 
 This RFC proposes adding the `setRouteComponent` API, importable from
 `@ember/routing/route`.
 
 ```js
-declare function setRouteComponent(component: Component, route: Route): void;
+declare function setRouteComponent(component: Component, route: Route): Route;
 ```
 
 Users can associate any component definition with a route via
@@ -99,7 +141,8 @@ Users can associate any component definition with a route via
 the route will render this component at its root rather than rendering the route
 template defined in `app/templates/routes`. The route's `render` and
 `renderTemplate` hooks will also be ignored, and will not be run as they would
-have previously.
+have previously. For convenience, `setRouteComponent` will return the route
+class (the second argument).
 
 The component will be passed the `@model` and `@controller` arguments, which
 correspond to the model returned from the route's `model` hook and the instance
@@ -131,6 +174,33 @@ experimentation with strict mode and route templates, or the goal of
 experimenting with controller-less applications. Changes in these areas will be
 done in future RFCs instead.
 
+### Component lifecycle
+
+The lifecycle of the component will be the same as if it were a top-level
+component rendered in a route template today, as in the example above. Timing
+semantics surrounding rerender, and switching to different models and routes,
+will be the same, as will the behavior of the `{{@model}}` value.
+
+### `@controller` argument details
+
+The `@controller` argument will _lazily_ access the route's controller. In the
+future, this controller _may_ be instantiated lazily as well, and only created
+upon first access.
+
+In addition, for cross-compatibility and to ease transition in the future,
+`@controller` will be made available in standard route templates. It will be
+an alias for `{{this}}`, effectively.
+
+### Routing substates
+
+Routes currently can defer to the `loading` and `error` substates based on the
+current state of the `model()` hook. These substates are _themselves_
+implemented as routes - you can define a `routes/loading.js` and
+`controller/loading.js` to go along with the `app/templates/routes/loading.js`
+for a particular route. So, the `setRouteComponent` API will work in the same
+way with these routes, and allow you to associate a component to render in
+them.
+
 ## How we teach this
 
 For the time being, this API will not be the recommended way of writing Ember
@@ -160,6 +230,9 @@ Is equivalent to having the following in the `my-route.hbs` file:
 ```
 
 Assuming that `MyRouteComponent` is resolvable via that name.
+
+`setRouteComponent` can be used with any route class, including route classes
+defined for `loading` and `error` substates.
 
 ## Drawbacks
 
