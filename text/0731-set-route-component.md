@@ -97,9 +97,13 @@ declare function setRouteComponent(component: Component, route: Route): void;
 Users can associate any component definition with a route via
 `setRouteComponent`. When a component has been associated with a route this way,
 the route will render this component at its root rather than rendering the route
-template defined in `app/templates/routes`. The component will be passed the
-`@model` and `@controller` arguments, which correspond to the model returned
-from the route's `model` hook and the instance of the route's controller.
+template defined in `app/templates/routes`. The route's `render` and
+`renderTemplate` hooks will also be ignored, and will not be run as they would
+have previously.
+
+The component will be passed the `@model` and `@controller` arguments, which
+correspond to the model returned from the route's `model` hook and the instance
+of the route's controller.
 
 This will effectively be syntactic sugar for rendering a top-level component
 within a route template today:
