@@ -6,7 +6,7 @@ Release Versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
 Relevant Team(s): Framework
-RFC PR:
+RFC PR: https://github.com/emberjs/rfcs/pull/731
 ---
 
 # Add `setRouteComponent`
@@ -128,6 +128,9 @@ experimenting with controller-less applications. Changes in these areas will be
 done in future RFCs instead.
 
 ## How we teach this
+
+For the time being, this API will not be the recommended way of writing Ember
+apps. As such, it will not be included in the guides.
 
 ### API Docs
 
