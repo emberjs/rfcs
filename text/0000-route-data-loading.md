@@ -7,7 +7,7 @@
 
 ## Summary
 
-[#499 An alternative to Controllers](https://github.com/emberjs/rfcs/pull/499) proposes an API for rendering a component from a route. This RFC builds on it by proposing an API to pass multiple arguments to a component from a route. It's based off the [design proposed by @chadhietala](https://gist.github.com/chadhietala/50b977a7d3476069892d351c65af418c) and much of the text is lifted from there.
+[#731 Add setRouteComponent API](https://github.com/emberjs/rfcs/pull/731) proposes an API for rendering a component from a route. This RFC builds on it by proposing an API to pass multiple arguments to a component from a route. It's based off the [design proposed by @chadhietala](https://gist.github.com/chadhietala/50b977a7d3476069892d351c65af418c) and much of the text is lifted from there.
 
 ## Motivation
 
@@ -19,7 +19,7 @@ This RFC proposes adding a `load()` hook to `Route`.
 
 The `load()` hook will receive the same arguments as `model()`.
 
-The route is in the `loading` state while this hook is run. When this hook has finished running, the route will change to the `resolved` state (and the `render` component will be rendered).
+The route is in the `loading` state while this hook is run. When this hook has finished running, the route will change to the `resolved` state (and the `setRouteComponent` component will be rendered).
 
 The keys of the object (what `Object.keys()` would return, i.e. only the own (`hasOwnProperty`) props, and nothing from prototypes) returned from `load()` become the named arguments to the component.
 
@@ -73,13 +73,13 @@ export default class ProfileRoute extends Route {
 
 ## How we teach this
 
-Should #499 be accepted, this is a fairly straightforward and complementary change that would reduce confusion from the `model()` hook passing in a `@model` argument to a component. The Guides would need to be updated to use `load()` instead of `model()`, `beforeModel()`, and `afterModel()`.
+Should #731 be accepted, this is a fairly straightforward and complementary change that would reduce confusion from the `model()` hook passing in a `@model` argument to a component. The Guides would need to be updated to use `load()` instead of `model()`, `beforeModel()`, and `afterModel()`.
 
 We could also include the `load()` hook in the route blueprint, returning an empty object, to make the hook more easily discoverable.
 
 ## Drawbacks
 
-In a time where a lot is changing in the Ember ecosystem, one might argue that this is too much change happening at once.
+Given that `setRouteComponent` is intended to unlock experimentation rather than being a final solution, adding this API at the present time could be premature.
 
 ## Alternatives
 
