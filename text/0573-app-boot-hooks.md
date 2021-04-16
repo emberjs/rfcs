@@ -8,7 +8,7 @@
 ## Summary
 
 This RFC proposes adding two hooks in the `Application` class in `app.js` that, by default, load
-and run initializers and instance-initializers. Here's an eaxmple of what this could look like:
+and run initializers and instance-initializers. Here's an example of what this could look like:
 
 ```js
 import { loadInitializers, loadInstanceInitializers } from 'ember-load-initializers';
