@@ -719,7 +719,7 @@ For types where it is useful to publish an interface for end users, but where us
 
 -   Document that users can create their own local aliases for these types, while *not* exporting the types in a public way. This has one of the same upsides as the use of the classs with a private brand: the type is not constructable other than via the module. It also shares the upside of being able to create your own instance of it for test code. However, it has ergonomic downsides, requiring the use of the `ReturnType` utility class and requiring all consumers to generate that utility type for themselves.
 
-Each of these leaves this module in control of the construction of `Person`s, which allows more flexibility for evolving the API, since non-user-constructable types are subject to fewer breaking change constraints that user-constructable types. Whichever is chosen for a given type, authors should document it clearly.
+Each of these leaves this module in control of the construction of `Person`s, which allows more flexibility for evolving the API, since non-user-constructable types are subject to fewer breaking change constraints than user-constructable types. Whichever is chosen for a given type, authors should document it clearly.
 
 
 ##### Updating types to maintain compatibility
