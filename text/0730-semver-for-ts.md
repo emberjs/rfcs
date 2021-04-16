@@ -77,7 +77,7 @@ This is somewhat more complicated than in other languages, even those other stat
 
 Furthermore, unlike the rest of the JavaScript ecosystem, the TypeScript compiler explicitly *rejects* SemVer. TypeScript's core team argues that *every* change to a compiler is a breaking change, and that SemVer is therefore meaningless for TypeScript. We do not agree with this characterization, but take the TypeScript team's position as a given for the purposes of this document. Accordingly, every TypeScript non-patch release may be a breaking change, and "major" numbers for releases signify nothing beyond having reached `x.9` in the previous cycle.
 
-This means that defining SemVer for TypeScript Types requires that we specify a definition of Semantic Versioning which can absorb breaking changes in the TypeScript compiler as well as intentional changes by package authors. As such, it also requires clearly defined version TypeScript compiler version support policies.
+This means that defining SemVer for TypeScript Types requires that we specify a definition of Semantic Versioning which can absorb breaking changes in the TypeScript compiler as well as intentional changes by package authors. As such, it also requires clearly defined TypeScript compiler version support policies.
 
 
 ## Detailed design
@@ -224,7 +224,7 @@ There are several reasons why breaking changes may occur:
 
 Changing a symbol is a breaking change when:
 
--   changing the name of an exported symbol (type or value), since users' existing imports will need to be updated. This is a breaking for value exports (`let`, `const`, `class`, `function`) independent of types, but renaming exported `interface`, `type` alias, or `namespace` declarations is breaking as well.
+-   changing the name of an exported symbol (type or value), since users' existing imports will need to be updated. This is breaking for value exports (`let`, `const`, `class`, `function`) independent of types, but renaming exported `interface`, `type` alias, or `namespace` declarations is breaking as well.
 
 -   removing an exported symbol, since users' existing imports will stop working. This is a breaking change for value exports (`let`, `const`, `class`, `function`) independent of types, but removing exported `interface`, `type` alias, or `namespace` declarations is breaking as well.
 
@@ -258,7 +258,7 @@ Changing a symbol is a breaking change when:
 
     -   Given a *type*-only exported symbol, including `type`, `interface`, or `export type` for a type or value, adding a *value* export with the same name may break users' code: they may have imported the type and safely created a value of the same name. Their existing import will now cause a re-declaration conflict. Note that this is distinct from adding an entirely new value export where there was no type or value export previously, since the user could never accidentally introduce the conflict, and could work around the conflict using the `as` import specifier when introducing the import.
 
-    -   Given a `namespace` export, changing it to a value-only export (that is, to an exported object) will break all nested type access, since types cannot be exported as nested members of a non-`namespace` values. (`namespace` exports cannot be directly converted to type-only exports.)
+    -   Given a `namespace` export, changing it to a value-only export (that is, to an exported object) will break all nested type access, since types cannot be exported as nested members of non-`namespace` values. (`namespace` exports cannot be directly converted to type-only exports.)
 
 -   changing an `interface` to a `type` alias will break any user code which used interface merging
 
@@ -361,7 +361,7 @@ For functions which return or accept user-constructable types, the rules specifi
 
     -   if the argument was optional, any invocations which used it will fail to type-check ([playground][remove-optional-argument])
 
--   changing a function from a `function` declaration to a an arrow function declaration, since it changes the type of `this` and the effect of calling `bind` or `call` on the function
+-   changing a function from a `function` declaration to an arrow function declaration, since it changes the type of `this` and the effect of calling `bind` or `call` on the function
 
 [changed-type]: https://www.typescriptlang.org/play?#code/PTAEEkFsEMHMEsB2BTUALZAnVAXN0dQ9UAiRaSZAZwAdoBjZE0BnAV2gBtOBPUAKzZVC2GtirJEOKkQwAoEKCoVU8SDQD2mHAC5QAAzWbtoAN6hYyHADUubVAF9QAM0wbIoAORV3yALTQACaBGoieANz6cnKByPSc0NigkBqBbJyoAPKY8AjknGZyoMUubIj0OPChLPSMNNK2nPYAFIEE0HqIbJAARlgAlHoAbhrwgeFyDtGx8Ymo5JS0DKgAwviIloGFJaXlldUMdQ12yK3teub0GmW6oF29WKAOg6AjYxNTctm5SFwAdIdkPUqI0WgBGABMAGZ+hM1tANshAgDakDjk1TpCYeEgA
 
@@ -385,7 +385,7 @@ In each of these cases, some user code becomes *superfluous*, but it neither fai
 
 A change to an exported symbol is *not* breaking when:
 
--   a wholly new symbol is exported which was not previously exported and which does not share a name with another symbol of a different kind (type vs. value) with a symbol which was previously exported
+-   a symbol is exported which was not previously exported and which does not share a name with another symbol which was previously exported
 
 
 ##### Interfaces, Type Aliases, and Classes
@@ -444,7 +444,7 @@ In practice, this suggests two key considerations around type bugs:
 
 1.  It is essential that types be well-tested! See discussion below under [**Tooling**](#tooling).
 
-2.  If a given types bug has existed for long enough, an author may choose to treat it as ["intimate API"][intimate] and change the *runtime* behavior to match the types rather than vice versa.
+2.  If a given type bug has existed for long enough, an author may choose to treat it as ["intimate API"][intimate] and change the *runtime* behavior to match the types rather than vice versa.
 
 [intimate]: https://twitter.com/wycats/status/918644693759488005
 
@@ -464,7 +464,7 @@ Accordingly, conforming packages must use `strict: true` and `noPropertyAccessFr
 
 The two flags `esModuleInterop` and `allowSyntheticDefaultImports` smooth the interoperation between ES Modules and CommonJS, AMD, and UMD modules for *emit* from TypeScript and *type resolution* by TypeScript respectively. The options are viral: enabling them in a package requires all downstream consumers to enable them as well (even if this is not desirable for whatever reasons). The reasons for this are details of how CommonJS and ES Modules interoperate for bundlers (Webpack, Parcel, etc.), and are beyond the scope of this document.
 
-Here, it is enough to note that changing from `esModuleInterop: true` to `esModuleInterop: false` on a package which emits *is a breaking change*"
+Here, it is enough to note that changing from `esModuleInterop: true` to `esModuleInterop: false` on a package which emits *is a breaking change*:
 
 -   with `esModuleInterop: true`: [playground][emi-true]
 -   with `esModuleInterop: false`: [playground][emi-false]
@@ -474,7 +474,7 @@ Here, it is enough to note that changing from `esModuleInterop: true` to `esModu
 
 Accordingly, library authors should set both `allowSyntheticDefaultImports` and `esModuleInterop` to `false`. This allows consumers to opt into these semantics, but does not *require* them to do so. Consumers can always safely use alternative import syntaxes (including falling back to `require()` and `import()`), or can enable these flags and opt into this behavior themselves.
 
-(If the Node ecosystem migrates full to ES modules over the next few years, this problem will be substantially mitigated.)
+(If the Node ecosystem migrates fully to ES modules over the next few years, this problem will be substantially mitigated.)
 
 
 ### Design summary
@@ -483,7 +483,7 @@ This section is a non-normative short summary for easy digestion. See the previo
 
 -   Public published types are part of the SemVer contract of a package, and must be versioned accordingly, per the specification above.
 
--   Adding a new TypeScript version to the support matrix *may* cause breaking changes. When it does not, adding it is a normal minor release. When it *does*, cause a breaking change, the package must either mitigated that breakage (so consumers are not broken) *or* the package must release a major version.
+-   Adding a new TypeScript version to the support matrix *may* cause breaking changes. When it does not, adding it is a normal minor release. When it *does* cause a breaking change, the package must either mitigate that breakage (so consumers are not broken) *or* the package must release a major version.
 
 -   Removing a TypeScript version from the support matrix is a breaking change, except when it falls out of the supported version range under the “rolling support windows” policy.
 
@@ -515,9 +515,9 @@ To conform to this standard, a package must:
 
 If these recommendations are adopted, the [**Detailed Design**](#detailed-design) section shall be published to a dedicated, standalone repository to ease linking to it (including by TypeScript packages beyond the Ember ecosystem, if they find it useful, as we hope they will!).
 
-When any Ember package begins publishing types, it shall follow the rules specified in [**Conformance**](#conformance). In the case of Ember, Ember CLI, and Ember Data, the link to the published spec shall be added along the existing links to the Node SemVer support policies. Additionally, Ember should publish a table showing supported versions in the same format as the Node version support table.
+When any Ember package begins publishing types, it shall follow the rules specified in [**Conformance**](#conformance). In the case of Ember, Ember CLI, and Ember Data, the link to the published spec shall be added alongside the existing links to the Node SemVer support policies. Additionally, Ember should publish a table showing supported versions in the same format as the Node version support table.
 
-Other official Ember packages which publishes types must publish their supported TypeScript versions and compiler version policy, but may do so in whatever form is appropriate for the package, for example badges in the README linking to the published specification text and to CI.
+Other official Ember packages which publish types must publish their supported TypeScript versions and compiler version policy, but may do so in whatever form is appropriate for the package, for example badges in the README linking to the published specification text and to CI.
 
 
 ## Drawbacks
@@ -537,7 +537,7 @@ Currently, no frameworks and few packages in the broader TypeScript ecosystem ha
 
 However, there are three major problems with this approach.
 
--   First, it does not scale well. While many packages are using TypeScript today, as the community of TypeScript users grows and especially as it increasingly includes packages used extensively throughout the community (e.g. frameworks or core libraries), the cost of breaking changes grows in an unbounded fashion, with all of that cost being born by the consumers of those changes, and worst of all *there is no signal about these breaking changes*.
+-   First, it does not scale well. While many packages are using TypeScript today, as the community of TypeScript users grows and especially as it increasingly includes packages used extensively throughout the community (e.g. frameworks or core libraries), the cost of breaking changes grows in an unbounded fashion, with all of that cost being borne by the consumers of those changes, and worst of all *there is no signal about these breaking changes*.
 
 -   Second, and closely related, the more central a package is to the ecosystem, the worse the impact is—especially when combined with any attempts to enforce “Highlander” rules for web bundling (e.g. Ember CLI will only resolve a single major version of an Ember package). Without a strategy for specifying breaking changes and therefore opportunities to mitigate them, core packages could easily end up fragmenting the ecosystem.
 
@@ -548,14 +548,14 @@ However, there are three major problems with this approach.
 
 ### Decouple TypeScript support from LTS cycles
 
-The “rolling support window policy” policy could be decoupled from LTS requirements. Similarly, the “simple majors” policy could drop the recommendation to combine dropping Node versions, TypeScript versions, and other LTS packages. This would simplify the rule for adopting packages. However, it comes with the previously mentioned challenges when multiple major versions of a package exist in a given ecosystem. While a strategy for resolving those challenges at the ecosystem level would be nice, it is far beyond the scope of *this* RFC and indeed is a general challenge for package-rich ecosystems like Node’s.
+The “rolling support window” policy could be decoupled from LTS requirements. Similarly, the “simple majors” policy could drop the recommendation to combine dropping Node versions, TypeScript versions, and other LTS packages. This would simplify the rule for adopting packages. However, it comes with the previously mentioned challenges when multiple major versions of a package exist in a given ecosystem. While a strategy for resolving those challenges at the ecosystem level would be nice, it is far beyond the scope of *this* RFC and indeed is a general challenge for package-rich ecosystems like Node’s.
 
 
 ## Unresolved questions
 
 -   What policy should this RFC adopt for compiler settings which behave in both lint-like and strictness-checking-like ways, but which cannot cause type breakage for consumers, such as `noUncheckedIndexAccess`?
 
-    The semantics of this check is that it effectively exposing `| undefined` in more places, but authors of types cannot construct a type which *avoids* emitting `T | undefined` if the consumer enables `noUncheckedIndexAccess` and `strictNullChecks`. That is: if an author publishes `function foo(): Array<string>` *or* `function foo(): Array<string | undefined>`, then *whether or not* the author has `noUncheckedIndexedAccess` enabled, the semantics are the same for downstream consumers, and is dependent on *their* setting. The only safety improvement would be to publish types as `SafeArray<string>` where:
+    The semantics of this check is that it effectively exposes `| undefined` in more places, but authors of types cannot construct a type which *avoids* emitting `T | undefined` if the consumer enables `noUncheckedIndexAccess` and `strictNullChecks`. That is: if an author publishes `function foo(): Array<string>` *or* `function foo(): Array<string | undefined>`, then *whether or not* the author has `noUncheckedIndexedAccess` enabled, the semantics are the same for downstream consumers, and is dependent on *their* setting. The only safety improvement would be to publish types as `SafeArray<string>` where:
 
     ```ts
     type SafeArray<T> = Array<T | undefined>;
@@ -577,7 +577,7 @@ These sections are non-normative.
 
 ### Appendix A: Existing Implementations
 
-The recommendations in this RFC have been full implemented in [`ember-modifier`][ember-modifier], [True Myth][true-myth], and [ember-async-data][ember-async-data]; and partly implemented in [`ember-concurrency`][ember-concurrency]. `ember-modifier`, `ember-async-data`, and `true-myth` all publish types generated from implementation code. `ember-concurrency` supplies a standalone, hand-written type definition file. Since adopting this policy in these implementations (beginning in early summer 2020), no known issues have emerged, and the experience of implementing earlier versions of the recommendations from this RFC were incorporated into the final form of this RFC.
+The recommendations in this RFC have been fully implemented in [`ember-modifier`][ember-modifier], [True Myth][true-myth], and [ember-async-data][ember-async-data]; and partly implemented in [`ember-concurrency`][ember-concurrency]. `ember-modifier`, `ember-async-data`, and `true-myth` all publish types generated from implementation code. `ember-concurrency` supplies a standalone, hand-written type definition file. Since adopting this policy in these implementations (beginning in early summer 2020), no known issues have emerged, and the experience of implementing earlier versions of the recommendations from this RFC were incorporated into the final form of this RFC.
 
 There are, to the best of our knowledge, no other major adopters of these recommendations, and no similar such recommendations in the TypeScript ecosystem at large.
 
@@ -632,7 +632,7 @@ The current options include:
 
     -   It currently has a single maintainer, and relatively few users.
 
-    -   It is relatively young, having been created only about a year ago, and therefore having existed for only 5 TypeScript releases. While its track record is good so far, there is not yet evidence of how it would deal with serious breaking changes like those introduce in TypeScript 3.5.
+    -   It is relatively young, having been created only about a year ago, and therefore having existed for only 5 TypeScript releases. While its track record is good so far, there is not yet evidence of how it would deal with serious breaking changes like those introduced in TypeScript 3.5.
 
     -   Because the assertions are implemented as type definitions, the library is subject to the same risk of compiler breakage as the types it is testing.
 
@@ -654,7 +654,7 @@ To be safe, these tests should be placed in a directory which does not emit runt
 
 In addition to *writing* these tests, package authors should make sure to run the tests (as appropriate to the testing tool chosen) in their continuous integration configuration, so that any changes made to the library are validated to make sure the API has not been changed accidentally.
 
-Further, just as packages are encouraged to test against all a matrix of Ember versions which includes the current stable release, the currently active Ember LTS release, and the canary and beta releases, packages should test the types against all versions of TypeScript supported by the package (see the [suggested policy for version support](#policy-for-supported-typescript-versions) below) as well as the upcoming version (the `next` tag for the `typescript` package on npm).
+Further, just as packages are encouraged to test against a matrix of Ember versions which includes the current stable release, the currently active Ember LTS release, and the canary and beta releases, packages should test the types against all versions of TypeScript supported by the package (see the [suggested policy for version support](#policy-for-supported-typescript-versions) below) as well as the upcoming version (the `next` tag for the `typescript` package on npm).
 
 Type tests can run as normal [ember-try] variations or similar CI. Typed Ember will document a conventional setup for ember-try configurations, so that correct integration into CI setups will be straightforward for package authors.
 
@@ -717,7 +717,7 @@ For types where it is useful to publish an interface for end users, but where us
 
     This *cannot* be constructed outside the module. Note that it may be useful to provide corresponding test helpers for scenarios like this, since users cannot safely provide their own mocks.
 
--   Document that users can create their own local aliases for these types, while *not* exporting the types in a public way. This has one of the same upsides as the use of the classs with a private brand: the type is not constructable other than via the module. It also shares the upside of being able to create your own instance of it for test code. However, it has ergonomic downsides, requiring the use of the `ReturnType` utility class and requiring all consumers to generate that utility type for themselves.
+-   Document that users can create their own local aliases for these types, while *not* exporting the types in a public way. This has one of the same upsides as the use of the classes with a private brand: the type is not constructable other than via the module. It also shares the upside of being able to create your own instance of it for test code. However, it has ergonomic downsides, requiring the use of the `ReturnType` utility class and requiring all consumers to generate that utility type for themselves.
 
 Each of these leaves this module in control of the construction of `Person`s, which allows more flexibility for evolving the API, since non-user-constructable types are subject to fewer breaking change constraints than user-constructable types. Whichever is chosen for a given type, authors should document it clearly.
 
@@ -768,7 +768,7 @@ Later, the default type argument `Promise<{}>` could be dropped and defaulted to
 
 ##### "Downleveling" types
 
-When a new version of TypeScript results in backwards-incompatible *emit* to to the type definitions, as they did in [3.7][3.7-emit-change], the strategy of changing the types directly may not work. However, it is still possible to provide backwards-compatible types, using the combination of [downlevel-dts] and [typesVersions]. (In some cases, this may also require some manual tweaking of types, but this should be rare for most packages.)
+When a new version of TypeScript includes a backwards-incompatible change to *emitted type definitions*, as they did in [3.7][3.7-emit-change], the strategy of changing the types directly may not work. However, it is still possible to provide backwards-compatible types, using the combination of [downlevel-dts] and [typesVersions]. (In some cases, this may also require some manual tweaking of types, but this should be rare for most packages.)
 
 - The [`downlevel-dts`][downlevel-dts] tool allows you to take a `.d.ts` file which is not valid for an earlier version of TypeScript (e.g. the changes to class field emit mentioned in [<b>Breaking Changes</b>](#breaking-changes)), and emit a version which *is* compatible with that version. It supports targeting all TypeScript versions later than 3.4.
 
