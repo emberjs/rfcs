@@ -189,7 +189,7 @@ interface DeprecationOptions {
 - for?: string;
 + for: string;
 - since?: {
-+ since?: {
++ since: {
     available: string;
     enabled: string;
   }
