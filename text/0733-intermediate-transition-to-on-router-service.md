@@ -86,6 +86,9 @@ At the moment, `intermediateTransitionTo` is not mentioned in the Ember guides a
 ## Alternatives
 
 - Not add `intermediateTransitionTo` on `RouterService` and keep using `intermediateTransitionTo` on `Route`
+- Deprecate `intermediateTransitionTo` on `Route` right away (would require a different RFC)
+  - Based on discussions on Discord, it seems that `intermediateTransitionTo` isn't well known ([Discussion 1](https://discord.com/channels/480462759797063690/500803406676492298/801484053844983809) - [Discussion 2](https://discord.com/channels/480462759797063690/500803406676492298/801886820244783113))
+  - Others mentioned they'd want to see `intermediateTransitionTo` removed instead ([Discussion](https://discord.com/channels/480462759797063690/500803406676492298/826068398500479036))
 
 ## Unresolved Questions
 
