@@ -6,7 +6,7 @@ Release Versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
 Relevant Team(s): ember-data
-RFC PR: 
+RFC PR: https://github.com/emberjs/rfcs/pull/737
 ---
 
 # EmberData | State Machine Updates
