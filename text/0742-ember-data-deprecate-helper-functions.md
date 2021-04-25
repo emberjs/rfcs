@@ -13,7 +13,7 @@ RFC PR: https://github.com/emberjs/rfcs/pull/742
 
 ## Summary
 
-Deprecates the exported util functions `errorsHashToArray` `arrorsArrayToHash`
+Deprecates the exported util functions `errorsHashToArray` `errorsArrayToHash`
 and `normalizeModelName` that were recommended for deprecation by the [RFC#395 packages](https://github.com/emberjs/rfcs/blob/master/text/0395-ember-data-packages.md)
 
 ## Motivation
