@@ -353,8 +353,8 @@ Example deprecation message:
 
 ```
 Using Ember.Checkbox or importing from '@ember/component/checkbox' has been
-deprecated, install the `ember-legacy-built-in-components` addon and use
-`import { Checkbox } from 'ember-legacy-built-in-components';` instead.
+deprecated, install the `@ember/legacy-built-in-components` addon and use
+`import { Checkbox } from '@ember/legacy-built-in-components';` instead.
 ```
 
 * * *
@@ -365,8 +365,8 @@ Example that causes deprecation:
 import Checkbox from '@ember/component/checkbox';
 //                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Using Ember.Checkbox or importing from '@ember/component/checkbox' has been
-// deprecated, install the `ember-legacy-built-in-components` addon and use
-// `import { Checkbox } from 'ember-legacy-built-in-components';` instead.
+// deprecated, install the `@ember/legacy-built-in-components` addon and use
+// `import { Checkbox } from '@ember/legacy-built-in-components';` instead.
 
 export class MyCheckbox extends Checkbox {
   // ...
@@ -393,8 +393,8 @@ export function initialize(owner) {
     Ember.Checkbox.extend({ /* ... */ })
 //  ~~~~~~~~~~~~~~
 // Using Ember.Checkbox or importing from '@ember/component/checkbox' has been
-// deprecated, install the `ember-legacy-built-in-components` addon and use
-// `import { Checkbox } from 'ember-legacy-built-in-components';` instead.
+// deprecated, install the `@ember/legacy-built-in-components` addon and use
+// `import { Checkbox } from '@ember/legacy-built-in-components';` instead.
   );
 }
 ```
@@ -669,7 +669,7 @@ export default class MyBetterInput extends Component {
 ## How we teach this
 
 The API documentation should be updated to document the built-in components as
-components, not as classes. When reaidng the documentation, developers should
+components, not as classes. When reading the documentation, developers should
 be able to understand the components in terms of what _arguments_ they are able
 to pass. The exact format for documenting components is left unspecified to
 provide the learning team some flexibility in accomplish this goal.
