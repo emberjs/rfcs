@@ -82,7 +82,7 @@ Would instead, if fully typed, be written like this:
 ```ts
 import Component from '@glimmer/component';
 
-export interface GreetingSignature {
+export interface NoticeSignature {
   Element: HTMLDivElement;
   Args: {
     /** The kind of message displayed in this notice. Defaults to `info`. */
@@ -98,7 +98,7 @@ export interface GreetingSignature {
   };
 }
 
-export default class Greeting extends Component<GreetingSignature> {
+export default class Notice extends Component<NoticeSignature> {
   // ...
 }
 ```
