@@ -120,7 +120,7 @@ This is not desirable behavior in the value-based semantics proposed in that
 RFC, because it makes it impossible to pass helpers around as values, just as
 it is possible to pass around contextual components today.
 
-The contextaul helper RFC proposed to deprecate this behavior and require
+The contextual helper RFC proposed to deprecate this behavior and require
 mandatory parentheses to invoke the helper.
 
 
