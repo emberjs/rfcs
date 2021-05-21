@@ -202,20 +202,29 @@ Unless otherwise specified, "functions" always refers interchangeably to: functi
 
 </dd>
 
+<dt>User constructibility</dt>
+
+<dd>
+
+A type is user-constructible if the consumer of a package is allowed to create their own objects which match a given type structurally, that is, *without* using a function or class exported from the package which provides the type.
+For example, a package may choose to export an interface to allow users to name the type returned by a function, while specifying that the only legal way to construct such an interface is via that exported function, in which case the type is *not* user-constructible.
+Alternatively, a package may export an interface or type alias explicitly for users to construct objects implementing that type, in which case the type *is* user-constructible.
+
+As a non-normative example of non-user-constructibility: in Ember.js today, the interface for a `Transition` is public API and consumers can rely on its stability, but only Ember is allowed to create `Transition` instances.
+If a user imported the `Transition` interface and wrote a `class CustomTransition implements Transition { ... }`, this would be stepping outside the SemVer contract.
+
+</dd>
+
 <dt>Public API:</dt>
 
 <dd>
 
-Some packages may choose to specify that the public API consists of *documented* exports, in which case no published type may be considered public API unless it is in the documentation. Other packages may choose to say the reverse: all exports are public unless explicitly defined as private (for example with the `@private` JSDoc annotation, a note in the docs, etc.).
+**Overview:** Some packages may choose to specify that the public API consists of *documented* exports, in which case no published type may be considered public API unless it is in the documentation. Other packages may choose to say the reverse: all exports are public unless explicitly defined as private (for example with the `@private` JSDoc annotation, a note in the docs, etc.).
 In either case, no change to a type documented as private is a breaking change, whether or not the type is exported, where *documented as private* is defined in terms of the documentation norm of the package in question.
 
-</dd>
+**Documentation of user constructibility:** Exported types (interfaces, type aliases, and the type side of classes) may be defined by documentation to be user-constructible or not.
 
-<dt>User constructibility:</dt>
-
-<dd>
-
-Exported types (interfaces, type aliases, and the type side of classes) may be defined by documentation to be user-constructible or *not*. For example, a package may choose to export an interface to allow users to name the type returned by a function, while specifying that the only legal way to construct such an interface is via the exported function: the type is *not* user-constructible. Alternatively, a package may export an interface or type alias explicitly for users to construct objects matching the type themselves: the type *is* user-constructible.
+**Docuentation of subclassibility:** Exported classes may be defined by documentation to be user-subclassible or not.
 
 </dd>
 
