@@ -463,7 +463,7 @@ For example (noting that this list is illustrative, not exhaustive):
 
 -   If a function is typed as returning `string | number` but always returns `string`, this is a bug. It will not cause an error at runtime, since consumers must "narrow" the type to use it, and narrowing the type would not even be a breaking change. However, the type is incorrect, and it *will* require end users to do unnecessary work.
 
--   If an interface is defined as having a property which is *not* part of the public API of the runtime object, or if an interface is defined as *missing* a a property which the public API of the runtime object does have, this is a bug.
+-   If an interface is defined as having a property which is *not* part of the public API of the runtime object, or if an interface is defined as *missing* a property which the public API of the runtime object does have, this is a bug.
 
 As with runtime bugs, authors are free to fix type bugs in a patch release. As with runtime code, this may break consumers who were relying on the buggy behavior. However, as with runtime bugs, this is well-understood to be part of the sociotechnical contract of semantic versioning.
 
