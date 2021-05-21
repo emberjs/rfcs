@@ -484,7 +484,7 @@ For example (noting that this list is illustrative, not exhaustive):
 
 -   If a function is typed as accepting `any` but actually requires a `string`, this will cause an error at runtime, and is a bug.
 
--   If a function is typed as returning `string | number` but always returns `string`, this is a bug. It will not cause an error at runtime, since consumers must "narrow" the type to use it, and narrowing the type would not even be a breaking change. However, the type is incorrect, and it *will* require end users to do unnecessary work.
+-   If a function is typed as returning `string | number` but is intended to return only `string`, this is a bug. Note that this is distinct from the runtime behavior: a package author may intentionally specify the type as wider than the current implementation with the expectation of future changes. This will not cause an error at runtime, since consumers must "narrow" the type to use it, and narrowing the type would not even be a breaking change.
 
 -   If an interface is defined as having a property which is *not* part of the public API of the runtime object, or if an interface is defined as *missing* a property which the public API of the runtime object does have, this is a bug.
 
