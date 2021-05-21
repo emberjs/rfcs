@@ -67,7 +67,6 @@ This section is a non-normative short summary for easy digestion. See [**Detaile
     - [Bug fixes](#bug-fixes)
     - [Strictness](#strictness)
     - [Module interop](#module-interop)
-  - [Design summary](#design-summary)
   - [Conformance](#conformance)
 - [How we teach this](#how-we-teach-this)
 - [Drawbacks](#drawbacks)
