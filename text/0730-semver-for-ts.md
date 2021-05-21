@@ -18,9 +18,32 @@ This RFC proposes a definition of [Semantic Versioning][semver] for managing cha
 
 [semver]: https://semver.org
 
-While this RFC is being authored in the context of Ember.js’ [adoption of TypeScript as a first-class supported language][RFC #0724], its recommendations are intentionally general, in hopes that these recommendations can be widely adopted by the broader TypeScript community.
+(While this RFC is being authored in the context of Ember.js’ [adoption of TypeScript as a first-class supported language][RFC #0724], its recommendations are intentionally general, in hopes that these recommendations can be widely adopted by the broader TypeScript community.)
 
 [RFC #0724]: https://github.com/emberjs/rfcs/pull/724
+
+
+### Design overview
+
+This section is a non-normative short summary for easy digestion. See [**Detailed Design**](#detailed-design) below for normative text.
+
+-   Public published types are part of the SemVer contract of a package, and must be versioned accordingly, per the specification above.
+
+-   Adding a new TypeScript version to the support matrix *may* cause breaking changes. When it does not, adding it is a normal minor release. When it *does* cause a breaking change, the package must either mitigate that breakage (so consumers are not broken) *or* the package must release a major version.
+
+-   Removing a TypeScript version from the support matrix is a breaking change, except when it falls out of the supported version range under the “rolling support windows” policy.
+
+-   Packages using the “rolling window” policy should normally support all TypeScript versions released during the current ‘LTS’ of other core packages/runtimes/etc. they support, and drop support for them only when they drop support for that ‘LTS’, to minimize the number of major versions in the ecosystem.
+
+-   Both the currently-supported compiler versions and the compiler version support policy must be documented.
+
+-   Packages must be authored with the following compiler options:
+    -   `strict: true`
+    -   `noPropertyAccessFromIndexSignature: true`
+
+-   Libraries should generally be authored with the following compiler options:
+    -   `esModuleInterop: false`
+    -   `allowSyntheticDefaultImports: false`
 
 
 ### Outline <!-- omit in toc -->
@@ -502,29 +525,6 @@ Here, it is enough to note that changing from `esModuleInterop: true` to `esModu
 Accordingly, library authors should set both `allowSyntheticDefaultImports` and `esModuleInterop` to `false`. This allows consumers to opt into these semantics, but does not *require* them to do so. Consumers can always safely use alternative import syntaxes (including falling back to `require()` and `import()`), or can enable these flags and opt into this behavior themselves.
 
 (If the Node ecosystem migrates fully to ES modules over the next few years, this problem will be substantially mitigated.)
-
-
-### Design summary
-
-This section is a non-normative short summary for easy digestion. See the previous sections and [**Conformance**](#conformance) below for normative text.
-
--   Public published types are part of the SemVer contract of a package, and must be versioned accordingly, per the specification above.
-
--   Adding a new TypeScript version to the support matrix *may* cause breaking changes. When it does not, adding it is a normal minor release. When it *does* cause a breaking change, the package must either mitigate that breakage (so consumers are not broken) *or* the package must release a major version.
-
--   Removing a TypeScript version from the support matrix is a breaking change, except when it falls out of the supported version range under the “rolling support windows” policy.
-
--   Packages using the “rolling window” policy should normally support all TypeScript versions released during the current ‘LTS’ of other core packages/runtimes/etc. they support, and drop support for them only when they drop support for that ‘LTS’, to minimize the number of major versions in the ecosystem.
-
--   Both the currently-supported compiler versions and the compiler version support policy must be documented.
-
--   Packages must be authored with the following compiler options:
-    -   `strict: true`
-    -   `noPropertyAccessFromIndexSignature: true`
-
--   Libraries should generally be authored with the following compiler options:
-    -   `esModuleInterop: false`
-    -   `allowSyntheticDefaultImports: false`
 
 
 ### Conformance
