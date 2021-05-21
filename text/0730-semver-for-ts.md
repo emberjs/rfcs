@@ -58,7 +58,7 @@ While this RFC is being authored in the context of Ember.js’ [adoption of Type
     - [Documenting supported versions and policy](#documenting-supported-versions-and-policy)
     - [Detect breaking changes in types](#detect-breaking-changes-in-types)
     - [Mitigate breaking changes](#mitigate-breaking-changes)
-      - [Avoiding user constructability](#avoiding-user-constructability)
+      - [Avoiding user constructibility](#avoiding-user-constructibility)
       - [Updating types to maintain compatibility](#updating-types-to-maintain-compatibility)
       - ["Downleveling" types](#downleveling-types)
       - [Opt-in future types](#opt-in-future-types)
@@ -210,11 +210,11 @@ No change to a type *documented as private* is a breaking change, whether or not
 
 </dd>
 
-<dt>User constructability:</dt>
+<dt>User constructibility:</dt>
 
 <dd>
 
-Exported types (interfaces, type aliases, and the type side of classes) may be defined by documentation to be user-constructable or *not*. For example, a package may choose to export an interface to allow users to name the type returned by a function, while specifying that the only legal way to construct such an interface is via the exported function: the type is *not* user-constructable. Alternatively, a package may export an interface or type alias explicitly for users to construct objects matching the type themselves: the type *is* user-constructable.
+Exported types (interfaces, type aliases, and the type side of classes) may be defined by documentation to be user-constructible or *not*. For example, a package may choose to export an interface to allow users to name the type returned by a function, while specifying that the only legal way to construct such an interface is via the exported function: the type is *not* user-constructible. Alternatively, a package may export an interface or type alias explicitly for users to construct objects matching the type themselves: the type *is* user-constructible.
 
 </dd>
 
@@ -292,7 +292,7 @@ Changing a symbol is a breaking change when:
 
 Object types may be defined with interfaces, type aliases, or classes. Interfaces and type aliases define type symbols only. Classes define both type symbols and value symbols. The `namespace` construct defines a value symbol (as well as introducing a context in which you can name other nested type or value symbols). The additional constraints for the value symbols introduced by classes are covered above under [Breaking Changes: Symbols](#symbols).
 
-A change to any object type (user constructable or not) is breaking when:
+A change to any object type (user constructible or not) is breaking when:
 
 -   a non-`readonly` object property's type changes in any way:
 
@@ -304,11 +304,11 @@ A change to any object type (user constructable or not) is breaking when:
 
 -   a property is removed from the type entirely, since some of the user's existing uses of the type will break, even if the property was optional ([optional][optional-removed], [required][required-removed])
 
-A change to a user-constructable type is breaking when:
+A change to a user-constructible type is breaking when:
 
 -   a required property is added to the type, since all of the user's existing constructions of the type will be incorrect ([new-required-property][required-added])
 
-A change to a non-user-constructable object type is breaking when:
+A change to a non-user-constructible object type is breaking when:
 
 -   a `readonly` object property type becomes a *less specific ("wider") type*, for example if it was previously `string` but now is `string | string[]`—since the user's existing handling of the property will be wrong in some cases ([playground][wider-property]—the playground uses a class but an interface or type alias would have the same behavior).
 
@@ -343,7 +343,7 @@ A change to a non-user-constructable object type is breaking when:
 
 ##### Functions
 
-For functions which return or accept user-constructable types, the rules specified for [Breaking Changes: Interfaces, Type Aliases, and Classes](#interfaces-type-aliases-and-classes) hold. Otherwise, a change to the type of a function is breaking when:
+For functions which return or accept user-constructible types, the rules specified for [Breaking Changes: Interfaces, Type Aliases, and Classes](#interfaces-type-aliases-and-classes) hold. Otherwise, a change to the type of a function is breaking when:
 
 -   an argument or return type changes entirely, for example if a function previously accepted `number` and now accepts `{ count: number }`, or previously returned `string` and now returns `boolean`—since the user will have to change all call sites for the function ([playground][changed-type])
 
@@ -407,11 +407,11 @@ A change to an exported symbol is *not* breaking when:
 
 ##### Interfaces, Type Aliases, and Classes
 
-A change to any type (user-constructable or not) is *not* breaking when:
+A change to any type (user-constructible or not) is *not* breaking when:
 
 -   a new optional property is added to the type, since all existing code will continue working ([playground][new-optional-prop])
 
-Any change to a non-user-constructable type is *not* breaking when:
+Any change to a non-user-constructible type is *not* breaking when:
 
 -   a `readonly` object property on the type becomes a *more specific ("narrower") type*, for example if it was previously `string | string[]` and now is always `string[]`—since all user code will continue working and type-checking ([playground][narrower-property]). Note that this includes a previously-optional property becoming required.
 
@@ -426,7 +426,7 @@ Any change to a non-user-constructable type is *not* breaking when:
 
 ##### Functions
 
-For functions which return or accept user-constructable types, the rules specified for [Non-breaking Changes: Interfaces, Type Aliases, and Classes](#interfaces-type-aliases-and-classes-1) hold. Otherwise, a change to a function declaration is *not* breaking when:
+For functions which return or accept user-constructible types, the rules specified for [Non-breaking Changes: Interfaces, Type Aliases, and Classes](#interfaces-type-aliases-and-classes-1) hold. Otherwise, a change to a function declaration is *not* breaking when:
 
 -   a function (including a class method or constructor) *accepts a less specific ("wider") type*, for example if it previously accepted only a `boolean` but now accepts `boolean | undefined`—since all existing user code will continue working and type-checking ([playground][wider-argument])
 
@@ -683,11 +683,11 @@ Type tests can run as normal [ember-try] variations or similar CI. Typed Ember w
 It is insufficient merely to be *aware* of breaking changes. It is also important to *mitigate* them, to minimize churn and breakage for package users.
 
 
-##### Avoiding user constructability
+##### Avoiding user constructibility
 
 For types where it is useful to publish an interface for end users, but where users should not construct the interface themselves, authors have a number of options (noting that this list is not exhaustive):
 
--   The type can simply be documented as non-user-constructable. This is the easiest, and allows an escape hatch for scenarios like testing, where users will recognize that if the public interface changes, they will necessarily need to update their test mocks to match. This can further be mitigated by providing a sanctioned test helper to construct test versions of the types.
+-   The type can simply be documented as non-user-constructible. This is the easiest, and allows an escape hatch for scenarios like testing, where users will recognize that if the public interface changes, they will necessarily need to update their test mocks to match. This can further be mitigated by providing a sanctioned test helper to construct test versions of the types.
 
 -   Export a nominal-like version of the type, using `export type` with a class with a private field:
 
@@ -734,9 +734,9 @@ For types where it is useful to publish an interface for end users, but where us
 
     This *cannot* be constructed outside the module. Note that it may be useful to provide corresponding test helpers for scenarios like this, since users cannot safely provide their own mocks.
 
--   Document that users can create their own local aliases for these types, while *not* exporting the types in a public way. This has one of the same upsides as the use of the classes with a private brand: the type is not constructable other than via the module. It also shares the upside of being able to create your own instance of it for test code. However, it has ergonomic downsides, requiring the use of the `ReturnType` utility class and requiring all consumers to generate that utility type for themselves.
+-   Document that users can create their own local aliases for these types, while *not* exporting the types in a public way. This has one of the same upsides as the use of the classes with a private brand: the type is not constructible other than via the module. It also shares the upside of being able to create your own instance of it for test code. However, it has ergonomic downsides, requiring the use of the `ReturnType` utility class and requiring all consumers to generate that utility type for themselves.
 
-Each of these leaves this module in control of the construction of `Person`s, which allows more flexibility for evolving the API, since non-user-constructable types are subject to fewer breaking change constraints than user-constructable types. Whichever is chosen for a given type, authors should document it clearly.
+Each of these leaves this module in control of the construction of `Person`s, which allows more flexibility for evolving the API, since non-user-constructible types are subject to fewer breaking change constraints than user-constructible types. Whichever is chosen for a given type, authors should document it clearly.
 
 
 ##### Updating types to maintain compatibility
