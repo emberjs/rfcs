@@ -94,9 +94,12 @@ For TypeScript packages be good citizens of the broader, semantically-versioned 
 
 This is somewhat more complicated than in other languages, even those other statically-typed languages with language-level SemVer guarantees (such as [Rust][rust-semver] and Elm), because TypeScript has an unusually flexible type system. In particular, its [structural type system][structural] means many more kinds of both breaking and non-breaking changes are possible than in languages with a [nominal type system][nominal]. Accordingly, this document proposes a definition of SemVer which accounts for the extra flexibility afforded by these features.
 
+(Many languages include structural typing in certain contexts, including Swift's protocols, Elm's record types, and row-polymorphic types in OCaml, PureScript, etc. However, of these only Elm provides language-level guidance or tooling, and at the time of authoring there is no public specification of its behavior. Its current algorithm is [implementations-specified]][elm-compat] and roughly checks for addition or removal of fields.)
+
 [rust-semver]: https://rust-lang.github.io/rfcs/1122-language-semver.html
 [structural]: https://en.wikipedia.org/wiki/Structural_type_system
 [nominal]: https://en.wikipedia.org/wiki/Nominal_type_system
+[elm-compat]: https://github.com/elm/compiler/blob/770071accf791e8171440709effe71e78a9ab37c/builder/src/Deps/Diff.hs#L128-L136
 
 Furthermore, unlike the rest of the JavaScript ecosystem, the TypeScript compiler explicitly *rejects* SemVer. TypeScript's core team argues that *every* change to a compiler is a breaking change, and that SemVer is therefore meaningless for TypeScript. We do not agree with this characterization, but take the TypeScript team's position as a given for the purposes of this document. Accordingly, every TypeScript non-patch release may be a breaking change, and "major" numbers for releases signify nothing beyond having reached `x.9` in the previous cycle.
 
