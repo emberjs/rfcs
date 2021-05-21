@@ -54,7 +54,23 @@ The goal of this change is to enable tooling to provide a more complete picture 
 
 ## Detailed design
 
-Given a component with this template:
+This RFC proposes the structure for a `Signature` type that enables authors to answer the questions outlined above about their component.
+
+```ts
+interface Signature {
+  Args?: {
+    argName: ArgType;
+    // ...
+  };
+  BlockParams?: {
+    blockName: [param1: Param1Type, paramTwo: Param2Type, ...];
+    // ...
+  };
+  Element?: AnElementType | null;
+}
+```
+
+So, given a component with this template:
 
 ```hbs
 <div class="notice notice-{{@kind}}" ...attributes>
@@ -62,7 +78,7 @@ Given a component with this template:
 </div>
 ```
 
-This RFC proposes that a TypeScript backing class currently written like this:
+A TypeScript backing class currently written like this:
 
 ```ts
 import Component from '@glimmer/component';
@@ -105,17 +121,17 @@ export default class Notice extends Component<NoticeSignature> {
 
 By nesting the existing `Args` type under a top-level _signature_ type, we create a place to provide additional type information for other aspects of a component's behavior. One key element of this design is that eases future evolution of the signature, as including additional keys with new meaning won't be a breaking change.
 
-In addition to `Args`, two other signature members are proposed here: `BlockParams` and `Element`. A detailed explanation of each of these follows.
-
 ### `Args`
 
 The `Args` signature member works exactly as the top-level `Args` type parameter does in `@glimmer/component@1.x` prior to this RFC. That is, it determines the type of `this.args` in the component backing class, as well as acting as an anchor for human-readable documentation for specific arguments.
 
-A component that accepts no arguments can omit the `Args` key from its signature.
+A signature with no `Args` indicates that its component does not accept any arguments.
 
 ### `BlockParams`
 
 The `BlockParams` member dictates what blocks a component accepts and specifies what parameters, if any, it provides to those blocks.
+
+A signature with no `BlockParams` indicates that its component never yields to any blocks.
 
 The [yieldable named blocks RFC] and recent versions of the [Component guides] discuss blocks in some depth, but since named blocks in particular are relatively new to the community, brief definitions based on those in [RFC 678] are included here for clarity.
 
@@ -198,7 +214,7 @@ The [yieldable named blocks RFC] and recent versions of the [Component guides] d
      ```
 </details>
 
-The `BlockParams` type maps the block names a component accepts to a tuple type representing the parameters those blocks will receive. A component that never yields to any blocks may omit the `BlockParams` key from its signature.
+The `BlockParams` type maps the block names a component accepts to a tuple type representing the parameters those blocks will receive.
 
 As a concrete example, the `BlogPost` component in the [Block Parameters section] of the Ember guides looks like this:
 
@@ -272,7 +288,9 @@ export default class FancyTable<T> extends Component<FancyTableSignature<T>> {
 
 ### `Element`
 
-The `Element` member of the signature declares what type of DOM element(s), if any, this component may be treated as encapsulating. That is, setting a non-`null` type for this member declares that this component may have HTML attributes applied to it, and that type reflects the type of DOM `Element` object any modifiers applied to the component will receive when they execute. Omitting `Element` or explicitly declaring it as `null` indicates that a component does not accept HTML attributes and modifiers at all.
+The `Element` member of the signature declares what type of DOM element(s), if any, this component may be treated as encapsulating. That is, setting a non-`null` type for this member declares that this component may have HTML attributes applied to it, and that type reflects the type of DOM `Element` object any modifiers applied to the component will receive when they execute.
+
+A signature with no `Element` or with `Element: null` indicates that its component does not accept HTML attributes and modifiers at all.
 
 For example, [`{{animated-if}}`] would omit `Element` from its signature, as it emits no DOM content. Even if you invoked it with angle-bracket syntax, any attributes or modifiers you applied wouldn't go anywhere.
 
