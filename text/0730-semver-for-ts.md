@@ -173,7 +173,24 @@ Bug fix/patch releases to TypeScript (as described above under [Bug fixes](#bug-
 <dt>Symbols</dt>
 <dd>
 
-There are two kinds of *symbols* in TypeScript: value symbols and type symbols. Value symbols are the symbols present in JavaScript: `let`, `const`, and `var` bindings; and `function` and `class` declarations. Type symbols are represented by `interface` declarations, `type` (type alias) declarations, and `class` declarations.
+There are two kinds of *symbols* in TypeScript: value symbols and type symbols.
+
+Value symbols represent values present at runtime in JavaScript:
+
+- `let`, `const`, and `var` bindings
+- `function` declarations
+- `class` declarations
+- `enum` and `const enum` declarations
+- `namespace` declarations (which produce or represent *objects* at runtime)
+
+Type symbols represent types which are used in type checking:
+
+- `interface` declarations
+- `type` (type alias) declarations
+- `class` declarations
+- `enum` and `const enum` declarations
+
+(Note that `namespace` declarations can also be present in type-only declarations, as when a type is exported from a namespace and referenced like `let val: SomeNamespace.ExportedInterface`, but the value produced by the `namespace` is not itself a type.)
 
 </dd>
 
