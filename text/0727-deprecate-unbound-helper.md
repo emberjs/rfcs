@@ -82,7 +82,7 @@ export default class UserComponent extends Component {
 {{this.name}}
 ```
 
-If you are using normal Ember components, your component could look like this:
+If you are using classic Ember components, your component could look like this:
 
 ```js
 // app/components/user.js
