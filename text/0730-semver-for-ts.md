@@ -202,11 +202,12 @@ Unless otherwise specified, "functions" always refers interchangeably to: functi
 
 </dd>
 
-<dt>Privacy:</dt>
+<dt>Public API:</dt>
 
 <dd>
 
-No change to a type *documented as private* is a breaking change, whether or not the type is exported. *Documented as private* is defined in terms of the documentation norm of the package in question. Some packages may choose to specify that the public API consists of *documented* exports, in which case no published type may be considered public API unless it is in the documentation. Other packages may choose to say the reverse: all exports are public unless explicitly defined as private (for example with the `@private` JSDoc annotation, a note in the docs, etc.).
+Some packages may choose to specify that the public API consists of *documented* exports, in which case no published type may be considered public API unless it is in the documentation. Other packages may choose to say the reverse: all exports are public unless explicitly defined as private (for example with the `@private` JSDoc annotation, a note in the docs, etc.).
+In either case, no change to a type documented as private is a breaking change, whether or not the type is exported, where *documented as private* is defined in terms of the documentation norm of the package in question.
 
 </dd>
 
