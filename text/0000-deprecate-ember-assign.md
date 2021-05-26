@@ -33,7 +33,7 @@ The polyfill is no longer necessary and is a small amount of code that can be re
 
 ## Transition Path
 
-The transision path is quite straightforward: devs will replace `Ember.assign` with `Object.assign`.
+The transition path is quite straightforward: devs will replace `Ember.assign` with `Object.assign`.
 
 ## How We Teach This
 
