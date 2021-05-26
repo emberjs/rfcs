@@ -29,7 +29,7 @@ is available in all browsers that Ember v4.0+ supports ([CanIUse](https://canius
 
 ## Motivation
 
-The polyfill is no longer necessary and is a small amount of code that can be removed and remove another Emberism. Apps and addons can use `Object.assign` or object destructring depending on their browser support targets.
+The polyfill is no longer necessary and is a small amount of code that can be removed and remove another Emberism. Apps and addons can use `Object.assign` or object destructuring depending on their browser support targets.
 
 ## Transition Path
 
