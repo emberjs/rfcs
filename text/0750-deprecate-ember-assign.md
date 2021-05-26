@@ -24,20 +24,27 @@ RFC PR: Fill this in with the URL for the Proposal RFC PR
 
 ## Summary
 
-Deprecate `Ember.assign` starting in v4.0. Now that Ember is dropping support for IE11, we no longer need `Ember.assign` as a polyfill since `Object.assign`
-is available in all browsers that Ember v4.0+ supports ([CanIUse](https://caniuse.com/mdn-javascript_builtins_object_assign), [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#browser_compatibility)).
+Now that Ember is dropping support for IE11, we no longer need `Ember.assign` as a polyfill since `Object.assign`
+is available in all browsers that Ember v4.x supports ([CanIUse](https://caniuse.com/mdn-javascript_builtins_object_assign), [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#browser_compatibility)).
 
 ## Motivation
 
-The polyfill is no longer necessary and is a small amount of code that can be removed and remove another Emberism. Apps and addons can use `Object.assign` or object destructuring depending on their browser support targets.
+The polyfill is no longer necessary, as well as being another Emberism that can be removed. Apps and addons can use `Object.assign` or object destructuring depending on their browser support targets.
 
 ## Transition Path
 
-The transition path is quite straightforward: devs will replace `Ember.assign` with `Object.assign`.
+The transition path is relatively simple: apps that use Ember 4.x will replace `Ember.assign` with `Object.assign`, and apps and addons that use or support Ember 3.x can continue to use the polyfill if needed.
+
+ex:
+```
+import { assign as emberAssign } from '@ember/polyfills';
+
+const assign = Object.assign || emberAssign;
+```
 
 ## How We Teach This
 
-A descriptive deprecation message alerting a developer that as of now (Ember v4), `Ember.assign` is no longer needed and it can be replaced with `Object.assign`.
+A descriptive deprecation message alerting a developer that `Ember.assign` is deprecated and can be replaced with `Object.assign`.
 
 ## Drawbacks
 
