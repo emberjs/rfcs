@@ -230,7 +230,9 @@ Bug fix/patch releases to TypeScript (as described above under [Bug fixes](#bug-
 <dt>Symbols</dt>
 <dd>
 
-There are two kinds of *symbols* in TypeScript: value symbols and type symbols.
+There are two kinds of *symbols* in TypeScript: value symbols and type symbols. (Note that these are distinct from the [Symbol][symbol] object in JavaScript.)
+
+[symbol]: http://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol
 
 Value symbols represent values present at runtime in JavaScript:
 
