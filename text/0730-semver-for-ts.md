@@ -278,7 +278,7 @@ In either case, no change to a type documented as private is a breaking change, 
 
 **Documentation of user constructibility:** Exported types (interfaces, type aliases, and the type side of classes) may be defined by documentation to be user-constructible or not.
 
-**Docuentation of subclassibility:** Exported classes may be defined by documentation to be user-subclassible or not.
+**Documentation of subclassibility:** Exported classes may be defined by documentation to be user-subclassible or not.
 
 </dd>
 
