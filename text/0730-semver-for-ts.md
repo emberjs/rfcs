@@ -12,7 +12,7 @@ RFC PR: https://github.com/emberjs/rfcs/pull/730
 # Semantic Versioning for TypeScript Types
 
 
-## Summary <!-- omit in toc -->
+## Summary
 
 This RFC proposes a definition of [Semantic Versioning][semver] for managing changes to TypeScript types, including when the TypeScript compiler makes breaking changes in its type-checking and type emit across a “minor” release.(Note that this RFC addresses *only* type checking and type emit, *not* the “transpilation” mode of the TypeScript compiler.)
 
@@ -73,6 +73,10 @@ Note that this summary elides *many* important details, and those details may su
 
 ### Outline <!-- omit in toc -->
 
+- [Summary](#summary)
+  - [Design overview](#design-overview)
+    - [For package consumers](#for-package-consumers)
+    - [For package authors](#for-package-authors)
 - [Motivation](#motivation)
 - [Detailed design](#detailed-design)
   - [Background: TypeScript and Semantic Versioning](#background-typescript-and-semantic-versioning)
