@@ -27,13 +27,38 @@ This RFC proposes a definition of [Semantic Versioning][semver] for managing cha
 
 This section is a non-normative short summary for easy digestion. See [**Detailed Design**](#detailed-design) below for normative text.
 
+
+#### For package consumers
+
+Things a package may do in a non-breaking way:
+
+- widen what it accepts from you
+- narrow what it provides to you
+- add new exports
+
+Things which constitute breaking changes in a package:
+
+- narrowing what it accepts from you
+- widening what it provides to you
+- removing exports
+
+Note that this summary elides *many* important details, and those details may surprise you! In particular "what it accepts" and "what it provides" have considerable depth and nuance: they include interfaces or types you can construct, function arguments, class field mutability, and more.
+
+#### For package authors
+
 -   Public published types are part of the SemVer contract of a package, and must be versioned accordingly, per the specification above.
 
 -   Adding a new TypeScript version to the support matrix *may* cause breaking changes. When it does not, adding it is a normal minor release. When it *does* cause a breaking change, the package must either mitigate that breakage (so consumers are not broken) *or* the package must release a major version.
 
 -   Removing a TypeScript version from the support matrix is a breaking change, except when it falls out of the supported version range under the “rolling support windows” policy.
 
--   Packages using the “rolling window” policy should normally support all TypeScript versions released during the current ‘LTS’ of other core packages/runtimes/etc. they support, and drop support for them only when they drop support for that ‘LTS’, to minimize the number of major versions in the ecosystem.
+-   There are two recommended support policies for TypeScript compiler versions: *simple majors* and *rolling window*.
+
+    -   In *simple majors*, dropping support for a previously supported compiler version requires a breaking change.
+
+    -   In *rolling window*, a package may declare a range of supported versions which moves over time, similar to supporting evergreen browsers.
+
+        Packages using the “rolling window” policy should normally support all TypeScript versions released during the current ‘LTS’ of other core packages/runtimes/etc. they support, and drop support for them only when they drop support for that ‘LTS’, to minimize the number of major versions in the ecosystem.
 
 -   Both the currently-supported compiler versions and the compiler version support policy must be documented.
 
