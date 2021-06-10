@@ -142,7 +142,7 @@ TypeScript introduces two new concerns around breaking changes for packages whic
 
 1.  TypeScript does not adhere to the same norms around Semantic Versioning as the rest of the npm ecosystem, so it is important for package authors to understand when TypeScript versions may introduce breaking changes without any other change made to the package.
 
-2.  The runtime behavior of the package is no longer the only source of potentially-breaking changes: types may be as well. In a well-typed package, runtime behavior and types should be well-aligned, but it is possible to introduce breaking changes to types without changing runtime behavior.
+2.  The runtime behavior of the package is no longer the only source of potentially-breaking changes: types may be as well. In a well-typed package, runtime behavior and types should be well-aligned, but it is possible to introduce breaking changes to types without changing runtime behavior and vice versa.
 
 Accordingly, we must define breaking changes precisely and carefully.
 
@@ -187,6 +187,8 @@ It is impossible to define the difference between breaking and non-breaking chan
 
 Accordingly, we propose the following specific definitions of breaking, non-breaking, and bug-fix changes for TypeScript types. Because types are designed to represent runtime behavior, we assume throughout that these changes *do* in fact correctly represent changes to runtime behavior, and that changes which *incorrectly* represent runtime behavior are *bugs*.
 
+**Note:** The examples supplied throughout via links to the TypeScript are illustrative rather than normative. However, the distinction between "observed" and "promised" behavior in TypeScript is quite loose: there is no independent specification, so the formal behavior of the type system is implementation-specified.
+
 
 #### Supported compiler versions
 
@@ -224,6 +226,7 @@ Bug fix/patch releases to TypeScript (as described above under [Bug fixes](#bug-
 #### Definitions
 
 <dl>
+
 <dt>Symbols</dt>
 <dd>
 
@@ -248,8 +251,7 @@ Type symbols represent types which are used in type checking:
 
 </dd>
 
-<dt>Functions:</dt>
-
+<dt>Functions</dt>
 <dd>
 
 Unless otherwise specified, "functions" always refers interchangeably to: functions in standalone scope, whether defined with either `function` or an arrow; class methods; and class constructors.
@@ -257,7 +259,6 @@ Unless otherwise specified, "functions" always refers interchangeably to: functi
 </dd>
 
 <dt>User constructibility</dt>
-
 <dd>
 
 A type is user-constructible if the consumer of a package is allowed to create their own objects which match a given type structurally, that is, *without* using a function or class exported from the package which provides the type.
@@ -269,8 +270,7 @@ If a user imported the `Transition` interface and wrote a `class CustomTransitio
 
 </dd>
 
-<dt>Public API:</dt>
-
+<dt>Public API</dt>
 <dd>
 
 **Overview:** Some packages may choose to specify that the public API consists of *documented* exports, in which case no published type may be considered public API unless it is in the documentation. Other packages may choose to say the reverse: all exports are public unless explicitly defined as private (for example with the `@private` JSDoc annotation, a note in the docs, etc.).
