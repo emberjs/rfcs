@@ -291,16 +291,18 @@ Each of the kinds of breaking changes defined below will trigger a compiler erro
 
 There are several reasons why breaking changes may occur:
 
--   The author of the package may choose to change the API for whatever reason. This is no different than the situation today for packages which do not support TypeScript. This would be a major version independent of types.
+1.  The author of the package may choose to change the API for whatever reason. This is no different than the situation today for packages which do not support TypeScript. This would be a major version independent of types.
 
--   The author of the package may need to make changes to adapt to changes in the JavaScript ecosystem, for example to support Octane idioms in Ember.js. This is likewise identical with the situation for packages which do not support TypeScript: it would require a major version regardless.
+2.  The author of the package may need to make changes to adapt to changes in the JavaScript ecosystem, for example to support Octane idioms in Ember.js. This is likewise identical with the situation for packages which do not support TypeScript: it would require a major version regardless.
 
--   Adopting a new version of TypeScript may change the meaning of existing types. For example, in TypeScript 3.5, generic types without a specified default type changed their default value from `{}` to `unknown`. This improved type safety, but broke many existing types, as [described in detail by Google][3.5-breakage].
+3.  Adopting a new version of TypeScript may change the meaning of existing types. For example, in TypeScript 3.5, generic types without a specified default type changed their default value from `{}` to `unknown`. This improved type safety, but broke many existing types, as [described in detail by Google][3.5-breakage].
 
--   Adopting a new version of TypeScript may change the type definitions emitted in `.d.ts` files in backwards-incompatible ways. For example, changing to use the finalized ECMAScript spec for class fields meant that [types emitted by TypeScript 3.7 were incompatible with TypeScript 3.5 and earlier][3.7-emit-change].
+4.  Adopting a new version of TypeScript may change the type definitions emitted in `.d.ts` files in backwards-incompatible ways. For example, changing to use the finalized ECMAScript spec for class fields meant that [types emitted by TypeScript 3.7 were incompatible with TypeScript 3.5 and earlier][3.7-emit-change].
 
 [3.5-breakage]: https://github.com/microsoft/TypeScript/issues/33272
 [3.7-emit-change]: https://github.com/microsoft/TypeScript/pull/33470
+
+The following subsections describe the kinds of breaking changes represented by reasons (1) and (2) above. For reasons (3) and (4), see the discussion above in [**Defining Breaking Changes: Supported Compiler Versions**](#supported-compiler-versions).
 
 
 ##### Symbols
