@@ -183,7 +183,9 @@ Changes to the types of the public interface are subject to the same constraints
 - Some changes will continue to allow user code to continue working without any issue.
 - Some published types represent private API.
 
-It is impossible to define the difference between breaking and non-breaking changes purely in the abstract. Instead, we must define exactly what changes are "backwards-compatible" and which are "breaking," and we must further define what constitutes a legitimate "bug fix" for type definitions designed to represent runtime behavior.
+It is impossible to define the difference between breaking and non-breaking changes purely in the abstract. Instead, we must define exactly what changes are "backwards-compatible" and which are "breaking," and we must further define what constitutes a legitimate "bug fix" for type definitions designed to represent runtime behavior. Note that this is a *socio-technical* contract, not a purely-technical contract, and therefore (contra [Hyrum’s Law][hyrum]) a breaking change is not simply *any observable change to a system* but rather *a change to the system which violates the contract*.
+
+[hyrum]: http://www.hyrumslaw.com
 
 Accordingly, we propose the following specific definitions of breaking, non-breaking, and bug-fix changes for TypeScript types. Because types are designed to represent runtime behavior, we assume throughout that these changes *do* in fact correctly represent changes to runtime behavior, and that changes which *incorrectly* represent runtime behavior are *bugs*.
 
@@ -192,9 +194,7 @@ Accordingly, we propose the following specific definitions of breaking, non-brea
 
 #### Supported compiler versions
 
-A breaking change is not simply *any observable change to a system* (contra [Hyrum’s Law][hyrum]). Rather, as noted above, Semantic Versioning is a matter of adherence to a specified contract. This is particularly important when dealing with transitive or peer dependencies, especially at the level of ecosystem dependencies—including Node versions, browsers, compilers, and frameworks (such as Ember, React, Vue, Svelte, etc.). Accordingly, the specification of breaking changes as described below is further defined in terms of the TypeScript compiler support version adopted by any given package. Conforming packages must adopt and clearly specify one of two support policies: *simple majors* or *rolling support windows*.
-
-[hyrum]: http://www.hyrumslaw.com
+As noted above, Semantic Versioning is a matter of adherence to a specified contract. This is particularly important when dealing with transitive or peer dependencies, especially at the level of ecosystem dependencies—including Node versions, browsers, compilers, and frameworks (such as Ember, React, Vue, Svelte, etc.). Accordingly, the specification of breaking changes as described below is further defined in terms of the TypeScript compiler support version adopted by any given package. Conforming packages must adopt and clearly specify one of two support policies: *simple majors* or *rolling support windows*.
 
 
 ##### Simple majors
