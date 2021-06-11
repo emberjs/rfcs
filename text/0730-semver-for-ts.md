@@ -192,37 +192,6 @@ Accordingly, we propose the following specific definitions of breaking, non-brea
 **Note:** The examples supplied throughout via links to the TypeScript are illustrative rather than normative. However, the distinction between "observed" and "promised" behavior in TypeScript is quite loose: there is no independent specification, so the formal behavior of the type system is implementation-specified.
 
 
-#### Supported compiler versions
-
-As noted above, Semantic Versioning is a matter of adherence to a specified contract. This is particularly important when dealing with transitive or peer dependencies, especially at the level of ecosystem dependencies—including Node versions, browsers, compilers, and frameworks (such as Ember, React, Vue, Svelte, etc.). Accordingly, the specification of breaking changes as described below is further defined in terms of the TypeScript compiler support version adopted by any given package. Conforming packages must adopt and clearly specify one of two support policies: *simple majors* or *rolling support windows*.
-
-
-##### Simple majors
-
-In “simple majors” pattern, dropping a previously-supported TypeScript version constitutes a breaking change, because it has the same kind of impact on users of the package as dropping support for a previously-supported version of Node: they must upgrade a *different* dependency to guarantee their code continues to work. Thus, whenever dropping a previously-supported TypeScript release, packages using “simple majors” should publish a new major version.
-
-However, bug fix/patch releases to TypeScript (as described above under [Bug fixes](#bug-fixes)) qualify for bug fix releases for packages using the “simple majors” policy. For example, if a package initially publishes support for TypeScript 4.5.0, but a critical bug is discovered and fixed in 4.5.1, the package may drop support for 4.5.0 without a major release. Dropping support for a bad version does not require publishing a new release, only documenting the change.
-
-In this case, packages should generally couple dropping support for previously-supported TypeScript versions with dropping support for other ecosystem-level dependencies, such as previously-supported Node.js LTS versions, Ember LTS releases, React major versions, etc. (This is not a requirement for conformance, but makes for a generally healthier ecosystem.)
-
-This pattern is recommended for “normal” packages, where major versions do not themselves have ecosystem-wide implications. For example, a package like [True Myth][true-myth] (maintained by the primary author of this RFC) is small and not presently foundational to any broader ecosystem. It is safely using the “simple majors” approach today for both Node and TypeScript versions.
-
-[true-myth]: https://true-myth.js.org
-
-
-##### Rolling support windows
-
-The “rolling support windows” policy decouples compiler version support from major breaking changes, by specifying a rolling window of supported versions. For example, Ember and Ember CLI [specify][ember-cli-node] that any change landing on `master` must work on the [Current, Active LTS, and Maintenance LTS Node versions][node-versions] at the time the change lands, and that when the Node Working Group drops support for an LTS, Ember and Ember CLI do so as well *without a breaking change*. This allows the CLI to use new Node features as part of its public API over time, rather than being fixed at the set of features available at the time of the latest release of the CLI (e.g. Node 8 for the Ember CLI 3.x series).
-
-[ember-cli-node]: https://github.com/ember-cli/ember-cli/blob/master/docs/node-support.md
-[node-versions]: https://nodejs.org/en/about/releases/
-
-Following this pattern, core ecosystem components (hypothetically including examples such `ember-source`, `react`, `@vue/cli`, etc.) could adopt a similar policy for supported TypeScript compiler versions, allowing the component to adopt new TypeScript features which impact the published types (e.g. in type emit, type system features such as conditional types, etc.) rather than being coupled to the features available at the time of release. Conforming projects which adopt this may choose any rolling support window they choose, except that if they have an LTS release schedule, upgrading to a new LTS shall not require upgrading to a new version of TypeScript.
-
-Bug fix/patch releases to TypeScript (as described above under [Bug fixes](#bug-fixes)) qualify for bug fix releases for packages using the “rolling support windows” policy. For example, if a package initially publishes support for TypeScript 4.5.0, but a critical bug is discovered and fixed in 4.5.1, the package may drop support for 4.5.0 without a major release. Dropping support for a bad version does not require publishing a new release, only documenting the change.
-
-
-
 #### Definitions
 
 <dl>
@@ -284,8 +253,7 @@ In either case, no change to a type documented as private is a breaking change, 
 
 </dd>
 
-
-#### Breaking changes
+#### Reasons for Breaking Changes
 
 Each of the kinds of breaking changes defined below will trigger a compiler error for consumers, surfacing the error. As such, they should be easily detectable by testing infrastructure (see below under [Tooling: Detect breaking changes in types](#detect-breaking-changes-in-types)).
 
@@ -302,8 +270,13 @@ There are several reasons why breaking changes may occur:
 [3.5-breakage]: https://github.com/microsoft/TypeScript/issues/33272
 [3.7-emit-change]: https://github.com/microsoft/TypeScript/pull/33470
 
-The following subsections describe the kinds of breaking changes represented by reasons (1) and (2) above. For reasons (3) and (4), see the discussion above in [**Defining Breaking Changes: Supported Compiler Versions**](#supported-compiler-versions).
+The kinds of breaking changes represented by reasons (1) and (2) are described below under [**Changes to Types**](#changes-to-types); reasons (3) and (4) are discussed below in [**Defining Breaking Changes: Supported Compiler Versions**](#supported-compiler-versions).
 
+### Changes to types
+
+
+
+#### Breaking Changes
 
 ##### Symbols
 
@@ -533,8 +506,42 @@ In practice, this suggests two key considerations around type bugs:
 
 [intimate]: https://twitter.com/wycats/status/918644693759488005
 
+### Compiler considerations
 
-#### Strictness
+To reiterate, Semantic Versioning is a matter of adherence to a specified contract. This is particularly important when dealing with transitive or peer dependencies, especially at the level of ecosystem dependencies—including Node versions, browsers, compilers, and frameworks (such as Ember, React, Vue, Svelte, etc.). Accordingly, the specification of breaking changes as described below is further defined in terms of the TypeScript compiler support version adopted by any given package as well as specific settings.
+
+
+##### Supported compiler versions
+
+Conforming packages must adopt and clearly specify one of two support policies: *simple majors* or *rolling support windows*.
+
+
+###### Simple majors
+
+In “simple majors” pattern, dropping a previously-supported TypeScript version constitutes a breaking change, because it has the same kind of impact on users of the package as dropping support for a previously-supported version of Node: they must upgrade a *different* dependency to guarantee their code continues to work. Thus, whenever dropping a previously-supported TypeScript release, packages using “simple majors” should publish a new major version.
+
+However, bug fix/patch releases to TypeScript (as described above under [Bug fixes](#bug-fixes)) qualify for bug fix releases for packages using the “simple majors” policy. For example, if a package initially publishes support for TypeScript 4.5.0, but a critical bug is discovered and fixed in 4.5.1, the package may drop support for 4.5.0 without a major release. Dropping support for a bad version does not require publishing a new release, only documenting the change.
+
+In this case, packages should generally couple dropping support for previously-supported TypeScript versions with dropping support for other ecosystem-level dependencies, such as previously-supported Node.js LTS versions, Ember LTS releases, React major versions, etc. (This is not a requirement for conformance, but makes for a generally healthier ecosystem.)
+
+This pattern is recommended for “normal” packages, where major versions do not themselves have ecosystem-wide implications. For example, a package like [True Myth][true-myth] (maintained by the primary author of this RFC) is small and not presently foundational to any broader ecosystem. It is safely using the “simple majors” approach today for both Node and TypeScript versions.
+
+[true-myth]: https://true-myth.js.org
+
+
+###### Rolling support windows
+
+The “rolling support windows” policy decouples compiler version support from major breaking changes, by specifying a rolling window of supported versions. For example, Ember and Ember CLI [specify][ember-cli-node] that any change landing on `master` must work on the [Current, Active LTS, and Maintenance LTS Node versions][node-versions] at the time the change lands, and that when the Node Working Group drops support for an LTS, Ember and Ember CLI do so as well *without a breaking change*. This allows the CLI to use new Node features as part of its public API over time, rather than being fixed at the set of features available at the time of the latest release of the CLI (e.g. Node 8 for the Ember CLI 3.x series).
+
+[ember-cli-node]: https://github.com/ember-cli/ember-cli/blob/master/docs/node-support.md
+[node-versions]: https://nodejs.org/en/about/releases/
+
+Following this pattern, core ecosystem components (hypothetically including examples such `ember-source`, `react`, `@vue/cli`, etc.) could adopt a similar policy for supported TypeScript compiler versions, allowing the component to adopt new TypeScript features which impact the published types (e.g. in type emit, type system features such as conditional types, etc.) rather than being coupled to the features available at the time of release. Conforming projects which adopt this may choose any rolling support window they choose, except that if they have an LTS release schedule, upgrading to a new LTS shall not require upgrading to a new version of TypeScript.
+
+Bug fix/patch releases to TypeScript (as described above under [Bug fixes](#bug-fixes)) qualify for bug fix releases for packages using the “rolling support windows” policy. For example, if a package initially publishes support for TypeScript 4.5.0, but a critical bug is discovered and fixed in 4.5.1, the package may drop support for 4.5.0 without a major release. Dropping support for a bad version does not require publishing a new release, only documenting the change.
+
+
+##### Strictness
 
 Type-checking in TypeScript behaves differently under different “strictness” settings, and the compiler adds more strictness settings over time. Changes to types which are not breaking under looser compiler settings may be breaking under stricter compiler settings.
 
@@ -545,7 +552,7 @@ Accordingly, conforming packages must use `strict: true` and `noPropertyAccessFr
 **Note:** While the TypeScript compiler may include new strictness flags under `strict: true` in any release, this is simply a special case of TypeScript’s policy on breaking changes.
 
 
-#### Module interop
+##### Module interop
 
 The two flags `esModuleInterop` and `allowSyntheticDefaultImports` smooth the interoperation between ES Modules and CommonJS, AMD, and UMD modules for *emit* from TypeScript and *type resolution* by TypeScript respectively. The options are viral: enabling them in a package requires all downstream consumers to enable them as well (even if this is not desirable for whatever reasons). The reasons for this are details of how CommonJS and ES Modules interoperate for bundlers (Webpack, Parcel, etc.), and are beyond the scope of this document.
 
