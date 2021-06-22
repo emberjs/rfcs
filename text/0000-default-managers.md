@@ -296,16 +296,38 @@ setComponentManager((owner) => new DefaultComponentManager(owner), Object.constr
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
+### Changes to Existing Pages
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
+On the [Helper Functions](https://guides.emberjs.com/v3.26.0/components/helper-functions/) page,
+We'll want to insert a section early on about how helpers can be "local" to or defined on
+components and controllers. Then, once there have been examples of the local/private helper,
+the existing content can continue to talk about the "global helper" -- explicitly differentiating
+between the local/private helper, rather then retaining the general "Helper Function" title as
+"Helper Functions" are all of these, rather than just the globally defines ones.
 
-> How should this feature be introduced and taught to existing Ember
-users?
+### Additional Pages
+
+This RFC adopts a default modifier manager, which means that folks can use modifiers without
+the assistance of a third-party addon, such as ember-modifier. This means that we'll benefit from
+adding a page to the guides on modifiers, their philosophy, when to use them, etc. While the
+overall API for modifiers in general has been "not perfect", there has been a fair amount of
+experimentation with modifiers since the 3.11 - 3.16 (pre-octane) era. Function modifiers are
+significantly simpler than class-based modifiers, and the complexity of the specifics of class-
+based modifiers is where most of the hesitance around adding modifiers by default has been.
+
+The default component manager may not need its own guides-documentation, because the prevelance
+of `@glimmer/component` is so widespread, documenting yet-another-way-to-define-a-component may
+cause more harm than good.
+
+Existing users of Ember should be made aware of these capabilities, once implemented, via
+the release blog post, with some examples -- but folks watching developments in the ecosystem
+will likely be aware of ember-could-get-used-to-this and ember-modifier, which both implement
+some parts of this RFC, so the migration path for users of those addons should be straight-forward.
+Those addons _may_ want to deprecate their similar functionality after the proposed behavior here
+lands -- though, this RFC suggests implementation such that developers may still use both
+addons without disruption.
+
+
 
 ## Drawbacks
 
