@@ -70,13 +70,229 @@ test('...', async function (assert) {
 
 ## Detailed design
 
-> This is the bulk of the RFC.
+Each implemented meta-manager needs a default manager specified. The logic for choosing when to use
+a default manager is, at a high-level:
 
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here.
+```
+if (noExistingManagerFor(X)) {
+  return defaultManager;
+}
+```
+Where X is one of a Helper, Modifier, or Component
+
+### Helpers
+
+Borrowing most of the implementation from ember-could-get-used-to-this with one change: the signature
+of the function may receive an options-like object as the last parameter if named arguments are specified.
+This aligns with the _syntax_ of helper invocation where named arguments may not appear before the last
+positional argument.
+
+#### Example with mixed params
+
+```hbs
+{{this.calculate 1 2 op="add"}}
+```
+would be an example invocation of a function with the following signature
+expressed as TypeScript for clarity:
+```ts
+type Options = { op: 'add' | 'subtract' }
+class A {
+  calculate(first: number, second: number, options: Options) {
+    // ...
+  }
+}
+```
+for unknown amounts of parameters, the [typescript can be awkward](https://www.typescriptlang.org/play?#code/JYOwLgpgTgZghgYwgAgMJwDYIK4bpAeQAcxgB7EAZ2QG8AoZR5MogLmQHI4ATbj5AD6dK2AEYcA3HQC+dMAE8iKdFlz4IAQSgBzagF5kAbQB0pkNgC2o6IYC6AGjSYceQiXJVbUujGwgEpBTICM5qkAAUpsZwOpTsKi7qWroAlLQMyBgQYMzuFPrIMbrGRCzhaXDUCWEQxIFUUoxZOeYWBUXUlcit1lB23owI+WRZxhhk2uE0ufWUjq3U0ilSsj5+AR7Boa4QAEyRph3x20mxafRN2UYss45RUBAAbtCUENy2yAYdxg-PUK-lRqZK4LT7IX4vN4-J6QwF0DJDKgjCBjCZTGYeObdSyLZYyeHwoA),
+
+but there is a [TC39 proposal: proposal-deiter](https://github.com/tc39/proposal-deiter) that could make
+destructuring simpler and inlined to
+```ts
+  calculate(...numbers: number[], options: Options) {
+```
+
+#### Example with only positional parameters
+
+```hbs
+{{this.add 1 2 3 4}}
+```
+Because there are no named arguments passed in, the method signature can be simple:
+```js
+class A {
+  add(...numbers: number[]) {
+    // ...
+  }
+}
+```
+
+The implementation for the this function-handling helper-manager could look like this:
+```ts
+import {
+  setHelperManager,
+  capabilities as helperCapabilities,
+} from '@ember/helper';
+import { assert } from '@ember/debug';
+
+class FunctionHelperManager {
+  capabilities = helperCapabilities('3.23', {
+    hasValue: true,
+  });
+
+  createHelper(fn, args) {
+    return { fn, args };
+  }
+
+  getValue({ fn, args }) {
+    let argsForFn = args.positional;
+
+    if (Object.keys(args.named).length > 0) {
+      argsForFn.push(args.named);
+    }
+
+    return fn(...argsForFn);
+  }
+
+  getDebugName(fn) {
+    return fn.name || '(anonymous function)';
+  }
+}
+
+const DEFAULT_HELPER_MANAGER = new FunctionHelperManager();
+
+// side-effect -- this file needs to be imported for the helper manager to be installed
+setHelperManager(() => DEFAULT_HELPER_MANAGER, Function.prototype);
+```
+
+### Modifiers
+
+Modifiers' default should be similar to the Helpers' default, in that they would be function-based.
+The primary difference is that the first argument to a function-modifier is the attached `Element`,
+and the function-modifier _may_ return a destruction function.
+
+Example:
+```js
+class MyComponent {
+  wiggle(element, first, second, options) {
+    const doAnimation = { /* ... */ }
+
+    element.addEventListener('touchstart', doAnimation);
+
+    return () => element.removeEventListener('touchstart', doAnimation);
+  }
+}
+```
+```hbs
+<button {{this.wiggle "first arg" "second arg"}}>
+```
+Similar to the helper manager, because the invocation of `{{this.wiggle ...` has no named arguments,
+the last parameter in the `wiggle` function signature will be `undefined`.
+
+The implementation of this modifier manager could look like:
+
+```js
+import {
+  setModifierManager,
+  capabilities as modifierCapabilities,
+} from '@ember/modifier';
+import { destroy, registerDestructor } from '@ember/destroyable';
+import { setOwner } from '@ember/application';
+
+class DefaultModifierManager {
+  capabilities = modifierCapabilities('3.22');
+
+  createModifier(fn, args) {
+    return { fn, args, element: undefined, destructor: undefined };
+  }
+
+  installModifier(state, element) {
+    state.element = element;
+    this.setupModifier(state);
+  }
+
+  updateModifier(state) {
+    this.destroyModifier(state);
+    this.setupModifier(state);
+  }
+
+  setupModifier(state) {
+    let { fn, args, element } = state;
+
+    let argsForFn = args.positional;
+
+    if (Object.keys(args.named).length > 0) {
+      argsForFn.push(args.named);
+    }
+
+    state.destructor = fn(element, ...argsForFn);
+  }
+
+  destroyModifier(state) {
+    if (typeof state.destructor === 'function') {
+      state.destructor();
+    }
+  }
+}
+
+const DEFAULT_MODIFIER_MANAGER = new DefaultModifierManager();
+
+// side-effect -- this file needs to be imported for the modifier manager to be installed
+setModifierManager(() => DEFAULT_MODIFIER_MANAGER, Function.prototype);
+```
+
+
+### Components
+
+The default component manager could be similar to the component manager for `@glimmer/component`,
+but be compatible with vanilla classes, such as:
+```js
+class MyComponent {
+  @tracked count = 0;
+}
+```
+Since the introduction of `@ember/destroyable`, we no longer _need_ a specific class for helping
+with destruction.
+
+If a component wanted to have a destruction hook, it could register one itself during construction:
+```js
+import { registerDestructor } from '@ember/destroyable';
+
+export default MyComponent {
+  constructor(...args) {
+    super(...args);
+
+    registerDestructor(this, () => this.myDestroy)
+  }
+
+  myDestroy() { /* ... */ }
+}
+```
+
+and the component manager to support this could look like:
+
+```js
+import { setComponentManager } from '@ember/component';
+import { destroy } from '@ember/destroyable';
+
+class DefaultComponentManager {
+  constructor(owner) { this.owner = owner; }
+
+  createComponent(ComponentClass, args) {
+    return new ComponentClass(this.owner, args);
+  }
+
+  getContext(component) {
+    return component;
+  }
+
+  destroyComponent(component) {
+    destroy(component);
+  }
+}
+
+// side-effect -- this file needs to be imported for the component manager to be installed
+setComponentManager((owner) => new DefaultComponentManager(owner), Object.constructor);
+```
+
+
 
 ## How we teach this
 
@@ -93,19 +309,31 @@ users?
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
 
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+For helpers and modifiers, there could be some awkwardness around the last argument
+passed to the function, as the type signature may not match how the call-site expects
+the signature to be. Projects like [Glint](https://github.com/typed-ember/glint#readme)
+would be essential for helping with clarity here.
+
+For components, people may begin to ask if they even need `@glimmer/component`, and that's
+something that the core team may want to address -- some folks may feel like there is churn
+in the component base-class, and don't know "what is correct", etc. The two approaches are
+similar enough where we could introduce a migration via lint rule or codemod.
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
+There are other defaults we could have:
+ - class based helpers & modifiers
+ - function based-components (though this would force the introduction of new paradigms, e.g.: React's hooks)
+    - React's hooks + ember's reactivity _may_ be something with exploring further and there have been a couple
+      of experiments already:
+      - https://github.com/rwjblue/ember-functional-component
+      - https://github.com/lifeart/hooked-components
+      - https://github.com/NullVoxPopuli/ember-function-component
 
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
+I don't think any of the above alternatives appeal to the goal of "least surprise" when authoring each of these
+constructs.
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
 TBD?
