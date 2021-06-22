@@ -1,7 +1,13 @@
-- Start Date: 2021-05-17
-- Relevant Team(s): Ember.js, Learning
-- RFC PR: https://github.com/emberjs/rfcs/pull/754
-- Tracking: (leave this empty)
+---
+Stage: Accepted
+Start Date: 2021-05-17
+Release Date: Unreleased
+Release Versions:
+  ember-source: vX.Y.Z
+  ember-data: vX.Y.Z
+Relevant Team(s): Ember.js, Learning
+RFC PR: https://github.com/emberjs/rfcs/pull/754
+---
 
 # Default Managers
 
