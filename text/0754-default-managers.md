@@ -1,6 +1,6 @@
 - Start Date: 2021-05-17
 - Relevant Team(s): Ember.js, Learning
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/754
 - Tracking: (leave this empty)
 
 # Default Managers
