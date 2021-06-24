@@ -1,5 +1,5 @@
 ---
-Stage:
+Stage: Proposed
 Start Date: 2021-05-13
 Release Date: Unreleased
 Release Versions:
@@ -62,10 +62,7 @@ interface Signature {
     argName: ArgType;
     // ...
   };
-  BlockParams?: {
-    blockName: [param1: Param1Type, paramTwo: Param2Type, ...];
-    // ...
-  };
+  BlockParams?: [param1: Param1Type, paramTwo: Param2Type, /* ... */];
   Element?: AnElementType | null;
 }
 ```
@@ -104,14 +101,12 @@ export interface NoticeSignature {
     /** The kind of message displayed in this notice. Defaults to `info`. */
     kind: 'error' | 'warning' | 'info' | 'success';
   };
-  BlockParams: {
-    /**
-     * Any default block content will be displayed in the body of the notice.
-     * This block receives a single `dismiss` parameter, which is an action
-     * that can be used to dismiss the notice.
-     */
-    default: [dismiss: () => void];
-  };
+  /**
+   * Any default block content will be displayed in the body of the notice.
+   * This block receives a single `dismiss` parameter, which is an action
+   * that can be used to dismiss the notice.
+   */
+  BlockParams: [dismiss: () => void];
 }
 
 export default class Notice extends Component<NoticeSignature> {
@@ -129,7 +124,32 @@ A signature with no `Args` indicates that its component does not accept any argu
 
 ### `BlockParams`
 
-The `BlockParams` member dictates what blocks a component accepts and specifies what parameters, if any, it provides to those blocks.
+The `BlockParams` member dictates what blocks a component accepts and specifies what parameters, if any, it provides to those blocks. When `BlockParams` is a simple tuple type, that indicates that the component only yields to the default block:
+
+```ts
+BlockParams: [name: string];
+```
+
+```hbs
+{{yield "Tomster"}}
+```
+
+However, `BlockParams` may also be an object type indicating what parameters a component's named blocks provide:
+
+```ts
+BlockParams: {
+  header: [];
+  body: [item: T; index: number]
+}
+```
+
+```hbs
+{{yield to="header"}}
+
+{{#each items as |item index|}}
+  {{yield item index to="body"}}
+{{/each}}
+```
 
 A signature with no `BlockParams` indicates that its component never yields to any blocks.
 
@@ -242,9 +262,7 @@ The signature for this component might look like:
 ```ts
 export interface BlogPostSignature {
   Args: { post: Post };
-  BlockParams: {
-    default: [postTitle: string, postAuthor: string, postBody: string];
-  };
+  BlockParams: [postTitle: string, postAuthor: string, postBody: string];
 }
 ```
 
@@ -286,15 +304,33 @@ export default class FancyTable<T> extends Component<FancyTableSignature<T>> {
 }
 ```
 
+While the runtime design of named blocks currently only permits components to yield parameters out to them, community members have suggested possible ways of making blocks more akin to components themselves, potentially accepting `@args` or attributes, or even themselves accepting further nested blocks. Should such a design ever become reality, the shape of a signature might evolve to become more recursive. Today, however, there are many open questions about how such functionality would actually work for authors, and so we keep the proposed format here simple.
+
 ### `Element`
 
 The `Element` member of the signature declares what type of DOM element(s), if any, this component may be treated as encapsulating. That is, setting a non-`null` type for this member declares that this component may have HTML attributes applied to it, and that type reflects the type of DOM `Element` object any modifiers applied to the component will receive when they execute.
 
-A signature with no `Element` or with `Element: null` indicates that its component does not accept HTML attributes and modifiers at all.
+A signature with no `Element` or with `Element: null` indicates that its component does not accept HTML attributes and modifiers at all. While applying attributes or modifiers to such a component wouldn't produce a runtime error, it still likely constitutes a mistake on the author's part, similar to [passing an unknown key in an object literal][ecp].
 
 For example, [`{{animated-if}}`] would omit `Element` from its signature, as it emits no DOM content. Even if you invoked it with angle-bracket syntax, any attributes or modifiers you applied wouldn't go anywhere.
 
 On the other hand, [`<ResponsiveImage>`] would set `Element: HTMLImageElement`, as the element in its template that it ultimately spreads `...attributes` on to is an `<img>`.
+
+[`{{animated-if}}`]: https://ember-animation.github.io/ember-animated/docs/api/components/animated-if
+[`<ResponsiveImage>`]: https://github.com/kaliber5/ember-responsive-image#the-responsiveimage-component
+
+The `Element` member is of particular relevance for the modifiers that consumers can apply to a component. In a system using this information to provide typechecking, any modifiers applied to its component must be declared to accept the component's `Element` type (or a broader type) as its first parameter, or else produce a type error.
+
+- A component with `Element: Element` can only be used with modifiers that accept _any_ DOM element. Many existing modifiers in the ecosystem, such as `{{on}}` and everything in `ember-render-modifiers`, fall into this bucket.
+
+- A component with e.g. `Element: HTMLCanvasElement`, may be used with any general-purpose modifiers as described above _as well as_ any modifiers that specifically expect to be attached to a `<canvas>`.
+
+- A component whose `Element` type is a [union of multiple possible elements](#components-with-multiple-or-varying-elements) can only be used with a modifier that is declared to accept _all_ of those element types. This behavior is, in fact, the point—modifiers are essentially callbacks that receive the element they're attached to, and so the [normal considerations][variance] for typing callback parameters apply.
+
+[ecp]: https://www.typescriptlang.org/docs/handbook/interfaces.html#excess-property-checks
+[variance]: https://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)
+
+#### Components With Multiple or Varying Elements
 
 While it's not common, occasionally components might forward `...attributes` to different types of elements in their template:
 
@@ -306,10 +342,41 @@ While it's not common, occasionally components might forward `...attributes` to 
 {{/if}}
 ```
 
-For such cases, components can use a union type for their `Element`. In the case of the template above, the signature would have `Element: HTMLAnchorElement | HTMLSpanElement`.
+For such cases, components can use a union type for their `Element`. In the case of the template above, the signature would have `Element: HTMLAnchorElement | HTMLSpanElement`. Correspondingly, any modifiers used with such components would need to accept any of the possible types of DOM elements declared.
 
-[`{{animated-if}}`]: https://ember-animation.github.io/ember-animated/docs/api/components/animated-if
-[`<ResponsiveImage>`]: https://github.com/kaliber5/ember-responsive-image#the-responsiveimage-component
+Similarly, a component that may use `...attributes` on an `<a>` element or may not spread them at all might write: `Element: HTMLAnchorElement | null`. In such cases, it would be legal to use any modifiers that accept an `HTMLAnchorElement`, since they wouldn't ever be invoked for the `null` scenario.
+
+In cases where the distinction between possible elements is key to the functionality of the component and can be statically known based on the arguments passed in, the component author may choose to capture this as part of the signature at the expense of additional type-level bookkeeping.
+
+<details><summary>Gritty details</summary>
+The particular shape/value of arguments is something that varies from instance to instance of the component, and the standard tool in TypeScript for handling these cases is to introduce a _type parameter_ on the type(s) in question.
+
+For the `{{#if @destination}}` example above, the implementation might look like this:
+
+```ts
+interface MaybeLinkSignature<Destination extends string | undefined> {
+  Args: {
+    destination: Destination;
+    target?: string;
+  };
+  BlockParams: [];
+  Element: Destination extends string
+    ? HTMLAnchorElement
+    : HTMLSpanElement;
+}
+
+export default class MaybeLink<Destination extends string | undefined>
+  extends Component<MaybeLinkSignature<Destination>> {
+  // ...
+}
+```
+
+This would allow consumers to use a modifier that requires an `HTMLAnchorElement` on a `MaybeLink` if and only if the `@destination` arg they pass is definitely a string.
+
+Note, still, that general-purpose modifiers like `{{on}}` or `{{did-insert}}` would be usable with this component regardless of the type of `@destination`, or even if the author had simply typed `Element` as `HTMLAnchorElement | HTMLSpanElement` without the extra song-and-dance of explicitly capturing the `Destination` type.
+
+Finally, template analysis tools can provide escape hatches in the same vein as TypeScript's `@ts-ignore` and `@ts-expect-error` for these or any cases where consumers have information that library authors haven't encoded in the type system.
+</details>
 
 ## How we teach this
 
