@@ -151,6 +151,8 @@ BlockParams: {
 {{/each}}
 ```
 
+If a component also accepts both a default block _and_ other named blocks, it can specify the default block by name (`default: [...]`) in its `BlockParams` in exactly the same way a consumer of the component might use `<:default>` to pass a default block alongside named ones when invoking a component.
+
 A signature with no `BlockParams` indicates that its component never yields to any blocks.
 
 The [yieldable named blocks RFC] and recent versions of the [Component guides] discuss blocks in some depth, but since named blocks in particular are relatively new to the community, brief definitions based on those in [RFC 678] are included here for clarity.
@@ -344,7 +346,7 @@ While it's not common, occasionally components might forward `...attributes` to 
 
 For such cases, components can use a union type for their `Element`. In the case of the template above, the signature would have `Element: HTMLAnchorElement | HTMLSpanElement`. Correspondingly, any modifiers used with such components would need to accept any of the possible types of DOM elements declared.
 
-Similarly, a component that may use `...attributes` on an `<a>` element or may not spread them at all might write: `Element: HTMLAnchorElement | null`. In such cases, it would be legal to use any modifiers that accept an `HTMLAnchorElement`, since they wouldn't ever be invoked for the `null` scenario.
+Similarly, a component that may use `...attributes` on an `<a>` element or may not spread them at all might write: `Element: HTMLAnchorElement | null`. In such cases, ecosystem tooling consuming this type information should treat it as legal to use any modifiers that accept an `HTMLAnchorElement`, since they wouldn't ever be invoked for the `null` scenario.
 
 In cases where the distinction between possible elements is key to the functionality of the component and can be statically known based on the arguments passed in, the component author may choose to capture this as part of the signature at the expense of additional type-level bookkeeping.
 
