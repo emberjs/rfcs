@@ -355,6 +355,14 @@ will react to various passed value/function/etc types.
   - `val instanceof AnyClass`: Passed as argument to the component
 - `<Component @arg={{val 1}} />`
   - `typeof val === 'function'`: Helper, existing behavior
+    - another consequence of evaluating `val` as a helper and invoking it is that it would be
+      more likely to cause an infinite revalidation assertion, which at present, would be hard
+      to track down the source of, but may be an option if the VM one day has an equivalent to
+      React's ErrorBoundary
+  - `typeof val === 'object'`: Expected Helper error
+  - `val instanceof AnyClass`: Expected Helper, no manager found
+- `<Component @arg={{ (val 1) }} />`
+  - `typeof val === 'function'`: Helper, existing behavior
   - `typeof val === 'object'`: Expected Helper error
   - `val instanceof AnyClass`: Expected Helper, no manager found
 - `<div {{val}}>`
@@ -415,6 +423,17 @@ This proposal eliminates the possibility of using functions as components with t
 bracket syntax. However, using functions as components would still be possible with angle bracket
 invocation.
 
+The difference between `<Component @handler={{this.handler}} />` and `<Component @handler={{this.handler 1}} />`
+could awkward for folks, as this proposal suggests that curly braces on a component _always_ pass
+a value, _unless_ there are arguments added within the curly braces, in which `this.handler` is invoked
+and the return value is instead passed as `@handler`. This could lead to infinite revalidation assertions,
+which, without an ErrorBoundary (from React) and Error messages that show the location in the template
+where an error originates from, would be fairly hard to track down. One option would be to throw
+an error when `@arg={{this.functionHelper 1}}` is detected, but that would be a breaking change.
+Maybe,
+  To curry: `@arg={{fn this.functionHelper 1}}`
+  To invoke: `@arg={{ (this.functionHelper 1) }}`
+
 ## Alternatives
 
 There are other defaults we could have:
@@ -431,4 +450,7 @@ constructs.
 
 ## Unresolved questions
 
-TBD?
+What do we do about the `@arg={{this.function 1}}` situation? do we just let it invoke (to be consistent),
+and make sure that the infinite revalidation assertion says exactly where the error originates from?
+
+
