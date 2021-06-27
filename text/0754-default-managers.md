@@ -86,6 +86,10 @@ if (noExistingManagerFor(X)) {
 ```
 Where X is one of a Helper, Modifier, or Component
 
+_A Default Manager is not something that can be chosen by the user, but is baked in to the framework
+as a default so that a user doesn't have to build something to use a non-framework-specific variant
+of the three constructs: Helpers, Modifiers, and Components._
+
 ### Helpers
 
 Borrowing most of the implementation from ember-could-get-used-to-this with one change: the signature
@@ -298,7 +302,66 @@ class DefaultComponentManager {
 setComponentManager((owner) => new DefaultComponentManager(owner), Object.constructor);
 ```
 
+### How a template syntax plays in to this behavior
 
+In the current state of templates there is some ambiguity in syntax around helper/component invocation invocation.
+Below is a list exploring the various syntaxes and how the code implemented in the framework for this RFC
+will react to various passed value/function/etc types.
+
+- `{{val}}`
+  - `typeof val === 'function'`: Helper
+    - presently, it's possible to have curly components use this syntax as well. By defining this as a helper,
+      the possibility of using functions as components using curly syntax is eliminated. Curly components could still
+      be used with a base class.
+    - because angle-bracket invocation is the generally accepted way to invoke a component,
+      this may be an acceptable trade-off
+  - `typeof val === 'object'`: Value, rendered
+  - `val instanceof AnyClass`: Value, rendered
+    - Today, classes are `.toString()`'d, but it's feasible that one could define their own
+      custom helper manager or component manager to do something different.
+- `{{ (val) }}`
+  - `typeof val === 'function'`: Helper, existing behavior
+  - `typeof val === 'object'`: Expected Helper error, no manager found
+  - `val instanceof AnyClass`: Expected Helper, no manager found
+- `{{val arg}}`
+  - `typeof val === 'function'`: Helper, existing behavior
+    - Similar to `{{val}}`, it is possible today to define a component manager that takes positional args that
+      would be invoked with this syntax.
+  - `typeof val === 'object'`: Expected Helper error
+  - `val instanceof AnyClass`: Expected Helper, no manager found
+- `<val />`
+  - `typeof val === 'function'`: Component
+    - both functions and classes have `typeof val === 'function'`, so having a default
+      Component Manager that uses classes doesn't prevent the possibility of someone
+      wanting to use functions as components
+  - `typeof val === 'object'`: Expected Component Manager missing error
+  - `val instanceof AnyClass`: Component, because any class can be a component with the proposed
+    default component manager
+- `<Component @arg={{val arg}} />`
+  - `typeof val === 'function'`: Helper, existing behavior
+  - `typeof val === 'object'`: Expected Helper error
+  - `val instanceof AnyClass`: Expected Helper, no manager found
+- `<Component @arg={{val}} />`
+  - `typeof val === 'function'`: Value
+    - if this were to evaluate as a helper it would break existing behavior where you may be
+      passing an event handler to the component
+    - another consequence of evaluating `val` as a helper and invoking it is that it would be
+      more likely to cause an infinite revalidation assertion, which at present, would be hard
+      to track down the source of, but may be an option if the VM one day has an equivalent to
+      React's ErrorBoundary
+    - if someone wanted to invoke `val` as a helper when passed as an argument, they would need to
+      add surrounding `()`, example: `<Component @arg={{ (val) }}` />
+  - `typeof val === 'object'`: Passed as argument to the component
+  - `val instanceof AnyClass`: Passed as argument to the component
+- `<Component @arg={{val 1}} />`
+  - `typeof val === 'function'`: Helper, existing behavior
+  - `typeof val === 'object'`: Expected Helper error
+  - `val instanceof AnyClass`: Expected Helper, no manager found
+- `<div {{val}}>`
+  - `typeof val === 'function'`: Modifier, existing behavior
+  - `val instanceof AnyClass`: Expected Modifier, no manager found
+  - `typeof val !== 'function'`: Expected Modifier error
+  - the behavior of modifiers is unchanged, as there is no ambiguity possible at this time
 
 ## How we teach this
 
@@ -347,6 +410,10 @@ For components, people may begin to ask if they even need `@glimmer/component`, 
 something that the core team may want to address -- some folks may feel like there is churn
 in the component base-class, and don't know "what is correct", etc. The two approaches are
 similar enough where we could introduce a migration via lint rule or codemod.
+
+This proposal eliminates the possibility of using functions as components with the curly
+bracket syntax. However, using functions as components would still be possible with angle bracket
+invocation.
 
 ## Alternatives
 
