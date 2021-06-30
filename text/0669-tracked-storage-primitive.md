@@ -201,7 +201,7 @@ function tracked(target, key, { initializer }) {
     let storage = storages.get(obj);
 
     if (storage === undefined) {
-      storage = createStorage(initializer.call(this), () => true);
+      storage = createStorage(initializer.call(this), () => false);
       storages.set(this, storage);
     }
 
@@ -455,7 +455,7 @@ import {
 
 class TrackedMap {
   #map = new Map();
-  #collection = createStorage(this, () => true);
+  #collection = createStorage(this, () => false);
 
   constructor(initialValues) {
     for (let [key, value] of initialValues) {
