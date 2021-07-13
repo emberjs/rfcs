@@ -306,7 +306,8 @@ setComponentManager((owner) => new DefaultComponentManager(owner), Object.constr
 
 In the current state of templates there is some ambiguity in syntax around helper/component invocation invocation.
 Below is a list exploring the various syntaxes and how the code implemented in the framework for this RFC
-will react to various passed value/function/etc types.
+will react to various passed value/function/etc types. All of this is current behavior and this RFC is not proposing
+a syntax change. In template strict mode, there is no ambiguity to worry about.
 
 - `{{val}}`
   - `typeof val === 'function'`: Helper
@@ -428,11 +429,9 @@ could awkward for folks, as this proposal suggests that curly braces on a compon
 a value, _unless_ there are arguments added within the curly braces, in which `this.handler` is invoked
 and the return value is instead passed as `@handler`. This could lead to infinite revalidation assertions,
 which, without an ErrorBoundary (from React) and Error messages that show the location in the template
-where an error originates from, would be fairly hard to track down. One option would be to throw
-an error when `@arg={{this.functionHelper 1}}` is detected, but that would be a breaking change.
-Maybe,
-  To curry: `@arg={{fn this.functionHelper 1}}`
-  To invoke: `@arg={{ (this.functionHelper 1) }}`
+where an error originates from, would be fairly hard to track down. The problem goes away entirely in
+template strict mode, so it may not be something we want to worry about in the short-term (outside of
+documenting the possibility and what to do when the situation occurs)
 
 ## Alternatives
 
