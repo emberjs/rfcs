@@ -67,9 +67,22 @@ export class MyComponent extends Component {
 
 ## Detailed design
 
-We export `inject` as `service` from the `@ember/service` package.
+We add an export `service` from the `@ember/service` package with the semantics
+of `inject`.
 
-Import of `inject` should be deprecated with a long timeframe (e.g. Ember 5?).
+Import of `inject` itself will be deprecated targeting Ember 5.0 for removal,
+and the app blueprint will be updated as soon as possible to the new API.
+
+Addons will likely want to support the legacy API for a long time, especially
+if the legacy API is not deprecated in Ember 4.0.0. The addon blueprint and
+best practice should be to:
+
+```js
+import * as ES from '@ember/service';
+const service = ES.service ?? ES.inject;
+```
+
+Then use `service` for injections.
 
 ## How we teach this
 
@@ -77,8 +90,11 @@ The docs should be updated to directly import `import { service } from '@ember/s
 
 ## Drawbacks
 
-It might be considered churn. 
-However, we could probably provide a codemod to automatically rename the imports, lessening the churn.
+It might be considered churn. However, we could probably provide a codemod to
+automatically rename the imports, lessening the churn.
+
+Addons will need to live with a degraded injection API for a long time, if they
+want to support both versions.
 
 ## Alternatives
 
@@ -89,5 +105,3 @@ Or we could stop suggesting the import and push for the community to simply use 
 We could also choose a different name for the import (e.g. `injectService` or something like this).
 
 ## Unresolved questions
-
-* What should the deprecation timeline be?
