@@ -27,7 +27,11 @@ Components on the other hand, have had no such "plain" / "vanilla" support / ado
 Maybe it's worth exploring what default behavior components should have.
 
 This could reduce the number of dependencies folks need to worry about when building components.
-Using native classes eliminates
+Using native classes eliminates the reliance on a "framework thing" and further
+lessens the appearance of "magic through object-oriented inheritance".
+
+Additionally, a goal of baseclass-less-classes as components is to have 0 potential API
+conflicts with userspace.
 
 ## Detailed design
 
