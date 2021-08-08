@@ -37,22 +37,23 @@ for helpers and modifiers.
 
 For Example:
 
-<!--
-  If you're reading this RFC non-rendered, ignore the "jsx" language tag.
-  "jsx" is incorrect, and isn't perfect, but "gjs" syntax highlighting
-  hasn't been added to GitHub's highlighting yet.
--->
+```js
+import Component from '@glimmer/component';
+import { setComponentTemplate } from '@ember/component';
+import { hbs } from 'ember-cli-htmlbars';
 
-```jsx
-const double = num => num * 2;
-const resizable = element => { /* ... */ };
+export default class Example extends Component {
+  double = num => num * 2;
+}
 
-<template>
-  {{double 2}}
-  <div {{resizable}}></div>
-</template>
+setComponentTemplate(
+  hbs`
+    {{this.double 2}} => prints 4
+    <SomeComponent @foo={{this.double 2}} /> => @foo === 4
+  `,
+  Example
+) ;
 ```
-_Note: `<template>` is experimental syntax, and should not be be the focus of this example_
 
 Another aspect of which is exciting is that it becomes easier, in tests to grab
 the output of yielding components:
@@ -61,10 +62,11 @@ the output of yielding components:
 test('...', async function (assert) {
   let output = [];
   const capture = (...args) => output = args;
+  this.setProperties({ capture });
 
   await render(hbs`
     <MyComponent as |yielded info and things|>
-       {{capture yielded info and things}}
+       {{this.capture yielded info and things}}
     </MyComponent>
   `);
 
@@ -78,14 +80,7 @@ A default modifier manager will be covered in a different RFC.
 
 ## Detailed design
 
-The logic for choosing when to use a default manager is, at a high-level:
-
-```
-if (noExistingManagerFor(X)) {
-  return defaultManager;
-}
-```
-Where X is, for the purposes of this RFC, a Helper.
+The logic for choosing when to use a default manager is described in [RFC 625: Helper Managers](https://github.com/emberjs/rfcs/blob/master/text/0625-helper-managers.md).
 
 _A Default Manager is not something that can be chosen by the user, but is baked in to the framework
 as a default so that a user doesn't have to build something to use a non-framework-specific variant
