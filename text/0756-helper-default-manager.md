@@ -32,10 +32,10 @@ This has the impact of greatly reducing helper burden for apps and addon devs, i
 folks no longer need to jump over to the app/addon helpers directory to create a helper
 "just to do this one simple thing". It's all now `{{this.myHelper}}` or `{{this.myModifier}}`.
 
-This has the added benefit of, with template strict mode, using plain functions in module-scope
-for helpers and modifiers.
+The introduction of a plain-function helper-manager is important because over the past several years,
+we've seen on numerous occasion, folks new to Ember inherently expect that plain functions work in templates.
 
-For Example:
+Examples:
 
 ```js
 import Component from '@glimmer/component';
@@ -45,20 +45,16 @@ import { hbs } from 'ember-cli-htmlbars';
 export default class Example extends Component {
   double = num => num * 2;
 }
-
-setComponentTemplate(
-  hbs`
-    {{this.double 2}} => prints 4
-    <SomeComponent @foo={{this.double 2}} /> => @foo === 4
-  `,
-  Example
-) ;
+```
+```hbs
+{{this.double 2}} => prints 4
+<SomeComponent @foo={{this.double 2}} /> => @foo === 4
 ```
 
 Another aspect of which is exciting is that it becomes easier, in tests to grab
 the output of yielding components:
 
-```jsx
+```js
 test('...', async function (assert) {
   let output = [];
   const capture = (...args) => output = args;
@@ -86,10 +82,16 @@ _A Default Manager is not something that can be chosen by the user, but is baked
 as a default so that a user doesn't have to build something to use a non-framework-specific variant
 of the three constructs: Helpers, Modifiers, and Components._
 
-Borrowing most of the implementation from ember-could-get-used-to-this with one change: the signature
-of the function may receive an options-like object as the last parameter if named arguments are specified.
-This aligns with the _syntax_ of helper invocation where named arguments may not appear before the last
-positional argument.
+The desired usage of a plain function in a template should be:
+ - convenient
+ - reduce boilerplate
+ - be easily portable to JS for developers' mental model of how template and JS interact.
+
+Which results in:
+ - default to positional parameters
+ - all named arguments are grouped into an "options object" as the last parameter.
+   this happens to align with the _syntax_ of helper invocation where named arguments may not appear
+   before the last positional argument.
 
 #### Example with mixed params
 
