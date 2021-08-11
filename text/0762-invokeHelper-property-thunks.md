@@ -24,6 +24,13 @@ RFC PR: Fill this in with the URL for the Proposal RFC PR
 
 ## Summary
 
+Add conditional behavior to `invokeHelper`'s third argument such that consumers of `invokeHelper` can
+have more fine-grained control over which arguments to entangle with. Today, all tracked data used
+to `invokeHelper`'s third argument is entangled with the entirety of the helper.
+
+
+## Motivation
+
 `invokeHelper` (from `@ember/helper` (re-export from `@glimmer/runtime`), introduced in [RFC 626](https://github.com/emberjs/rfcs/pull/626))
 is a low-level utility for helping library-authors create reactive wrapping abstractions, such as _Resources_.
 
@@ -31,6 +38,7 @@ However, `invokeHelper`'s third argument, the thunk, entangles all tracked data 
 of the helper and does not allow lazy-entanglement upon access. This RFC proposes a solution
 to enable lazy-entanglement of tracked data when using `invokeHelper`.
 
+This would look like the following:
 ```js
 import Component from '@glimmer/component';
 import { cached } from '@glimmer/tracking';
@@ -38,11 +46,17 @@ import { invokeHelper } from '@ember/helper';
 import { getValue } from '@glimmer/tracking/primitives/cache';
 
 export default class MyComponent extends Component {
-  @tracked op = '+';
   @tracked left = 1;
   @tracked right = 2;
 
-  calculator = invokeHelper(this, Calculator, {
+  // currently, all arguments are conusmed at once (this RFC is not suggesting removing the current behavior)
+  oldAdder = invokeHelper(this, Adder, () => ({ 
+    named: { operation: this.op },
+    positional: [this.left, this.right],
+  }));
+
+  // arguments are individually entangleable upon access
+  adder = invokeHelper(this, Adder, {
     named: {
       operation: () => this.op;
     },
@@ -52,15 +66,19 @@ export default class MyComponent extends Component {
     ],
   });
 
-  get calculatorValue() {
-    return getValue(this.calculator);
+  get adderValue() {
+    return getValue(this.adder);
+  }
+
+  get oldAdderValue() {
+    return getValue(this.oldAdder);
   }
 }
 
 // Assume there is a Helper manager registered that knows what to do with this
 // and getValue(this.calculator) returns an instance of this class
 // (instead of calling compute like on the default Helper class)
-class Calculator {
+class Adder {
   @cached
   get leftDoubled() {
     console.log('doubling the left');
@@ -74,25 +92,21 @@ class Calculator {
   }
 
   get result() {
-    if (this.args.named.op === '+') {
-      return this.leftDoubled + this.rightDoubled;
-    }
-
-    return this.leftDoubled - this.leftDoubled;
+    return this.leftDoubled + this.rightDoubled;
   }
 }
 ```
 ```hbs
-{{this.calculatorValue.result}} => prints 6, both console.logs print
+{{this.adderValue.result}} => prints 6, both console.logs print
+{{this.oldAddeerValue.result}} => prints 6, both console.logs print
 {{!-- sometime later this.left changes to 3 --}}
-{{this.calculatorValue.result}} => would print 10, only one console.log prints (because the left changed and not the right)
+{{this.adderValue.result}} => would print 10, only one console.log prints (because the left changed and not the right)
+{{this.oldAdderValue.result}} => would print 10, both console.logs print, even though only this.left changed
 ```
 
 prior to this RFC's implementation, when _any_ arg changes, everything is invalidated and usage of the
 `@cached` decorator is moot, whereas intuition states that only changes to arguments accessed within
 the getter are consumed.
-
-## Motivation
 
 One of the benefits of tracking, and by proxy, auto-tracking, is that data is lazily entangled.
 _You only pay for what you use or consume_. However, this is not the case with `invokeHelper`.
@@ -161,7 +175,40 @@ access of the specific argument accessed.
 
 ## How we teach this
 
-- Update docs with examples in the doc-comment block in `@ember/helper/index.ts`
+_Update [docs](https://api.emberjs.com/ember/3.27/functions/@ember%2Fhelper/invokeHelper) with examples in the doc-comment block in `@ember/helper/index.ts`_
+
+Currently, this part:
+> `computeArgs`: An optional function that produces the arguments to the helper. The function receives the parant context as an argument, and must return an object with a `positional` property that is an array and/or a `named` property that is an object.
+
+Should be changed to:
+
+`computeArgs`: Optionally, either a function that produces the arguments to the helper or an object with keys `named` and `positional` whos values are functions that produce the values for the helper.
+
+When passing a function that produces the arguments to the helper, it should return an object that has a `named` property that has a value that is an object, and a `positional` property that has a value that is an array. This allows for a concise API, but means that all tracked data consumed in this function will be entangled with the helper, regardless of which arguments are used or when they are accessed.
+
+Example:
+```js
+// ... imports and Helper ommitted for brevity
+export default class PlusOne extends Component {
+  plusOne = invokeHelper(this, RemoteData, () => {
+    return {
+      positional: [this.args.number],
+    }
+  });
+}
+```
+
+When passing an object with `named` and `positional` arguments, each value must be a function. This function will receive the parent context as an argument and must return a single value. This allows for fine-grained control of tracked entanglement within the helper, `RemoteData` such that entanglement does not occur until the positional argument is accessed.
+
+Example:
+```js
+// ... imports and Helper ommitted for brevity
+export default class PlusOne extends Component {
+  plusOne = invokeHelper(this, RemoteData, {
+    positional: [() => this.args.number],
+  });
+}
+```
 
 ## Drawbacks
 
