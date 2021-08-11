@@ -152,6 +152,8 @@ class FunctionHelperManager {
 
     if (Object.keys(args.named).length > 0) {
       argsForFn.push(args.named);
+    } else {
+      argsForFn.push({});
     }
 
     return fn(...argsForFn);
@@ -167,6 +169,13 @@ const DEFAULT_HELPER_MANAGER = new FunctionHelperManager();
 // side-effect -- this file needs to be imported for the helper manager to be installed
 setHelperManager(() => DEFAULT_HELPER_MANAGER, Function.prototype);
 ```
+ - when the "helper" is created, the function is not invoked
+ - when `getValue` is invoked,
+   - the function is invoked with the named arguments all grouped into the last arg
+   - if no named arguments are given, an empty object is used instead to allow less nullish checking in userland
+ - to register this helper manager, it should occur during app boot so developers do not need to import anything to
+   trigger the `setHelperManager` call
+
 
 ### How a template syntax plays in to this behavior
 
