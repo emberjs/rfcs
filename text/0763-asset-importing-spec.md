@@ -24,7 +24,7 @@ RFC PR: Fill this in with the URL for the Proposal RFC PR
 
 ## Summary
 
-This RFC defines standard semantics for what it means to depend on files that are not Javascript or CSS, like images, fonts, and other media. It proposes that when your code needs to refer to an asset, you should import it, which will give you back a valid URL:
+This RFC defines standard semantics for what it means to depend on files that are not JavaScript or CSS, like images, fonts, and other media. It proposes that when your code needs to refer to an asset, you should import it, which will give you back a valid URL:
 
 ```js
 import myImage from './hello.png';
@@ -57,7 +57,7 @@ The regular expressions that broccoli-asset-rev uses to do reference rewriting a
 
 Another problem with broccoli-asset-rev is that it's "push based", meaning it handles files because they exist, rather than handling files because somebody is actually consuming them. It can't detect unused assets and it can't detect missing assets at build time. It exposes the underlying implementation of how assets get delivered, making it hard to change later without breaking app code.
 
-And because broccoli-asset-rev exposes assumptions about the exact layout of the final build output, it's not compatible with Embroider. Embroider allows different Javascript packagers to optimize the app delivery in any spec-compliant way. For example, small images might get inlined as `data:` URIs, CSS `@import()` might get inlined or not, etc. All these concerns really need to be integrated into the Javascript packager, because asset handling affects app-wide hashing & fingerprinting.
+And because broccoli-asset-rev exposes assumptions about the exact layout of the final build output, it's not compatible with Embroider. Embroider allows different JavaScript packagers to optimize the app delivery in any spec-compliant way. For example, small images might get inlined as `data:` URIs, CSS `@import()` might get inlined or not, etc. All these concerns really need to be integrated into the JavaScript packager, because asset handling affects app-wide hashing & fingerprinting.
 
 In contrast, a pull-based design that lets code declare what assets it needs and then not worry about how those assets will get delivered is safer and easier to change in the future.
 
@@ -129,10 +129,10 @@ export default setComponentTemplate(
 
 There are many alternative competing ways to assign extra semantics to imports of non-JS files. Examples include:
 
- - importing `.graphql` files, which get preprocessed into a Javascript value, possibly with the side effect of tracking that this particular query is in use.
- - doing "CSS in JS" where an imported CSS file comes back as a Javascript value.
+ - importing `.graphql` files, which get preprocessed into a JavaScript value, possibly with the side effect of tracking that this particular query is in use.
+ - doing "CSS in JS" where an imported CSS file comes back as a JavaScript value.
 
-This RFC is not in conflict with these patterns, because they should be understood as authoring formats that can be compiled into a spec-compliant format for compatibility with the rest of the build system and ecosystem. In both the above cases, a preprocessor would rewrite these files to Javascript, and then they get completely standard handling from that point forward.
+This RFC is not in conflict with these patterns, because they should be understood as authoring formats that can be compiled into a spec-compliant format for compatibility with the rest of the build system and ecosystem. In both the above cases, a preprocessor would rewrite these files to JavaScript, and then they get completely standard handling from that point forward.
 
 App authors are still always free to configure their build tool with this kind of preprocessing. They may need to be careful to restrict their customizations to only run on their own code. For example, if you want imports of `.png` files to have a special behavior in your app, that's possible, but you shouldn't rewrite `.png` imports in your addons because they're expecting the standard behavior defined by this RFC. On the other hand, it's fair game to configure your build tool in ways that preserve semantics. For example, configuring your build to run all imported `.png` files through a compression optimizer would be OK even for images imported by addons.
 
@@ -172,7 +172,7 @@ Examples:
  - build systems are free to replace any asset URL with a `data:` URI or even a blob at runtime.
  - build systems are free to rewrite CSS `@import` to inline the contents (which happens to be today's default behavior)
  - build systems can rewrite graphs of ES modules to single ES modules with the same semantics.
- - build systems could implement `import "./some.css"` by generating Javascript that inserts an inline stylesheet or a link tag, or by inserting a link tag directly into the HTML.
+ - build systems could implement `import "./some.css"` by generating JavaScript that inserts an inline stylesheet or a link tag, or by inserting a link tag directly into the HTML.
 
 The exceptions where you can guarantee control over the URLs of assets are:
 
