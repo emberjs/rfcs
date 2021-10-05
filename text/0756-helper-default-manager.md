@@ -26,7 +26,7 @@ demonstrated that it's possible to use plain functions for helpers and modifiers
 And since Ember 3.25, helpers can be invoked directly from value references, this opened
 a whole new world of ergonomics improvements where a dev could define a function in a
 component class and use that function **as** a helper, thanks to
-ember-could-get-used-to-this implementing a Helper Manager that _knew what to do with plain functions.
+ember-could-get-used-to-this implementing a Helper Manager that knew what to do with plain functions.
 
 This has the impact of greatly reducing helper burden for apps and addon devs, in that,
 folks no longer need to jump over to the app/addon helpers directory to create a helper
