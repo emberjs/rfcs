@@ -28,7 +28,7 @@ a whole new world of ergonomics improvements where a dev could define a function
 component class and use that function **as** a helper, thanks to
 ember-could-get-used-to-this implementing a Helper Manager that knew what to do with plain functions.
 
-This has the impact of greatly reducing helper burden for apps and addon devs, in that,
+This has the impact of greatly reducing mental overhead around helpers for app and addon authors, in that,
 folks no longer need to jump over to the app/addon helpers directory to create a helper
 "just to do this one simple thing". It's all now `{{this.myHelper}}` or `{{this.myModifier}}`.
 
