@@ -130,6 +130,8 @@ class A {
 }
 ```
 
+#### Example Default Helper Implementation
+
 The implementation for the this function-handling helper-manager could look like this:
 ```ts
 import {
