@@ -35,7 +35,7 @@ folks no longer need to jump over to the app/addon helpers directory to create a
 The introduction of a plain-function helper-manager is important because over the past several years,
 we've seen on numerous occasion, folks new to Ember inherently expect that plain functions work in templates.
 
-Examples:
+Example:
 
 ```js
 import Component from '@glimmer/component';
@@ -51,32 +51,10 @@ export default class Example extends Component {
 <SomeComponent @foo={{this.double 2}} /> => @foo === 4
 ```
 
-Another aspect of which is exciting is that it becomes easier, in tests to grab
-the output of yielding components:
-
-```js
-test('...', async function (assert) {
-  let output = [];
-  const capture = (...args) => output = args;
-  this.setProperties({ capture });
-
-  await render(hbs`
-    <MyComponent as |yielded info and things|>
-       {{this.capture yielded info and things}}
-    </MyComponent>
-  `);
-
-  assert.equal(output[0], /* value of yielded */ );
-  assert.equal(output[1], /* value of info */ );
-  // ...
-})
-```
 
 A default modifier manager will be covered in a different RFC.
 
 ## Detailed design
-
-The logic for choosing when to use a default manager is described in [RFC 625: Helper Managers](https://github.com/emberjs/rfcs/blob/master/text/0625-helper-managers.md).
 
 _A Default Manager is not something that can be chosen by the user, but is baked in to the framework
 as a default so that a user doesn't have to build something to use a non-framework-specific variant
@@ -178,6 +156,25 @@ setHelperManager(() => DEFAULT_HELPER_MANAGER, Function.prototype);
  - to register this helper manager, it should occur during app boot so developers do not need to import anything to
    trigger the `setHelperManager` call
 
+### Updating highlevel manager choosing algorithm
+
+This is the existing manager chooser algorithm, but with extra additions required by this RFC (notated by `-->`).
+
+- if inside element space
+    - use `getModifierManager`
+- if inside document body space using curly invocation
+    1. attempt lookup via `getComponentManager` and invoke it
+    2. attempt lookup via `getHelperManager` and invoke it
+    3. `-->` if function, fallback to this RFC's default manager
+    4. render, e.g.: `[Object object]`, for objects
+- if inside document body space using angle invocation
+    - attempt to lookup via `getComponentManager` and invoke it
+- if inside of a subexpression's "head" (e.g. `PathExpression`) position
+    1. attempt to lookup via `getHelperManager` and invoke it
+    2. `-->` if function, fallback to this RFC's default manager
+    3. error
+- if inside of a subexpression arguments
+    - pass the value
 
 ### How a template syntax plays in to this behavior
 
@@ -189,8 +186,8 @@ a syntax change. In template strict mode, there is no ambiguity to worry about.
 - `{{val}}`
   - `typeof val === 'function'`: Helper, invoked
     - presently, it's possible to have curly components use this syntax as well. By defining this as a helper,
-      the possibility of using functions as components using curly syntax is eliminated. Curly components could still
-      be used with a base class.
+      there is a possibility of confusion as the manager choosing algorithm will select a component before it selects a helper
+      when using curlies.
     - because angle-bracket invocation is the generally accepted way to invoke a component,
       this may be an acceptable trade-off
   - `typeof val === 'object'`: Value, rendered
