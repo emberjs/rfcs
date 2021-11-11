@@ -36,44 +36,36 @@ As part of the larger effort to [make Typescript an officially supported languag
 1. Pave the way for TypeScript blueprint generation in any Ember app or addon right out of the box (likely via a `--typescript` flag or something similar).
 1. Enable addon authors to better support TypeScript users by allowing them to publish their own TypeScript blueprints without concern for also supporting JavaScript users.
 
-Note that this does _not_ mean that we should _generate_ TypeScript by default, but rather that the blueprints themselves should _begin_ as TypeScript before actually being reified as actual code. By default, all of the Ember generators would still behave exactly as they do today: by generating Javascript files. This RFC is primarily concerned with TypeScript as an _implementation detail_ for the existing blueprints, rather than being prescriptive about whether or not users should adopt TypeScript themselves.
+Note that this does **not** mean that we should generate TypeScript by default, but rather that the blueprints themselves should _begin_ as TypeScript before actually being reified as actual code. By default, all of the Ember generators would still behave exactly as they do today: by generating Javascript files. This RFC is primarily concerned with TypeScript as an _implementation detail_ for the existing blueprints, rather than being prescriptive about whether or not users should adopt TypeScript themselves.
 
 ## Detailed design
 
-> This is the bulk of the RFC.
+tl;dr: Blueprints will be handled exactly the same as before, with the one exception that any blueprint file ending in `.ts` will be run through Babel's [`@babel/plugin-transform-typescript`](https://babeljs.io/docs/en/babel-plugin-transform-typescript) to strip out all the TypeScript syntax. Please read on for a more detailed explanation.
 
-> Explain the design in enough detail for somebody
-> familiar with the framework to understand, and for somebody familiar with the
-> implementation to implement. This should get into specifics and corner-cases,
-> and include examples of how the feature is used. Any new terminology should be
-> defined here.
+In the current generator system, new files are created from templates that resides in the `files` directory of the blueprint that corresponds to generator that was invoked. When a user runs `ember generate service foo`, Ember CLI will locate the template at `blueprints/service/files/__root__/__path__/__name__.js`, load it into memory, perform a text replacement on all of the EJS-style tags (e.g. `class <%= classifiedModuleName => extends Service` becomes `class Foo extends Service`), and then writes the entire string out to a file at the correct path inside the parent app or addon. Notably, there is no evaluation of the code itself, as the entire process of blueprint generation is simple text replacement.
+
+In the new version of Ember's blueprint system, this template would instead be named `__name__.ts`. The generator process would run identically (locate the template, read into memory, perform text replacement) up until it is actually time to _write_ the file. Before that occurs, the (now fully populated) in-memory version of the newly generated file would be run through Babel's [`@babel/plugin-transform-typescript`](https://babeljs.io/docs/en/babel-plugin-transform-typescript). This would strip the file of all TypeScript-related syntax, resulting in a completely valid JavaScript file with no evidence that it had begun as TypeScript file. In this way, we're able to ensure that the built-in generators would continue to perform as exactly as they have previously.
+
+There are a few details worth calling out about this change to the generation process:
+
+1. While the TypeScript files are parsed and transformed, they are _not_ type-checked in any way. The Babel plugin is concerned solely with the transformation of TypeScript syntax into JavaScript syntax and does not pay any attention to what the types actually are. This is a good thing, as it minimizes any performance cost during the generation process and we'd expect any actual type-checking to happen at compilation time in the user's app, using their own `tsconfig` rather than one we'd have to supply (and maintain).
+1. By default, the generators would behave exactly as they did before, however, the fact that all the blueprints are now written in TypeScript means that it becomes trivial to add a `--typescript` flag to the `generate` command that tells the generator to simply bypass the Babel transform and instead output TypeScript directly. Since TypeScript is a superset of JavaScript, we're able to easily accomodate both sets of users with a single blueprint file by starting out with the "higher-fidelity" TypeScript and down-leveling it JavaScript when needed.
+1. Addon authors would be able to ship blueprints written in TypeScript that would "just work" in the same way that the built-in blueprints would, e.g. they'd get support for both JavaScript and TypeScript versions of their blueprints with no additional effort or maintenance.
+1. No one is _required_ to write their blueprints in TypeScript. Any blueprint written in JavaScript would be handled in the exact same way that they are today.
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-> idea best presented? As a continuation of existing Ember patterns, or as a
-> wholly new one?
-
-> Would the acceptance of this proposal mean the Ember guides must be
-> re-organized or altered? Does it change how Ember is taught to new users
-> at any level?
-
-> How should this feature be introduced and taught to existing Ember
-> users?
+Since this RFC is primarily concerned with the implementation details of the blueprints themselves, I'm not sure that we'd necessarily _need_ to teach this. That said, I imagine that we would eventually include TypeScript in the documentation for creating custom blueprints as support for TypeScript in Ember rolls out. Since this RFC is not concerned with shipping a TypeScript _compiler_ as a built-in component of new Ember apps or addons, we wouldn't actually roll out any new functionality as a result of this RFC, and thus I don't think there'd be anything to teach (yet).
 
 ## Drawbacks
 
-> Why should we _not_ do this? Please consider the impact on teaching Ember,
-> on the integration of this feature with other existing and planned features,
-> on the impact of the API churn on existing apps, etc.
+There should be little to no impact on the end-user as a result of the changes proposed in the RFC. The one drawback worth mentioning is that this change does introduce additional memory and performance overhead as a result of running the files through Babel transforms when converting from TypeScript to JavaScript.
 
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+That said, Ember (and most of the front-end world) already relies heavily on Babel, so this change would simply be extending a dependency that already exists. Furthermore, while there _is_ a cost to running a Babel transform as part of a generator, it will be extremely trivial given that generators only ever create a handful of files at a time, and a newly-generated Ember app runs _far_ more files through many more Babel transforms without issue. Finally, we'd be running the transform on the in-memory version of the file, so there'd be no additional I/O cost incurred.
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
+We could continue to maintain a wholly independent set of blueprint files, a la [`ember-cli-typescript-blueprints`](https://github.com/typed-ember/ember-cli-typescript-blueprints). However, this would leave us with the same challenges that exist today, and would also make it harder to provide official support for TypeScript in Ember itself.
 
 ## Unresolved questions
 
