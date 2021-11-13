@@ -114,7 +114,7 @@ The `{{unbound}}` helper is only documented in the API documentation.
 
 ## Drawbacks
 
-Quite a few deprecations have already been introduced in the 3.X cycle. This of course, will only add to that. App creators and addon authors will have to update their projects accordingly.
+App creators and addon authors will have to update their projects accordingly.
 
 A code search on [Ember Observer](https://emberobserver.com/) returns the following results:
 1. [Searching for `{{unbound` in every addon's `addon` folder](https://emberobserver.com/code-search?codeQuery=%7B%7Bunbound&fileFilter=addon&sort=score&sortAscending=false)
