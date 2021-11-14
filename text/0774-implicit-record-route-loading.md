@@ -42,7 +42,9 @@ By removing this behaviour, we will encourage developers to explicitly define wh
 
 ## Detailed design
 
-We will issue a deprecation to `findModel` notifying the user that if they want to continue this behaviour of attempting to fetch a resource implicitly, they should try and replicate with their own explicitly defined `model` hook. This will not remove returning the `transition` context when no `model` hook is defined.
+We will issue a deprecation to [`findModel`](https://github.com/emberjs/ember.js/blob/017b11e2f58880869a5b8c647bf7f3199fc07f26/packages/%40ember/-internals/routing/lib/system/route.ts#L1376) notifying the user that if they want to continue this behaviour of attempting to fetch a resource implicitly, they should try and replicate with their own explicitly defined `model` hook. 
+
+In v5.0.0, we will remove `findModel` and logic to determine arguments for this method.  This will not remove returning the `transition` context when no `model` hook is defined.
 
 ## How we teach this
 
