@@ -64,7 +64,7 @@ export default class PostRoute extends Route {
   }
 
   model({ post_id }) {
-    return this.store.find('post', post_id);
+    return this.store.findRecord('post', post_id);
   }
 
   afterModel() {
