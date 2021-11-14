@@ -75,7 +75,7 @@ export default class PostRoute extends Route {
 
 ## Alternatives
 
-- Continue to provide fallback fetching behaviour but ensure no `assert` is called for users that neither a store nor a `Model` with a `find` method.
+- Continue to provide fallback fetching behaviour but ensure no `assert` is called for users that have neither a store nor a `Model` with a `find` method.
 
 ## Open Questions
 
