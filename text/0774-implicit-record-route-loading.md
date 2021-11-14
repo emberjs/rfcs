@@ -30,7 +30,7 @@ export default class PostRoute extends Route {
 In this example, the `model` hook is not defined.  However, Ember will attempt to try a few things before rendering this route's template.
 
 1. If there is a `store` property on your route, it will attempt to call it's `find` method.  Assuming you have `ember-data` installed, you may be expecting this. The arguments will be extracted from the params.
-  a. For example, if a dynamic segment is `:post_id`, there exists logic to split on the underscore and and find a record of type `post`.  
+  a. For example, if a dynamic segment is `:post_id`, there exists logic to split on the underscore and find a record of type `post`.  
 
 2. As a fallback, it will attempt to defined a `find` method and use your `Model` instance's find method to fetch.  If no `find` method exists, an assertion is thrown.
 
