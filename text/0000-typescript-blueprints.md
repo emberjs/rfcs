@@ -24,7 +24,7 @@ RFC PR: Fill this in with the URL for the Proposal RFC PR
 
 ## Summary
 
-> One paragraph explanation of the feature.
+In order to support both TypeScript and JavaScript as official languages in Ember, we should enable blueprints to be written in TypeScript and (optionally) transformed to JavaScript. We should also convert all of the existing built-in blueprints to TypeScript to take advantage of this new functionality and lay the groundwork for future TypeScript inclusion efforts.
 
 ## Motivation
 
