@@ -74,46 +74,38 @@ Note that this summary elides *many* important details, and those details may su
 ### Outline <!-- omit in toc -->
 
 - [Summary](#summary)
-  - [Design overview](#design-overview)
-    - [For package consumers](#for-package-consumers)
-    - [For package authors](#for-package-authors)
+    - [Design overview](#design-overview)
+        - [For package consumers](#for-package-consumers)
+        - [For package authors](#for-package-authors)
 - [Motivation](#motivation)
 - [Detailed design](#detailed-design)
-  - [Background: TypeScript and Semantic Versioning](#background-typescript-and-semantic-versioning)
-  - [Defining breaking changes](#defining-breaking-changes)
-    - [Supported compiler versions](#supported-compiler-versions)
-      - [Simple majors](#simple-majors)
-      - [Rolling support windows](#rolling-support-windows)
-    - [Definitions](#definitions)
-    - [Breaking changes](#breaking-changes)
-      - [Symbols](#symbols)
-      - [Interfaces, Type Aliases, and Classes](#interfaces-type-aliases-and-classes)
-      - [Functions](#functions)
-    - [Non-breaking changes](#non-breaking-changes)
-      - [Symbols](#symbols-1)
-      - [Interfaces, Type Aliases, and Classes](#interfaces-type-aliases-and-classes-1)
-      - [Functions](#functions-1)
-    - [Bug fixes](#bug-fixes)
-    - [Strictness](#strictness)
-    - [Module interop](#module-interop)
-  - [Conformance](#conformance)
+    - [Background: TypeScript and Semantic Versioning](#background-typescript-and-semantic-versioning)
+    - [Defining breaking changes](#defining-breaking-changes)
+        - [Definitions](#definitions)
+        - [Reasons for Breaking Changes](#reasons-for-breaking-changes)
+    - [Changes to types](#changes-to-types)
+        - [Variance](#variance)
+        - [Breaking Changes](#breaking-changes)
+        - [Non-breaking changes](#non-breaking-changes)
+        - [Bug fixes](#bug-fixes)
+    - [Compiler considerations](#compiler-considerations)
+    - [Conformance](#conformance)
 - [How we teach this](#how-we-teach-this)
 - [Drawbacks](#drawbacks)
 - [Alternatives](#alternatives)
-  - [No policy](#no-policy)
-  - [Decouple TypeScript support from LTS cycles](#decouple-typescript-support-from-lts-cycles)
+    - [No policy](#no-policy)
+    - [Decouple TypeScript support from LTS cycles](#decouple-typescript-support-from-lts-cycles)
 - [Unresolved questions](#unresolved-questions)
 - [Appendices](#appendices)
-  - [Appendix A: Existing Implementations](#appendix-a-existing-implementations)
-  - [Appendix B: Tooling](#appendix-b-tooling)
-    - [Documenting supported versions and policy](#documenting-supported-versions-and-policy)
-    - [Detect breaking changes in types](#detect-breaking-changes-in-types)
-    - [Mitigate breaking changes](#mitigate-breaking-changes)
-      - [Avoiding user constructibility](#avoiding-user-constructibility)
-      - [Updating types to maintain compatibility](#updating-types-to-maintain-compatibility)
-      - ["Downleveling" types](#downleveling-types)
-      - [Opt-in future types](#opt-in-future-types)
-    - [Matching exports to public API](#matching-exports-to-public-api)
+    - [Appendix A: Existing Implementations](#appendix-a-existing-implementations)
+    - [Appendix B: Tooling](#appendix-b-tooling)
+        - [Documenting supported versions and policy](#documenting-supported-versions-and-policy)
+        - [Detect breaking changes in types](#detect-breaking-changes-in-types)
+        - [Mitigate breaking changes](#mitigate-breaking-changes)
+        - [Matching exports to public API](#matching-exports-to-public-api)
+    - [Appendix C: On Variance in TypeScript](#appendix-c-on-variance-in-typescript)
+        - [Structural typing](#structural-typing)
+        - [Higher-order type operations](#higher-order-type-operations)
 
 
 ## Motivation
@@ -270,11 +262,21 @@ There are several reasons why breaking changes may occur:
 [3.5-breakage]: https://github.com/microsoft/TypeScript/issues/33272
 [3.7-emit-change]: https://github.com/microsoft/TypeScript/pull/33470
 
-The kinds of breaking changes represented by reasons (1) and (2) are described below under [**Changes to Types**](#changes-to-types); reasons (3) and (4) are discussed below in [**Defining Breaking Changes: Supported Compiler Versions**](#supported-compiler-versions).
+The kinds of breaking changes represented by reasons (1) and (2) are described below under [**Changes to Types**](#changes-to-types); reasons (3) and (4) are discussed below in [**Compiler Considerations**](#compiler-considerations).
+
+Additionally, there are some changes which we define *not* to be breaking changes because, while they will cause the compiler to produce a type error, they will do so in a way which simply allows the removal of now-defunct code.
 
 ### Changes to types
 
+#### Variance
 
+Virtually all of the rules around what constitutes a breaking change to types come down to *variance*. In a real sense, everything in the discussion below is a way of showing the variance rules by example. In many cases, these are the standard variance rules applicable in any and all languages with types: read-only types (sources) may be covariant, write-only types (sinks) may be contravariant, and read-write (mutable) types must be invariant.
+
+(For the purposes of this discussion, I will *assume* knowledge of variance, rather than explaining it.)
+
+TypeScript has two features most languages do not which complicate reasoning about variance: *structural typing* and *higher-order type operations*. The result of these additional features is that it is impossible to safely write types which can be *guaranteed* never to stop compiling for runtime-safe changes. For details, see [**Appendix C**](#appendix-c-on-variance-in-typescript).
+
+<!-- TODO: add example code covering this -->
 
 #### Breaking Changes
 
@@ -979,3 +981,109 @@ This approach is a variant on [**Updating types to maintain compatibility**](#up
 Another optional tool for managing public API is [API Extractor][api-extractor]. Authors can mark their exports as `@public`, `@protected`, `@private`, `@alpha`, `@beta`, etc. and use the tool to generate type definitions accordingly. For example, for mitigating a future TypeScript version change, or experimenting on a new API, authors can use `@alpha` or `@beta` and use `typesVersions` to publish to a dedicated directory. Similarly, authors can make an export public for use through the package or even a set of related packages in a moinorepo, but mark it as `@private` and use API Extractor to generate types which exclude it when publishing to npm.
 
 [api-extractor]: https://api-extractor.com
+
+
+### Appendix C: On Variance in TypeScript
+
+As alluded to in [Changes to Types: Variance](#variance), there are two complicating factors for the discussion of variance in TypeScript:
+
+- structural typing
+- what I will describe here as *higher-order type operations*
+
+#### Structural typing
+
+Most programming languages where programmers must deal with variance have *nominal* type systems, and and subtyping relations can be straightforwardly specified in terms of the relations between the types—particular via subclassing (as in Java, C++, and C#) or between interfaces (as in Rust’s `trait` system). In TypeScript, however, subtyping relationships include both subclassing and interface-based subtypes and also *structural subtyping*.
+
+Given types `A` and `B`, `B` is a subtype of `A` for the purposes of assignability (e.g. in function calls) when it is a *superset* of `A`. Most simply:
+
+```ts
+type A = {
+  a: number;
+}
+
+type B = {
+  a: number;
+  b: string;
+}
+
+type C = {
+  a?: number;
+  b: string;
+}
+
+declare function takesA(a: A): void;
+
+declare let a: A;
+declare let b: B;
+declare let c: C;
+takesA(a); // ✅
+takesA(b); // ✅
+takesA(c); // ❌
+```
+
+Notice that this is *unlike* the dynamics in nominal type systems, where unless `B` explicitly declared a relationship to `A` (e.g. `class B extends A { }` or `interface B : A { }` or similar), the two are unrelated, regardless of their structural relationships. Similar dynamics play out for other kinds of types.
+
+#### Higher-order type operations
+
+The second factor which makes dealing with TypeScript types difficult is its support for *type-level mutation*. Consider the type of `x` at points 1–4 in the following simple, but relatively idiomatic, TypeScript function definition:
+
+```ts
+function describe(x: string | number | undefined) {
+  switch (typeof x) {                 // 1
+    case 'string':
+      return `x is the string ${x}`;  // 2
+    case 'number':
+      return `x is the number ${x}`;  // 3
+    default:
+      return `x is "undefined"`;      // 4
+  }
+}
+```
+
+1. The type is `string | number | undefined`.
+2. The type is `string`.
+3. The type is `number`.
+4. The type is `undefined`.
+
+While this quickly becomes second-nature to TypeScript developers and we don’t give it a second thought, it’s important to take a step back and consider what is actually happening here: the type of `x` is a variable—a *type-level* variable—whose value changes over the body of the function. That is, it is a *mutable type-level variable*. While it is possible to construct values whose types in TypeScript are *not* mutable (e.g. with `never` or a boolean or numeric literal value), *most* values constructed in an ordinary TypeScript program have mutable types.
+
+What’s more, this combines with TypeScript’s use of structural typing and inference mean that many cases which would intuitively be “safe” to make changes around can in fact create compiler errors. For example, consider a function which today returns `string | number`:
+
+```ts
+declare function a(): string | number;
+```
+
+Using this function to create a value `x` will give us the type `x: string | number` as we would expect. Then we might *narrow* the type later:
+
+```ts
+const x = a(); // string | number
+const y = typeof x === 'string' ? x.length : x;  // ✅
+```
+
+In general by the rules of variance, we would expect that narrowing the return type of `a` to always return `number` would be fine. This is in a “write-only” position, and so we would expect that we should allow contravariance: a narrower type is permissible. From a runtime perspective, that is true, because all existing code will continue to work (even if there are some unnecessary branches). However, TypeScript will produce a type error here, because the type of `x` no longer includes `string`, and so the `typeof x === 'string'` check can be statically known to be.
+
+Practically speaking, this is an annoyance rather than a meaningful breaking change. It can, however, result in significant work across a code base! What is more, it is not possible to work around this merely with an explicit type definition today. Naïvely, we might expect explicit type declarations to allow us to dodge this problem in places we actually care about it:
+
+```ts
+const x: string | number = a();
+const y = typeof x === 'string' ? x.length : x;  // ❌
+```
+
+In practice, however, TypeScript today (up through 4.5) will first check that the type returned by `a()` is a subtype of the declared type of `x`, and then if `a()` returns a *narrower* type than that declared for `x`, it will actually set `x`'s type to the narrower type returned by `a()` instead of the explicitly-declared type. Thus, a user who wishes to avoid this problem must *everywhere* annotate their code with explicit type casts:
+
+```ts
+const x = a() as string | number;
+const y = typeof x === 'string' ? x.length : x;
+```
+
+This is very annoying; worse, it is also easy to break. TypeScript today silently allows an unsafe cast here, which can in turn produce runtime errors:
+
+```ts
+declare function a(): string | number;
+const x = a() as string; // 👎🏼
+const y = x.length;  // possible runtime error!
+```
+
+Thus, for the thoroughly pragmatic reason that no one would ever want to write these kinds of casts and the more principled reason that these kinds of casts as readily undermine as support the kinds of type safety TypeScript aims to provide *and* the versioning guarantees this RFC aims to provide, we simply acknowledge that from a practical standpoint, the pervasiveness of type-level mutation makes it impossible to provide a definition of breaking changes which forbids the introduction of compiler errors by even apparently-safe changes.
+
+This might at first seem to make the problem of Semantic Versioning for TypeScript types intractable. However, precisely because SemVer is a *sociological* and not only a *technical* contract, the problem is tractable. We define a breaking change as a change to the types produced by a library in which the result is not a trivial simplification of the user's code. This is admittedly unsatisfying in some ways!
