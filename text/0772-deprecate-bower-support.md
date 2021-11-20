@@ -9,7 +9,7 @@ Relevant Team(s): Ember CLI
 RFC PR: https://github.com/emberjs/rfcs/pull/772
 ---
 
-# Deprecate Bower APIs
+# Deprecate Bower Support
 
 ## Summary
 
@@ -20,6 +20,9 @@ This RFC proposes to deprecate the following Bower APIs:
 - [Project::bowerDependencies](https://ember-cli.com/api/classes/project#method_bowerDependencies) (not public, but used in several addons)
 - [Project::bowerDirectory](https://github.com/ember-cli/ember-cli/blob/master/lib/models/project.js#L127) (not public, but used in several addons)
 
+This RFC also proposes to deprecate building Bower packages, coming from
+`/bower_components` by default.
+
 ## Motivation
 
 While [Bower](https://bower.io/) is still maintained, it's recommended to use an
@@ -28,7 +31,7 @@ Ember CLI stopped emitting a `bower.json` file since [v2.13.0](https://github.co
 not use Bower anymore as well in the [Compiling Assets](https://guides.emberjs.com/release/addons-and-dependencies/#toc_compiling-assets) section. Lastly, most addons have
 dropped support for Bower as well.
 
-Putting this all together, deprecating (and later on removing) all Bower APIs
+Putting this all together, deprecating (and later on removing) Bower support
 seems like the best path forward.
 
 ## Transition Path
@@ -49,12 +52,12 @@ suggest your users to install the Bower package manually by running:
 
 **Deprecation details:**
 
-| Key     | Value                                            |
-| ------- | ------------------------------------------------ |
-| `for`   | `'ember-cli'`                                    |
-| `id`    | `'ember-cli.blueprint.addBowerPackageToProject'` |
-| `since` | `{ available: '4.X.X', enabled: '4.X.X' }`       |
-| `until` | `'5.0.0'`                                        |
+| Key     | Value                                                |
+| ------- | ---------------------------------------------------- |
+| `for`   | `'ember-cli'`                                        |
+| `id`    | `'ember-cli.blueprint.add-bower-package-to-project'` |
+| `since` | `{ available: '4.X.X', enabled: '4.X.X' }`           |
+| `until` | `'5.0.0'`                                            |
 
 ### `Blueprint::addBowerPackagesToProject`
 
@@ -72,12 +75,12 @@ suggest your users to install the Bower packages manually by running:
 
 **Deprecation details:**
 
-| Key     | Value                                             |
-| ------- | ------------------------------------------------- |
-| `for`   | `'ember-cli'`                                     |
-| `id`    | `'ember-cli.blueprint.addBowerPackagesToProject'` |
-| `since` | `{ available: '4.X.X', enabled: '4.X.X' }`        |
-| `until` | `'5.0.0'`                                         |
+| Key     | Value                                                 |
+| ------- | ----------------------------------------------------- |
+| `for`   | `'ember-cli'`                                         |
+| `id`    | `'ember-cli.blueprint.add-bower-packages-to-project'` |
+| `since` | `{ available: '4.X.X', enabled: '4.X.X' }`            |
+| `until` | `'5.0.0'`                                             |
 
 ### `Project::bowerDependencies`
 
@@ -85,7 +88,8 @@ Returns the Bower dependencies (including the development dependencies) for the
 project.
 
 Addons that use this method, mostly do so to check the presence of a
-specific Bower package in order to suggest users to use the npm equivalent instead.
+specific Bower package in order to suggest users to use the npm equivalent
+instead.
 
 When used, the following deprecation message will be triggered:
 
@@ -100,7 +104,7 @@ project's Bower dependencies, you will have to manually resolve the project's
 | Key     | Value                                      |
 | ------- | ------------------------------------------ |
 | `for`   | `'ember-cli'`                              |
-| `id`    | `'ember-cli.project.bowerDependencies'`    |
+| `id`    | `'ember-cli.project.bower-dependencies'`   |
 | `since` | `{ available: '4.X.X', enabled: '4.X.X' }` |
 | `until` | `'5.0.0'`                                  |
 
@@ -121,7 +125,32 @@ project's Bower directory, you will have to manually resolve the project's
 | Key     | Value                                      |
 | ------- | ------------------------------------------ |
 | `for`   | `'ember-cli'`                              |
-| `id`    | `'ember-cli.project.bowerDirectory'`       |
+| `id`    | `'ember-cli.project.bower-directory'`      |
+| `since` | `{ available: '4.X.X', enabled: '4.X.X' }` |
+| `until` | `'5.0.0'`                                  |
+
+### Building Bower Packages
+
+If Ember CLI detects that the project contains a Bower directory, it will try to
+build a Broccoli tree with Bower packages.
+
+When a Bower directory is detected, the following deprecation message will be
+triggered:
+
+```
+Building Bower packages has been deprecated. You have Bower packages in
+`<bower-directory>`.
+```
+
+The deprecation message should be triggered when the [`packageBower`](https://github.com/ember-cli/ember-cli/blob/e747ac4c21a8e4a37e158a226dfa8ac048541b1f/lib/broccoli/default-packager.js#L630)
+method is called.
+
+**Deprecation details:**
+
+| Key     | Value                                      |
+| ------- | ------------------------------------------ |
+| `for`   | `'ember-cli'`                              |
+| `id`    | `'ember-cli.building-bower-packages'`      |
 | `since` | `{ available: '4.X.X', enabled: '4.X.X' }` |
 | `until` | `'5.0.0'`                                  |
 
@@ -208,6 +237,18 @@ module.exports = {
 };
 ```
 
+### Building Bower Packages
+
+Building Bower packages has been deprecated.
+
+Please consider one of the following alternatives:
+
+1. Install the package via the npm registry and use `ember-auto-import` to
+import the package into your project
+2. If alternative 1 is not an option, you could copy the contents of the Bower
+package into the `/vendor` folder and use `app.import` to import the package
+into your project
+
 ## How We Teach This
 
 The following references to Bower in the Ember Guides should be removed:
@@ -238,6 +279,9 @@ have to manually resolve the project's `bower.json` file instead
 - Addons that still require access to the project's Bower directory, will
 have to manually resolve the project's `.bowerrc` file and read the `directory`
 property instead
+- Projects that still import Bower packages will need to use one of the
+suggested alternatives in the [Building Bower Packages](#building-bower-packages-1)
+deprecation guide
 
 ## Alternatives
 
@@ -247,5 +291,3 @@ property instead
 
 - Should a deprecation warning be displayed when the `--skip-bower` CLI flag is
 used?
-- Is deprecating these Bower APIs sufficient to completely remove Bower support
-in the future? If not, what is still missing in this RFC?
