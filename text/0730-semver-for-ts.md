@@ -241,6 +241,11 @@ Using the type-level `typeof` operator to construct a type using the type of an 
 </dd>
 <dd>
 
+One challenge for this definition is the common scenario where code is not ordinarily user-constructible but may need to be mocked for tests. Changes to these *do not* constitute breaking changes—but library authors can also mitigate the challenge presented by this scenario. (See discussion below under [Appendix B: Tooling – Mitigate Breaking Changes – Avoiding User constructibility](#avoiding-user-constructibility).)
+
+</dd>
+<dd>
+
 **Non-normative example:** in Ember.js today, the interface for a `Transition` is public API and consumers can rely on its stability, but only Ember is allowed to create `Transition` instances.
 
 If a user imported the `Transition` interface and wrote a `class CustomTransition implements Transition { ... }`, this would be stepping outside the SemVer contract.
@@ -809,6 +814,8 @@ For types where it is useful to publish an interface for end users, but where us
     This *cannot* be constructed outside the module. Note that it may be useful to provide corresponding test helpers for scenarios like this, since users cannot safely provide their own mocks.
 
 -   Document that users can create their own local aliases for these types, while *not* exporting the types in a public way. This has one of the same upsides as the use of the classes with a private brand: the type is not constructible other than via the module. It also shares the upside of being able to create your own instance of it for test code. However, it has ergonomic downsides, requiring the use of the `ReturnType` utility class and requiring all consumers to generate that utility type for themselves.
+
+-   Provide sanctioned mocks for testing purposes. Since these live alongside, and therefore can be tested with and kept in sync with the package they are mocks for, they can also be provided with the exact same versioning stability guarantees as the package code itself.
 
 Each of these leaves this module in control of the construction of `Person`s, which allows more flexibility for evolving the API, since non-user-constructible types are subject to fewer breaking change constraints than user-constructible types. Whichever is chosen for a given type, authors should document it clearly.
 
