@@ -492,11 +492,9 @@ A change to an exported symbol is *not* breaking when:
 
 ##### Interfaces, Type Aliases, and Classes
 
-A change to any type (user-constructible or not) is *not* breaking when:
+Any change to a non-user-constructible type is *not* breaking when:
 
 -   a new optional property is added to the type, since all existing code will continue working ([playground][new-optional-prop])
-
-Any change to a non-user-constructible type is *not* breaking when:
 
 -   a `readonly` object property on the type becomes a *more specific ("narrower") type*, for example if it was previously `string | string[]` and now is always `string[]`—since all user code will continue working and type-checking ([playground][narrower-property]). Note that this includes a previously-optional property becoming required.[^nit-on-comparability]
 
