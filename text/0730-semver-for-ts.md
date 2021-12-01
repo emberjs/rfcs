@@ -104,6 +104,7 @@ Note that this summary elides *many* important details, and those details may su
         - [Mitigate breaking changes](#mitigate-breaking-changes)
         - [Matching exports to public API](#matching-exports-to-public-api)
     - [Appendix C: On Variance in TypeScript](#appendix-c-on-variance-in-typescript)
+        - [Inference and pervasive mutability](#inference-and-pervasive-mutability)
         - [Structural typing](#structural-typing)
         - [Higher-order type operations](#higher-order-type-operations)
 
