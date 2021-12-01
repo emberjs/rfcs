@@ -208,6 +208,7 @@ Type symbols represent types which are used in type checking:
 
 - `interface` declarations
 - `type` (type alias) declarations
+- `function` declarations
 - `class` declarations
 - `enum` and `const enum` declarations
 
