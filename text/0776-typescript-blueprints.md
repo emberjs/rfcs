@@ -34,7 +34,7 @@ As part of the larger effort to [make Typescript an officially supported languag
 
 1. Remove the disconnect between TypeScript and JavaScript blueprints discussed above, as the Typed Ember team would no longer be responsible for maintaining an entirely independent set of blueprints.
 1. Allow for multiple versions of TypeScript blueprints to exist (since they'd belong to each version of Ember), rather than today where there is no way to tie standalone TypeScript blueprints to individual versions of Ember (e.g. there's no LTS version of the TypeScript blueprints today).
-1. Pave the way for TypeScript blueprint generation in any Ember app or addon right out of the box (likely via a `--typescript` flag or something similar).
+1. Enable TypeScript blueprint generation in any Ember app or addon right out of the box via a `--typescript` flag.
 1. Enable addon authors to better support TypeScript users by allowing them to publish their own TypeScript blueprints without concern for also supporting JavaScript users.
 
 Note that this does **not** mean that we should generate TypeScript by default, but rather that the blueprints themselves should _begin_ as TypeScript before actually being reified as actual code. By default, all of the Ember generators would still behave exactly as they do today: by generating JavaScript files. This RFC is primarily concerned with TypeScript as an _implementation detail_ for the existing blueprints, rather than being prescriptive about whether or not users should adopt TypeScript themselves.
@@ -55,13 +55,25 @@ There are a few details worth calling out about this change to the generation pr
 
 1. While the TypeScript files are parsed and transformed, they are _not_ type-checked in any way. The Babel plugin is concerned solely with the transformation of TypeScript syntax into JavaScript syntax and does not pay any attention to what the types actually are. This is a good thing, as it minimizes any performance cost during the generation process and we'd expect any actual type-checking to happen at compilation time in the user's app, using their own `tsconfig` rather than one we'd have to supply (and maintain).
    1. In the future, we DO also need the ability to test the actual TypeScript parts of the blueprints (i.e. do the blueprints output TS files that actually type-check?), but that functionality will be covered in a later RFC that is more concerned with enabling TypeScript support in Ember.
-1. By default, the generators would behave exactly as they did before, however, the fact that all the blueprints are now written in TypeScript means that it becomes trivial to add a `--typescript` flag to the `generate` command that tells the generator to simply bypass the Babel transform and instead output TypeScript directly. Since TypeScript is a superset of JavaScript, we're able to easily accomodate both sets of users with a single blueprint file by starting out with the "higher-fidelity" TypeScript and down-leveling it JavaScript when needed.
+1. By default, the generators would behave exactly as they did before. However, we would also add a `--typescript` flag to the `generate` command that tells the generator to simply bypass the Babel transform and instead output TypeScript directly. Since TypeScript is a superset of JavaScript, we're able to easily accomodate both sets of users with a single blueprint file by starting out with the "higher-fidelity" TypeScript and down-leveling it JavaScript when needed.
 1. Addon authors would be able to provide blueprints written in TypeScript that would "just work" in the same way that the built-in blueprints would, e.g. they'd get support for both JavaScript and TypeScript versions of their blueprints with no additional effort or maintenance.
 1. No one is _required_ to write their blueprints in TypeScript. Any blueprint written in JavaScript would be handled in the exact same way that they are today.
 
+To sum up, the changes would be as follows:
+
+- Rewrite Ember's existing blueprints in TypeScript.
+- Add a `--typescript` flag to `ember generate` that will force the command to output TypeScript instead of JavaScript (assuming a TypeScript blueprint exists).
+- Add a `shouldTransformTypeScript` flag to the `Blueprint` base class that opts the blueprint in to the down-leveling behavior.
+  - This defaults to `false`.
+  - This flag exists so that blueprint authors can choose whether they want the auto-transform behavior in case there are already apps/addons that have custom blueprints they expect to always result in TypeScript files.
+- Add a `isTypeScriptProject` flag to `.ember-cli` that can be used to determine whether to generate TypeScript or JavaScript by default.
+  - This flag defaults to `false`.
+  - If `isTypeScriptProject` is `true`, `ember g component foo` would generate a TypeScript file, otherwise it will generate a JavaScript file.
+  - Users can override this default behavior by passing the `--typescript` flag (mentioned above), which will force the blueprint to output TypeScript as long as a TypeScript blueprint is available.
+
 ## How we teach this
 
-Since this RFC is primarily concerned with the implementation details of the blueprints themselves, I'm not sure that we'd necessarily _need_ to teach this. That said, I imagine that we would eventually include TypeScript in the documentation for creating custom blueprints as support for TypeScript in Ember rolls out. Since this RFC is not concerned with providing a TypeScript _compiler_ as a built-in component of new Ember apps or addons, we wouldn't actually roll out any new functionality as a result of this RFC, and thus I don't think there'd be anything to teach (yet).
+For most users, there isn't much to teach here since their default experience with Ember's blueprints won't change at all. However, we should document the typescript-related behaviors in the [documentation for creating custom blueprints.](https://cli.emberjs.com/release/advanced-use/blueprints/) More specifically, we'd need to mention the 3 new flags being added (`shouldTransformTypeScript`, `isTypeScriptProject`, and `--typescript`) and explain their usage.
 
 ## Drawbacks
 
