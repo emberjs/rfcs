@@ -320,11 +320,12 @@ These basic intuitions underlie the guidelines below. However, several factors c
 
 First of all, notice that the vast majority of objects in JavaScript are mutable, which means they must be *invariant*. When combined with type inference, this effectively means that *any* change to an object type *can* cause breakage for consumers. (The only real counter-examples are `readonly` types.)
 
-Additionally, TypeScript has two other features many other languages do not which complicate reasoning about variance: *structural typing*, *higher-order type operations*. The result of these additional features is a further impossibility of safely writing types which can be *guaranteed* never to stop compiling for runtime-safe changes. Exemplary cases are explicitly identified below (but the examples are not exhaustive).
+Additionally, TypeScript has two other features many other languages do not which complicate reasoning about variance: *structural typing*, *higher-order type operations*. The result of these additional features is a further impossibility of safely writing types which can be *guaranteed* never to stop compiling for runtime-safe changes.
 
-To account for this, we recommend the following rule for dealing with these scenarios:
+Accordingly, we propose the rules below, with the caveat that (as noted in several places throughout) they will *not* prevent all possible breakage—only the majority of it, and substantially the worst of it. Most of all, they give us a workable approach which can be well-tested and well-understood, and the edge cases identified here do not prevent the rules from being generally useful or applicable.[^satisficery]
 
-<!-- TODO: write the rule -->
+[^satisficery]: Precisely because SemVer is a *sociological* and not only a *technical* contract, the problem is tractable: We define a breaking change as above, and accept the reality that some changes are not preventable (but may in many cases be mitigated or fixed automatically). This is admittedly unsatisfying, but we believe it [satisfices](https://www.merriam-webster.com/dictionary/satisfice) our constraints.
+
 
 For a more detailed explanation and analysis of the impact of variance on these rules, see [**Appendix C**](#appendix-c-on-variance-in-typescript).
 
@@ -1250,5 +1251,3 @@ The compiler will dutifully report:
 > Property 'substring' does not exist on type 'string | number'.
 
 In sum, just as pervasive runtime mutability and inference made it impossible to fully specify an approach which prevents users from experiencing breaking changes.
-
-This might at first seem to make the problem of Semantic Versioning for TypeScript types intractable. However, precisely because SemVer is a *sociological* and not only a *technical* contract, the problem is tractable: We define a breaking change as above, and accept the reality that some changes are not preventable (but may in many cases be mitigated or fixed automatically). This is admittedly unsatisfying, but we believe it [satisfices](https://www.merriam-webster.com/dictionary/satisfice) our constraints.
