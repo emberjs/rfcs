@@ -506,7 +506,7 @@ Any change to a non-user-constructible type is *not* breaking when:
 
 -   a `readonly` object property on the type becomes a *more specific ("narrower") type*, for example if it was previously `string | string[]` and now is always `string[]`—since all user code will continue working and type-checking ([playground][narrower-property]). Note that this includes a previously-optional property becoming required.[^nit-on-comparability]
 
--   a new required property is added to the object—since its presence does not require the consuming code to use the property at a type level ([playground][new-required-prop])
+-   a new required property is added to the object—since its presence does not require the consuming code to use the property at a type level ([playground][new-required-prop])[^variance-in-discriminating]
 
 [new-optional-prop]: https://www.typescriptlang.org/play?#code/JYOwLgpgTgZghgYwgAgPJWAc1HANsgbwFgAoZc5OALmQGcwMRMBuUgX1NNElkRQFUADgBM4kYYVIVKNeoxZSKAIwD8NEAFcAtkuisSHEqWEQEuOFBQwNIBGGAB7EMktgNUELXRYcuABQAlDTe2CB4+iZmFlY2do7Oru6eQqLigTQpYhDC+sam5pbI1rb2TshgcADWEF4YoXh+AB7Bdb5ByABuDsA5eVGFxXFlFdW0mWnNyOPZ7V09uSRhWjWCfMgAQhAwDpbTkmQUAPSHyAhOchpDIIrkuBBgMmitYfgAvISPAEQAFhC4uA5Psg2AtpMcXPcktlkEoAJ7IXDAJRQCywm4I+4wlo+F7Id6JDy1HENAKgo4nBB4cxKYCIsBog7kEY1EK+PxwUno5lE+r+AhfX7-QHAgLsTiLODLWirJDIACCMB4e2IjOQ4LOngYl1K11Vdwe1CmIiyEne-MNPz+AKBIPFYJOBJA0LhCKRKKgDOk+qxT2JbwhbkJ02EgTJ5HVVLgNLpnoo3NZL3ZnNV3ODSf00njzwaSmTmaqNTTuYzcYLY2NaXNNEtQptooMpCAA
 
@@ -518,6 +518,8 @@ Any change to a non-user-constructible type is *not* breaking when:
 [^nit-on-comparability]: Strictly speaking, one value may stop being comparable to another value in this scenario. However, this is both a rare edge case and fits under the standard rule where changes which simply let users delete now-defunct code are allowed.
 
 [comparable-narrowing]: https://www.typescriptlang.org/play?#code/CYUwxgNghgTiAEYD2A7AzgF3kmBLA5rilBAFzyZ4r7wA+FGV+A2gLoCwAUKJLAsuizIAtgAdYUAEYQQ5SkRr0UAV2GSQMLj2hxEqTPGWjgUDCGBzGCtly64AZvAAUOAkRLwAvN71iJ0kABKeABvAF87RycjEzNgLx8RcRgpGWDwriA
+
+[^variance-in-discriminating]: Mostly, anyway—see [Appendix C: On Variance in TypeScript – Higher-order type operations](#higher-order-type-operations) below for a discussion of how the `in` operator (or similar operations discriminating between unions) makes this cause breakage in some cases. These are rare enough, and easily-enough solved, that the rule remains workable.
 
 
 ##### Functions
@@ -1094,6 +1096,15 @@ value = "hello";       // ✅
 
 While lint guidelines preferring `const` may *help* mitigate the latter, they are controversial[^const-controversy] and they do not and cannot help with the `Array` example or others like it. Nor is it feasible to require a “functional” immutable-update style, given that JavaScript lacks robust immutable data structures, which would allow for recommending that approach.
 
+In this case, cautious users may work around this by explicitly annotating their types to match the return type of the:
+
+```ts
+const myArray: Array<string | number> = [example()];
+let value: string | number = example();
+```
+
+We do not expect this to be common, however: the cost of this is much higher than the cost of changing one's code in the cases where it may be broken.
+
 [^const-controversy]: Rightly so, in my opinion!
 
 #### Structural typing
@@ -1192,4 +1203,52 @@ const y = x.length;  // possible runtime error!
 
 Thus, for the thoroughly pragmatic reason that no one would ever want to write these kinds of casts and the more principled reason that these kinds of casts as readily undermine as support the kinds of type safety TypeScript aims to provide *and* the versioning guarantees this RFC aims to provide, we simply acknowledge that from a practical standpoint, the pervasiveness of type-level mutation makes it impossible to provide a definition of breaking changes which forbids the introduction of compiler errors by even apparently-safe changes.
 
-This might at first seem to make the problem of Semantic Versioning for TypeScript types intractable. However, precisely because SemVer is a *sociological* and not only a *technical* contract, the problem is tractable: We define a breaking change as a change to the types produced by a library in which the result is not a trivial simplification of the user's code, e.g. the removal of the dead code branch in the `typeof` check example given above. This is admittedly unsatisfying, but we believe it [satisfices](https://www.merriam-webster.com/dictionary/satisfice) our constraints.
+The problem runs the other direction, too: while this example shows now-extraneous code which can be deleted, the same underlying issue can also require *adding* code, e.g. when adding a field to a library type which was previously being used to discriminate two objects.
+
+Given this starting code:
+
+```ts
+// provided by the library
+type LibType = {
+  a: boolean;
+}
+
+type MyType = {
+  b: string;
+}
+
+function takesEither(obj: LibType | MyType) {
+  if ('b' in obj) {
+      // narrowed obj to `MyType`
+    console.log(obj.b.substring(0));
+  }
+}
+```
+
+If the library adds a field `b` which is of any type but `string`—
+
+```ts
+type LibType = {
+  a: boolean;
+  b: number;
+}
+```
+
+—then we have a type error in `takesEither()` because the `in` operator no longer successfully discriminates between `LibType` and `MyType`:
+
+```ts
+function takesEither(obj: LibType | MyType) {
+  if ('b' in obj) {
+    // `obj` is still `LibType | MyType` so `b` is now `string | number`
+    console.log(obj.b.substring(0)); // ❌
+  }
+}
+```
+
+The compiler will dutifully report:
+
+> Property 'substring' does not exist on type 'string | number'.
+
+In sum, just as pervasive runtime mutability and inference made it impossible to fully specify an approach which prevents users from experiencing breaking changes.
+
+This might at first seem to make the problem of Semantic Versioning for TypeScript types intractable. However, precisely because SemVer is a *sociological* and not only a *technical* contract, the problem is tractable: We define a breaking change as above, and accept the reality that some changes are not preventable (but may in many cases be mitigated or fixed automatically). This is admittedly unsatisfying, but we believe it [satisfices](https://www.merriam-webster.com/dictionary/satisfice) our constraints.
