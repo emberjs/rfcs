@@ -271,6 +271,14 @@ In either case, no change to a type documented as private is a breaking change, 
 
 </dd>
 
+<dd>
+
+**Re-exports:** using the `export * from` re-export syntax can in theory cause breakage by causing export conflicts: if the library being re-exported and the library doing the re-export both export the same name. For this reason, changes caused by the `export * from ...` are never breaking changes.[^re-export-antipattern]
+
+</dd>
+
+[^re-export-antipattern]: In general, it is an antipattern for one package to re-export another package directly like this, and the cases where it makes sense (e.g. Ember re-exporting Glimmer APIs) are cases of collaborators which can manage this.
+
 #### Reasons for Breaking Changes
 
 Each of the kinds of breaking changes defined below will trigger a compiler error for consumers, surfacing the error. As such, they should be easily detectable by testing infrastructure (see below under [Tooling: Detect breaking changes in types](#detect-breaking-changes-in-types)).
