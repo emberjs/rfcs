@@ -295,13 +295,29 @@ Additionally, there are some changes which we define *not* to be breaking change
 
 #### Variance
 
-Virtually all of the rules around what constitutes a breaking change to types come down to *variance*. In a real sense, everything in the discussion below is a way of showing the variance rules by example. In many cases, these are the standard variance rules applicable in any and all languages with types: read-only types (sources) may be covariant, write-only types (sinks) may be contravariant, and read-write (mutable) types must be invariant.
+Virtually all of the rules around what constitutes a breaking change to types come down to *variance*.[^variance] In a real sense, everything in the discussion below is a way of showing the variance rules by example.[^thanks-to-ryan]
 
-(For the purposes of this discussion, I will *assume* knowledge of variance, rather than explaining it.)
+[^variance]: For the purposes of this discussion, I will *assume* knowledge of variance, rather than explaining it.
 
-TypeScript has two features most languages do not which complicate reasoning about variance: *structural typing* and *higher-order type operations*. The result of these additional features is that it is impossible to safely write types which can be *guaranteed* never to stop compiling for runtime-safe changes. For details, see [**Appendix C**](#appendix-c-on-variance-in-typescript).
+[^thanks-to-ryan]: Thanks to [Ryan Cavanaugh](https://github.com/RyanCavanaugh) of the TypeScript team for pointing out the various examples which motivated this discussion.
 
-<!-- TODO: add example code covering this -->
+In many cases, these are the standard variance rules applicable in any and all languages with types:
+
+- read-only types (sources) may be covariant
+- write-only types (sinks) may be contravariant
+- read-write (mutable) types must be invariant
+
+These basic intuitions underlie the guidelines below. However, several factors complicate them.
+
+First of all, notice that the vast majority of objects in JavaScript are mutable, which means they must be *invariant*. When combined with type inference, this effectively means that *any* change to an object type *can* cause breakage for consumers. (The only real counter-examples are `readonly` types.)
+
+Additionally, TypeScript has two other features many other languages do not which complicate reasoning about variance: *structural typing*, *higher-order type operations*. The result of these additional features is a further impossibility of safely writing types which can be *guaranteed* never to stop compiling for runtime-safe changes. Exemplary cases are explicitly identified below (but the examples are not exhaustive).
+
+To account for this, we recommend the following rule for dealing with these scenarios:
+
+<!-- TODO: write the rule -->
+
+For a more detailed explanation and analysis of the impact of variance on these rules, see [**Appendix C**](#appendix-c-on-variance-in-typescript).
 
 #### Breaking Changes
 
@@ -1012,10 +1028,61 @@ Another optional tool for managing public API is [API Extractor][api-extractor].
 
 ### Appendix C: On Variance in TypeScript
 
-As alluded to in [Changes to Types: Variance](#variance), there are two complicating factors for the discussion of variance in TypeScript:
+As alluded to in [Changes to Types: Variance](#variance), there are several complicating factors for the discussion of variance in TypeScript:
 
+- the combination of inference with pervasive mutability
 - structural typing
 - what I will describe here as *higher-order type operations*
+
+#### Inference and pervasive mutability
+
+For example, by the classic rules, `Array<T>` should be invariant: it is a read-write (i.e. mutable) type. That means that a very simple change, otherwise apparently safe for consumers, can break it. Start with a library function which returns `string | number`:
+
+```ts
+declare function example(): string | number;
+```
+
+A consumer might use this code in the construction of an array, and then having leaned on inference, push both `string`s and `number`s into it:
+
+```ts
+const myArray = [example()]; // Array<string | number>
+myArray.push(123);           // ✅
+myArray.push("hello");       // ✅
+```
+
+The author of the library might later update `example` to return only `string`s:
+
+```ts
+declare function example(): string;
+```
+
+This would be safe under the rule for write-only types, which is the intuition underlying many of the definitions below—but for our array example, it is *not* safe: `.push()`-ing in a `number` is now illegal.
+
+```ts
+const myArray = [example()]; // Array<string>
+myArray.push(123);           // ❌ number not assignable to string
+myArray.push("hello");       // ✅
+```
+
+What's more, we don't need an object like an array to trigger this kind of behavior. Using a `let` binding instead of a `const` binding will produce exactly the same issue. Under the original definition of `example`, this would be perfectly legal:
+
+```ts
+let value = example(); // string | number
+value = 123;           // ✅
+value = "hello";       // ✅
+```
+
+But it stops being valid as soon as `example` is narrowed:
+
+```ts
+let value = example(); // string
+value = 123;           // ❌ number not assignable to string
+value = "hello";       // ✅
+```
+
+While lint guidelines preferring `const` may *help* mitigate the latter, they are controversial[^const-controversy] and they do not and cannot help with the `Array` example or others like it. Nor is it feasible to require a “functional” immutable-update style, given that JavaScript lacks robust immutable data structures, which would allow for recommending that approach.
+
+[^const-controversy]: Rightly so, in my opinion!
 
 #### Structural typing
 
