@@ -1,0 +1,141 @@
+---
+Stage: Accepted
+Start Date: 2021-11-30
+Release Date: Unreleased
+Release Versions:
+  ember-source: vX.Y.Z
+  ember-data: vX.Y.Z
+Relevant Team(s): Ember
+RFC PR:
+---
+
+<!---
+Directions for above:
+
+Stage: Leave as is
+Start Date: Fill in with today's date, YYYY-MM-DD
+Release Date: Leave as is
+Release Versions: Leave as is
+Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies
+RFC PR: Fill this in with the URL for the Proposal RFC PR
+-->
+
+# <RFC title>
+
+## Summary
+
+Introduce new testing utilities that remove the need for the use of `get`/`set` on `this` in test contexts. This will make rendering tests behave more like application code, and also greatly simplify the process of writing rendering tests in TypeScript since it will remove the need to append type information to `this` as properties are set.
+
+## Motivation
+
+Current rendering tests require developers to set values on `this` in order for them to actually be present in the template that gets rendered as part of the test. For example, if we're testing that a component correctly displays a value that gets passed in as an argument, we'd do something like:
+
+```js
+this.set('name', 'foo');
+
+await render(hbs`<MyComponent @name={{this.name}} />`);
+
+assert.dom('[data-test-name]').hasText(this.get('name'));
+```
+
+This approach has two main issues:
+
+1. It's not consistent with any other programming model in Ember
+1. It makes writing tests in TypeScript a huge pain
+
+On the first point: `this.set` is essentially irrelevant everwhere else in Ember. In a post-Octane world, we no longer need to `get` or `set`, and it is, in fact, frequently discouraged as an unnecessary complication. Furthermore, `this.set` inside of a test is even stranger than it was in application code since `set` in tests also manipulates the run loop and flushes the entirety of DOM (in additon to actually setting the value of a property on `this`), and the value of `this` is extremely murky in the first place. The fact that `this` is both the test context _and_ a sort of ersatz scope for the surrounding "template" of the rendering test is not exactly intuitive or easy to teach.
+
+On the second point: having to set properties on `this` leads to a whole bunch of papercuts when writing tests in TypeScript. [As discussed in the `ember-cli-typescript` docs](https://docs.ember-cli-typescript.com/ember/testing#the-testcontext), since rendering tests require developers to arbitrarily add (and change) properties on `this`, you have to define (and re-define) the interface for `this` to accomodate all of those properties just to prevent TypeScript from complaining that each of the values that were set don't exist on the `TestContext` type.
+
+The goal of this RFC, then, is to greatly simplify the testing model by removing the need for `get` and `set` in rendering tests, thereby reducing the reliance on `this`.
+
+## Detailed design
+
+We will introduce several new/refactored utilities for use in rendering tests:
+
+1. A new version of `render` that accepts a component rather than a template.
+1. A new `scopedTemplate` function that accepts a template and returns a component _and is lexically scoped_
+1. A new `rerender` function that would be used after the initial `render` call
+
+Rendering tests currently work by rendering a template that is bound to the `this` of the surrounding test file. This is why developers have to call `this.set` in the first place, since the value of `this` in a given test is doing double duty as both the actual test context AND the backing object for the template that eventually gets rendered. Since we want to move away from this very behavior, we need a version of `render` that accepts a fully-formed component instead, since components have their own context and are self-contained.
+
+Once we've got this new version of `render`, we also need a convenient way of creating components to pass to it. This is where the `scopedTemplate` function comes in. `scopedTemplate` would accept a template (created using the `hbs` macro today, or the `<template>` tag in the future), and return a newly-formed component class which could then be passed to our new version of `render`. In addition, the template passed to `scopedTemplate` would be lexically scoped, meaning that it's values would pull _directly from the surrounding scope_, i.e. the values defined in the test itself. With this new approach, instead of having to call `this.set` for each value you want to reference in the template, you instead just define the data you want and reference it directly in the template. For example:
+
+```js
+import { render } from '@ember/test-helpers';
+import { scopedTemplate } from 'ember-cli-htmlbars';
+
+// setup elided
+test('it works', async function (assert) {
+  const somePerson = {
+    name: 'Zoey',
+    age: 5,
+  };
+
+  const component = scopedTemplate(hbs`
+    <ProfileCard @name={{somePerson.name}} @age={{somePerson.age}} />
+  `);
+
+  await render(component);
+
+  assert.dom(this.element).hasText(somePerson.name);
+});
+```
+
+Finally, we need to handle cases where you want to update the backing data and assert against the resulting changes in the rendered output. In the current testing paradigm, we'd update the values using `this.set` and then wait for the state we want to assert against, likely using either `settled` or `waitFor`. This works, but has the downside of either waiting for _everything_ to finish (in the case of `settled`), or waiting for a single thing to finish (in the case of `waitFor`). Instead, we propose a new `rerender` function that exclusively waits on pending render operations, but ignores all other [settledness metrics](https://github.com/emberjs/ember-test-helpers/blob/master/API.md#issettled). When combined with [tracked state](https://guides.emberjs.com/release/in-depth-topics/autotracking-in-depth/#toc_autotracking-basics), this new `rerender` function allows developers to make updates to their component state and `await` the newly rendered version of their component _without_ having to also wait for other pending timers or run loops. In other words, they can still assert against changes in the DOM, but would also be able to assert against things like loading states without having to use `waitFor` since `rerender` would not wait for things like async operations to complete.
+
+Continuing the example from above, here's what we'd expect an update and re-render to look like:
+
+```js
+import { render, rerender } from '@ember/test-helpers';
+import { scopedTemplate } from 'ember-cli-htmlbars';
+import { tracked } from 'tracked-built-ins';
+
+// setup elided
+test('it works', async function (assert) {
+  const somePerson = tracked({
+    name: 'Zoey',
+    age: 5,
+  });
+
+  const component = scopedTemplate(hbs`
+    <ProfileCard @name={{somePerson.name}} @age={{somePerson.age}} />
+  `);
+
+  await render(component);
+
+  assert.dom(this.element).hasText(somePerson.name);
+
+  somePerson.name = 'Zoeyyyyyyyyyyyyy';
+
+  await rerender();
+
+  assert.dom(this.element).hasText(somePerson.name);
+});
+```
+
+It's worth noting that rendering tests without `get`/`set` are actually possible today using a combination of the `precompileTemplate` function from `@ember/template-compilation`, a scope object containing all of the relevant values referenced in the template, and the `settled` function from `@ember/test-helpers`. Ultimately this RFC would largely end up exposing these existing APIs in a way that is both more user-friendly and better-suited to both [First-Class Component Templates](https://github.com/emberjs/rfcs/pull/779) and [TypeScript](https://github.com/emberjs/rfcs/pull/724)
+
+## How we teach this
+
+We'd need to update the [testing components](https://guides.emberjs.com/release/testing/testing-components/) section of the official guides to document this new approach.
+
+We'd also need to update the [API docs for ember-test-helpers](https://github.com/emberjs/ember-test-helpers/blob/master/API.md) for the new version of `render` as well as the newly introduced `rerender` function..
+
+Finally, we'd need to document the `scopedTemplate` function **in whatever package it ends up living in????????????**.
+
+All things considered, the changes in this RFC should result in a component testing model that ultimately _more_ intuitive. We could also introduce a configuration option to `ember-test-helpers` that would allow users to turn on assertion that prevents rendering tests from being written using the old method to help codebases migrate.
+
+## Drawbacks
+
+Ember's testing setup is one its most valuable features, and this RFC would introduce changes to a testing model that ultimately already works fine. These changes would be introduced alongside the existing rendering test models, so they would not constitute a breaking change, but would introduce additional overhead in terms of "old vs. new", similar to the overhead of Octane, or the Grand Testing Unification RFCs.
+
+## Alternatives
+
+- Leave things as they are.
+- Encourage people to use `precompileTemplate` along with the current version of `render`.
+
+## Unresolved questions
+
+> Optional, but suggested for first drafts. What parts of the design are still
+> TBD?
