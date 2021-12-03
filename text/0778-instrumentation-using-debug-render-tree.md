@@ -3,9 +3,9 @@ Stage: Accepted
 Start Date: 
 Release Date: Unreleased
 Release Versions:
-  ember-source: 
-  ember-data: 
-Relevant Team(s): Ember.js, GlimmerJS
+  ember.js: 
+  glimmerjs: 
+Relevant Team(s): ember.js, glimmerjs
 RFC PR: https://github.com/emberjs/rfcs/pull/778
 ---
 
