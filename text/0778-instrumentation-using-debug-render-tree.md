@@ -1,7 +1,7 @@
 ---
-Stage: TBD
+Stage: Accepted
 Start Date: TBD
-Release Date: TBD
+Release Date: Unreleased
 Release Versions:
   ember-source: TBD
   ember-data: TBD
