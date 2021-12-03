@@ -5,7 +5,7 @@ Release Date: Unreleased
 Release Versions:
   ember-source: TBD
   ember-data: TBD
-Relevant Team(s): 
+Relevant Team(s): Ember.js, GlimmerJS
 RFC PR: https://github.com/emberjs/rfcs/pull/778
 ---
 
