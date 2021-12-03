@@ -120,6 +120,7 @@ export default class GenerateAvatar extends Component {
   - [Interop](#interop)
   - [The “prelude”](#the-prelude)
   - [Tooling](#tooling)
+    - [Syntax highlighting](#syntax-highlighting)
     - [Blueprints](#blueprints)
     - [Linting and formatting](#linting-and-formatting)
     - [Language server support](#language-server-support)
