@@ -9,17 +9,6 @@ Relevant Team(s): Ember.js, Learning, Ember CLI
 RFC PR: https://github.com/emberjs/rfcs/pull/779
 ---
 
-<!--- 
-Directions for above: 
-
-Stage: Leave as is
-Start Date: Fill in with today's date, YYYY-MM-DD
-Release Date: Leave as is
-Release Versions: Leave as is
-Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies
-RFC PR: Fill this in with the URL for the Proposal RFC PR
--->
-
 
 # First Class Component Templates
 
@@ -941,15 +930,19 @@ A blog post can introduce the feature along these lines when the feature ships, 
 
     The analogy here would be if a JavaScript module could only have a single function or class in it, or a CSS file could only have a single declaration in it, regardless of what actually made sense for that particular module.
 
-<!--
+- The syntax offered here, `<template>`, overlaps with [a platform built-in][platform-template]. This may provoke some degree of confusion for users if they are familiar with it. However, there are several reasons to think this drawback is not significant:
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
+    - In practice `<template>` is very-little used, and only in the context of progressive enhancement with vanilla JS—not with frameworks.
 
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+    - Although it looks a little odd, the platform-native `<template>` can still be nested *within* a `<template>` tag as defined here.
 
--->
+    - Other frameworks (most notably Vue) have used `<template>` in much the same way we are here with no major confusion on the part of developers.
+
+    - Most importantly, there is no *actual* conflict with the platform built-in, since `<template>` is not *JavaScript* syntax, which is where we are using it.
+
+    - As a bonus: in a certain sense, the use of `<template>` here “rhymes” with the version from the platform: it represents the dynamic HTML content associated with some JavaScript functionality.
+
+[platform-template]: http://developer.mozilla.org/en-US/docs/Web/HTML/Element/template
 
 
 ## Alternatives
