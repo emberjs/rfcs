@@ -20,55 +20,89 @@ Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to w
 RFC PR: Fill this in with the URL for the Proposal RFC PR
 -->
 
-# <RFC title>
+# Instrumentation using Debug-Render-Tree
 
 ## Summary
 
-> One paragraph explanation of the feature.
+> Currently, instrumation for Ember component has payload with view data, which includes BOUNDS. This enables the render highlight feature for Ember-Inspector. We can also use it for tracking component rendering. Unfortunately, this is not supported by Glimmer component, the payload for Glimmer component only contains component name. However, debug-render-tree is fully supported by Glimmer component, they contains view data including BOUNDS. We can integrate instrumentation with debug-render-tree then we can send view data to Ember-Inspector. 
 
 ## Motivation
 
-> Why are we doing this? What use cases does it support? What is the expected
-outcome?
+> First of all, Ember component supports such feature. The payload data can be used by some other apps. However, after Octane migration, this is no longer supported. It is an unexpected deprecation. I saw several requests for such feature to be continuously supported https://discord.com/channels/480462759797063690/501388188762505216/684442737113563213
+https://discord.com/channels/480462759797063690/501388188762505216/686516553050751005
+> Additionally, I recently added the component render highlight feature for Ember-Inspector. 
+https://drive.google.com/file/d/1jIUPaM69okID1tlroAFu8lead6zeKfi_/view?usp=sharing
+Other framework like ReactJS has such feature in dev-tool for several years. It is very important for developers, since we can then see when the component is updated or created. It not only help us improve the website performance by eliminating wasted rendering but also help detects potential bugs when component is destroyed and recreated. Without instrumenation with view data, these are impossible.
+
 
 ## Detailed design
+### This is what we currently have:
+> When a Glimmer component is rendered. "Bounds" data is send to debugRenderTree
+> https://github.com/glimmerjs/glimmer-vm/blob/master/packages/@glimmer/runtime/lib/compiled/opcodes/component.ts#L841
+```js
+vm.env.debugRenderTree!.didRender(bucket, bounds);
+```
+> debugRenderTree save the data in the map `nodes`
+> https://github.com/glimmerjs/glimmer-vm/blob/master/packages/@glimmer/runtime/lib/debug-render-tree.ts#L86
+```js
+  didRender(state: TBucket, bounds: Bounds): void {
+    ...
 
-> This is the bulk of the RFC.
+    this.nodeFor(state).bounds = bounds;
+    this.exit();
+  }
+```
+> Currently, we only use the `capture` method to construct the render tree
+> https://github.com/emberjs/ember.js/blob/master/packages/@ember/debug/lib/capture-render-tree.ts#L25
+```js
+export default function captureRenderTree(app: Owner): CapturedRenderNode[] {
+  let renderer = expect(app.lookup<Renderer>('renderer:-dom'), `BUG: owner is missing renderer`);
 
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here.
+  return renderer.debugRenderTree.capture();
+}
+```
+### My proposal:
+> We can add an array `newNodes` with `state` element. We push `state` to queue
+```js
+  didRender(state: TBucket, bounds: Bounds): void {
+    ...
+
+    this.nodeFor(state).bounds = bounds;
++   this.newNodes.push(state);
+    ...
+  }
+```
+> Then add a new method `takeNewNodes`, it returns an nested array of `node` mapped from `newNodes`, and reset `newNodes` to `[]` 
+within EmberJS, when Glimmer component finish rendering, we call `takeNewNodes` and send the `Bounds` and `States` to instrumentation
+> https://github.com/emberjs/ember.js/blob/master/packages/@ember/-internals/glimmer/lib/resolver.ts#L304
+
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
-
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
-
-> How should this feature be introduced and taught to existing Ember
-users?
+> This change will be fully support component render highlight
+> The `node` may have different shape of view data other then the payload from Ember component.  
+> We need to update this doc. https://api.emberjs.com/ember/2.13/classes/Ember.Instrumentation
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+> There is no actual drawback I can think of. This change should NOT affect any performance and can be backward compatible.
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
+> Alternatively, we can call `_instrumentStart` as part of componentManager `update` method, similar to Ember component.
+> https://github.com/glimmerjs/glimmer-vm/blob/master/packages/%40glimmer/manager/lib/public/component.ts#L168
+> This is where Glimmer component calls `_instrumentStart`
+> https://github.com/emberjs/ember.js/blob/master/packages/@ember/-internals/glimmer/lib/component-managers/curly.ts#L432
+> It has several disadvantage.
+ - Bonds data are generated as part of rendering, so starting point is in fact inaccurate. 
+ - The `componentManager` for Glimmer component does not have access to node data. We need to make big changes to support it and the change could impact the performance.
+ - In contract, another advantage of debugRenderTree is, it is enabled by ember-inspector. 
+> https://github.com/emberjs/ember.js/blob/master/packages/@ember/-internals/environment/lib/env.ts#L111
+> https://github.com/glimmerjs/glimmer-vm/blob/master/packages/@glimmer/runtime/lib/environment.ts#L122
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+> We may not guarantee the component from current glimmer instrumentation is always mapped node data. We need test differen edge case.
+> https://github.com/emberjs/ember.js/blob/master/packages/@ember/-internals/glimmer/lib/resolver.ts#L269
+> We can create another method to manually removed the newNodes, `resetNewNodes` and call it before `_instrumentStart` is called.
+> Additionally, It is unlikely, we need to check for any potental racing conditional. Is it possible we don't get all the node data before resolver is called? 
