@@ -6,7 +6,7 @@ Release Versions:
   ember-source: TBD
   ember-data: TBD
 Relevant Team(s): 
-RFC PR: 
+RFC PR: https://github.com/emberjs/rfcs/pull/778
 ---
 
 <!--- 
