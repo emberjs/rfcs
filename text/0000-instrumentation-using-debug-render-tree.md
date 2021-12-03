@@ -33,7 +33,7 @@ RFC PR: Fill this in with the URL for the Proposal RFC PR
 > https://discord.com/channels/480462759797063690/501388188762505216/686516553050751005
 > Additionally, I recently added the component render highlight feature for Ember-Inspector. 
 > https://drive.google.com/file/d/1jIUPaM69okID1tlroAFu8lead6zeKfi_/view?usp=sharing
-Other framework like ReactJS has such feature in dev-tool for several years. It is very important for developers, since we can then see when the component is updated or created. It not only help us improve the website performance by eliminating wasted rendering but also help detects potential bugs when component is destroyed and recreated. Without instrumenation with view data, these are impossible.
+> Other framework like ReactJS has such feature in dev-tool for several years. It is very important for developers, since we can then see when the component is updated or created. It not only help us improve the website performance by eliminating wasted rendering but also help detects potential bugs when component is destroyed and recreated. Without instrumenation with view data, these are impossible.
 
 
 ## Detailed design
