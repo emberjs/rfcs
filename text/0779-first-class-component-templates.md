@@ -941,7 +941,7 @@ A blog post can introduce the feature along these lines when the feature ships, 
 
     - Most importantly, there is no *actual* conflict with the platform built-in, since `<template>` is not *JavaScript* syntax, which is where we are using it.
 
-    - As a bonus: in a certain sense, the use of `<template>` here “rhymes” with the version from the platform: it represents the dynamic HTML content associated with some JavaScript functionality.
+    As a bonus: in a certain sense, the use of `<template>` here “rhymes” with the version from the platform: it represents the dynamic HTML content associated with some JavaScript functionality.
 
 [platform-template]: http://developer.mozilla.org/en-US/docs/Web/HTML/Element/template
 
@@ -955,11 +955,11 @@ Within the major strokes of this design proposal, we could tweak the invocation 
 
 Additionally, there are three major alternatives which Ember community members have proposed in the design space:
 
-- **imports-only:** a design which uses “front-matter” to add imports, and only imports, to templates, while maintaining
-- **single-file components (SFCs)**: a design which follows the example of Svelte and Vue and make HTML the basis of a component, and
+- **imports-only:** a design which uses “front-matter” to add imports, and only imports, to templates, while maintaining everything else in today’s system
+- **single-file components (SFCs)**: a design which follows the example of Svelte and Vue and make HTML the basis of a component, and use a `<script>` tag to host JavaScript functionality
 - **`hbs` template literals**: a design which mirrors the `<template>` design quite closely, but uses `hbs` template literals similar to those we use in tests today
 
-I discuss each of these briefly below; for a *much* longer and more thorough discussion, please see the \~16,000-word series of blog posts I wrote as a deep dive: [**Ember Template Imports**](https://v5.chriskrycho.com/journal/ember-template-imports/).
+I discuss each of these briefly below; for a *much* longer and more thorough discussion, please see the \~16,000-word series of blog posts I wrote as a deep dive: [**Ember Template Imports**](https://v5.chriskrycho.com/journal/ember-template-imports/). Notably, as I alluded to above, *all* of them require custom parsing implementation for tooling, especially including Prettier and language servers.
 
 
 ### Imports-only
