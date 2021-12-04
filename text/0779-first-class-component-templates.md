@@ -1387,7 +1387,7 @@ Net, while there are some nice features to the `hbs` proposal, it comes out sign
 
 - How does this relate to the currently un-merged [RFC #0731: Add `setRouteComponent` API][rfc-0731]? That is: can we merge this and proceed with authoring components while there is an unresolved design problem for the related issue of routes, controllers, and their host components? Or should we see this as a helpful part of resolving *that* design question? (I believe we can move forward in parallel.)
 
-    The primary challenge here is that, as things stand, our guides would have some fairly substantial incoherence until we solve the problems which #0731 is addressing: route templates would be totally different from component templates in their semantics and behavior. This points to the ongoing and increasing divergence of the `Route` and `Component` design from the rest of the framework, but it’s directly connected to *this* RFC pedagogically.
+    The primary challenge here is that, as things stand, our guides would have some fairly substantial incoherence until we solve the problems which #0731 is addressing: route templates would be totally different from component templates in their semantics and behavior. This points to the ongoing and increasing divergence of the `Route` and `Controller` design from the rest of the framework, but it’s directly connected to *this* RFC pedagogically.
 
 - Should we include a plan for a staged rollout of deprecating namespace resolution in this RFC, rather than tackling it in a later RFC?
 
