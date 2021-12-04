@@ -1230,7 +1230,7 @@ Single File Components (hereafter SFCs) start with an HTML baseline and layer on
 
 This is very attractive in some ways, but it comes with three downsides:
 
-First, SFCs do not allow multiple components to be defined in a single file. This has been an ongoing sticking point with the Vue and Svelte designs, such that there is even an [open-for-years RFC for Svelte for supporting at least a subset of this functionality](https://github.com/sveltejs/rfcs/blob/inline-components/text/0000-inline-components.md).
+First, SFCs do not allow multiple components to be defined in a single file. This has been an ongoing sticking point with the Vue and Svelte designs, such that there is even an [RFC for Svelte for supporting at least a subset of this functionality](https://github.com/sveltejs/rfcs/blob/inline-components/text/0000-inline-components.md).
 
 Second, the scope handling for the default export is unusual and requires additional teaching.
 
