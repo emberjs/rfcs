@@ -582,10 +582,12 @@ The helpers in the prelude are:
 - `has-block`
 - `has-block-params`
 - `hash`
+- `helper`
 - `if`
 - `in-element`
 - `let`
 - `log`
+- `modifier`
 - `mount`
 - `mut`
 - `on`
