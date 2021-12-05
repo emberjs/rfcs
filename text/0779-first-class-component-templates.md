@@ -301,10 +301,6 @@ const Greet = setComponentTemplate(
 If the `<template>` references values in scope, they will be included in an object with a `scope` argument (matching the current implementation of the underlying primitives). Thus, this definition—
 
 ```js
-import { precompileTemplate } from '@ember/template-compilation';
-import { setComponentTemplate } from '@ember/component';
-import templateOnlyComponent from '@ember/component/template-only';
-
 function isBirthday(dateOfBirth) {
   const today = new Date();
   return (
@@ -1010,8 +1006,7 @@ The imports-only design borrows the idea of “front-matter” from many text au
 - `replace-location.js`:
 
     ```js
-
-    export default modifier((el, _ , { with: newUrl }) => {
+    export default function replaceLocation(el, { with: newUrl }) {
         el.contentWindow.location.replace(newUrl);
     });
     ```
@@ -1023,8 +1018,6 @@ The imports-only design borrows the idea of “front-matter” from many text au
     import { tracked } from '@glimmer/tracking';
     import Greet from './greet.glimmer';
     import SetUsername from './set-username.glimmer';
-
-
 
     export default class GenerateAvatar extends Component {
       @tracked name = "";
