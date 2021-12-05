@@ -1057,7 +1057,7 @@ The imports-only design borrows the idea of “front-matter” from many text au
 
 </details>
 
-The major upside to this is that it is the smallest possible delta over today’s implementation. However, it has a number of significant downsides
+The major upside to this is that it is the smallest possible delta over today’s implementation. However, it has a number of significant downsides which render it much worse than the first-class component templates proposal, and in some cases worse than the _status quo_.
 
 First, as with today’s _status quo_, it does not allow locally-scoped JavaScript values (including helpers and modifiers but also ecosystem tooling like GraphQL values, CSS-in-JS tooling, etc.) even when that is a perfectly reasonable design decision.
 
@@ -1084,46 +1084,48 @@ import { isBirthday } from './my-component';
 
 While a colocated template (the default since Octane) is part of the same module as the backing class, this does technically work![^recursive-module] However, it’s the kind of extremely surprising and weird thing we would generally try to avoid pedagogically—it requires us to explain that these two separate files (`.js` and `.hbs`) are combined into a single module at build time… and that we have nonetheless kept them separate at authoring time, requiring these kinds of workarounds.[^recursive-import-perf]
 
-Perhaps most critically, this is **much worse than the _status quo_ for tests**. It requires that we do one of the following:
+Perhaps most critically, this is **much worse than the _status quo_ for tests**.
 
-- Require people’s test authoring format to become *massively* more verbose and less useful, with imports in every single test `hbs` string, to support strict mode for tests:
+If we support strict mode for tests, then out of the box we require people’s test authoring format to become *massively* more verbose and less useful, with imports in every single test `hbs` string, to support strict mode for tests:
 
-    ```js
-    import { module, test } from 'qunit';
-    import { hbs } from 'ember-cli-htmlbars';
-    import { setupRenderingTest } from 'ember-qunit';
-    import { render } from '@ember/test-helpers';
+```js
+import { module, test } from 'qunit';
+import { hbs } from 'ember-cli-htmlbars';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
 
-    module('demonstrates the problem', function (hooks) {
-      setupRenderingTest(hooks);
+module('demonstrates the problem', function (hooks) {
+  setupRenderingTest(hooks);
 
-      test('by rendering an imported component', async function (assert) {
-        await render(hbs`
-          ---
-          import ComponentToTest from 'my-app/components/component-to-test';
-          ---
+  test('by rendering an imported component', async function (assert) {
+    await render(hbs`
+      ---
+      import ComponentToTest from 'my-app/components/component-to-test';
+      ---
 
-          <ComponentToTest />
-        `);
-      });
+      <ComponentToTest />
+    `);
+  });
 
-      test('then again with an argument', async function (assert) {
-        await render(hbs`
-          ---
-          import ComponentToTest from 'my-app/components/component-to-test';
-          ---
+  test('then again with an argument', async function (assert) {
+    await render(hbs`
+      ---
+      import ComponentToTest from 'my-app/components/component-to-test';
+      ---
 
-          <ComponentToTest @anArg= />
-        `);
-      });
-    });
-    ```
+      <ComponentToTest @anArg= />
+    `);
+  });
+});
+```
 
-    The first thing to notice is that there is no way to import `ComponentToTest` here just once. This overhead will multiply across the number of items to reference in a given test—every component, every helper, every modifier!—as well as across the number of tests. This is a *large* increase in the burden of testing compared to today.
+There are two major problems to notice here:
 
-    The second thing to notice is that this also requires us to maintain, *and to teach*, the `hbs` handling for tests (or to design some replacement for it), on top of the “regular” template handling for components. This is the same situation as in Ember apps today—but since first-class component templates allow us to *improve* the consistency between app code and test code, this counts as a negative by comparison!
+1. There is no way to import `ComponentToTest` here just once. This overhead will multiply across the number of items to reference in a given test—every component, every helper, every modifier!—as well as across the number of tests. This is a *large* increase in the burden of testing compared to today.
 
-- Continue to support a completely separate design for testing than for app code. In that case, though, supporting strict mode templates in tests *and* avoiding the verbosity of the first option means we need a separate authoring format for tests—in fact, it basically requires that we fully implement something like the first-class component templates design!
+2. This also requires us to maintain, *and to teach*, the `hbs` handling for tests (or to design some replacement for it), on top of the “regular” template handling for components. This is the same situation as in Ember apps today—but since first-class component templates allow us to *improve* the consistency between app code and test code, this counts as a negative by comparison!
+
+To get around this, we could continue to support a completely separate design for testing than for app code. In that case, though, if we want to support strict mode templates in tests, we need a separate authoring format for tests from app code. In fact, it basically requires that we fully implement something like the first-class component templates design!
 
 [^recursive-module]: To see this for yourself, follow the instructions in [this gist](https://gist.github.com/chriskrycho/dc5adabd80c04d405c7a4894c0ffb99e). I had to test this out myself, and while it’s actually *very good* that modules work this way, I was initially surprised by it! If you’re curious: imports and exports are *static* and so are analyzed before the module is executed.
 
