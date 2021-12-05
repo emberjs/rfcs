@@ -177,7 +177,7 @@ These problems are all well-solved already, using the JavaScript modules spec (o
 
 ### Scope
 
-Second, and closely related to the global namespace problem: there is presently no good way for users to introduce or use locally-scoped code. Every component, helper, and modifier must live in its own file, and be globally availbale—even if it is meant to be used privately. Where JavaScript modules provide users to control their public APIs in terms of `export`s, Ember apps largely cannot take advantage of those for anything which interacts with the template layer.
+Second, and closely related to the global namespace problem: there is presently no good way for users to introduce or use locally-scoped code. Every component, helper, and modifier must live in its own file, and be globally available—even if it is meant to be used privately. Where JavaScript modules provide users to control their public APIs in terms of `export`s, Ember apps largely cannot take advantage of those for anything which interacts with the template layer.
 
 In practice, this has a number of knock-on effects for Ember code.
 
@@ -186,7 +186,7 @@ First, components tend to grow without bound, because the equivalent of the "ext
 - they make the newly-extracted components available to the whole app, even if the concern is private to that component
 - the require an entirely new file, which is friction both for the creation and the use/understanding of a given view
 
-Second, users also often introduce classes with actions or getters where a simple [function-based helper][rfc-0756] would do, because that is the only way to provide a non-global function. (I show this by example in [**How We Teaching This: Guides: Tutorial: Reusable Components**](#reusable-components) below.)
+Second, users also often introduce classes with actions or getters where a simple [function-based helper][rfc-0756] would do, because that is the only way to provide a non-global function. (I show this by example in [**How We Teach This: Guides: Tutorial: Reusable Components**](#reusable-components) below.)
 
 Third, it likewise incentivizes the use of the ember-render-modifiers with backing classes, rather than custom modifiers, because the behavior can then be scoped to that module—whereas, again, a custom modifier would be in global scope. This in turn makes it easy for users to miss the helpful separation of concerns which custom modifiers enable.
 
@@ -532,7 +532,7 @@ class Example extends Component {
 
 That is because the compilation output does *not* embed the template in the class' body in any way, but instead associates it *externally* to the class—but private class fields are only accessible within the body of the class itself, per the ECMAScript spec. While we could invest time to change the implementation to avoid this, it is not generally a problem. Because we do not interact with component class instances directly—only through the template layer—we do not actually *need* private class fields.
 
-Even, this is a real gap, which we could address in a future RFC. Notably, it is *not specific to this proposal*, but applies to *all* proposals built on the current primitives.
+This is a real gap, which we could address in a future RFC. Notably, it is *not specific to this proposal*, but applies to *all* proposals built on the current primitives.
 
 
 ### Interop
@@ -594,8 +594,6 @@ The helpers in the prelude are:
 - `mut`
 - `on`
 - `outlet`
-- `query-params`
-- `unbound`[^unbound-deprecated]
 - `unless`
 - `yield`
 
@@ -613,7 +611,6 @@ The components in the prelude are:
 
 [^prelude]: “Prelude” is the conventional name for this functionality in programming language design.
 
-[^unbound-deprecated]: `unbound` is deprecated, but since it will not be removed till Ember 5.0.0, it should appear in the prelude nonetheless.
 
 
 ### Tooling
