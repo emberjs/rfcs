@@ -642,7 +642,58 @@ The current blueprints support generating a backing class for any existing compo
 
 2. Reimplement the blueprint using an AST transform (which we have prior art for: route generation uses that approach), to add a backing class for an existing default export in the module.
 
-We should take (1) here as a default starting point, while encouraging the community to implement (2) if interested.
+(We should take (1) here as a default starting point, while encouraging the community to implement (2) if interested.)
+
+We should also update the name of the class generated for a component class. The default behavior of today's blueprint when generating a component is to suffix the class name with `Component`. Thus, running `ember generate component greeting --component-class=@glimmer/component` will produce a class named `GreetingComponent`.[^ts-component-name]
+
+There was room for debate about whether this made sense for naming component classes up till now, since the invocation name was based on the file name (using Ember's resolution rules) and *not* the class name. Now, though, it *will* be based on the imported name, and the standard behavior of auto-import tooling is to import classes by their full name—whether the item is a named export or a default export. When a user goes to autocomplete `Greeting` (e.g. in [Glint][glint]), they will end up with `GreetingComponent`, leading to this sort of thing if they don’t rename it:
+
+```js
+import GreetingComponent from './greeting';
+
+<template>
+  <GreetingComponent @name={{@user.name}} />
+</template>
+```
+
+This is obviously undesirable, but avoiding this will mean mean renaming locally after the autocomplete works. That renaming operation is needless papercut in the best case of importing a default export. It rises to the level of a significant annoyance when using named imports:
+
+```js
+import {
+  ButtonComponent as UIButton,
+  FormComponent as UIForm,
+  InputComponent as UIInput,
+} from './ui';
+
+<template>
+  <UIForm @onSubmit={{@saveName}}>
+    <UIInput @label="Name" @value={{@name}} @onUpdate={{@updateName}} />
+    <UIButton @label="Save" type="submit" />
+  </UIForm>
+</template>
+```
+
+And it makes namespace-style imports basically unusable: to invoke *without* `Component` everywhere, you have to rebind all the imports you use!
+
+```js
+import * as _UI from './ui';
+const UI = {
+  Form: _UI.FormComponent,
+  Button: _UI.ButtonComponent,
+  Input: _UI.InputComponent
+}
+
+<template>
+  <UI.Form @onSubmit={{@saveName}}>
+    <UI.Input @label="Name" @value={{@name}} @onUpdate={{@updateName}} />
+    <UI.Button @label="Save" type="submit" />
+  </UI.Form>
+</template>
+```
+
+Accordingly, we should switch to generating *without* a class name: `ember generate component greeting --component-class=@glimmer/component` should produce a class named `Greeting`, *not* `GreetingComponent`. The generated names for routes, services, and controllers can remain as they are, since they are never invoked this way.
+
+[^ts-component-name]: In TypeScript, this also extends to `GreetingComponentArgs` (or, with [RFC #0748][rfc-0748], something like `GreetingComponentSignature`), which gets *really* unwieldy!
 
 
 #### Linting and formatting
