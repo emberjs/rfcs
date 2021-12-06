@@ -119,8 +119,8 @@ export default class GenerateAvatar extends Component {
   - [Constraints](#constraints)
 - [Detailed design](#detailed-design)
   - [Compilation](#compilation)
-    - [Bound to a name](#bound-to-a-name)
     - [Standalone](#standalone)
+    - [Bound to a name](#bound-to-a-name)
     - [Class body](#class-body)
   - [Interop](#interop)
   - [The “prelude”](#the-prelude)
@@ -294,24 +294,24 @@ These kinds of apps and integrations can integrate the template compiler as a ru
 [storybook]: https://storybook.js.org
 
 
-#### Bound to a name
+#### Standalone
 
-Given a `<template>` tag assigned to a name in JavaScript scope:
+The compiled output for a top-level `<template>` tag is a default export. This means that the very common case of having a simple template-only component looks basically just like HTML, wrapped in `<template>`, helping us provide a strong *progressive disclosure of complexity* flow to our design and our pedagogy. It also means that the basic code Ember developers use today changes very little for the most basic version of the new format. Given this input:
 
 ```js
-const Greet = <template>
+<template>
   <p>Hello, {{@name}}!</p>
 </template>
 ```
 
-Then the compiled output is:
+The compiled output is:
 
 ```js
 import { precompileTemplate } from '@ember/template-compilation';
 import { setComponentTemplate } from '@ember/component';
 import templateOnlyComponent from '@ember/component/template-only';
 
-const Greet = setComponentTemplate(
+export default setComponentTemplate(
   precompileTemplate(`
   <p>Hello, {{@name}}!</p>
   `
@@ -320,7 +320,7 @@ const Greet = setComponentTemplate(
 );
 ```
 
-If the `<template>` references values in scope, they will be included in an object with a `scope` argument (matching the current implementation of the underlying primitives). Thus, this definition—
+If the `<template>` references values in scope, they will be included in an object with a `scope` argument (shown here using the current implementation of the underlying primitives). Thus, this definition—
 
 ```js
 function isBirthday(dateOfBirth) {
@@ -331,7 +331,7 @@ function isBirthday(dateOfBirth) {
   );
 }
 
-const Greet = <template>
+<template>
   <p>Hello, {{@name}}!</p>
   {{#if (isBirthday @dateOfBirth)}}
     <p>Happy birthday! 🎈</p>
@@ -354,7 +354,7 @@ function isBirthday(dateOfBirth) {
   );
 }
 
-const Greet = setComponentTemplate(
+export default setComponentTemplate(
   precompileTemplate(`
   <p>Hello, {{@name}}!</p>
   {{#if (isBirthday @dateOfBirth)}}
@@ -368,6 +368,81 @@ const Greet = setComponentTemplate(
   templateOnlyComponent()
 );
 ```
+
+Since the values in scope use normal JavaScript semantics, this means that imports also “just work”. Thus, if we extracted `isBirthday` into a separate file for reuse elsewhere, we could import and use it like this:
+
+```js
+import { isBirthday } from '../utils/user';
+
+<template>
+  <p>Hello, {{@name}}!</p>
+  {{#if (isBirthday @dateOfBirth)}}
+    <p>Happy birthday! 🎈</p>
+  {{/if}}
+</template>
+```
+
+The compiled output would be just the same as before, save using the imported value:
+
+```js
+import { isBirthday } from '../utils/user';
+import { precompileTemplate } from '@ember/template-compilation';
+import { setComponentTemplate } from '@ember/component';
+import templateOnlyComponent from '@ember/component/template-only';
+
+export default setComponentTemplate(
+  precompileTemplate(`
+  <p>Hello, {{@name}}!</p>
+  {{#if (isBirthday @dateOfBirth)}}
+    <p>Happy birthday! 🎈</p>
+  {{/if}}
+  `,
+    {
+      scope: () => ({ isBirthday }),
+    }
+  ),
+  templateOnlyComponent()
+);
+```
+
+Since the compiled output is a default export, it is a static error to have multiple top-level (i.e. not bound to a name) `<template>`s in a file—because it is a static error to have multiple `export default` statements in a JavaScript file. (We should provide linting tooling to error on this case, rather than letting it fail at build or runtime.)
+
+
+#### Bound to a name
+
+A standalone first-class template can also be bound to a name in the module. This allows users to provide locally-scoped modules as well as a single default export, as well as to use modules as a way of grouping related functionality or hiding private functionality while still being able to refactor and extract common code. Given this input:
+
+```js
+const Greet = <template>
+  <p>Hello, {{@name}}!</p>
+</template>
+```
+
+The compiled output is:
+
+```js
+import { precompileTemplate } from '@ember/template-compilation';
+import { setComponentTemplate } from '@ember/component';
+import templateOnlyComponent from '@ember/component/template-only';
+
+const Greet = setComponentTemplate(
+  precompileTemplate(`
+  <p>Hello, {{@name}}!</p>
+  `
+  ),
+  templateOnlyComponent()
+);
+```
+
+Values referended from the surrounding scope are included in exactly the same way as with the standalone top-level declaration.
+
+Notice that this allows for a host of convenient (and likely common!) new ways of providing a group of related components. For example:
+
+- Genuinely private components could be authored within a file which does not export them, and only exports the public API.
+- Components can be authored in their own files as default exports, and then importing them and re-exporting them as a namespace from an entry-point module.
+- A namespace export allows an library to supply both a default export as its primary entry point and a series of related components within the same module.
+
+No doubt there are many other such useful patterns which will emerge organically here as they have across the broader JS ecosystem.
 
 **Two important notes:**
 
@@ -423,37 +498,6 @@ const Greet = setComponentTemplate(
     (Notice that this is no different than any other concern around other costly operations needlessly happening in a function body repeatedly.)
 
     See further discussion below under [**How We Teach This**](#how-we-teach-this).
-
-
-#### Standalone
-
-The compiled output for a top-level `<template>` tag *not* bound to a name is a default export, but otherwise identical to a `<template>` declaration bound to a tag. Thus, given this input:
-
-```js
-<template>
-  <p>Hello, {{@name}}!</p>
-</template>
-```
-
-The compiled output is:
-
-```js
-import { precompileTemplate } from '@ember/template-compilation';
-import { setComponentTemplate } from '@ember/component';
-import templateOnlyComponent from '@ember/component/template-only';
-
-export default setComponentTemplate(
-  precompileTemplate(`
-  <p>Hello, {{@name}}!</p>
-  `
-  ),
-  templateOnlyComponent()
-);
-```
-
-Scoped values are included the same as with named definitions.
-
-Since the compiled output is a default export, it is a static error to have multiple top-level (i.e. not bound to a name) `<template>`s in a file—because it is a static error to have multiple `export default` statements in a JavaScript file. (We should provide linting tooling to error on this case, rather than letting it fail at runtime.)
 
 
 #### Class body
