@@ -1033,15 +1033,13 @@ A blog post can introduce the feature along these lines when the feature ships, 
 
 - We must build a custom tooling integration with Prettier for the file format to *parse*. (As discussed below, we must build custom tooling to *use* Prettier for other options, but Prettier can *parse* them without custom tooling.)
 
-- While not especially important in the context of a front-end framework (as opposed to a framework-less/“vanilla” context), `<template>` does technically overlap with a platform built-in, and would look very strange if a user *did*  want to use the built-in form.
-
 - Developers may put an unreasonable number of components, helpers, modifiers, etc. in a single file, degrading the maintainability of that module. However, the counterpoint here is that large files are already common in many code bases, with or without this tool. Indeed, that happens in non-UI and UI code bases alike!
 
     Moreover, experience from frameworks which restrict component authoring formats to a single component per file, including Ember’s loose mode templates as well as Vue and Svelte SFCs, is that those components themselves tend to balloon in size. Sometimes that’s because everything in those components is notionally related or because much of it should be treated as "private API" for that component (even if it would be helpful to refactor small local components). Sometimes it is just because of the annoying overhead of needing to create a separate file to break the huge component into smaller pieces, and then import them all (or make them globally available, in Ember loose mode template!).
 
     The analogy here would be if a JavaScript module could only have a single function or class in it, or a CSS file could only have a single declaration in it, regardless of what actually made sense for that particular module.
 
-- The syntax offered here, `<template>`, overlaps with [a platform built-in][platform-template]. This may provoke some degree of confusion for users if they are familiar with it. However, there are several reasons to think this drawback is not significant:
+- The syntax offered here, `<template>`, overlaps with [a platform built-in][platform-template], and would look very strange if a user *did*  want to use the built-in form. This may provoke some degree of confusion for users if they are familiar with it. However, there are several reasons to think this drawback is not significant:
 
     - In practice `<template>` is very-little used, and only in the context of progressive enhancement with vanilla JS—not with frameworks.
 
