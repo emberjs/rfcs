@@ -10,14 +10,14 @@ RFC PR: https://github.com/emberjs/rfcs/pull/779
 ---
 
 
-# First Class Component Templates
+# First-Class Component Templates
 
 
 ## Summary
 
 Adopt `<template>` tags as a format for making component templates first-class participants in JavaScript and TypeScript with [strict mode][rfc-0496] template semantics. In support of the new syntax, adopt new custom JavaScript and TypeScript files with the extensions `.gjs` and `.gts` respectively.
 
-First class component templates address a number of pain points in today’s component authoring world, and providing a number of new capabilities to Ember and Glimmer users:
+First-class component templates address a number of pain points in today’s component authoring world, and provide a number of new capabilities to Ember and Glimmer users:
 
 - accessing local JavaScript values with no ceremony and no backing class, enabling much easier use of existing JavaScript ecosystem tools, including especially styling libraries—standard [CSS Modules][css-modules] will “just work,” for example
 
@@ -25,11 +25,15 @@ First class component templates address a number of pain points in today’s com
 
 - likewise authoring locally-scoped helpers, modifiers, and other JavaScript functionality
 
-First class component templates offer these new capabilities while not only maintaining but *improving* Ember’s long-standing commitment to integrated testing, in that it allows app and test code to share a single authoring paradigm—substantially simplifying our teaching story. Similarly, it preserves Ember’s long-standing commitment to treating JavaScript and HTML (and CSS!) as distinctive concerns which, however closely related, are not the *same*.
+First-class component templates offer these new capabilities while not only maintaining but *improving* Ember’s long-standing commitment to integrated testing, in that it allows app and test code to share a single authoring paradigm—substantially simplifying our teaching story. Similarly, it preserves Ember’s long-standing commitment to treating JavaScript and HTML (and CSS!) as distinctive concerns which, however closely related, are not the *same*.
 
 <details><summary>Full-fledged example showing how this might work in practice</summary>
 
-(Note that for this and all following examples, I assume [RFC #0757: Default Modifier Manager][rfc-0757] for simplicity, but it does not meaningfully change *this* proposal.)
+Two notes:
+
+- For this and all the examples in the RFC, I assume [RFC #0757: Default Modifier Manager][rfc-0757] for simplicity, but it does not meaningfully change *this* proposal.
+
+- The syntax highlighting here is a mess… but that's because GitHub still doesn't have good highlighting for *decorators*. Samples which have `<template>` but *not* `@tracked` actually already highlight decently well.
 
 [rfc-0757]: https://github.com/emberjs/rfcs/pull/757
 
