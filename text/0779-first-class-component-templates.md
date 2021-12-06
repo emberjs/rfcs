@@ -609,7 +609,7 @@ export const Greet = <template>
 </template>
 
 export const Farewell = <template>
-  <p>Hello, {{@name}}!</p>
+  <p>Goodbye, {{@name}}!</p>
 </template>
 ```
 
@@ -1228,7 +1228,7 @@ module('demonstrates the problem', function (hooks) {
       import ComponentToTest from 'my-app/components/component-to-test';
       ---
 
-      <ComponentToTest @anArg= />
+      <ComponentToTest @anArg={{123}} />
     `);
   });
 });
@@ -1368,7 +1368,7 @@ module('demonstrates the problem', function (hooks) {
         import ComponentToTest from 'my-app/components/component-to-test';
       </script>
 
-      <ComponentToTest @anArg= />
+      <ComponentToTest @anArg={{123}} />
     `);
   });
 });
