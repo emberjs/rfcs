@@ -156,7 +156,7 @@ First, because of the global namespace, name conflicts are common, and avoiding 
 
 - Even the workaround via `ember-holy-futuristic-template-namespacing-batman` requires using different names for modules in Ember than their Node package name when the Node package uses [npm scopes][scopes]. (This was one of the original motivations for exploring a design which leverages JavaScript modules, in fact!) Since our resolution modes must ultimately deal in JavaScript terms, we are in the position of always potentially being one ecosystem shift away from another syntax conflict with template-language-only designs for managing scope.
 
-- It requires our tooling to understand Ember's resolution rules, and cannot take advantage of existing ecosystem tooling. Our language servers, for example, have to more or less reimplement Ember’s resolver themselves. And on the build side, Ember CSS Modules has to do an enormous amount of very hacky work (just ask the author!) to make CSS Modules work with Ember. These problems are fundamental to the current model.
+- It requires our tooling to understand Ember's resolution rules, and our tooling cannot take advantage of existing ecosystem tooling. Our language servers, for example, have to more or less reimplement Ember’s resolver themselves.
 
 - There is a substantial performance cost to dynamically resolving components by name at runtime. This can be mitigated by using the combination of something like `ember-holy-futuristic-template-namespacing-batman` with the [strict resolver][strict-resolver], but the strict resolver is not standard—and really cannot be without something like this proposal.[^strict-resolver-rfc]
 
@@ -177,7 +177,7 @@ These problems are all well-solved already, using the JavaScript modules spec (o
 
 ### Scope
 
-Second, and closely related to the global namespace problem: there is presently no good way for users to introduce or use locally-scoped code. Every component, helper, and modifier must live in its own file, and be globally available—even if it is meant to be used privately. Where JavaScript modules provide users to control their public APIs in terms of `export`s, Ember apps largely cannot take advantage of those for anything which interacts with the template layer.
+Second, and closely related to the global namespace problem: there is presently no good way for users to introduce or use locally-scoped code. Every component, helper, and modifier must live in its own file, and be globally available—even if it is meant to be used privately. Where JavaScript modules provide users to control their public APIs in terms of `export`s, Ember apps largely cannot take advantage of exports for anything which interacts with the template layer.
 
 In practice, this has a number of knock-on effects for Ember code.
 
@@ -196,7 +196,10 @@ Over time, these all lead to a proliferation of backing classes which are only p
 
 [scopes]: https://docs.npmjs.com/cli/v8/using-npm/scope
 
-What’s more, tools which assume they will be used in JavaScript contexts more or less don’t work with our templates today, because the templates have no way to access them. Think of CSS tools like [CSS Modules][css-modules], which is widely used in the Ember ecosystem via [Ember CSS Modules][e-css-m]: our current implementation has to jump through many hoops and do many hacks to work at all. A format which makes JavaScript values available in template scope would let us drop *all* of that special sauce—and this goes for *all* such JavaScript-side tooling.
+  
+### Ecosystem integration
+
+Tools which assume they will be used in JavaScript contexts more or less don’t work with our templates today, because the templates have no way to access them. Think of CSS tools like [CSS Modules][css-modules], which is widely used in the Ember ecosystem via [Ember CSS Modules][e-css-m]: our current implementation has to jump through many hoops and do many hacks to work at all. These problems are fundamental to the current model. A format which makes JavaScript values available in template scope would let us drop *all* of that special sauce—and this goes for *all* such JavaScript-side tooling.[^other-css-tools]
 
 [css-modules]: https://github.com/css-modules/css-modules
 [e-css-m]: https://github.com/salsify/ember-css-modules
@@ -381,7 +384,7 @@ const Greet = setComponentTemplate(
     }
     ```
 
-    The problem here is that this requires re-running both the template precompilation step *and* the creation of the template-only empty backing instance which has `null` for `this`. Re-doing the template precompilation will *work*, but it is expensive and slow.
+    The problem here is that this requires re-running both the creation of the template-only empty backing instance which has `null` for `this`, and the association between the two. (Normally the template precompilation also happens during the buidl, which eliminates some but not all of the apparent cost here. Re-doing the template precompilation will *work*, but it is expensive and slow, so we do it during build.)
 
     In this scenario, users can accomplish the same thing by manually hoisting the component definitions to module scope:
 
@@ -528,7 +531,7 @@ class Example extends Component {
 
 That is because the compilation output does *not* embed the template in the class' body in any way, but instead associates it *externally* to the class—but private class fields are only accessible within the body of the class itself, per the ECMAScript spec. While we could invest time to change the implementation to avoid this, it is not generally a problem. Because we do not interact with component class instances directly—only through the template layer—we do not actually *need* private class fields.
 
-This is a real gap, which we could address in a future RFC. Notably, it is *not specific to this proposal*, but applies to *all* proposals built on the current primitives.
+This is a real gap, which we could address in a future RFC. Notably, however, it is *not specific to this proposal*, but applies to *all* proposals built on the current primitives.
 
 
 ### Interop
@@ -634,7 +637,7 @@ All blueprints will need to be updated to support generating the new format. Dur
 
 1. Introduce the ability to author components in the new format with a new `--strict` flag, but leave the default today’s loose mode format. Introduce `--loose` as an explicit flag for using today’s loose mode format.
 
-2. When Ember Polaris is released, change the default to the new format, while leaving loose mode available via `--loose`, and preserving `--strict` as an explicit flag for the new default.
+2. When Ember Polaris[^polaris] is released, change the default to the new format for apps and addons which set `"edition": "polaris"`, while leaving loose mode available via `--loose`, and preserving `--strict` as an explicit flag for the new default.
 
 3. If or when loose mode templates are deprecated, the supporting blueprint infrastructure can be removed, including the `--loose` flag.
 
@@ -694,6 +697,8 @@ const UI = {
 ```
 
 Accordingly, we should switch to generating *without* a class name: `ember generate component greeting --component-class=@glimmer/component` should produce a class named `Greeting`, *not* `GreetingComponent`. The generated names for routes, services, and controllers can remain as they are, since they are never invoked this way.
+  
+[^polaris]: Polaris was announced as planned at EmberConf 2021. This plan assumes we ship Polaris before Ember 5. If we ship Ember 5 first, the dynamics would be much the same, but with the major version as the point wehn we switch the default instead.
 
 [^ts-component-name]: In TypeScript, this also extends to `GreetingComponentArgs` (or, with [RFC #0748][rfc-0748], something like `GreetingComponentSignature`), which gets *really* unwieldy!
 
