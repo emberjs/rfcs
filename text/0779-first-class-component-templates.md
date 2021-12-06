@@ -403,7 +403,7 @@ const Greet = setComponentTemplate(
     }
     ```
 
-    The problem here is that this requires re-running both the creation of the template-only empty backing instance which has `null` for `this`, and the association between the two. (Normally the template precompilation also happens during the buidl, which eliminates some but not all of the apparent cost here. Re-doing the template precompilation will *work*, but it is expensive and slow, so we do it during build.)
+    The problem here is that this requires re-running both the creation of the template-only empty backing instance which has `null` for `this`, and the association between the two. As described above, the template precompilation also happens during the build, which eliminates some but not all of the apparent cost here; but the other parts are needlessly dynamic and expensive.
 
     In this scenario, users can accomplish the same thing by manually hoisting the component definitions to module scope:
 
