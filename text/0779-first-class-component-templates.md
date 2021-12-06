@@ -260,20 +260,34 @@ While it is certainly possible to differ with these constraints *a priori*—ree
 
 ## Detailed design
 
-Introduce a new high-level syntax, the `<template>` tag, which is syntactical sugar for `setComponentTemplate` and `precompileTemplate`, in conjunction with the existing Ember and Glimmer `Component` classes and the special template-only component class returned by the `templateOnlyComponent` default export from `@ember/component/template-only`. There are three distinct, legal forms for this compilation:
+Introduce a new high-level syntax, the `<template>` tag, which is syntactical sugar for `setComponentTemplate` and `precompileTemplate`, in conjunction with the existing Ember and Glimmer `Component` classes and the special template-only component class returned by the `templateOnlyComponent` default export from `@ember/component/template-only`.
+
+There are three distinct, legal forms for this compilation:
 
 - a standalone `<template>` at the top level of a module
 - a `<template>` bound to a name
 - in the body of a component class
 
-For a discussion of the `setComponentTemplate` and `templateOnlyComponent` primitives, see [RFC #0481][rfc-0481]; for discussion of the `precompileTemplate` primitive, see [RFC #0496][rfc-0496]. This discussion will *assume* rather than *define* those.
+For a discussion of the `setComponentTemplate` and `templateOnlyComponent` primitives, see [RFC #0481][rfc-0481]; for discussion of the `precompileTemplate` primitive, see [RFC #0496][rfc-0496]. This discussion will *assume* rather than *define* those. Additionally, I leave aside here the further build-time passes which transform `precompileTemplate` invocations into a precompiled template in “wire format” ready for use by the Glimmer VM, as that is not affected by the authoring format.
 
 [rfc-0481]: https://emberjs.github.io/rfcs/0481-component-templates-co-location.html
 
 
 ### Compilation
 
-The value produced by authoring a `<template>` is a *JavaScript value*, and accordingly may be exported, bound to other values, passed as an argument to a function or set as a value on a class, etc. However, the value may not be treated as *dynamic*: the rendering engine will evaluate the value exactly and only once. Therefore, it is nonsensical to use it with a `let` binding or to attempt to create new `<template>`s dynamically from the body of a function. (A function may of course return different components based on its arguments, etc.; it simply may not *construct* new component templates dynamically.)
+The value produced by authoring a `<template>` is a *JavaScript value*, and accordingly may be exported, bound to other values, passed as an argument to a function or set as a value on a class, and so on. However, that value is not *dynamic*. Intead, it is compiled statically to a format targeting the Glimmer VM at compile time, such that even the `precompileTemplate` invocations are removed in favor of the wire format, which itself may be further optimized or changed in the future.
+
+Therefore, in normal app or addon code, it is nonsensical to use it with a `let` binding: changing the value bound to the `let` will *not* result in Ember’s reevaluating anything which *uses* that value: the “scope” of a template is only ever computed once, for performance reasons.
+
+A function may of course return different components based on its arguments, etc.; but such a function will not be “automatically” re-executed unless the function consumes tracked properties. This is just applying the standard auto-tracking semantics to functions which return components, which is possible *today*. I discuss below the performance pitfalls of doing this inline, and the corresponding guidance we should provide.
+
+Apps or addons which want to compile arbitrary components at runtime are the exception to static component definition as described here. Most apps and addons will *not* want to do this, because it is expensive and slow and also a security risk in that it allows arbitrary code execution within your app. However, there *are* good use cases, e.g. dynamic online environments like the [GlimmerX playground][glimmerx-playground] or the [Limber Editor][limber], or documentation tooling like [Storybook][storybook].
+
+These kinds of apps and integrations can integrate the template compiler as a runtime dependency and build new templates on the fly. However, the details of doing that are unrelated to providing first-class component templates and do not change as a result of this RFC. The scope remains static for any given `<template>` declaration after compilation; the difference there is that they are intentionally re-executing the compilation step itself.
+
+[glimmerx-playground]: https://glimmerjs.github.io/glimmer-experimental/
+[limber]: https://limber.glimdown.com/
+[storybook]: https://storybook.js.org
 
 
 #### Bound to a name
