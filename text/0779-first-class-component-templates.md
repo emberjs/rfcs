@@ -109,6 +109,7 @@ export default class GenerateAvatar extends Component {
 - [Motivation](#motivation)
   - [Namespaces and Modules](#namespaces-and-modules)
   - [Scope](#scope)
+  - [Ecosystem integration](#ecosystem-integration)
   - [Testing](#testing)
   - [The solution](#the-solution)
   - [Constraints](#constraints)
