@@ -785,12 +785,10 @@ The discussion of adding behavior to components will need to be updated to accou
 
 2. When discussing use of values from `ENV`, instead of providing a getter on a backing class, start by creating a `TOKEN` constant in module scope, and show that it is available to access in the template. In the following section, which shows args being used in the template, simply use that `TOKEN` value in the template directly, `access_token={{TOKEN}}`.
 
-3. When refactoring to use a getter for `src`, use the value as `${TOKEN}`. Note explicitly how there is a symmetry between JS and templates: you can use whichever approach is clearer for a given context.
-
 
 ##### Reusable Components
 
-This section provides is an opportunity to show how useful it can be to introduce local functions. The code samples here currently use a backing class, but they only do so to provide a home for getters which provide an encoded URI for the Mapbox token and derive the `src` from the arguments.
+This section provides us an opportunity to show how useful it can be to introduce local functions. The code samples here currently use a backing class, but they only do so to provide a home for getters which provide an encoded URI for the Mapbox token and derive the `src` from the arguments.
 
 (I will provide this example in full here in part because it shows powerfully the pedagogical value of this RFC!)
 
@@ -856,9 +854,7 @@ The section “Getting JavaScript Values into the Test Context” will also be p
 
 This entire section will also need to be substantially reworked. Once again, I am here summarizing the changes rather than trying to rewrite the guide in place. Each section represents a page to be changed; if a section is not mentioned, it needs no substantive changes—likely only switching over to using the `<template>` wrapper.
 
-At some point in the course of this discussion, we should call out (e.g. with a “Zoey says” block) that users should treat `<template>` the same way they treat a costly function which produces a result for the life of the whole app, and should therefore avoidng using `<template>` in function bodies rather than hoisting them, etc. This cannot be a hard and fast rule about where `<template>` definitions live, because there are plenty of ways to do it safely, and what’s more we *need* to do it in test modules.
-
-The point is simply to align people’s mental model for `<template>` with *other* costly operations, since these concerns are not specific to component creation.
+At some point in the course of this discussion, we should call out (e.g. with a “Zoey says” block) that users should treat `<template>` the same way they treat a costly function which produces a result for the life of the whole app, and should therefore avoidng using `<template>` in function bodies rather than hoisting them, etc. This cannot be a hard and fast rule about where `<template>` definitions live, because there are plenty of ways to do it safely, and what’s more we *need* to do it in test modules. The point is simply to align people’s mental model for `<template>` with *other* costly operations, since these concerns are not specific to component creation.
 
 
 ##### Introducing Components
@@ -889,7 +885,7 @@ Additionally, instead of the *next* section being the place where we first ident
 
 Here, the content will need to shift in two ways:
 
-1. The motivation for introducing a backing class shifts slightly: we have the ability to have state at the module level already, including via class-backed helpers. What we need is a way to have state that is for *just one component*. A class is JavaScript’s first-class way of doing that, so we have a version which supports it.
+1. The motivation for introducing a backing class shifts slightly: we have the ability to have state at the module level already, including via class-backed helpers. What we need is a way to have state that is for *each component instance*. A class is JavaScript’s first-class way of doing that, so we have a version of first-class component templates which supports it!
 
 2. Having made the motivation clear, we can show the `<template>` in the body of the class and explain that it is exactly the same as a standalone template component, except that it now has access to the backing class for local state, "actions", etc.
 
