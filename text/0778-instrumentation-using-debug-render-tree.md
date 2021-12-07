@@ -65,6 +65,7 @@ export default function captureRenderTree(app: Owner): CapturedRenderNode[] {
 ```
 ### My proposal:
 > We can add an array `newNodes` with `state` element. We push `state` to queue
+
 ```js
   didRender(state: TBucket, bounds: Bounds): void {
     ...
