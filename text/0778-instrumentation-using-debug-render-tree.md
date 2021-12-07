@@ -1,6 +1,6 @@
 ---
 Stage: Accepted
-Start Date: 
+Start Date: 2021-12-06
 Release Date: Unreleased
 Release Versions:
   ember.js: 
