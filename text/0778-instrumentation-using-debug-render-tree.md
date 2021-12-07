@@ -24,7 +24,7 @@ RFC PR: Fill this in with the URL for the Proposal RFC PR
 
 ## Summary
 
-> Currently, instrumation for Ember component has payload with view data, which includes BOUNDS. This enables the render highlight feature for Ember-Inspector. We can also use it for tracking component rendering. Unfortunately, this is not supported by Glimmer component, the payload for Glimmer component only contains component name. However, debug-render-tree is fully supported by Glimmer component, they contains view data including BOUNDS. We can integrate instrumentation with debug-render-tree then we can send view data to Ember-Inspector. 
+Currently, instrumentation for Ember component has payload with view data, which includes BOUNDS. This enables the render highlight feature for Ember-Inspector. We can also use it for tracking component rendering. Unfortunately, this is not supported by Glimmer component; the payload for Glimmer component only contains component name. However, debug-render-tree is fully supported by Glimmer component, they contains view data including BOUNDS. We can integrate instrumentation with debug-render-tree then we can send view data to Ember-Inspector. 
 
 ## Motivation
 
