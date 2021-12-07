@@ -75,7 +75,8 @@ export default function captureRenderTree(app: Owner): CapturedRenderNode[] {
     ...
   }
 ```
-> Then add a new method `takeNewNodes`, it returns an nested array of `node` mapped from `newNodes`, and reset `newNodes` to `[]` 
+
+Then add a new method `takeNewNodes`, it returns an nested array of `node` mapped from `newNodes`, and reset `newNodes` to `[]` 
 within EmberJS, when Glimmer component finish rendering, we call `takeNewNodes` and send the `Bounds` and `States` to instrumentation
 > https://github.com/emberjs/ember.js/blob/master/packages/@ember/-internals/glimmer/lib/resolver.ts#L304
 
