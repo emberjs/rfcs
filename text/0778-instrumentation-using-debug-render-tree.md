@@ -55,6 +55,7 @@ vm.env.debugRenderTree!.didRender(bucket, bounds);
 ```
 > Currently, we only use the `capture` method to construct the render tree
 > https://github.com/emberjs/ember.js/blob/master/packages/@ember/debug/lib/capture-render-tree.ts#L25
+
 ```js
 export default function captureRenderTree(app: Owner): CapturedRenderNode[] {
   let renderer = expect(app.lookup<Renderer>('renderer:-dom'), `BUG: owner is missing renderer`);
