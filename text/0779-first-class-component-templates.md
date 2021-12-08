@@ -1146,6 +1146,8 @@ A blog post can introduce the feature along these lines when the feature ships, 
 
     As a bonus: in a certain sense, the use of `<template>` here “rhymes” with the version from the platform: it represents the dynamic HTML content associated with some JavaScript functionality.
 
+- Some developers prefer to keep a hard file-level separation between JavaScript and HTML. This proposal allows that to continue for loose mode components, but not for strict mode components, and strongly suggests a future where it is *not* possible (if we deprecate loose mode in the future).
+
 [platform-template]: http://developer.mozilla.org/en-US/docs/Web/HTML/Element/template
 
 
@@ -1630,10 +1632,3 @@ Net, while there are some nice features to the `hbs` proposal, it comes out sign
 - Should we include a plan for a staged rollout of deprecating namespace resolution in this RFC, rather than tackling it in a later RFC?
 
 [rfc-0731]: https://github.com/emberjs/rfcs/pull/731
-
-<!--
-
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
-
- -->
