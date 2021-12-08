@@ -896,7 +896,7 @@ const Greet: TemplateOnlyComponent<{ name: string }> = <template>
 </template>
 ```
 
-(While this empty interface is currently more or less useless from a type-checking perspective—we will need something like Glint to support it—it suffices to provide a hook for documentation tooling such as [TypeDoc][typedoc] or [API Extractor][api-extractor]—and thus suffices for the level of support we have for TypeScript today.)
+(While this empty interface is currently more or less useless from a type-checking perspective—we will need something like Glint to support it—it suffices to provide a hook for documentation tooling such as [TypeDoc][typedoc] or [API Extractor][api-extractor], and thus suffices for the level of support we have for TypeScript today.)
 
 [typedoc]: https://typedoc.org
 [api-extractor]: https://api-extractor.com
