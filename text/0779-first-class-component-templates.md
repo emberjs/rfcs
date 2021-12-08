@@ -886,7 +886,7 @@ export {};
 
 </details>
 
-Users can then define a named template-only component like this:[^tc-export]
+Users can then define a named template-only component like this:
 
 ```ts
 import type { TemplateOnlyComponent } from '@glimmer/component';
