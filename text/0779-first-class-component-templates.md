@@ -132,20 +132,21 @@ export default class GenerateAvatar extends Component {
     - [Linting and formatting](#linting-and-formatting)
     - [Language server support](#language-server-support)
     - [Codemod](#codemod)
+  - [TypeScript](#typescript)
 - [How we teach this](#how-we-teach-this)
   - [Guides](#guides)
     - [Tutorial](#tutorial)
     - [Core Concepts: Components](#core-concepts-components)
   - [API Docs](#api-docs)
-  - [TypeScript](#typescript)
   - [Existing Ember users](#existing-ember-users)
 - [Drawbacks](#drawbacks)
 - [Alternatives](#alternatives)
-  - [Imports-only](#imports-only)
-  - [SFCs](#sfcs)
-  - [Template literals (`hbs`)](#template-literals-hbs)
-    - [Advantages](#advantages)
-    - [Disadvantages](#disadvantages)
+  - [TypeScript signature](#typescript-signature)
+  - [Distinguishing class-backed and template-only components](#distinguishing-class-backed-and-template-only-components)
+  - [Alternative syntaxes](#alternative-syntaxes)
+    - [Imports-only](#imports-only)
+    - [SFCs](#sfcs)
+    - [Template literals (`hbs`)](#template-literals-hbs)
 - [Unresolved questions](#unresolved-questions)
 
 
@@ -845,6 +846,98 @@ Such a codemod will automate the fairly mechanical work of providing a wrapping 
 [colo-codemod]: https://github.com/ember-codemods/ember-component-template-colocation-migrator
 
 
+### TypeScript
+
+The type of a component is not affected by this proposal. However, it is worth seeing *how* a component defined using `<template>` works with types, at least for the purpose of documentation (and for integration with the current DefinitelyTyped definitions).
+
+For a class-backed component, there is no change to the *types* of the component when using `<template>`. As described above in the discussion of language servers, tools like Glint will need to provide an interpretation of the body of a `<template>` which correctly understands the scope in which it is embedded, i.e. correctly providing `this` to it.
+
+For a template-only component, defining the type will require a type import to represent that there is a component with no `this` context, etc. Glint already supplies such a type, albeit with the types updated for [RFC #0748][rfc-0748]. For today’s purposes, we can simply augment the [existing types on DefinitelyTyped][DT-toc] with `Args`.
+
+[rfc-0748]: https://github.com/emberjs/rfcs/pull/748
+[DT-toc]: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/54d540ab4deb2588c0eff39dadf370cbf0a2dee4/types/ember__component/template-only.d.ts
+
+<details><summary>updated signature on DT</summary>
+
+```ts
+declare const A: unique symbol;
+
+// This class is not intended to be directly constructable.
+declare class _TemplateOnlyComponent<Args extends {}> {
+    // Type brand to simulate a nominal type.
+    declare private brand: 'TemplateOnlyComponent';
+    // Host to make args "used"
+    declare private [A]: Args;
+    toString(): string;
+}
+
+// Export an interface instead to prevent construction.
+// tslint:disable-next-line:no-empty-interface
+export interface TemplateOnlyComponent<Args extends {} = {}> extends _TemplateOnlyComponent<Args> {}
+type TC<Args extends {} = {}> = TemplateOnlyComponent<Args>
+
+declare function templateOnly(moduleName?: string): TemplateOnlyComponent;
+
+export default templateOnly;
+
+// Shut off automatic exporting.
+export {};
+```
+
+</details>
+
+Users can then define a named template-only component like this:[^tc-export]
+
+```ts
+import type { TemplateOnlyComponent } from '@glimmer/component';
+
+const Greet: TemplateOnlyComponent<{ name: string }> = <template>
+  <p>Hello, {{@name}}!</p>
+</template>
+```
+
+(While this empty interface is currently more or less useless from a type-checking perspective—we will need something like Glint to support it—it suffices to provide a hook for documentation tooling such as [TypeDoc][typedoc] or [API Extractor][api-extractor]—and thus suffices for the level of support we have for TypeScript today.)
+
+[typedoc]: https://typedoc.org
+[api-extractor]: https://api-extractor.com
+
+However, since the top-level `<template>` syntax is sugar for an anonymous default export, there is nowhere to put a type declaration like this. This is a limitation of default exports in JavaScript: functions and classes have names as part of their declarations, but other items do not, so they cannot be both named *and* part of the default export of a module.
+
+Accordingly, we propose an extension to `<template>`, available only in `.gts` files, which uses the following syntax designed to mirror type parameterization in TypeScript but in a way that is straightforward to parse into the desired target format:
+
+```ts
+export interface GreetingArgs {
+  name: string;
+}
+
+<template[GreetingArgs]>
+  <p>Hello, {{@name}}!</p>
+</template>
+```
+
+This syntax for generics has prior art in other programming languages, including Scala, Go, and Ruby’s Sorbet type checker (a cousin of TypeScript, as it were!). It clearly associates the `Args` with the `template`, while *not* putting it in a value space which could conflict with future extensions to `<template>` with “attributes” in the value space.[^emblem-etc]
+
+Given this design, we can also simplify the definition of named components (both forms will of course be legal):
+
+```ts
+export interface GreetingArgs {
+  name: string;
+}
+
+export const Greeting = <template[GreetingArgs]>
+  <p>Hello, {{@name}}!</p>
+</template>
+```
+
+There are two key restrictions here:
+
+1. As mentioned above, this is illegal in the context of a class-backed component, because the component class itself is the host for the signature (and must be to make `this.args` type check correctly).
+
+2. The only thing allowed within the `[...]` is a type available in the local scope. *It is not legal to provide an inline type definition.* However, given the relative verbosity of even today’s component signature, still less the revised version from [RFC #0748][rfc-0748], inline signatures are unlikely to be attractive anyway.
+
+From an implementation perspective, this requires our language parser to handle this variant of the tag, and for the transforms supplied for compilation to properly ignore this for build output but to supply it in an appropriate place for TypeScript-aware tools like Glint to be able to take advantage of it.
+
+
 ## How we teach this
 
 We describe a `<template>` as representing the *template* for a *component*. When there is no backing class, that’s all there is to the component. When there *is* a backing class, the component also has associated state and behavior. (Notably, this shift already began with Octane, where we generate template-only components by default.)
@@ -1020,57 +1113,6 @@ There is presently no API for `<template>` itself, as proposed in this RFC, thou
 [emblem]: http://emblemjs.com
 
 
-### TypeScript
-
-The type of a component is not affected by this proposal. However, it is worth seeing *how* a component defined using `<template>` works with types, at least for the purpose of documentation (and for integration with the current DefinitelyTyped definitions).
-
-- For a class-backed component, there is no change to the *types* of the component when using `<template>`. As described above in the discussion of language servers, tools like Glint will need to provide an interpretation of the body of a `<template>` which correctly understands the scope in which it is embedded, i.e. correctly providing `this` to it.
-
-- For a template-only component, defining the type will require a type import to represent that there is a component with no `this` context, etc. Glint already supplies such a type, albeit with the types updated for [RFC #0748][rfc-0748]. For today’s purposes, we can simply augment the [existing types on DefinitelyTyped][DT-toc] with `Args`.
-
-    <details><summary>updated signature on DT</summary>
-
-    ```ts
-    declare const A: unique symbol;
-
-    // This class is not intended to be directly constructable.
-    declare class _TemplateOnlyComponent<Args extends {}> {
-        // Type brand to simulate a nominal type.
-        declare private brand: 'TemplateOnlyComponent';
-        // Host to make args "used"
-        declare private [A]: Args;
-        toString(): string;
-    }
-
-    // Export an interface instead to prevent construction.
-    // tslint:disable-next-line:no-empty-interface
-    export interface TemplateOnlyComponent<Args extends {} = {}> extends _TemplateOnlyComponent<Args> {}
-    type TC<Args extends {} = {}> = TemplateOnlyComponent<Args>
-
-    declare function templateOnly(moduleName?: string): TemplateOnlyComponent;
-
-    export default templateOnly;
-
-    // Shut off automatic exporting.
-    export {};
-    ```
-
-    Users can then define a template-only component like this:
-
-    ```ts
-    import { TC } from '@glimmer/component';
-
-    const Greet: TC<{ name: string }> = <template>
-      <p>Hello, {{@name}}!</p>
-    </template>
-    ```
-
-    While this empty interface is currently more or less useless from a type-checking perspective (we will need something like Glint to support it), it suffices to provide a hook for documentation tooling such as TypeDoc or API Extractor—but this suffices for the level of support we have for TypeScript today.
-
-[rfc-0748]: https://github.com/emberjs/rfcs/pull/748
-[DT-toc]: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/54d540ab4deb2588c0eff39dadf370cbf0a2dee4/types/ember__component/template-only.d.ts
-
-
 ### Existing Ember users
 
 The Ember community has long experience with the idea that we can only have *one* component per file, and that component templates and the backing class must always be in separate files. The name of this feature, *first-class component templates*, is designed to help explain how it relates to that historical experience. In the past, templates in many ways were second-class citizens of the overall experience of authoring an Ember app—especially for template-only components. Adding even a small amount of functionality to a template came with a lot of friction and other downsides: switching to a class-backed component, or introducing a globally-available helper. Now, adding a local helper utility is no different for a template-only component than it is anywhere else: write a function!
@@ -1114,6 +1156,43 @@ Within the major strokes of this design proposal, we could tweak the invocation 
 - Use `<Template>` or `<Glimmer>` or similar. This would disambiguate it from the built-in `<template>`, but would introduce ambiguity with component invocation.
 - Use a new sigil—much as we use `<:main>...</:main>` for named blocks, we could do `<[template]>...</[template]>` or something similar. While verbose and not especially pretty, this avoids overloading the platform tag.
 
+There are also alternative possibilities for defining the type of a non-class-backed `<template>`, for the choice of consistency of `<template>` between class-backed and non-class-backed components, and for the syntax for *some* sort of strict mode templates.
+
+
+### TypeScript signature
+
+Instead of adding the generic position to `<template>`, we can simply recommend that TypeScript users always create a named `<template>` with a `const` binding, and then `export default` that named export:
+
+```js
+import type { TC } from '@glimmer/component';
+
+const Greet: TC<{ name: string }> = <template>
+  <p>Hello, {{@name}}!</p>
+</template>
+
+export default Greet;
+```
+
+(Users may also be tempted use an `as` cast after the `<template>`—but this is unsafe: it allows users to unsafely provide a narrower type than the item actually provides, whereas assignment only allows *widening* of the types.)
+
+This works, and it simplifies the burden of the tooling implementation, but it comes with the significant downside of making a *much* worse authoring experience for TypeScript users than for JavaScript users.
+
+
+### Distinguishing class-backed and template-only components
+
+There is a small pedagogical difficulty, suggested by some of the language above, about the fact that we use `<template>` here to represent both the entirety of a component, when it is free-standing; and also the template portion of a component, when it is embedded in a class. Similarly, the proposed syntax for a TypeScript type signature must forbid the type parameter in class-backed components, because the correct home for the 
+
+We could instead introduce `<component>` and `<template>` as separate constructs, where `<template>` provides a template definition for the class it is embedded in, and `<component>` defines a standalone component. In this approach, `<component>` could *not* be used within the body of a class, nor `<template>` in a standalone form.[^route-template]
+
+The major downside here is that the transformation of adding a backing class becomes a bit more involved: not just moving a `<template>` definition into the new class body, but moving a `<component>` into the new class body and then changing it from `<component>` to `<template>`. Notice, however, that the move for TS users *already* involves some further transformation, even if we chose not to ship the `<template[Signature]>` form, because type parameters have to move. The same goes for any documentation attached to a `<template>` declaration when moved to.
+
+**This is a reasonable alternative and *we should strongly consider adopting it*.** I did not propose it here because I think just using `<template>` is more or less comparable to having both `<template>` and `<component>` on balance, and having *only* `<template>` feels a little nicer. That is, however, a purely subjective judgment and I would be perfectly happy with a solution using both `<component>` and `<template>`.
+
+[^route-template]: One other *possible* upside is that we could then in theory use `<template>` in the context of routes—but it is not clear that that is preferable to the direction suggested by [RFC #0731][rfc-0731]. My own judgment is that using `<template>` that way would be a mistake.
+
+
+### Alternative syntaxes
+
 Additionally, there are three major alternatives which Ember community members have proposed in the design space:
 
 - **imports-only:** a design which uses “front-matter” to add imports, and only imports, to templates, while maintaining everything else in today’s system
@@ -1123,7 +1202,7 @@ Additionally, there are three major alternatives which Ember community members h
 I discuss each of these briefly below; for a *much* longer and more thorough discussion, please see the \~16,000-word series of blog posts I wrote as a deep dive: [**Ember Template Imports**](https://v5.chriskrycho.com/journal/ember-template-imports/). Notably, as I alluded to above, *all* of them require custom parsing implementation for tooling, especially including Prettier and language servers.
 
 
-### Imports-only
+#### Imports-only
 
 The imports-only design borrows the idea of “front-matter” from many text authoring formats, using something like `---`-delimiters to introduce a new, non-Handlebars area at the top of a template which allows exactly and only *imports* to appear. As with all strict-mode designs, all non-built-in values must be imported here. Thus, the *template* for the final component shown in the motivating example might appear like this:
 
@@ -1225,7 +1304,7 @@ The imports-only design borrows the idea of “front-matter” from many text au
 
 </details>
 
-The major upside to this is that it is the smallest possible delta over today’s implementation. However, it has a number of significant downsides which render it much worse than the first-class component templates proposal, and in some cases worse than the _status quo_.
+The major upside to this is that it is the smallest possible delta over today’s implementation. It also allows users who appreciate the separation between JavaScript and template files to maintain that. However, it has a number of significant downsides which render it much worse than the first-class component templates proposal, and in some cases worse than the _status quo_.
 
 First, as with today’s _status quo_, it does not allow locally-scoped JavaScript values (including helpers and modifiers but also ecosystem tooling like GraphQL values, CSS-in-JS tooling, etc.) even when that is a perfectly reasonable design decision.
 
@@ -1300,7 +1379,7 @@ To get around this, we could continue to support a completely separate design fo
 [^recursive-import-perf]: Without additional post-processing, this would also introduce extra runtime overhead in terms of the imports!
 
 
-### SFCs
+#### SFCs
 
 Single File Components (hereafter SFCs) start with an HTML baseline and layer on functionality in a `<script>` tag, modeled on HTML’s own design, but with extra semantics supporting imports and making an `export default class extends Component` statement provide the `this` for the template context. It can, however, define modifiers and helpers local to the component. You can think of this as a fairly natural (and HTML-like) extension to the imports-only design.
 
@@ -1432,7 +1511,7 @@ Besides having all the same problems as the imports-only approach does, notice t
 And, once again, avoiding those problems more or less requires that we fully implement first-class component templates to avoid this!
 
 
-### Template literals (`hbs`)
+#### Template literals (`hbs`)
 
 The “template literals” design takes as its starting point the `hbs` template strings Ember has used for testing since the 1.x era. It is relatively similar to the `<template>` design, in that it uses JavaScript/TypeScript files as the basis for its design. Unlike `template`, it uses an explicit `hbs` import, presumably from `@glimmer/component`. For components with a backing class, the template is defined as a static class field.
 
@@ -1507,9 +1586,7 @@ export default class GenerateAvatar extends Component {
 
 </details>
 
-#### Advantages
-
-This has a couple significant advantages!
+This has a few significant advantages!
 
 First, unlike with the `<template>` proposal, Prettier can *parse* a file using `hbs` string with no further changes. (It cannot *format* them, however: it treats the contents of the string opaquely.) This is a small, but significant, decrease in the cost of supporting the format both up front and over time.
 
@@ -1517,14 +1594,13 @@ Second, it feels familiar to developers in the Ember ecosystem used to using `hb
 
 Third, the broader JavaScript ecosystem makes use of a number of template string syntaxes, e.g. with `css` from [Emotion][emotion] or [`gql` from Apollo][gql], so it has familiarity for people coming from *outside* the Ember ecosystem as well.
 
-Fourth, it shares many of the other strongly-positive properties of the `<template>` design, including that it works exactly the same way for testing and app code.
+Fourth, we do not need to introduce custom syntax for providing types: we can type `hbs` as a function which accepts the args/signature as a type parameter, and teach people to perform.
+
+Finally, it shares many of the other strongly-positive properties of the `<template>` design, including that it works exactly the same way for testing and app code.
 
 These advantages are strong enough that this is *absolutely* the second-best move in the design space for us, and given a choice between maintaining the status quo and using `hbs` (i.e. if `<template>` were off the table), ***we should absolutely choose `hbs`***.
 
-
-#### Disadvantages
-
-Those positives notwithstanding, it also has some significant disadvantages compared to `<template>`.
+Those positives notwithstanding, **it also has some significant disadvantages compared to `<template>`**.
 
 First, the design repurposes JavaScript syntax and gives it totally different semantics—like `<template>` does with HTML, but with *zero* signal from the context that it is doing something special.
 
@@ -1535,6 +1611,8 @@ First, the design repurposes JavaScript syntax and gives it totally different se
 Second, the learning path is *much* less gradual: the simplest possible component requires showing and at least minimally explaining JavaScript import and export semantics and template literals *and* that it isn’t a normal template literal as described above.
 
 Third, explaining what exactly `hbs` invocations produce is also strange: they aren’t actually JavaScript expressions, but they *appear* to be. In a template-only context, “invoking” `hbs` produces a component; in a class, it produces the *template* for that component. This is the same as with the `<template>` proposal, but it has the additional quirk of using JavaScript syntax to do it, rather than shifting languages.
+
+Fourth, while supplying a type definition which allows `hbs` to receive a type parameter initially appears nicer than the custom syntax for `<template>`, that form actually performs an unsafe type cast, the same as writing `as TC<Signature>` after the definition would! For this reason, it is equally impossible= to write a genuinely type safe form for non-named default exports for `hbs` as for `<template>`… and, critically, unlike `<template>`, which we control syntactically, we cannot work around this limitation with `hbs`.
 
 Net, while there are some nice features to the `hbs` proposal, it comes out significantly worse than `<template>` in most ways we care about. The decreased tooling costs are real, but they are much smaller than the other downsides of the format.
 
