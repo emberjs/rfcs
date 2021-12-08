@@ -165,7 +165,7 @@ First, because of the global namespace, name conflicts are common, and avoiding 
 
 - Even the workaround via `ember-holy-futuristic-template-namespacing-batman` requires using different names for modules in Ember than their Node package name when the Node package uses [npm scopes][scopes]. (This was one of the original motivations for exploring a design which leverages JavaScript modules, in fact!) Since our resolution modes must ultimately deal in JavaScript terms, we are in the position of always potentially being one ecosystem shift away from another syntax conflict with template-language-only designs for managing scope.
 
-- It requires our tooling to understand Ember's resolution rules, and our tooling cannot take advantage of existing ecosystem tooling. Our language servers, for example, have to more or less reimplement Ember’s resolver themselves.
+- It requires our tooling to understand Ember's resolution rules, and our tooling cannot take advantage of existing ecosystem tooling. Our language servers, for example, have to more or less re-implement Ember’s resolver themselves.
 
 - There is a substantial performance cost to dynamically resolving components by name at runtime. This can be mitigated by using the combination of something like `ember-holy-futuristic-template-namespacing-batman` with the [strict resolver][strict-resolver], but the strict resolver is not standard—and really cannot be without something like this proposal.[^strict-resolver-rfc]
 
@@ -190,7 +190,7 @@ Second, and closely related to the global namespace problem: there is presently 
 
 In practice, this has a number of knock-on effects for Ember code.
 
-First, components tend to grow without bound, because the equivalent of the "extract method" or "extract into new class" refactorings (which we commonly use on the JS side) end up with two downsides:
+First, components tend to grow without bound, because the equivalent of the "extract method" or "extract into new class" refactors (which we commonly use on the JS side) end up with two downsides:
 
 - they make the newly-extracted components available to the whole app, even if the concern is private to that component
 - the require an entirely new file, which is friction both for the creation and the use/understanding of a given view
@@ -233,16 +233,16 @@ Additionally, introducing test-only components is quite painful, requiring use o
 
 ### The solution
 
-To address these problems, the Ember community [proposed primitives][rfc-0454] which unlocked experimentation in this space and [defined the semantics of “strict” templates which use those primitives][rfc-0496]. Now, with a history of having done that experimentation—with [GlimmerX][glimmerx] and [ember-template-imports][eti]—and having had *many* discussions about the tradeoffs over the years, it’s time to ship a proposal which resolves these questions: **first-class component templates**.
+To address these problems, the Ember community [proposed primitives][rfc-0454] which unlocked experimentation in this space and [defined the semantics of “strict” templates which use those primitives][rfc-0496]. Now, with a history of having done that experimentation—with [GlimmerX][glimmerx] and [ember-template-imports][eti]—and having had *many* discussions about the trade-offs over the years, it’s time to ship a proposal which resolves these questions: **first-class component templates**.
 
 [rfc-0454]: https://github.com/emberjs/rfcs/pull/454
 [rfc-0496]: https://emberjs.github.io/rfcs/0496-handlebars-strict-mode.html
 [glimmerx]: https://glimmerjs.github.io/glimmer-experimental/
 [eti]: https://github.com/ember-template-imports/ember-template-imports
 
-In this new world, templates are authored in JavaScript files with a `<template>` tag. Templates defined this way have normal Glimmer template semantics, but instead of using a runtime resolution strategy, they have access to values in JavaScript scope, which means they can just use normal JavaScript imports. What's more, they can define other local components, helpers, or modifiers and export them or not as makes sense. They can do the same kind of extraction refactors they do with JavaScript or CSS. And other tools from the JavaScript ecosystem “just work”—from custom CSS tooling to GraphQL queries authored with [Apollo Client’s `gql` template strings][gql] and anything else the ecosystem comes up with.
+In this new world, templates are authored in JavaScript files with a `<template>` tag. Templates defined this way have normal Glimmer template semantics, but instead of using a runtime resolution strategy, they have access to values in JavaScript scope, which means they can just use normal JavaScript imports. What's more, they can define other local components, helpers, or modifiers and export them or not as makes sense. They can do the same kind of extraction refactors they do with JavaScript or CSS. And other tools from the JavaScript ecosystem “just work”—from custom CSS tooling to GraphQL queries authored with [Apollo Client’s `graphql` template strings][graphql] and anything else the ecosystem comes up with.
 
-[gql]: https://www.apollographql.com/docs/react/data/queries/
+[graphql]: https://www.apollographql.com/docs/react/data/queries/
 
 At the same time, since the body of a template defined with a `<template>` tag has all the same rules as Glimmer templates do today, this new authoring format keeps all the goodness of today’s clear separation of concerns between HTML and JavaScript and CSS. That means it continues to empower developers who are HTML and CSS experts and reach for JavaScript only secondarily. Indeed, the design goes out of its way to make HTML/Handlebars-only files feel like first-class citizens.
 
@@ -259,7 +259,7 @@ There are a number of solutions which could address these needs and add these ca
 
 2. In the absence of hard technical constraints forbidding it, we should **prefer the solution which has the best story for teaching**—at all levels, including beginners but also supporting advanced users. In particular, this means that we should value both *progressive disclosure of complexity* and the *principle of least surprise*, and that we may need to weight them against each other, but that we should pay particular attention when they agree.
 
-3. This design must cleanly interoperate with existing Ember codebases. That is, adopting this **must not require users to migrate their entire codebase at once**.
+3. This design must cleanly interoperate with existing Ember code bases. That is, adopting this **must not require users to migrate their entire code base at once**.
 
 4. We should **prefer a design which provides more flexibility** to end users over a design which provides less.
 
@@ -283,7 +283,7 @@ For a discussion of the `setComponentTemplate` and `templateOnlyComponent` primi
 
 ### Compilation
 
-The value produced by authoring a `<template>` is a *JavaScript value*, and accordingly may be exported, bound to other values, passed as an argument to a function or set as a value on a class, and so on. However, that value is not *dynamic*. Intead, it is compiled statically to a format targeting the Glimmer VM at compile time, such that even the `precompileTemplate` invocations are removed in favor of the wire format, which itself may be further optimized or changed in the future.
+The value produced by authoring a `<template>` is a *JavaScript value*, and accordingly may be exported, bound to other values, passed as an argument to a function or set as a value on a class, and so on. However, that value is not *dynamic*. Instead, it is compiled statically to a format targeting the Glimmer VM at compile time, such that even the `precompileTemplate` invocations are removed in favor of the wire format, which itself may be further optimized or changed in the future.
 
 Therefore, in normal app or addon code, it is nonsensical to use it with a `let` binding: changing the value bound to the `let` will *not* result in Ember’s reevaluating anything which *uses* that value: the “scope” of a template is only ever computed once, for performance reasons.
 
@@ -438,7 +438,7 @@ const Greet = setComponentTemplate(
 );
 ```
 
-Values referended from the surrounding scope are included in exactly the same way as with the standalone top-level declaration.
+Values referenced from the surrounding scope are included in exactly the same way as with the standalone top-level declaration.
 
 Notice that this allows for a host of convenient (and likely common!) new ways of providing a group of related components. For example:
 
@@ -603,7 +603,7 @@ This is a real gap, which we could address in a future RFC. Notably, however, it
 
 ### Interop
 
-Since all existing components already work using the same low-level primitives the new system uses, strict-mode components using `<template>` can import and invoke components authored in Ember’s loose mode format. Similarly, since loose mode components are resolved to a component which is the default export of a module in the correct/conventional location on disk, components authored in strict mode with `<template>` and exported as the default export in that conventional location will be resolveable by loose mode components as well.
+Since all existing components already work using the same low-level primitives the new system uses, strict-mode components using `<template>` can import and invoke components authored in Ember’s loose mode format. Similarly, since loose mode components are resolved to a component which is the default export of a module in the correct/conventional location on disk, components authored in strict mode with `<template>` and exported as the default export in that conventional location will be resolve-able by loose mode components as well.
 
 There are two qualifications to the interop story: a minor one around named exports and a more significant one around non-colocated templates.
 
@@ -641,7 +641,7 @@ Then a loose-mode component could invoke them like `<NamedOnly::Greet @name="Chr
 
 #### Non-colocated templates
 
-Since the same time as the Ember Octane release, Ember has supported “colocted templates,” where the template file for a component can live next to it in the `app/components` or `addon/components` directory, instead of in the `app/templates/components` or `addon/templates/components` directory:
+Since the same time as the Ember Octane release, Ember has supported “colocated templates,” where the template file for a component can live next to it in the `app/components` or `addon/components` directory, instead of in the `app/templates/components` or `addon/templates/components` directory:
 
 ```
 my-ember-app/
@@ -657,7 +657,7 @@ Colocated templates are merged into the sibling JavaScript module at build time 
 
 By contrast, classic/non-colocated templates are *not* merged into the associated JavaScript module (if any). They remain as their own distinct module at runtime. Those template modules can be looked up via the AMD module system or Ember's DI registry, and Ember connects them to components via the same system it always did before the introduction of the `setComponentTemplate` primitive (and the same way it continues to connect the route-controller-template triplet). Critically, this means that as of today, Ember does *not* connect non-colocated templates to the associated class (whether backing class or `templateOnlyComponent()`-generated) using `setComponentTemplate`. This means that the corresponding `getComponentTemplate()` lookup used when resolving those components does not work. First-class component templates which reference non-colocated component templates will build successfully, but *do not render anything for them*.
 
-This is a fairly serious developer experience problem, because it fails *invisibly* (see [this demo repo][non-colo-failure] to see this failure mode in practice).
+This is a fairly serious developer experience problem, because it fails *invisibly* (see [this demo repository][non-colo-failure] to see this failure mode in practice).
 
 [non-colo-failure]: https://github.com/chriskrycho/fcct-interop-demo
 
@@ -747,13 +747,13 @@ The current blueprints support generating a backing class for any existing compo
 
 1. Do not support it. Adding a backing class is simply a matter of adding an import and adding a class.
 
-2. Reimplement the blueprint using an AST transform (which we have prior art for: route generation uses that approach), to add a backing class for an existing default export in the module.
+2. Re-implement the blueprint using an AST transform (which we have prior art for: route generation uses that approach), to add a backing class for an existing default export in the module.
 
 (We should take (1) here as a default starting point, while encouraging the community to implement (2) if interested.)
 
 We should also update the name of the class generated for a component class. The default behavior of today's blueprint when generating a component is to suffix the class name with `Component`. Thus, running `ember generate component greeting --component-class=@glimmer/component` will produce a class named `GreetingComponent`.[^ts-component-name]
 
-There was room for debate about whether this made sense for naming component classes up till now, since the invocation name was based on the file name (using Ember's resolution rules) and *not* the class name. Now, though, it *will* be based on the imported name, and the standard behavior of auto-import tooling is to import classes by their full name—whether the item is a named export or a default export. When a user goes to autocomplete `Greeting` (e.g. in [Glint][glint]), they will end up with `GreetingComponent`, leading to this sort of thing if they don’t rename it:
+There was room for debate about whether this made sense for naming component classes up till now, since the invocation name was based on the file name (using Ember's resolution rules) and *not* the class name. Now, though, it *will* be based on the imported name, and the standard behavior of auto-import tooling is to import classes by their full name—whether the item is a named export or a default export. When a user goes to auto-complete `Greeting` (e.g. in [Glint][glint]), they will end up with `GreetingComponent`, leading to this sort of thing if they don’t rename it:
 
 ```js
 import GreetingComponent from './greeting';
@@ -763,7 +763,7 @@ import GreetingComponent from './greeting';
 </template>
 ```
 
-This is obviously undesirable, but avoiding this will mean mean renaming locally after the autocomplete works. That renaming operation is needless papercut in the best case of importing a default export. It rises to the level of a significant annoyance when using named imports:
+This is obviously undesirable, but avoiding this will mean mean renaming locally after the auto-complete works. That renaming operation is a needless paper cut in the best case of importing a default export. It rises to the level of a significant annoyance when using named imports:
 
 ```js
 import {
@@ -800,7 +800,7 @@ const UI = {
 
 Accordingly, we should switch to generating *without* a class name: `ember generate component greeting --component-class=@glimmer/component` should produce a class named `Greeting`, *not* `GreetingComponent`. The generated names for routes, services, and controllers can remain as they are, since they are never invoked this way.
   
-[^polaris]: Polaris was announced as planned at EmberConf 2021. This plan assumes we ship Polaris before Ember 5. If we ship Ember 5 first, the dynamics would be much the same, but with the major version as the point wehn we switch the default instead.
+[^polaris]: Polaris was announced as planned at EmberConf 2021. This plan assumes we ship Polaris before Ember 5. If we ship Ember 5 first, the dynamics would be much the same, but with the major version as the point when we switch the default instead.
 
 [^ts-component-name]: In TypeScript, this also extends to `GreetingComponentArgs` (or, with [RFC #0748][rfc-0748], something like `GreetingComponentSignature`), which gets *really* unwieldy!
 
@@ -813,18 +813,18 @@ For linting, we need to make two changes:
 
 1. Create an ESLint processor which uses the same Babel transform as the core behavior itself (as provided currently by [ember-template-imports][eti]) to make normal ESLint rules (e.g. unused imports and values) work with the template scope.
 
-2. Going the other direction, make it possible to use the existing `ember-template-lint` rules in `.gjs`/`.gts` files. This likely means integrating `ember-template-lint` directly into ESLint, in much the same way that other sub-language integration is done (in the same way that e.g. [eslint-plugin-svelte3][eslint-svelte] integrates Svelte's custom language).
+2. Going the other direction, make it possible to use the existing `ember-template-lint` rules in `.gjs`/`.gts` files. This likely means integrating `ember-template-lint` directly into ESLint, in much the same way that other sub-language integration is done (in the same way that e.g. [eslint-plugin-svelte3][eslint-svelte] integrates Svelte’s custom language).
 
 [eslint-svelte]: https://github.com/sveltejs/eslint-plugin-svelte3
 
-For formatting, we need to implement a custom parser plugin and language which will make Prettier able to format both the host JavaScript files and the embedded templates. This will need to present a view of the non-template parts of the file to Prettier so that it formats the JavaScript correctly without updating the template contents, and vice versa. The primary work here is to make it so that we can leverage Prettier's existing support for JavaScript/TypeScript and Handlebars in a `.gjs`/`.gts` file (rather than simply ending up with a parse error, as happens when you try to treat those files as pure JS or TS).
+For formatting, we need to implement a custom parser plugin and language which will make Prettier able to format both the host JavaScript files and the embedded templates. This will need to present a view of the non-template parts of the file to Prettier so that it formats the JavaScript correctly without updating the template contents, and vice versa. The primary work here is to make it so that we can leverage Prettier’s existing support for JavaScript/TypeScript and Handlebars in a `.gjs`/`.gts` file (rather than simply ending up with a parse error, as happens when you try to treat those files as pure JS or TS).
 
 
 #### Language server support
 
 The final piece of tooling we need for supporting this is *language server support*. Language servers using the [Language Server Protocol][lsp] allow a variety of different editors (including e.g. Vim, Visual Studio Code, Emacs, Atom, Sublime Text, IntelliJ, and others) to use a single language server Currently, for uninteresting historical reasons, there are a handful of language servers floating around which Ember developers use. Most important for our purposes are the [Unstable Ember Language Server][uels] and [Glint][glint].
 
-**Neither of these is technically a hard blocker for adopting first-class component templates, but we expect there to be significant community demand for support.** However, the existing support in these tools for the `hbs` experiment means that supporting `<template>` is relatively straightforward: the work needs to be done, but is not especially large. In particular, the same Babel transform which makes `<template>` work and can power ESLint and Prettier integration should provide the necessary information for language servers as well, which can then leverage their own interpretations of templates (e.g. Glint's mapping from a Handlebars template to a TypeScript representation) to provide richer feedback, autocompletion, go-to-definition, documentation hovers, etc.
+**Neither of these is technically a hard blocker for adopting first-class component templates, but we expect there to be significant community demand for support.** However, the existing support in these tools for the `hbs` experiment means that supporting `<template>` is relatively straightforward: the work needs to be done, but is not especially large. In particular, the same Babel transform which makes `<template>` work and can power ESLint and Prettier integration should provide the necessary information for language servers as well, which can then leverage their own interpretations of templates (e.g. Glint's mapping from a Handlebars template to a TypeScript representation) to provide richer feedback, auto-completion, go-to-definition, documentation hovers, etc.
 
 [lsp]: https://microsoft.github.io/language-server-protocol/
 [uels]: https://marketplace.visualstudio.com/items?itemName=lifeart.vscode-ember-unstable
@@ -1054,7 +1054,7 @@ Notice the results of this pedagogically:
 - The code they *do* write feels much more HTML-first. The template can stay almost exactly as it was, with no shift to a backing class.
 - For developers who have experience with other frameworks, this feels familiar, but with an Ember twist.
 
-At this point we could *additionally* show that we could introduce a backing class, and discuss the tradeoffs of introducing a class when we don't have any other local state. This also allows us to encourage just using functions unless you *do* need local state.
+At this point we could *additionally* show that we could introduce a backing class, and discuss the trade-offs of introducing a class when we don't have any other local state. This also allows us to encourage just using functions unless you *do* need local state.
 
 The section “Getting JavaScript Values into the Test Context” will also be possible to simplify: we will simply be able to introduce tracked state locally and update it directly, without special testing helpers. That will dramatically reduce the number of bespoke ideas we have to cover here. Much of the related work will be addressed in other RFCs, but being able to use the *same* primitives to bring values into scope for tests as we do in apps (immediately above!) will be very helpful in reducing what we have to cover in this section.
 
@@ -1063,7 +1063,7 @@ The section “Getting JavaScript Values into the Test Context” will also be p
 
 This entire section will also need to be substantially reworked. Once again, I am here summarizing the changes rather than trying to rewrite the guide in place. Each section represents a page to be changed; if a section is not mentioned, it needs no substantive changes—likely only switching over to using the `<template>` wrapper.
 
-At some point in the course of this discussion, we should call out (e.g. with a “Zoey says” block) that users should treat `<template>` the same way they treat a costly function which produces a result for the life of the whole app, and should therefore avoidng using `<template>` in function bodies rather than hoisting them, etc. This cannot be a hard and fast rule about where `<template>` definitions live, because there are plenty of ways to do it safely, and what’s more we *need* to do it in test modules. The point is simply to align people’s mental model for `<template>` with *other* costly operations, since these concerns are not specific to component creation.
+At some point in the course of this discussion, we should call out (e.g. with a “Zoey says” block) that users should treat `<template>` the same way they treat a costly function which produces a result for the life of the whole app, and should therefore avoiding using `<template>` in function bodies rather than hoisting them, etc. This cannot be a hard and fast rule about where `<template>` definitions live, because there are plenty of ways to do it safely, and what’s more we *need* to do it in test modules. The point is simply to align people’s mental model for `<template>` with *other* costly operations, since these concerns are not specific to component creation.
 
 
 ##### Introducing Components
@@ -1078,7 +1078,7 @@ Unsurprisingly, this is the section which will see the most sweeping changes.
 
 - As in the tutorial, the discussion around naming will need to be updated to indicate that we capitalize by *convention*: it will no longer be a hard requirement. Likewise, the “Zoey says...” will go away because we will no longer be using resolution to get imports.
 
-- After showing the other extraction-style refactors, we can show how components which don't need to be exported can just be defined locally with a `const` declaration, and explain that the standalone `<template>` tag is sugar for a default export. This will also provide the first hook for defininig helpers etc. locally in following sections.
+- After showing the other extraction-style refactors, we can show how components which don't need to be exported can just be defined locally with a `const` declaration, and explain that the standalone `<template>` tag is sugar for a default export. This will also provide the first hook for defining helpers etc. locally in following sections.
 
 - We will entirely drop the folder namespace syntax (`::`) discussion, in favor of showing how normal JS imports handle that concern—including showing how the combination of named exports and namespace-style imports handle those. (This will necessitate reworking the example, which currently uses that namespacing as a means of scoping.)
 
@@ -1594,7 +1594,7 @@ First, unlike with the `<template>` proposal, Prettier can *parse* a file using 
 
 Second, it feels familiar to developers in the Ember ecosystem used to using `hbs` strings with their tests.
 
-Third, the broader JavaScript ecosystem makes use of a number of template string syntaxes, e.g. with `css` from [Emotion][emotion] or [`gql` from Apollo][gql], so it has familiarity for people coming from *outside* the Ember ecosystem as well.
+Third, the broader JavaScript ecosystem makes use of a number of template string syntaxes, e.g. with `css` from [Emotion][emotion] or [`graphql` from Apollo][graphql], so it has familiarity for people coming from *outside* the Ember ecosystem as well.
 
 Fourth, we do not need to introduce custom syntax for providing types: we can type `hbs` as a function which accepts the args/signature as a type parameter, and teach people to perform.
 
@@ -1604,7 +1604,7 @@ These advantages are strong enough that this is *absolutely* the second-best mov
 
 Those positives notwithstanding, **it also has some significant disadvantages compared to `<template>`**.
 
-First, the design repurposes JavaScript syntax and gives it totally different semantics—like `<template>` does with HTML, but with *zero* signal from the context that it is doing something special.
+First, the design re-purposes JavaScript syntax and gives it totally different semantics—like `<template>` does with HTML, but with *zero* signal from the context that it is doing something special.
 
 - `hbs` is *not* actually a template string literal; it is a compile-time macro. Attempting to use it like a template string literal (e.g. by using `${...}` string interpolation) is a build-time error. This substantially undercuts the familiarity of the design: `css` and `graphql` and similar are *actual* string templates, not compile-time macros, and accordingly developers can use normal JavaScript semantics with them.
 
@@ -1614,7 +1614,7 @@ Second, the learning path is *much* less gradual: the simplest possible componen
 
 Third, explaining what exactly `hbs` invocations produce is also strange: they aren’t actually JavaScript expressions, but they *appear* to be. In a template-only context, “invoking” `hbs` produces a component; in a class, it produces the *template* for that component. This is the same as with the `<template>` proposal, but it has the additional quirk of using JavaScript syntax to do it, rather than shifting languages.
 
-Fourth, while supplying a type definition which allows `hbs` to receive a type parameter initially appears nicer than the custom syntax for `<template>`, that form *appears* like an unsafe type cast in TypeScript, the same as writing `as TC<Signature>` after the definition. In terms of how we implement the transform, it would actually be safe in practice (the compmiled output would be the same as with `<template[Signature]>`, and therefore would constrain the body of the template in the same way)—but only because the thing passed to `hbs` is *not* a template string. People can therefore not rely on any of their intuitions on the TypeScript side, either.
+Fourth, while supplying a type definition which allows `hbs` to receive a type parameter initially appears nicer than the custom syntax for `<template>`, that form *appears* like an unsafe type cast in TypeScript, the same as writing `as TC<Signature>` after the definition. In terms of how we implement the transform, it would actually be safe in practice (the compiled output would be the same as with `<template[Signature]>`, and therefore would constrain the body of the template in the same way)—but only because the thing passed to `hbs` is *not* a template string. People can therefore not rely on any of their intuitions on the TypeScript side, either.
 
 Net, while there are some nice features to the `hbs` proposal, it comes out significantly worse than `<template>` in most ways we care about. The decreased tooling costs are real, but they are much smaller than the other downsides of the format.
 
