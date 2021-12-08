@@ -123,12 +123,15 @@ export default class GenerateAvatar extends Component {
     - [Bound to a name](#bound-to-a-name)
     - [Class body](#class-body)
   - [Interop](#interop)
+    - [Named exports](#named-exports)
+    - [Non-colocated templates](#non-colocated-templates)
   - [The “prelude”](#the-prelude)
   - [Tooling](#tooling)
     - [Syntax highlighting](#syntax-highlighting)
     - [Blueprints](#blueprints)
     - [Linting and formatting](#linting-and-formatting)
     - [Language server support](#language-server-support)
+    - [Codemod](#codemod)
 - [How we teach this](#how-we-teach-this)
   - [Guides](#guides)
     - [Tutorial](#tutorial)
@@ -601,6 +604,11 @@ This is a real gap, which we could address in a future RFC. Notably, however, it
 
 Since all existing components already work using the same low-level primitives the new system uses, strict-mode components using `<template>` can import and invoke components authored in Ember’s loose mode format. Similarly, since loose mode components are resolved to a component which is the default export of a module in the correct/conventional location on disk, components authored in strict mode with `<template>` and exported as the default export in that conventional location will be resolveable by loose mode components as well.
 
+There are two qualifications to the interop story: a minor one around named exports and a more significant one around non-colocated templates.
+
+
+#### Named exports
+
 However, other components exported as *named* exports will not be available in loose mode. This is a temporary incoherence which will be resolved as the ecosystem migrates to strict mode. As a workaround, users may choose to create reexport-only modules to allow loose-mode access. For example, given a module `app/components/named-only.js` with two named export components:
 
 ```js
@@ -628,6 +636,36 @@ A user wishing to make these available to loose mode could introduce two new mod
     ```
 
 Then a loose-mode component could invoke them like `<NamedOnly::Greet @name="Chris">` and `<NamedOnly::Farewell @name="Krycho" />`. Note that this pattern is not at all *necessary* for migration, but may be useful.
+
+
+#### Non-colocated templates
+
+Since the same time as the Ember Octane release, Ember has supported “colocted templates,” where the template file for a component can live next to it in the `app/components` or `addon/components` directory, instead of in the `app/templates/components` or `addon/templates/components` directory:
+
+```
+my-ember-app/
+  app/
+    components/
+      example.js
+      example.hbs
+```
+
+Although this appears to be merely a user-facing convenience, there is a real and important difference at the implementation level which currently prevents first-class component templates from using classic, non-colocated templates:
+
+Colocated templates are merged into the sibling JavaScript module at build time and set as the template for the component using `setComponentTemplate`: the same primitive used by first-class component templates. This includes template-only components, for which Ember's build synthesizes a JavaScript module and uses `templateOnlyComponent()`—again, just as `<template>` does.
+
+By contrast, classic/non-colocated templates are *not* merged into the associated JavaScript module (if any). They remain as their own distinct module at runtime. Those template modules can be looked up via the AMD module system or Ember's DI registry, and Ember connects them to components via the same system it always did before the introduction of the `setComponentTemplate` primitive (and the same way it continues to connect the route-controller-template triplet). Critically, this means that as of today, Ember does *not* connect non-colocated templates to the associated class (whether backing class or `templateOnlyComponent()`-generated) using `setComponentTemplate`. This means that the corresponding `getComponentTemplate()` lookup used when resolving those components does not work. First-class component templates which reference non-colocated component templates will build successfully, but *do not render anything for them*.
+
+This is a fairly serious developer experience problem, because it fails *invisibly* (see [this demo repo][non-colo-failure] to see this failure mode in practice).
+
+[non-colo-failure]: https://github.com/chriskrycho/fcct-interop-demo
+
+We can address in one of two ways:
+
+- Introduce support into Ember to associated non-colocated templates with their associated classes.
+- Introduce debug output which informs users that they must first migrate the referenced component to use colocation.
+
+Of these, the second option is preferable. It has significantly lower risk of introducing bugs in the framework along the way, because it only requires adding some debug alerting and does *not* require changing the semantics or implementation of long-standing Ember features. It is [straightforward to codemod][colo-codemod] to colocation.
 
 
 ### The “prelude”
@@ -790,6 +828,21 @@ The final piece of tooling we need for supporting this is *language server suppo
 [lsp]: https://microsoft.github.io/language-server-protocol/
 [uels]: https://marketplace.visualstudio.com/items?itemName=lifeart.vscode-ember-unstable
 [glint]: https://github.com/typed-ember/glint
+
+
+#### Codemod
+
+While providing a codemod is not a *hard* necessity, it is much like language server support: there will be high community demand.
+
+Such a codemod will automate the fairly mechanical work of providing a wrapping `<template>` for template-only components and moving the content of an `.hbs` file into a `<template>` on the backing class for class-backed components. To do that, however, there are two major pieces such a codemod will need to address:
+
+- **Identifying where a given component or item came from**. This is not *trivial*, since in most apps the items are all in one big global namespace. This is definitely *tractable*, though. A codemod could start by walking the graph of Ember addons any given library depends on and identifying all names it exports in terms of Ember's standard layout. Then that can be fed into each template module being converted.
+
+    There will definitely be occasional conflicts here, for example when developers have *intentionally* overridden something supplied by an addon. In that case of conflict, the codemod can bail and report it to the end user. (We could use a telemetry-powered codemod like we did for the native classes codemod with Octane, but that's a much higher lift and my own judgment is that the cost-benefit ratio is low enough not to be worth it in *this* case. People generally either work around those or have done it on purpose.)
+
+- **Handling non-colocated templates.** As discussed above in [**Detailed Design: Interop**](#interop), strict mode templates cannot *currently* resolve components where the template is still located in `templates/components` rather than next to a backing class, if any, in `components`. If we do not change this behavior at the framework level, we will need to recommend people start by migrating to colocated templates (which already has [a reliable codemod][colo-codemod]).
+
+[colo-codemod]: https://github.com/ember-codemods/ember-component-template-colocation-migrator
 
 
 ## How we teach this
