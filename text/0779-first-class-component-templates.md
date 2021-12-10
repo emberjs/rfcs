@@ -289,7 +289,7 @@ For a discussion of the `setComponentTemplate` and `templateOnlyComponent` primi
 
 The value produced by authoring a `<template>` is a *JavaScript value*, and accordingly may be exported, bound to other values, passed as an argument to a function or set as a value on a class, and so on. However, that value is not *dynamic*. Instead, it is compiled statically to a format targeting the Glimmer VM at compile time, such that even the `precompileTemplate` invocations are removed in favor of the wire format, which itself may be further optimized or changed in the future.
 
-Therefore, in normal app or addon code, it is nonsensical to use it with a `let` binding: changing the value bound to the `let` will *not* result in Ember’s reevaluating anything which *uses* that value: the “scope” of a template is only ever computed once, for performance reasons.
+Therefore, in normal app or addon code, it is nonsensical to reassign it when bound with a `let` binding: changing the value bound to the `let` will *not* result in Ember’s reevaluating anything which *uses* that value: the “scope” of a template is only ever computed once, for performance reasons.
 
 A function may of course return different components based on its arguments, etc.; but such a function will not be “automatically” re-executed unless the function consumes tracked properties. This is just applying the standard auto-tracking semantics to functions which return components, which is possible *today*. I discuss below the performance pitfalls of doing this inline, and the corresponding guidance we should provide.
 
