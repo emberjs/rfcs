@@ -565,7 +565,7 @@ This is a real gap, which we could address in a future RFC. Notably, however, it
 
 ### Performance
 
-In normal app code, authors should not introduce component definitions `<template>`s in contexts where they will be “re-executed,” e.g. in a function body. It is technically possible to create components from a function, like so:
+In normal app code, authors should not *generally* introduce component definitions `<template>`s in contexts where they will be “re-executed,” e.g. in a function body. It is technically possible to create components from a function, like so:
 
 ```js
 function conditionalComponent(predicate) {
@@ -577,7 +577,7 @@ function conditionalComponent(predicate) {
 }
 ```
 
-However, doing so will have unexpected costs at runtime. It’s worth remembering what the resulting output is:
+However, doing so will have a fairly high costs at runtime. It’s worth remembering what the resulting output is:
 
 ```js
 function conditionalComponent(predicate) {
@@ -612,7 +612,7 @@ function conditionalComponent(predicate) {
 }
 ```
 
-(Notice that this is no different than any other concern around other costly operations needlessly happening in a function body repeatedly.)
+This is not a hard error because there *are* legitimate use cases for this, including taking advantage of values which are only in scope within the body of a function. (Test modules alone provide good motivation here; but there are many such examples in app code as well.) Notice that this is no different than any other concern around other costly operations needlessly happening in a function body repeatedly.
 
 See further discussion below under [**How We Teach This**](#how-we-teach-this).
 
