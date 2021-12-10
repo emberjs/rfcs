@@ -40,7 +40,7 @@ For Ember component `payload` has `view` data.\
 However for Glimmer component the `payload` only has `object` \
 <img width="528" alt="Screen Shot 2021-12-10 at 12 08 44 PM" src="https://user-images.githubusercontent.com/20895144/145635320-c8a18bd4-916a-45ce-a6fd-749786ed6d43.png"> \
 Without instrumenation with view data, this feature is broken.\
-Additionally, I saw several requests for such feature to be continuously supported\
+Additionally, I saw several inquiries that we need view data in instrumentation. \
 https://discord.com/channels/480462759797063690/501388188762505216/684442737113563213 \
 https://discord.com/channels/480462759797063690/501388188762505216/686516553050751005
 
