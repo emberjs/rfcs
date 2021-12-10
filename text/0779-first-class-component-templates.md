@@ -672,44 +672,9 @@ Of these, the second option is preferable. It has significantly lower risk of in
 
 ### The “prelude”
 
-While all values used in templates must be explicitly in scope, Ember[^glimmer-prelude] will provide some via a “prelude”.[^prelude] These are always in scope and do not need to be imported.
+While all values used in templates must be explicitly in scope, Ember[^glimmer-prelude] will provide some via a “prelude”.[^prelude] These are always in scope and do not need to be imported. See [RFC #0496: Handlebars Strict Mode: Keywords][rfc-0496-keyword] for a detailed list of keywords and imports.
 
-The helpers in the prelude are:
-
-- `action`
-- `array`
-- `component`
-- `concat`
-- `debugger`
-- `each`
-- `each-in`
-- `fn`
-- `get`
-- `has-block`
-- `has-block-params`
-- `hash`
-- `helper`
-- `if`
-- `in-element`
-- `let`
-- `log`
-- `modifier`
-- `mount`
-- `mut`
-- `on`
-- `outlet`
-- `unless`
-- `yield`
-
-The modifiers in the prelude are:
-
-- `on`
-
-The components in the prelude are:
-
-- `LinkTo`
-- `Input`
-- `Textarea`
+[rfc-0496-keyword]: https://emberjs.github.io/rfcs/0496-handlebars-strict-mode.html#keywords
 
 [^glimmer-prelude]: Glimmer.js may provide its own prelude. While long-term the two should likely align, this RFC simply takes the _status quo_ as a given
 
