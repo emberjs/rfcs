@@ -42,7 +42,7 @@ However for Glimmer component the `payload` only has `object` \
 Without instrumenation with view data, this feature is broken.\
 Additionally, I saw several requests for such feature to be continuously supported\
 https://discord.com/channels/480462759797063690/501388188762505216/684442737113563213 \
-https://discord.com/channels/480462759797063690/501388188762505216/686516553050751005 \
+https://discord.com/channels/480462759797063690/501388188762505216/686516553050751005
 
 ## Detailed design
 ### This is what we currently have:
