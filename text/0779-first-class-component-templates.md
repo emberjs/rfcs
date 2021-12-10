@@ -714,7 +714,7 @@ Beyond that, we should encourage the community to add support for other editors 
 
 #### Blueprints
 
-All blueprints will need to be updated to support generating the new format. During the transition period, we should allow generating both. The rollout will follow the example of the rollout of Glimmer components with Octane:
+Component and component test blueprints will need to be updated to support generating the new format. (See a forthcoming RFC for updates to testing to support this more robustly.) During the transition period, we should allow generating both. The rollout will follow the example of the rollout of Glimmer components with Octane:
 
 1. Introduce the ability to author components in the new format with a new `--strict` flag, but leave the default today’s loose mode format. Introduce `--loose` as an explicit flag for using today’s loose mode format.
 
@@ -728,7 +728,7 @@ The current blueprints support generating a backing class for any existing compo
 
 2. Re-implement the blueprint using an AST transform (which we have prior art for: route generation uses that approach), to add a backing class for an existing default export in the module.
 
-(We should take (1) here as a default starting point, while encouraging the community to implement (2) if interested.)
+(We should do (1). The community can of course implement (2) if interested.)
 
 We should also update the name of the class generated for a component class. The default behavior of today's blueprint when generating a component is to suffix the class name with `Component`. Thus, running `ember generate component greeting --component-class=@glimmer/component` will produce a class named `GreetingComponent`.[^ts-component-name]
 
