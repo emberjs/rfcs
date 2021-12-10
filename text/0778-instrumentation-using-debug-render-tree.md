@@ -24,17 +24,25 @@ RFC PR: Fill this in with the URL for the Proposal RFC PR
 
 ## Summary
 
-Currently, instrumentation for Ember component has payload with view data, which includes BOUNDS. This enables the render highlight feature for Ember-Inspector. We can also use it for tracking component rendering. Unfortunately, this is not supported by Glimmer component; the payload for Glimmer component only contains component name. However, debug-render-tree is fully supported by Glimmer component, they contains view data including BOUNDS. We can integrate instrumentation with debug-render-tree then we can send view data to Ember-Inspector. 
+Currently, `instrumentation` for Ember component has `payload` with `view` data. This enables the render highlight feature for Ember-Inspector(see more detail in "Motivation" section). We can also use the view data for tracking component rendering. Unfortunately, this is not supported by Glimmer component; the payload for Glimmer component only contains component name. Fortunately, debug-render-tree is fully supported by Glimmer component, they contains all the view data. We can integrate instrumentation with debug-render-tree then we can send view data to Ember-Inspector. 
 
 ## Motivation
-
-First of all, Ember component supports such feature. The payload data can be used by some other apps. However, after Octane migration, this is no longer supported. It is an unexpected deprecation. I saw several requests for such feature to be continuously supported\
+I recently added the component render highlight feature for Ember-Inspector. \
+https://drive.google.com/file/d/1jIUPaM69okID1tlroAFu8lead6zeKfi_/view?usp=sharing \
+https://github.com/emberjs/ember-inspector/pull/1685 \
+Other framework like ReactJS has such feature in dev-tool for several years. https://www.youtube.com/watch?v=R2HULHV8R8M \
+It is very helpful for developers, since it highlights the components which are updated or created. It not only help us improve the website performance by eliminating wasted rendering but also help detects potential bugs when component is destroyed and recreated.  \
+Ember inspector render highlight depends on `subscribe` API in EmberJS. \
+https://github.com/emberjs/ember-inspector/blob/master/ember_debug/render-debug.js#L4 \
+https://github.com/emberjs/ember-inspector/blob/master/ember_debug/models/profile-manager.js#L85 \
+For Ember component `payload` has `view` data.\
+<img width="535" alt="Screen Shot 2021-12-10 at 12 08 10 PM" src="https://user-images.githubusercontent.com/20895144/145635267-f51389d9-4855-40b3-aaea-ed87b836af03.png"> \
+However for Glimmer component the `payload` only has `object` \
+<img width="528" alt="Screen Shot 2021-12-10 at 12 08 44 PM" src="https://user-images.githubusercontent.com/20895144/145635320-c8a18bd4-916a-45ce-a6fd-749786ed6d43.png"> \
+Without instrumenation with view data, this feature is broken.\
+Additionally, I saw several requests for such feature to be continuously supported\
 https://discord.com/channels/480462759797063690/501388188762505216/684442737113563213 \
 https://discord.com/channels/480462759797063690/501388188762505216/686516553050751005 \
-Additionally, I recently added the component render highlight feature for Ember-Inspector. \
-https://drive.google.com/file/d/1jIUPaM69okID1tlroAFu8lead6zeKfi_/view?usp=sharing \
-Other framework like ReactJS has such feature in dev-tool for several years. It is very important for developers, since we can then see when the component is updated or created. It not only help us improve the website performance by eliminating wasted rendering but also help detects potential bugs when component is destroyed and recreated. Without instrumenation with view data, these are impossible.
-
 
 ## Detailed design
 ### This is what we currently have:
