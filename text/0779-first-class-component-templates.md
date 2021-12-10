@@ -558,7 +558,7 @@ class Example extends Component {
 }
 ```
 
-That is because the compilation output does *not* embed the template in the class' body in any way, but instead associates it *externally* to the class—but private class fields are only accessible within the body of the class itself, per the ECMAScript spec. While we could invest time to change the implementation to avoid this, it is not generally a problem. This is rarely a problem: the only way to get direct access a component instance is to `{{yield this}}` in a component template. For managing privacy, developers should choose to `yield` public API instead (e.g. via a getter, or using `hash` or using a set of positional parameters).
+That is because the compilation output does *not* embed the template in the class' body in any way, but instead associates it *externally* to the class—but private class fields are only accessible within the body of the class itself, per the ECMAScript spec. While we could invest time to change the implementation to avoid this, it is not generally a problem. The only way to get direct access a component instance is to `{{yield this}}` in a component template. For managing privacy, developers should choose to `yield` public API instead (e.g. via a getter, or using `hash` or using a set of positional parameters).
 
 This is a real gap, which we could address in a future RFC. Notably, however, it is *not specific to this proposal*, but applies to *all* proposals built on the current primitives.
 
