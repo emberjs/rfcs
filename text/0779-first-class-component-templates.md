@@ -134,6 +134,7 @@ export default class GenerateAvatar extends Component {
     - [Language server support](#language-server-support)
     - [Codemod](#codemod)
   - [TypeScript](#typescript)
+  - [Custom file extension](#custom-file-extension)
 - [How we teach this](#how-we-teach-this)
   - [Guides](#guides)
     - [Tutorial](#tutorial)
@@ -694,7 +695,6 @@ While all values used in templates must be explicitly in scope, Ember[^glimmer-p
 [^prelude]: “Prelude” is the conventional name for this functionality in programming language design.
 
 
-
 ### Tooling
 
 To support the new format, we need to update tooling across the ecosystem to understand the format.
@@ -915,6 +915,15 @@ There are two key restrictions here:
 2. The only thing allowed within the `[...]` is a type available in the local scope. *It is not legal to provide an inline type definition.* However, given the relative verbosity of even today’s component signature, still less the revised version from [RFC #0748][rfc-0748], inline signatures are unlikely to be attractive anyway.
 
 From an implementation perspective, this requires our language parser to handle this variant of the tag, and for the transforms supplied for compilation to properly ignore this for build output but to supply it in an appropriate place for TypeScript-aware tools like Glint to be able to take advantage of it.
+
+
+### Custom file extension
+
+These tooling considerations together provide the motivation for a custom file extension (`.gjs` and `.gts`). In the case of TypeScript in particular, it is not possible to *remove* errors using a TypeScript language server plugin, which means that in a pure `.js` or `.ts` file, a user would get conflicting reports from TypeScript and (e.g.) Glint. Thus, today, Glint recommends that GlimmerX users *disable TypeScript in their projects*, and rely on only Glint. Taking a lesson from Vue and Svelte, however, introducing a custom file extension allows us to provide a default type for `.gjs`/`.gts` files which makes TypeScript happy in `.js` and `.ts` files, and on top of which tools like Glint can safely add *more* information.[^hbs-custom-syntax]
+
+While both Prettier and ESLint *can* work with `.js` or `.ts`, introducing the new file extension also simplifies the tooling implementation for them. It does mean that tools like GitHub’s Linguist will not work without implementing support, but we need to do that work anyway.
+
+[^hbs-custom-syntax]: Note that this also applies to the `hbs` syntax discussed in [**Alternatives: Template literals (`hbs`)**](#template-literals-hbs).
 
 
 ## How we teach this
