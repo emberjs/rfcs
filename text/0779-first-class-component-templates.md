@@ -511,7 +511,7 @@ class SetUsername extends Component {
 }
 
 setComponentTemplate(
-  precompileTemplate`
+  precompileTemplate(`
     <form {{on "submit" this.saveName}}>
       <label for='name'>Set username:</label>
       <input
