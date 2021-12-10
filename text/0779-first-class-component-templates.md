@@ -682,7 +682,9 @@ We can address in one of two ways:
 - Introduce support into Ember to associated non-colocated templates with their associated classes.
 - Introduce debug output which informs users that they must first migrate the referenced component to use colocation.
 
-Of these, the second option is preferable. It has significantly lower risk of introducing bugs in the framework along the way, because it only requires adding some debug alerting and does *not* require changing the semantics or implementation of long-standing Ember features. It is [straightforward to codemod][colo-codemod] to colocation.
+Of these, the second option is preferable.[^deprecated-non-colo] It has significantly lower risk of introducing bugs in the framework along the way, because it only requires adding some debug alerting and does *not* require changing the semantics or implementation of long-standing Ember features. It is [straightforward to codemod][colo-codemod] to colocation.
+
+[^deprecated-non-colo]: We may additionally wish to entirely deprecate non-colocated component templates as part of Polaris. However, even if we do so, we still *must* provide that debug output for the sake of the transition period, not least since that deprecation can only target Ember 5 at the earliest.
 
 
 ### The “prelude”
