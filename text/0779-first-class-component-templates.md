@@ -324,7 +324,7 @@ export default setComponentTemplate(
   <p>Hello, {{@name}}!</p>
   `,
     {
-      isStrict: true,
+      strictMode: true,
     }
   ),
   templateOnlyComponent()
@@ -373,7 +373,7 @@ export default setComponentTemplate(
   {{/if}}
   `,
     {
-      isStrict: true,
+      strictMode: true,
       scope: () => ({ isBirthday }),
     }
   ),
@@ -410,7 +410,7 @@ export default setComponentTemplate(
   {{/if}}
   `,
     {
-      isStrict: true,
+      strictMode: true,
       scope: () => ({ isBirthday }),
     }
   ),
@@ -443,7 +443,7 @@ const Greet = setComponentTemplate(
   <p>Hello, {{@name}}!</p>
   `,
     {
-      isStrict: true
+      strictMode: true
     }
   ),
   templateOnlyComponent()
@@ -535,7 +535,7 @@ setComponentTemplate(
     </form>
   `,
     {
-      isStrict: true,
+      strictMode: true,
     }
   ),
   SetUsername
