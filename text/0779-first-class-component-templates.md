@@ -692,7 +692,7 @@ While all values used in templates must be explicitly in scope, Ember[^glimmer-p
 
 [^glimmer-prelude]: Glimmer.js may provide its own prelude. While long-term the two should likely align, this RFC simply takes the _status quo_ as a given
 
-[^prelude]: “Prelude” is the conventional name for this functionality in programming language design.
+[^prelude]: “Prelude” is the conventional name for this functionality in programming language design. See e.g. the discussion from [Rust’s `std::prelude` docs](https://doc.rust-lang.org/std/prelude/index.html).
 
 
 ### Tooling
