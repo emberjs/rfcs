@@ -1609,6 +1609,39 @@ Net, while there are some nice features to the `hbs` proposal, it comes out sign
 
 ## Unresolved questions
 
+- Introducing a new file extension also provides an easy opportunity to change the default component manager for class-backed components in, and only in, the new file type—eliminating the need to subclass from Glimmer's `Component`. From the motivating example:
+
+    ```js
+    class SetUsername {
+      @tracked name = '';
+
+      updateName = ({ target: { value } }) => {
+        this.name = value;
+      }
+
+      saveName = (submitEvent) => {
+        submitEvent.preventDefault();
+        this.args.onSaveName(this.name);
+      };
+
+      <template>
+        <form {{on "submit" this.saveName}}>
+          <label for='name'>Set username:</label>
+          <input
+            id='name'
+            value={{this.value}}
+            {{on "input" this.updateName}}
+          />
+          <button type='submit' disabled={{eq this.value.length 0}}>
+            Generate
+          </button>
+        </form>
+      </template>
+    }
+    ```
+
+    However, this has unresolved complexities around providing the types needed for Glint, which requires a home for the information about the element(s) and yield(s) for the component. Today, Glint uses type-only declarations on Glimmer `Component`, which cannot be straightforwardly translated to this mode. This is likely tractable, and a future RFC may introduce it (including for defaulting `.gjs` and `.gts` into it automatically), but it is large enough that it is probably worth addressing separately.
+
 - Does the possible confusion with the platform `<template>` warrant adopting an alternative syntax, whether component-like (`<Template>`) or using an additional sigil (`<[template]>`, `<% ... %>`, `<$ ... $>` etc.)? If so, what design? Here we must keep in mind that the design should not be ambiguous with “dynamic” behavior (e.g. `<{template}>` which is suggestive of the Svelte and React expression marker, and which we might find attractive for future iterations of template language ourselves).
 
 - Are `.gjs` and `.gts` the best file extensions?
