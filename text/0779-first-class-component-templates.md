@@ -410,7 +410,7 @@ export default setComponentTemplate(
 );
 ```
 
-Since the compiled output is a default export, it is a static error to have multiple top-level (i.e. not bound to a name) `<template>`s in a file—because it is a static error to have multiple `export default` statements in a JavaScript file. (We should provide linting tooling to error on this case, rather than letting it fail at build or runtime.)
+Since the compiled output is a default export, it is a static error to have multiple top-level (i.e. not bound to a name) `<template>`s in a file—because it is a static error to have multiple `export default` statements in a JavaScript file. We should provide a lint rule to error on this case, rather than letting it fail at build or runtime.
 
 
 #### Bound to a name
@@ -451,7 +451,7 @@ No doubt there are many other such useful patterns which will emerge organically
 
 **Two important notes:**
 
-1. Users *should* always and only use `const` bindings for the result of such a template, because Ember will never reevaluate if the name is re-bound later. (Even if we wanted to do that, it would be difficult at best: nothing would notify Ember that it *should* re-evaluate that value!) We should introduce a lint rule forbidding assignment of a `<template>` to a `let` binding to prevent that confusion.
+1. Users *should* never reassign the result of binding a template, because Ember will never reevaluate if the name is re-bound later. (Even if we wanted to do that, it would be difficult at best: nothing would notify Ember that it *should* re-evaluate that value!) We should introduce a lint rule forbidding reassignment of a `<template>` to a binding to prevent that confusion.
 
 2. Relatedly, in normal app code, authors should not introduce component definitions `<template>`s in contexts where they will be “re-executed,” e.g. in a function body. It is technically possible to create components from a function, like so:
 
