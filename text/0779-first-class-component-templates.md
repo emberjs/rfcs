@@ -320,7 +320,10 @@ import templateOnlyComponent from '@ember/component/template-only';
 export default setComponentTemplate(
   precompileTemplate(`
   <p>Hello, {{@name}}!</p>
-  `
+  `,
+    {
+      isStrict: true,
+    }
   ),
   templateOnlyComponent()
 );
@@ -368,6 +371,7 @@ export default setComponentTemplate(
   {{/if}}
   `,
     {
+      isStrict: true,
       scope: () => ({ isBirthday }),
     }
   ),
@@ -404,6 +408,7 @@ export default setComponentTemplate(
   {{/if}}
   `,
     {
+      isStrict: true,
       scope: () => ({ isBirthday }),
     }
   ),
@@ -434,7 +439,10 @@ import templateOnlyComponent from '@ember/component/template-only';
 const Greet = setComponentTemplate(
   precompileTemplate(`
   <p>Hello, {{@name}}!</p>
-  `
+  `,
+    {
+      isStrict: true
+    }
   ),
   templateOnlyComponent()
 );
@@ -523,7 +531,10 @@ setComponentTemplate(
         Generate
       </button>
     </form>
-  `
+  `,
+    {
+      isStrict: true,
+    }
   ),
   SetUsername
 )
