@@ -583,12 +583,12 @@ However, doing so will have a fairly high costs at runtime. It’s worth remembe
 function conditionalComponent(predicate) {
   if (predicate) {
     return setComponentTemplate(
-      precompileTemplate(`<p>Cool</p>`),
+      precompileTemplate(`<p>Cool</p>`, { strictMode: true }),
       templateOnly()
     );
   } else {
     return setComponentTemplate(
-      precompileTemplate(`<p>Lame</p>`),
+      precompileTemplate(`<p>Lame</p>`, { strictMode: true }),
       templateOnly()
     );
   }
