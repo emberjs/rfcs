@@ -233,10 +233,11 @@ Additionally, introducing test-only components is quite painful, requiring use o
 
 ### The solution
 
-To address these problems, the Ember community [proposed primitives][rfc-0454] which unlocked experimentation in this space and [defined the semantics of “strict” templates which use those primitives][rfc-0496]. Now, with a history of having done that experimentation—with [GlimmerX][glimmerx] and [ember-template-imports][eti]—and having had *many* discussions about the trade-offs over the years, it’s time to ship a proposal which resolves these questions: **first-class component templates**.
+To address these problems, the Ember community [proposed primitives][rfc-0454] which unlocked experimentation in this space and [defined the semantics of “strict” templates which use those primitives][rfc-0496] and [made modifers and helpers first-class citizens of templates][rfc-0432]. Now, with a history of having done that experimentation—with [GlimmerX][glimmerx] and [ember-template-imports][eti]—and having had *many* discussions about the trade-offs over the years, it’s time to ship a proposal which resolves these questions: **first-class component templates**.
 
 [rfc-0454]: https://github.com/emberjs/rfcs/pull/454
 [rfc-0496]: https://emberjs.github.io/rfcs/0496-handlebars-strict-mode.html
+[rfc-0432]: https://emberjs.github.io/rfcs/0432-contextual-helpers.html
 [glimmerx]: https://glimmerjs.github.io/glimmer-experimental/
 [eti]: https://github.com/ember-template-imports/ember-template-imports
 
