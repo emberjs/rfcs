@@ -291,7 +291,7 @@ The value produced by authoring a `<template>` is a *JavaScript value*, and acco
 
 Therefore, in normal app or addon code, it is nonsensical to reassign it when bound with a `let` binding: changing the value bound to the `let` will *not* result in Ember’s reevaluating anything which *uses* that value: the “scope” of a template is only ever computed once, for performance reasons.
 
-A function may of course return different components based on its arguments, etc.; but such a function will not be “automatically” re-executed unless the function consumes tracked properties. This is just applying the standard auto-tracking semantics to functions which return components, which is possible *today*. I discuss below the performance pitfalls of doing this inline, and the corresponding guidance we should provide.
+A function may of course return different components based on its arguments, etc.; but such a function will not be “automatically” re-executed unless the function consumes tracked properties. (This is just applying the standard auto-tracking semantics to functions which return components, which is possible *today*.) I discuss below the performance pitfalls of doing this inline, and the corresponding guidance we should provide.
 
 Apps or addons which want to compile arbitrary components at runtime are the exception to static component definition as described here. Most apps and addons will *not* want to do this, because it is expensive and slow and also a security risk in that it allows arbitrary code execution within your app. However, there *are* good use cases, e.g. dynamic online environments like the [GlimmerX playground][glimmerx-playground] or the [Limber Editor][limber], or documentation tooling like [Storybook][storybook].
 
