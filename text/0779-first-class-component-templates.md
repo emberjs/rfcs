@@ -135,6 +135,7 @@ export default class GenerateAvatar extends Component {
     - [Codemod](#codemod)
   - [TypeScript](#typescript)
   - [Custom file extension](#custom-file-extension)
+- [Transition path](#transition-path)
 - [How we teach this](#how-we-teach-this)
   - [Guides](#guides)
     - [Tutorial](#tutorial)
@@ -924,6 +925,23 @@ These tooling considerations together provide the motivation for a custom file e
 While both Prettier and ESLint *can* work with `.js` or `.ts`, introducing the new file extension also simplifies the tooling implementation for them. It does mean that tools like GitHub’s Linguist will not work without implementing support, but we need to do that work anyway.
 
 [^hbs-custom-syntax]: Note that this also applies to the `hbs` syntax discussed in [**Alternatives: Template literals (`hbs`)**](#template-literals-hbs).
+
+
+## Transition path
+
+We will complete this transition as part of Ember Polaris. To do that successfully, we must:
+
+- implement the features as described in [**Detailed design**](#detailed-design), migrating in the implementation from `ember-template-imports`
+- update the [tooling](#tooling):
+  - [syntax highlighting](#syntax-highlighting)
+  - [blueprints](#blueprints)
+  - [linting and formatting](#linting-and-formatting)
+  - [language servers](#language-server-support)
+- update all [the teaching materials](#how-we-teach-this)
+
+Additionally, an optimal transition will include changes to [language server implementations](#language-server-support) and supply a [codemod](#codemod) from loose to strict mode. (We may be *able* to release this as part of Polaris without those, but the transition will be much more successful with them.)
+
+Finally, the Glimmer.js (and thus [GlimmerX][glimmerx]) implementation should update to match this, further decreasing the delta between standalone Glimmer and Ember.
 
 
 ## How we teach this
