@@ -122,6 +122,7 @@ export default class GenerateAvatar extends Component {
     - [Standalone](#standalone)
     - [Bound to a name](#bound-to-a-name)
     - [Class body](#class-body)
+  - [Performance](#performance)
   - [Interop](#interop)
     - [Named exports](#named-exports)
     - [Non-colocated templates](#non-colocated-templates)
@@ -449,60 +450,7 @@ Notice that this allows for a host of convenient (and likely common!) new ways o
 
 No doubt there are many other such useful patterns which will emerge organically here as they have across the broader JS ecosystem.
 
-**Two important notes:**
-
-1. Users *should* never reassign the result of binding a template, because Ember will never reevaluate if the name is re-bound later. (Even if we wanted to do that, it would be difficult at best: nothing would notify Ember that it *should* re-evaluate that value!) We should introduce a lint rule forbidding reassignment of a `<template>` to a binding to prevent that confusion.
-
-2. Relatedly, in normal app code, authors should not introduce component definitions `<template>`s in contexts where they will be “re-executed,” e.g. in a function body. It is technically possible to create components from a function, like so:
-
-    ```js
-    function conditionalComponent(predicate) {
-      if (predicate) {
-        return <template><p>Cool</p></template>
-      } else {
-        return <template><p>Lame</p></template>
-      }
-    }
-    ```
-
-    However, doing so will have unexpected costs at runtime. It’s worth remembering what the resulting output is:
-
-    ```js
-    function conditionalComponent(predicate) {
-      if (predicate) {
-        return setComponentTemplate(
-          precompileTemplate(`<p>Cool</p>`),
-          templateOnly()
-        );
-      } else {
-        return setComponentTemplate(
-          precompileTemplate(`<p>Lame</p>`),
-          templateOnly()
-        );
-      }
-    }
-    ```
-
-    The problem here is that this requires re-running both the creation of the template-only empty backing instance which has `null` for `this`, and the association between the two. As described above, the template precompilation also happens during the build, which eliminates some but not all of the apparent cost here; but the other parts are needlessly dynamic and expensive.
-
-    In this scenario, users can accomplish the same thing by manually hoisting the component definitions to module scope:
-
-    ```js
-    const Cool = <template><p>Cool</p></template>;
-    const Lame = <template><p>Lame</p></template>;
-
-    function conditionalComponent(predicate) {
-      if (predicate) {
-        return Cool;
-      } else {
-        return Lame;
-      }
-    }
-    ```
-
-    (Notice that this is no different than any other concern around other costly operations needlessly happening in a function body repeatedly.)
-
-    See further discussion below under [**How We Teach This**](#how-we-teach-this).
+Users *should* never reassign the result of binding a template, because Ember will never reevaluate if the name is re-bound later. (Even if we wanted to do that, it would be difficult at best: nothing would notify Ember that it *should* re-evaluate that value!) We should introduce a lint rule forbidding reassignment of a `<template>` to a binding to prevent that confusion.
 
 
 #### Class body
@@ -600,6 +548,60 @@ class Example extends Component {
 That is because the compilation output does *not* embed the template in the class' body in any way, but instead associates it *externally* to the class—but private class fields are only accessible within the body of the class itself, per the ECMAScript spec. While we could invest time to change the implementation to avoid this, it is not generally a problem. Because we do not interact with component class instances directly—only through the template layer—we do not actually *need* private class fields.
 
 This is a real gap, which we could address in a future RFC. Notably, however, it is *not specific to this proposal*, but applies to *all* proposals built on the current primitives.
+
+
+### Performance
+
+In normal app code, authors should not introduce component definitions `<template>`s in contexts where they will be “re-executed,” e.g. in a function body. It is technically possible to create components from a function, like so:
+
+```js
+function conditionalComponent(predicate) {
+  if (predicate) {
+    return <template><p>Cool</p></template>
+  } else {
+    return <template><p>Lame</p></template>
+  }
+}
+```
+
+However, doing so will have unexpected costs at runtime. It’s worth remembering what the resulting output is:
+
+```js
+function conditionalComponent(predicate) {
+  if (predicate) {
+    return setComponentTemplate(
+      precompileTemplate(`<p>Cool</p>`),
+      templateOnly()
+    );
+  } else {
+    return setComponentTemplate(
+      precompileTemplate(`<p>Lame</p>`),
+      templateOnly()
+    );
+  }
+}
+```
+
+The problem here is that this requires re-running both the creation of the template-only empty backing instance which has `null` for `this`, and the association between the two. As described above, the template precompilation also happens during the build, which eliminates some but not all of the apparent cost here; but the other parts are needlessly dynamic and expensive.
+
+In this scenario, users can accomplish the same thing by manually hoisting the component definitions to module scope:
+
+```js
+const Cool = <template><p>Cool</p></template>;
+const Lame = <template><p>Lame</p></template>;
+
+function conditionalComponent(predicate) {
+  if (predicate) {
+    return Cool;
+  } else {
+    return Lame;
+  }
+}
+```
+
+(Notice that this is no different than any other concern around other costly operations needlessly happening in a function body repeatedly.)
+
+See further discussion below under [**How We Teach This**](#how-we-teach-this).
 
 
 ### Interop
