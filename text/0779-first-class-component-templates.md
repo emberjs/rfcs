@@ -931,7 +931,7 @@ While both Prettier and ESLint *can* work with `.js` or `.ts`, introducing the n
 
 ## Transition path
 
-We will complete this transition as part of Ember Polaris. To do that successfully, we must:
+We will transition to using first-class component templates by default as part of Ember Polaris. To do that successfully, we must:
 
 - implement the features as described in [**Detailed design**](#detailed-design), migrating in the implementation from `ember-template-imports`
 - update the [tooling](#tooling):
@@ -942,6 +942,8 @@ We will complete this transition as part of Ember Polaris. To do that successful
 - update all [the teaching materials](#how-we-teach-this)
 
 Additionally, an optimal transition will include changes to [language server implementations](#language-server-support) and supply a [codemod](#codemod) from loose to strict mode. (We may be *able* to release this as part of Polaris without those, but the transition will be much more successful with them.)
+
+In terms of rollout, we should deliver features incrementally, allowing users to opt into them via command line flags for Ember CLI (`--strict` and `--loose` for `ember generate component`) and possibly also optional features (e.g. a `"strict-components": true` in `optional-features.json`). Once Polaris arrives, setting `"edition": "polaris"` will opt users into those as new defaults, while allowing use of command line flags to opt into loose mode for a given component. (Later deprecations may remove that, but that is something to resolve at a later time.)
 
 Finally, the Glimmer.js (and thus [GlimmerX][glimmerx]) implementation should update to match this, further decreasing the delta between standalone Glimmer and Ember.
 
