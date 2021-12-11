@@ -1013,7 +1013,7 @@ This section provides us an opportunity to show how useful it can be to introduc
 
 (I will provide this example in full here in part because it shows powerfully the pedagogical value of this RFC!)
 
-The Mapbox token value is not reactive and therefore the computation has no reason to exist on a backing class *at all*. It is only there today because *without* first-class component templates, it requires introducing the heavier notion of classic (pre-[RFC #0756][rfc-0756]) helpers. With `<template>`, it can simply become a constant value defined in local scope:
+The Mapbox token value is not reactive and therefore the computation has no reason to exist on a backing class *at all*. It is only there today because *without* first-class component templates, it requires introducing the heavier notion of helpers off in a separate file. (The more so given that the guides currently assume classic, i.e. pre-[RFC #0756][rfc-0756] helpers using the `helper` function and not a standalone function!) With `<template>`, it can simply become a constant value defined in local scope:
 
 ```js
 import ENV from 'super-rentals/config/environment';
