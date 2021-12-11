@@ -626,7 +626,7 @@ There are two qualifications to the interop story: a minor one around named expo
 
 #### Named exports
 
-However, other components exported as *named* exports will not be available in loose mode: resolution only evaluates default exports. This is a temporary incoherence which will be resolved as the ecosystem migrates to strict mode. As a workaround, users may choose to create reexport-only modules to allow loose-mode access. For example, given a module `app/components/named-only.js` with two named export components:
+Components exported as *named* exports will not be available in loose mode: resolution only evaluates default exports. This is a temporary incoherence which will be resolved as the ecosystem migrates to strict mode. As a workaround, users may choose to create reexport-only modules to allow loose-mode access. For example, given a module `app/components/named-only.js` with two named export components:
 
 ```js
 export const Greet = <template>
