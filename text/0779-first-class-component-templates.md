@@ -1190,7 +1190,7 @@ This works, and it simplifies the burden of the tooling implementation, but it c
 
 ### Distinguishing class-backed and template-only components
 
-There is a small pedagogical difficulty, suggested by some of the language above, about the fact that we use `<template>` here to represent both the entirety of a component, when it is free-standing; and also the template portion of a component, when it is embedded in a class. Similarly, the proposed syntax for a TypeScript type signature must forbid the type parameter in class-backed components, because the correct home for the 
+There is a small pedagogical difficulty, suggested by some of the language above, about the fact that we use `<template>` here to represent both the entirety of a component, when it is free-standing; and also the template portion of a component, when it is embedded in a class. Similarly, the proposed syntax for a TypeScript type signature must forbid the type parameter in class-backed components, because the correct home for the type parameter is on the backing class itself.
 
 We could instead introduce `<component>` and `<template>` as separate constructs, where `<template>` provides a template definition for the class it is embedded in, and `<component>` defines a standalone component. In this approach, `<component>` could *not* be used within the body of a class, nor `<template>` in a standalone form.[^route-template]
 
