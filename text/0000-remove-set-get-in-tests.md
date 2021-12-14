@@ -48,7 +48,7 @@ This approach has three main issues:
 1. It synchronously flushes the DOM
 1. It makes writing tests in TypeScript a huge pain
 
-On the first point: `this.set` is essentially irrelevant everwhere else in Ember. In a post-Octane world, we no longer need to `get` or `set`, and it is, in fact, frequently discouraged as an unnecessary complication. Additonally, the value of `this` inside of a test is extremely murky. The fact that `this` is both the test context _and_ a sort of ersatz scope for the surrounding "template" of the rendering test is not exactly intuitive or easy to teach.
+On the first point: `this.set` is essentially irrelevant everywhere else in Ember. In a post-Octane world, we no longer need to `get` or `set`, and it is, in fact, frequently discouraged as an unnecessary complication. Additonally, the value of `this` inside of a test is extremely murky. The fact that `this` is both the test context _and_ a sort of ersatz scope for the surrounding "template" of the rendering test is not exactly intuitive or easy to teach.
 
 On the second point: `this.set` is actually [run-wrapped when called in tests](https://github.com/emberjs/ember-test-helpers/blob/master/addon-test-support/@ember/test-helpers/setup-context.ts#L412-L423), which means that every time someone calls `this.set`, they are actually synchronously flushing the entirety of the DOM and triggering a re-render of the entire test template. This _in no way_ resembles the relationship between data updates and re-renders in application code. In application code, changes to the underlying data in template are coalesced into a single DOM update, which, in turn, re-renders only the parts of the DOM that are affected by the changed data. As a result, rendering tests end up essentially testing a version of rendering that isn't even used in the application being tested.
 
@@ -161,7 +161,54 @@ It's worth noting that rendering tests without `get`/`set` are actually possible
 
 We'd need to update the [testing components](https://guides.emberjs.com/release/testing/testing-components/) section of the official guides to document this new approach.
 
-We'd also need to update the [API docs for ember-test-helpers](https://github.com/emberjs/ember-test-helpers/blob/master/API.md) for the new version of `render` as well as the newly introduced `rerender` and `scopedTemplate` functions.
+We'd also need to update the [API docs for @ember/test-helpers](https://github.com/emberjs/ember-test-helpers/blob/master/API.md) for the new version of `render` as well as the newly introduced `rerender` function.
+
+Finally, we'd need to document the new `scopedTemplate` function in `@ember/template-compilation`.
+
+API documentation for the three new functions are included below:
+
+### render
+
+```ts
+/**
+  Renders the provided template or component and appends it to the DOM, overwriting any previously-rendered template or component.
+  @public
+  @param {CompiledTemplate|Component} template the template or component to render
+  @param {RenderOptions} options options hash containing engine owner ({ owner: engineOwner })
+  @returns {Promise<void>} resolves when settled
+*/
+render(template: CompiledTemplate | Component, options?: RenderOptions): Promise<void>;
+```
+
+### rerender
+
+```ts
+/**
+  Returns a promise that resolves when rendering has settled.  Settled in this context is defined as when all of the
+  tags in use are "current". When this is checked at the _end_ of the run loop, this essentially guarantees that all
+  rendering is completed.
+  @public
+  @returns {Promise<void>} resolves when settled
+*/
+rerender(): Promise<void>
+```
+
+### scopedTemplate
+
+```ts
+/**
+ Turns a lexically scoped strict-mode template into a Component. The string passed to `scopedTemplate` may not contain
+ any interpolated values or other dynamic elements, but it may refer to other values/variables in the surrounding scope.
+ @public
+ @param {string} templateString a string containing a strict-mode template
+ @returns {Component} a component that can be passed to `render`
+ @example
+     let person = { name: 'Chris' };
+     scopedTemplate('<Foo @name={{person.name}} />`)
+ **/
+
+function scopedTemplate(templateString: string): Component;
+```
 
 All things considered, the changes in this RFC should result in a component testing model that is ultimately _more_ intuitive. We could also introduce a configuration option to `@ember/test-helpers` that would allow users to turn on assertion that prevents rendering tests from being written using the old method to help codebases migrate.
 
