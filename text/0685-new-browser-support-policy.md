@@ -76,7 +76,7 @@ In the new support policy, Ember will support the following browsers:
   3. Safari
 - Testing
   1. Headless Chrome
-  2. Headless Safari
+  2. Headless Firefox
 
 Any browser which is not listed here may work, but is not explicitly supported.
 
@@ -343,7 +343,7 @@ Ember supports the following major browsers:
   3. Safari
 - Testing
   1. Headless Chrome
-  2. Headless Safari
+  2. Headless Firefox
 
 Other browsers may work with Ember.js, but are not explicitly supported. If you
 would like to add support for a new browser, please [submit an RFC or RFC issue for discussion](https://github.com/emberjs/rfcs)!
@@ -362,7 +362,7 @@ either **evergreen** or **non-evergreen**. The categorization is as follows:
     2. Mozilla Firefox
   - Testing
     1. Headless Chrome
-    2. Headless Safari
+    2. Headless Firefox
 
 - Non-evergreen
   - Desktop
