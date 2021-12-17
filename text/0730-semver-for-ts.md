@@ -606,7 +606,7 @@ Type-checking in TypeScript behaves differently under different “strictness”
 
 For example: a package with `strictNullChecks: false` could make a function return type nullable without the compiler reporting it within the package or the package’s type tests. However, as described above, this is a breaking change for consumers which have `strictNullChecks: true`. (By contrast, a *consumer* may disable strictness settings safely: code which type-checks under a stricter setting also type-checks under a less strict setting.) Likewise, with `noPropertyAccessFromIndexSignature: false`, an author could change a type `SomeObj` from `{ a: string }` to `{ [key: string]: string }` and accessing `someObj.a.length` would now error.
 
-Accordingly, conforming packages must use `strict: true` and `noPropertyAccessFromIndexSignature: true` in their compiler settings.
+Accordingly, conforming packages must use `strict: true` in their compiler settings. Additionally, communities may define further strictness settings to which they commit to conform which include “pedantic” strictness settings like `noUncheckedIndexedAccess`. For example, the Ember community might commit to a set of *additional* strictness flags it supports for its own types for any LTS release, published in Ember’s own TypeScript documentation.
 
 **Note:** While the TypeScript compiler may include new strictness flags under `strict: true` in any release, this is simply a special case of TypeScript’s policy on breaking changes.
 
