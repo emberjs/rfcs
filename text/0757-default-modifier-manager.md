@@ -13,11 +13,40 @@ RFC PR: https://github.com/emberjs/rfcs/pull/757
 
 ## Summary
 
-Anything that can be in a template has its lifecycle managed by the manager pattern.
-Today, we have known managers for `@glimmer/component`, `@ember/helper`, etc.
-But what happens when the VM encounters an object for which there is no manager?,
-such as a plain function? This RFC explores and proposes a default behavior for
-those unknown scenarios when it comes to _modifiers_.
+By introducing a default modifier manager, we can enable standalone functions to be used as modifiers.
+
+Today, when defining a modifier, developers need to both install _a_ library,
+such as [ember-modifier](gh-ember-modifier) or [ember-could-get-used-to-this](gh-ecgutt), and wrap
+a function an a utility from one of those libraries:
+
+```js
+// app/modifiers/scroll.js
+import { modifier } from 'ember-modifier';
+
+export default modifier(function scroll(el, _, { when: shouldScroll }) {
+  if (shouldScroll) {
+    el.scrollTop(0);
+  }
+});
+```
+
+With the default modifier manager proposed in this RFC,
+we can write a function which receives the element and the arguments directly:
+
+```js
+// app/modifiers/scroll.js
+export default function scroll(el, { when: shouldScroll }) {
+  if (shouldScroll) {
+    el.scrollTop(0);
+  }
+}
+```
+
+This complements the introduction of the [default-helper-manager](rfc-756) and is
+especially nice when combined with strict mode templates
+via [ember-template-imports](gh-ember-template-imports) (or as proposed in [First-Class Component Templates (RFC 779)](rfc-779))
+
+[gh-ember-template-imports]: https://github.com/ember-template-imports/ember-template-imports
 
 ## Motivation
 
@@ -63,6 +92,7 @@ export default class Example extends Component {
   @tracked numberOfClicks = 0
 
   // when the number of clicks is odd, add a JS movement effect / animation
+  // (this is the modifier definition)
   wiggly = (element) => {
     if (this.numberOfClicks % 2 === 0) {
       return;
@@ -141,8 +171,10 @@ _Note: `<template>` is experimental syntax, and should not be be the focus of th
 ## Detailed design
 
 _A Default Manager is not something that can be chosen by the user, but is baked in to the framework
-as a default so that a user doesn't have to build something to use a non-framework-specific variant
-of the three constructs: Helpers, Modifiers, and Components._
+as a default so that a user doesn't have to build framework-specific wrappers in order to use
+modifiers, (or whatever the manager is managing -- helpers, etc).
+This reduces the overall API surface area and boilerplate of the framework, allow developers
+to lean more on general JavaScript.
 
 The desired usage of a plain function in a template should be:
  - convenient
@@ -155,36 +187,117 @@ Which results in:
    this happens to align with the _syntax_ of modifier invocation where named arguments may not appear
    before the last positional argument.
 
+The following examples will use the example from the [Ember Guides](eg-3-27-on-click-outside), where a modifier
+is used to implement a callback-invocation upon clicking _outside_ an element,
+which could be useful for modals, menus, popovers, etc.
+
+[eg-3-27-on-click-outside]: https://guides.emberjs.com/v3.27.0/components/template-lifecycle-dom-and-modifiers/#toc_out-of-component-modifications
+
+For reference, this is the original implementation:
+
+```js
+// app/modifiers/on-click-outside.js
+import { modifier } from "ember-modifier";
+
+export default modifier((element, [callback]) => {
+  function handleClick(event) {
+    if (!element.contains(event.target)) {
+      callback();
+    }
+  }
+
+  document.addEventListener("click", handleClick);
+
+  return () => {
+    document.removeEventListener("click", handleClick);
+  };
+});
+```
+
+
 #### Example with mixed params
 
+In this modal example, with the modal (a div) starting open, the
+`this.onClickOutside` modifier is applied with mixed positional (`this.close`)
+and named (`when`) arguments.
+
 ```hbs
-<div {{this.myModifier 1 2 op="add"}}></div>
+{{#if this.isOpen}}
+  <div {{this.onClickOutside this.close when=this.canLeave}}>
+    modal contents
+  </div>
+{{/if}}
 ```
-would be an example invocation of a function with the following signature
-expressed as TypeScript for clarity:
-```ts
-type Options = { op: 'add' | 'subtract' }
-class A {
-  myModifier = (element: Element, first: number, second: number, options: Options) => {
-    // ...
+```js
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+
+export default class Example extends Component {
+  @tracked isOpen = true;
+  @tracked canLeave = true;
+
+  onClickOutside = (element, callback, options) => {
+    function handleClick(event) {
+      if (!options.canLeave) return;
+
+      if (!element.contains(event.target)) {
+        callback();
+      }
+    }
+
+    document.addEventListener('click', handleClick);
+
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
   }
+
+  close = () => this.isOpen = false;
 }
 ```
 
-#### Example with only positional parameters
+#### Example with only positional arguments
+
+This example is the same as above, but with only positional arguments
 
 ```hbs
-<div {{this.myModifier 1 2}}></div>
+{{#if this.isOpen}}
+  <div {{this.onClickOutside this.close this.canLeave}}>
+    modal contents
+  </div>
+{{/if}}
 ```
-Because there are no named arguments passed in, the develope may opt to omit the options argument from the method signature.
-```ts
-class A {
-  myModifier = (element: Element, first: number, second: number) => {
-    // ..
+```js
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+
+export default class Example extends Component {
+  @tracked isOpen = true;
+  @tracked canLeave = true;
+
+  onClickOutside = (element, callback, canLeave) => {
+    function handleClick(event) {
+      if (!canLeave) return;
+
+      if (!element.contains(event.target)) {
+        callback();
+      }
+    }
+
+    document.addEventListener('click', handleClick);
+
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
   }
+
+  close = () => this.isOpen = false;
 }
 ```
-however, the options argument is still passed, but is equivalent to `{}`.
+
+Because there are no named arguments passed in,
+the developer may opt to omit the options argument from the method signature.
+However, the options argument is still passed, but is equivalent to `{}`.
 
 
 #### Example default modifier implementation
@@ -196,20 +309,21 @@ import type { CapturedArguments as Arguments } from '@glimmer/interfaces';
 
 type FnArgs<Args extends Arguments = Arguments> =
   | [Element, ...Args['positional'], Args['named']]
-  | [Element, ...Args['positional'], {}];
+  | [Element, ...Args['positional'], {}]
+  // For argument-less modifiers or
+  // for modifiers defined in classes that consume tracked data
+  | [Element];
 
-type FunctionModifier<
-  Args extends Arguments = Arguments,
-  ModifierArgs extends FnArgs<Args> = FnArgs<Args>
-> =
-  | ((...args: ModifierArgs) => void) // setup, with no teardown
-  | ((...args: ModifierArgs) => () => void) // setup with teardown
+// The return value may be a function, which is used for cleanup, but otherwise
+// no return value is needed
+type FunctionModifier<ModifierArgs extends FnArgs> =
+  ((...args: ModifierArgs) => (void | () => void))
 
 class A {
-  myModifierA: FunctionModifier = (element, a, b, c, options) => {
+  myModifierA = (element, a, b, c, options) => {
     /* setup, with no teardown */
   }
-  myModifierB: FunctionModifier = (element, a, b, c, options) => {
+  myModifierB = (element, a, b, c, options) => {
     /* setup */
     return () => { /* teardown */ }
   }
@@ -240,9 +354,12 @@ local/private modifier, rather than something you'd put in `app/modifiers`.
 Maybe a whole page is added to the guides on modifiers, their philosophy, when to use them, etc.
 
 While the overall API for modifiers in general has been "not perfect", there has been a fair amount of
-experimentation with modifiers since the 3.11 - 3.16 (pre-octane) era. Function modifiers are
-significantly simpler than class-based modifiers, and the complexity of the specifics of class-
-based modifiers is where most of the hesitance around adding modifiers by default has been.
+experimentation with modifiers since the 3.11 - 3.16 (pre-octane) era. Since Octane's release,
+[ember-modifier](gh-ember-modifier) has had extensive usage and has proven that the design of
+function-based modifiers is solid for its use-cases.
+Function modifiers are significantly simpler than class-based modifiers,
+and the complexity of the specifics of class-based modifiers is where most of
+the hesitance around adding modifiers by default has been (around lifecycle management).
 
 Existing users of Ember should be made aware of these capabilities, once implemented, via
 the release blog post, with some examples -- but folks watching developments in the ecosystem
@@ -264,7 +381,11 @@ the [helpers polyfill](helpers-polyfill) does for a helper-manager.
 There could be some awkwardness around the last argument
 passed to the function, as the type signature may not match how the call-site expects
 the signature to be. Projects like [Glint](https://github.com/typed-ember/glint#readme)
-would be essential for helping with clarity here.
+would be essential for helping with clarity here:
+mostly to alert developers when modifier arguments do not match the defined type signature.
+If one day Glint becomes a default that developers don't have to configure, regardless of the
+usage of typescript or not, it can help protect people from easy mistakes, typos, etc.
+(But this applies to a lot more than just modifier usage)
 
 ## Alternatives
 
