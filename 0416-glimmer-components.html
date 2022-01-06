@@ -1,42 +1,36 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js">
+<html lang="en" class="sidebar-visible no-js light">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>0416-glimmer-components - </title>
-        
-
+        <title>0416-glimmer-components</title>
+        <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
+        <link rel="icon" href="favicon.svg">
         <link rel="shortcut icon" href="favicon.png">
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
         <link rel="stylesheet" href="css/print.css" media="print">
-
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
-
+        <link rel="stylesheet" href="fonts/fonts.css">
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
-
-        
     </head>
-    <body class="light">
+    <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -60,8 +54,11 @@
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            document.body.className = theme;
-            document.querySelector('html').className = theme + ' js';
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
@@ -78,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="affix"><a href="introduction.html">Introduction</a></li><li><a href="0001-transform-attribute-meta-parameter.html">0001-transform-attribute-meta-parameter</a></li><li><a href="0003-block-params.html">0003-block-params</a></li><li><a href="0003-cli-ember-doctor.html">0003-cli-ember-doctor</a></li><li><a href="0010-engines.html">0010-engines</a></li><li><a href="0011-improved-cp-syntax.html">0011-improved-cp-syntax</a></li><li><a href="0012-help-json-output.html">0012-help-json-output</a></li><li><a href="0015-the-road-to-ember-2-0.html">0015-the-road-to-ember-2-0</a></li><li><a href="0020-sri-default.html">0020-sri-default</a></li><li><a href="0023-command-line-completion.html">0023-command-line-completion</a></li><li><a href="0024-bound-attributes.html">0024-bound-attributes</a></li><li><a href="0028-app-import-output-file.html">0028-app-import-output-file</a></li><li><a href="0029-addon-black-and-whitelist-for-apps.html">0029-addon-black-and-whitelist-for-apps</a></li><li><a href="0045-internet-explorer.html">0045-internet-explorer</a></li><li><a href="0046-cli-improved-release-process.html">0046-cli-improved-release-process</a></li><li><a href="0046-registry-reform.html">0046-registry-reform</a></li><li><a href="0050-cli-production-code-stripping.html">0050-cli-production-code-stripping</a></li><li><a href="0050-improved-actions.html">0050-improved-actions</a></li><li><a href="0053-helpers.html">0053-helpers</a></li><li><a href="0055-anonymous-amd.html">0055-anonymous-amd</a></li><li><a href="0056-improved-release-cycle.html">0056-improved-release-cycle</a></li><li><a href="0057-ember-data-reference-unification.html">0057-ember-data-reference-unification</a></li><li><a href="0058-helper-listing.html">0058-helper-listing</a></li><li><a href="0061-ember-data-background-fetch.html">0061-ember-data-background-fetch</a></li><li><a href="0064-contextual-component-lookup.html">0064-contextual-component-lookup</a></li><li><a href="0065-deprecation-warning-handlers.html">0065-deprecation-warning-handlers</a></li><li><a href="0080-serve-file-api.html">0080-serve-file-api</a></li><li><a href="0086-firefox-in-ci.html">0086-firefox-in-ci</a></li><li><a href="0090-addon-tree-caching.html">0090-addon-tree-caching</a></li><li><a href="0091-cli-addon-instrumentation-experimental-hooks.html">0091-cli-addon-instrumentation-experimental-hooks</a></li><li><a href="0091-weakmap.html">0091-weakmap</a></li><li><a href="0092-blueprint-remove-old-files.html">0092-blueprint-remove-old-files</a></li><li><a href="0095-cli-standardise-targets.html">0095-cli-standardise-targets</a></li><li><a href="0095-router-service.html">0095-router-service</a></li><li><a href="0096-enable-yarn-usage.html">0096-enable-yarn-usage</a></li><li><a href="0101-ember-data-friendly-errors.html">0101-ember-data-friendly-errors</a></li><li><a href="0105-addons-optionalDependencies.html">0105-addons-optionalDependencies</a></li><li><a href="0108-add-custom-transform.html">0108-add-custom-transform</a></li><li><a href="0110-packaging.html">0110-packaging</a></li><li><a href="0114-add-template-lint-addon.html">0114-add-template-lint-addon</a></li><li><a href="0116-qunit-dom.html">0116-qunit-dom</a></li><li><a href="0120-cli-guides.html">0120-cli-guides</a></li><li><a href="0120-route-serializers.html">0120-route-serializers</a></li><li><a href="0121-remove-ember-cli-eslint.html">0121-remove-ember-cli-eslint</a></li><li><a href="0136-contains-to-includes.html">0136-contains-to-includes</a></li><li><a href="0139-isHtmlSafe.html">0139-isHtmlSafe</a></li><li><a href="0143-module-unification.html">0143-module-unification</a></li><li><a href="0150-factory-for.html">0150-factory-for</a></li><li><a href="0176-javascript-module-api.html">0176-javascript-module-api</a></li><li><a href="0178-deprecate-ember-k.html">0178-deprecate-ember-k</a></li><li><a href="0181-deprecate-ember-data-initializers.html">0181-deprecate-ember-data-initializers</a></li><li><a href="0186-track-unique-history-location-state.html">0186-track-unique-history-location-state</a></li><li><a href="0191-deprecate-component-lifecycle-hook-args.html">0191-deprecate-component-lifecycle-hook-args</a></li><li><a href="0194-deprecate-custom-event-manager.html">0194-deprecate-custom-event-manager</a></li><li><a href="0213-custom-components.html">0213-custom-components</a></li><li><a href="0225-ember-engines-mount-params.html">0225-ember-engines-mount-params</a></li><li><a href="0226-named-blocks.html">0226-named-blocks</a></li><li><a href="0229-deprecate-testing-restricted-resolver.html">0229-deprecate-testing-restricted-resolver</a></li><li><a href="0232-simplify-qunit-testing-api.html">0232-simplify-qunit-testing-api</a></li><li><a href="0236-deprecation-ember-string.html">0236-deprecation-ember-string</a></li><li><a href="0237-deprecation-ember-map.html">0237-deprecation-ember-map</a></li><li><a href="0240-es-classes.html">0240-es-classes</a></li><li><a href="0252-browser-support-changes.html">0252-browser-support-changes</a></li><li><a href="0268-acceptance-testing-refactor.html">0268-acceptance-testing-refactor</a></li><li><a href="0272-deprecation-native-function-prototype-extensions.html">0272-deprecation-native-function-prototype-extensions</a></li><li><a href="0276-named-args.html">0276-named-args</a></li><li><a href="0278-template-only-components.html">0278-template-only-components</a></li><li><a href="0280-remove-application-wrapper.html">0280-remove-application-wrapper</a></li><li><a href="0281-es5-getters.html">0281-es5-getters</a></li><li><a href="0286-block-let-template-helper.html">0286-block-let-template-helper</a></li><li><a href="0287-promote-in-element-to-public-api.html">0287-promote-in-element-to-public-api</a></li><li><a href="0293-record-data.html">0293-record-data</a></li><li><a href="0294-optional-jquery.html">0294-optional-jquery</a></li><li><a href="0297-deprecate-ember-logger.html">0297-deprecate-ember-logger</a></li><li><a href="0300-rfc-process-update.html">0300-rfc-process-update</a></li><li><a href="0308-deprecate-property-lookup-fallback.html">0308-deprecate-property-lookup-fallback</a></li><li><a href="0311-angle-bracket-invocation.html">0311-angle-bracket-invocation</a></li><li><a href="0318-array-helper.html">0318-array-helper</a></li><li><a href="0322-deprecate-copy-copyable.html">0322-deprecate-copy-copyable</a></li><li><a href="0324-deprecate-component-isvisible.html">0324-deprecate-component-isvisible</a></li><li><a href="0326-ember-data-filter-deprecation.html">0326-ember-data-filter-deprecation</a></li><li><a href="0329-deprecated-ember-evented-in-ember-data.html">0329-deprecated-ember-evented-in-ember-data</a></li><li><a href="0331-deprecate-globals-resolver.html">0331-deprecate-globals-resolver</a></li><li><a href="0332-ember-data-record-links-and-meta.html">0332-ember-data-record-links-and-meta</a></li><li><a href="0335-deprecate-send-action.html">0335-deprecate-send-action</a></li><li><a href="0337-native-class-constructor-update.html">0337-native-class-constructor-update</a></li><li><a href="0340-deprecate-ember-merge.html">0340-deprecate-ember-merge</a></li><li><a href="0345-discord.html">0345-discord</a></li><li><a href="0364-roadmap-2018.html">0364-roadmap-2018</a></li><li><a href="0369-deprecate-computed-clobberability.html">0369-deprecate-computed-clobberability</a></li><li><a href="0370-deprecate-computed-volatile.html">0370-deprecate-computed-volatile</a></li><li><a href="0372-ember-data-model-factory-for.html">0372-ember-data-model-factory-for</a></li><li><a href="0373-Element-Modifier-Managers.html">0373-Element-Modifier-Managers</a></li><li><a href="0375-deprecate-computed-property-modifier.html">0375-deprecate-computed-property-modifier</a></li><li><a href="0386-remove-jquery.html">0386-remove-jquery</a></li><li><a href="0389-dynamic-tag-names.html">0389-dynamic-tag-names</a></li><li><a href="0391-router-helpers.html">0391-router-helpers</a></li><li><a href="0392-deprecate-component-manager-string-lookup.html">0392-deprecate-component-manager-string-lookup</a></li><li><a href="0395-ember-data-packages.html">0395-ember-data-packages</a></li><li><a href="0398-RouteInfo-Metadata.html">0398-RouteInfo-Metadata</a></li><li><a href="0403-ember-data-identifiers.html">0403-ember-data-identifiers</a></li><li><a href="0408-decorators.html">0408-decorators</a></li><li><a href="0410-tracked-properties.html">0410-tracked-properties</a></li><li><a href="0415-render-element-modifiers.html">0415-render-element-modifiers</a></li><li><a href="0416-glimmer-components.html" class="active">0416-glimmer-components</a></li><li><a href="0418-deprecate-route-render-methods.html">0418-deprecate-route-render-methods</a></li><li><a href="0421-deprecate-application-controller-props.html">0421-deprecate-application-controller-props</a></li><li><a href="0425-website-redesign.html">0425-website-redesign</a></li><li><a href="0431-guides-restructure.html">0431-guides-restructure</a></li><li><a href="0432-contextual-helpers.html">0432-contextual-helpers</a></li><li><a href="0435-modifier-splattributes.html">0435-modifier-splattributes</a></li><li><a href="0440-decorator-support.html">0440-decorator-support</a></li><li><a href="0445-deprecate-with.html">0445-deprecate-with</a></li><li><a href="0446-contribution-guides.html">0446-contribution-guides</a></li><li><a href="0449-deprecate-partials.html">0449-deprecate-partials</a></li><li><a href="0451-injection-parameter-normalization.html">0451-injection-parameter-normalization</a></li><li><a href="0452-ember-data-medium-term-plan.html">0452-ember-data-medium-term-plan</a></li><li><a href="0457-nested-lookups.html">0457-nested-lookups</a></li><li><a href="0459-angle-bracket-built-in-components.html">0459-angle-bracket-built-in-components</a></li><li><a href="0460-yieldable-named-blocks.html">0460-yieldable-named-blocks</a></li><li><a href="0461-ember-data-singleton-record-data.html">0461-ember-data-singleton-record-data</a></li><li><a href="0463-record-data-state.html">0463-record-data-state</a></li><li><a href="0465-record-data-errors.html">0465-record-data-errors</a></li><li><a href="0466-request-state-service.html">0466-request-state-service</a></li><li><a href="0468-classic-decorator.html">0468-classic-decorator</a></li><li><a href="0470-fn-helper.html">0470-fn-helper</a></li><li><a href="0471-on-modifier.html">0471-on-modifier</a></li><li><a href="0477-blueprints-update.html">0477-blueprints-update</a></li><li><a href="0478-tracked-properties-updates.html">0478-tracked-properties-updates</a></li><li><a href="0481-component-templates-co-location.html">0481-component-templates-co-location</a></li><li><a href="0486-deprecate-mouseenter.html">0486-deprecate-mouseenter</a></li><li><a href="0487-custom-model-classes.html">0487-custom-model-classes</a></li><li><a href="0491-deprecate-disconnect-outlet.html">0491-deprecate-disconnect-outlet</a></li><li><a href="0494-async-observers.html">0494-async-observers</a></li><li><a href="0496-handlebars-strict-mode.html">0496-handlebars-strict-mode</a></li><li><a href="0507-embroider-v2-package-format.html">0507-embroider-v2-package-format</a></li><li><a href="0519-2019-2020-roadmap.html">0519-2019-2020-roadmap</a></li><li><a href="0521-find-by-identifier.html">0521-find-by-identifier</a></li><li><a href="0522-default-serializers-and-adapters.html">0522-default-serializers-and-adapters</a></li><li><a href="0523-model-argument-for-route-templates.html">0523-model-argument-for-route-templates</a></li><li><a href="0554-deprecate-getwithdefault.html">0554-deprecate-getwithdefault</a></li><li><a href="0558-edition-detection.html">0558-edition-detection</a></li><li><a href="0560-add-equality-operators.html">0560-add-equality-operators</a></li><li><a href="0561-add-numeric-comparison-operators.html">0561-add-numeric-comparison-operators</a></li><li><a href="0562-add-logical-operators.html">0562-add-logical-operators</a></li><li><a href="0566-memo-decorator.html">0566-memo-decorator</a></li><li><a href="0580-destroyables.html">0580-destroyables</a></li><li><a href="0581-new-test-waiters.html">0581-new-test-waiters</a></li><li><a href="0585-improved-ember-registry-apis.html">0585-improved-ember-registry-apis</a></li><li><a href="0615-autotracking-memoization.html">0615-autotracking-memoization</a></li><li><a href="0617-rfc-stages.html">0617-rfc-stages</a></li><li><a href="0625-helper-managers.html">0625-helper-managers</a></li><li><a href="0626-invoke-helper.html">0626-invoke-helper</a></li><li><a href="0628-prettier.html">0628-prettier</a></li><li><a href="0631-refresh-method-for-router-service.html">0631-refresh-method-for-router-service</a></li><li><a href="0635-ember-new-lang.html">0635-ember-new-lang</a></li><li><a href="0637-customizable-test-setups.html">0637-customizable-test-setups</a></li><li><a href="0638-interactive-app-creation.html">0638-interactive-app-creation</a></li><li><a href="0639-replace-blacklist-whitelist.html">0639-replace-blacklist-whitelist</a></li><li><a href="0645-add-ember-page-title-addon.html">0645-add-ember-page-title-addon</a></li><li><a href="0649-deprecation-staging.html">0649-deprecation-staging</a></li><li><a href="0659-unique-id-helper.html">0659-unique-id-helper</a></li><li><a href="0669-tracked-storage-primitive.html">0669-tracked-storage-primitive</a></li><li><a href="0671-modernize-built-in-components-1.html">0671-modernize-built-in-components-1</a></li><li><a href="0673-deprecate-tryinvoke.html">0673-deprecate-tryinvoke</a></li><li><a href="0674-deprecate-transition-methods-of-controller-and-route.html">0674-deprecate-transition-methods-of-controller-and-route</a></li><li><a href="0680-implicit-injection-deprecation.html">0680-implicit-injection-deprecation</a></li><li><a href="0685-new-browser-support-policy.html">0685-new-browser-support-policy</a></li><li><a href="0686-deprecate-old-manager-capabilities-versions.html">0686-deprecate-old-manager-capabilities-versions</a></li><li><a href="0689-deprecate-has-block.html">0689-deprecate-has-block</a></li><li><a href="0690-deprecate-attrs-in-templates.html">0690-deprecate-attrs-in-templates</a></li><li><a href="0691-deprecate-class-binding-and-class-name-bindings.html">0691-deprecate-class-binding-and-class-name-bindings</a></li><li><a href="0692-deprecate-array-observers.html">0692-deprecate-array-observers</a></li><li><a href="0698-deprecate-link-to-positional-arguments.html">0698-deprecate-link-to-positional-arguments</a></li><li><a href="0702-eslint-plugin-qunit.html">0702-eslint-plugin-qunit</a></li><li><a href="0704-deprecate-octane-optional-features.html">0704-deprecate-octane-optional-features</a></li><li><a href="0705-deprecate-jquery-optional-feature.html">0705-deprecate-jquery-optional-feature</a></li><li><a href="0706-deprecate-ember-global.html">0706-deprecate-ember-global</a></li><li><a href="0707-modernize-built-in-components-2.html">0707-modernize-built-in-components-2</a></li><li><a href="0711-deprecate-auto-location.html">0711-deprecate-auto-location</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="0001-transform-attribute-meta-parameter.html">0001-transform-attribute-meta-parameter</a></li><li class="chapter-item expanded "><a href="0003-block-params.html">0003-block-params</a></li><li class="chapter-item expanded "><a href="0003-cli-ember-doctor.html">0003-cli-ember-doctor</a></li><li class="chapter-item expanded "><a href="0010-engines.html">0010-engines</a></li><li class="chapter-item expanded "><a href="0011-improved-cp-syntax.html">0011-improved-cp-syntax</a></li><li class="chapter-item expanded "><a href="0012-help-json-output.html">0012-help-json-output</a></li><li class="chapter-item expanded "><a href="0015-the-road-to-ember-2-0.html">0015-the-road-to-ember-2-0</a></li><li class="chapter-item expanded "><a href="0020-sri-default.html">0020-sri-default</a></li><li class="chapter-item expanded "><a href="0023-command-line-completion.html">0023-command-line-completion</a></li><li class="chapter-item expanded "><a href="0024-bound-attributes.html">0024-bound-attributes</a></li><li class="chapter-item expanded "><a href="0028-app-import-output-file.html">0028-app-import-output-file</a></li><li class="chapter-item expanded "><a href="0029-addon-black-and-whitelist-for-apps.html">0029-addon-black-and-whitelist-for-apps</a></li><li class="chapter-item expanded "><a href="0045-internet-explorer.html">0045-internet-explorer</a></li><li class="chapter-item expanded "><a href="0046-cli-improved-release-process.html">0046-cli-improved-release-process</a></li><li class="chapter-item expanded "><a href="0046-registry-reform.html">0046-registry-reform</a></li><li class="chapter-item expanded "><a href="0050-cli-production-code-stripping.html">0050-cli-production-code-stripping</a></li><li class="chapter-item expanded "><a href="0050-improved-actions.html">0050-improved-actions</a></li><li class="chapter-item expanded "><a href="0053-helpers.html">0053-helpers</a></li><li class="chapter-item expanded "><a href="0055-anonymous-amd.html">0055-anonymous-amd</a></li><li class="chapter-item expanded "><a href="0056-improved-release-cycle.html">0056-improved-release-cycle</a></li><li class="chapter-item expanded "><a href="0057-ember-data-reference-unification.html">0057-ember-data-reference-unification</a></li><li class="chapter-item expanded "><a href="0058-helper-listing.html">0058-helper-listing</a></li><li class="chapter-item expanded "><a href="0061-ember-data-background-fetch.html">0061-ember-data-background-fetch</a></li><li class="chapter-item expanded "><a href="0064-contextual-component-lookup.html">0064-contextual-component-lookup</a></li><li class="chapter-item expanded "><a href="0065-deprecation-warning-handlers.html">0065-deprecation-warning-handlers</a></li><li class="chapter-item expanded "><a href="0080-serve-file-api.html">0080-serve-file-api</a></li><li class="chapter-item expanded "><a href="0086-firefox-in-ci.html">0086-firefox-in-ci</a></li><li class="chapter-item expanded "><a href="0090-addon-tree-caching.html">0090-addon-tree-caching</a></li><li class="chapter-item expanded "><a href="0091-cli-addon-instrumentation-experimental-hooks.html">0091-cli-addon-instrumentation-experimental-hooks</a></li><li class="chapter-item expanded "><a href="0091-weakmap.html">0091-weakmap</a></li><li class="chapter-item expanded "><a href="0092-blueprint-remove-old-files.html">0092-blueprint-remove-old-files</a></li><li class="chapter-item expanded "><a href="0095-cli-standardise-targets.html">0095-cli-standardise-targets</a></li><li class="chapter-item expanded "><a href="0095-router-service.html">0095-router-service</a></li><li class="chapter-item expanded "><a href="0096-enable-yarn-usage.html">0096-enable-yarn-usage</a></li><li class="chapter-item expanded "><a href="0101-ember-data-friendly-errors.html">0101-ember-data-friendly-errors</a></li><li class="chapter-item expanded "><a href="0105-addons-optionalDependencies.html">0105-addons-optionalDependencies</a></li><li class="chapter-item expanded "><a href="0108-add-custom-transform.html">0108-add-custom-transform</a></li><li class="chapter-item expanded "><a href="0110-packaging.html">0110-packaging</a></li><li class="chapter-item expanded "><a href="0114-add-template-lint-addon.html">0114-add-template-lint-addon</a></li><li class="chapter-item expanded "><a href="0116-qunit-dom.html">0116-qunit-dom</a></li><li class="chapter-item expanded "><a href="0120-cli-guides.html">0120-cli-guides</a></li><li class="chapter-item expanded "><a href="0120-route-serializers.html">0120-route-serializers</a></li><li class="chapter-item expanded "><a href="0121-remove-ember-cli-eslint.html">0121-remove-ember-cli-eslint</a></li><li class="chapter-item expanded "><a href="0136-contains-to-includes.html">0136-contains-to-includes</a></li><li class="chapter-item expanded "><a href="0139-isHtmlSafe.html">0139-isHtmlSafe</a></li><li class="chapter-item expanded "><a href="0143-module-unification.html">0143-module-unification</a></li><li class="chapter-item expanded "><a href="0150-factory-for.html">0150-factory-for</a></li><li class="chapter-item expanded "><a href="0176-javascript-module-api.html">0176-javascript-module-api</a></li><li class="chapter-item expanded "><a href="0178-deprecate-ember-k.html">0178-deprecate-ember-k</a></li><li class="chapter-item expanded "><a href="0181-deprecate-ember-data-initializers.html">0181-deprecate-ember-data-initializers</a></li><li class="chapter-item expanded "><a href="0186-track-unique-history-location-state.html">0186-track-unique-history-location-state</a></li><li class="chapter-item expanded "><a href="0191-deprecate-component-lifecycle-hook-args.html">0191-deprecate-component-lifecycle-hook-args</a></li><li class="chapter-item expanded "><a href="0194-deprecate-custom-event-manager.html">0194-deprecate-custom-event-manager</a></li><li class="chapter-item expanded "><a href="0213-custom-components.html">0213-custom-components</a></li><li class="chapter-item expanded "><a href="0225-ember-engines-mount-params.html">0225-ember-engines-mount-params</a></li><li class="chapter-item expanded "><a href="0226-named-blocks.html">0226-named-blocks</a></li><li class="chapter-item expanded "><a href="0229-deprecate-testing-restricted-resolver.html">0229-deprecate-testing-restricted-resolver</a></li><li class="chapter-item expanded "><a href="0232-simplify-qunit-testing-api.html">0232-simplify-qunit-testing-api</a></li><li class="chapter-item expanded "><a href="0236-deprecation-ember-string.html">0236-deprecation-ember-string</a></li><li class="chapter-item expanded "><a href="0237-deprecation-ember-map.html">0237-deprecation-ember-map</a></li><li class="chapter-item expanded "><a href="0240-es-classes.html">0240-es-classes</a></li><li class="chapter-item expanded "><a href="0252-browser-support-changes.html">0252-browser-support-changes</a></li><li class="chapter-item expanded "><a href="0268-acceptance-testing-refactor.html">0268-acceptance-testing-refactor</a></li><li class="chapter-item expanded "><a href="0272-deprecation-native-function-prototype-extensions.html">0272-deprecation-native-function-prototype-extensions</a></li><li class="chapter-item expanded "><a href="0276-named-args.html">0276-named-args</a></li><li class="chapter-item expanded "><a href="0278-template-only-components.html">0278-template-only-components</a></li><li class="chapter-item expanded "><a href="0280-remove-application-wrapper.html">0280-remove-application-wrapper</a></li><li class="chapter-item expanded "><a href="0281-es5-getters.html">0281-es5-getters</a></li><li class="chapter-item expanded "><a href="0286-block-let-template-helper.html">0286-block-let-template-helper</a></li><li class="chapter-item expanded "><a href="0287-promote-in-element-to-public-api.html">0287-promote-in-element-to-public-api</a></li><li class="chapter-item expanded "><a href="0293-record-data.html">0293-record-data</a></li><li class="chapter-item expanded "><a href="0294-optional-jquery.html">0294-optional-jquery</a></li><li class="chapter-item expanded "><a href="0297-deprecate-ember-logger.html">0297-deprecate-ember-logger</a></li><li class="chapter-item expanded "><a href="0300-rfc-process-update.html">0300-rfc-process-update</a></li><li class="chapter-item expanded "><a href="0308-deprecate-property-lookup-fallback.html">0308-deprecate-property-lookup-fallback</a></li><li class="chapter-item expanded "><a href="0311-angle-bracket-invocation.html">0311-angle-bracket-invocation</a></li><li class="chapter-item expanded "><a href="0318-array-helper.html">0318-array-helper</a></li><li class="chapter-item expanded "><a href="0322-deprecate-copy-copyable.html">0322-deprecate-copy-copyable</a></li><li class="chapter-item expanded "><a href="0324-deprecate-component-isvisible.html">0324-deprecate-component-isvisible</a></li><li class="chapter-item expanded "><a href="0326-ember-data-filter-deprecation.html">0326-ember-data-filter-deprecation</a></li><li class="chapter-item expanded "><a href="0329-deprecated-ember-evented-in-ember-data.html">0329-deprecated-ember-evented-in-ember-data</a></li><li class="chapter-item expanded "><a href="0331-deprecate-globals-resolver.html">0331-deprecate-globals-resolver</a></li><li class="chapter-item expanded "><a href="0332-ember-data-record-links-and-meta.html">0332-ember-data-record-links-and-meta</a></li><li class="chapter-item expanded "><a href="0335-deprecate-send-action.html">0335-deprecate-send-action</a></li><li class="chapter-item expanded "><a href="0337-native-class-constructor-update.html">0337-native-class-constructor-update</a></li><li class="chapter-item expanded "><a href="0340-deprecate-ember-merge.html">0340-deprecate-ember-merge</a></li><li class="chapter-item expanded "><a href="0345-discord.html">0345-discord</a></li><li class="chapter-item expanded "><a href="0364-roadmap-2018.html">0364-roadmap-2018</a></li><li class="chapter-item expanded "><a href="0369-deprecate-computed-clobberability.html">0369-deprecate-computed-clobberability</a></li><li class="chapter-item expanded "><a href="0370-deprecate-computed-volatile.html">0370-deprecate-computed-volatile</a></li><li class="chapter-item expanded "><a href="0372-ember-data-model-factory-for.html">0372-ember-data-model-factory-for</a></li><li class="chapter-item expanded "><a href="0373-Element-Modifier-Managers.html">0373-Element-Modifier-Managers</a></li><li class="chapter-item expanded "><a href="0375-deprecate-computed-property-modifier.html">0375-deprecate-computed-property-modifier</a></li><li class="chapter-item expanded "><a href="0386-remove-jquery.html">0386-remove-jquery</a></li><li class="chapter-item expanded "><a href="0389-dynamic-tag-names.html">0389-dynamic-tag-names</a></li><li class="chapter-item expanded "><a href="0391-router-helpers.html">0391-router-helpers</a></li><li class="chapter-item expanded "><a href="0392-deprecate-component-manager-string-lookup.html">0392-deprecate-component-manager-string-lookup</a></li><li class="chapter-item expanded "><a href="0395-ember-data-packages.html">0395-ember-data-packages</a></li><li class="chapter-item expanded "><a href="0398-RouteInfo-Metadata.html">0398-RouteInfo-Metadata</a></li><li class="chapter-item expanded "><a href="0403-ember-data-identifiers.html">0403-ember-data-identifiers</a></li><li class="chapter-item expanded "><a href="0408-decorators.html">0408-decorators</a></li><li class="chapter-item expanded "><a href="0410-tracked-properties.html">0410-tracked-properties</a></li><li class="chapter-item expanded "><a href="0415-render-element-modifiers.html">0415-render-element-modifiers</a></li><li class="chapter-item expanded "><a href="0416-glimmer-components.html" class="active">0416-glimmer-components</a></li><li class="chapter-item expanded "><a href="0418-deprecate-route-render-methods.html">0418-deprecate-route-render-methods</a></li><li class="chapter-item expanded "><a href="0421-deprecate-application-controller-props.html">0421-deprecate-application-controller-props</a></li><li class="chapter-item expanded "><a href="0425-website-redesign.html">0425-website-redesign</a></li><li class="chapter-item expanded "><a href="0431-guides-restructure.html">0431-guides-restructure</a></li><li class="chapter-item expanded "><a href="0432-contextual-helpers.html">0432-contextual-helpers</a></li><li class="chapter-item expanded "><a href="0435-modifier-splattributes.html">0435-modifier-splattributes</a></li><li class="chapter-item expanded "><a href="0440-decorator-support.html">0440-decorator-support</a></li><li class="chapter-item expanded "><a href="0445-deprecate-with.html">0445-deprecate-with</a></li><li class="chapter-item expanded "><a href="0446-contribution-guides.html">0446-contribution-guides</a></li><li class="chapter-item expanded "><a href="0449-deprecate-partials.html">0449-deprecate-partials</a></li><li class="chapter-item expanded "><a href="0451-injection-parameter-normalization.html">0451-injection-parameter-normalization</a></li><li class="chapter-item expanded "><a href="0452-ember-data-medium-term-plan.html">0452-ember-data-medium-term-plan</a></li><li class="chapter-item expanded "><a href="0457-nested-lookups.html">0457-nested-lookups</a></li><li class="chapter-item expanded "><a href="0459-angle-bracket-built-in-components.html">0459-angle-bracket-built-in-components</a></li><li class="chapter-item expanded "><a href="0460-yieldable-named-blocks.html">0460-yieldable-named-blocks</a></li><li class="chapter-item expanded "><a href="0461-ember-data-singleton-record-data.html">0461-ember-data-singleton-record-data</a></li><li class="chapter-item expanded "><a href="0463-record-data-state.html">0463-record-data-state</a></li><li class="chapter-item expanded "><a href="0465-record-data-errors.html">0465-record-data-errors</a></li><li class="chapter-item expanded "><a href="0466-request-state-service.html">0466-request-state-service</a></li><li class="chapter-item expanded "><a href="0468-classic-decorator.html">0468-classic-decorator</a></li><li class="chapter-item expanded "><a href="0470-fn-helper.html">0470-fn-helper</a></li><li class="chapter-item expanded "><a href="0471-on-modifier.html">0471-on-modifier</a></li><li class="chapter-item expanded "><a href="0477-blueprints-update.html">0477-blueprints-update</a></li><li class="chapter-item expanded "><a href="0478-tracked-properties-updates.html">0478-tracked-properties-updates</a></li><li class="chapter-item expanded "><a href="0481-component-templates-co-location.html">0481-component-templates-co-location</a></li><li class="chapter-item expanded "><a href="0486-deprecate-mouseenter.html">0486-deprecate-mouseenter</a></li><li class="chapter-item expanded "><a href="0487-custom-model-classes.html">0487-custom-model-classes</a></li><li class="chapter-item expanded "><a href="0491-deprecate-disconnect-outlet.html">0491-deprecate-disconnect-outlet</a></li><li class="chapter-item expanded "><a href="0494-async-observers.html">0494-async-observers</a></li><li class="chapter-item expanded "><a href="0496-handlebars-strict-mode.html">0496-handlebars-strict-mode</a></li><li class="chapter-item expanded "><a href="0507-embroider-v2-package-format.html">0507-embroider-v2-package-format</a></li><li class="chapter-item expanded "><a href="0519-2019-2020-roadmap.html">0519-2019-2020-roadmap</a></li><li class="chapter-item expanded "><a href="0521-find-by-identifier.html">0521-find-by-identifier</a></li><li class="chapter-item expanded "><a href="0522-default-serializers-and-adapters.html">0522-default-serializers-and-adapters</a></li><li class="chapter-item expanded "><a href="0523-model-argument-for-route-templates.html">0523-model-argument-for-route-templates</a></li><li class="chapter-item expanded "><a href="0554-deprecate-getwithdefault.html">0554-deprecate-getwithdefault</a></li><li class="chapter-item expanded "><a href="0558-edition-detection.html">0558-edition-detection</a></li><li class="chapter-item expanded "><a href="0560-add-equality-operators.html">0560-add-equality-operators</a></li><li class="chapter-item expanded "><a href="0561-add-numeric-comparison-operators.html">0561-add-numeric-comparison-operators</a></li><li class="chapter-item expanded "><a href="0562-add-logical-operators.html">0562-add-logical-operators</a></li><li class="chapter-item expanded "><a href="0566-memo-decorator.html">0566-memo-decorator</a></li><li class="chapter-item expanded "><a href="0580-destroyables.html">0580-destroyables</a></li><li class="chapter-item expanded "><a href="0581-new-test-waiters.html">0581-new-test-waiters</a></li><li class="chapter-item expanded "><a href="0585-improved-ember-registry-apis.html">0585-improved-ember-registry-apis</a></li><li class="chapter-item expanded "><a href="0615-autotracking-memoization.html">0615-autotracking-memoization</a></li><li class="chapter-item expanded "><a href="0617-rfc-stages.html">0617-rfc-stages</a></li><li class="chapter-item expanded "><a href="0625-helper-managers.html">0625-helper-managers</a></li><li class="chapter-item expanded "><a href="0626-invoke-helper.html">0626-invoke-helper</a></li><li class="chapter-item expanded "><a href="0628-prettier.html">0628-prettier</a></li><li class="chapter-item expanded "><a href="0631-refresh-method-for-router-service.html">0631-refresh-method-for-router-service</a></li><li class="chapter-item expanded "><a href="0635-ember-new-lang.html">0635-ember-new-lang</a></li><li class="chapter-item expanded "><a href="0637-customizable-test-setups.html">0637-customizable-test-setups</a></li><li class="chapter-item expanded "><a href="0638-interactive-app-creation.html">0638-interactive-app-creation</a></li><li class="chapter-item expanded "><a href="0639-replace-blacklist-whitelist.html">0639-replace-blacklist-whitelist</a></li><li class="chapter-item expanded "><a href="0645-add-ember-page-title-addon.html">0645-add-ember-page-title-addon</a></li><li class="chapter-item expanded "><a href="0649-deprecation-staging.html">0649-deprecation-staging</a></li><li class="chapter-item expanded "><a href="0659-unique-id-helper.html">0659-unique-id-helper</a></li><li class="chapter-item expanded "><a href="0669-tracked-storage-primitive.html">0669-tracked-storage-primitive</a></li><li class="chapter-item expanded "><a href="0671-modernize-built-in-components-1.html">0671-modernize-built-in-components-1</a></li><li class="chapter-item expanded "><a href="0673-deprecate-tryinvoke.html">0673-deprecate-tryinvoke</a></li><li class="chapter-item expanded "><a href="0674-deprecate-transition-methods-of-controller-and-route.html">0674-deprecate-transition-methods-of-controller-and-route</a></li><li class="chapter-item expanded "><a href="0680-implicit-injection-deprecation.html">0680-implicit-injection-deprecation</a></li><li class="chapter-item expanded "><a href="0685-new-browser-support-policy.html">0685-new-browser-support-policy</a></li><li class="chapter-item expanded "><a href="0686-deprecate-old-manager-capabilities-versions.html">0686-deprecate-old-manager-capabilities-versions</a></li><li class="chapter-item expanded "><a href="0689-deprecate-has-block.html">0689-deprecate-has-block</a></li><li class="chapter-item expanded "><a href="0690-deprecate-attrs-in-templates.html">0690-deprecate-attrs-in-templates</a></li><li class="chapter-item expanded "><a href="0691-deprecate-class-binding-and-class-name-bindings.html">0691-deprecate-class-binding-and-class-name-bindings</a></li><li class="chapter-item expanded "><a href="0692-deprecate-array-observers.html">0692-deprecate-array-observers</a></li><li class="chapter-item expanded "><a href="0698-deprecate-link-to-positional-arguments.html">0698-deprecate-link-to-positional-arguments</a></li><li class="chapter-item expanded "><a href="0702-eslint-plugin-qunit.html">0702-eslint-plugin-qunit</a></li><li class="chapter-item expanded "><a href="0704-deprecate-octane-optional-features.html">0704-deprecate-octane-optional-features</a></li><li class="chapter-item expanded "><a href="0705-deprecate-jquery-optional-feature.html">0705-deprecate-jquery-optional-feature</a></li><li class="chapter-item expanded "><a href="0706-deprecate-ember-global.html">0706-deprecate-ember-global</a></li><li class="chapter-item expanded "><a href="0707-modernize-built-in-components-2.html">0707-modernize-built-in-components-2</a></li><li class="chapter-item expanded "><a href="0711-deprecate-auto-location.html">0711-deprecate-auto-location</a></li><li class="chapter-item expanded "><a href="0738-ember-data-deprecate-model-reopen.html">0738-ember-data-deprecate-model-reopen</a></li><li class="chapter-item expanded "><a href="0750-deprecate-ember-assign.html">0750-deprecate-ember-assign</a></li><li class="chapter-item expanded "><a href="0752-inject-service.html">0752-inject-service</a></li><li class="chapter-item expanded "><a href="0756-helper-default-manager.html">0756-helper-default-manager</a></li><li class="chapter-item expanded "><a href="0772-deprecate-bower-support.html">0772-deprecate-bower-support</a></li><li class="chapter-item expanded "><a href="0776-typescript-blueprints.html">0776-typescript-blueprints</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -86,45 +83,39 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                
-                <div id="menu-bar" class="menu-bar">
-                    <div id="menu-bar-sticky-container">
-                        <div class="left-buttons">
-                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
-                                <i class="fa fa-bars"></i>
-                            </button>
-                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
-                                <i class="fa fa-paint-brush"></i>
-                            </button>
-                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
-                            </ul>
-                            
-                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
-                                <i class="fa fa-search"></i>
-                            </button>
-                            
-                        </div>
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
 
-                        <h1 class="menu-title"></h1>
+                    <h1 class="menu-title"></h1>
 
-                        <div class="right-buttons">
-                            <a href="print.html" title="Print this book" aria-label="Print this book">
-                                <i id="print-button" class="fa fa-print"></i>
-                            </a>
-                            
-                        </div>
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -132,8 +123,6 @@
                         </ul>
                     </div>
                 </div>
-                
-
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script type="text/javascript">
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
@@ -151,18 +140,18 @@ Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/416
 Tracking: https://github.com/emberjs/rfc-tracking/issues/2</p>
 <hr />
-<h1><a class="header" href="#glimmer-components" id="glimmer-components">Glimmer Components</a></h1>
-<h2><a class="header" href="#summary" id="summary">Summary</a></h2>
+<h1 id="glimmer-components"><a class="header" href="#glimmer-components">Glimmer Components</a></h1>
+<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
 <p>Glimmer components are a simpler, more ergonomic, and more declarative approach
 to building components. They represent the sum of multiple years of design and
 feature work by the community, which stemmed from the original RFCs and
 discussions surrounding &quot;angle-bracket components&quot;.</p>
 <p>This RFC proposes adding Glimmer components to Ember's public API, and making
 them the default new app experience in Ember Octane.</p>
-<h2><a class="header" href="#attribution" id="attribution">Attribution</a></h2>
+<h2 id="attribution"><a class="header" href="#attribution">Attribution</a></h2>
 <p>The Glimmer components API presented in this RFC was designed in cooperation
 between @tomdale, @rwjblue, @krisselden, @pzuraq, and others.</p>
-<h2><a class="header" href="#first-a-bit-of-history" id="first-a-bit-of-history">First, a Bit of History</a></h2>
+<h2 id="first-a-bit-of-history"><a class="header" href="#first-a-bit-of-history">First, a Bit of History</a></h2>
 <p>As components became the standard for Single Page Apps (SPAs) several years ago,
 and the Ember community began adopting them in earnest and converting from Ember
 1's primarily MVC oriented approach, there were many small and large issues that
@@ -199,7 +188,7 @@ much more than what we currently have in Ember today. But as a whole they
 represent the culmination of multiple years of design work and discussion by the
 Ember community, and the collective attention to detail and care of all of our
 community members.</p>
-<h2><a class="header" href="#terminology" id="terminology">Terminology</a></h2>
+<h2 id="terminology"><a class="header" href="#terminology">Terminology</a></h2>
 <ul>
 <li>The <strong>Glimmer VM</strong> is the underlying rendering engine which is used by
 <em>Ember.js</em> and <em>Glimmer.js</em>.</li>
@@ -216,7 +205,7 @@ RFC, which have been available in Ember in some form since v1.</li>
 <li><strong>Tracked properties</strong> refer to a new method of change tracking which is being
 proposed in a separate RFC, parallel to this one.</li>
 </ul>
-<h2><a class="header" href="#motivation" id="motivation">Motivation</a></h2>
+<h2 id="motivation"><a class="header" href="#motivation">Motivation</a></h2>
 <p><code>GlimmerComponent</code> is a simpler base component class that enables smaller class
 definitions, stronger conventions for lifecycle hooks and properties, and
 unidirectional data flow. We aim to design them to be easier understand in
@@ -274,7 +263,7 @@ export default class PostComponent extends GlimmerComponent {
 <p>Glimmer components eliminate many of the common paper cuts that cause confusion
 with classic components, and align more closely with modern template syntax and
 features.</p>
-<h3><a class="header" href="#outer-html-semantics" id="outer-html-semantics">Outer HTML Semantics</a></h3>
+<h3 id="outer-html-semantics"><a class="header" href="#outer-html-semantics">Outer HTML Semantics</a></h3>
 <p>The biggest change Glimmer components make is defaulting to outer HTML
 semantics. In the classic component API, components had a implicit wrapper
 element. Given this component template:</p>
@@ -345,7 +334,7 @@ other frameworks' functional components - and components with a backing class
 is reduced, making them a more viable pattern.</p>
 </li>
 </ul>
-<h3><a class="header" href="#namespaced-arguments" id="namespaced-arguments">Namespaced Arguments</a></h3>
+<h3 id="namespaced-arguments"><a class="header" href="#namespaced-arguments">Namespaced Arguments</a></h3>
 <p>In classic components, arguments are set as properties directly on the class
 instance. This means that class methods and properties can be completely
 overwritten by incoming arguments, which can have surprising and problematic
@@ -376,7 +365,7 @@ antipatterns.</p>
 instance, preventing namespace collisions from happening in the first place.
 This allows component authors to define a clear public API for a component which
 <em>cannot</em> be circumvented.</p>
-<h3><a class="header" href="#immutable-arguments" id="immutable-arguments">Immutable Arguments</a></h3>
+<h3 id="immutable-arguments"><a class="header" href="#immutable-arguments">Immutable Arguments</a></h3>
 <p>In classic components argument values on the component are also <em>mutable</em>. This
 can lead to some confusing behavior, because argument values in the <em>class</em> can
 change, but named arguments in <em>templates</em> cannot. For instance, given this
@@ -419,7 +408,7 @@ where appropriate. At scale, this makes reading templates even easier, since
 more information is encoded in the template itself. One way data flow also
 encourages the Data Down, Actions Up pattern, and normalizes the way that data
 flows through apps, making reasoning about app state easier.</p>
-<h3><a class="header" href="#minimal-classes" id="minimal-classes">Minimal Classes</a></h3>
+<h3 id="minimal-classes"><a class="header" href="#minimal-classes">Minimal Classes</a></h3>
 <p>Classic components are large classes, with lots of built up functionality and
 debt from over the years. The total list of default properties and hooks
 (including inherited ones) includes:</p>
@@ -453,7 +442,7 @@ simplifies what users need to learn in order to start using the bread-and-butter
 class of Ember, and enforces a single conventional location for each of the
 possible hooks in classic components, allowing users to focus on productivity
 out of the box.</p>
-<h3><a class="header" href="#glimmerjs-compatibility" id="glimmerjs-compatibility">Glimmer.js Compatibility</a></h3>
+<h3 id="glimmerjs-compatibility"><a class="header" href="#glimmerjs-compatibility">Glimmer.js Compatibility</a></h3>
 <p>One of the goals for future versions of Ember, post Ember Octane, will be to
 enable lighter-weight applications to be built using the framework. Breaking
 Ember apart into smaller, fully independent and optional pieces is the core idea
@@ -477,7 +466,7 @@ for any and all changes to user APIs</strong></em>. The implementations for thei
 managers in Glimmer and Ember may change to keep them compatible, but they will
 not make major changes without first getting community input, and will be
 considered part of the public API of Ember.</p>
-<h2><a class="header" href="#prior-art" id="prior-art">Prior Art</a></h2>
+<h2 id="prior-art"><a class="header" href="#prior-art">Prior Art</a></h2>
 <p>Part of the challenge in the original Angle Bracket components RFC was
 attempting to design without implementation, testing, usage, and feedback.
 Glimmer.js provided an early method to experiment, but because it was not widely
@@ -500,7 +489,7 @@ RFC</a>
 was accepted and opened up additional design possibilities. However, they serve
 as valuable data points for the viability of a simpler component API, and inform
 the design accordingly.</p>
-<h2><a class="header" href="#detailed-design" id="detailed-design">Detailed design</a></h2>
+<h2 id="detailed-design"><a class="header" href="#detailed-design">Detailed design</a></h2>
 <p>Glimmer components have the following interface:</p>
 <pre><code class="language-ts">interface GlimmerComponent&lt;T = object&gt; {
   args: T;
@@ -515,7 +504,7 @@ the design accordingly.</p>
 <p>This class will be importable from <code>@glimmer/component</code>;</p>
 <pre><code class="language-js">import Component from '@glimmer/component';
 </code></pre>
-<h3><a class="header" href="#constructor" id="constructor">Constructor</a></h3>
+<h3 id="constructor"><a class="header" href="#constructor">Constructor</a></h3>
 <p>The constructor for Glimmer components receives two arguments: The owner
 instance and the named arguments object. Both of these arguments should
 conventionally be passed to <code>super</code> immediately, and then accessed through
@@ -549,7 +538,7 @@ immediately <em>after</em> the call to <code>super</code>:</p>
 </code></pre>
 <p>The <code>args</code> argument will be shallow-frozen (in development mode only) to prevent
 users from modifying them.</p>
-<h4><a class="header" href="#type-injections" id="type-injections">Type Injections</a></h4>
+<h4 id="type-injections"><a class="header" href="#type-injections">Type Injections</a></h4>
 <p>Ember's dependency injection system allows defining injections across an entire
 type via
 <a href="https://www.emberjs.com/api/ember/3.5/classes/ApplicationInstance/methods/inject?anchor=inject">RegistryProxy#inject</a> - for
@@ -564,26 +553,26 @@ practice since <code>inject.service()</code> was introduced.</p>
 <p>Glimmer components will only receive the owner directly, and as such will <em>not</em>
 support type injections. This cuts down on the implicit knowledge developers
 must have when writing a component.</p>
-<h3><a class="header" href="#properties" id="properties">Properties</a></h3>
+<h3 id="properties"><a class="header" href="#properties">Properties</a></h3>
 <p>Glimmer components have 3 properties: <code>args</code>, <code>isDestroying</code>, and <code>isDestroyed</code>.</p>
-<h4><a class="header" href="#args" id="args"><code>args</code></a></h4>
+<h4 id="args"><a class="header" href="#args"><code>args</code></a></h4>
 <p>As discussed in the motivation section, <code>args</code> is an object with the values of
 the named arguments passed to the component. This property will be updated
 whenever the arguments change. It will be shallow-frozen in development mode to
 prevent users from setting values on it.</p>
-<h4><a class="header" href="#isdestroying" id="isdestroying"><code>isDestroying</code></a></h4>
+<h4 id="isdestroying"><a class="header" href="#isdestroying"><code>isDestroying</code></a></h4>
 <p>This property will be set to <code>true</code> when component teardown has been initiated,
 <em>before</em> the component's <code>willDestroy</code> hook is run, along with any other
 components which are currently being torn down. This allows the entire component
 tree to be marked before user code is run. It can be used by users to
 conditionally prevent asynchronous code from running, and to check on the
 teardown state of the component in general.</p>
-<h4><a class="header" href="#isdestroyed" id="isdestroyed"><code>isDestroyed</code></a></h4>
+<h4 id="isdestroyed"><a class="header" href="#isdestroyed"><code>isDestroyed</code></a></h4>
 <p>This property will be set after any <code>willDestroy</code> hooks have run, and the
 component has been fully torn down. It can be used by users to conditionally
 prevent asynchronous code from running, and to check on the teardown state of
 the component in general.</p>
-<h3><a class="header" href="#lifecycle-hooks" id="lifecycle-hooks">Lifecycle Hooks</a></h3>
+<h3 id="lifecycle-hooks"><a class="header" href="#lifecycle-hooks">Lifecycle Hooks</a></h3>
 <p>Classic components have 13 major lifecycle hooks that run during 3 major phases
 of the component lifecycle, with some hooks running during multiple phases:</p>
 <ol>
@@ -653,7 +642,7 @@ next section.</p>
 </ul>
 <p>Based on these considerations, we can reduce these hooks to just a setup and
 teardown method: <code>constructor</code> and <code>willDestroy</code>.</p>
-<h4><a class="header" href="#constructor-1" id="constructor-1"><code>constructor</code></a></h4>
+<h4 id="constructor-1"><a class="header" href="#constructor-1"><code>constructor</code></a></h4>
 <p>The native <code>constructor</code> method for the class can be used for initial setup of
 the component. This effectively replaces <code>init</code>, and allows users to setup state
 before <em>any</em> renders occur. It has the following timing semantics:</p>
@@ -683,7 +672,7 @@ class fields, whose initializers run during instance construction.</p>
 <p>Class fields are assigned <em>after</em> the call to <code>super</code> in the constructor, but
 <em>before</em> any of the user's code runs, allowing their values to be accessed by
 users as well.</p>
-<h4><a class="header" href="#willdestroy" id="willdestroy"><code>willDestroy</code></a></h4>
+<h4 id="willdestroy"><a class="header" href="#willdestroy"><code>willDestroy</code></a></h4>
 <p>This hook runs when the component is being destroyed, and can be used for
 cleanup code. It has the following timing semantics:</p>
 <ul>
@@ -705,7 +694,7 @@ hooks</li>
 </ul>
 </li>
 </ul>
-<h3><a class="header" href="#element-modifiers" id="element-modifiers">Element Modifiers</a></h3>
+<h3 id="element-modifiers"><a class="header" href="#element-modifiers">Element Modifiers</a></h3>
 <p>DOM manipulation is a hard problem for component-oriented frameworks. We spend a
 lot of time crafting elegant, functional, template oriented abstractions that
 work very well, up until the point where we have to use an imperative native API
@@ -765,7 +754,7 @@ in components, and more. Importantly, modifiers are <em>easy to compose</em> and
 <em>self-contained</em>, meaning that it will be possible for general purpose addons to
 be built for various use cases, and for them all to be used together without
 difficulty.</p>
-<h4><a class="header" href="#conversion-and-path-forward" id="conversion-and-path-forward">Conversion and Path Forward</a></h4>
+<h4 id="conversion-and-path-forward"><a class="header" href="#conversion-and-path-forward">Conversion and Path Forward</a></h4>
 <p>Modifiers may be the general purpose solution for writing DOM APIs, but average
 Ember developers should not have to <em>write</em> a modifier very often. This is a key
 distinction - it means that beginner Ember developers will not need to learn the
@@ -799,7 +788,7 @@ assist in converting to these modifiers. Over time, as addons and libraries are
 released that target specific use cases, the guides should be updated to include
 popular patterns and demonstrate the most effective and conventional ways to
 solve <em>specific</em> problems with DOM manipulation.</p>
-<h3><a class="header" href="#lifecycle-hook-audit" id="lifecycle-hook-audit">Lifecycle Hook Audit</a></h3>
+<h3 id="lifecycle-hook-audit"><a class="header" href="#lifecycle-hook-audit">Lifecycle Hook Audit</a></h3>
 <p>In the design process of this RFC, we wanted to provide the minimal set of
 functionality that covered the previous use cases of classic components. The
 final API of Glimmer components as proposed in this RFC is very small, cutting
@@ -836,7 +825,7 @@ Alternatively, a component can be defined with a custom component manager, which
 still retains this ability.</p>
 <p>The usages from the audit and their equivalent solution in Glimmer components
 have been included in this RFC in an appendix.</p>
-<h3><a class="header" href="#actions" id="actions">Actions</a></h3>
+<h3 id="actions"><a class="header" href="#actions">Actions</a></h3>
 <p>In classic components, actions are defined on the <code>actions</code> hash, and can be
 referenced in templates using strings passed to the <code>{{action}}</code> helper:</p>
 <pre><code class="language-js">export default Component.extend({
@@ -894,7 +883,7 @@ the arrow function</li>
 </ul>
 <p>For more details, see <a href="https://github.com/tc39/proposal-decorators/blob/master/bound-decorator-rationale.md">this document explaining the rationale for decorators</a>
 over class fields for binding.</p>
-<h2><a class="header" href="#dependencies" id="dependencies">Dependencies</a></h2>
+<h2 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h2>
 <p>In it's current form this RFC is dependent on 2 of 3 open RFCs being accepted:</p>
 <ul>
 <li>
@@ -911,7 +900,7 @@ lifecycle hooks or ways to interact with the DOM.</p>
 listed below (<code>{{capture-element}}</code>, <code>bounds</code>, and render hooks).</p>
 </li>
 </ul>
-<h2><a class="header" href="#how-we-teach-this" id="how-we-teach-this">How we teach this</a></h2>
+<h2 id="how-we-teach-this"><a class="header" href="#how-we-teach-this">How we teach this</a></h2>
 <p>Teaching Glimmer components is intrinsically tied to a wider shift in the Ember
 programming model - the Ember Octane edition. From a teaching perspective, this
 edition will be completely overhauling the guides and updating all of the best
@@ -929,7 +918,7 @@ are supported by Ember.</p>
 <li>Lifecycle hooks and properties</li>
 <li>Element modifiers</li>
 </ul>
-<h3><a class="header" href="#native-class-syntax" id="native-class-syntax">Native class syntax</a></h3>
+<h3 id="native-class-syntax"><a class="header" href="#native-class-syntax">Native class syntax</a></h3>
 <p>One of the benefits of native class syntax is that it is used outside of Ember,
 so as time goes on we will be able to assume there is more general knowledge of
 it, and provide links to documentation for it for users who are not familiar.
@@ -978,7 +967,7 @@ instance, so users should also be careful with them.</p>
 <p>Getting ahold of prototypes if/when you need them</p>
 </li>
 </ul>
-<h3><a class="header" href="#arguments" id="arguments">Arguments</a></h3>
+<h3 id="arguments"><a class="header" href="#arguments">Arguments</a></h3>
 <p>For arguments, namespacing makes sense in general as an API choice and is common
 in other frameworks (<code>props</code> in React, etc.). We should be sure to cover this
 thoroughly for users who are used to classic components, but it shouldn't
@@ -1018,7 +1007,7 @@ Glimmer components:</p>
 </code></pre>
 <p>Or to explore possibilities using decorators, such as those in the
 <a href="https://github.com/gossi/sparkles-decorators">sparkles-decorators</a> addon.</p>
-<h4><a class="header" href="#lifecycle-hooks-and-properties" id="lifecycle-hooks-and-properties">Lifecycle hooks and properties</a></h4>
+<h4 id="lifecycle-hooks-and-properties"><a class="header" href="#lifecycle-hooks-and-properties">Lifecycle hooks and properties</a></h4>
 <p>For users without framework experience, and users of other frameworks, lifecycle
 hooks will be very minimal and fairly easy to understand. The lack of render
 hooks may be the more difficult part to understand, and we'll have to lean on
@@ -1043,7 +1032,7 @@ passed to <code>{{will-destroy}}</code></li>
 pretty thoroughly. Users should know that they can (and probably should) check
 these flags if they are doing anything asynchronous that could happen after the
 component has been torn down.</p>
-<h4><a class="header" href="#element-modifiers-1" id="element-modifiers-1">Element modifiers</a></h4>
+<h4 id="element-modifiers-1"><a class="header" href="#element-modifiers-1">Element modifiers</a></h4>
 <p>The render element modifiers will be the most different part of Glimmer
 components for users. The strategy for teaching these is <a href="https://github.com/emberjs/rfcs/blob/b9f390cb98f560d9cf876e3b1d67226fe0e1613b/text/0000-render-element-modifiers.md#how-we-teach-this">included in their
 RFC</a>,
@@ -1059,7 +1048,7 @@ addon provided by Ember.</p>
 transitioning from classic components.</p>
 </li>
 </ol>
-<h3><a class="header" href="#template-only-components" id="template-only-components">Template-Only Components</a></h3>
+<h3 id="template-only-components"><a class="header" href="#template-only-components">Template-Only Components</a></h3>
 <p><a href="https://github.com/emberjs/rfcs/blob/master/text/0278-template-only-components.md">Template-only components</a>
 are not strictly speaking related to the <code>GlimmerComponent</code> class proposed in
 this RFC. However, conceptually they will probably be much easier to teach in
@@ -1070,21 +1059,21 @@ between Glimmer components and template-only components much more difficult and
 confusing.</p>
 <p>As such, when writing the documentation for Glimmer components, we should ensure
 that we cover template-only components in some detail as well.</p>
-<h2><a class="header" href="#drawbacks" id="drawbacks">Drawbacks</a></h2>
-<h3><a class="header" href="#multiple-component-apis" id="multiple-component-apis">Multiple component APIs</a></h3>
+<h2 id="drawbacks"><a class="header" href="#drawbacks">Drawbacks</a></h2>
+<h3 id="multiple-component-apis"><a class="header" href="#multiple-component-apis">Multiple component APIs</a></h3>
 <p>One major drawback to Glimmer components is that they add a separate API for
 components, meaning that for the forseeable future Ember users will likely
 need to learn how to use both interchangeably. This introduces a fair amount of
 mental overhead for users, but the benefits of Glimmer components and their
 simplicity should make this less problematic.</p>
-<h3><a class="header" href="#heavy-reliance-on-element-modifiers" id="heavy-reliance-on-element-modifiers">Heavy reliance on element modifiers</a></h3>
+<h3 id="heavy-reliance-on-element-modifiers"><a class="header" href="#heavy-reliance-on-element-modifiers">Heavy reliance on element modifiers</a></h3>
 <p>Glimmer components as proposed in this RFC are heavily reliant on element
 modifiers for element manipulation. Element modifiers are a relatively new
 concept in Ember, and as such will likely be unfamiliar to users and require
 more learning than normal to get used to. This also means that users will not
 be able to rely on well established patterns, and will have to develop new ones
 for dealing with element manipulation.</p>
-<h3><a class="header" href="#lack-of-positional-parameter-support" id="lack-of-positional-parameter-support">Lack of positional parameter support</a></h3>
+<h3 id="lack-of-positional-parameter-support"><a class="header" href="#lack-of-positional-parameter-support">Lack of positional parameter support</a></h3>
 <p>Glimmer components are meant to cover <em>most</em> common use cases, but are also
 meant to be as minimal as possible. As such, they do <em>not</em> have support for
 positional parameters. Positional parameters are already unusable with any
@@ -1094,8 +1083,8 @@ not support them even when using curly bracket invocation.</p>
 sense to add them to the main component class as an option. Instead, we should
 make alternative component classes which support positional parameters, perhaps
 exclusively (e.g. asserting if positional parameters are <em>not</em> defined).</p>
-<h2><a class="header" href="#alternatives" id="alternatives">Alternatives</a></h2>
-<h3><a class="header" href="#render-lifecycle-hooks" id="render-lifecycle-hooks">Render lifecycle hooks</a></h3>
+<h2 id="alternatives"><a class="header" href="#alternatives">Alternatives</a></h2>
+<h3 id="render-lifecycle-hooks"><a class="header" href="#render-lifecycle-hooks">Render lifecycle hooks</a></h3>
 <p>The ommission of <code>didRender</code>,  <code>didUpdate</code>, <code>didInsertElement</code>,
 <code>willDestroyElement</code>, and other render oriented hooks could be confusing to
 users. These were staples of classic components, are common in other frameworks,
@@ -1125,7 +1114,7 @@ with <code>{{did-insert}}</code> and <code>{{will-destroy}}</code> for registeri
   }
 }
 </code></pre>
-<h3><a class="header" href="#add-a-capture-element-modifier" id="add-a-capture-element-modifier">Add a <code>{{capture-element}}</code> modifier</a></h3>
+<h3 id="add-a-capture-element-modifier"><a class="header" href="#add-a-capture-element-modifier">Add a <code>{{capture-element}}</code> modifier</a></h3>
 <p>This alternative would go hand in hand with having render lifecycle hooks.
 Rather than relying solely on element modifiers for DOM manipulation, we could
 add a modifier that allows users to specify elements which they want to
@@ -1178,7 +1167,7 @@ additional validation code will have to exist in <code>didRender</code>:</p>
 </code></pre>
 <p>This problem is compounded in collections, where any number of elements may be
 added or removed.</p>
-<h3><a class="header" href="#add-element-or-bounds-on-the-component" id="add-element-or-bounds-on-the-component">Add <code>element</code> or <code>bounds</code> on the component</a></h3>
+<h3 id="add-element-or-bounds-on-the-component"><a class="header" href="#add-element-or-bounds-on-the-component">Add <code>element</code> or <code>bounds</code> on the component</a></h3>
 <p>We could attempt to add DOM references back to the component, instead of adding
 the <code>{{did-insert}}</code> and <code>{{will-destroy}}</code> modifiers. This would require us to
 handle a number of edge-cases (0 element, multi element), and would open up some
@@ -1188,7 +1177,7 @@ future the VM wanted to change these details, it could be problematic.</p>
 boilerplate type code (checking to see if an element exists, for instance).
 However, they are also very new to Ember users as a concept (aside from
 <code>{{action}}</code>) and could be difficult to teach.</p>
-<h3><a class="header" href="#init-vs-constructor" id="init-vs-constructor"><code>init</code> vs <code>constructor</code></a></h3>
+<h3 id="init-vs-constructor"><a class="header" href="#init-vs-constructor"><code>init</code> vs <code>constructor</code></a></h3>
 <p>Recent changes to the way native classes extend from <code>EmberObject</code> made it so
 users have to use <code>init</code> instead of the <code>constructor</code>. This is a pretty
 universal caveat currently, so it's fairly teachable - there is a <code>constructor</code>,
@@ -1201,7 +1190,7 @@ clearly documented at the least.</p>
 <p>We could alternatively include an <code>init</code> hook, or have both. This would allow
 users to follow one rule for object initialization, but would also lock us into
 the supporting the <code>init</code> hook for the forseeable future.</p>
-<h3><a class="header" href="#no-owner-in-constructor" id="no-owner-in-constructor">No owner in constructor</a></h3>
+<h3 id="no-owner-in-constructor"><a class="header" href="#no-owner-in-constructor">No owner in constructor</a></h3>
 <p>Sparkles components do not provide access to the owner or injections in the
 constructor, though it is a requested feature. Instead of passing the owner to
 the constructor, we could add a <code>willCreate</code> or <code>init</code> hook which allows users
@@ -1209,9 +1198,9 @@ to setup the instance after the owner has been assigned.</p>
 <p>Alternatively, the exact method by which the owner is passed to the constructor
 can be changed (on an object vs directly) or all injections could be passed,
 enabling typed injections.</p>
-<h2><a class="header" href="#appendix-lifecycle-hook-audit" id="appendix-lifecycle-hook-audit">Appendix: Lifecycle Hook Audit</a></h2>
-<h3><a class="header" href="#a-hrefhttpsmiguelcobaingithubioember-paperember-papera" id="a-hrefhttpsmiguelcobaingithubioember-paperember-papera"><a href="https://miguelcobain.github.io/ember-paper/">ember-paper</a></a></h3>
-<h4><a class="header" href="#didupdateattrs" id="didupdateattrs"><code>didUpdateAttrs</code></a></h4>
+<h2 id="appendix-lifecycle-hook-audit"><a class="header" href="#appendix-lifecycle-hook-audit">Appendix: Lifecycle Hook Audit</a></h2>
+<h3 id="ember-paper"><a class="header" href="#ember-paper"><a href="https://miguelcobain.github.io/ember-paper/">ember-paper</a></a></h3>
+<h4 id="didupdateattrs"><a class="header" href="#didupdateattrs"><code>didUpdateAttrs</code></a></h4>
 <table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-autocomplete-trigger.js#L37">link</a></td><td>Setup component state based on incoming arguments</td><td>Tracked properties</td></tr>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-grid-tile.js#L41">link</a></td><td>Setup component state based on incoming arguments</td><td>Tracked properties</td></tr>
@@ -1219,7 +1208,7 @@ enabling typed injections.</p>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-switch.js#L75">link</a></td><td>Element setup/update code based on incoming arguments</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-toast-inner.js#L65">link</a></td><td>Element setup/update code based on incoming arguments</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
 </tbody></table>
-<h4><a class="header" href="#didreceiveattrs" id="didreceiveattrs"><code>didReceiveAttrs</code></a></h4>
+<h4 id="didreceiveattrs"><a class="header" href="#didreceiveattrs"><code>didReceiveAttrs</code></a></h4>
 <table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-autocomplete.js#L93">link</a></td><td>Setup component state based on incoming arguments</td><td>Tracked properties and <code>constructor</code></td></tr>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-card-actions.js#L17">link</a></td><td>Setup component state based on incoming arguments</td><td>Tracked properties and <code>constructor</code></td></tr>
@@ -1229,11 +1218,11 @@ enabling typed injections.</p>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-sidenav-inner.js#L55">link</a></td><td>Element update code and sending an action</td><td>Tracked properties and <code>{{did-insert}}</code> with args</td></tr>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-virtual-repeat.js#L131">link</a></td><td>Updating logic and element update code</td><td>Tracked properties and <code>{{did-insert}}</code> with args</td></tr>
 </tbody></table>
-<h4><a class="header" href="#willinsertelement" id="willinsertelement"><code>willInsertElement</code></a></h4>
+<h4 id="willinsertelement"><a class="header" href="#willinsertelement"><code>willInsertElement</code></a></h4>
 <table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-toast.js#L91">link</a></td><td>Container setup code on initialization</td><td><code>{{did-insert}}</code></td></tr>
 </tbody></table>
-<h4><a class="header" href="#didinsertelement" id="didinsertelement"><code>didInsertElement</code></a></h4>
+<h4 id="didinsertelement"><a class="header" href="#didinsertelement"><code>didInsertElement</code></a></h4>
 <table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-dialog-inner.js#L39">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code></td></tr>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-dialog.js#L64">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code></td></tr>
@@ -1257,7 +1246,7 @@ enabling typed injections.</p>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/mixins/ripple-mixin.js#L8">link</a></td><td>Element setup code on initialization</td><td><code>{{did-insert}}</code></td></tr>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/mixins/translate3d-mixin.js#L8">link</a></td><td>Element animation on setup</td><td><code>{{did-insert}}</code></td></tr>
 </tbody></table>
-<h4><a class="header" href="#willdestroyelement" id="willdestroyelement"><code>willDestroyElement</code></a></h4>
+<h4 id="willdestroyelement"><a class="header" href="#willdestroyelement"><code>willDestroyElement</code></a></h4>
 <table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-dialog-inner.js#L51">link</a></td><td>Element teardown code on destruction</td><td><code>{{will-destroy}}</code></td></tr>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-dialog.js#L79">link</a></td><td>Element teardown code on destruction</td><td><code>{{will-destroy}}</code></td></tr>
@@ -1274,11 +1263,11 @@ enabling typed injections.</p>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/mixins/child-mixin.js#L30">link</a></td><td>Unregister child class from parent</td><td><code>willDestroy</code></td></tr>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/mixins/translate3d-mixin.js#L30">link</a></td><td>Teardown animations on destruction</td><td><code>{{will-destroy}}</code></td></tr>
 </tbody></table>
-<h4><a class="header" href="#didupdate" id="didupdate"><code>didUpdate</code></a></h4>
+<h4 id="didupdate"><a class="header" href="#didupdate"><code>didUpdate</code></a></h4>
 <table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-grid-list.js#L57">link</a></td><td>Reapply styles based on changes to args</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
 </tbody></table>
-<h4><a class="header" href="#didrender" id="didrender"><code>didRender</code></a></h4>
+<h4 id="didrender"><a class="header" href="#didrender"><code>didRender</code></a></h4>
 <table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-input.js#L97">link</a></td><td>Resize component based on changes to args</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code>, or <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">MutationObserver</a></td></tr>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-speed-dial-action-action.js#L34">link</a></td><td>Animate component based on changes to arguments</td><td><code>{{did-insert}}</code> and <code>{{did-update}}</code></td></tr>
@@ -1287,39 +1276,39 @@ enabling typed injections.</p>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-tabs.js#L96">link</a></td><td>Resize component based on changes to size</td><td><code>{{did-insert}}</code> with args, or <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">MutationObserver</a></td></tr>
 <tr><td><a href="https://github.com/miguelcobain/ember-paper/blob/b36f7a7b5e19c60fa71e945590178d86274bd49d/addon/components/paper-virtual-repeat.js#L156">link</a></td><td>Measure element sizes based on changes to args</td><td><code>{{did-insert}}</code> with args</td></tr>
 </tbody></table>
-<h3><a class="header" href="#a-hrefhttpsgithubcomsandydooember-google-mapsember-google-mapsa" id="a-hrefhttpsgithubcomsandydooember-google-mapsember-google-mapsa"><a href="https://github.com/sandydoo/ember-google-maps">ember-google-maps</a></a></h3>
-<h4><a class="header" href="#didupdateattrs-1" id="didupdateattrs-1"><code>didUpdateAttrs</code></a></h4>
+<h3 id="ember-google-maps"><a class="header" href="#ember-google-maps"><a href="https://github.com/sandydoo/ember-google-maps">ember-google-maps</a></a></h3>
+<h4 id="didupdateattrs-1"><a class="header" href="#didupdateattrs-1"><code>didUpdateAttrs</code></a></h4>
 <table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/components/g-map.js#L103">link</a></td><td>Synchronize options with Google maps</td><td>Refactor to use actions to modify data, or use a modifier</td></tr>
 <tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/components/g-map/map-component.js#L54">link</a></td><td>Update component based on changes to arguments</td><td>Refactor to use actions to modify data, or use a modifier</td></tr>
 </tbody></table>
-<h4><a class="header" href="#didreceiveattrs-1" id="didreceiveattrs-1"><code>didReceiveAttrs</code></a></h4>
+<h4 id="didreceiveattrs-1"><a class="header" href="#didreceiveattrs-1"><code>didReceiveAttrs</code></a></h4>
 <table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/components/g-map/waypoint.js#L20">link</a></td><td>Register component with parent</td><td><code>constructor</code></td></tr>
 </tbody></table>
-<h4><a class="header" href="#didinsertelement-1" id="didinsertelement-1"><code>didInsertElement</code></a></h4>
+<h4 id="didinsertelement-1"><a class="header" href="#didinsertelement-1"><code>didInsertElement</code></a></h4>
 <table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/components/g-map/map-component.js#L46">link</a></td><td>Register component with parent and initialize</td><td><code>constructor</code> and parent component <code>{{did-insert}}</code></td></tr>
 </tbody></table>
-<h4><a class="header" href="#willdestroyelement-1" id="willdestroyelement-1"><code>willDestroyElement</code></a></h4>
+<h4 id="willdestroyelement-1"><a class="header" href="#willdestroyelement-1"><code>willDestroyElement</code></a></h4>
 <table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/components/g-map/map-component.js#L60">link</a></td><td>Element teardown code on destruction (and potentially destruction of parent)</td><td><code>willDestroy</code> and parent component <code>{{will-destroy}}</code></td></tr>
 <tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/components/g-map/waypoint.js#L26">link</a></td><td>Unregister element from parent</td><td><code>willDestroy</code> and parent component <code>{{will-destroy}}</code></td></tr>
 <tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/mixins/process-options.js#L26">link</a></td><td>Teardown class state</td><td><code>willDestroy</code></td></tr>
 <tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/3f846751eda7fff08a02367c04407cf545741f00/addon/mixins/register-events.js#L26">link</a></td><td>Teardown class state</td><td><code>willDestroy</code></td></tr>
 </tbody></table>
-<h4><a class="header" href="#didrender-1" id="didrender-1"><code>didRender</code></a></h4>
+<h4 id="didrender-1"><a class="header" href="#didrender-1"><code>didRender</code></a></h4>
 <table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/sandydoo/ember-google-maps/blob/master/addon/templates/components/g-map/overlay.hbs#L6">link</a></td><td>Detect changes to subtree and reposition overlay</td><td><a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">MutationObserver</a> or custom component that can trigger actions on subtree rerenders</td></tr>
 </tbody></table>
-<h3><a class="header" href="#a-hrefhttpsgithubcomember-animationliquid-fireliquid-firea" id="a-hrefhttpsgithubcomember-animationliquid-fireliquid-firea"><a href="https://github.com/ember-animation/liquid-fire">liquid-fire</a></a></h3>
-<h4><a class="header" href="#didreceiveattrs-2" id="didreceiveattrs-2"><code>didReceiveAttrs</code></a></h4>
+<h3 id="liquid-fire"><a class="header" href="#liquid-fire"><a href="https://github.com/ember-animation/liquid-fire">liquid-fire</a></a></h3>
+<h4 id="didreceiveattrs-2"><a class="header" href="#didreceiveattrs-2"><code>didReceiveAttrs</code></a></h4>
 <table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/illiquid-model.js#L7">link</a></td><td>Capture argument as component state</td><td><code>constructor</code></td></tr>
 <tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-outlet.js#L23">link</a></td><td>Capture argument as component state</td><td><code>constructor</code></td></tr>
 <tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-versions.js#L15">link</a></td><td>Run update code for changing versions (and animating)</td><td><code>constructor</code> and tracked properties or element modifiers</td></tr>
 </tbody></table>
-<h4><a class="header" href="#didinsertelement-2" id="didinsertelement-2"><code>didInsertElement</code></a></h4>
+<h4 id="didinsertelement-2"><a class="header" href="#didinsertelement-2"><code>didInsertElement</code></a></h4>
 <table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-child.js#L12">link</a></td><td>Trigger animation</td><td><code>{{did-insert}}</code></td></tr>
 <tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-container.js#L44">link</a></td><td>Set did render</td><td><code>{{did-insert}}</code></td></tr>
@@ -1327,7 +1316,7 @@ enabling typed injections.</p>
 <tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-spacer.js#L11">link</a></td><td>Element setup code on insertion</td><td><code>{{did-insert}}</code></td></tr>
 <tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-sync.js#L8">link</a></td><td>Pause animations on insertion (continue later via action)</td><td><code>{{did-insert}}</code></td></tr>
 </tbody></table>
-<h4><a class="header" href="#willdestroyelement-2" id="willdestroyelement-2"><code>willDestroyElement</code></a></h4>
+<h4 id="willdestroyelement-2"><a class="header" href="#willdestroyelement-2"><code>willDestroyElement</code></a></h4>
 <table><thead><tr><th>Usage</th><th>Use Case</th><th>Converts To</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/ember-animation/liquid-fire/blob/21711359faf0a396489f169ae34c1637e7f45828/addon/components/liquid-measured.js#L37">link</a></td><td>Element teardown code on destruction</td><td><code>{{will-destroy}}</code></td></tr>
 </tbody></table>
@@ -1336,59 +1325,38 @@ enabling typed injections.</p>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
                             <a rel="prev" href="0415-render-element-modifiers.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                        
-
-                        
                             <a rel="next" href="0418-deprecate-route-render-methods.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
-                        
-
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
-                    <a href="0415-render-element-modifiers.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="0415-render-element-modifiers.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                
-
-                
-                    <a href="0418-deprecate-route-render-methods.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="0418-deprecate-route-render-methods.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
             </nav>
 
         </div>
 
-        
-
-        
-
-        
-
-        
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        
-
         <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
-        
-
-        
-
     </body>
 </html>

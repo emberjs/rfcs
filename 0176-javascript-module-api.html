@@ -1,42 +1,36 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js">
+<html lang="en" class="sidebar-visible no-js light">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>0176-javascript-module-api - </title>
-        
-
+        <title>0176-javascript-module-api</title>
+        <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
+        <link rel="icon" href="favicon.svg">
         <link rel="shortcut icon" href="favicon.png">
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
         <link rel="stylesheet" href="css/print.css" media="print">
-
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
-
+        <link rel="stylesheet" href="fonts/fonts.css">
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
-
-        
     </head>
-    <body class="light">
+    <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -60,8 +54,11 @@
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            document.body.className = theme;
-            document.querySelector('html').className = theme + ' js';
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
@@ -78,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="affix"><a href="introduction.html">Introduction</a></li><li><a href="0001-transform-attribute-meta-parameter.html">0001-transform-attribute-meta-parameter</a></li><li><a href="0003-block-params.html">0003-block-params</a></li><li><a href="0003-cli-ember-doctor.html">0003-cli-ember-doctor</a></li><li><a href="0010-engines.html">0010-engines</a></li><li><a href="0011-improved-cp-syntax.html">0011-improved-cp-syntax</a></li><li><a href="0012-help-json-output.html">0012-help-json-output</a></li><li><a href="0015-the-road-to-ember-2-0.html">0015-the-road-to-ember-2-0</a></li><li><a href="0020-sri-default.html">0020-sri-default</a></li><li><a href="0023-command-line-completion.html">0023-command-line-completion</a></li><li><a href="0024-bound-attributes.html">0024-bound-attributes</a></li><li><a href="0028-app-import-output-file.html">0028-app-import-output-file</a></li><li><a href="0029-addon-black-and-whitelist-for-apps.html">0029-addon-black-and-whitelist-for-apps</a></li><li><a href="0045-internet-explorer.html">0045-internet-explorer</a></li><li><a href="0046-cli-improved-release-process.html">0046-cli-improved-release-process</a></li><li><a href="0046-registry-reform.html">0046-registry-reform</a></li><li><a href="0050-cli-production-code-stripping.html">0050-cli-production-code-stripping</a></li><li><a href="0050-improved-actions.html">0050-improved-actions</a></li><li><a href="0053-helpers.html">0053-helpers</a></li><li><a href="0055-anonymous-amd.html">0055-anonymous-amd</a></li><li><a href="0056-improved-release-cycle.html">0056-improved-release-cycle</a></li><li><a href="0057-ember-data-reference-unification.html">0057-ember-data-reference-unification</a></li><li><a href="0058-helper-listing.html">0058-helper-listing</a></li><li><a href="0061-ember-data-background-fetch.html">0061-ember-data-background-fetch</a></li><li><a href="0064-contextual-component-lookup.html">0064-contextual-component-lookup</a></li><li><a href="0065-deprecation-warning-handlers.html">0065-deprecation-warning-handlers</a></li><li><a href="0080-serve-file-api.html">0080-serve-file-api</a></li><li><a href="0086-firefox-in-ci.html">0086-firefox-in-ci</a></li><li><a href="0090-addon-tree-caching.html">0090-addon-tree-caching</a></li><li><a href="0091-cli-addon-instrumentation-experimental-hooks.html">0091-cli-addon-instrumentation-experimental-hooks</a></li><li><a href="0091-weakmap.html">0091-weakmap</a></li><li><a href="0092-blueprint-remove-old-files.html">0092-blueprint-remove-old-files</a></li><li><a href="0095-cli-standardise-targets.html">0095-cli-standardise-targets</a></li><li><a href="0095-router-service.html">0095-router-service</a></li><li><a href="0096-enable-yarn-usage.html">0096-enable-yarn-usage</a></li><li><a href="0101-ember-data-friendly-errors.html">0101-ember-data-friendly-errors</a></li><li><a href="0105-addons-optionalDependencies.html">0105-addons-optionalDependencies</a></li><li><a href="0108-add-custom-transform.html">0108-add-custom-transform</a></li><li><a href="0110-packaging.html">0110-packaging</a></li><li><a href="0114-add-template-lint-addon.html">0114-add-template-lint-addon</a></li><li><a href="0116-qunit-dom.html">0116-qunit-dom</a></li><li><a href="0120-cli-guides.html">0120-cli-guides</a></li><li><a href="0120-route-serializers.html">0120-route-serializers</a></li><li><a href="0121-remove-ember-cli-eslint.html">0121-remove-ember-cli-eslint</a></li><li><a href="0136-contains-to-includes.html">0136-contains-to-includes</a></li><li><a href="0139-isHtmlSafe.html">0139-isHtmlSafe</a></li><li><a href="0143-module-unification.html">0143-module-unification</a></li><li><a href="0150-factory-for.html">0150-factory-for</a></li><li><a href="0176-javascript-module-api.html" class="active">0176-javascript-module-api</a></li><li><a href="0178-deprecate-ember-k.html">0178-deprecate-ember-k</a></li><li><a href="0181-deprecate-ember-data-initializers.html">0181-deprecate-ember-data-initializers</a></li><li><a href="0186-track-unique-history-location-state.html">0186-track-unique-history-location-state</a></li><li><a href="0191-deprecate-component-lifecycle-hook-args.html">0191-deprecate-component-lifecycle-hook-args</a></li><li><a href="0194-deprecate-custom-event-manager.html">0194-deprecate-custom-event-manager</a></li><li><a href="0213-custom-components.html">0213-custom-components</a></li><li><a href="0225-ember-engines-mount-params.html">0225-ember-engines-mount-params</a></li><li><a href="0226-named-blocks.html">0226-named-blocks</a></li><li><a href="0229-deprecate-testing-restricted-resolver.html">0229-deprecate-testing-restricted-resolver</a></li><li><a href="0232-simplify-qunit-testing-api.html">0232-simplify-qunit-testing-api</a></li><li><a href="0236-deprecation-ember-string.html">0236-deprecation-ember-string</a></li><li><a href="0237-deprecation-ember-map.html">0237-deprecation-ember-map</a></li><li><a href="0240-es-classes.html">0240-es-classes</a></li><li><a href="0252-browser-support-changes.html">0252-browser-support-changes</a></li><li><a href="0268-acceptance-testing-refactor.html">0268-acceptance-testing-refactor</a></li><li><a href="0272-deprecation-native-function-prototype-extensions.html">0272-deprecation-native-function-prototype-extensions</a></li><li><a href="0276-named-args.html">0276-named-args</a></li><li><a href="0278-template-only-components.html">0278-template-only-components</a></li><li><a href="0280-remove-application-wrapper.html">0280-remove-application-wrapper</a></li><li><a href="0281-es5-getters.html">0281-es5-getters</a></li><li><a href="0286-block-let-template-helper.html">0286-block-let-template-helper</a></li><li><a href="0287-promote-in-element-to-public-api.html">0287-promote-in-element-to-public-api</a></li><li><a href="0293-record-data.html">0293-record-data</a></li><li><a href="0294-optional-jquery.html">0294-optional-jquery</a></li><li><a href="0297-deprecate-ember-logger.html">0297-deprecate-ember-logger</a></li><li><a href="0300-rfc-process-update.html">0300-rfc-process-update</a></li><li><a href="0308-deprecate-property-lookup-fallback.html">0308-deprecate-property-lookup-fallback</a></li><li><a href="0311-angle-bracket-invocation.html">0311-angle-bracket-invocation</a></li><li><a href="0318-array-helper.html">0318-array-helper</a></li><li><a href="0322-deprecate-copy-copyable.html">0322-deprecate-copy-copyable</a></li><li><a href="0324-deprecate-component-isvisible.html">0324-deprecate-component-isvisible</a></li><li><a href="0326-ember-data-filter-deprecation.html">0326-ember-data-filter-deprecation</a></li><li><a href="0329-deprecated-ember-evented-in-ember-data.html">0329-deprecated-ember-evented-in-ember-data</a></li><li><a href="0331-deprecate-globals-resolver.html">0331-deprecate-globals-resolver</a></li><li><a href="0332-ember-data-record-links-and-meta.html">0332-ember-data-record-links-and-meta</a></li><li><a href="0335-deprecate-send-action.html">0335-deprecate-send-action</a></li><li><a href="0337-native-class-constructor-update.html">0337-native-class-constructor-update</a></li><li><a href="0340-deprecate-ember-merge.html">0340-deprecate-ember-merge</a></li><li><a href="0345-discord.html">0345-discord</a></li><li><a href="0364-roadmap-2018.html">0364-roadmap-2018</a></li><li><a href="0369-deprecate-computed-clobberability.html">0369-deprecate-computed-clobberability</a></li><li><a href="0370-deprecate-computed-volatile.html">0370-deprecate-computed-volatile</a></li><li><a href="0372-ember-data-model-factory-for.html">0372-ember-data-model-factory-for</a></li><li><a href="0373-Element-Modifier-Managers.html">0373-Element-Modifier-Managers</a></li><li><a href="0375-deprecate-computed-property-modifier.html">0375-deprecate-computed-property-modifier</a></li><li><a href="0386-remove-jquery.html">0386-remove-jquery</a></li><li><a href="0389-dynamic-tag-names.html">0389-dynamic-tag-names</a></li><li><a href="0391-router-helpers.html">0391-router-helpers</a></li><li><a href="0392-deprecate-component-manager-string-lookup.html">0392-deprecate-component-manager-string-lookup</a></li><li><a href="0395-ember-data-packages.html">0395-ember-data-packages</a></li><li><a href="0398-RouteInfo-Metadata.html">0398-RouteInfo-Metadata</a></li><li><a href="0403-ember-data-identifiers.html">0403-ember-data-identifiers</a></li><li><a href="0408-decorators.html">0408-decorators</a></li><li><a href="0410-tracked-properties.html">0410-tracked-properties</a></li><li><a href="0415-render-element-modifiers.html">0415-render-element-modifiers</a></li><li><a href="0416-glimmer-components.html">0416-glimmer-components</a></li><li><a href="0418-deprecate-route-render-methods.html">0418-deprecate-route-render-methods</a></li><li><a href="0421-deprecate-application-controller-props.html">0421-deprecate-application-controller-props</a></li><li><a href="0425-website-redesign.html">0425-website-redesign</a></li><li><a href="0431-guides-restructure.html">0431-guides-restructure</a></li><li><a href="0432-contextual-helpers.html">0432-contextual-helpers</a></li><li><a href="0435-modifier-splattributes.html">0435-modifier-splattributes</a></li><li><a href="0440-decorator-support.html">0440-decorator-support</a></li><li><a href="0445-deprecate-with.html">0445-deprecate-with</a></li><li><a href="0446-contribution-guides.html">0446-contribution-guides</a></li><li><a href="0449-deprecate-partials.html">0449-deprecate-partials</a></li><li><a href="0451-injection-parameter-normalization.html">0451-injection-parameter-normalization</a></li><li><a href="0452-ember-data-medium-term-plan.html">0452-ember-data-medium-term-plan</a></li><li><a href="0457-nested-lookups.html">0457-nested-lookups</a></li><li><a href="0459-angle-bracket-built-in-components.html">0459-angle-bracket-built-in-components</a></li><li><a href="0460-yieldable-named-blocks.html">0460-yieldable-named-blocks</a></li><li><a href="0461-ember-data-singleton-record-data.html">0461-ember-data-singleton-record-data</a></li><li><a href="0463-record-data-state.html">0463-record-data-state</a></li><li><a href="0465-record-data-errors.html">0465-record-data-errors</a></li><li><a href="0466-request-state-service.html">0466-request-state-service</a></li><li><a href="0468-classic-decorator.html">0468-classic-decorator</a></li><li><a href="0470-fn-helper.html">0470-fn-helper</a></li><li><a href="0471-on-modifier.html">0471-on-modifier</a></li><li><a href="0477-blueprints-update.html">0477-blueprints-update</a></li><li><a href="0478-tracked-properties-updates.html">0478-tracked-properties-updates</a></li><li><a href="0481-component-templates-co-location.html">0481-component-templates-co-location</a></li><li><a href="0486-deprecate-mouseenter.html">0486-deprecate-mouseenter</a></li><li><a href="0487-custom-model-classes.html">0487-custom-model-classes</a></li><li><a href="0491-deprecate-disconnect-outlet.html">0491-deprecate-disconnect-outlet</a></li><li><a href="0494-async-observers.html">0494-async-observers</a></li><li><a href="0496-handlebars-strict-mode.html">0496-handlebars-strict-mode</a></li><li><a href="0507-embroider-v2-package-format.html">0507-embroider-v2-package-format</a></li><li><a href="0519-2019-2020-roadmap.html">0519-2019-2020-roadmap</a></li><li><a href="0521-find-by-identifier.html">0521-find-by-identifier</a></li><li><a href="0522-default-serializers-and-adapters.html">0522-default-serializers-and-adapters</a></li><li><a href="0523-model-argument-for-route-templates.html">0523-model-argument-for-route-templates</a></li><li><a href="0554-deprecate-getwithdefault.html">0554-deprecate-getwithdefault</a></li><li><a href="0558-edition-detection.html">0558-edition-detection</a></li><li><a href="0560-add-equality-operators.html">0560-add-equality-operators</a></li><li><a href="0561-add-numeric-comparison-operators.html">0561-add-numeric-comparison-operators</a></li><li><a href="0562-add-logical-operators.html">0562-add-logical-operators</a></li><li><a href="0566-memo-decorator.html">0566-memo-decorator</a></li><li><a href="0580-destroyables.html">0580-destroyables</a></li><li><a href="0581-new-test-waiters.html">0581-new-test-waiters</a></li><li><a href="0585-improved-ember-registry-apis.html">0585-improved-ember-registry-apis</a></li><li><a href="0615-autotracking-memoization.html">0615-autotracking-memoization</a></li><li><a href="0617-rfc-stages.html">0617-rfc-stages</a></li><li><a href="0625-helper-managers.html">0625-helper-managers</a></li><li><a href="0626-invoke-helper.html">0626-invoke-helper</a></li><li><a href="0628-prettier.html">0628-prettier</a></li><li><a href="0631-refresh-method-for-router-service.html">0631-refresh-method-for-router-service</a></li><li><a href="0635-ember-new-lang.html">0635-ember-new-lang</a></li><li><a href="0637-customizable-test-setups.html">0637-customizable-test-setups</a></li><li><a href="0638-interactive-app-creation.html">0638-interactive-app-creation</a></li><li><a href="0639-replace-blacklist-whitelist.html">0639-replace-blacklist-whitelist</a></li><li><a href="0645-add-ember-page-title-addon.html">0645-add-ember-page-title-addon</a></li><li><a href="0649-deprecation-staging.html">0649-deprecation-staging</a></li><li><a href="0659-unique-id-helper.html">0659-unique-id-helper</a></li><li><a href="0669-tracked-storage-primitive.html">0669-tracked-storage-primitive</a></li><li><a href="0671-modernize-built-in-components-1.html">0671-modernize-built-in-components-1</a></li><li><a href="0673-deprecate-tryinvoke.html">0673-deprecate-tryinvoke</a></li><li><a href="0674-deprecate-transition-methods-of-controller-and-route.html">0674-deprecate-transition-methods-of-controller-and-route</a></li><li><a href="0680-implicit-injection-deprecation.html">0680-implicit-injection-deprecation</a></li><li><a href="0685-new-browser-support-policy.html">0685-new-browser-support-policy</a></li><li><a href="0686-deprecate-old-manager-capabilities-versions.html">0686-deprecate-old-manager-capabilities-versions</a></li><li><a href="0689-deprecate-has-block.html">0689-deprecate-has-block</a></li><li><a href="0690-deprecate-attrs-in-templates.html">0690-deprecate-attrs-in-templates</a></li><li><a href="0691-deprecate-class-binding-and-class-name-bindings.html">0691-deprecate-class-binding-and-class-name-bindings</a></li><li><a href="0692-deprecate-array-observers.html">0692-deprecate-array-observers</a></li><li><a href="0698-deprecate-link-to-positional-arguments.html">0698-deprecate-link-to-positional-arguments</a></li><li><a href="0702-eslint-plugin-qunit.html">0702-eslint-plugin-qunit</a></li><li><a href="0704-deprecate-octane-optional-features.html">0704-deprecate-octane-optional-features</a></li><li><a href="0705-deprecate-jquery-optional-feature.html">0705-deprecate-jquery-optional-feature</a></li><li><a href="0706-deprecate-ember-global.html">0706-deprecate-ember-global</a></li><li><a href="0707-modernize-built-in-components-2.html">0707-modernize-built-in-components-2</a></li><li><a href="0711-deprecate-auto-location.html">0711-deprecate-auto-location</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="0001-transform-attribute-meta-parameter.html">0001-transform-attribute-meta-parameter</a></li><li class="chapter-item expanded "><a href="0003-block-params.html">0003-block-params</a></li><li class="chapter-item expanded "><a href="0003-cli-ember-doctor.html">0003-cli-ember-doctor</a></li><li class="chapter-item expanded "><a href="0010-engines.html">0010-engines</a></li><li class="chapter-item expanded "><a href="0011-improved-cp-syntax.html">0011-improved-cp-syntax</a></li><li class="chapter-item expanded "><a href="0012-help-json-output.html">0012-help-json-output</a></li><li class="chapter-item expanded "><a href="0015-the-road-to-ember-2-0.html">0015-the-road-to-ember-2-0</a></li><li class="chapter-item expanded "><a href="0020-sri-default.html">0020-sri-default</a></li><li class="chapter-item expanded "><a href="0023-command-line-completion.html">0023-command-line-completion</a></li><li class="chapter-item expanded "><a href="0024-bound-attributes.html">0024-bound-attributes</a></li><li class="chapter-item expanded "><a href="0028-app-import-output-file.html">0028-app-import-output-file</a></li><li class="chapter-item expanded "><a href="0029-addon-black-and-whitelist-for-apps.html">0029-addon-black-and-whitelist-for-apps</a></li><li class="chapter-item expanded "><a href="0045-internet-explorer.html">0045-internet-explorer</a></li><li class="chapter-item expanded "><a href="0046-cli-improved-release-process.html">0046-cli-improved-release-process</a></li><li class="chapter-item expanded "><a href="0046-registry-reform.html">0046-registry-reform</a></li><li class="chapter-item expanded "><a href="0050-cli-production-code-stripping.html">0050-cli-production-code-stripping</a></li><li class="chapter-item expanded "><a href="0050-improved-actions.html">0050-improved-actions</a></li><li class="chapter-item expanded "><a href="0053-helpers.html">0053-helpers</a></li><li class="chapter-item expanded "><a href="0055-anonymous-amd.html">0055-anonymous-amd</a></li><li class="chapter-item expanded "><a href="0056-improved-release-cycle.html">0056-improved-release-cycle</a></li><li class="chapter-item expanded "><a href="0057-ember-data-reference-unification.html">0057-ember-data-reference-unification</a></li><li class="chapter-item expanded "><a href="0058-helper-listing.html">0058-helper-listing</a></li><li class="chapter-item expanded "><a href="0061-ember-data-background-fetch.html">0061-ember-data-background-fetch</a></li><li class="chapter-item expanded "><a href="0064-contextual-component-lookup.html">0064-contextual-component-lookup</a></li><li class="chapter-item expanded "><a href="0065-deprecation-warning-handlers.html">0065-deprecation-warning-handlers</a></li><li class="chapter-item expanded "><a href="0080-serve-file-api.html">0080-serve-file-api</a></li><li class="chapter-item expanded "><a href="0086-firefox-in-ci.html">0086-firefox-in-ci</a></li><li class="chapter-item expanded "><a href="0090-addon-tree-caching.html">0090-addon-tree-caching</a></li><li class="chapter-item expanded "><a href="0091-cli-addon-instrumentation-experimental-hooks.html">0091-cli-addon-instrumentation-experimental-hooks</a></li><li class="chapter-item expanded "><a href="0091-weakmap.html">0091-weakmap</a></li><li class="chapter-item expanded "><a href="0092-blueprint-remove-old-files.html">0092-blueprint-remove-old-files</a></li><li class="chapter-item expanded "><a href="0095-cli-standardise-targets.html">0095-cli-standardise-targets</a></li><li class="chapter-item expanded "><a href="0095-router-service.html">0095-router-service</a></li><li class="chapter-item expanded "><a href="0096-enable-yarn-usage.html">0096-enable-yarn-usage</a></li><li class="chapter-item expanded "><a href="0101-ember-data-friendly-errors.html">0101-ember-data-friendly-errors</a></li><li class="chapter-item expanded "><a href="0105-addons-optionalDependencies.html">0105-addons-optionalDependencies</a></li><li class="chapter-item expanded "><a href="0108-add-custom-transform.html">0108-add-custom-transform</a></li><li class="chapter-item expanded "><a href="0110-packaging.html">0110-packaging</a></li><li class="chapter-item expanded "><a href="0114-add-template-lint-addon.html">0114-add-template-lint-addon</a></li><li class="chapter-item expanded "><a href="0116-qunit-dom.html">0116-qunit-dom</a></li><li class="chapter-item expanded "><a href="0120-cli-guides.html">0120-cli-guides</a></li><li class="chapter-item expanded "><a href="0120-route-serializers.html">0120-route-serializers</a></li><li class="chapter-item expanded "><a href="0121-remove-ember-cli-eslint.html">0121-remove-ember-cli-eslint</a></li><li class="chapter-item expanded "><a href="0136-contains-to-includes.html">0136-contains-to-includes</a></li><li class="chapter-item expanded "><a href="0139-isHtmlSafe.html">0139-isHtmlSafe</a></li><li class="chapter-item expanded "><a href="0143-module-unification.html">0143-module-unification</a></li><li class="chapter-item expanded "><a href="0150-factory-for.html">0150-factory-for</a></li><li class="chapter-item expanded "><a href="0176-javascript-module-api.html" class="active">0176-javascript-module-api</a></li><li class="chapter-item expanded "><a href="0178-deprecate-ember-k.html">0178-deprecate-ember-k</a></li><li class="chapter-item expanded "><a href="0181-deprecate-ember-data-initializers.html">0181-deprecate-ember-data-initializers</a></li><li class="chapter-item expanded "><a href="0186-track-unique-history-location-state.html">0186-track-unique-history-location-state</a></li><li class="chapter-item expanded "><a href="0191-deprecate-component-lifecycle-hook-args.html">0191-deprecate-component-lifecycle-hook-args</a></li><li class="chapter-item expanded "><a href="0194-deprecate-custom-event-manager.html">0194-deprecate-custom-event-manager</a></li><li class="chapter-item expanded "><a href="0213-custom-components.html">0213-custom-components</a></li><li class="chapter-item expanded "><a href="0225-ember-engines-mount-params.html">0225-ember-engines-mount-params</a></li><li class="chapter-item expanded "><a href="0226-named-blocks.html">0226-named-blocks</a></li><li class="chapter-item expanded "><a href="0229-deprecate-testing-restricted-resolver.html">0229-deprecate-testing-restricted-resolver</a></li><li class="chapter-item expanded "><a href="0232-simplify-qunit-testing-api.html">0232-simplify-qunit-testing-api</a></li><li class="chapter-item expanded "><a href="0236-deprecation-ember-string.html">0236-deprecation-ember-string</a></li><li class="chapter-item expanded "><a href="0237-deprecation-ember-map.html">0237-deprecation-ember-map</a></li><li class="chapter-item expanded "><a href="0240-es-classes.html">0240-es-classes</a></li><li class="chapter-item expanded "><a href="0252-browser-support-changes.html">0252-browser-support-changes</a></li><li class="chapter-item expanded "><a href="0268-acceptance-testing-refactor.html">0268-acceptance-testing-refactor</a></li><li class="chapter-item expanded "><a href="0272-deprecation-native-function-prototype-extensions.html">0272-deprecation-native-function-prototype-extensions</a></li><li class="chapter-item expanded "><a href="0276-named-args.html">0276-named-args</a></li><li class="chapter-item expanded "><a href="0278-template-only-components.html">0278-template-only-components</a></li><li class="chapter-item expanded "><a href="0280-remove-application-wrapper.html">0280-remove-application-wrapper</a></li><li class="chapter-item expanded "><a href="0281-es5-getters.html">0281-es5-getters</a></li><li class="chapter-item expanded "><a href="0286-block-let-template-helper.html">0286-block-let-template-helper</a></li><li class="chapter-item expanded "><a href="0287-promote-in-element-to-public-api.html">0287-promote-in-element-to-public-api</a></li><li class="chapter-item expanded "><a href="0293-record-data.html">0293-record-data</a></li><li class="chapter-item expanded "><a href="0294-optional-jquery.html">0294-optional-jquery</a></li><li class="chapter-item expanded "><a href="0297-deprecate-ember-logger.html">0297-deprecate-ember-logger</a></li><li class="chapter-item expanded "><a href="0300-rfc-process-update.html">0300-rfc-process-update</a></li><li class="chapter-item expanded "><a href="0308-deprecate-property-lookup-fallback.html">0308-deprecate-property-lookup-fallback</a></li><li class="chapter-item expanded "><a href="0311-angle-bracket-invocation.html">0311-angle-bracket-invocation</a></li><li class="chapter-item expanded "><a href="0318-array-helper.html">0318-array-helper</a></li><li class="chapter-item expanded "><a href="0322-deprecate-copy-copyable.html">0322-deprecate-copy-copyable</a></li><li class="chapter-item expanded "><a href="0324-deprecate-component-isvisible.html">0324-deprecate-component-isvisible</a></li><li class="chapter-item expanded "><a href="0326-ember-data-filter-deprecation.html">0326-ember-data-filter-deprecation</a></li><li class="chapter-item expanded "><a href="0329-deprecated-ember-evented-in-ember-data.html">0329-deprecated-ember-evented-in-ember-data</a></li><li class="chapter-item expanded "><a href="0331-deprecate-globals-resolver.html">0331-deprecate-globals-resolver</a></li><li class="chapter-item expanded "><a href="0332-ember-data-record-links-and-meta.html">0332-ember-data-record-links-and-meta</a></li><li class="chapter-item expanded "><a href="0335-deprecate-send-action.html">0335-deprecate-send-action</a></li><li class="chapter-item expanded "><a href="0337-native-class-constructor-update.html">0337-native-class-constructor-update</a></li><li class="chapter-item expanded "><a href="0340-deprecate-ember-merge.html">0340-deprecate-ember-merge</a></li><li class="chapter-item expanded "><a href="0345-discord.html">0345-discord</a></li><li class="chapter-item expanded "><a href="0364-roadmap-2018.html">0364-roadmap-2018</a></li><li class="chapter-item expanded "><a href="0369-deprecate-computed-clobberability.html">0369-deprecate-computed-clobberability</a></li><li class="chapter-item expanded "><a href="0370-deprecate-computed-volatile.html">0370-deprecate-computed-volatile</a></li><li class="chapter-item expanded "><a href="0372-ember-data-model-factory-for.html">0372-ember-data-model-factory-for</a></li><li class="chapter-item expanded "><a href="0373-Element-Modifier-Managers.html">0373-Element-Modifier-Managers</a></li><li class="chapter-item expanded "><a href="0375-deprecate-computed-property-modifier.html">0375-deprecate-computed-property-modifier</a></li><li class="chapter-item expanded "><a href="0386-remove-jquery.html">0386-remove-jquery</a></li><li class="chapter-item expanded "><a href="0389-dynamic-tag-names.html">0389-dynamic-tag-names</a></li><li class="chapter-item expanded "><a href="0391-router-helpers.html">0391-router-helpers</a></li><li class="chapter-item expanded "><a href="0392-deprecate-component-manager-string-lookup.html">0392-deprecate-component-manager-string-lookup</a></li><li class="chapter-item expanded "><a href="0395-ember-data-packages.html">0395-ember-data-packages</a></li><li class="chapter-item expanded "><a href="0398-RouteInfo-Metadata.html">0398-RouteInfo-Metadata</a></li><li class="chapter-item expanded "><a href="0403-ember-data-identifiers.html">0403-ember-data-identifiers</a></li><li class="chapter-item expanded "><a href="0408-decorators.html">0408-decorators</a></li><li class="chapter-item expanded "><a href="0410-tracked-properties.html">0410-tracked-properties</a></li><li class="chapter-item expanded "><a href="0415-render-element-modifiers.html">0415-render-element-modifiers</a></li><li class="chapter-item expanded "><a href="0416-glimmer-components.html">0416-glimmer-components</a></li><li class="chapter-item expanded "><a href="0418-deprecate-route-render-methods.html">0418-deprecate-route-render-methods</a></li><li class="chapter-item expanded "><a href="0421-deprecate-application-controller-props.html">0421-deprecate-application-controller-props</a></li><li class="chapter-item expanded "><a href="0425-website-redesign.html">0425-website-redesign</a></li><li class="chapter-item expanded "><a href="0431-guides-restructure.html">0431-guides-restructure</a></li><li class="chapter-item expanded "><a href="0432-contextual-helpers.html">0432-contextual-helpers</a></li><li class="chapter-item expanded "><a href="0435-modifier-splattributes.html">0435-modifier-splattributes</a></li><li class="chapter-item expanded "><a href="0440-decorator-support.html">0440-decorator-support</a></li><li class="chapter-item expanded "><a href="0445-deprecate-with.html">0445-deprecate-with</a></li><li class="chapter-item expanded "><a href="0446-contribution-guides.html">0446-contribution-guides</a></li><li class="chapter-item expanded "><a href="0449-deprecate-partials.html">0449-deprecate-partials</a></li><li class="chapter-item expanded "><a href="0451-injection-parameter-normalization.html">0451-injection-parameter-normalization</a></li><li class="chapter-item expanded "><a href="0452-ember-data-medium-term-plan.html">0452-ember-data-medium-term-plan</a></li><li class="chapter-item expanded "><a href="0457-nested-lookups.html">0457-nested-lookups</a></li><li class="chapter-item expanded "><a href="0459-angle-bracket-built-in-components.html">0459-angle-bracket-built-in-components</a></li><li class="chapter-item expanded "><a href="0460-yieldable-named-blocks.html">0460-yieldable-named-blocks</a></li><li class="chapter-item expanded "><a href="0461-ember-data-singleton-record-data.html">0461-ember-data-singleton-record-data</a></li><li class="chapter-item expanded "><a href="0463-record-data-state.html">0463-record-data-state</a></li><li class="chapter-item expanded "><a href="0465-record-data-errors.html">0465-record-data-errors</a></li><li class="chapter-item expanded "><a href="0466-request-state-service.html">0466-request-state-service</a></li><li class="chapter-item expanded "><a href="0468-classic-decorator.html">0468-classic-decorator</a></li><li class="chapter-item expanded "><a href="0470-fn-helper.html">0470-fn-helper</a></li><li class="chapter-item expanded "><a href="0471-on-modifier.html">0471-on-modifier</a></li><li class="chapter-item expanded "><a href="0477-blueprints-update.html">0477-blueprints-update</a></li><li class="chapter-item expanded "><a href="0478-tracked-properties-updates.html">0478-tracked-properties-updates</a></li><li class="chapter-item expanded "><a href="0481-component-templates-co-location.html">0481-component-templates-co-location</a></li><li class="chapter-item expanded "><a href="0486-deprecate-mouseenter.html">0486-deprecate-mouseenter</a></li><li class="chapter-item expanded "><a href="0487-custom-model-classes.html">0487-custom-model-classes</a></li><li class="chapter-item expanded "><a href="0491-deprecate-disconnect-outlet.html">0491-deprecate-disconnect-outlet</a></li><li class="chapter-item expanded "><a href="0494-async-observers.html">0494-async-observers</a></li><li class="chapter-item expanded "><a href="0496-handlebars-strict-mode.html">0496-handlebars-strict-mode</a></li><li class="chapter-item expanded "><a href="0507-embroider-v2-package-format.html">0507-embroider-v2-package-format</a></li><li class="chapter-item expanded "><a href="0519-2019-2020-roadmap.html">0519-2019-2020-roadmap</a></li><li class="chapter-item expanded "><a href="0521-find-by-identifier.html">0521-find-by-identifier</a></li><li class="chapter-item expanded "><a href="0522-default-serializers-and-adapters.html">0522-default-serializers-and-adapters</a></li><li class="chapter-item expanded "><a href="0523-model-argument-for-route-templates.html">0523-model-argument-for-route-templates</a></li><li class="chapter-item expanded "><a href="0554-deprecate-getwithdefault.html">0554-deprecate-getwithdefault</a></li><li class="chapter-item expanded "><a href="0558-edition-detection.html">0558-edition-detection</a></li><li class="chapter-item expanded "><a href="0560-add-equality-operators.html">0560-add-equality-operators</a></li><li class="chapter-item expanded "><a href="0561-add-numeric-comparison-operators.html">0561-add-numeric-comparison-operators</a></li><li class="chapter-item expanded "><a href="0562-add-logical-operators.html">0562-add-logical-operators</a></li><li class="chapter-item expanded "><a href="0566-memo-decorator.html">0566-memo-decorator</a></li><li class="chapter-item expanded "><a href="0580-destroyables.html">0580-destroyables</a></li><li class="chapter-item expanded "><a href="0581-new-test-waiters.html">0581-new-test-waiters</a></li><li class="chapter-item expanded "><a href="0585-improved-ember-registry-apis.html">0585-improved-ember-registry-apis</a></li><li class="chapter-item expanded "><a href="0615-autotracking-memoization.html">0615-autotracking-memoization</a></li><li class="chapter-item expanded "><a href="0617-rfc-stages.html">0617-rfc-stages</a></li><li class="chapter-item expanded "><a href="0625-helper-managers.html">0625-helper-managers</a></li><li class="chapter-item expanded "><a href="0626-invoke-helper.html">0626-invoke-helper</a></li><li class="chapter-item expanded "><a href="0628-prettier.html">0628-prettier</a></li><li class="chapter-item expanded "><a href="0631-refresh-method-for-router-service.html">0631-refresh-method-for-router-service</a></li><li class="chapter-item expanded "><a href="0635-ember-new-lang.html">0635-ember-new-lang</a></li><li class="chapter-item expanded "><a href="0637-customizable-test-setups.html">0637-customizable-test-setups</a></li><li class="chapter-item expanded "><a href="0638-interactive-app-creation.html">0638-interactive-app-creation</a></li><li class="chapter-item expanded "><a href="0639-replace-blacklist-whitelist.html">0639-replace-blacklist-whitelist</a></li><li class="chapter-item expanded "><a href="0645-add-ember-page-title-addon.html">0645-add-ember-page-title-addon</a></li><li class="chapter-item expanded "><a href="0649-deprecation-staging.html">0649-deprecation-staging</a></li><li class="chapter-item expanded "><a href="0659-unique-id-helper.html">0659-unique-id-helper</a></li><li class="chapter-item expanded "><a href="0669-tracked-storage-primitive.html">0669-tracked-storage-primitive</a></li><li class="chapter-item expanded "><a href="0671-modernize-built-in-components-1.html">0671-modernize-built-in-components-1</a></li><li class="chapter-item expanded "><a href="0673-deprecate-tryinvoke.html">0673-deprecate-tryinvoke</a></li><li class="chapter-item expanded "><a href="0674-deprecate-transition-methods-of-controller-and-route.html">0674-deprecate-transition-methods-of-controller-and-route</a></li><li class="chapter-item expanded "><a href="0680-implicit-injection-deprecation.html">0680-implicit-injection-deprecation</a></li><li class="chapter-item expanded "><a href="0685-new-browser-support-policy.html">0685-new-browser-support-policy</a></li><li class="chapter-item expanded "><a href="0686-deprecate-old-manager-capabilities-versions.html">0686-deprecate-old-manager-capabilities-versions</a></li><li class="chapter-item expanded "><a href="0689-deprecate-has-block.html">0689-deprecate-has-block</a></li><li class="chapter-item expanded "><a href="0690-deprecate-attrs-in-templates.html">0690-deprecate-attrs-in-templates</a></li><li class="chapter-item expanded "><a href="0691-deprecate-class-binding-and-class-name-bindings.html">0691-deprecate-class-binding-and-class-name-bindings</a></li><li class="chapter-item expanded "><a href="0692-deprecate-array-observers.html">0692-deprecate-array-observers</a></li><li class="chapter-item expanded "><a href="0698-deprecate-link-to-positional-arguments.html">0698-deprecate-link-to-positional-arguments</a></li><li class="chapter-item expanded "><a href="0702-eslint-plugin-qunit.html">0702-eslint-plugin-qunit</a></li><li class="chapter-item expanded "><a href="0704-deprecate-octane-optional-features.html">0704-deprecate-octane-optional-features</a></li><li class="chapter-item expanded "><a href="0705-deprecate-jquery-optional-feature.html">0705-deprecate-jquery-optional-feature</a></li><li class="chapter-item expanded "><a href="0706-deprecate-ember-global.html">0706-deprecate-ember-global</a></li><li class="chapter-item expanded "><a href="0707-modernize-built-in-components-2.html">0707-modernize-built-in-components-2</a></li><li class="chapter-item expanded "><a href="0711-deprecate-auto-location.html">0711-deprecate-auto-location</a></li><li class="chapter-item expanded "><a href="0738-ember-data-deprecate-model-reopen.html">0738-ember-data-deprecate-model-reopen</a></li><li class="chapter-item expanded "><a href="0750-deprecate-ember-assign.html">0750-deprecate-ember-assign</a></li><li class="chapter-item expanded "><a href="0752-inject-service.html">0752-inject-service</a></li><li class="chapter-item expanded "><a href="0756-helper-default-manager.html">0756-helper-default-manager</a></li><li class="chapter-item expanded "><a href="0772-deprecate-bower-support.html">0772-deprecate-bower-support</a></li><li class="chapter-item expanded "><a href="0776-typescript-blueprints.html">0776-typescript-blueprints</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -86,45 +83,39 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                
-                <div id="menu-bar" class="menu-bar">
-                    <div id="menu-bar-sticky-container">
-                        <div class="left-buttons">
-                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
-                                <i class="fa fa-bars"></i>
-                            </button>
-                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
-                                <i class="fa fa-paint-brush"></i>
-                            </button>
-                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
-                            </ul>
-                            
-                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
-                                <i class="fa fa-search"></i>
-                            </button>
-                            
-                        </div>
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
 
-                        <h1 class="menu-title"></h1>
+                    <h1 class="menu-title"></h1>
 
-                        <div class="right-buttons">
-                            <a href="print.html" title="Print this book" aria-label="Print this book">
-                                <i id="print-button" class="fa fa-print"></i>
-                            </a>
-                            
-                        </div>
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -132,8 +123,6 @@
                         </ul>
                     </div>
                 </div>
-                
-
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script type="text/javascript">
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
@@ -149,11 +138,11 @@
 <p>Start Date: 2016-11-05
 RFC PR: https://github.com/emberjs/rfcs/pull/176</p>
 <hr />
-<h1><a class="header" href="#summary" id="summary">Summary</a></h1>
+<h1 id="summary"><a class="header" href="#summary">Summary</a></h1>
 <p>Make Ember feel less overwhelming to new users, and make Ember applications
 start faster, by replacing the <code>Ember</code> global with a first-class system for
 importing just the parts of the framework you need.</p>
-<h1><a class="header" href="#motivation" id="motivation">Motivation</a></h1>
+<h1 id="motivation"><a class="header" href="#motivation">Motivation</a></h1>
 <p>ECMAScript 2015 (also known as ES2015 or ES6) introduced a syntax for importing
 and exporting values from modules. Ember aggressively adopted modules, and if
 you've used Ember before, you're probably familiar with this syntax:</p>
@@ -188,7 +177,7 @@ download itself.</li>
 </ul>
 <p>Defining a public API for importing parts of Ember via JavaScript modules helps
 us lay the groundwork for solving all of these problems.</p>
-<h4><a class="header" href="#reducing-load-time" id="reducing-load-time">Reducing Load Time</a></h4>
+<h4 id="reducing-load-time"><a class="header" href="#reducing-load-time">Reducing Load Time</a></h4>
 <p>Modules help us eliminate unneeded code. The module syntax is <em>statically
 analyzable</em>, meaning that a tool like Ember CLI can analyze an application's
 source code and reliably determine which files, in both the framework and the
@@ -212,16 +201,16 @@ entire application.</p>
 components and framework code used in the route. Only after the route is
 rendered would we start to send the remainder of the application and framework
 code in the background.</p>
-<h4><a class="header" href="#guiding-learners" id="guiding-learners">Guiding Learners</a></h4>
+<h4 id="guiding-learners"><a class="header" href="#guiding-learners">Guiding Learners</a></h4>
 <p>We can group framework classes and utilities by functionality, making it clear
 what things are related and how they should work together. People can feel
 confident they are getting only what they need at that moment, not an entire
 framework that they're not sure they're benefiting from.</p>
-<h4><a class="header" href="#modernizing-ember" id="modernizing-ember">Modernizing Ember</a></h4>
+<h4 id="modernizing-ember"><a class="header" href="#modernizing-ember">Modernizing Ember</a></h4>
 <p>Lastly, developers are growing increasingly accustomed to using JavaScript
 modules to import libaries. If we don't adapt to modules, Ember will feel clunky
 and antiquated compared to modern alternatives.</p>
-<h3><a class="header" href="#prior-art" id="prior-art">Prior Art</a></h3>
+<h3 id="prior-art"><a class="header" href="#prior-art">Prior Art</a></h3>
 <p>Initial efforts to define a module API for Ember began with the
 <a href="https://github.com/ember-cli/ember-cli-shims"><code>ember-cli-shims</code></a> addon. This addon provides a set of &quot;shim&quot; modules
 that re-export a value off the global <code>Ember</code>. While this setup doesn't offer
@@ -246,8 +235,8 @@ a few minutes (see <a href="#migration">Migration</a>).</p>
 <p>This RFC also builds significantly on <a href="https://github.com/zeppelin">@zeppelin's</a>
 previous <a href="https://github.com/emberjs/rfcs/pull/68">ES6 modules RFC</a>, which drove
 initial discussion, including the idea to use scoped packages.</p>
-<h1><a class="header" href="#detailed-design" id="detailed-design">Detailed Design</a></h1>
-<h2><a class="header" href="#terminology" id="terminology">Terminology</a></h2>
+<h1 id="detailed-design"><a class="header" href="#detailed-design">Detailed Design</a></h1>
+<h2 id="terminology"><a class="header" href="#terminology">Terminology</a></h2>
 <ul>
 <li><strong>Package</strong> - a bundle of JavaScript addressable by npm and other package
 managers, it may contain many modules (but has a default module, usually
@@ -261,7 +250,7 @@ like <code>import Component from &quot;@ember/component&quot;</code>.</li>
 <li><strong>Nested Module</strong> - a module provided at a path <em>inside</em> a package, like
 <code>import { addObserver } from &quot;@ember/object/observers&quot;</code>.</li>
 </ul>
-<h2><a class="header" href="#module-naming--organization" id="module-naming--organization">Module Naming &amp; Organization</a></h2>
+<h2 id="module-naming--organization"><a class="header" href="#module-naming--organization">Module Naming &amp; Organization</a></h2>
 <p>Because our goal is to eliminate the <code>Ember</code> global object, any public classes,
 functions or properties that currently exist on the global need an equivalent
 module that can be imported.</p>
@@ -290,7 +279,7 @@ Effects</a>.</p>
 of the thinking that guided this proposal. And keep in mind, this RFC specifies
 a <em>baseline</em> module API. Nothing here precludes adding additional models in the
 future, as we discover missing pieces.</p>
-<h3><a class="header" href="#use-scoped-packages" id="use-scoped-packages">Use Scoped Packages</a></h3>
+<h3 id="use-scoped-packages"><a class="header" href="#use-scoped-packages">Use Scoped Packages</a></h3>
 <p>Last year, <a href="http://blog.npmjs.org/post/116936804365/solving-npms-hard-problem-naming-packages">npm introduced support for scoped packages</a>. Scopes
 are similar to organizations on GitHub. They allow us to use any package name,
 even if it's already in use on npm, by namespacing it inside a scope.</p>
@@ -308,7 +297,7 @@ the <code>@ember</code> scope: <code>import Component from &quot;@ember/componen
 to implement this RFC. We should still design around this constraint so that we
 have the option available to us in the future. For more discussion, see the
 <a href="#distribution">Distribution unresolved question</a>.</p>
-<h3><a class="header" href="#prefer-common-terminology" id="prefer-common-terminology">Prefer Common Terminology</a></h3>
+<h3 id="prefer-common-terminology"><a class="header" href="#prefer-common-terminology">Prefer Common Terminology</a></h3>
 <p>Module names should use terms people are more likely to be familiar with. For
 example, instead of the ambiguous <code>platform</code>, polyfills should be in a module
 called <code>polyfill</code>.</p>
@@ -316,7 +305,7 @@ called <code>polyfill</code>.</p>
 articulate the difference between <code>ember-metal</code> and <code>ember-runtime</code>. Instead, we
 should prefer <code>ember-object</code>, to match how people actually talk about these
 features: the Ember object model.</p>
-<h3><a class="header" href="#organize-by-mental-model" id="organize-by-mental-model">Organize by Mental Model</a></h3>
+<h3 id="organize-by-mental-model"><a class="header" href="#organize-by-mental-model">Organize by Mental Model</a></h3>
 <p>One of the biggest barriers to learning is the fact that short-term memory is
 limited. To understand a complex system like a modern web application, the
 learner must hold in their head many different concepts—more concepts than most
@@ -368,7 +357,7 @@ but are not used day-to-day by app developers:</p>
 <li><code>@ember/instrumentation</code> - Instrumentation hooks for measuring performance.</li>
 <li><code>@ember/debug</code> - Utility functions for debugging, and hooks used by debugger tools like Ember Inspector.</li>
 </ul>
-<h3><a class="header" href="#classes-are-default-exports" id="classes-are-default-exports">Classes are Default Exports</a></h3>
+<h3 id="classes-are-default-exports"><a class="header" href="#classes-are-default-exports">Classes are Default Exports</a></h3>
 <p>Classes that the user is supposed to import and subclass are always the default
 export, never a named export. In the case where a package has more than one primary class,
 those classes live in a nested module.</p>
@@ -377,7 +366,7 @@ export or a default export: classes are always default exports. In tandem with
 the following rule (<a href="#utility-functions-are-named-exports">Utility Functions are Named
 Exports</a>), this also means that classes
 and the functions that act on them are grouped into the same <code>import</code> line.</p>
-<h4><a class="header" href="#examples" id="examples">Examples</a></h4>
+<h4 id="examples"><a class="header" href="#examples">Examples</a></h4>
 <p>Primary class only:</p>
 <pre><code class="language-js">import EmberObject from &quot;@ember/object&quot;;
 </code></pre>
@@ -392,10 +381,10 @@ import MapWithDefault from &quot;@ember/map/with-default&quot;;
 <pre><code class="language-js">import Router from &quot;@ember/routing/router&quot;;
 import Route from &quot;@ember/routing/route&quot;;
 </code></pre>
-<h3><a class="header" href="#utility-functions-are-named-exports" id="utility-functions-are-named-exports">Utility Functions are Named Exports</a></h3>
+<h3 id="utility-functions-are-named-exports"><a class="header" href="#utility-functions-are-named-exports">Utility Functions are Named Exports</a></h3>
 <p>Functions that are only useful with a particular class, or are used most frequently with
 that class, are named exports from the package that exports the class.</p>
-<h4><a class="header" href="#examples-1" id="examples-1">Examples</a></h4>
+<h4 id="examples-1"><a class="header" href="#examples-1">Examples</a></h4>
 <pre><code class="language-js">import Service, { inject } from &quot;@ember/service&quot;;
 import EmberObject, { get, set } from &quot;@ember/object&quot;;
 </code></pre>
@@ -409,7 +398,7 @@ import { addListener } from &quot;@ember/object/events&quot;;
 well. In fact, designing with an eye towards decorators was a large driver
 behind this principle. For more discussion, see the <a href="#everything-is-a-named-export">Everything is a Named
 Export alternative</a>.</p>
-<h3><a class="header" href="#one-level-deep" id="one-level-deep">One Level Deep</a></h3>
+<h3 id="one-level-deep"><a class="header" href="#one-level-deep">One Level Deep</a></h3>
 <p>To avoid deep directory hierarchies with mostly-empty directories, this proposal
 limits nesting inside a top-level package to a single level. Deep nesting like
 this can add additional time to navigating the hierarchy without adding much
@@ -423,7 +412,7 @@ where you end up with deeply nested directories, like
 where it might otherwise be grouped instead. For example, instead of
 <code>@ember/routing/locations/none</code>, we prefer <code>@ember/routing/none-location</code> to
 avoid the second level of nesting.</p>
-<h3><a class="header" href="#no-non-module-namespaces" id="no-non-module-namespaces">No Non-Module Namespaces</a></h3>
+<h3 id="no-non-module-namespaces"><a class="header" href="#no-non-module-namespaces">No Non-Module Namespaces</a></h3>
 <p>The global version of Ember includes several functions that also act as a
 namespace to group related functionality.</p>
 <p>For example, <code>Ember.run</code> can be used to run some code inside a run loop, while
@@ -450,7 +439,7 @@ scheduleOnce(function() {
 </code></pre>
 <p>The <a href="#migration">migration tool</a>, described below, is designed to detect these
 cases and migrate them correctly.</p>
-<h3><a class="header" href="#prototype-extensions-and-other-code-with-side-effects" id="prototype-extensions-and-other-code-with-side-effects">Prototype Extensions and Other Code with Side Effects</a></h3>
+<h3 id="prototype-extensions-and-other-code-with-side-effects"><a class="header" href="#prototype-extensions-and-other-code-with-side-effects">Prototype Extensions and Other Code with Side Effects</a></h3>
 <p>Some parts of Ember change global objects rather than exporting classes or
 functions. For example, Ember (by default) installs additional methods on
 <code>String.prototype</code>, like the <code>camelize()</code> method.</p>
@@ -462,7 +451,7 @@ write:</p>
 </code></pre>
 <p>Generally speaking, modules that have side effects are harder to debug and can
 cause compatibility issues, and should be avoided if possible.</p>
-<h2><a class="header" href="#migration" id="migration">Migration</a></h2>
+<h2 id="migration"><a class="header" href="#migration">Migration</a></h2>
 <p>To assist in assessing this RFC in real-world applications, and to help upgrade
 apps should this RFC be accepted and implemented, your author has provided an
 automatic migration utility, or &quot;codemod&quot;:</p>
@@ -496,7 +485,7 @@ export default Component.extend({
 });
 </code></pre>
 <p>For more information, see the <a href="https://github.com/tomdale/ember-modules-codemod">README</a>.</p>
-<h1><a class="header" href="#how-we-teach-this" id="how-we-teach-this">How We Teach This</a></h1>
+<h1 id="how-we-teach-this"><a class="header" href="#how-we-teach-this">How We Teach This</a></h1>
 <p>This RFC makes changes to one of the most foundational (and historically stable)
 concepts in Ember: how you access framework code. Because of that, it is hard to
 overstate the impact these changes will have. We need to proceed carefully to
@@ -510,7 +499,7 @@ effort.</p>
 We can lean heavily on the greater JavaScript community's learning materials,
 and any teaching we do has the benefit of being transferable and not an
 &quot;Ember-only&quot; skill.</p>
-<h2><a class="header" href="#documentation-examples" id="documentation-examples">Documentation Examples</a></h2>
+<h2 id="documentation-examples"><a class="header" href="#documentation-examples">Documentation Examples</a></h2>
 <p>Examples in the Getting Started tutorial, guides and API docs will need to be
 updated to the new module syntax.</p>
 <p>Probably the most efficient and least painful way to do this would be to write a
@@ -524,14 +513,14 @@ attempt to update everything by hand, the duration and tediousness of that
 process will likely take out an effective &quot;lock&quot; on the documentation code base,
 where people will put off making big changes because of the potential for merge
 conflicts.</p>
-<h2><a class="header" href="#generators" id="generators">Generators</a></h2>
+<h2 id="generators"><a class="header" href="#generators">Generators</a></h2>
 <p>Generators are used by new users to help them get a handle on the framework, and
 by experienced users to avoid typing repetitive boilerplate. We need to ensure
 that the generators that ship with Ember are updated to use modules as soon as
 they are ready. The recent work by the Ember CLI team to ship generators with
 the Ember package itself, rather than Ember CLI, should make this relatively
 painless.</p>
-<h2><a class="header" href="#api-documentation" id="api-documentation">API Documentation</a></h2>
+<h2 id="api-documentation"><a class="header" href="#api-documentation">API Documentation</a></h2>
 <p>Our API documentation has long been a source of frustration, because the laundry
 list of (often rarely used or internal) classes makes Ember feel far more
 overwhelming than it really is.</p>
@@ -542,7 +531,7 @@ will also be grouped by area of functionality.</p>
 <p>We should investigate the broader ecosystem to see if there is a good tool that
 generates package-oriented documentation for JavaScript projects. If not, we may
 wish to adapt an existing tool to do so.</p>
-<h2><a class="header" href="#explaining-the-migration" id="explaining-the-migration">Explaining the Migration</a></h2>
+<h2 id="explaining-the-migration"><a class="header" href="#explaining-the-migration">Explaining the Migration</a></h2>
 <p>Once the guides and API documentation are updated, modules should be
 straightforward for new learners—indeed, more and more new learners are starting
 with JavaScript modules as the baseline.</p>
@@ -565,7 +554,7 @@ mode, we can offer suggestions for how to reduce the file size, providing a
 helpful pointer to the modules migration guide. This will make the transition
 feel less like churn and more like an optimization opportunity that developers
 can take advantage of when they have the time or resources.</p>
-<h3><a class="header" href="#addons" id="addons">Addons</a></h3>
+<h3 id="addons"><a class="header" href="#addons">Addons</a></h3>
 <p>One pitfall is that a <em>single</em> use of the <code>Ember</code> global means we have to
 include the entire framework. That means that a developer could migrate their
 entire app to modules, but a single old addon that uses the Ember globals will
@@ -582,21 +571,21 @@ would produce an error.</li>
 </li>
 <li>Community outreach and pull requests to help authors update addons.</li>
 </ul>
-<h1><a class="header" href="#drawbacks" id="drawbacks">Drawbacks</a></h1>
-<h2><a class="header" href="#complexity" id="complexity">Complexity</a></h2>
+<h1 id="drawbacks"><a class="header" href="#drawbacks">Drawbacks</a></h1>
+<h2 id="complexity"><a class="header" href="#complexity">Complexity</a></h2>
 <p>There is something elegantly simple about a single <code>Ember</code> global that contains
 everything. Introducing multiple packages means you don't just have to know what
 you need—you also need to know where to import it from.</p>
 <p>JavaScript module syntax is also something not everyone will be familiar with,
 given its newness. However, this is something we must deal with anyway because
 module syntax is already in use within apps.</p>
-<h2><a class="header" href="#module-churn" id="module-churn">Module Churn</a></h2>
+<h2 id="module-churn"><a class="header" href="#module-churn">Module Churn</a></h2>
 <p>The <code>ember-cli-shims</code> package is already included by default in new Ember apps,
 and is in fairly common usage. Many developers are already familiar with its
 API. This drawback can be at least partially mitigated by <a href="#migration">the automated
 migration process</a>, which will be easily applied to existing shimmed
 apps.</p>
-<h2><a class="header" href="#scoped-packages-are-an-unknown-quantity" id="scoped-packages-are-an-unknown-quantity">Scoped Packages Are an Unknown Quantity</a></h2>
+<h2 id="scoped-packages-are-an-unknown-quantity"><a class="header" href="#scoped-packages-are-an-unknown-quantity">Scoped Packages Are an Unknown Quantity</a></h2>
 <p>This proposal relies on scoped packages. Despite being released over a year ago,
 scoped packages are not always well supported.</p>
 <p>For example, <a href="https://github.com/yarnpkg/yarn/issues?utf8=%E2%9C%93&amp;q=is%3Aissue%20is%3Aopen%20scoped%20packages">scoped packages currently wreak havoc on Yarn</a>. Until very
@@ -607,7 +596,7 @@ ecosystem that will choke on scoped packages.</p>
 recently adopted the <code>@types</code> scope for publishing TypeScript typings to npm.
 The popularity of both of these should drive compatibility. Despite this, we can
 expect <a href="https://github.com/angular/angular/issues/8422">similar compatibility issues</a> for some time.</p>
-<h2><a class="header" href="#nested-modules" id="nested-modules">Nested Modules</a></h2>
+<h2 id="nested-modules"><a class="header" href="#nested-modules">Nested Modules</a></h2>
 <p>To satisfy the <a href="#classes-are-default-exports">Classes are Default Exports</a> rule,
 this RFC proposes the use of nested modules. That is, a module name may contain
 an additional path segment beyond the package name. For example,
@@ -643,13 +632,13 @@ own package. For example, <code>@ember/object/observers</code> could become
 find a strong technical reason against it, and because having more packages is
 in tension with the explicit goal to <a href="#organize-by-mental-model">make Ember feel less
 overwhelming</a>, I decided it was worth the small cost.</p>
-<h1><a class="header" href="#alternatives" id="alternatives">Alternatives</a></h1>
-<h3><a class="header" href="#ember--prefix" id="ember--prefix"><code>ember-</code> prefix</a></h3>
+<h1 id="alternatives"><a class="header" href="#alternatives">Alternatives</a></h1>
+<h3 id="ember--prefix"><a class="header" href="#ember--prefix"><code>ember-</code> prefix</a></h3>
 <p>One alternative to the <code>@ember</code> scope is to use the <code>ember-</code> prefix. This avoids
 the drawbacks around scoped packages described above. However, they would be
 indistinguishable from the large number of community packages that begin with
 <code>ember-</code>.</p>
-<h3><a class="header" href="#everything-is-a-named-export" id="everything-is-a-named-export">Everything is a Named Export</a></h3>
+<h3 id="everything-is-a-named-export"><a class="header" href="#everything-is-a-named-export">Everything is a Named Export</a></h3>
 <p>This proposal argues that classes should be a module's default export, and any
 utility functions should be a named export. That means you can never have more
 than one class per module, and <em>that</em> means, inherently, more <code>import</code>
@@ -702,11 +691,11 @@ refactoring perspective: if you delete a class from a file, you then delete a
 single line from your imports.</p>
 <p>Contrast that with making fiddly edits to a long list of named exports unrelated
 to each other.</p>
-<h1><a class="header" href="#unresolved-questions" id="unresolved-questions">Unresolved Questions</a></h1>
-<h3><a class="header" href="#intimate-apis" id="intimate-apis">Intimate APIs</a></h3>
+<h1 id="unresolved-questions"><a class="header" href="#unresolved-questions">Unresolved Questions</a></h1>
+<h3 id="intimate-apis"><a class="header" href="#intimate-apis">Intimate APIs</a></h3>
 <p>How much do we want to provide module API for so-called &quot;intimate
 APIs&quot;—technically private, but in widespread use?</p>
-<h3><a class="header" href="#backwards-compatibility-for-addons" id="backwards-compatibility-for-addons">Backwards Compatibility for Addons</a></h3>
+<h3 id="backwards-compatibility-for-addons"><a class="header" href="#backwards-compatibility-for-addons">Backwards Compatibility for Addons</a></h3>
 <p>How do we provide an API for addons to use modules but fall back to globals mode
 in older versions of Ember? We should ensure that, at minimum, addons can
 continue to support LTS releases. At the same time, it's critical that adding an
@@ -714,7 +703,7 @@ addon doesn't opt your entire application back in to the entire framework.</p>
 <p>Because there is a lot of implementation-specific detail to get right here, and
 because it doesn't otherwise block landing this module naming RFC, the final
 design of API for addon authors should be broken out into a separate RFC.</p>
-<h3><a class="header" href="#distribution" id="distribution">Distribution</a></h3>
+<h3 id="distribution"><a class="header" href="#distribution">Distribution</a></h3>
 <p>In practice, how do we ship this code to end users of Ember CLI?</p>
 <p>When building client-side apps, it's very important to avoid duplicate
 dependencies, which can quickly cause file size to balloon out of control.</p>
@@ -738,9 +727,9 @@ dependencies.</p>
 publishing each package to npm individually, we will have that option available
 to us in the future once we determine that we can do so without causing lots of
 pain.</p>
-<h1><a class="header" href="#addenda" id="addenda">Addenda</a></h1>
+<h1 id="addenda"><a class="header" href="#addenda">Addenda</a></h1>
 <p><em>(Ed. note: These tables are automatically generated from the scripts in the <a href="https://github.com/tomdale/ember-modules-codemod">codemod</a> repository.)</em></p>
-<h2><a class="header" href="#addendum-1---table-of-module-names-and-exports-by-global" id="addendum-1---table-of-module-names-and-exports-by-global">Addendum 1 - Table of Module Names and Exports by Global</a></h2>
+<h2 id="addendum-1---table-of-module-names-and-exports-by-global"><a class="header" href="#addendum-1---table-of-module-names-and-exports-by-global">Addendum 1 - Table of Module Names and Exports by Global</a></h2>
 <table><thead><tr><th>Before</th><th>After</th></tr></thead><tbody>
 <tr><td><code>Ember.$</code></td><td><code>import $ from &quot;jquery&quot;</code></td></tr>
 <tr><td><code>Ember.A</code></td><td><code>import { A } from &quot;@ember/array&quot;</code></td></tr>
@@ -881,9 +870,9 @@ pain.</p>
 <tr><td><code>Ember.unsubscribe</code></td><td><code>import { unsubscribe } from &quot;@ember/instrumentation&quot;</code></td></tr>
 <tr><td><code>Ember.warn</code></td><td><code>import { warn } from &quot;@ember/debug&quot;</code></td></tr>
 </tbody></table>
-<h2><a class="header" href="#addendum-2---table-of-module-names-and-exports-by-package" id="addendum-2---table-of-module-names-and-exports-by-package">Addendum 2 - Table of Module Names and Exports by Package</a></h2>
+<h2 id="addendum-2---table-of-module-names-and-exports-by-package"><a class="header" href="#addendum-2---table-of-module-names-and-exports-by-package">Addendum 2 - Table of Module Names and Exports by Package</a></h2>
 <p>Each package is sorted by module name, then export name.</p>
-<h3><a class="header" href="#emberapplication" id="emberapplication"><code>@ember/application</code></a></h3>
+<h3 id="emberapplication"><a class="header" href="#emberapplication"><code>@ember/application</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import Application from &quot;@ember/application&quot;</code></td><td><code>Ember.Application</code></td></tr>
 <tr><td><code>import { getOwner } from &quot;@ember/application&quot;</code></td><td><code>Ember.getOwner</code></td></tr>
@@ -895,7 +884,7 @@ pain.</p>
 <tr><td><code>import GlobalsResolver from &quot;@ember/application/globals-resolver&quot;</code></td><td><code>Ember.DefaultResolver</code></td></tr>
 <tr><td><code>import Resolver from &quot;@ember/application/resolver&quot;</code></td><td><code>Ember.Resolver</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#emberarray" id="emberarray"><code>@ember/array</code></a></h3>
+<h3 id="emberarray"><a class="header" href="#emberarray"><code>@ember/array</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import EmberArray from &quot;@ember/array&quot;</code></td><td><code>Ember.Array</code></td></tr>
 <tr><td><code>import { A } from &quot;@ember/array&quot;</code></td><td><code>Ember.A</code></td></tr>
@@ -904,7 +893,7 @@ pain.</p>
 <tr><td><code>import MutableArray from &quot;@ember/array/mutable&quot;</code></td><td><code>Ember.MutableArray</code></td></tr>
 <tr><td><code>import ArrayProxy from &quot;@ember/array/proxy&quot;</code></td><td><code>Ember.ArrayProxy</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#embercomponent" id="embercomponent"><code>@ember/component</code></a></h3>
+<h3 id="embercomponent"><a class="header" href="#embercomponent"><code>@ember/component</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import Component from &quot;@ember/component&quot;</code></td><td><code>Ember.Component</code></td></tr>
 <tr><td><code>import Checkbox from &quot;@ember/component/checkbox&quot;</code></td><td><code>Ember.Checkbox</code></td></tr>
@@ -913,12 +902,12 @@ pain.</p>
 <tr><td><code>import TextArea from &quot;@ember/component/text-area&quot;</code></td><td><code>Ember.TextArea</code></td></tr>
 <tr><td><code>import TextField from &quot;@ember/component/text-field&quot;</code></td><td><code>Ember.TextField</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#embercontroller" id="embercontroller"><code>@ember/controller</code></a></h3>
+<h3 id="embercontroller"><a class="header" href="#embercontroller"><code>@ember/controller</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import Controller from &quot;@ember/controller&quot;</code></td><td><code>Ember.Controller</code></td></tr>
 <tr><td><code>import { inject } from &quot;@ember/controller&quot;</code></td><td><code>Ember.inject.controller</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#emberdebug" id="emberdebug"><code>@ember/debug</code></a></h3>
+<h3 id="emberdebug"><a class="header" href="#emberdebug"><code>@ember/debug</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import { assert } from &quot;@ember/debug&quot;</code></td><td><code>Ember.assert</code></td></tr>
 <tr><td><code>import { debug } from &quot;@ember/debug&quot;</code></td><td><code>Ember.debug</code></td></tr>
@@ -928,23 +917,23 @@ pain.</p>
 <tr><td><code>import ContainerDebugAdapter from &quot;@ember/debug/container-debug-adapter&quot;</code></td><td><code>Ember.ContainerDebugAdapter</code></td></tr>
 <tr><td><code>import DataAdapter from &quot;@ember/debug/data-adapter&quot;</code></td><td><code>Ember.DataAdapter</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#emberenumerable" id="emberenumerable"><code>@ember/enumerable</code></a></h3>
+<h3 id="emberenumerable"><a class="header" href="#emberenumerable"><code>@ember/enumerable</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import Enumerable from &quot;@ember/enumerable&quot;</code></td><td><code>Ember.Enumerable</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#emberinstrumentation" id="emberinstrumentation"><code>@ember/instrumentation</code></a></h3>
+<h3 id="emberinstrumentation"><a class="header" href="#emberinstrumentation"><code>@ember/instrumentation</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import { instrument } from &quot;@ember/instrumentation&quot;</code></td><td><code>Ember.instrument</code></td></tr>
 <tr><td><code>import { reset } from &quot;@ember/instrumentation&quot;</code></td><td><code>Ember.reset</code></td></tr>
 <tr><td><code>import { subscribe } from &quot;@ember/instrumentation&quot;</code></td><td><code>Ember.subscribe</code></td></tr>
 <tr><td><code>import { unsubscribe } from &quot;@ember/instrumentation&quot;</code></td><td><code>Ember.unsubscribe</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#embermap" id="embermap"><code>@ember/map</code></a></h3>
+<h3 id="embermap"><a class="header" href="#embermap"><code>@ember/map</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import EmberMap from &quot;@ember/map&quot;</code></td><td><code>Ember.Map</code></td></tr>
 <tr><td><code>import MapWithDefault from &quot;@ember/map/with-default&quot;</code></td><td><code>Ember.MapWithDefault</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#emberobject" id="emberobject"><code>@ember/object</code></a></h3>
+<h3 id="emberobject"><a class="header" href="#emberobject"><code>@ember/object</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import EmberObject from &quot;@ember/object&quot;</code></td><td><code>Ember.Object</code></td></tr>
 <tr><td><code>import { aliasMethod } from &quot;@ember/object&quot;</code></td><td><code>Ember.aliasMethod</code></td></tr>
@@ -1000,7 +989,7 @@ pain.</p>
 <tr><td><code>import { addObserver } from &quot;@ember/object/observers&quot;</code></td><td><code>Ember.addObserver</code></td></tr>
 <tr><td><code>import { removeObserver } from &quot;@ember/object/observers&quot;</code></td><td><code>Ember.removeObserver</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#emberpolyfills" id="emberpolyfills"><code>@ember/polyfills</code></a></h3>
+<h3 id="emberpolyfills"><a class="header" href="#emberpolyfills"><code>@ember/polyfills</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import { assign } from &quot;@ember/polyfills&quot;</code></td><td><code>Ember.assign</code></td></tr>
 <tr><td><code>import { create } from &quot;@ember/polyfills&quot;</code></td><td><code>Ember.create</code></td></tr>
@@ -1008,7 +997,7 @@ pain.</p>
 <tr><td><code>import { hasPropertyAccessors } from &quot;@ember/polyfills&quot;</code></td><td><code>Ember.platform.hasPropertyAccessors</code></td></tr>
 <tr><td><code>import { keys } from &quot;@ember/polyfills&quot;</code></td><td><code>Ember.keys</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#emberrouting" id="emberrouting"><code>@ember/routing</code></a></h3>
+<h3 id="emberrouting"><a class="header" href="#emberrouting"><code>@ember/routing</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import AutoLocation from &quot;@ember/routing/auto-location&quot;</code></td><td><code>Ember.AutoLocation</code></td></tr>
 <tr><td><code>import HashLocation from &quot;@ember/routing/hash-location&quot;</code></td><td><code>Ember.HashLocation</code></td></tr>
@@ -1019,7 +1008,7 @@ pain.</p>
 <tr><td><code>import Route from &quot;@ember/routing/route&quot;</code></td><td><code>Ember.Route</code></td></tr>
 <tr><td><code>import Router from &quot;@ember/routing/router&quot;</code></td><td><code>Ember.Router</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#emberrunloop" id="emberrunloop"><code>@ember/runloop</code></a></h3>
+<h3 id="emberrunloop"><a class="header" href="#emberrunloop"><code>@ember/runloop</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import { begin } from &quot;@ember/runloop&quot;</code></td><td><code>Ember.run.begin</code></td></tr>
 <tr><td><code>import { bind } from &quot;@ember/runloop&quot;</code></td><td><code>Ember.run.bind</code></td></tr>
@@ -1035,12 +1024,12 @@ pain.</p>
 <tr><td><code>import { scheduleOnce } from &quot;@ember/runloop&quot;</code></td><td><code>Ember.run.scheduleOnce</code></td></tr>
 <tr><td><code>import { throttle } from &quot;@ember/runloop&quot;</code></td><td><code>Ember.run.throttle</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#emberservice" id="emberservice"><code>@ember/service</code></a></h3>
+<h3 id="emberservice"><a class="header" href="#emberservice"><code>@ember/service</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import Service from &quot;@ember/service&quot;</code></td><td><code>Ember.Service</code></td></tr>
 <tr><td><code>import { inject } from &quot;@ember/service&quot;</code></td><td><code>Ember.inject.service</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#emberstring" id="emberstring"><code>@ember/string</code></a></h3>
+<h3 id="emberstring"><a class="header" href="#emberstring"><code>@ember/string</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import { camelize } from &quot;@ember/string&quot;</code></td><td><code>Ember.String.camelize</code></td></tr>
 <tr><td><code>import { capitalize } from &quot;@ember/string&quot;</code></td><td><code>Ember.String.capitalize</code></td></tr>
@@ -1053,7 +1042,7 @@ pain.</p>
 <tr><td><code>import { underscore } from &quot;@ember/string&quot;</code></td><td><code>Ember.String.underscore</code></td></tr>
 <tr><td><code>import { w } from &quot;@ember/string&quot;</code></td><td><code>Ember.String.w</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#emberutils" id="emberutils"><code>@ember/utils</code></a></h3>
+<h3 id="emberutils"><a class="header" href="#emberutils"><code>@ember/utils</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import { compare } from &quot;@ember/utils&quot;</code></td><td><code>Ember.compare</code></td></tr>
 <tr><td><code>import { isBlank } from &quot;@ember/utils&quot;</code></td><td><code>Ember.isBlank</code></td></tr>
@@ -1063,15 +1052,15 @@ pain.</p>
 <tr><td><code>import { tryInvoke } from &quot;@ember/utils&quot;</code></td><td><code>Ember.tryInvoke</code></td></tr>
 <tr><td><code>import { typeOf } from &quot;@ember/utils&quot;</code></td><td><code>Ember.typeOf</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#jquery" id="jquery"><code>jquery</code></a></h3>
+<h3 id="jquery"><a class="header" href="#jquery"><code>jquery</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import $ from &quot;jquery&quot;</code></td><td><code>Ember.$</code></td></tr>
 </tbody></table>
-<h3><a class="header" href="#rsvp" id="rsvp"><code>rsvp</code></a></h3>
+<h3 id="rsvp"><a class="header" href="#rsvp"><code>rsvp</code></a></h3>
 <table><thead><tr><th>Module</th><th>Global</th></tr></thead><tbody>
 <tr><td><code>import RSVP from &quot;rsvp&quot;</code></td><td><code>Ember.RSVP</code></td></tr>
 </tbody></table>
-<h2><a class="header" href="#addendum-3---table-of-modules-with-side-effects" id="addendum-3---table-of-modules-with-side-effects">Addendum 3 - Table of Modules with Side Effects</a></h2>
+<h2 id="addendum-3---table-of-modules-with-side-effects"><a class="header" href="#addendum-3---table-of-modules-with-side-effects">Addendum 3 - Table of Modules with Side Effects</a></h2>
 <table><thead><tr><th>Module</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>import &quot;@ember/extensions&quot;</code></td><td>Adds all of Ember's prototype extensions.</td></tr>
 <tr><td><code>import &quot;@ember/extensions/string&quot;</code></td><td>Adds just <code>String</code> prototype extensions.</td></tr>
@@ -1083,59 +1072,38 @@ pain.</p>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
                             <a rel="prev" href="0150-factory-for.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                        
-
-                        
                             <a rel="next" href="0178-deprecate-ember-k.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
-                        
-
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
-                    <a href="0150-factory-for.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="0150-factory-for.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                
-
-                
-                    <a href="0178-deprecate-ember-k.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="0178-deprecate-ember-k.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
             </nav>
 
         </div>
 
-        
-
-        
-
-        
-
-        
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        
-
         <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
-        
-
-        
-
     </body>
 </html>

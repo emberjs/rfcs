@@ -1,42 +1,36 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js">
+<html lang="en" class="sidebar-visible no-js light">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>0110-packaging - </title>
-        
-
+        <title>0110-packaging</title>
+        <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
+        <link rel="icon" href="favicon.svg">
         <link rel="shortcut icon" href="favicon.png">
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
         <link rel="stylesheet" href="css/chrome.css">
         <link rel="stylesheet" href="css/print.css" media="print">
-
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
-
+        <link rel="stylesheet" href="fonts/fonts.css">
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
-
-        
     </head>
-    <body class="light">
+    <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -60,8 +54,11 @@
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            document.body.className = theme;
-            document.querySelector('html').className = theme + ' js';
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
@@ -78,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="affix"><a href="introduction.html">Introduction</a></li><li><a href="0001-transform-attribute-meta-parameter.html">0001-transform-attribute-meta-parameter</a></li><li><a href="0003-block-params.html">0003-block-params</a></li><li><a href="0003-cli-ember-doctor.html">0003-cli-ember-doctor</a></li><li><a href="0010-engines.html">0010-engines</a></li><li><a href="0011-improved-cp-syntax.html">0011-improved-cp-syntax</a></li><li><a href="0012-help-json-output.html">0012-help-json-output</a></li><li><a href="0015-the-road-to-ember-2-0.html">0015-the-road-to-ember-2-0</a></li><li><a href="0020-sri-default.html">0020-sri-default</a></li><li><a href="0023-command-line-completion.html">0023-command-line-completion</a></li><li><a href="0024-bound-attributes.html">0024-bound-attributes</a></li><li><a href="0028-app-import-output-file.html">0028-app-import-output-file</a></li><li><a href="0029-addon-black-and-whitelist-for-apps.html">0029-addon-black-and-whitelist-for-apps</a></li><li><a href="0045-internet-explorer.html">0045-internet-explorer</a></li><li><a href="0046-cli-improved-release-process.html">0046-cli-improved-release-process</a></li><li><a href="0046-registry-reform.html">0046-registry-reform</a></li><li><a href="0050-cli-production-code-stripping.html">0050-cli-production-code-stripping</a></li><li><a href="0050-improved-actions.html">0050-improved-actions</a></li><li><a href="0053-helpers.html">0053-helpers</a></li><li><a href="0055-anonymous-amd.html">0055-anonymous-amd</a></li><li><a href="0056-improved-release-cycle.html">0056-improved-release-cycle</a></li><li><a href="0057-ember-data-reference-unification.html">0057-ember-data-reference-unification</a></li><li><a href="0058-helper-listing.html">0058-helper-listing</a></li><li><a href="0061-ember-data-background-fetch.html">0061-ember-data-background-fetch</a></li><li><a href="0064-contextual-component-lookup.html">0064-contextual-component-lookup</a></li><li><a href="0065-deprecation-warning-handlers.html">0065-deprecation-warning-handlers</a></li><li><a href="0080-serve-file-api.html">0080-serve-file-api</a></li><li><a href="0086-firefox-in-ci.html">0086-firefox-in-ci</a></li><li><a href="0090-addon-tree-caching.html">0090-addon-tree-caching</a></li><li><a href="0091-cli-addon-instrumentation-experimental-hooks.html">0091-cli-addon-instrumentation-experimental-hooks</a></li><li><a href="0091-weakmap.html">0091-weakmap</a></li><li><a href="0092-blueprint-remove-old-files.html">0092-blueprint-remove-old-files</a></li><li><a href="0095-cli-standardise-targets.html">0095-cli-standardise-targets</a></li><li><a href="0095-router-service.html">0095-router-service</a></li><li><a href="0096-enable-yarn-usage.html">0096-enable-yarn-usage</a></li><li><a href="0101-ember-data-friendly-errors.html">0101-ember-data-friendly-errors</a></li><li><a href="0105-addons-optionalDependencies.html">0105-addons-optionalDependencies</a></li><li><a href="0108-add-custom-transform.html">0108-add-custom-transform</a></li><li><a href="0110-packaging.html" class="active">0110-packaging</a></li><li><a href="0114-add-template-lint-addon.html">0114-add-template-lint-addon</a></li><li><a href="0116-qunit-dom.html">0116-qunit-dom</a></li><li><a href="0120-cli-guides.html">0120-cli-guides</a></li><li><a href="0120-route-serializers.html">0120-route-serializers</a></li><li><a href="0121-remove-ember-cli-eslint.html">0121-remove-ember-cli-eslint</a></li><li><a href="0136-contains-to-includes.html">0136-contains-to-includes</a></li><li><a href="0139-isHtmlSafe.html">0139-isHtmlSafe</a></li><li><a href="0143-module-unification.html">0143-module-unification</a></li><li><a href="0150-factory-for.html">0150-factory-for</a></li><li><a href="0176-javascript-module-api.html">0176-javascript-module-api</a></li><li><a href="0178-deprecate-ember-k.html">0178-deprecate-ember-k</a></li><li><a href="0181-deprecate-ember-data-initializers.html">0181-deprecate-ember-data-initializers</a></li><li><a href="0186-track-unique-history-location-state.html">0186-track-unique-history-location-state</a></li><li><a href="0191-deprecate-component-lifecycle-hook-args.html">0191-deprecate-component-lifecycle-hook-args</a></li><li><a href="0194-deprecate-custom-event-manager.html">0194-deprecate-custom-event-manager</a></li><li><a href="0213-custom-components.html">0213-custom-components</a></li><li><a href="0225-ember-engines-mount-params.html">0225-ember-engines-mount-params</a></li><li><a href="0226-named-blocks.html">0226-named-blocks</a></li><li><a href="0229-deprecate-testing-restricted-resolver.html">0229-deprecate-testing-restricted-resolver</a></li><li><a href="0232-simplify-qunit-testing-api.html">0232-simplify-qunit-testing-api</a></li><li><a href="0236-deprecation-ember-string.html">0236-deprecation-ember-string</a></li><li><a href="0237-deprecation-ember-map.html">0237-deprecation-ember-map</a></li><li><a href="0240-es-classes.html">0240-es-classes</a></li><li><a href="0252-browser-support-changes.html">0252-browser-support-changes</a></li><li><a href="0268-acceptance-testing-refactor.html">0268-acceptance-testing-refactor</a></li><li><a href="0272-deprecation-native-function-prototype-extensions.html">0272-deprecation-native-function-prototype-extensions</a></li><li><a href="0276-named-args.html">0276-named-args</a></li><li><a href="0278-template-only-components.html">0278-template-only-components</a></li><li><a href="0280-remove-application-wrapper.html">0280-remove-application-wrapper</a></li><li><a href="0281-es5-getters.html">0281-es5-getters</a></li><li><a href="0286-block-let-template-helper.html">0286-block-let-template-helper</a></li><li><a href="0287-promote-in-element-to-public-api.html">0287-promote-in-element-to-public-api</a></li><li><a href="0293-record-data.html">0293-record-data</a></li><li><a href="0294-optional-jquery.html">0294-optional-jquery</a></li><li><a href="0297-deprecate-ember-logger.html">0297-deprecate-ember-logger</a></li><li><a href="0300-rfc-process-update.html">0300-rfc-process-update</a></li><li><a href="0308-deprecate-property-lookup-fallback.html">0308-deprecate-property-lookup-fallback</a></li><li><a href="0311-angle-bracket-invocation.html">0311-angle-bracket-invocation</a></li><li><a href="0318-array-helper.html">0318-array-helper</a></li><li><a href="0322-deprecate-copy-copyable.html">0322-deprecate-copy-copyable</a></li><li><a href="0324-deprecate-component-isvisible.html">0324-deprecate-component-isvisible</a></li><li><a href="0326-ember-data-filter-deprecation.html">0326-ember-data-filter-deprecation</a></li><li><a href="0329-deprecated-ember-evented-in-ember-data.html">0329-deprecated-ember-evented-in-ember-data</a></li><li><a href="0331-deprecate-globals-resolver.html">0331-deprecate-globals-resolver</a></li><li><a href="0332-ember-data-record-links-and-meta.html">0332-ember-data-record-links-and-meta</a></li><li><a href="0335-deprecate-send-action.html">0335-deprecate-send-action</a></li><li><a href="0337-native-class-constructor-update.html">0337-native-class-constructor-update</a></li><li><a href="0340-deprecate-ember-merge.html">0340-deprecate-ember-merge</a></li><li><a href="0345-discord.html">0345-discord</a></li><li><a href="0364-roadmap-2018.html">0364-roadmap-2018</a></li><li><a href="0369-deprecate-computed-clobberability.html">0369-deprecate-computed-clobberability</a></li><li><a href="0370-deprecate-computed-volatile.html">0370-deprecate-computed-volatile</a></li><li><a href="0372-ember-data-model-factory-for.html">0372-ember-data-model-factory-for</a></li><li><a href="0373-Element-Modifier-Managers.html">0373-Element-Modifier-Managers</a></li><li><a href="0375-deprecate-computed-property-modifier.html">0375-deprecate-computed-property-modifier</a></li><li><a href="0386-remove-jquery.html">0386-remove-jquery</a></li><li><a href="0389-dynamic-tag-names.html">0389-dynamic-tag-names</a></li><li><a href="0391-router-helpers.html">0391-router-helpers</a></li><li><a href="0392-deprecate-component-manager-string-lookup.html">0392-deprecate-component-manager-string-lookup</a></li><li><a href="0395-ember-data-packages.html">0395-ember-data-packages</a></li><li><a href="0398-RouteInfo-Metadata.html">0398-RouteInfo-Metadata</a></li><li><a href="0403-ember-data-identifiers.html">0403-ember-data-identifiers</a></li><li><a href="0408-decorators.html">0408-decorators</a></li><li><a href="0410-tracked-properties.html">0410-tracked-properties</a></li><li><a href="0415-render-element-modifiers.html">0415-render-element-modifiers</a></li><li><a href="0416-glimmer-components.html">0416-glimmer-components</a></li><li><a href="0418-deprecate-route-render-methods.html">0418-deprecate-route-render-methods</a></li><li><a href="0421-deprecate-application-controller-props.html">0421-deprecate-application-controller-props</a></li><li><a href="0425-website-redesign.html">0425-website-redesign</a></li><li><a href="0431-guides-restructure.html">0431-guides-restructure</a></li><li><a href="0432-contextual-helpers.html">0432-contextual-helpers</a></li><li><a href="0435-modifier-splattributes.html">0435-modifier-splattributes</a></li><li><a href="0440-decorator-support.html">0440-decorator-support</a></li><li><a href="0445-deprecate-with.html">0445-deprecate-with</a></li><li><a href="0446-contribution-guides.html">0446-contribution-guides</a></li><li><a href="0449-deprecate-partials.html">0449-deprecate-partials</a></li><li><a href="0451-injection-parameter-normalization.html">0451-injection-parameter-normalization</a></li><li><a href="0452-ember-data-medium-term-plan.html">0452-ember-data-medium-term-plan</a></li><li><a href="0457-nested-lookups.html">0457-nested-lookups</a></li><li><a href="0459-angle-bracket-built-in-components.html">0459-angle-bracket-built-in-components</a></li><li><a href="0460-yieldable-named-blocks.html">0460-yieldable-named-blocks</a></li><li><a href="0461-ember-data-singleton-record-data.html">0461-ember-data-singleton-record-data</a></li><li><a href="0463-record-data-state.html">0463-record-data-state</a></li><li><a href="0465-record-data-errors.html">0465-record-data-errors</a></li><li><a href="0466-request-state-service.html">0466-request-state-service</a></li><li><a href="0468-classic-decorator.html">0468-classic-decorator</a></li><li><a href="0470-fn-helper.html">0470-fn-helper</a></li><li><a href="0471-on-modifier.html">0471-on-modifier</a></li><li><a href="0477-blueprints-update.html">0477-blueprints-update</a></li><li><a href="0478-tracked-properties-updates.html">0478-tracked-properties-updates</a></li><li><a href="0481-component-templates-co-location.html">0481-component-templates-co-location</a></li><li><a href="0486-deprecate-mouseenter.html">0486-deprecate-mouseenter</a></li><li><a href="0487-custom-model-classes.html">0487-custom-model-classes</a></li><li><a href="0491-deprecate-disconnect-outlet.html">0491-deprecate-disconnect-outlet</a></li><li><a href="0494-async-observers.html">0494-async-observers</a></li><li><a href="0496-handlebars-strict-mode.html">0496-handlebars-strict-mode</a></li><li><a href="0507-embroider-v2-package-format.html">0507-embroider-v2-package-format</a></li><li><a href="0519-2019-2020-roadmap.html">0519-2019-2020-roadmap</a></li><li><a href="0521-find-by-identifier.html">0521-find-by-identifier</a></li><li><a href="0522-default-serializers-and-adapters.html">0522-default-serializers-and-adapters</a></li><li><a href="0523-model-argument-for-route-templates.html">0523-model-argument-for-route-templates</a></li><li><a href="0554-deprecate-getwithdefault.html">0554-deprecate-getwithdefault</a></li><li><a href="0558-edition-detection.html">0558-edition-detection</a></li><li><a href="0560-add-equality-operators.html">0560-add-equality-operators</a></li><li><a href="0561-add-numeric-comparison-operators.html">0561-add-numeric-comparison-operators</a></li><li><a href="0562-add-logical-operators.html">0562-add-logical-operators</a></li><li><a href="0566-memo-decorator.html">0566-memo-decorator</a></li><li><a href="0580-destroyables.html">0580-destroyables</a></li><li><a href="0581-new-test-waiters.html">0581-new-test-waiters</a></li><li><a href="0585-improved-ember-registry-apis.html">0585-improved-ember-registry-apis</a></li><li><a href="0615-autotracking-memoization.html">0615-autotracking-memoization</a></li><li><a href="0617-rfc-stages.html">0617-rfc-stages</a></li><li><a href="0625-helper-managers.html">0625-helper-managers</a></li><li><a href="0626-invoke-helper.html">0626-invoke-helper</a></li><li><a href="0628-prettier.html">0628-prettier</a></li><li><a href="0631-refresh-method-for-router-service.html">0631-refresh-method-for-router-service</a></li><li><a href="0635-ember-new-lang.html">0635-ember-new-lang</a></li><li><a href="0637-customizable-test-setups.html">0637-customizable-test-setups</a></li><li><a href="0638-interactive-app-creation.html">0638-interactive-app-creation</a></li><li><a href="0639-replace-blacklist-whitelist.html">0639-replace-blacklist-whitelist</a></li><li><a href="0645-add-ember-page-title-addon.html">0645-add-ember-page-title-addon</a></li><li><a href="0649-deprecation-staging.html">0649-deprecation-staging</a></li><li><a href="0659-unique-id-helper.html">0659-unique-id-helper</a></li><li><a href="0669-tracked-storage-primitive.html">0669-tracked-storage-primitive</a></li><li><a href="0671-modernize-built-in-components-1.html">0671-modernize-built-in-components-1</a></li><li><a href="0673-deprecate-tryinvoke.html">0673-deprecate-tryinvoke</a></li><li><a href="0674-deprecate-transition-methods-of-controller-and-route.html">0674-deprecate-transition-methods-of-controller-and-route</a></li><li><a href="0680-implicit-injection-deprecation.html">0680-implicit-injection-deprecation</a></li><li><a href="0685-new-browser-support-policy.html">0685-new-browser-support-policy</a></li><li><a href="0686-deprecate-old-manager-capabilities-versions.html">0686-deprecate-old-manager-capabilities-versions</a></li><li><a href="0689-deprecate-has-block.html">0689-deprecate-has-block</a></li><li><a href="0690-deprecate-attrs-in-templates.html">0690-deprecate-attrs-in-templates</a></li><li><a href="0691-deprecate-class-binding-and-class-name-bindings.html">0691-deprecate-class-binding-and-class-name-bindings</a></li><li><a href="0692-deprecate-array-observers.html">0692-deprecate-array-observers</a></li><li><a href="0698-deprecate-link-to-positional-arguments.html">0698-deprecate-link-to-positional-arguments</a></li><li><a href="0702-eslint-plugin-qunit.html">0702-eslint-plugin-qunit</a></li><li><a href="0704-deprecate-octane-optional-features.html">0704-deprecate-octane-optional-features</a></li><li><a href="0705-deprecate-jquery-optional-feature.html">0705-deprecate-jquery-optional-feature</a></li><li><a href="0706-deprecate-ember-global.html">0706-deprecate-ember-global</a></li><li><a href="0707-modernize-built-in-components-2.html">0707-modernize-built-in-components-2</a></li><li><a href="0711-deprecate-auto-location.html">0711-deprecate-auto-location</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="0001-transform-attribute-meta-parameter.html">0001-transform-attribute-meta-parameter</a></li><li class="chapter-item expanded "><a href="0003-block-params.html">0003-block-params</a></li><li class="chapter-item expanded "><a href="0003-cli-ember-doctor.html">0003-cli-ember-doctor</a></li><li class="chapter-item expanded "><a href="0010-engines.html">0010-engines</a></li><li class="chapter-item expanded "><a href="0011-improved-cp-syntax.html">0011-improved-cp-syntax</a></li><li class="chapter-item expanded "><a href="0012-help-json-output.html">0012-help-json-output</a></li><li class="chapter-item expanded "><a href="0015-the-road-to-ember-2-0.html">0015-the-road-to-ember-2-0</a></li><li class="chapter-item expanded "><a href="0020-sri-default.html">0020-sri-default</a></li><li class="chapter-item expanded "><a href="0023-command-line-completion.html">0023-command-line-completion</a></li><li class="chapter-item expanded "><a href="0024-bound-attributes.html">0024-bound-attributes</a></li><li class="chapter-item expanded "><a href="0028-app-import-output-file.html">0028-app-import-output-file</a></li><li class="chapter-item expanded "><a href="0029-addon-black-and-whitelist-for-apps.html">0029-addon-black-and-whitelist-for-apps</a></li><li class="chapter-item expanded "><a href="0045-internet-explorer.html">0045-internet-explorer</a></li><li class="chapter-item expanded "><a href="0046-cli-improved-release-process.html">0046-cli-improved-release-process</a></li><li class="chapter-item expanded "><a href="0046-registry-reform.html">0046-registry-reform</a></li><li class="chapter-item expanded "><a href="0050-cli-production-code-stripping.html">0050-cli-production-code-stripping</a></li><li class="chapter-item expanded "><a href="0050-improved-actions.html">0050-improved-actions</a></li><li class="chapter-item expanded "><a href="0053-helpers.html">0053-helpers</a></li><li class="chapter-item expanded "><a href="0055-anonymous-amd.html">0055-anonymous-amd</a></li><li class="chapter-item expanded "><a href="0056-improved-release-cycle.html">0056-improved-release-cycle</a></li><li class="chapter-item expanded "><a href="0057-ember-data-reference-unification.html">0057-ember-data-reference-unification</a></li><li class="chapter-item expanded "><a href="0058-helper-listing.html">0058-helper-listing</a></li><li class="chapter-item expanded "><a href="0061-ember-data-background-fetch.html">0061-ember-data-background-fetch</a></li><li class="chapter-item expanded "><a href="0064-contextual-component-lookup.html">0064-contextual-component-lookup</a></li><li class="chapter-item expanded "><a href="0065-deprecation-warning-handlers.html">0065-deprecation-warning-handlers</a></li><li class="chapter-item expanded "><a href="0080-serve-file-api.html">0080-serve-file-api</a></li><li class="chapter-item expanded "><a href="0086-firefox-in-ci.html">0086-firefox-in-ci</a></li><li class="chapter-item expanded "><a href="0090-addon-tree-caching.html">0090-addon-tree-caching</a></li><li class="chapter-item expanded "><a href="0091-cli-addon-instrumentation-experimental-hooks.html">0091-cli-addon-instrumentation-experimental-hooks</a></li><li class="chapter-item expanded "><a href="0091-weakmap.html">0091-weakmap</a></li><li class="chapter-item expanded "><a href="0092-blueprint-remove-old-files.html">0092-blueprint-remove-old-files</a></li><li class="chapter-item expanded "><a href="0095-cli-standardise-targets.html">0095-cli-standardise-targets</a></li><li class="chapter-item expanded "><a href="0095-router-service.html">0095-router-service</a></li><li class="chapter-item expanded "><a href="0096-enable-yarn-usage.html">0096-enable-yarn-usage</a></li><li class="chapter-item expanded "><a href="0101-ember-data-friendly-errors.html">0101-ember-data-friendly-errors</a></li><li class="chapter-item expanded "><a href="0105-addons-optionalDependencies.html">0105-addons-optionalDependencies</a></li><li class="chapter-item expanded "><a href="0108-add-custom-transform.html">0108-add-custom-transform</a></li><li class="chapter-item expanded "><a href="0110-packaging.html" class="active">0110-packaging</a></li><li class="chapter-item expanded "><a href="0114-add-template-lint-addon.html">0114-add-template-lint-addon</a></li><li class="chapter-item expanded "><a href="0116-qunit-dom.html">0116-qunit-dom</a></li><li class="chapter-item expanded "><a href="0120-cli-guides.html">0120-cli-guides</a></li><li class="chapter-item expanded "><a href="0120-route-serializers.html">0120-route-serializers</a></li><li class="chapter-item expanded "><a href="0121-remove-ember-cli-eslint.html">0121-remove-ember-cli-eslint</a></li><li class="chapter-item expanded "><a href="0136-contains-to-includes.html">0136-contains-to-includes</a></li><li class="chapter-item expanded "><a href="0139-isHtmlSafe.html">0139-isHtmlSafe</a></li><li class="chapter-item expanded "><a href="0143-module-unification.html">0143-module-unification</a></li><li class="chapter-item expanded "><a href="0150-factory-for.html">0150-factory-for</a></li><li class="chapter-item expanded "><a href="0176-javascript-module-api.html">0176-javascript-module-api</a></li><li class="chapter-item expanded "><a href="0178-deprecate-ember-k.html">0178-deprecate-ember-k</a></li><li class="chapter-item expanded "><a href="0181-deprecate-ember-data-initializers.html">0181-deprecate-ember-data-initializers</a></li><li class="chapter-item expanded "><a href="0186-track-unique-history-location-state.html">0186-track-unique-history-location-state</a></li><li class="chapter-item expanded "><a href="0191-deprecate-component-lifecycle-hook-args.html">0191-deprecate-component-lifecycle-hook-args</a></li><li class="chapter-item expanded "><a href="0194-deprecate-custom-event-manager.html">0194-deprecate-custom-event-manager</a></li><li class="chapter-item expanded "><a href="0213-custom-components.html">0213-custom-components</a></li><li class="chapter-item expanded "><a href="0225-ember-engines-mount-params.html">0225-ember-engines-mount-params</a></li><li class="chapter-item expanded "><a href="0226-named-blocks.html">0226-named-blocks</a></li><li class="chapter-item expanded "><a href="0229-deprecate-testing-restricted-resolver.html">0229-deprecate-testing-restricted-resolver</a></li><li class="chapter-item expanded "><a href="0232-simplify-qunit-testing-api.html">0232-simplify-qunit-testing-api</a></li><li class="chapter-item expanded "><a href="0236-deprecation-ember-string.html">0236-deprecation-ember-string</a></li><li class="chapter-item expanded "><a href="0237-deprecation-ember-map.html">0237-deprecation-ember-map</a></li><li class="chapter-item expanded "><a href="0240-es-classes.html">0240-es-classes</a></li><li class="chapter-item expanded "><a href="0252-browser-support-changes.html">0252-browser-support-changes</a></li><li class="chapter-item expanded "><a href="0268-acceptance-testing-refactor.html">0268-acceptance-testing-refactor</a></li><li class="chapter-item expanded "><a href="0272-deprecation-native-function-prototype-extensions.html">0272-deprecation-native-function-prototype-extensions</a></li><li class="chapter-item expanded "><a href="0276-named-args.html">0276-named-args</a></li><li class="chapter-item expanded "><a href="0278-template-only-components.html">0278-template-only-components</a></li><li class="chapter-item expanded "><a href="0280-remove-application-wrapper.html">0280-remove-application-wrapper</a></li><li class="chapter-item expanded "><a href="0281-es5-getters.html">0281-es5-getters</a></li><li class="chapter-item expanded "><a href="0286-block-let-template-helper.html">0286-block-let-template-helper</a></li><li class="chapter-item expanded "><a href="0287-promote-in-element-to-public-api.html">0287-promote-in-element-to-public-api</a></li><li class="chapter-item expanded "><a href="0293-record-data.html">0293-record-data</a></li><li class="chapter-item expanded "><a href="0294-optional-jquery.html">0294-optional-jquery</a></li><li class="chapter-item expanded "><a href="0297-deprecate-ember-logger.html">0297-deprecate-ember-logger</a></li><li class="chapter-item expanded "><a href="0300-rfc-process-update.html">0300-rfc-process-update</a></li><li class="chapter-item expanded "><a href="0308-deprecate-property-lookup-fallback.html">0308-deprecate-property-lookup-fallback</a></li><li class="chapter-item expanded "><a href="0311-angle-bracket-invocation.html">0311-angle-bracket-invocation</a></li><li class="chapter-item expanded "><a href="0318-array-helper.html">0318-array-helper</a></li><li class="chapter-item expanded "><a href="0322-deprecate-copy-copyable.html">0322-deprecate-copy-copyable</a></li><li class="chapter-item expanded "><a href="0324-deprecate-component-isvisible.html">0324-deprecate-component-isvisible</a></li><li class="chapter-item expanded "><a href="0326-ember-data-filter-deprecation.html">0326-ember-data-filter-deprecation</a></li><li class="chapter-item expanded "><a href="0329-deprecated-ember-evented-in-ember-data.html">0329-deprecated-ember-evented-in-ember-data</a></li><li class="chapter-item expanded "><a href="0331-deprecate-globals-resolver.html">0331-deprecate-globals-resolver</a></li><li class="chapter-item expanded "><a href="0332-ember-data-record-links-and-meta.html">0332-ember-data-record-links-and-meta</a></li><li class="chapter-item expanded "><a href="0335-deprecate-send-action.html">0335-deprecate-send-action</a></li><li class="chapter-item expanded "><a href="0337-native-class-constructor-update.html">0337-native-class-constructor-update</a></li><li class="chapter-item expanded "><a href="0340-deprecate-ember-merge.html">0340-deprecate-ember-merge</a></li><li class="chapter-item expanded "><a href="0345-discord.html">0345-discord</a></li><li class="chapter-item expanded "><a href="0364-roadmap-2018.html">0364-roadmap-2018</a></li><li class="chapter-item expanded "><a href="0369-deprecate-computed-clobberability.html">0369-deprecate-computed-clobberability</a></li><li class="chapter-item expanded "><a href="0370-deprecate-computed-volatile.html">0370-deprecate-computed-volatile</a></li><li class="chapter-item expanded "><a href="0372-ember-data-model-factory-for.html">0372-ember-data-model-factory-for</a></li><li class="chapter-item expanded "><a href="0373-Element-Modifier-Managers.html">0373-Element-Modifier-Managers</a></li><li class="chapter-item expanded "><a href="0375-deprecate-computed-property-modifier.html">0375-deprecate-computed-property-modifier</a></li><li class="chapter-item expanded "><a href="0386-remove-jquery.html">0386-remove-jquery</a></li><li class="chapter-item expanded "><a href="0389-dynamic-tag-names.html">0389-dynamic-tag-names</a></li><li class="chapter-item expanded "><a href="0391-router-helpers.html">0391-router-helpers</a></li><li class="chapter-item expanded "><a href="0392-deprecate-component-manager-string-lookup.html">0392-deprecate-component-manager-string-lookup</a></li><li class="chapter-item expanded "><a href="0395-ember-data-packages.html">0395-ember-data-packages</a></li><li class="chapter-item expanded "><a href="0398-RouteInfo-Metadata.html">0398-RouteInfo-Metadata</a></li><li class="chapter-item expanded "><a href="0403-ember-data-identifiers.html">0403-ember-data-identifiers</a></li><li class="chapter-item expanded "><a href="0408-decorators.html">0408-decorators</a></li><li class="chapter-item expanded "><a href="0410-tracked-properties.html">0410-tracked-properties</a></li><li class="chapter-item expanded "><a href="0415-render-element-modifiers.html">0415-render-element-modifiers</a></li><li class="chapter-item expanded "><a href="0416-glimmer-components.html">0416-glimmer-components</a></li><li class="chapter-item expanded "><a href="0418-deprecate-route-render-methods.html">0418-deprecate-route-render-methods</a></li><li class="chapter-item expanded "><a href="0421-deprecate-application-controller-props.html">0421-deprecate-application-controller-props</a></li><li class="chapter-item expanded "><a href="0425-website-redesign.html">0425-website-redesign</a></li><li class="chapter-item expanded "><a href="0431-guides-restructure.html">0431-guides-restructure</a></li><li class="chapter-item expanded "><a href="0432-contextual-helpers.html">0432-contextual-helpers</a></li><li class="chapter-item expanded "><a href="0435-modifier-splattributes.html">0435-modifier-splattributes</a></li><li class="chapter-item expanded "><a href="0440-decorator-support.html">0440-decorator-support</a></li><li class="chapter-item expanded "><a href="0445-deprecate-with.html">0445-deprecate-with</a></li><li class="chapter-item expanded "><a href="0446-contribution-guides.html">0446-contribution-guides</a></li><li class="chapter-item expanded "><a href="0449-deprecate-partials.html">0449-deprecate-partials</a></li><li class="chapter-item expanded "><a href="0451-injection-parameter-normalization.html">0451-injection-parameter-normalization</a></li><li class="chapter-item expanded "><a href="0452-ember-data-medium-term-plan.html">0452-ember-data-medium-term-plan</a></li><li class="chapter-item expanded "><a href="0457-nested-lookups.html">0457-nested-lookups</a></li><li class="chapter-item expanded "><a href="0459-angle-bracket-built-in-components.html">0459-angle-bracket-built-in-components</a></li><li class="chapter-item expanded "><a href="0460-yieldable-named-blocks.html">0460-yieldable-named-blocks</a></li><li class="chapter-item expanded "><a href="0461-ember-data-singleton-record-data.html">0461-ember-data-singleton-record-data</a></li><li class="chapter-item expanded "><a href="0463-record-data-state.html">0463-record-data-state</a></li><li class="chapter-item expanded "><a href="0465-record-data-errors.html">0465-record-data-errors</a></li><li class="chapter-item expanded "><a href="0466-request-state-service.html">0466-request-state-service</a></li><li class="chapter-item expanded "><a href="0468-classic-decorator.html">0468-classic-decorator</a></li><li class="chapter-item expanded "><a href="0470-fn-helper.html">0470-fn-helper</a></li><li class="chapter-item expanded "><a href="0471-on-modifier.html">0471-on-modifier</a></li><li class="chapter-item expanded "><a href="0477-blueprints-update.html">0477-blueprints-update</a></li><li class="chapter-item expanded "><a href="0478-tracked-properties-updates.html">0478-tracked-properties-updates</a></li><li class="chapter-item expanded "><a href="0481-component-templates-co-location.html">0481-component-templates-co-location</a></li><li class="chapter-item expanded "><a href="0486-deprecate-mouseenter.html">0486-deprecate-mouseenter</a></li><li class="chapter-item expanded "><a href="0487-custom-model-classes.html">0487-custom-model-classes</a></li><li class="chapter-item expanded "><a href="0491-deprecate-disconnect-outlet.html">0491-deprecate-disconnect-outlet</a></li><li class="chapter-item expanded "><a href="0494-async-observers.html">0494-async-observers</a></li><li class="chapter-item expanded "><a href="0496-handlebars-strict-mode.html">0496-handlebars-strict-mode</a></li><li class="chapter-item expanded "><a href="0507-embroider-v2-package-format.html">0507-embroider-v2-package-format</a></li><li class="chapter-item expanded "><a href="0519-2019-2020-roadmap.html">0519-2019-2020-roadmap</a></li><li class="chapter-item expanded "><a href="0521-find-by-identifier.html">0521-find-by-identifier</a></li><li class="chapter-item expanded "><a href="0522-default-serializers-and-adapters.html">0522-default-serializers-and-adapters</a></li><li class="chapter-item expanded "><a href="0523-model-argument-for-route-templates.html">0523-model-argument-for-route-templates</a></li><li class="chapter-item expanded "><a href="0554-deprecate-getwithdefault.html">0554-deprecate-getwithdefault</a></li><li class="chapter-item expanded "><a href="0558-edition-detection.html">0558-edition-detection</a></li><li class="chapter-item expanded "><a href="0560-add-equality-operators.html">0560-add-equality-operators</a></li><li class="chapter-item expanded "><a href="0561-add-numeric-comparison-operators.html">0561-add-numeric-comparison-operators</a></li><li class="chapter-item expanded "><a href="0562-add-logical-operators.html">0562-add-logical-operators</a></li><li class="chapter-item expanded "><a href="0566-memo-decorator.html">0566-memo-decorator</a></li><li class="chapter-item expanded "><a href="0580-destroyables.html">0580-destroyables</a></li><li class="chapter-item expanded "><a href="0581-new-test-waiters.html">0581-new-test-waiters</a></li><li class="chapter-item expanded "><a href="0585-improved-ember-registry-apis.html">0585-improved-ember-registry-apis</a></li><li class="chapter-item expanded "><a href="0615-autotracking-memoization.html">0615-autotracking-memoization</a></li><li class="chapter-item expanded "><a href="0617-rfc-stages.html">0617-rfc-stages</a></li><li class="chapter-item expanded "><a href="0625-helper-managers.html">0625-helper-managers</a></li><li class="chapter-item expanded "><a href="0626-invoke-helper.html">0626-invoke-helper</a></li><li class="chapter-item expanded "><a href="0628-prettier.html">0628-prettier</a></li><li class="chapter-item expanded "><a href="0631-refresh-method-for-router-service.html">0631-refresh-method-for-router-service</a></li><li class="chapter-item expanded "><a href="0635-ember-new-lang.html">0635-ember-new-lang</a></li><li class="chapter-item expanded "><a href="0637-customizable-test-setups.html">0637-customizable-test-setups</a></li><li class="chapter-item expanded "><a href="0638-interactive-app-creation.html">0638-interactive-app-creation</a></li><li class="chapter-item expanded "><a href="0639-replace-blacklist-whitelist.html">0639-replace-blacklist-whitelist</a></li><li class="chapter-item expanded "><a href="0645-add-ember-page-title-addon.html">0645-add-ember-page-title-addon</a></li><li class="chapter-item expanded "><a href="0649-deprecation-staging.html">0649-deprecation-staging</a></li><li class="chapter-item expanded "><a href="0659-unique-id-helper.html">0659-unique-id-helper</a></li><li class="chapter-item expanded "><a href="0669-tracked-storage-primitive.html">0669-tracked-storage-primitive</a></li><li class="chapter-item expanded "><a href="0671-modernize-built-in-components-1.html">0671-modernize-built-in-components-1</a></li><li class="chapter-item expanded "><a href="0673-deprecate-tryinvoke.html">0673-deprecate-tryinvoke</a></li><li class="chapter-item expanded "><a href="0674-deprecate-transition-methods-of-controller-and-route.html">0674-deprecate-transition-methods-of-controller-and-route</a></li><li class="chapter-item expanded "><a href="0680-implicit-injection-deprecation.html">0680-implicit-injection-deprecation</a></li><li class="chapter-item expanded "><a href="0685-new-browser-support-policy.html">0685-new-browser-support-policy</a></li><li class="chapter-item expanded "><a href="0686-deprecate-old-manager-capabilities-versions.html">0686-deprecate-old-manager-capabilities-versions</a></li><li class="chapter-item expanded "><a href="0689-deprecate-has-block.html">0689-deprecate-has-block</a></li><li class="chapter-item expanded "><a href="0690-deprecate-attrs-in-templates.html">0690-deprecate-attrs-in-templates</a></li><li class="chapter-item expanded "><a href="0691-deprecate-class-binding-and-class-name-bindings.html">0691-deprecate-class-binding-and-class-name-bindings</a></li><li class="chapter-item expanded "><a href="0692-deprecate-array-observers.html">0692-deprecate-array-observers</a></li><li class="chapter-item expanded "><a href="0698-deprecate-link-to-positional-arguments.html">0698-deprecate-link-to-positional-arguments</a></li><li class="chapter-item expanded "><a href="0702-eslint-plugin-qunit.html">0702-eslint-plugin-qunit</a></li><li class="chapter-item expanded "><a href="0704-deprecate-octane-optional-features.html">0704-deprecate-octane-optional-features</a></li><li class="chapter-item expanded "><a href="0705-deprecate-jquery-optional-feature.html">0705-deprecate-jquery-optional-feature</a></li><li class="chapter-item expanded "><a href="0706-deprecate-ember-global.html">0706-deprecate-ember-global</a></li><li class="chapter-item expanded "><a href="0707-modernize-built-in-components-2.html">0707-modernize-built-in-components-2</a></li><li class="chapter-item expanded "><a href="0711-deprecate-auto-location.html">0711-deprecate-auto-location</a></li><li class="chapter-item expanded "><a href="0738-ember-data-deprecate-model-reopen.html">0738-ember-data-deprecate-model-reopen</a></li><li class="chapter-item expanded "><a href="0750-deprecate-ember-assign.html">0750-deprecate-ember-assign</a></li><li class="chapter-item expanded "><a href="0752-inject-service.html">0752-inject-service</a></li><li class="chapter-item expanded "><a href="0756-helper-default-manager.html">0756-helper-default-manager</a></li><li class="chapter-item expanded "><a href="0772-deprecate-bower-support.html">0772-deprecate-bower-support</a></li><li class="chapter-item expanded "><a href="0776-typescript-blueprints.html">0776-typescript-blueprints</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -86,45 +83,39 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                
-                <div id="menu-bar" class="menu-bar">
-                    <div id="menu-bar-sticky-container">
-                        <div class="left-buttons">
-                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
-                                <i class="fa fa-bars"></i>
-                            </button>
-                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
-                                <i class="fa fa-paint-brush"></i>
-                            </button>
-                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
-                            </ul>
-                            
-                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
-                                <i class="fa fa-search"></i>
-                            </button>
-                            
-                        </div>
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
 
-                        <h1 class="menu-title"></h1>
+                    <h1 class="menu-title"></h1>
 
-                        <div class="right-buttons">
-                            <a href="print.html" title="Print this book" aria-label="Print this book">
-                                <i id="print-button" class="fa fa-print"></i>
-                            </a>
-                            
-                        </div>
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -132,8 +123,6 @@
                         </ul>
                     </div>
                 </div>
-                
-
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script type="text/javascript">
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
@@ -150,12 +139,12 @@
 Relevant Team(s): Ember CLI
 RFC PR: https://github.com/ember-cli/rfcs/pull/110</p>
 <hr />
-<h1><a class="header" href="#summary" id="summary">Summary</a></h1>
+<h1 id="summary"><a class="header" href="#summary">Summary</a></h1>
 <p>The goal of this RFC is to solidify the next version of the mechanism that
 <code>ember-cli</code> uses to build final assets. It will allow for a more flexible build
 pipeline for Ember applications. It also unlocks building experimental features
 on top. It is a backward compatible change.</p>
-<h1><a class="header" href="#motivation" id="motivation">Motivation</a></h1>
+<h1 id="motivation"><a class="header" href="#motivation">Motivation</a></h1>
 <p>The <a href="https://github.com/chadhietala/rfcs/blob/packager/active/0002-packager.md">Packager
 RFC</a>
 submitted by <a href="https://github.com/chadhietala">Chad Hietala</a> is a little over 2
@@ -170,29 +159,26 @@ refactor our build process and provide more flexibility when desired.</p>
 <li>removing highly coupled code and streamline technical implementation (Ember
 Engines and Fastboot)</li>
 <li>unlock a whole different set of plugins we couldn't have before:
-<ul>
-<li>ability to create custom bundles (i.e per-engine and per-route bundles)</li>
-<li>take advantage of <a href="https://http2.github.io/faq/#why-is-http2-multiplexed">HTTP2
++ ability to create custom bundles (i.e per-engine and per-route bundles)
++ take advantage of <a href="https://http2.github.io/faq/#why-is-http2-multiplexed">HTTP2
 multiplexing</a> and
 <a href="https://www.mnot.net/blog/2014/01/30/http2_expectations#4-cache-pushing">cache
-pushing</a></li>
-<li>optimising plugins (JavaScript and CSS tree-shaking)</li>
+pushing</a>
++ optimising plugins (JavaScript and CSS tree-shaking)</li>
 </ul>
-</li>
-</ul>
-<h1><a class="header" href="#scope" id="scope">Scope</a></h1>
+<h1 id="scope"><a class="header" href="#scope">Scope</a></h1>
 <ul>
 <li>New public API for customising build process and giving more granular control over
 the final build output</li>
 </ul>
-<h1><a class="header" href="#terminology" id="terminology">Terminology</a></h1>
+<h1 id="terminology"><a class="header" href="#terminology">Terminology</a></h1>
 <ul>
 <li><strong>Packaging</strong> - The process of designing, evaluating, and producing final build assets.</li>
 </ul>
-<h1><a class="header" href="#detailed-design" id="detailed-design">Detailed design</a></h1>
+<h1 id="detailed-design"><a class="header" href="#detailed-design">Detailed design</a></h1>
 <p>The detailed design is separated in various sections so that it is easier for a
 reader to understand.</p>
-<h2><a class="header" href="#packaging" id="packaging">Packaging</a></h2>
+<h2 id="packaging"><a class="header" href="#packaging">Packaging</a></h2>
 <p>It gives you granular control over the final build output. It could be used in many
 different ways (we are going to go over use cases below). Note, it isn't meant to be
 used for &quot;postprocess&quot; transformations; &quot;postprocess&quot; is called after packaging is
@@ -217,7 +203,7 @@ directory with the following structure:</p>
 both <code>tree</code> and <code>output</code> don't communicate well about the contents of the folder.</p>
 <p>During packaging process the final output will be generated (everything that currently
 resides under <code>dist/</code> folder when a developer runs <code>ember build</code>).</p>
-<h3><a class="header" href="#package-api" id="package-api"><code>package</code> API</a></h3>
+<h3 id="package-api"><a class="header" href="#package-api"><code>package</code> API</a></h3>
 <p>A new public <code>package</code> method will be introduced to open up a way to customise packaging process:</p>
 <pre><code class="language-javascript">// ember-cli-build.js
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
@@ -253,7 +239,7 @@ tied to a particular release cycle.</p>
 <p>Note, that <code>package</code> is optional. If you don't define it, you're
 effectively &quot;opting out&quot; of the feature and using the default
 behaviour.</p>
-<h3><a class="header" href="#defaultpackager-api" id="defaultpackager-api"><code>defaultPackager</code> API</a></h3>
+<h3 id="defaultpackager-api"><a class="header" href="#defaultpackager-api"><code>defaultPackager</code> API</a></h3>
 <p>It's important to make it easy for users to still use default Ember CLI
 packaging.</p>
 <p><code>defaultPackager</code> is a way for the users to access out-of-the-box packaging while
@@ -278,8 +264,8 @@ module.exports = function(defaults) {
 <pre><code class="language-typescript">function defaultPackager(app: EmberApp, inputTree: BroccoliTreel): BroccoliTree;
 </code></pre>
 <p><code>defaultPackager</code> must return a <code>BroccoliTree</code>.</p>
-<h3><a class="header" href="#possible-usages" id="possible-usages">Possible usages</a></h3>
-<h4><a class="header" href="#debuganalyse" id="debuganalyse">Debug/Analyse</a></h4>
+<h3 id="possible-usages"><a class="header" href="#possible-usages">Possible usages</a></h3>
+<h4 id="debuganalyse"><a class="header" href="#debuganalyse">Debug/Analyse</a></h4>
 <p>One of the applications of <code>package</code> API would be to run different analysis on the
 Ember applications. Take
 <a href="https://github.com/stefanpenner/broccoli-concat-analyser">broccoli-concat-analyser</a>,
@@ -300,23 +286,23 @@ module.exports = function(defaults) {
   return app.toTree();
 }
 </code></pre>
-<h4><a class="header" href="#static-assets-split" id="static-assets-split">Static Assets Split</a></h4>
+<h4 id="static-assets-split"><a class="header" href="#static-assets-split">Static Assets Split</a></h4>
 <p>One of the techniques for improving site speed is isolating changes throughout
 application deployments. Assuming  the application assets are uploaded to CDN,
 the reasoning is very simple: if <code>ember.js</code> or <code>jQuery</code> (possibly along with
 other third party libraries) don't change with every deployment, why bust CDN
 cache for them?</p>
-<h4><a class="header" href="#es6-modules" id="es6-modules">ES6 Modules</a></h4>
+<h4 id="es6-modules"><a class="header" href="#es6-modules">ES6 Modules</a></h4>
 <p>ES6 modules are <a href="https://caniuse.com/#feat=es6-module">starting</a> to land in browsers.
 This means that you can use <code>&lt;script type=&quot;module&quot; src=&quot;/my/app.js&quot;&gt;&lt;/script&gt;</code>.</p>
 <p>This <a href="https://philipwalton.com/articles/deploying-es2015-code-in-production-today/">article</a> <a href="https://philipwalton.com/articles/deploying-es2015-code-in-production-today/#is-this-really-worth-the-extra-effort">explains</a> the benefits of using ES6 modules over ES2015 (smaller total file sizes, faster to parse and evaluate).</p>
 <p><code>package</code> API will make it possible to package your application for both ES2015 only browsers as well
 the ones with ES6 modules support.</p>
-<h1><a class="header" href="#topics-for-future-rfcs" id="topics-for-future-rfcs">Topics for Future RFCs</a></h1>
+<h1 id="topics-for-future-rfcs"><a class="header" href="#topics-for-future-rfcs">Topics for Future RFCs</a></h1>
 <p>While working on this RFC, some ideas were brought into focus regarding existing
 and new features in Ember CLI. They all likely require separate discussions in
 future RFCs, but the discussion points have been included below.</p>
-<h2><a class="header" href="#tree-shaking" id="tree-shaking">Tree-shaking</a></h2>
+<h2 id="tree-shaking"><a class="header" href="#tree-shaking">Tree-shaking</a></h2>
 <p>Firstly, what's <em>tree-shaking</em>? AFAIK, the term
 <a href="https://groups.google.com/forum/#!msg/comp.lang.lisp/6zpZsWFFW18/-z_8hHRAIf4J">originated</a>
 in Lisp. The gist of the idea is &quot;how about we start using <em>only</em> the code that
@@ -356,13 +342,10 @@ fileSystemResolver.resolve('ember-data/-private') =&gt; `some-path/addon-modules
 <li>dead modules elimination inside of the <code>addons/</code> (application would be the
 main entry point and unused modules are removed only from <code>addons/</code>)</li>
 <li>dead modules elimination inside of the <code>app/</code>
-<ul>
-<li>removing unused components and helpers (requires analysing templates)</li>
-<li>removing unused initializers/services (this likely entails work on
++ removing unused components and helpers (requires analysing templates)
++ removing unused initializers/services (this likely entails work on
 dependency injection layer as we would need access to a resolver resolution
 map)</li>
-</ul>
-</li>
 <li>tree-shaking (Rollup-like tree-shaking where we include <em>only</em> the code that is
 used)</li>
 </ul>
@@ -371,10 +354,10 @@ Although, valuable in some situations, it should be clearly marked as advanced
 API. It should be used as a last resort and serve as an &quot;escape hatch&quot;.</p>
 <p>It would make sense to implement <code>Linker</code> as a strategy. Developers would be
 able to &quot;opt in&quot;/&quot;opt out&quot; of optimising behaviour.</p>
-<h2><a class="header" href="#deprecating-appimport-api" id="deprecating-appimport-api">Deprecating <code>app.import</code> API</a></h2>
+<h2 id="deprecating-appimport-api"><a class="header" href="#deprecating-appimport-api">Deprecating <code>app.import</code> API</a></h2>
 <p>Ember applications which choose to use <code>Linker</code> strategy should be able to
 remove usages of <code>app.import</code>.</p>
-<h2><a class="header" href="#tools" id="tools">Tools</a></h2>
+<h2 id="tools"><a class="header" href="#tools">Tools</a></h2>
 <p>With growing complexity of Ember applications, it is crucial to provide more
 insights into final assets.</p>
 <p>Main goals are:</p>
@@ -385,12 +368,12 @@ insights into final assets.</p>
 fine tune code splitting parameters to reduce bundle invalidation rates as
 well as improve repeat page load performance)</li>
 </ul>
-<h1><a class="header" href="#how-we-teach-this" id="how-we-teach-this">How We Teach This</a></h1>
+<h1 id="how-we-teach-this"><a class="header" href="#how-we-teach-this">How We Teach This</a></h1>
 <p>This is a backward compatible change to the existing Ember CLI ecosystem. In
 order to teach users how to use <code>package</code> API, we need to update the API docs
 with a section for this and the best practices of when to use this. A more
 general purpose blog post could be beneficial as well.</p>
-<h1><a class="header" href="#drawbacks" id="drawbacks">Drawbacks</a></h1>
+<h1 id="drawbacks"><a class="header" href="#drawbacks">Drawbacks</a></h1>
 <p>There are several potential drawbacks that are worth noting.</p>
 <p><em>Build performance</em>. There is minimal overhead in instantiating strategies and
 calling methods on them and I believe this approach shouldn't degrade build
@@ -398,7 +381,7 @@ performance.</p>
 <p><em>A note on add-ons</em>. Add-ons don't rely on the way Ember CLI does bundling. That
 means existing build system continues to work as expected and add-ons won't have
 to change their implementation.</p>
-<h1><a class="header" href="#alternatives" id="alternatives">Alternatives</a></h1>
+<h1 id="alternatives"><a class="header" href="#alternatives">Alternatives</a></h1>
 <p>This RFC allows us to customise packaging when needed.
 <a href="https://webpack.js.org">Webpack</a> has become very popular in solving this
 similar problem. One could implement a <code>package</code> function that would use Webpack
@@ -407,12 +390,12 @@ assembled and how Ember apps utilise dependency injection that takes advantage
 of existing tools. The long term plan is to have a dependency graph that is
 aware of application structure so can avoid the &quot;wall of configuration&quot; that
 other asset packaging systems are susceptible to.</p>
-<h1><a class="header" href="#unresolved-questions" id="unresolved-questions">Unresolved questions</a></h1>
+<h1 id="unresolved-questions"><a class="header" href="#unresolved-questions">Unresolved questions</a></h1>
 <ul>
 <li>Will it increase build time?</li>
 <li>Should we introduce the same API on add-on level?</li>
 </ul>
-<h1><a class="header" href="#thanks" id="thanks">Thanks</a></h1>
+<h1 id="thanks"><a class="header" href="#thanks">Thanks</a></h1>
 <p>Many thanks for <a href="https://github.com/stefanpenner/">@stefanpenner</a>,
 <a href="https://github.com/rwjblue/">@rwjblue</a> and
 <a href="https://github.com/chadhietala/">@chadhietala</a> for helping me to drive this
@@ -422,59 +405,38 @@ forward.</p>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
                             <a rel="prev" href="0108-add-custom-transform.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                        
-
-                        
                             <a rel="next" href="0114-add-template-lint-addon.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
-                        
-
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
-                    <a href="0108-add-custom-transform.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="0108-add-custom-transform.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                
-
-                
-                    <a href="0114-add-template-lint-addon.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="0114-add-template-lint-addon.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
             </nav>
 
         </div>
 
-        
-
-        
-
-        
-
-        
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        
-
         <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
-        
-
-        
-
     </body>
 </html>
