@@ -229,9 +229,11 @@ Finally, the authoring format for tests and the authoring format for app code to
 
 Additionally, introducing test-only components is quite painful, requiring use of the `this.owner.register()` functionality, and therefore requiring users to understand at least some of Ember’s custom runtime resolution (as well as learning a microsyntax for it[^microsyntax]). What's more, authoring a *template* for a test-only component is undocumented and is also entirely unlike the story for authoring templates for app components.
 
-[^testing-rfc]: The test helper `render()` also does not actually render components today—but the *mental model* is that it does. Here and below I assume a forthcoming RFC which will allow `render` to work not only with templates (the _status quo_) but also with components. This will be an independent change which helps eliminate a number of quirks in the testing infrastructure today as well as make it more TypeScript friendly, but it complements *this* RFC by allowing local definition of tests.
+[^testing-rfc]: The test helper `render()` also does not actually render components today—but the *mental model* is that it does. See [RFC #0785][rfc-0785] which will allow `render` to work not only with templates (the _status quo_) but also with components. This will be an independent change which helps eliminate a number of quirks in the testing infrastructure today as well as make it more TypeScript friendly, but it complements *this* RFC by allowing local definition of tests.
 
 [^microsyntax]: made that much more bespoke since [RFC #0585](https://emberjs.github.io/rfcs/0585-improved-ember-registry-apis.html) is accepted but not yet implemented
+  
+[rfc-0785]: https://github.com/emberjs/rfcs/pull/785
 
 
 ### The solution
@@ -719,7 +721,7 @@ Beyond that, we should encourage the community to add support for other editors 
 
 #### Blueprints
 
-Component and component test blueprints will need to be updated to support generating the new format. (See a forthcoming RFC for updates to testing to support this more robustly.) During the transition period, we should allow generating both. The rollout will follow the example of the rollout of Glimmer components with Octane:
+Component and component test blueprints will need to be updated to support generating the new format. (See [RFC #0785][rfc-0785] for updates to testing to support this more robustly.) During the transition period, we should allow generating both. The rollout will follow the example of the rollout of Glimmer components with Octane:
 
 1. Introduce the ability to author components in the new format with a new `--strict` flag, but leave the default today’s loose mode format. Introduce `--loose` as an explicit flag for using today’s loose mode format.
 
