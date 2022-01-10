@@ -20,7 +20,7 @@ Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to w
 RFC PR: Fill this in with the URL for the Proposal RFC PR
 -->
 
-# Deprecate the use of `get`/`set` in test contexts
+# Introduce new test helpers for rendering (and re-rendering) that obviate the need for `get` and `set`
 
 ## Summary
 
