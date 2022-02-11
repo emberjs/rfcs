@@ -6,7 +6,7 @@ Release Versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
 Relevant Team(s): 
-RFC PR: 
+RFC PR: https://github.com/emberjs/rfcs/pull/793
 ---
 
 <!--- 
@@ -17,10 +17,10 @@ Start Date: 2022-02-11
 Release Date: Leave as is
 Release Versions: Leave as is
 Relevant Team(s): Ember Data
-RFC PR: Fill this in with the URL for the Proposal RFC PR
+RFC PR: https://github.com/emberjs/rfcs/pull/793
 -->
 
-# <RFC title>
+# Polymorphic relations without inheritance
 
 ## Summary
 
