@@ -1,4 +1,5 @@
-- Stage: Accepted
+---
+Stage: Accepted
 Start Date: 2022-02-12
 Release Date: Unreleased
 Release Versions:
