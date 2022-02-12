@@ -1,6 +1,6 @@
 - Stage: Accepted
 - Start Date: 2022-02-12
-- Relevant Team(s): data 
+- Relevant Team(s): ember-data 
 - RFC PR: https://github.com/emberjs/rfcs/pull/642
 - Tracking: (leave this empty)
 
