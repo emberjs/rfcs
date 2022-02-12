@@ -6,7 +6,7 @@ Release Versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
 Relevant Team(s): ember-data 
-- RFC PR: https://github.com/emberjs/rfcs/pull/642
+RFC PR: https://github.com/emberjs/rfcs/pull/642
 - Tracking: (leave this empty)
 
 # Simplify Schema Definition Service methods in Ember Data
