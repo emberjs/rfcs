@@ -9,7 +9,7 @@
 
 This RFC is an amendment to the Custom Model Classes RFC (https://github.com/emberjs/rfcs/pull/487).
 Based on implementation feedback, we discovered we could simplify the arguments to
-`attributesDefinitonFor` and `relationshipsDefinitionFor` to drop the string argument and always
+`attributesDefinitionFor` and `relationshipsDefinitionFor` to drop the string argument and always
 pass in an object.
 
 
