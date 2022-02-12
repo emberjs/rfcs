@@ -38,7 +38,7 @@ We can simplify `attributesDefinitonFor` and `relationshipsDefinitionFor` method
 ```typescript
 interface SchemaDefinitionService {
   // Following the existing RD implementation 
-  attributesDefinitonFor(identifier: RecordIdentifier | { type: string }): AttributesDefiniton
+  attributesDefinitionFor(identifier: RecordIdentifier | { type: string }): AttributesDefinition
   
   // Following the existing RD implementation
   relationshipsDefinitionFor(identifier: RecordIdentifier | { type: string }): RelationshipsDefinition
