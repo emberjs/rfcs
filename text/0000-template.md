@@ -1,7 +1,7 @@
 - Stage: Accepted
 - Start Date: 2022-02-12
 - Relevant Team(s): data 
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/642
 - Tracking: (leave this empty)
 
 # Simplify Schema Definition Service methods in Ember Data
