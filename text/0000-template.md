@@ -16,7 +16,7 @@ pass in an object.
 ## Motivation
 
 When implementing a schema service, code ends up easier and cleaner if it does not have to deal with
-both a raw string and a object.
+both a raw string and an object.
 
 ## Detailed design
 
