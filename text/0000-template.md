@@ -1,4 +1,5 @@
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
+- Stage: Accepted
+- Start Date: 2022-02-12
 - Relevant Team(s): data 
 - RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
 - Tracking: (leave this empty)
