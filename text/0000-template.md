@@ -25,7 +25,7 @@ The original RFC proposed the following interface:
 ```typescript
 interface SchemaDefinitionService {
   // Following the existing RD implementation 
-  attributesDefinitionFor(identifier: RecordIdentifier | type: string): AttributesDefiniton
+  attributesDefinitionFor(identifier: RecordIdentifier | type: string): AttributesDefinition
   
   // Following the existing RD implementation
   relationshipsDefinitionFor(identifier: RecordIdentifier | type: string): RelationshipsDefinition
