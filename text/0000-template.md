@@ -33,7 +33,7 @@ interface SchemaDefinitionService {
 }
 ```
 
-We can simplify `attributesDefinitonFor` and `relationshipsDefinitionFor` methods to always accept an object.
+We can simplify `attributesDefinitionFor` and `relationshipsDefinitionFor` methods to always accept an object.
 
 ```typescript
 interface SchemaDefinitionService {
