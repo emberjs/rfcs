@@ -3,7 +3,7 @@
 - RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
 - Tracking: (leave this empty)
 
-# Simplify Schema Definiton Service methods in Ember Data
+# Simplify Schema Definition Service methods in Ember Data
 
 ## Summary
 
