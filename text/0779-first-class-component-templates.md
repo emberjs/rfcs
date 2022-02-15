@@ -135,6 +135,7 @@ export default class GenerateAvatar extends Component {
     - [Codemod](#codemod)
   - [TypeScript](#typescript)
   - [Custom file extension](#custom-file-extension)
+  - [Spec](#spec)
 - [Transition path](#transition-path)
 - [How we teach this](#how-we-teach-this)
   - [Guides](#guides)
