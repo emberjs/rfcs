@@ -941,7 +941,7 @@ During implementation—before this is the default for Ember apps, and before it
 
 - to enable future design moves in this space—for example, `<style>` blocks for scoped CSS or `<query>` blocks for languages like GraphQL, etc.
 
-- to enable other parts of the JS ecosystem to adopt this—in the same way that JSX is not a React-only syntax but a [spec](https://facebook.github.io/jsx/) can also be used by e.g. [Solid](https://www.solidjs.com)—since it could be valuable authoring format for Svelte, Vue, and other template-focused/HTML-first frameworks
+- to enable other parts of the JS ecosystem to adopt this—in the same way that JSX is not a React-only syntax but a [spec](https://facebook.github.io/jsx/) which can also be used by e.g. [Solid](https://www.solidjs.com)—since it could be valuable authoring format for Svelte, Vue, and other template-focused/HTML-first frameworks
 
 
 ## Transition path
