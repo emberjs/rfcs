@@ -933,6 +933,17 @@ While both Prettier and ESLint *can* work with `.js` or `.ts`, introducing the n
 [^hbs-custom-syntax]: Note that this also applies to the `hbs` syntax discussed in [**Alternatives: Template literals (`hbs`)**](#template-literals-hbs).
 
 
+### Spec
+
+During implementation—before this is the default for Ember apps, and before it advances to **Recommended** if [the Stages RFC](https://emberjs.github.io/rfcs/0617-rfc-stages.html) is implemented before this implementation is finished—we will create a spec for the format we propose here, generalizing it to account for similar potential future extensions:
+
+- to make it easy for tooling authors to know when they have implemented the support correctly, including answering questions about nested invocation, escaping, handling closing tags within comments, etc.
+
+- to enable future design moves in this space—for example, `<style>` blocks for scoped CSS or `<query>` blocks for languages like GraphQL, etc.
+
+- to enable other parts of the JS ecosystem to adopt this—in the same way that JSX is not a React-only syntax but a [spec](https://facebook.github.io/jsx/) can also be used by e.g. [Solid](https://www.solidjs.com)—since it could be valuable authoring format for Svelte, Vue, and other template-focused/HTML-first frameworks
+
+
 ## Transition path
 
 We will transition to using first-class component templates by default as part of Ember Polaris. To do that successfully, we must:
