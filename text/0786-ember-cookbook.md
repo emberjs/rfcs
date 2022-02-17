@@ -59,6 +59,26 @@ In addition, we could have a set of volunteers sign up to add content to the coo
 Monitoring stack overflow and other forums to come up with most-asked questions
 Work closely with the Ember Core team on upgrades to add, modify or delete information from Ember Guides. 
 
+A cookbook template will be used to keep all the entries uniform. The template would contain the following sections, 
+
+#### Title
+  This is an intro section that lets someone know what they will learn by the time they are done reading.
+#### The challenge
+  Lay out the example and the problem you are trying to solve
+#### Steps
+  The steps someone should take to get to the end result.
+  Use headings to describe steps and not numbers.
+#### Results
+  When you are finished, here's how it should work
+#### Resources
+  Links to Guides and API go here.
+  Also include ways that someone could build upon this knowledge.
+#### Tags
+
+After reading this recipe you should now know what is a cookbook and what is the templete that Ember recipes follow.
+
+#### Learn more
+
 ### Launch strategy
 The cookbook articles will be drafted in markdown format. Once there is a critical mass of 5 articles, they can be published. The cookbook will be hosted at cookbook.emberjs.com
 The cookbook will use Guidemaker, similar to cli.emberjs.com
