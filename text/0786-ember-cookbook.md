@@ -44,7 +44,7 @@ Sourcing information for the cookbook can be done a few ways:
 Officially endorsing existing articles and blogs
 Monitoring most asked questions on stackoverflow 
 Create entries for [really good explanations](https://discuss.emberjs.com/t/adding-a-delete-row-button-from-a-table/18623) from the ember forum. 
-Create sections that would make it easier for the developer to navigate through the different guides. 
+Create sections that would make it easier for the developer to navigate through the different guides. Ember-data's adapter/serializer cookbook articles can go under a specific section called "Ember Data" within the cookbook. 
 
 For the MVP we can include the following articles and topics, or similar content.
 [How to create a grid/table with Ember Data and creating a CRUD form with Ember data](https://discuss.emberjs.com/t/looking-for-an-example-of-a-grid-and-form/18490)
@@ -59,7 +59,7 @@ In addition, we could have a set of volunteers sign up to add content to the coo
 Monitoring stack overflow and other forums to come up with most-asked questions
 Work closely with the Ember Core team on upgrades to add, modify or delete information from Ember Guides. 
 
-###Launch strategy
+### Launch strategy
 The cookbook articles will be drafted in markdown format. Once there is a critical mass of 5 articles, they can be published. The cookbook will be hosted at cookbook.emberjs.com
 The cookbook will use Guidemaker, similar to cli.emberjs.com
 We will mention it in the Ember Newsletter.
@@ -93,5 +93,9 @@ If a topic becomes obsolete for any reason, we could add a warning at the top. A
 ## Drawbacks
 
 We will need to maintain the cookbooks as we have major Ember version upgrades. 
+
+### Language support
+
+The Ember documentation serves a global community. The cookbook aims to be a resource that could be translated into multiple languages after the initial content settles. The translations would be found under the same domain, `cookbook.emberjs.com`
 
 
