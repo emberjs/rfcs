@@ -13,7 +13,7 @@ RFC PR: https://github.com/emberjs/rfcs/pull/795
 
 ## Summary
 
-Model.save() will return an RSVP.Promise wrapper instead of a PromiseObject.
+Model.save() will return a Promise wrapper instead of a PromiseObject.
 
 ## Motivation
 
@@ -26,7 +26,7 @@ Model.save() will return an RSVP.Promise wrapper instead of a PromiseObject.
 
 ## Detailed design
 
-Introduce a new feature flag, `DS_MODEL_SAVE_PROMISE`, Model.save() will return an an RSVP.Promise wrapper that resolves with the model if the save was successful, or rejects with an error if the save fails. Moreover, `isPending`, `isResolved`, and `isRejected` will be exposed as derived state on the promise.  When disabled, a PromiseObject will be returned to keep today's behavior, but accessing properties on the PromiseObject or calling non-Promise functions (.then, .finally, .catch) on the PromiseObject will issue a deprecation warning.
+Introduce a new feature flag, `DS_MODEL_SAVE_PROMISE`, Model.save() will return an an Promise wrapper that resolves with the model if the save was successful, or rejects with an error if the save fails. Moreover, `isPending`, `isResolved`, and `isRejected` will be exposed as derived state on the promise.  When disabled, a PromiseObject will be returned to keep today's behavior, but accessing properties on the PromiseObject or calling non-Promise functions (.then, .finally, .catch) on the PromiseObject will issue a deprecation warning.
 
 Deprecation Plan:
 
@@ -35,7 +35,7 @@ The deprecations can be implemented by adding deprecations around the existing P
     * Accessing properties on the PromiseObject returned from DS.Model.save()
         * Use deprecateProperty from Ember to deprecate all the properties that the PromiseProxy Mixin provides. The list of properties can be found here: https://github.com/emberjs/ember.js/blob/master/packages/ember-runtime/lib/mixins/promise_proxy.js
         * Deprecate accessing any unknown properties. For instance, someone might try to grab the value of an attr or computed property from a model, e.g. proxy.get('email').
-    * Calling functions that are not available on RSVP.Promises
+    * Calling functions that are not available on Promises
         * Not Safe (issue deprecation): .get/.set/anything else really
         * Safe (do not issue a deprecation): .then, .catch, .finally
 
@@ -65,6 +65,8 @@ For users relying on this behavior, they may have to refactor their code to acce
 
 ## Alternatives
 
-The impact of not doing this prevents further changes in Ember Data.
+- The impact of not doing this prevents further changes in Ember Data.
+- We could just return a promise instead of wrapper around the promise.
+- Return a promise but also exposing a template/js helper in a new package that wraps any promise exposing these flags providing broader utility without imposing this promise-state management on ember-data itself.
 
 ## Unresolved questions
