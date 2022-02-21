@@ -90,7 +90,7 @@ While it solves the problem, it seems like a misuse of inheritance and too much 
 
 ## Detailed design
 
-I propose to introduce new API, similar to what [rails have](https://guides.rubyonrails.org/association_basics.html#polymorphic-associations).
+This RFC proposes to allow explicitly declaring polymorphic traits similar to [rails conventions](https://guides.rubyonrails.org/association_basics.html#polymorphic-associations).
 
 ```js
 import Model, { belongsTo, hasMany } from '@ember-data/model';
