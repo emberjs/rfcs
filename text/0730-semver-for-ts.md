@@ -113,7 +113,7 @@ Note that this summary elides *many* important details, and those details may su
 
 For TypeScript packages be good citizens of the broader, semantically-versioned JavaScript ecosystem, package authors need a useful definition of SemVer for TypeScript’s type system.
 
-This is somewhat more complicated than in other languages, even those other statically-typed languages with language-level SemVer guarantees (such as [Rust][rust-semver] and Elm), because TypeScript has an unusually flexible type system. In particular, its [structural type system][structural] means many more kinds of both breaking and non-breaking changes are possible than in languages with a [nominal type system][nominal][^other-structural-types] Accordingly, this document proposes a definition of SemVer which accounts for the extra flexibility afforded by these features.
+This is somewhat more complicated than in other languages, even those other statically-typed languages with language-level SemVer guarantees (such as [Rust][rust-semver] and Elm), because TypeScript has an unusually flexible type system. In particular, its [structural type system][structural] means many more kinds of both breaking and non-breaking changes are possible than in languages with a [nominal type system][nominal].[^other-structural-types] Accordingly, this document proposes a definition of SemVer which accounts for the extra flexibility afforded by these features.
 
 [rust-semver]: https://rust-lang.github.io/rfcs/1122-language-semver.html
 [structural]: https://en.wikipedia.org/wiki/Structural_type_system
