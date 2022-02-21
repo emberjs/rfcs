@@ -24,11 +24,12 @@ RFC PR: https://github.com/emberjs/rfcs/pull/793
 
 ## Summary
 
-Allow setting polymorph relations without inheritance and mixins.
+1. Allow setting polymorph relations without inheritance and mixins.
+2. Deprecate using inheritance and mixins for polymorphic relations. Target version: 5.0.
 
 ## Motivation
 
-In pre-octane Ember you could set polymorphic relations using two ways: inheritance or mixins. Mixins are deprecated and impossible to use with native classes, so the only option is to use inheritance:
+You could set polymorphic relations using two ways: inheritance or mixins.
 
 ```js
 import Model, { belongsTo, hasMany } from '@ember-data/model';
@@ -47,46 +48,25 @@ class CommentModel extends TaggableModel {}
 class PostModel extends TaggableModel {}
 ```
 
-Which fells apart when you need your model to be a target of several polymorphic relations.
+Now consider that this same post and comment class also both need to be "viewable", and that "viewable" is a trait also shared by other models that are not "taggable". Today this is only achievable via mixins.
 
 ```js
 import Model, { belongsTo, hasMany } from '@ember-data/model';
+
+class TagModel extends Model {
+  @belongsTo('taggable', { polymorphic: true }) taggable;
+}
 
 class ViewModel extends Model {
   @belongsTo('viewable', { polymorphic: true }) viewable;
 }
 
-class ViewableModel extends Model {
-  @hasMany('views', { inverse: 'viewable' }) views;
-}
-
-// How to make Comment and Post viewable?...
-```
-
-You can do some dirty tricks making it inherit from each other  `ViewableModel extends TaggableModel`. Or even by adding new base model class, like this:
-
-```js
-
-import Model, { belongsTo, hasMany } from '@ember-data/model';
-
-class ModelWithPolymorphic extends Model {}
-
-class TagModel extends Model {
-  @belongsTo('model-with-polymorphic', { polymorphic: true }) taggable;
-}
-
-class ViewModel extends Model {
-  @belongsTo('model-with-polymorphic', { polymorphic: true }) viewable;
-}
-
-class CommentModel extends ModelWithPolymorphic {
-  @hasMany('views', { inverse: 'viewable' }) views;
+class CommentModel extends Model.extends(TaggableMixin, ViewableMixin) {
   @hasMany('tag', { inverse: 'taggable' }) tags;
+  @hasMany('views', { inverse: 'viewable' }) views;
 }
 
 ```
-
-While it solves the problem, it seems like a misuse of inheritance and too much trickery involved.
 
 ## Detailed design
 
