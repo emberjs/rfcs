@@ -13,7 +13,7 @@ RFC PR: https://github.com/emberjs/rfcs/pull/795
 
 ## Summary
 
-Model.save() will return a Promise wrapper instead of a PromiseObject.
+Model.save() will return a Promise instead of a [`PromiseProxyMixin`](https://api.emberjs.com/ember/release/classes/PromiseProxyMixin), otherwise referred to as a PromiseObject from here on out.
 
 ## Motivation
 
@@ -22,11 +22,11 @@ Model.save() will return a Promise wrapper instead of a PromiseObject.
 * Async Consistency - The PromiseObject encourages a usage pattern of sometimes-async, sometimes-sync behavior. We want to [reduce zalgo](http://blog.izs.me/post/59142742143/designing-apis-for-asynchrony).
 * API consistency - While the PromiseObject proxies properties, the PromiseObject does not proxy methods on the underlying model. For instance, if you try to call a method like destroyRecord on the model, you will get a “not a function” error because the method is called on the Proxy and not the underlying model. This encourages users for Ember Data to reach into private implementation details of the promise proxy, such as using proxy.get('content') to call methods.
 * Enable new functionality in Ember Data while making backwards compatibility with older versions of Ember easier.
-* The documentation of using PromiseProxy APIs has been replaced over time in the guides and API documentation to use more typical JavaScript usage of Promises, such as async/await, instead of PromiseProxies.
+* The documentation of using PromiseObject APIs have been replaced over time in the guides and API documentation to use more typical JavaScript usage of Promises, such as async/await, instead of PromiseProxies.
 
 ## Detailed design
 
-Introduce a new feature flag, `DS_MODEL_SAVE_PROMISE`, Model.save() will return an an Promise wrapper that resolves with the model if the save was successful, or rejects with an error if the save fails. Moreover, `isPending`, `isResolved`, and `isRejected` will be exposed as derived state on the promise.  When disabled, a PromiseObject will be returned to keep today's behavior, but accessing properties on the PromiseObject or calling non-Promise functions (.then, .finally, .catch) on the PromiseObject will issue a deprecation warning.
+Introduce a new feature flag, `DS_MODEL_SAVE_PROMISE`, Model.save() will return an a Promise that resolves with the model if the save was successful, or rejects with an error if the save fails.  When disabled, a PromiseObject will be returned to keep today's behavior, but accessing properties on the PromiseObject or calling non-Promise functions (.then, .finally, .catch) on the PromiseObject will issue a deprecation warning.
 
 Deprecation Plan:
 
@@ -61,12 +61,11 @@ We do not believe this requires any update to the Ember curriculum. API document
 
 ## Drawbacks
 
-For users relying on this behavior, they may have to refactor their code to access model properties and methods, especially if they were reaching for private APIs.
+For users relying on this behavior, they will have to refactor their code to either use patterns like async/await, ember-concurrency, or ember-promise-helpers. Alternatively, if all they want to access are properties on the model, they can use the model instead.
 
 ## Alternatives
 
 - The impact of not doing this prevents further changes in Ember Data.
-- We could just return a promise instead of wrapper around the promise.
-- Return a promise but also exposing a template/js helper in a new package that wraps any promise exposing these flags providing broader utility without imposing this promise-state management on ember-data itself.
+- Return a promise but also exposing a template/js helper in a new package that wraps any promise exposing isResolved and isRejected flags. This helps maintain similar behaviour to the existing implementation.
 
 ## Unresolved questions
