@@ -101,11 +101,13 @@ Community-maintained learning resources like blogs, videos, and livestreams
 
 We know that something may belong in the cookbook if we answer yes to the following questions:
 
-The concept can be explained in an article that would take less than TODO mins to read
-The concept is not already shown in the Super Rentals tutorial
-The article helps show how to put together multiple Ember features to achieve a goal.
-The article is trying to demonstrate a pattern, not teach a concept. For example, if we are showing how to use a model hook to accomplish something, we are not explaining what a model hook is.
-[It is narrowly tailored to solve a single problem](https://guides.emberjs.com/v1.12.0/cookbook/contributing/deciding_if_a_recipe_is_a_good_fit/#toc_solution)
+- The concept can be explained in an article that would take less than 10 mins to read
+- The concept is not already shown in the Super Rentals tutorial
+- The article helps show how to put together multiple Ember features to achieve a goal.
+- The article is trying to demonstrate a pattern, not teach a concept. For example, if we are showing how to use a model hook to accomplish something, we are not explaining what a model hook is.
+- [It is narrowly tailored to solve a single problem](https://guides.emberjs.com/v1.12.0/cookbook/contributing/deciding_if_a_recipe_is_a_good_fit/#toc_solution)
+- It shows how to solve a problem that Ember apps may commonly face. For example, managing a dropdown menu or creating a form are common. Integrating WebRTC is not.
+- The article goal can be accomplished without installing new addons, with the exception of addons mentioned in the Guides.
 
 Removal of recipes
 If a topic becomes obsolete for any reason, we could add a warning at the top. An archived section for outdated things would help with this. This way the links stay forever but hidden in a section. This way it will serve as an example of which pattern is deprecated.
