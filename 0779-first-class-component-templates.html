@@ -1,0 +1,1592 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>0779-first-class-component-templates</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="0001-transform-attribute-meta-parameter.html">0001-transform-attribute-meta-parameter</a></li><li class="chapter-item expanded "><a href="0003-block-params.html">0003-block-params</a></li><li class="chapter-item expanded "><a href="0003-cli-ember-doctor.html">0003-cli-ember-doctor</a></li><li class="chapter-item expanded "><a href="0010-engines.html">0010-engines</a></li><li class="chapter-item expanded "><a href="0011-improved-cp-syntax.html">0011-improved-cp-syntax</a></li><li class="chapter-item expanded "><a href="0012-help-json-output.html">0012-help-json-output</a></li><li class="chapter-item expanded "><a href="0015-the-road-to-ember-2-0.html">0015-the-road-to-ember-2-0</a></li><li class="chapter-item expanded "><a href="0020-sri-default.html">0020-sri-default</a></li><li class="chapter-item expanded "><a href="0023-command-line-completion.html">0023-command-line-completion</a></li><li class="chapter-item expanded "><a href="0024-bound-attributes.html">0024-bound-attributes</a></li><li class="chapter-item expanded "><a href="0028-app-import-output-file.html">0028-app-import-output-file</a></li><li class="chapter-item expanded "><a href="0029-addon-black-and-whitelist-for-apps.html">0029-addon-black-and-whitelist-for-apps</a></li><li class="chapter-item expanded "><a href="0045-internet-explorer.html">0045-internet-explorer</a></li><li class="chapter-item expanded "><a href="0046-cli-improved-release-process.html">0046-cli-improved-release-process</a></li><li class="chapter-item expanded "><a href="0046-registry-reform.html">0046-registry-reform</a></li><li class="chapter-item expanded "><a href="0050-cli-production-code-stripping.html">0050-cli-production-code-stripping</a></li><li class="chapter-item expanded "><a href="0050-improved-actions.html">0050-improved-actions</a></li><li class="chapter-item expanded "><a href="0053-helpers.html">0053-helpers</a></li><li class="chapter-item expanded "><a href="0055-anonymous-amd.html">0055-anonymous-amd</a></li><li class="chapter-item expanded "><a href="0056-improved-release-cycle.html">0056-improved-release-cycle</a></li><li class="chapter-item expanded "><a href="0057-ember-data-reference-unification.html">0057-ember-data-reference-unification</a></li><li class="chapter-item expanded "><a href="0058-helper-listing.html">0058-helper-listing</a></li><li class="chapter-item expanded "><a href="0061-ember-data-background-fetch.html">0061-ember-data-background-fetch</a></li><li class="chapter-item expanded "><a href="0064-contextual-component-lookup.html">0064-contextual-component-lookup</a></li><li class="chapter-item expanded "><a href="0065-deprecation-warning-handlers.html">0065-deprecation-warning-handlers</a></li><li class="chapter-item expanded "><a href="0080-serve-file-api.html">0080-serve-file-api</a></li><li class="chapter-item expanded "><a href="0086-firefox-in-ci.html">0086-firefox-in-ci</a></li><li class="chapter-item expanded "><a href="0090-addon-tree-caching.html">0090-addon-tree-caching</a></li><li class="chapter-item expanded "><a href="0091-cli-addon-instrumentation-experimental-hooks.html">0091-cli-addon-instrumentation-experimental-hooks</a></li><li class="chapter-item expanded "><a href="0091-weakmap.html">0091-weakmap</a></li><li class="chapter-item expanded "><a href="0092-blueprint-remove-old-files.html">0092-blueprint-remove-old-files</a></li><li class="chapter-item expanded "><a href="0095-cli-standardise-targets.html">0095-cli-standardise-targets</a></li><li class="chapter-item expanded "><a href="0095-router-service.html">0095-router-service</a></li><li class="chapter-item expanded "><a href="0096-enable-yarn-usage.html">0096-enable-yarn-usage</a></li><li class="chapter-item expanded "><a href="0101-ember-data-friendly-errors.html">0101-ember-data-friendly-errors</a></li><li class="chapter-item expanded "><a href="0105-addons-optionalDependencies.html">0105-addons-optionalDependencies</a></li><li class="chapter-item expanded "><a href="0108-add-custom-transform.html">0108-add-custom-transform</a></li><li class="chapter-item expanded "><a href="0110-packaging.html">0110-packaging</a></li><li class="chapter-item expanded "><a href="0114-add-template-lint-addon.html">0114-add-template-lint-addon</a></li><li class="chapter-item expanded "><a href="0116-qunit-dom.html">0116-qunit-dom</a></li><li class="chapter-item expanded "><a href="0120-cli-guides.html">0120-cli-guides</a></li><li class="chapter-item expanded "><a href="0120-route-serializers.html">0120-route-serializers</a></li><li class="chapter-item expanded "><a href="0121-remove-ember-cli-eslint.html">0121-remove-ember-cli-eslint</a></li><li class="chapter-item expanded "><a href="0136-contains-to-includes.html">0136-contains-to-includes</a></li><li class="chapter-item expanded "><a href="0139-isHtmlSafe.html">0139-isHtmlSafe</a></li><li class="chapter-item expanded "><a href="0143-module-unification.html">0143-module-unification</a></li><li class="chapter-item expanded "><a href="0150-factory-for.html">0150-factory-for</a></li><li class="chapter-item expanded "><a href="0176-javascript-module-api.html">0176-javascript-module-api</a></li><li class="chapter-item expanded "><a href="0178-deprecate-ember-k.html">0178-deprecate-ember-k</a></li><li class="chapter-item expanded "><a href="0181-deprecate-ember-data-initializers.html">0181-deprecate-ember-data-initializers</a></li><li class="chapter-item expanded "><a href="0186-track-unique-history-location-state.html">0186-track-unique-history-location-state</a></li><li class="chapter-item expanded "><a href="0191-deprecate-component-lifecycle-hook-args.html">0191-deprecate-component-lifecycle-hook-args</a></li><li class="chapter-item expanded "><a href="0194-deprecate-custom-event-manager.html">0194-deprecate-custom-event-manager</a></li><li class="chapter-item expanded "><a href="0213-custom-components.html">0213-custom-components</a></li><li class="chapter-item expanded "><a href="0225-ember-engines-mount-params.html">0225-ember-engines-mount-params</a></li><li class="chapter-item expanded "><a href="0226-named-blocks.html">0226-named-blocks</a></li><li class="chapter-item expanded "><a href="0229-deprecate-testing-restricted-resolver.html">0229-deprecate-testing-restricted-resolver</a></li><li class="chapter-item expanded "><a href="0232-simplify-qunit-testing-api.html">0232-simplify-qunit-testing-api</a></li><li class="chapter-item expanded "><a href="0236-deprecation-ember-string.html">0236-deprecation-ember-string</a></li><li class="chapter-item expanded "><a href="0237-deprecation-ember-map.html">0237-deprecation-ember-map</a></li><li class="chapter-item expanded "><a href="0240-es-classes.html">0240-es-classes</a></li><li class="chapter-item expanded "><a href="0252-browser-support-changes.html">0252-browser-support-changes</a></li><li class="chapter-item expanded "><a href="0268-acceptance-testing-refactor.html">0268-acceptance-testing-refactor</a></li><li class="chapter-item expanded "><a href="0272-deprecation-native-function-prototype-extensions.html">0272-deprecation-native-function-prototype-extensions</a></li><li class="chapter-item expanded "><a href="0276-named-args.html">0276-named-args</a></li><li class="chapter-item expanded "><a href="0278-template-only-components.html">0278-template-only-components</a></li><li class="chapter-item expanded "><a href="0280-remove-application-wrapper.html">0280-remove-application-wrapper</a></li><li class="chapter-item expanded "><a href="0281-es5-getters.html">0281-es5-getters</a></li><li class="chapter-item expanded "><a href="0286-block-let-template-helper.html">0286-block-let-template-helper</a></li><li class="chapter-item expanded "><a href="0287-promote-in-element-to-public-api.html">0287-promote-in-element-to-public-api</a></li><li class="chapter-item expanded "><a href="0293-record-data.html">0293-record-data</a></li><li class="chapter-item expanded "><a href="0294-optional-jquery.html">0294-optional-jquery</a></li><li class="chapter-item expanded "><a href="0297-deprecate-ember-logger.html">0297-deprecate-ember-logger</a></li><li class="chapter-item expanded "><a href="0300-rfc-process-update.html">0300-rfc-process-update</a></li><li class="chapter-item expanded "><a href="0308-deprecate-property-lookup-fallback.html">0308-deprecate-property-lookup-fallback</a></li><li class="chapter-item expanded "><a href="0311-angle-bracket-invocation.html">0311-angle-bracket-invocation</a></li><li class="chapter-item expanded "><a href="0318-array-helper.html">0318-array-helper</a></li><li class="chapter-item expanded "><a href="0322-deprecate-copy-copyable.html">0322-deprecate-copy-copyable</a></li><li class="chapter-item expanded "><a href="0324-deprecate-component-isvisible.html">0324-deprecate-component-isvisible</a></li><li class="chapter-item expanded "><a href="0326-ember-data-filter-deprecation.html">0326-ember-data-filter-deprecation</a></li><li class="chapter-item expanded "><a href="0329-deprecated-ember-evented-in-ember-data.html">0329-deprecated-ember-evented-in-ember-data</a></li><li class="chapter-item expanded "><a href="0331-deprecate-globals-resolver.html">0331-deprecate-globals-resolver</a></li><li class="chapter-item expanded "><a href="0332-ember-data-record-links-and-meta.html">0332-ember-data-record-links-and-meta</a></li><li class="chapter-item expanded "><a href="0335-deprecate-send-action.html">0335-deprecate-send-action</a></li><li class="chapter-item expanded "><a href="0337-native-class-constructor-update.html">0337-native-class-constructor-update</a></li><li class="chapter-item expanded "><a href="0340-deprecate-ember-merge.html">0340-deprecate-ember-merge</a></li><li class="chapter-item expanded "><a href="0345-discord.html">0345-discord</a></li><li class="chapter-item expanded "><a href="0364-roadmap-2018.html">0364-roadmap-2018</a></li><li class="chapter-item expanded "><a href="0369-deprecate-computed-clobberability.html">0369-deprecate-computed-clobberability</a></li><li class="chapter-item expanded "><a href="0370-deprecate-computed-volatile.html">0370-deprecate-computed-volatile</a></li><li class="chapter-item expanded "><a href="0372-ember-data-model-factory-for.html">0372-ember-data-model-factory-for</a></li><li class="chapter-item expanded "><a href="0373-Element-Modifier-Managers.html">0373-Element-Modifier-Managers</a></li><li class="chapter-item expanded "><a href="0375-deprecate-computed-property-modifier.html">0375-deprecate-computed-property-modifier</a></li><li class="chapter-item expanded "><a href="0386-remove-jquery.html">0386-remove-jquery</a></li><li class="chapter-item expanded "><a href="0389-dynamic-tag-names.html">0389-dynamic-tag-names</a></li><li class="chapter-item expanded "><a href="0391-router-helpers.html">0391-router-helpers</a></li><li class="chapter-item expanded "><a href="0392-deprecate-component-manager-string-lookup.html">0392-deprecate-component-manager-string-lookup</a></li><li class="chapter-item expanded "><a href="0395-ember-data-packages.html">0395-ember-data-packages</a></li><li class="chapter-item expanded "><a href="0398-RouteInfo-Metadata.html">0398-RouteInfo-Metadata</a></li><li class="chapter-item expanded "><a href="0403-ember-data-identifiers.html">0403-ember-data-identifiers</a></li><li class="chapter-item expanded "><a href="0408-decorators.html">0408-decorators</a></li><li class="chapter-item expanded "><a href="0410-tracked-properties.html">0410-tracked-properties</a></li><li class="chapter-item expanded "><a href="0415-render-element-modifiers.html">0415-render-element-modifiers</a></li><li class="chapter-item expanded "><a href="0416-glimmer-components.html">0416-glimmer-components</a></li><li class="chapter-item expanded "><a href="0418-deprecate-route-render-methods.html">0418-deprecate-route-render-methods</a></li><li class="chapter-item expanded "><a href="0421-deprecate-application-controller-props.html">0421-deprecate-application-controller-props</a></li><li class="chapter-item expanded "><a href="0425-website-redesign.html">0425-website-redesign</a></li><li class="chapter-item expanded "><a href="0431-guides-restructure.html">0431-guides-restructure</a></li><li class="chapter-item expanded "><a href="0432-contextual-helpers.html">0432-contextual-helpers</a></li><li class="chapter-item expanded "><a href="0435-modifier-splattributes.html">0435-modifier-splattributes</a></li><li class="chapter-item expanded "><a href="0440-decorator-support.html">0440-decorator-support</a></li><li class="chapter-item expanded "><a href="0445-deprecate-with.html">0445-deprecate-with</a></li><li class="chapter-item expanded "><a href="0446-contribution-guides.html">0446-contribution-guides</a></li><li class="chapter-item expanded "><a href="0449-deprecate-partials.html">0449-deprecate-partials</a></li><li class="chapter-item expanded "><a href="0451-injection-parameter-normalization.html">0451-injection-parameter-normalization</a></li><li class="chapter-item expanded "><a href="0452-ember-data-medium-term-plan.html">0452-ember-data-medium-term-plan</a></li><li class="chapter-item expanded "><a href="0457-nested-lookups.html">0457-nested-lookups</a></li><li class="chapter-item expanded "><a href="0459-angle-bracket-built-in-components.html">0459-angle-bracket-built-in-components</a></li><li class="chapter-item expanded "><a href="0460-yieldable-named-blocks.html">0460-yieldable-named-blocks</a></li><li class="chapter-item expanded "><a href="0461-ember-data-singleton-record-data.html">0461-ember-data-singleton-record-data</a></li><li class="chapter-item expanded "><a href="0463-record-data-state.html">0463-record-data-state</a></li><li class="chapter-item expanded "><a href="0465-record-data-errors.html">0465-record-data-errors</a></li><li class="chapter-item expanded "><a href="0466-request-state-service.html">0466-request-state-service</a></li><li class="chapter-item expanded "><a href="0468-classic-decorator.html">0468-classic-decorator</a></li><li class="chapter-item expanded "><a href="0470-fn-helper.html">0470-fn-helper</a></li><li class="chapter-item expanded "><a href="0471-on-modifier.html">0471-on-modifier</a></li><li class="chapter-item expanded "><a href="0477-blueprints-update.html">0477-blueprints-update</a></li><li class="chapter-item expanded "><a href="0478-tracked-properties-updates.html">0478-tracked-properties-updates</a></li><li class="chapter-item expanded "><a href="0481-component-templates-co-location.html">0481-component-templates-co-location</a></li><li class="chapter-item expanded "><a href="0486-deprecate-mouseenter.html">0486-deprecate-mouseenter</a></li><li class="chapter-item expanded "><a href="0487-custom-model-classes.html">0487-custom-model-classes</a></li><li class="chapter-item expanded "><a href="0491-deprecate-disconnect-outlet.html">0491-deprecate-disconnect-outlet</a></li><li class="chapter-item expanded "><a href="0494-async-observers.html">0494-async-observers</a></li><li class="chapter-item expanded "><a href="0496-handlebars-strict-mode.html">0496-handlebars-strict-mode</a></li><li class="chapter-item expanded "><a href="0507-embroider-v2-package-format.html">0507-embroider-v2-package-format</a></li><li class="chapter-item expanded "><a href="0519-2019-2020-roadmap.html">0519-2019-2020-roadmap</a></li><li class="chapter-item expanded "><a href="0521-find-by-identifier.html">0521-find-by-identifier</a></li><li class="chapter-item expanded "><a href="0522-default-serializers-and-adapters.html">0522-default-serializers-and-adapters</a></li><li class="chapter-item expanded "><a href="0523-model-argument-for-route-templates.html">0523-model-argument-for-route-templates</a></li><li class="chapter-item expanded "><a href="0554-deprecate-getwithdefault.html">0554-deprecate-getwithdefault</a></li><li class="chapter-item expanded "><a href="0558-edition-detection.html">0558-edition-detection</a></li><li class="chapter-item expanded "><a href="0560-add-equality-operators.html">0560-add-equality-operators</a></li><li class="chapter-item expanded "><a href="0561-add-numeric-comparison-operators.html">0561-add-numeric-comparison-operators</a></li><li class="chapter-item expanded "><a href="0562-add-logical-operators.html">0562-add-logical-operators</a></li><li class="chapter-item expanded "><a href="0566-memo-decorator.html">0566-memo-decorator</a></li><li class="chapter-item expanded "><a href="0580-destroyables.html">0580-destroyables</a></li><li class="chapter-item expanded "><a href="0581-new-test-waiters.html">0581-new-test-waiters</a></li><li class="chapter-item expanded "><a href="0585-improved-ember-registry-apis.html">0585-improved-ember-registry-apis</a></li><li class="chapter-item expanded "><a href="0615-autotracking-memoization.html">0615-autotracking-memoization</a></li><li class="chapter-item expanded "><a href="0617-rfc-stages.html">0617-rfc-stages</a></li><li class="chapter-item expanded "><a href="0625-helper-managers.html">0625-helper-managers</a></li><li class="chapter-item expanded "><a href="0626-invoke-helper.html">0626-invoke-helper</a></li><li class="chapter-item expanded "><a href="0628-prettier.html">0628-prettier</a></li><li class="chapter-item expanded "><a href="0631-refresh-method-for-router-service.html">0631-refresh-method-for-router-service</a></li><li class="chapter-item expanded "><a href="0635-ember-new-lang.html">0635-ember-new-lang</a></li><li class="chapter-item expanded "><a href="0637-customizable-test-setups.html">0637-customizable-test-setups</a></li><li class="chapter-item expanded "><a href="0638-interactive-app-creation.html">0638-interactive-app-creation</a></li><li class="chapter-item expanded "><a href="0639-replace-blacklist-whitelist.html">0639-replace-blacklist-whitelist</a></li><li class="chapter-item expanded "><a href="0645-add-ember-page-title-addon.html">0645-add-ember-page-title-addon</a></li><li class="chapter-item expanded "><a href="0649-deprecation-staging.html">0649-deprecation-staging</a></li><li class="chapter-item expanded "><a href="0659-unique-id-helper.html">0659-unique-id-helper</a></li><li class="chapter-item expanded "><a href="0669-tracked-storage-primitive.html">0669-tracked-storage-primitive</a></li><li class="chapter-item expanded "><a href="0671-modernize-built-in-components-1.html">0671-modernize-built-in-components-1</a></li><li class="chapter-item expanded "><a href="0673-deprecate-tryinvoke.html">0673-deprecate-tryinvoke</a></li><li class="chapter-item expanded "><a href="0674-deprecate-transition-methods-of-controller-and-route.html">0674-deprecate-transition-methods-of-controller-and-route</a></li><li class="chapter-item expanded "><a href="0680-implicit-injection-deprecation.html">0680-implicit-injection-deprecation</a></li><li class="chapter-item expanded "><a href="0685-new-browser-support-policy.html">0685-new-browser-support-policy</a></li><li class="chapter-item expanded "><a href="0686-deprecate-old-manager-capabilities-versions.html">0686-deprecate-old-manager-capabilities-versions</a></li><li class="chapter-item expanded "><a href="0689-deprecate-has-block.html">0689-deprecate-has-block</a></li><li class="chapter-item expanded "><a href="0690-deprecate-attrs-in-templates.html">0690-deprecate-attrs-in-templates</a></li><li class="chapter-item expanded "><a href="0691-deprecate-class-binding-and-class-name-bindings.html">0691-deprecate-class-binding-and-class-name-bindings</a></li><li class="chapter-item expanded "><a href="0692-deprecate-array-observers.html">0692-deprecate-array-observers</a></li><li class="chapter-item expanded "><a href="0698-deprecate-link-to-positional-arguments.html">0698-deprecate-link-to-positional-arguments</a></li><li class="chapter-item expanded "><a href="0702-eslint-plugin-qunit.html">0702-eslint-plugin-qunit</a></li><li class="chapter-item expanded "><a href="0704-deprecate-octane-optional-features.html">0704-deprecate-octane-optional-features</a></li><li class="chapter-item expanded "><a href="0705-deprecate-jquery-optional-feature.html">0705-deprecate-jquery-optional-feature</a></li><li class="chapter-item expanded "><a href="0706-deprecate-ember-global.html">0706-deprecate-ember-global</a></li><li class="chapter-item expanded "><a href="0707-modernize-built-in-components-2.html">0707-modernize-built-in-components-2</a></li><li class="chapter-item expanded "><a href="0711-deprecate-auto-location.html">0711-deprecate-auto-location</a></li><li class="chapter-item expanded "><a href="0738-ember-data-deprecate-model-reopen.html">0738-ember-data-deprecate-model-reopen</a></li><li class="chapter-item expanded "><a href="0750-deprecate-ember-assign.html">0750-deprecate-ember-assign</a></li><li class="chapter-item expanded "><a href="0752-inject-service.html">0752-inject-service</a></li><li class="chapter-item expanded "><a href="0756-helper-default-manager.html">0756-helper-default-manager</a></li><li class="chapter-item expanded "><a href="0772-deprecate-bower-support.html">0772-deprecate-bower-support</a></li><li class="chapter-item expanded "><a href="0776-typescript-blueprints.html">0776-typescript-blueprints</a></li><li class="chapter-item expanded "><a href="0779-first-class-component-templates.html" class="active">0779-first-class-component-templates</a></li><li class="chapter-item expanded "><a href="0794-ember-data-schema-definition-service-simplify.html">0794-ember-data-schema-definition-service-simplify</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <hr />
+<h2>Stage: Accepted
+Start Date: 2021-12-03
+Release Date: Unreleased
+Release Versions:
+ember-source: vX.Y.Z
+ember-data: vX.Y.Z
+Relevant Team(s): Ember.js, Learning, Ember CLI
+RFC PR: https://github.com/emberjs/rfcs/pull/779</h2>
+<h1 id="first-class-component-templates"><a class="header" href="#first-class-component-templates">First-Class Component Templates</a></h1>
+<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
+<p>Adopt <code>&lt;template&gt;</code> tags as a format for making component templates first-class participants in JavaScript and TypeScript with <a href="https://emberjs.github.io/rfcs/0496-handlebars-strict-mode.html">strict mode</a> template semantics. In support of the new syntax, adopt new custom JavaScript and TypeScript files with the extensions <code>.gjs</code> and <code>.gts</code> respectively.</p>
+<p>First-class component templates address a number of pain points in today’s component authoring world, and provide a number of new capabilities to Ember and Glimmer users:</p>
+<ul>
+<li>
+<p>accessing local JavaScript values with no ceremony and no backing class, enabling much easier use of existing JavaScript ecosystem tools, including especially styling libraries—standard <a href="https://github.com/css-modules/css-modules">CSS Modules</a> will “just work,” for example</p>
+</li>
+<li>
+<p>authoring more than one component in a single file, where colocation makes sense—and thereby providing more control over a component’s public API</p>
+</li>
+<li>
+<p>likewise authoring locally-scoped helpers, modifiers, and other JavaScript functionality</p>
+</li>
+</ul>
+<p>First-class component templates offer these new capabilities while not only maintaining but <em>improving</em> Ember’s long-standing commitment to integrated testing, in that it allows app and test code to share a single authoring paradigm—substantially simplifying our teaching story. Similarly, it preserves Ember’s long-standing commitment to treating JavaScript and HTML (and CSS!) as distinctive concerns which, however closely related, are not the <em>same</em>.</p>
+<details><summary>Full-fledged example showing how this might work in practice</summary>
+<p>Two notes:</p>
+<ul>
+<li>
+<p>For this and all the examples in the RFC, I assume <a href="https://github.com/emberjs/rfcs/pull/757">RFC #0757: Default Modifier Manager</a> for simplicity, but it does not meaningfully change <em>this</em> proposal.</p>
+</li>
+<li>
+<p>The syntax highlighting here is a mess… but that's because GitHub still doesn't have good highlighting for <em>decorators</em>. Samples which have <code>&lt;template&gt;</code> but <em>not</em> <code>@tracked</code> actually already highlight decently well.</p>
+</li>
+</ul>
+<pre><code class="language-js">import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+
+const Greet = &lt;template&gt;
+  &lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+&lt;/template&gt;
+
+class SetUsername extends Component {
+  @tracked name = '';
+
+  updateName = ({ target: { value } }) =&gt; {
+    this.name = value;
+  }
+
+  saveName = (submitEvent) =&gt; {
+    submitEvent.preventDefault();
+    this.args.onSaveName(this.name);
+  };
+
+  &lt;template&gt;
+    &lt;form {{on &quot;submit&quot; this.saveName}}&gt;
+      &lt;label for='name'&gt;Set username:&lt;/label&gt;
+      &lt;input
+        id='name'
+        value={{this.value}}
+        {{on &quot;input&quot; this.updateName}}
+      /&gt;
+      &lt;button type='submit' disabled={{eq this.value.length 0}}&gt;
+        Generate
+      &lt;/button&gt;
+    &lt;/form&gt;
+  &lt;/template&gt;
+}
+
+function replaceLocation(el, { with: newUrl }) {
+  el.contentWindow.location.replace(newUrl);
+}
+
+export default class GenerateAvatar extends Component {
+  @tracked name = &quot;&quot;;
+
+  get previewUrl() {
+    return `http://www.example.com/avatars/${name}`;
+  }
+
+  updateName = (newName) =&gt; {
+    this.name = newName;
+  };
+
+  &lt;template&gt;
+    &lt;Greet @name={{this.name}} /&gt;
+    &lt;SetUsername
+      @name={{this.name}}
+      @onSaveName={{this.updateName}}
+    /&gt;
+    
+    {{#if (gt 0 this.name.length)}}
+      &lt;iframe
+        title='Preview'
+        {{replaceLocation with=this.previewUrl}}
+      &gt;
+    {{/if}}
+  &lt;/template&gt;
+}
+</code></pre>
+</details>
+<h3 id="contents"><a class="header" href="#contents">Contents <!-- omit in toc --></a></h3>
+<ul>
+<li><a href="#summary">Summary</a></li>
+<li><a href="#motivation">Motivation</a>
+<ul>
+<li><a href="#namespaces-and-modules">Namespaces and Modules</a></li>
+<li><a href="#scope">Scope</a></li>
+<li><a href="#ecosystem-integration">Ecosystem integration</a></li>
+<li><a href="#testing">Testing</a></li>
+<li><a href="#the-solution">The solution</a></li>
+<li><a href="#constraints">Constraints</a></li>
+</ul>
+</li>
+<li><a href="#detailed-design">Detailed design</a>
+<ul>
+<li><a href="#compilation">Compilation</a>
+<ul>
+<li><a href="#standalone">Standalone</a></li>
+<li><a href="#bound-to-a-name">Bound to a name</a></li>
+<li><a href="#class-body">Class body</a></li>
+</ul>
+</li>
+<li><a href="#performance">Performance</a></li>
+<li><a href="#interop">Interop</a>
+<ul>
+<li><a href="#named-exports">Named exports</a></li>
+<li><a href="#non-colocated-templates">Non-colocated templates</a></li>
+</ul>
+</li>
+<li><a href="#the-prelude">The “prelude”</a></li>
+<li><a href="#tooling">Tooling</a>
+<ul>
+<li><a href="#syntax-highlighting">Syntax highlighting</a></li>
+<li><a href="#blueprints">Blueprints</a></li>
+<li><a href="#linting-and-formatting">Linting and formatting</a></li>
+<li><a href="#language-server-support">Language server support</a></li>
+<li><a href="#codemod">Codemod</a></li>
+</ul>
+</li>
+<li><a href="#typescript">TypeScript</a></li>
+<li><a href="#custom-file-extension">Custom file extension</a></li>
+<li><a href="#spec">Spec</a></li>
+</ul>
+</li>
+<li><a href="#transition-path">Transition path</a></li>
+<li><a href="#how-we-teach-this">How we teach this</a>
+<ul>
+<li><a href="#guides">Guides</a>
+<ul>
+<li><a href="#tutorial">Tutorial</a></li>
+<li><a href="#core-concepts-components">Core Concepts: Components</a></li>
+</ul>
+</li>
+<li><a href="#api-docs">API Docs</a></li>
+<li><a href="#existing-ember-users">Existing Ember users</a></li>
+</ul>
+</li>
+<li><a href="#drawbacks">Drawbacks</a></li>
+<li><a href="#alternatives">Alternatives</a>
+<ul>
+<li><a href="#typescript-signature">TypeScript signature</a></li>
+<li><a href="#distinguishing-class-backed-and-template-only-components">Distinguishing class-backed and template-only components</a></li>
+<li><a href="#alternative-syntaxes">Alternative syntaxes</a>
+<ul>
+<li><a href="#imports-only">Imports-only</a></li>
+<li><a href="#sfcs">SFCs</a></li>
+<li><a href="#template-literals-hbs">Template literals (<code>hbs</code>)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#unresolved-questions">Unresolved questions</a></li>
+</ul>
+<h2 id="motivation"><a class="header" href="#motivation">Motivation</a></h2>
+<p>Today, authors of Ember and Glimmer apps and libraries must author their templates and JavaScript in separate <code>.hbs</code> and <code>.js</code> files, and the templates exist in a “resolution” mode where every component, helper, and modifier exists in a single global namespace. This has a number of significant downsides. What’s more, there are significant new capabilities for Ember and Glimmer authors made available by embracing JavaScript scope—while keeping our commitments to testing and separation of concerns.<sup class="footnote-reference"><a href="#original-primitives-rfc">1</a></sup></p>
+<div class="footnote-definition" id="original-primitives-rfc"><sup class="footnote-definition-label">1</sup>
+<p>See also <a href="https://github.com/emberjs/rfcs/blob/tomdale/template-primitives/text/000-sfc-and-template-import-primitives.md">the SFC &amp; Template Import Primitives RFC</a>, which described the motivation for implementing the primitives on which this proposal will build.</p>
+</div>
+<h3 id="namespaces-and-modules"><a class="header" href="#namespaces-and-modules">Namespaces and Modules</a></h3>
+<p>First, because of the global namespace, name conflicts are common, and avoiding them requires either manually namespacing components or using (now-deprecated) experimental tools like <a href="https://github.com/rwjblue/ember-holy-futuristic-template-namespacing-batman"><code>ember-holy-futuristic-template-namespacing-batman</code></a>. But:</p>
+<ul>
+<li>
+<p>Manually namespacing is clunky and does not actually <em>guarantee</em> there won't be conflicts. Combined with the way addons typically supply their components, helpers, and modifiers into the app namespace, name conflicts are sometimes unavoidable.</p>
+</li>
+<li>
+<p>Even the workaround via <code>ember-holy-futuristic-template-namespacing-batman</code> requires using different names for modules in Ember than their Node package name when the Node package uses <a href="https://docs.npmjs.com/cli/v8/using-npm/scope">npm scopes</a>. (This was one of the original motivations for exploring a design which leverages JavaScript modules, in fact!) Since our resolution modes must ultimately deal in JavaScript terms, we are in the position of always potentially being one ecosystem shift away from another syntax conflict with template-language-only designs for managing scope.</p>
+</li>
+<li>
+<p>It requires our tooling to understand Ember's resolution rules, and our tooling cannot take advantage of existing ecosystem tooling. Our language servers, for example, have to more or less re-implement Ember’s resolver themselves.</p>
+</li>
+<li>
+<p>There is a substantial performance cost to dynamically resolving components by name at runtime. This can be mitigated by using the combination of something like <code>ember-holy-futuristic-template-namespacing-batman</code> with the <a href="https://github.com/stefanpenner/ember-strict-resolver">strict resolver</a>, but the strict resolver is not standard—and really cannot be without something like this proposal.<sup class="footnote-reference"><a href="#strict-resolver-rfc">2</a></sup></p>
+</li>
+<li>
+<p>It is extremely unpleasant (though, strictly speaking, <em>possible</em> as of Ember 3.25<sup class="footnote-reference"><a href="#verbose-local">3</a></sup>) to introduce a component, helper, or modifier which is not in the global namespace. See the next section, <a href="#scope"><strong>Scope</strong></a>, for further on this.</p>
+</li>
+</ul>
+<p>The global namespace also comes with overhead for our teaching story by introducing a layer of “magic”: people just have to memorize that a file with a default export in a given location <em>automagically</em> is available with a given name. This is just a “bare fact”: there is nothing to connect it to in terms of a developers’ existing JavaScript or HTML knowledge.</p>
+<p>These problems are all well-solved already, using the JavaScript modules spec (or &quot;ESM&quot;, for ECMAScript Modules). Today, however Ember developers cannot take advantage of those or the tooling which understands them!</p>
+<div class="footnote-definition" id="strict-resolver-rfc"><sup class="footnote-definition-label">2</sup>
+<p>See the still-open <a href="https://github.com/emberjs/rfcs/pull/683">RFC #0683</a> for a discussion of the full set of concerns involved in resolution, which include but are not limited to the template concerns addressed here.</p>
+</div>
+<div class="footnote-definition" id="verbose-local"><sup class="footnote-definition-label">3</sup>
+<p>In all cases, doing so requires introducing a backing class to make the value available to the template <em>or</em> writing Ember's strict mode template syntax manually (which is error-prone and extremely verbose: it is designed as an output format, not an authoring format).</p>
+</div>
+<h3 id="scope"><a class="header" href="#scope">Scope</a></h3>
+<p>Second, and closely related to the global namespace problem: there is presently no good way for users to introduce or use locally-scoped code. Every component, helper, and modifier must live in its own file, and be globally available—even if it is meant to be used privately. Where JavaScript modules provide users to control their public APIs in terms of <code>export</code>s, Ember apps largely cannot take advantage of exports for anything which interacts with the template layer.</p>
+<p>In practice, this has a number of knock-on effects for Ember code.</p>
+<p>First, components tend to grow without bound, because the equivalent of the &quot;extract method&quot; or &quot;extract into new class&quot; refactors (which we commonly use on the JS side) end up with two downsides:</p>
+<ul>
+<li>they make the newly-extracted components available to the whole app, even if the concern is private to that component</li>
+<li>the require an entirely new file, which is friction both for the creation and the use/understanding of a given view</li>
+</ul>
+<p>Second, users also often introduce classes with actions or getters where a simple <a href="https://github.com/emberjs/rfcs/pull/756">function-based helper</a> would do, because that is the only way to provide a non-global function. (I show this by example in <a href="#reusable-components"><strong>How We Teach This: Guides: Tutorial: Reusable Components</strong></a> below.)</p>
+<p>Third, it likewise incentivizes the use of the ember-render-modifiers with backing classes, rather than custom modifiers, because the behavior can then be scoped to that module—whereas, again, a custom modifier would be in global scope. This in turn makes it easy for users to miss the helpful separation of concerns which custom modifiers enable.</p>
+<p>Over time, these all lead to a proliferation of backing classes which are only present to work around the fact that we have no <em>other</em> way to provide non-global scope for our components. These classes in turn tend to act as “state attractors,” leading to an unnecessary proliferation of state throughout an app or addon.</p>
+<h3 id="ecosystem-integration"><a class="header" href="#ecosystem-integration">Ecosystem integration</a></h3>
+<p>Tools which assume they will be used in JavaScript contexts more or less don’t work with our templates today, because the templates have no way to access them. Think of CSS tools like <a href="https://github.com/css-modules/css-modules">CSS Modules</a>, which is widely used in the Ember ecosystem via <a href="https://github.com/salsify/ember-css-modules">Ember CSS Modules</a>: our current implementation has to jump through many hoops and do many hacks to work at all. These problems are fundamental to the current model. A format which makes JavaScript values available in template scope would let us drop <em>all</em> of that special sauce—and this goes for <em>all</em> such JavaScript-side tooling.<sup class="footnote-reference"><a href="#other-css-tools">4</a></sup></p>
+<div class="footnote-definition" id="other-css-tools"><sup class="footnote-definition-label">4</sup>
+<p>The same applies to all other similar tools, e.g. <a href="https://emotion.sh/docs/@emotion/css">Emotion</a>, <a href="https://styled-components.com">Styled Components</a>, <a href="https://vanilla-extract.style">vanilla-extract</a>: none of them work out of the box with our current design. Whatever anyone’s personal opinions on these specific, they’re potentially-valuable tools which are barely or not at all usable in Ember today.</p>
+</div>
+<h3 id="testing"><a class="header" href="#testing">Testing</a></h3>
+<p>Finally, the authoring format for tests and the authoring format for app code today is completely different. A test can render a component by calling the <code>render()</code> function from <code>@ember/test-helpers</code> and passing it a Handlebars string.<sup class="footnote-reference"><a href="#testing-rfc">5</a></sup> App code <em>cannot</em> do this or anything like it. This has teaching overhead: we both <em>can</em> do things in tests we <em>cannot</em> do in app code, raising the obvious “but why not?”; and we also <em>must</em> do things in tests we do not <em>need</em> to do in app code.</p>
+<p>Additionally, introducing test-only components is quite painful, requiring use of the <code>this.owner.register()</code> functionality, and therefore requiring users to understand at least some of Ember’s custom runtime resolution (as well as learning a microsyntax for it<sup class="footnote-reference"><a href="#microsyntax">6</a></sup>). What's more, authoring a <em>template</em> for a test-only component is undocumented and is also entirely unlike the story for authoring templates for app components.</p>
+<div class="footnote-definition" id="testing-rfc"><sup class="footnote-definition-label">5</sup>
+<p>The test helper <code>render()</code> also does not actually render components today—but the <em>mental model</em> is that it does. See <a href="https://github.com/emberjs/rfcs/pull/785">RFC #0785</a> which will allow <code>render</code> to work not only with templates (the <em>status quo</em>) but also with components. This will be an independent change which helps eliminate a number of quirks in the testing infrastructure today as well as make it more TypeScript friendly, but it complements <em>this</em> RFC by allowing local definition of tests.</p>
+</div>
+<div class="footnote-definition" id="microsyntax"><sup class="footnote-definition-label">6</sup>
+<p>made that much more bespoke since <a href="https://emberjs.github.io/rfcs/0585-improved-ember-registry-apis.html">RFC #0585</a> is accepted but not yet implemented</p>
+</div>
+<h3 id="the-solution"><a class="header" href="#the-solution">The solution</a></h3>
+<p>To address these problems, the Ember community <a href="https://github.com/emberjs/rfcs/pull/454">proposed primitives</a> which unlocked experimentation in this space and <a href="https://emberjs.github.io/rfcs/0496-handlebars-strict-mode.html">defined the semantics of “strict” templates which use those primitives</a> and <a href="https://emberjs.github.io/rfcs/0432-contextual-helpers.html">made modifers and helpers first-class citizens of templates</a>. Now, with a history of having done that experimentation—with <a href="https://glimmerjs.github.io/glimmer-experimental/">GlimmerX</a> and <a href="https://github.com/ember-template-imports/ember-template-imports">ember-template-imports</a>—and having had <em>many</em> discussions about the trade-offs over the years, it’s time to ship a proposal which resolves these questions: <strong>first-class component templates</strong>.</p>
+<p>In this new world, templates are authored in JavaScript files with a <code>&lt;template&gt;</code> tag. Templates defined this way have normal Glimmer template semantics, but instead of using a runtime resolution strategy, they have access to values in JavaScript scope, which means they can just use normal JavaScript imports. What's more, they can define other local components, helpers, or modifiers and export them or not as makes sense. They can do the same kind of extraction refactors they do with JavaScript or CSS. And other tools from the JavaScript ecosystem “just work”—from custom CSS tooling to GraphQL queries authored with <a href="https://www.apollographql.com/docs/react/data/queries/">Apollo Client’s <code>graphql</code> template strings</a> and anything else the ecosystem comes up with.</p>
+<p>At the same time, since the body of a template defined with a <code>&lt;template&gt;</code> tag has all the same rules as Glimmer templates do today, this new authoring format keeps all the goodness of today’s clear separation of concerns between HTML and JavaScript and CSS. That means it continues to empower developers who are HTML and CSS experts and reach for JavaScript only secondarily. Indeed, the design goes out of its way to make HTML/Handlebars-only files feel like first-class citizens.</p>
+<p>Finally, introducing <code>&lt;template&gt;</code> completely unifies the story between app and test code: in this new world, introducing a test-only component is as simple as introducing any other component in the same file as an existing component.</p>
+<p>In sum, <code>&lt;template&gt;</code> resolves each problem outlined above, and introduces new capabilities to boot.</p>
+<h3 id="constraints"><a class="header" href="#constraints">Constraints</a></h3>
+<p>There are a number of solutions which could address these needs and add these capabilities. This RFC proposes <code>&lt;template&gt;</code> out of all the possible options because I take the following constraints as guiding the design decision (and the ordering here is purposeful—items earlier in the list I judge to be more important than items later in the list):</p>
+<ol>
+<li>
+<p>Our choice of design <strong>must not regress our ability to write tests</strong>, and if it is possible to <em>improve</em> our testing story, we should take the opportunity to do so.</p>
+</li>
+<li>
+<p>In the absence of hard technical constraints forbidding it, we should <strong>prefer the solution which has the best story for teaching</strong>—at all levels, including beginners but also supporting advanced users. In particular, this means that we should value both <em>progressive disclosure of complexity</em> and the <em>principle of least surprise</em>, and that we may need to weight them against each other, but that we should pay particular attention when they agree.</p>
+</li>
+<li>
+<p>This design must cleanly interoperate with existing Ember code bases. That is, adopting this <strong>must not require users to migrate their entire code base at once</strong>.</p>
+</li>
+<li>
+<p>We should <strong>prefer a design which provides more flexibility</strong> to end users over a design which provides less.</p>
+</li>
+</ol>
+<p>While it is certainly possible to differ with these constraints <em>a priori</em>—reevaluating constraints is, in a very real sense, <a href="https://github.com/emberjs/rfcs/pull/367#issuecomment-423839940">how we got to this very RFC</a>—we also run the risk of paralysis if we <em>continually</em> reevaluate from first principles. More challenging is inevitable disagreement about how we <em>weight</em> these constraints. On that front, there is no possibility of <em>final</em> agreement, but we should commit to some ordering for the purposes of this design so that the rest of it can proceed on the same terms.</p>
+<h2 id="detailed-design"><a class="header" href="#detailed-design">Detailed design</a></h2>
+<p>Introduce a new high-level syntax, the <code>&lt;template&gt;</code> tag, which is syntactical sugar for <code>setComponentTemplate</code> and <code>precompileTemplate</code>, in conjunction with the existing Ember and Glimmer <code>Component</code> classes and the special template-only component class returned by the <code>templateOnlyComponent</code> default export from <code>@ember/component/template-only</code>.</p>
+<p>There are three distinct, legal forms for this compilation:</p>
+<ul>
+<li>a standalone <code>&lt;template&gt;</code> at the top level of a module</li>
+<li>a <code>&lt;template&gt;</code> bound to a name</li>
+<li>in the body of a component class</li>
+</ul>
+<p>For a discussion of the <code>setComponentTemplate</code> and <code>templateOnlyComponent</code> primitives, see <a href="https://emberjs.github.io/rfcs/0481-component-templates-co-location.html">RFC #0481</a>; for discussion of the <code>precompileTemplate</code> primitive, see <a href="https://emberjs.github.io/rfcs/0496-handlebars-strict-mode.html">RFC #0496</a>. This discussion will <em>assume</em> rather than <em>define</em> those. Additionally, I leave aside here the further build-time passes which transform <code>precompileTemplate</code> invocations into a precompiled template in “wire format” ready for use by the Glimmer VM, as that is not affected by the authoring format.</p>
+<h3 id="compilation"><a class="header" href="#compilation">Compilation</a></h3>
+<p>The value produced by authoring a <code>&lt;template&gt;</code> is a <em>JavaScript value</em>, and accordingly may be exported, bound to other values, passed as an argument to a function or set as a value on a class, and so on. However, that value is not <em>dynamic</em>. Instead, it is compiled statically to a format targeting the Glimmer VM at compile time, such that even the <code>precompileTemplate</code> invocations are removed in favor of the wire format, which itself may be further optimized or changed in the future.</p>
+<p>Therefore, in normal app or addon code, it is nonsensical to reassign it when bound with a <code>let</code> binding: changing the value bound to the <code>let</code> will <em>not</em> result in Ember’s reevaluating anything which <em>uses</em> that value: the “scope” of a template is only ever computed once, for performance reasons.</p>
+<p>A function may of course return different components based on its arguments, etc.; but such a function will not be “automatically” re-executed unless the function consumes tracked properties. (This is just applying the standard auto-tracking semantics to functions which return components, which is possible <em>today</em>.) I discuss below the performance pitfalls of doing this inline, and the corresponding guidance we should provide.</p>
+<p>Apps or addons which want to compile arbitrary components at runtime are the exception to static component definition as described here. Most apps and addons will <em>not</em> want to do this, because it is expensive and slow and also a security risk in that it allows arbitrary code execution within your app. However, there <em>are</em> good use cases, e.g. dynamic online environments like the <a href="https://glimmerjs.github.io/glimmer-experimental/">GlimmerX playground</a> or the <a href="https://limber.glimdown.com/">Limber Editor</a>, or documentation tooling like <a href="https://storybook.js.org">Storybook</a>.</p>
+<p>These kinds of apps and integrations can integrate the template compiler as a runtime dependency and build new templates on the fly. However, the details of doing that are unrelated to providing first-class component templates and do not change as a result of this RFC. The scope remains static for any given <code>&lt;template&gt;</code> declaration after compilation; the difference there is that they are intentionally re-executing the compilation step itself.</p>
+<h4 id="standalone"><a class="header" href="#standalone">Standalone</a></h4>
+<p>The compiled output for a top-level <code>&lt;template&gt;</code> tag is a default export. This means that the very common case of having a simple template-only component looks basically just like HTML, wrapped in <code>&lt;template&gt;</code>, helping us provide a strong <em>progressive disclosure of complexity</em> flow to our design and our pedagogy. It also means that the basic code Ember developers use today changes very little for the most basic version of the new format. Given this input:</p>
+<pre><code class="language-js">&lt;template&gt;
+  &lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+&lt;/template&gt;
+</code></pre>
+<p>The compiled output is:</p>
+<pre><code class="language-js">import { precompileTemplate } from '@ember/template-compilation';
+import { setComponentTemplate } from '@ember/component';
+import templateOnlyComponent from '@ember/component/template-only';
+
+export default setComponentTemplate(
+  precompileTemplate(`
+  &lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+  `,
+    {
+      strictMode: true,
+    }
+  ),
+  templateOnlyComponent()
+);
+</code></pre>
+<p>If the <code>&lt;template&gt;</code> references values in scope, they will be included in an object with a <code>scope</code> argument (shown here using the current implementation of the underlying primitives). Thus, this definition—</p>
+<pre><code class="language-js">function isBirthday(dateOfBirth) {
+  const today = new Date();
+  return (
+    today.getMonth() === dateOfBirth.getMonth() &amp;&amp;
+    today.getDate() === dateOfBirth.getDate()
+  );
+}
+
+&lt;template&gt;
+  &lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+  {{#if (isBirthday @dateOfBirth)}}
+    &lt;p&gt;Happy birthday! 🎈&lt;/p&gt;
+  {{/if}}
+&lt;/template&gt;
+</code></pre>
+<p>—compiles to this output:</p>
+<pre><code class="language-js">import { precompileTemplate } from '@ember/template-compilation';
+import { setComponentTemplate } from '@ember/component';
+import templateOnlyComponent from '@ember/component/template-only';
+
+function isBirthday(dateOfBirth) {
+  const today = new Date();
+  return (
+    today.getMonth() === dateOfBirth.getMonth() &amp;&amp;
+    today.getDate() === dateOfBirth.getDate()
+  );
+}
+
+export default setComponentTemplate(
+  precompileTemplate(`
+  &lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+  {{#if (isBirthday @dateOfBirth)}}
+    &lt;p&gt;Happy birthday! 🎈&lt;/p&gt;
+  {{/if}}
+  `,
+    {
+      strictMode: true,
+      scope: () =&gt; ({ isBirthday }),
+    }
+  ),
+  templateOnlyComponent()
+);
+</code></pre>
+<p>Since the values in scope use normal JavaScript semantics, this means that imports also “just work”. Thus, if we extracted <code>isBirthday</code> into a separate file for reuse elsewhere, we could import and use it like this:</p>
+<pre><code class="language-js">import { isBirthday } from '../utils/user';
+
+&lt;template&gt;
+  &lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+  {{#if (isBirthday @dateOfBirth)}}
+    &lt;p&gt;Happy birthday! 🎈&lt;/p&gt;
+  {{/if}}
+&lt;/template&gt;
+</code></pre>
+<p>The compiled output would be just the same as before, save using the imported value:</p>
+<pre><code class="language-js">import { isBirthday } from '../utils/user';
+import { precompileTemplate } from '@ember/template-compilation';
+import { setComponentTemplate } from '@ember/component';
+import templateOnlyComponent from '@ember/component/template-only';
+
+export default setComponentTemplate(
+  precompileTemplate(`
+  &lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+  {{#if (isBirthday @dateOfBirth)}}
+    &lt;p&gt;Happy birthday! 🎈&lt;/p&gt;
+  {{/if}}
+  `,
+    {
+      strictMode: true,
+      scope: () =&gt; ({ isBirthday }),
+    }
+  ),
+  templateOnlyComponent()
+);
+</code></pre>
+<p>Since the compiled output is a default export, it is a static error to have multiple top-level (i.e. not bound to a name) <code>&lt;template&gt;</code>s in a file—because it is a static error to have multiple <code>export default</code> statements in a JavaScript file. We should provide a lint rule to error on this case, rather than letting it fail at build or runtime.</p>
+<h4 id="bound-to-a-name"><a class="header" href="#bound-to-a-name">Bound to a name</a></h4>
+<p>A standalone first-class template can also be bound to a name in the module. This allows users to provide locally-scoped modules as well as a single default export, as well as to use modules as a way of grouping related functionality or hiding private functionality while still being able to refactor and extract common code. Given this input:</p>
+<pre><code class="language-js">const Greet = &lt;template&gt;
+  &lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+&lt;/template&gt;
+</code></pre>
+<p>The compiled output is:</p>
+<pre><code class="language-js">import { precompileTemplate } from '@ember/template-compilation';
+import { setComponentTemplate } from '@ember/component';
+import templateOnlyComponent from '@ember/component/template-only';
+
+const Greet = setComponentTemplate(
+  precompileTemplate(`
+  &lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+  `,
+    {
+      strictMode: true
+    }
+  ),
+  templateOnlyComponent()
+);
+</code></pre>
+<p>Values referenced from the surrounding scope are included in exactly the same way as with the standalone top-level declaration.</p>
+<p>Notice that this allows for a host of convenient (and likely common!) new ways of providing a group of related components. For example:</p>
+<ul>
+<li>Genuinely private components could be authored within a file which does not export them, and only exports the public API.</li>
+<li>Components can be authored in their own files as default exports, and then importing them and re-exporting them as a namespace from an entry-point module.</li>
+<li>A namespace export allows an library to supply both a default export as its primary entry point and a series of related components within the same module.</li>
+</ul>
+<p>No doubt there are many other such useful patterns which will emerge organically here as they have across the broader JS ecosystem.</p>
+<p>Users <em>should</em> never reassign the result of binding a template, because Ember will never reevaluate if the name is re-bound later. (Even if we wanted to do that, it would be difficult at best: nothing would notify Ember that it <em>should</em> re-evaluate that value!) We should introduce a lint rule forbidding reassignment of a <code>&lt;template&gt;</code> to a binding to prevent that confusion.</p>
+<h4 id="class-body"><a class="header" href="#class-body">Class body</a></h4>
+<p>The compilation output with a class-backed component is similar, but instead of using <code>templateOnlyComponent</code>, it uses the backing class. Given this component:</p>
+<pre><code class="language-js">import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+
+class SetUsername extends Component {
+  @tracked name = '';
+
+  updateName = ({ target: { value } }) =&gt; {
+    this.name = value;
+  }
+
+  saveName = (submitEvent) =&gt; {
+    submitEvent.preventDefault();
+    this.args.onSaveName(this.name);
+  };
+
+  &lt;template&gt;
+    &lt;form {{on &quot;submit&quot; this.saveName}}&gt;
+      &lt;label for='name'&gt;Set username:&lt;/label&gt;
+      &lt;input
+        id='name'
+        value={{this.value}}
+        {{on &quot;input&quot; this.updateName}}
+      /&gt;
+      &lt;button type='submit' disabled={{eq this.value.length 0}}&gt;
+        Generate
+      &lt;/button&gt;
+    &lt;/form&gt;
+  &lt;/template&gt;
+}
+</code></pre>
+<p>The compiled output is:</p>
+<pre><code class="language-js">import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { precompileTemplate } from '@ember/template-compilation';
+import { setComponentTemplate } from '@ember/component';
+
+class SetUsername extends Component {
+  @tracked name = '';
+
+  updateName = ({ target: { value } }) =&gt; {
+    this.name = value;
+  }
+
+  saveName = (submitEvent) =&gt; {
+    submitEvent.preventDefault();
+    this.args.onSaveName(this.name);
+  };
+}
+
+setComponentTemplate(
+  precompileTemplate(`
+    &lt;form {{on &quot;submit&quot; this.saveName}}&gt;
+      &lt;label for='name'&gt;Set username:&lt;/label&gt;
+      &lt;input
+        id='name'
+        value={{this.value}}
+        {{on &quot;input&quot; this.updateName}}
+      /&gt;
+      &lt;button type='submit' disabled={{eq this.value.length 0}}&gt;
+        Generate
+      &lt;/button&gt;
+    &lt;/form&gt;
+  `,
+    {
+      strictMode: true,
+    }
+  ),
+  SetUsername
+)
+</code></pre>
+<h5 id="private-class-fields"><a class="header" href="#private-class-fields">Private class fields</a></h5>
+<p>In the present design of the template compilation primitives, a template cannot access private fields from the backing class. That is, the following <em>will not work</em>:</p>
+<pre><code class="language-js">import Component from '@glimmer/component';
+
+class Example extends Component {
+  #aField = true;
+
+  &lt;template&gt;
+    &lt;p&gt;The value of the field is: {{this.#aField}}&lt;/p&gt;
+  &lt;/template&gt;
+}
+</code></pre>
+<p>That is because the compilation output does <em>not</em> embed the template in the class' body in any way, but instead associates it <em>externally</em> to the class—but private class fields are only accessible within the body of the class itself, per the ECMAScript spec. While we could invest time to change the implementation to avoid this, it is not generally a problem. The only way to get direct access a component instance is to <code>{{yield this}}</code> in a component template. For managing privacy, developers should choose to <code>yield</code> public API instead (e.g. via a getter, or using <code>hash</code> or using a set of positional parameters).</p>
+<p>This is a real gap, which we could address in a future RFC. Notably, however, it is <em>not specific to this proposal</em>, but applies to <em>all</em> proposals built on the current primitives.</p>
+<h3 id="performance"><a class="header" href="#performance">Performance</a></h3>
+<p>In normal app code, authors should not <em>generally</em> introduce component definitions <code>&lt;template&gt;</code>s in contexts where they will be “re-executed,” e.g. in a function body. It is technically possible to create components from a function, like so:</p>
+<pre><code class="language-js">function conditionalComponent(predicate) {
+  if (predicate) {
+    return &lt;template&gt;&lt;p&gt;Cool&lt;/p&gt;&lt;/template&gt;
+  } else {
+    return &lt;template&gt;&lt;p&gt;Lame&lt;/p&gt;&lt;/template&gt;
+  }
+}
+</code></pre>
+<p>However, doing so will have a fairly high costs at runtime. It’s worth remembering what the resulting output is:</p>
+<pre><code class="language-js">function conditionalComponent(predicate) {
+  if (predicate) {
+    return setComponentTemplate(
+      precompileTemplate(`&lt;p&gt;Cool&lt;/p&gt;`, { strictMode: true }),
+      templateOnly()
+    );
+  } else {
+    return setComponentTemplate(
+      precompileTemplate(`&lt;p&gt;Lame&lt;/p&gt;`, { strictMode: true }),
+      templateOnly()
+    );
+  }
+}
+</code></pre>
+<p>The problem here is that this requires re-running both the creation of the template-only empty backing instance which has <code>null</code> for <code>this</code>, and the association between the two. As described above, the template precompilation also happens during the build, which eliminates some but not all of the apparent cost here; but the other parts are needlessly dynamic and expensive.</p>
+<p>In this scenario, users can accomplish the same thing by manually hoisting the component definitions to module scope:</p>
+<pre><code class="language-js">const Cool = &lt;template&gt;&lt;p&gt;Cool&lt;/p&gt;&lt;/template&gt;;
+const Lame = &lt;template&gt;&lt;p&gt;Lame&lt;/p&gt;&lt;/template&gt;;
+
+function conditionalComponent(predicate) {
+  if (predicate) {
+    return Cool;
+  } else {
+    return Lame;
+  }
+}
+</code></pre>
+<p>This is not a hard error because there <em>are</em> legitimate use cases for this, including taking advantage of values which are only in scope within the body of a function. (Test modules alone provide good motivation here; but there are many such examples in app code as well.) Notice that this is no different than any other concern around other costly operations needlessly happening in a function body repeatedly.</p>
+<p>See further discussion below under <a href="#how-we-teach-this"><strong>How We Teach This</strong></a>.</p>
+<h3 id="interop"><a class="header" href="#interop">Interop</a></h3>
+<p>Since all existing components already work using the same low-level primitives the new system uses, strict-mode components using <code>&lt;template&gt;</code> can import and invoke components authored in Ember’s loose mode format. Similarly, since loose mode components are resolved to a component which is the default export of a module in the correct/conventional location on disk, components authored in strict mode with <code>&lt;template&gt;</code> and exported as the default export in that conventional location will be resolve-able by loose mode components as well.</p>
+<p>There are two qualifications to the interop story: a minor one around named exports and a more significant one around non-colocated templates.</p>
+<h4 id="named-exports"><a class="header" href="#named-exports">Named exports</a></h4>
+<p>Components exported as <em>named</em> exports will not be available in loose mode: resolution only evaluates default exports. This is a temporary incoherence which will be resolved as the ecosystem migrates to strict mode. There are also a number of workarounds for this issue, including yielding components from a default export component and creating reexport-only modules to allow loose-mode access.</p>
+<p>For an example of the reexport-only pattern, consider a module <code>app/components/named-only.js</code> with two named export components:</p>
+<pre><code class="language-js">export const Greet = &lt;template&gt;
+  &lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+&lt;/template&gt;
+
+export const Farewell = &lt;template&gt;
+  &lt;p&gt;Goodbye, {{@name}}!&lt;/p&gt;
+&lt;/template&gt;
+</code></pre>
+<p>A user wishing to make these available to loose mode could introduce two new modules:</p>
+<ul>
+<li>
+<p><code>app/components/named-only/greet.js</code>:</p>
+<pre><code class="language-js">export { Greet as default } from '../named-only';
+</code></pre>
+</li>
+<li>
+<p><code>app/components/named-only/farewell.js</code>:</p>
+<pre><code class="language-js">export { Farewell as default } from '../named-only';
+</code></pre>
+</li>
+</ul>
+<p>Then a loose-mode component could invoke them like <code>&lt;NamedOnly::Greet @name=&quot;Chris&quot;&gt;</code> and <code>&lt;NamedOnly::Farewell @name=&quot;Krycho&quot; /&gt;</code>. Note that this pattern is not at all <em>necessary</em> for migration, but may be useful.</p>
+<h4 id="non-colocated-templates"><a class="header" href="#non-colocated-templates">Non-colocated templates</a></h4>
+<p>Since the same time as the Ember Octane release, Ember has supported “colocated templates,” where the template file for a component can live next to it in the <code>app/components</code> or <code>addon/components</code> directory, instead of in the <code>app/templates/components</code> or <code>addon/templates/components</code> directory:</p>
+<pre><code>my-ember-app/
+  app/
+    components/
+      example.js
+      example.hbs
+</code></pre>
+<p>Although this appears to be merely a user-facing convenience, there is a real and important difference at the implementation level which currently prevents first-class component templates from using classic, non-colocated templates:</p>
+<p>Colocated templates are merged into the sibling JavaScript module at build time and set as the template for the component using <code>setComponentTemplate</code>: the same primitive used by first-class component templates. This includes template-only components, for which Ember's build synthesizes a JavaScript module and uses <code>templateOnlyComponent()</code>—again, just as <code>&lt;template&gt;</code> does.</p>
+<p>By contrast, classic/non-colocated templates are <em>not</em> merged into the associated JavaScript module (if any). They remain as their own distinct module at runtime. Those template modules can be looked up via the AMD module system or Ember's DI registry, and Ember connects them to components via the same system it always did before the introduction of the <code>setComponentTemplate</code> primitive (and the same way it continues to connect the route-controller-template triplet). Critically, this means that as of today, Ember does <em>not</em> connect non-colocated templates to the associated class (whether backing class or <code>templateOnlyComponent()</code>-generated) using <code>setComponentTemplate</code>. This means that the corresponding <code>getComponentTemplate()</code> lookup used when resolving those components does not work. First-class component templates which reference non-colocated component templates will build successfully, but <em>do not render anything for them</em>.</p>
+<p>This is a fairly serious developer experience problem, because it fails <em>invisibly</em> (see <a href="https://github.com/chriskrycho/fcct-interop-demo">this demo repository</a> to see this failure mode in practice).</p>
+<p>We can address in one of two ways:</p>
+<ul>
+<li>Introduce support into Ember to associated non-colocated templates with their associated classes.</li>
+<li>Introduce debug output which informs users that they must first migrate the referenced component to use colocation.</li>
+</ul>
+<p>Of these, the second option is preferable.<sup class="footnote-reference"><a href="#deprecated-non-colo">7</a></sup> It has significantly lower risk of introducing bugs in the framework along the way, because it only requires adding some debug alerting and does <em>not</em> require changing the semantics or implementation of long-standing Ember features. It is <a href="https://github.com/ember-codemods/ember-component-template-colocation-migrator">straightforward to codemod</a> to colocation.</p>
+<div class="footnote-definition" id="deprecated-non-colo"><sup class="footnote-definition-label">7</sup>
+<p>We may additionally wish to entirely deprecate non-colocated component templates as part of Polaris. However, even if we do so, we still <em>must</em> provide that debug output for the sake of the transition period, not least since that deprecation can only target Ember 5 at the earliest.</p>
+</div>
+<h3 id="the-prelude"><a class="header" href="#the-prelude">The “prelude”</a></h3>
+<p>While all values used in templates must be explicitly in scope, Ember<sup class="footnote-reference"><a href="#glimmer-prelude">8</a></sup> will provide some via a “prelude”.<sup class="footnote-reference"><a href="#prelude">9</a></sup> These are always in scope and do not need to be imported. See <a href="https://emberjs.github.io/rfcs/0496-handlebars-strict-mode.html#keywords">RFC #0496: Handlebars Strict Mode: Keywords</a> for a detailed list of keywords and imports.</p>
+<div class="footnote-definition" id="glimmer-prelude"><sup class="footnote-definition-label">8</sup>
+<p>Glimmer.js may provide its own prelude. While long-term the two should likely align, this RFC simply takes the <em>status quo</em> as a given</p>
+</div>
+<div class="footnote-definition" id="prelude"><sup class="footnote-definition-label">9</sup>
+<p>“Prelude” is the conventional name for this functionality in programming language design. See e.g. the discussion from <a href="https://doc.rust-lang.org/std/prelude/index.html">Rust’s <code>std::prelude</code> docs</a>.</p>
+</div>
+<h3 id="tooling"><a class="header" href="#tooling">Tooling</a></h3>
+<p>To support the new format, we need to update tooling across the ecosystem to understand the format.</p>
+<h4 id="syntax-highlighting"><a class="header" href="#syntax-highlighting">Syntax highlighting</a></h4>
+<p>First, we need syntax highlighting support across the ecosystem. Support already exists <a href="https://marketplace.visualstudio.com/items?itemName=chiragpat.vscode-glimmer">for VS Code</a>, which represents the single largest group of web developers; as well as for any tool which can use <a href="https://github.com/alexlafroscia/tree-sitter-glimmer">a tree-sitter grammar</a> (e.g. Neovim).</p>
+<p>We will also need to implement support in <a href="https://github.com/github/linguist">Linguist</a> for GitHub syntax highlighting.</p>
+<p>Beyond that, we should encourage the community to add support for other editors (IntelliJ, Atom, Emacs, etc.) as well as for tools like <a href="https://rubygems.org/gems/rouge">Rouge</a> (which powers GitLab syntax highlighting) and other highlighters, but need not treat those as <em>blocking</em> adoption of first-class component templates.</p>
+<h4 id="blueprints"><a class="header" href="#blueprints">Blueprints</a></h4>
+<p>Component and component test blueprints will need to be updated to support generating the new format. (See <a href="https://github.com/emberjs/rfcs/pull/785">RFC #0785</a> for updates to testing to support this more robustly.) During the transition period, we should allow generating both. The rollout will follow the example of the rollout of Glimmer components with Octane:</p>
+<ol>
+<li>
+<p>Introduce the ability to author components in the new format with a new <code>--strict</code> flag, but leave the default today’s loose mode format. Introduce <code>--loose</code> as an explicit flag for using today’s loose mode format.</p>
+</li>
+<li>
+<p>When Ember Polaris<sup class="footnote-reference"><a href="#polaris">10</a></sup> is released, change the default to the new format for apps and addons which set <code>&quot;edition&quot;: &quot;polaris&quot;</code>, while leaving loose mode available via <code>--loose</code>, and preserving <code>--strict</code> as an explicit flag for the new default.</p>
+</li>
+<li>
+<p>If or when loose mode templates are deprecated, the supporting blueprint infrastructure can be removed, including the <code>--loose</code> flag.</p>
+</li>
+</ol>
+<p>The current blueprints support generating a backing class for any existing component template which does not already have a backing class with the <code>component-class</code> format. We have two choices about the behavior of that blueprint for strict mode templates:</p>
+<ol>
+<li>
+<p>Do not support it. Adding a backing class is simply a matter of adding an import and adding a class.</p>
+</li>
+<li>
+<p>Re-implement the blueprint using an AST transform (which we have prior art for: route generation uses that approach), to add a backing class for an existing default export in the module.</p>
+</li>
+</ol>
+<p>(We should do (1). The community can of course implement (2) if interested.)</p>
+<p>We should also update the name of the class generated for a component class. The default behavior of today's blueprint when generating a component is to suffix the class name with <code>Component</code>. Thus, running <code>ember generate component greeting --component-class=@glimmer/component</code> will produce a class named <code>GreetingComponent</code>.<sup class="footnote-reference"><a href="#ts-component-name">11</a></sup></p>
+<p>There was room for debate about whether this made sense for naming component classes up till now, since the invocation name was based on the file name (using Ember's resolution rules) and <em>not</em> the class name. Now, though, it <em>will</em> be based on the imported name, and the standard behavior of auto-import tooling is to import classes by their full name—whether the item is a named export or a default export. When a user goes to auto-complete <code>Greeting</code> (e.g. in <a href="https://github.com/typed-ember/glint">Glint</a>), they will end up with <code>GreetingComponent</code>, leading to this sort of thing if they don’t rename it:</p>
+<pre><code class="language-js">import GreetingComponent from './greeting';
+
+&lt;template&gt;
+  &lt;GreetingComponent @name={{@user.name}} /&gt;
+&lt;/template&gt;
+</code></pre>
+<p>This is obviously undesirable, but avoiding this will mean mean renaming locally after the auto-complete works. That renaming operation is a needless paper cut in the best case of importing a default export. It rises to the level of a significant annoyance when using named imports:</p>
+<pre><code class="language-js">import {
+  ButtonComponent as UIButton,
+  FormComponent as UIForm,
+  InputComponent as UIInput,
+} from './ui';
+
+&lt;template&gt;
+  &lt;UIForm @onSubmit={{@saveName}}&gt;
+    &lt;UIInput @label=&quot;Name&quot; @value={{@name}} @onUpdate={{@updateName}} /&gt;
+    &lt;UIButton @label=&quot;Save&quot; type=&quot;submit&quot; /&gt;
+  &lt;/UIForm&gt;
+&lt;/template&gt;
+</code></pre>
+<p>And it makes namespace-style imports basically unusable: to invoke <em>without</em> <code>Component</code> everywhere, you have to rebind all the imports you use!</p>
+<pre><code class="language-js">import * as _UI from './ui';
+const UI = {
+  Form: _UI.FormComponent,
+  Button: _UI.ButtonComponent,
+  Input: _UI.InputComponent
+}
+
+&lt;template&gt;
+  &lt;UI.Form @onSubmit={{@saveName}}&gt;
+    &lt;UI.Input @label=&quot;Name&quot; @value={{@name}} @onUpdate={{@updateName}} /&gt;
+    &lt;UI.Button @label=&quot;Save&quot; type=&quot;submit&quot; /&gt;
+  &lt;/UI.Form&gt;
+&lt;/template&gt;
+</code></pre>
+<p>Accordingly, we should switch to generating <em>without</em> a class name: <code>ember generate component greeting --component-class=@glimmer/component</code> should produce a class named <code>Greeting</code>, <em>not</em> <code>GreetingComponent</code>. The generated names for routes, services, and controllers can remain as they are, since they are never invoked this way.</p>
+<div class="footnote-definition" id="polaris"><sup class="footnote-definition-label">10</sup>
+<p>Polaris was announced as planned at EmberConf 2021. This plan assumes we ship Polaris before Ember 5. If we ship Ember 5 first, the dynamics would be much the same, but with the major version as the point when we switch the default instead.</p>
+</div>
+<div class="footnote-definition" id="ts-component-name"><sup class="footnote-definition-label">11</sup>
+<p>In TypeScript, this also extends to <code>GreetingComponentArgs</code> (or, with <a href="https://github.com/emberjs/rfcs/pull/748">RFC #0748</a>, something like <code>GreetingComponentSignature</code>), which gets <em>really</em> unwieldy!</p>
+</div>
+<h4 id="linting-and-formatting"><a class="header" href="#linting-and-formatting">Linting and formatting</a></h4>
+<p>As with syntax highlighting, we need to support the new format with linting and formatting integration.</p>
+<p>For linting, we need to make two changes:</p>
+<ol>
+<li>
+<p>Create an ESLint processor which uses the same Babel transform as the core behavior itself (as provided currently by <a href="https://github.com/ember-template-imports/ember-template-imports">ember-template-imports</a>) to make normal ESLint rules (e.g. unused imports and values) work with the template scope.</p>
+</li>
+<li>
+<p>Going the other direction, make it possible to use the existing <code>ember-template-lint</code> rules in <code>.gjs</code>/<code>.gts</code> files. This likely means integrating <code>ember-template-lint</code> directly into ESLint, in much the same way that other sub-language integration is done (in the same way that e.g. <a href="https://github.com/sveltejs/eslint-plugin-svelte3">eslint-plugin-svelte3</a> integrates Svelte’s custom language).</p>
+</li>
+</ol>
+<p>For formatting, we need to implement a custom parser plugin and language which will make Prettier able to format both the host JavaScript files and the embedded templates. This will need to present a view of the non-template parts of the file to Prettier so that it formats the JavaScript correctly without updating the template contents, and vice versa. The primary work here is to make it so that we can leverage Prettier’s existing support for JavaScript/TypeScript and Handlebars in a <code>.gjs</code>/<code>.gts</code> file (rather than simply ending up with a parse error, as happens when you try to treat those files as pure JS or TS).</p>
+<h4 id="language-server-support"><a class="header" href="#language-server-support">Language server support</a></h4>
+<p>The final piece of tooling we need for supporting this is <em>language server support</em>. Language servers using the <a href="https://microsoft.github.io/language-server-protocol/">Language Server Protocol</a> allow a variety of different editors (including e.g. Vim, Visual Studio Code, Emacs, Atom, Sublime Text, IntelliJ, and others) to use a single language server Currently, for uninteresting historical reasons, there are a handful of language servers floating around which Ember developers use. Most important for our purposes are the <a href="https://marketplace.visualstudio.com/items?itemName=lifeart.vscode-ember-unstable">Unstable Ember Language Server</a> and <a href="https://github.com/typed-ember/glint">Glint</a>.</p>
+<p><strong>Neither of these is technically a hard blocker for adopting first-class component templates, but we expect there to be significant community demand for support.</strong> However, the existing support in these tools for the <code>hbs</code> experiment means that supporting <code>&lt;template&gt;</code> is relatively straightforward: the work needs to be done, but is not especially large. In particular, the same Babel transform which makes <code>&lt;template&gt;</code> work and can power ESLint and Prettier integration should provide the necessary information for language servers as well, which can then leverage their own interpretations of templates (e.g. Glint's mapping from a Handlebars template to a TypeScript representation) to provide richer feedback, auto-completion, go-to-definition, documentation hovers, etc.</p>
+<h4 id="codemod"><a class="header" href="#codemod">Codemod</a></h4>
+<p>While providing a codemod is not a <em>hard</em> necessity, it is much like language server support: there will be high community demand.</p>
+<p>Such a codemod will automate the fairly mechanical work of providing a wrapping <code>&lt;template&gt;</code> for template-only components and moving the content of an <code>.hbs</code> file into a <code>&lt;template&gt;</code> on the backing class for class-backed components. To do that, however, there are two major pieces such a codemod will need to address:</p>
+<ul>
+<li>
+<p><strong>Identifying where a given component or item came from</strong>. This is not <em>trivial</em>, since in most apps the items are all in one big global namespace. This is definitely <em>tractable</em>, though. A codemod could start by walking the graph of Ember addons any given library depends on and identifying all names it exports in terms of Ember's standard layout. Then that can be fed into each template module being converted.</p>
+<p>There will definitely be occasional conflicts here, for example when developers have <em>intentionally</em> overridden something supplied by an addon. In that case of conflict, the codemod can bail and report it to the end user. (We could use a telemetry-powered codemod like we did for the native classes codemod with Octane, but that's a much higher lift and my own judgment is that the cost-benefit ratio is low enough not to be worth it in <em>this</em> case. People generally either work around those or have done it on purpose.)</p>
+</li>
+<li>
+<p><strong>Handling non-colocated templates.</strong> As discussed above in <a href="#interop"><strong>Detailed Design: Interop</strong></a>, strict mode templates cannot <em>currently</em> resolve components where the template is still located in <code>templates/components</code> rather than next to a backing class, if any, in <code>components</code>. If we do not change this behavior at the framework level, we will need to recommend people start by migrating to colocated templates (which already has <a href="https://github.com/ember-codemods/ember-component-template-colocation-migrator">a reliable codemod</a>).</p>
+</li>
+</ul>
+<h3 id="typescript"><a class="header" href="#typescript">TypeScript</a></h3>
+<p>The type of a component is not affected by this proposal. However, it is worth seeing <em>how</em> a component defined using <code>&lt;template&gt;</code> works with types, at least for the purpose of documentation (and for integration with the current DefinitelyTyped definitions).</p>
+<p>For a class-backed component, there is no change to the <em>types</em> of the component when using <code>&lt;template&gt;</code>. As described above in the discussion of language servers, tools like Glint will need to provide an interpretation of the body of a <code>&lt;template&gt;</code> which correctly understands the scope in which it is embedded, i.e. correctly providing <code>this</code> to it.</p>
+<p>For a template-only component, defining the type will require a type import to represent that there is a component with no <code>this</code> context, etc. Glint already supplies such a type, albeit with the types updated for <a href="https://github.com/emberjs/rfcs/pull/748">RFC #0748</a>. For today’s purposes, we can simply augment the <a href="https://github.com/DefinitelyTyped/DefinitelyTyped/blob/54d540ab4deb2588c0eff39dadf370cbf0a2dee4/types/ember__component/template-only.d.ts">existing types on DefinitelyTyped</a> with <code>Args</code>.</p>
+<details><summary>updated signature on DT</summary>
+<pre><code class="language-ts">declare const A: unique symbol;
+
+// This class is not intended to be directly constructable.
+declare class _TemplateOnlyComponent&lt;Args extends {}&gt; {
+    // Type brand to simulate a nominal type.
+    declare private brand: 'TemplateOnlyComponent';
+    // Host to make args &quot;used&quot;
+    declare private [A]: Args;
+    toString(): string;
+}
+
+// Export an interface instead to prevent construction.
+// tslint:disable-next-line:no-empty-interface
+export interface TemplateOnlyComponent&lt;Args extends {} = {}&gt; extends _TemplateOnlyComponent&lt;Args&gt; {}
+type TC&lt;Args extends {} = {}&gt; = TemplateOnlyComponent&lt;Args&gt;
+
+declare function templateOnly(moduleName?: string): TemplateOnlyComponent;
+
+export default templateOnly;
+
+// Shut off automatic exporting.
+export {};
+</code></pre>
+</details>
+<p>Users can then define a named template-only component like this:</p>
+<pre><code class="language-ts">import type { TemplateOnlyComponent } from '@glimmer/component';
+
+const Greet: TemplateOnlyComponent&lt;{ name: string }&gt; = &lt;template&gt;
+  &lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+&lt;/template&gt;
+</code></pre>
+<p>(While this empty interface is currently more or less useless from a type-checking perspective—we will need something like Glint to support it—it suffices to provide a hook for documentation tooling such as <a href="https://typedoc.org">TypeDoc</a> or <a href="https://api-extractor.com">API Extractor</a>, and thus suffices for the level of support we have for TypeScript today.)</p>
+<p>However, since the top-level <code>&lt;template&gt;</code> syntax is sugar for an anonymous default export, there is nowhere to put a type declaration like this. This is a limitation of default exports in JavaScript: functions and classes have names as part of their declarations, but other items do not, so they cannot be both named <em>and</em> part of the default export of a module.</p>
+<p>Accordingly, we propose an extension to <code>&lt;template&gt;</code>, available only in <code>.gts</code> files, which uses the following syntax designed to mirror type parameterization in TypeScript but in a way that is straightforward to parse into the desired target format:</p>
+<pre><code class="language-ts">export interface GreetingArgs {
+  name: string;
+}
+
+&lt;template[GreetingArgs]&gt;
+  &lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+&lt;/template&gt;
+</code></pre>
+<p>This syntax for generics has prior art in other programming languages, including Scala, Go, and Ruby’s Sorbet type checker (a cousin of TypeScript, as it were!). It clearly associates the <code>Args</code> with the <code>template</code>, while <em>not</em> putting it in a value space which could conflict with future extensions to <code>&lt;template&gt;</code> with “attributes” in the value space.<sup class="footnote-reference"><a href="#emblem-etc">12</a></sup></p>
+<p>Given this design, we can also simplify the definition of named components (both forms will of course be legal):</p>
+<pre><code class="language-ts">export interface GreetingArgs {
+  name: string;
+}
+
+export const Greeting = &lt;template[GreetingArgs]&gt;
+  &lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+&lt;/template&gt;
+</code></pre>
+<p>There are two key restrictions here:</p>
+<ol>
+<li>
+<p>As mentioned above, this is illegal in the context of a class-backed component, because the component class itself is the host for the signature (and must be to make <code>this.args</code> type check correctly).</p>
+</li>
+<li>
+<p>The only thing allowed within the <code>[...]</code> is a type available in the local scope. <em>It is not legal to provide an inline type definition.</em> However, given the relative verbosity of even today’s component signature, still less the revised version from <a href="https://github.com/emberjs/rfcs/pull/748">RFC #0748</a>, inline signatures are unlikely to be attractive anyway.</p>
+</li>
+</ol>
+<p>From an implementation perspective, this requires our language parser to handle this variant of the tag, and for the transforms supplied for compilation to properly ignore this for build output but to supply it in an appropriate place for TypeScript-aware tools like Glint to be able to take advantage of it.</p>
+<h3 id="custom-file-extension"><a class="header" href="#custom-file-extension">Custom file extension</a></h3>
+<p>These tooling considerations together provide the motivation for a custom file extension (<code>.gjs</code> and <code>.gts</code>). In the case of TypeScript in particular, it is not possible to <em>remove</em> errors using a TypeScript language server plugin, which means that in a pure <code>.js</code> or <code>.ts</code> file, a user would get conflicting reports from TypeScript and (e.g.) Glint. Thus, today, Glint recommends that GlimmerX users <em>disable TypeScript in their projects</em>, and rely on only Glint. Taking a lesson from Vue and Svelte, however, introducing a custom file extension allows us to provide a default type for <code>.gjs</code>/<code>.gts</code> files which makes TypeScript happy in <code>.js</code> and <code>.ts</code> files, and on top of which tools like Glint can safely add <em>more</em> information.<sup class="footnote-reference"><a href="#hbs-custom-syntax">13</a></sup></p>
+<p>While both Prettier and ESLint <em>can</em> work with <code>.js</code> or <code>.ts</code>, introducing the new file extension also simplifies the tooling implementation for them. It does mean that tools like GitHub’s Linguist will not work without implementing support, but we need to do that work anyway.</p>
+<div class="footnote-definition" id="hbs-custom-syntax"><sup class="footnote-definition-label">13</sup>
+<p>Note that this also applies to the <code>hbs</code> syntax discussed in <a href="#template-literals-hbs"><strong>Alternatives: Template literals (<code>hbs</code>)</strong></a>.</p>
+</div>
+<h3 id="spec"><a class="header" href="#spec">Spec</a></h3>
+<p>During implementation—before this is the default for Ember apps, and before it advances to <strong>Recommended</strong> if <a href="https://emberjs.github.io/rfcs/0617-rfc-stages.html">the Stages RFC</a> is implemented before this implementation is finished—we will create a spec for the format we propose here, generalizing it to account for similar potential future extensions:</p>
+<ul>
+<li>
+<p>to make it easy for tooling authors to know when they have implemented the support correctly, including answering questions about nested invocation, escaping, handling closing tags within comments, etc.</p>
+</li>
+<li>
+<p>to enable future design moves in this space—for example, <code>&lt;style&gt;</code> blocks for scoped CSS or <code>&lt;query&gt;</code> blocks for languages like GraphQL, etc.</p>
+</li>
+<li>
+<p>to enable other parts of the JS ecosystem to adopt this—in the same way that JSX is not a React-only syntax but a <a href="https://facebook.github.io/jsx/">spec</a> which can also be used by e.g. <a href="https://www.solidjs.com">Solid</a>—since it could be valuable authoring format for Svelte, Vue, and other template-focused/HTML-first frameworks</p>
+</li>
+</ul>
+<h2 id="transition-path"><a class="header" href="#transition-path">Transition path</a></h2>
+<p>We will transition to using first-class component templates by default as part of Ember Polaris. To do that successfully, we must:</p>
+<ul>
+<li>implement the features as described in <a href="#detailed-design"><strong>Detailed design</strong></a>, migrating in the implementation from <code>ember-template-imports</code></li>
+<li>update the <a href="#tooling">tooling</a>:
+<ul>
+<li><a href="#syntax-highlighting">syntax highlighting</a></li>
+<li><a href="#blueprints">blueprints</a></li>
+<li><a href="#linting-and-formatting">linting and formatting</a></li>
+<li><a href="#language-server-support">language servers</a></li>
+</ul>
+</li>
+<li>update all <a href="#how-we-teach-this">the teaching materials</a></li>
+</ul>
+<p>Additionally, an optimal transition will include changes to <a href="#language-server-support">language server implementations</a> and supply a <a href="#codemod">codemod</a> from loose to strict mode. (We may be <em>able</em> to release this as part of Polaris without those, but the transition will be much more successful with them.)</p>
+<p>In terms of rollout, we should deliver features incrementally, allowing users to opt into them via command line flags for Ember CLI (<code>--strict</code> and <code>--loose</code> for <code>ember generate component</code>) and possibly also optional features (e.g. a <code>&quot;strict-components&quot;: true</code> in <code>optional-features.json</code>). Once Polaris arrives, setting <code>&quot;edition&quot;: &quot;polaris&quot;</code> will opt users into those as new defaults, while allowing use of command line flags to opt into loose mode for a given component. (Later deprecations may remove that, but that is something to resolve at a later time.)</p>
+<p>Finally, the Glimmer.js (and thus <a href="https://glimmerjs.github.io/glimmer-experimental/">GlimmerX</a>) implementation should update to match this, further decreasing the delta between standalone Glimmer and Ember.</p>
+<h2 id="how-we-teach-this"><a class="header" href="#how-we-teach-this">How we teach this</a></h2>
+<p>We describe a <code>&lt;template&gt;</code> as representing the <em>template</em> for a <em>component</em>. When there is no backing class, that’s all there is to the component. When there <em>is</em> a backing class, the component also has associated state and behavior. (Notably, this shift already began with Octane, where we generate template-only components by default.)</p>
+<p>This explanatory model provides a helpful opportunity, when first introducing the idea of a backing class, to link to deeper-dive materials which let people who want to understand more deeply. In particular, it allows us a place to point out that mechanically, there <em>is</em> in fact always an associated component instance (generated via <code>templateOnlyComponent()</code>), but it’s just a way for this <code>&lt;template&gt;</code> to be hooked into the broader system, rather than a home for state.</p>
+<p><strong>Note:</strong> This is complicated by the need to introduce route templates as well as component templates. The text here assumes that we will, in parallel with this work, resolve the design questions addressed by <a href="https://github.com/emberjs/rfcs/pull/731">RFC #0731</a> in something like the design proposed there. Accordingly, it also assumes we will update the generators and the relevant text accordingly. Fundamentally, we <em>should not</em> update the guides until we have a resolution for that design space, so they can be updated in a coherent way.</p>
+<h3 id="guides"><a class="header" href="#guides">Guides</a></h3>
+<p>Once <code>&lt;template&gt;</code> is implemented and tooling is sufficiently stable, we will update the guides with changes along the following lines:</p>
+<h4 id="tutorial"><a class="header" href="#tutorial">Tutorial</a></h4>
+<p>One cross-cutting change here will be updating the output from generators, including correct new file extensions. The following discussion of the current sections of the guide <em>assumes</em> that change, and addresses concrete <em>pedagogical</em> changes we need to make. If a section is not included here, it (a) needs little or no other change beyond the minimum or (b) is dependent on the results of <a href="https://github.com/emberjs/rfcs/pull/731">RFC #0731</a> to flesh out the details.</p>
+<h5 id="orientation"><a class="header" href="#orientation">Orientation</a></h5>
+<p>Here we will need to update the prose to describe that <code>&lt;template&gt;</code> marks this as Ember/Glimmer’s special superset of HTML, with prose long the lines of:</p>
+<blockquote>
+<p>Note that all you need to do to have a working Ember component is to wrap your HTML in <code>&lt;template&gt;</code>.</p>
+</blockquote>
+<h5 id="component-basics"><a class="header" href="#component-basics">Component Basics</a></h5>
+<p>Introducing components will see a lot of changes, unsurprisingly:</p>
+<ol>
+<li>
+<p>The introduction to components in updated guides will depend on the specific design choices we make in <a href="https://github.com/emberjs/rfcs/pull/731">RFC #0731</a>. One possible approach here will be to note that we have already seen components in practice, if the decision in that space is that routes simply invoke a component template. Otherwise we may indicated that components are similar to route templates, but are self-contained.</p>
+</li>
+<li>
+<p>The use of <code>&lt;CapitalizedComponents /&gt;</code> is no longer required, but remains a <em>helpful convention</em>.<sup class="footnote-reference"><a href="#resolver-capitalized-components">14</a></sup> If someone does <code>const foo = &lt;template&gt;...&lt;/template&gt;</code>, they will be able to invoke that as <code>&lt;foo /&gt;</code> elsewhere. The notes in this section as well as about <code>LinkTo</code> will need to be updated to describe it accordingly.</p>
+</li>
+<li>
+<p>After introducing <code>&lt;Jumbo /&gt;</code> with updated use of a wrapping <code>&lt;template&gt;</code>, discuss <em>importing it</em> into the route (component) template which uses it. This is a good place to describe how <code>.gjs</code> can use JS features, and hint that we’ll see more of this later; it is also a good opportunity to note that we <em>could</em> have defined <code>&lt;Jumbo /&gt;</code> locally, but that we moved it to a separate file because we’re sharing it across multiple different components.</p>
+</li>
+<li>
+<p>Our discussion of the testing will need to be updated to include importing the components under test, and to use <code>&lt;template&gt;</code> rather than <code>hbs</code> strings for the <code>render</code> calls.<sup class="footnote-reference"><a href="#testing-rfc">5</a></sup></p>
+</li>
+</ol>
+<div class="footnote-definition" id="resolver-capitalized-components"><sup class="footnote-definition-label">14</sup>
+<p>Historically users <em>had</em> to use this convention, but only because that was the decision for how the resolver would work.</p>
+</div>
+<h5 id="more-about-components"><a class="header" href="#more-about-components">More About Components</a></h5>
+<p>We can simply <em>remove</em> the discussion of namespaced components, in favor of simply describing the use of normal JS imports to accomplish the same goal. However, here we can also note that JavaScript modules are a great way to organize groups of related components, and show how we might use namespace-style imports (<code>import * as Rental from '';</code> and then <code>&lt;Rental.Image /&gt;</code> within a <code>&lt;template&gt;</code>) for this kind of organization.<sup class="footnote-reference"><a href="#namespace-deprecation">15</a></sup></p>
+<div class="footnote-definition" id="namespace-deprecation"><sup class="footnote-definition-label">15</sup>
+<p>Attentive readers will likely have noticed that this makes the namespace sigil a candidate for later deprecation, since it will be entirely redundant once the ecosystem moves fully to strict mode and template imports. However, that question is best left to a potential future RFC deprecating loose mode.</p>
+</div>
+<h5 id="interactive-components"><a class="header" href="#interactive-components">Interactive Components</a></h5>
+<p>The discussion of adding behavior to components will need to be updated to account for the design <em>and</em> the new possibilities in the space:</p>
+<ol>
+<li>
+<p>Show that when we generate a class for an existing component, it  adds the <code>Component</code> import, creates a wrapping class, and moves the template into the body of that class. Here, teach the mental model that a <code>&lt;template&gt;</code> which is part of a class body has access to the instance properties on the backing class.</p>
+</li>
+<li>
+<p>When discussing use of values from <code>ENV</code>, instead of providing a getter on a backing class, start by creating a <code>TOKEN</code> constant in module scope, and show that it is available to access in the template. In the following section, which shows args being used in the template, simply use that <code>TOKEN</code> value in the template directly, <code>access_token={{TOKEN}}</code>.</p>
+</li>
+</ol>
+<h5 id="reusable-components"><a class="header" href="#reusable-components">Reusable Components</a></h5>
+<p>This section provides us an opportunity to show how useful it can be to introduce local functions. The code samples here currently use a backing class, but they only do so to provide a home for getters which provide an encoded URI for the Mapbox token and derive the <code>src</code> from the arguments.</p>
+<p>(I will provide this example in full here in part because it shows powerfully the pedagogical value of this RFC!)</p>
+<p>The Mapbox token value is not reactive and therefore the computation has no reason to exist on a backing class <em>at all</em>. It is only there today because <em>without</em> first-class component templates, it requires introducing the heavier notion of helpers off in a separate file. (The more so given that the guides currently assume classic, i.e. pre-<a href="https://github.com/emberjs/rfcs/pull/756">RFC #0756</a> helpers using the <code>helper</code> function and not a standalone function!) With <code>&lt;template&gt;</code>, it can simply become a constant value defined in local scope:</p>
+<pre><code class="language-js">import ENV from 'super-rentals/config/environment';
+
+const TOKEN = encodeURIComponent(ENV.MAPBOX_ACCESS_TOKEN)
+
+&lt;template&gt;
+  &lt;div class=&quot;map&quot;&gt;
+    &lt;img
+      alt=&quot;Map image at coordinates {{@lat}},{{@lng}}&quot;
+      ...attributes
+      src=&quot;https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/{{@lng}},{{@lat}},{{@zoom}}/{{@width}}x{{@height}}@2x?access_token={{TOKEN}}&quot;
+      width={{@width}} height={{@height}}
+    &gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+</code></pre>
+<p>Similarly, while <code>src</code> <em>is</em> computed from reactive data, there is once again no reason to compute it <em>in a class</em> if we are not going to use the class to store state. We can just write a local function and use it (and use that to note that we handle named arguments, too):</p>
+<pre><code class="language-js">import ENV from 'super-rentals/config/environment';
+
+const TOKEN = encodeURIComponent(ENV.MAPBOX_ACCESS_TOKEN)
+const MAPBOX_API = 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static';
+
+function source({ lng, lat, width, height, zoom }) {
+  let coordinates = `${lng},${lat},${zoom}`;
+  let dimensions = `${width}x${height}`;
+  let accessToken = `access_token=${TOKEN}`;
+
+  return `${MAPBOX_API}/${coordinates}/${dimensions}@2x?${accessToken}`;
+}
+
+&lt;template&gt;
+  &lt;div class=&quot;map&quot;&gt;
+    &lt;img
+      alt=&quot;Map image at coordinates {{@lat}},{{@lng}}&quot;
+      ...attributes
+      src={{source lng=@lng lat=@lat width=@width zoom=@zoom}}
+      width={{@width}} height={{@height}}
+    &gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+</code></pre>
+<p>Notice the results of this pedagogically:</p>
+<ul>
+<li>We have asked people to write <em>less code</em>: fewer imports, and less overall syntax.</li>
+<li>The code they <em>do</em> write feels much more HTML-first. The template can stay almost exactly as it was, with no shift to a backing class.</li>
+<li>For developers who have experience with other frameworks, this feels familiar, but with an Ember twist.</li>
+</ul>
+<p>At this point we could <em>additionally</em> show that we could introduce a backing class, and discuss the trade-offs of introducing a class when we don't have any other local state. This also allows us to encourage just using functions unless you <em>do</em> need local state.</p>
+<p>The section “Getting JavaScript Values into the Test Context” will also be possible to simplify: we will simply be able to introduce tracked state locally and update it directly, without special testing helpers. That will dramatically reduce the number of bespoke ideas we have to cover here. Much of the related work will be addressed in other RFCs, but being able to use the <em>same</em> primitives to bring values into scope for tests as we do in apps (immediately above!) will be very helpful in reducing what we have to cover in this section.</p>
+<h4 id="core-concepts-components"><a class="header" href="#core-concepts-components">Core Concepts: Components</a></h4>
+<p>This entire section will also need to be substantially reworked. Once again, I am here summarizing the changes rather than trying to rewrite the guide in place. Each section represents a page to be changed; if a section is not mentioned, it needs no substantive changes—likely only switching over to using the <code>&lt;template&gt;</code> wrapper.</p>
+<p>At some point in the course of this discussion, we should call out (e.g. with a “Zoey says” block) that users should treat <code>&lt;template&gt;</code> the same way they treat a costly function which produces a result for the life of the whole app, and should therefore avoiding using <code>&lt;template&gt;</code> in function bodies rather than hoisting them, etc. This cannot be a hard and fast rule about where <code>&lt;template&gt;</code> definitions live, because there are plenty of ways to do it safely, and what’s more we <em>need</em> to do it in test modules. The point is simply to align people’s mental model for <code>&lt;template&gt;</code> with <em>other</em> costly operations, since these concerns are not specific to component creation.</p>
+<h5 id="introducing-components"><a class="header" href="#introducing-components">Introducing Components</a></h5>
+<p>Unsurprisingly, this is the section which will see the most sweeping changes.</p>
+<ul>
+<li>
+<p>As described in the tutorial, our introduction will depend on the design chosen for route templates. We will either note that we’ve already seen our first component, if the application template <em>was</em> a component, or note the similarities and differences between route templates and components otherwise.</p>
+</li>
+<li>
+<p>We can continue to show breaking the component out into separate files, with a top-level <code>&lt;template&gt;</code> (serving, so far implicitly, as a default export).</p>
+</li>
+<li>
+<p>Then, back in the application file, we can show using <code>import</code> to refer to it.</p>
+</li>
+<li>
+<p>As in the tutorial, the discussion around naming will need to be updated to indicate that we capitalize by <em>convention</em>: it will no longer be a hard requirement. Likewise, the “Zoey says...” will go away because we will no longer be using resolution to get imports.</p>
+</li>
+<li>
+<p>After showing the other extraction-style refactors, we can show how components which don't need to be exported can just be defined locally with a <code>const</code> declaration, and explain that the standalone <code>&lt;template&gt;</code> tag is sugar for a default export. This will also provide the first hook for defining helpers etc. locally in following sections.</p>
+</li>
+<li>
+<p>We will entirely drop the folder namespace syntax (<code>::</code>) discussion, in favor of showing how normal JS imports handle that concern—including showing how the combination of named exports and namespace-style imports handle those. (This will necessitate reworking the example, which currently uses that namespacing as a means of scoping.)</p>
+</li>
+</ul>
+<h5 id="helper-functions"><a class="header" href="#helper-functions">Helper functions</a></h5>
+<p>Instead of introducing <code>app/helpers</code> and the resolution-based lookup, we can introduce the helper as a local function in the component which needs it. This will be the first place where this guide explicitly calls out that components have access to values in their surrounding scope, just like normal JavaScript. This will be a good point to call out the power and versatility this affords.</p>
+<p>Additionally, instead of the <em>next</em> section being the place where we first identify that JS is needed to make our UI dynamic, we will address that here. The next section can then build on that by showing how classes make certain patterns <em>easier</em>.</p>
+<h5 id="component-state-and-actions"><a class="header" href="#component-state-and-actions">Component State and Actions</a></h5>
+<p>Here, the content will need to shift in two ways:</p>
+<ol>
+<li>
+<p>The motivation for introducing a backing class shifts slightly: we have the ability to have state at the module level already, including via class-backed helpers. What we need is a way to have state that is for <em>each component instance</em>. A class is JavaScript’s first-class way of doing that, so we have a version of first-class component templates which supports it!</p>
+</li>
+<li>
+<p>Having made the motivation clear, we can show the <code>&lt;template&gt;</code> in the body of the class and explain that it is exactly the same as a standalone template component, except that it now has access to the backing class for local state, &quot;actions&quot;, etc.</p>
+</li>
+</ol>
+<h5 id="template-lifecycle-dom-and-modifiers"><a class="header" href="#template-lifecycle-dom-and-modifiers">Template Lifecycle, DOM, and Modifiers</a></h5>
+<p>Once again, many of the changes here will be mechanical: just using the new syntax. However, this also provides another opportunity to discuss (and demonstrate) the value of local-only vs. exported functionality. Both of the main custom modifier examples here currently show highly-reusable examples of modifiers which <em>should</em> be exported and should indeed probably live in their own modules. Accordingly, we might find an example which shows the value of having a locally-scoped modifier—e.g. something which manages the private details of an <code>iframe</code>.</p>
+<h3 id="api-docs"><a class="header" href="#api-docs">API Docs</a></h3>
+<p>There is presently no API for <code>&lt;template&gt;</code> itself, as proposed in this RFC, though it leaves room for future RFCs to do so.<sup class="footnote-reference"><a href="#emblem-etc">12</a></sup> Since there is no import location, we should cover it under the <code>@glimmer/component</code> module documentation. This will be a natural home for it, since we will always discuss it in the context of components.</p>
+<div class="footnote-definition" id="emblem-etc"><sup class="footnote-definition-label">12</sup>
+<p>Historically, for example, many Ember apps used <a href="http://emblemjs.com">Emblem</a> as a templating language—and it is still possible to do so today! In the future, that could be supported with <code>&lt;template lang=&quot;emblem&quot;&gt;</code>. This would also be an easy home for experiments with a Svelte-like syntax with e.g. <code>&lt;template lang=&quot;svelte&quot;&gt;</code> etc.</p>
+</div>
+<h3 id="existing-ember-users"><a class="header" href="#existing-ember-users">Existing Ember users</a></h3>
+<p>The Ember community has long experience with the idea that we can only have <em>one</em> component per file, and that component templates and the backing class must always be in separate files. The name of this feature, <em>first-class component templates</em>, is designed to help explain how it relates to that historical experience. In the past, templates in many ways were second-class citizens of the overall experience of authoring an Ember app—especially for template-only components. Adding even a small amount of functionality to a template came with a lot of friction and other downsides: switching to a class-backed component, or introducing a globally-available helper. Now, adding a local helper utility is no different for a template-only component than it is anywhere else: write a function!</p>
+<p>As a result, we can teach this to existing Ember users as taking everything they already know about how templates work, while making it faster, easier, and lighter-weight to solve common problems. The one significant new concept here is the <code>&lt;template&gt;</code> tag. We can describe that to existing features as the one addition which raises templates up to being a first-class tool in your app or addon. For this audience, we can explicitly connect standalone <code>&lt;template&gt;</code> to “template-only components,” a long-standing concept. (I did <em>not</em> use this verbiage in the overall discussion because this design, even more than Octane, helps make template-only components the <em>default</em> kind of component, with class-backed components the exception and thing to treat as a special case.)</p>
+<p>A blog post can introduce the feature along these lines when the feature ships, with examples showing how it simplifies existing patterns and enables new capabilities. For simplifying existing patterns, we might pull the same Mapbox example from the guides shown above. For enabling new capabilities, we could show how it enables using native CSS Modules with none of the hacks required by Ember CSS Modules.</p>
+<h2 id="drawbacks"><a class="header" href="#drawbacks">Drawbacks</a></h2>
+<ul>
+<li>
+<p>Since there is no notional import for <code>&lt;template&gt;</code>, there also isn’t a notional home for API documentation for it other than components.</p>
+</li>
+<li>
+<p>We must build a custom tooling integration with Prettier for the file format to <em>parse</em>. (As discussed below, we must build custom tooling to <em>use</em> Prettier for other options, but Prettier can <em>parse</em> them without custom tooling.)</p>
+</li>
+<li>
+<p>Developers may put an unreasonable number of components, helpers, modifiers, etc. in a single file, degrading the maintainability of that module. However, the counterpoint here is that large files are already common in many code bases, with or without this tool. Indeed, that happens in non-UI and UI code bases alike!</p>
+<p>Moreover, experience from frameworks which restrict component authoring formats to a single component per file, including Ember’s loose mode templates as well as Vue and Svelte SFCs, is that those components themselves tend to balloon in size. Sometimes that’s because everything in those components is notionally related or because much of it should be treated as &quot;private API&quot; for that component (even if it would be helpful to refactor small local components). Sometimes it is just because of the annoying overhead of needing to create a separate file to break the huge component into smaller pieces, and then import them all (or make them globally available, in Ember loose mode template!).</p>
+<p>The analogy here would be if a JavaScript module could only have a single function or class in it, or a CSS file could only have a single declaration in it, regardless of what actually made sense for that particular module.</p>
+</li>
+<li>
+<p>The syntax offered here, <code>&lt;template&gt;</code>, overlaps with <a href="http://developer.mozilla.org/en-US/docs/Web/HTML/Element/template">a platform built-in</a>, and would look very strange if a user <em>did</em>  want to use the built-in form. This may provoke some degree of confusion for users if they are familiar with it. However, there are several reasons to think this drawback is not significant:</p>
+<ul>
+<li>
+<p>In practice <code>&lt;template&gt;</code> is very-little used, and only in the context of progressive enhancement with vanilla JS—not with frameworks.</p>
+</li>
+<li>
+<p>Although it looks a little odd, the platform-native <code>&lt;template&gt;</code> can still be nested <em>within</em> a <code>&lt;template&gt;</code> tag as defined here.</p>
+</li>
+<li>
+<p>Other frameworks (most notably Vue) have used <code>&lt;template&gt;</code> in much the same way we are here with no major confusion on the part of developers.</p>
+</li>
+<li>
+<p>Most importantly, there is no <em>actual</em> conflict with the platform built-in, since <code>&lt;template&gt;</code> is not <em>JavaScript</em> syntax, which is where we are using it.</p>
+</li>
+</ul>
+<p>As a bonus: in a certain sense, the use of <code>&lt;template&gt;</code> here “rhymes” with the version from the platform: it represents the dynamic HTML content associated with some JavaScript functionality.</p>
+</li>
+<li>
+<p>Some developers prefer to keep a hard file-level separation between JavaScript and HTML. This proposal allows that to continue for loose mode components, but not for strict mode components, and strongly suggests a future where it is <em>not</em> possible (if we deprecate loose mode in the future).</p>
+</li>
+</ul>
+<h2 id="alternatives"><a class="header" href="#alternatives">Alternatives</a></h2>
+<p>Within the major strokes of this design proposal, we could tweak the invocation for the template space to clarify that it does <em>not</em> overlap with the built-in <code>&lt;template&gt;</code> tag.</p>
+<ul>
+<li>Use <code>&lt;Template&gt;</code> or <code>&lt;Glimmer&gt;</code> or similar. This would disambiguate it from the built-in <code>&lt;template&gt;</code>, but would introduce ambiguity with component invocation.</li>
+<li>Use a new sigil—much as we use <code>&lt;:main&gt;...&lt;/:main&gt;</code> for named blocks, we could do <code>&lt;[template]&gt;...&lt;/[template]&gt;</code> or something similar. While verbose and not especially pretty, this avoids overloading the platform tag.</li>
+</ul>
+<p>There are also alternative possibilities for defining the type of a non-class-backed <code>&lt;template&gt;</code>, for the choice of consistency of <code>&lt;template&gt;</code> between class-backed and non-class-backed components, and for the syntax for <em>some</em> sort of strict mode templates.</p>
+<h3 id="typescript-signature"><a class="header" href="#typescript-signature">TypeScript signature</a></h3>
+<p>Instead of adding the generic position to <code>&lt;template&gt;</code>, we can simply recommend that TypeScript users always create a named <code>&lt;template&gt;</code> with a <code>const</code> binding, and then <code>export default</code> that named export:</p>
+<pre><code class="language-js">import type { TC } from '@glimmer/component';
+
+const Greet: TC&lt;{ name: string }&gt; = &lt;template&gt;
+  &lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+&lt;/template&gt;
+
+export default Greet;
+</code></pre>
+<p>(Users may also be tempted use an <code>as</code> cast after the <code>&lt;template&gt;</code>—but this is unsafe: it allows users to unsafely provide a narrower type than the item actually provides, whereas assignment only allows <em>widening</em> of the types.)</p>
+<p>This works, and it simplifies the burden of the tooling implementation, but it comes with the significant downside of making a <em>much</em> worse authoring experience for TypeScript users than for JavaScript users.</p>
+<h3 id="distinguishing-class-backed-and-template-only-components"><a class="header" href="#distinguishing-class-backed-and-template-only-components">Distinguishing class-backed and template-only components</a></h3>
+<p>There is a small pedagogical difficulty, suggested by some of the language above, about the fact that we use <code>&lt;template&gt;</code> here to represent both the entirety of a component, when it is free-standing; and also the template portion of a component, when it is embedded in a class. Similarly, the proposed syntax for a TypeScript type signature must forbid the type parameter in class-backed components, because the correct home for the type parameter is on the backing class itself.</p>
+<p>We could instead introduce <code>&lt;component&gt;</code> and <code>&lt;template&gt;</code> as separate constructs, where <code>&lt;template&gt;</code> provides a template definition for the class it is embedded in, and <code>&lt;component&gt;</code> defines a standalone component. In this approach, <code>&lt;component&gt;</code> could <em>not</em> be used within the body of a class, nor <code>&lt;template&gt;</code> in a standalone form.<sup class="footnote-reference"><a href="#route-template">16</a></sup></p>
+<p>The major downside here is that the transformation of adding a backing class becomes a bit more involved: not just moving a <code>&lt;template&gt;</code> definition into the new class body, but moving a <code>&lt;component&gt;</code> into the new class body and then changing it from <code>&lt;component&gt;</code> to <code>&lt;template&gt;</code>. Notice, however, that the move for TS users <em>already</em> involves some further transformation, even if we chose not to ship the <code>&lt;template[Signature]&gt;</code> form, because type parameters have to move. The same goes for any documentation attached to a <code>&lt;template&gt;</code> declaration when moved to a backing class: it has to go on the class itself instead.</p>
+<p><strong>This is a reasonable alternative and <em>we should strongly consider adopting it</em>.</strong> I did not propose it here because I think just using <code>&lt;template&gt;</code> is more or less comparable to having both <code>&lt;template&gt;</code> and <code>&lt;component&gt;</code> on balance, and having <em>only</em> <code>&lt;template&gt;</code> feels a little nicer. That is, however, a purely subjective judgment and I would be perfectly happy with a solution using both <code>&lt;component&gt;</code> and <code>&lt;template&gt;</code>.</p>
+<div class="footnote-definition" id="route-template"><sup class="footnote-definition-label">16</sup>
+<p>One other <em>possible</em> upside is that we could then in theory use <code>&lt;template&gt;</code> in the context of routes—but it is not clear that that is preferable to the direction suggested by <a href="https://github.com/emberjs/rfcs/pull/731">RFC #0731</a>. My own judgment is that using <code>&lt;template&gt;</code> that way would be a mistake.</p>
+</div>
+<h3 id="alternative-syntaxes"><a class="header" href="#alternative-syntaxes">Alternative syntaxes</a></h3>
+<p>Additionally, there are three major alternatives which Ember community members have proposed in the design space:</p>
+<ul>
+<li><strong>imports-only:</strong> a design which uses “front-matter” to add imports, and only imports, to templates, while maintaining everything else in today’s system</li>
+<li><strong>single-file components (SFCs)</strong>: a design which follows the example of Svelte and Vue and make HTML the basis of a component, and use a <code>&lt;script&gt;</code> tag to host JavaScript functionality</li>
+<li><strong><code>hbs</code> template literals</strong>: a design which mirrors the <code>&lt;template&gt;</code> design quite closely, but uses <code>hbs</code> template literals similar to those we use in tests today</li>
+</ul>
+<p>I discuss each of these briefly below; for a <em>much</em> longer and more thorough discussion, please see the ~16,000-word series of blog posts I wrote as a deep dive: <a href="https://v5.chriskrycho.com/journal/ember-template-imports/"><strong>Ember Template Imports</strong></a>. Notably, as I alluded to above, <em>all</em> of them require custom parsing implementation for tooling, especially including Prettier and language servers.</p>
+<h4 id="imports-only"><a class="header" href="#imports-only">Imports-only</a></h4>
+<p>The imports-only design borrows the idea of “front-matter” from many text authoring formats, using something like <code>---</code>-delimiters to introduce a new, non-Handlebars area at the top of a template which allows exactly and only <em>imports</em> to appear. As with all strict-mode designs, all non-built-in values must be imported here. Thus, the <em>template</em> for the final component shown in the motivating example might appear like this:</p>
+<details><summary>motivating example shown with imports-only</summary>
+<ul>
+<li>
+<p><code>greet.hbs</code>:</p>
+<pre><code class="language-hbs">&lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+</code></pre>
+</li>
+<li>
+<p><code>set-username.js</code>:</p>
+<pre><code class="language-js">import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+
+export default class SetUsername extends Component {
+  @tracked name = '';
+
+  updateName = ({ target: { value } }) =&gt; {
+    this.name = value;
+  }
+
+  saveName = (submitEvent) =&gt; {
+    submitEvent.preventDefault();
+    this.args.onSaveName(this.name);
+  };
+}
+</code></pre>
+</li>
+<li>
+<p><code>set-username.hbs</code>:</p>
+<pre><code class="language-hbs">&lt;form {{on &quot;submit&quot; this.saveName}}&gt;
+  &lt;label for='name'&gt;Set username:&lt;/label&gt;
+  &lt;input
+    id='name'
+    value={{this.value}}
+    {{on &quot;input&quot; this.updateName}}
+  /&gt;
+  &lt;button type='submit' disabled={{eq this.value.length 0}}&gt;
+    Generate
+  &lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+</li>
+<li>
+<p><code>replace-location.js</code>:</p>
+<pre><code class="language-js">export default function replaceLocation(el, { with: newUrl }) {
+    el.contentWindow.location.replace(newUrl);
+});
+</code></pre>
+</li>
+<li>
+<p><code>generate-avatar.js</code>:</p>
+<pre><code class="language-js">import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import Greet from './greet.glimmer';
+import SetUsername from './set-username.glimmer';
+
+export default class GenerateAvatar extends Component {
+  @tracked name = &quot;&quot;;
+
+  get previewUrl() {
+    return `http://www.example.com/avatars/${name}`;
+  }
+
+  updateName = (newName) =&gt; {
+    this.name = newName;
+  };
+}
+</code></pre>
+</li>
+<li>
+<p><code>generate-avatar.hbs</code>:</p>
+<pre><code class="language-hbs">---
+import Greet from './greet';
+import SetUsername from './set-username';
+import replaceLocation from '../modifiers/replace-location';
+---
+
+&lt;Greet @name={{this.name}} /&gt;
+&lt;SetUsername
+  @name={{this.name}}
+  @onSaveName={{this.updateName}}
+/&gt;
+
+{{#if (gt 0 this.name.length)}}
+  &lt;iframe
+    title='Preview'
+    {{replaceLocation with=this.previewUrl}}
+  &gt;
+{{/if}}
+</code></pre>
+</li>
+</ul>
+</details>
+<p>The major upside to this is that it is the smallest possible delta over today’s implementation. It also allows users who appreciate the separation between JavaScript and template files to maintain that. However, it has a number of significant downsides which render it much worse than the first-class component templates proposal, and in some cases worse than the <em>status quo</em>.</p>
+<p>First, as with today’s <em>status quo</em>, it does not allow locally-scoped JavaScript values (including helpers and modifiers but also ecosystem tooling like GraphQL values, CSS-in-JS tooling, etc.) even when that is a perfectly reasonable design decision.</p>
+<p>Second, it substantially complicates the implementation of tooling for language servers, which have to do extra work to detect the presence of a backing class and “stitch together” the backing class and the template if a backing class does exist.</p>
+<p>Third, Since there are separate files for a template and its backing class, users may be tempted try to implement JavaScript functionality in the module for the backing class, and import it in the template:</p>
+<pre><code class="language-js">import Component from '@glimmer/component';
+
+export function isBirthday() {/*...*/}
+
+export default class MyComponent extends Component { /*...*/ }
+</code></pre>
+<pre><code class="language-hbs">---
+import { isBirthday } from './my-component';
+---
+{{#if (isBirthday @user.name)}}
+  &lt;p&gt;Happy birthday, {{@user.name}}!&lt;/p&gt;
+{{/if}}
+</code></pre>
+<p>While a colocated template (the default since Octane) is part of the same module as the backing class, this does technically work<sup class="footnote-reference"><a href="#recursive-module">17</a></sup> However, it’s the kind of extremely surprising and weird thing we would generally try to avoid pedagogically—it requires us to explain that these two separate files (<code>.js</code> and <code>.hbs</code>) are combined into a single module at build time… and that we have nonetheless kept them separate at authoring time, requiring these kinds of workarounds.<sup class="footnote-reference"><a href="#recursive-import-perf">18</a></sup></p>
+<p>Perhaps most critically, this is <strong>much worse than the <em>status quo</em> for tests</strong>.</p>
+<p>If we support strict mode for tests, then out of the box we require people’s test authoring format to become <em>massively</em> more verbose and less useful, with imports in every single test <code>hbs</code> string, to support strict mode for tests:</p>
+<pre><code class="language-js">import { module, test } from 'qunit';
+import { hbs } from 'ember-cli-htmlbars';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
+
+module('demonstrates the problem', function (hooks) {
+  setupRenderingTest(hooks);
+
+  test('by rendering an imported component', async function (assert) {
+    await render(hbs`
+      ---
+      import ComponentToTest from 'my-app/components/component-to-test';
+      ---
+
+      &lt;ComponentToTest /&gt;
+    `);
+  });
+
+  test('then again with an argument', async function (assert) {
+    await render(hbs`
+      ---
+      import ComponentToTest from 'my-app/components/component-to-test';
+      ---
+
+      &lt;ComponentToTest @anArg={{123}} /&gt;
+    `);
+  });
+});
+</code></pre>
+<p>There are two major problems to notice here:</p>
+<ol>
+<li>
+<p>There is no way to import <code>ComponentToTest</code> here just once. This overhead will multiply across the number of items to reference in a given test—every component, every helper, every modifier!—as well as across the number of tests. This is a <em>large</em> increase in the burden of testing compared to today.</p>
+</li>
+<li>
+<p>This also requires us to maintain, <em>and to teach</em>, the <code>hbs</code> handling for tests (or to design some replacement for it), on top of the “regular” template handling for components. This is the same situation as in Ember apps today—but since first-class component templates allow us to <em>improve</em> the consistency between app code and test code, this counts as a negative by comparison!</p>
+</li>
+</ol>
+<p>To get around this, we could continue to support a completely separate design for testing than for app code. In that case, though, if we want to support strict mode templates in tests, we need a separate authoring format for tests from app code. In fact, it basically requires that we fully implement something like the first-class component templates design!</p>
+<div class="footnote-definition" id="recursive-module"><sup class="footnote-definition-label">17</sup>
+<p>To see this for yourself, follow the instructions in <a href="https://gist.github.com/chriskrycho/dc5adabd80c04d405c7a4894c0ffb99e">this gist</a>. I had to test this out myself, and while it’s actually <em>very good</em> that modules work this way, I was initially surprised by it! If you’re curious: imports and exports are <em>static</em> and so are analyzed before the module is executed.</p>
+</div>
+<div class="footnote-definition" id="recursive-import-perf"><sup class="footnote-definition-label">18</sup>
+<p>Without additional post-processing, this would also introduce extra runtime overhead in terms of the imports!</p>
+</div>
+<h4 id="sfcs"><a class="header" href="#sfcs">SFCs</a></h4>
+<p>Single File Components (hereafter SFCs) start with an HTML baseline and layer on functionality in a <code>&lt;script&gt;</code> tag, modeled on HTML’s own design, but with extra semantics supporting imports and making an <code>export default class extends Component</code> statement provide the <code>this</code> for the template context. It can, however, define modifiers and helpers local to the component. You can think of this as a fairly natural (and HTML-like) extension to the imports-only design.</p>
+<details><summary>motivating example shown with SFCs</summary>
+<ul>
+<li>
+<p><code>greet.glimmer</code>:</p>
+<pre><code class="language-hbs">&lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+</code></pre>
+</li>
+<li>
+<p><code>set-username.glimmer</code>:</p>
+<pre><code class="language-hbs">&lt;script&gt;
+  import Component from '@glimmer/component';
+  import { tracked } from '@glimmer/tracking';
+
+  export default class SetUsername extends Component {
+    @tracked name = '';
+
+    updateName = ({ target: { value } }) =&gt; {
+      this.name = value;
+    }
+
+    saveName = (submitEvent) =&gt; {
+      submitEvent.preventDefault();
+      this.args.onSaveName(this.name);
+    };
+  }
+&lt;/script&gt;
+
+&lt;form {{on &quot;submit&quot; this.saveName}}&gt;
+  &lt;label for='name'&gt;Set username:&lt;/label&gt;
+  &lt;input
+    id='name'
+    value={{this.value}}
+    {{on &quot;input&quot; this.updateName}}
+  /&gt;
+  &lt;button type='submit' disabled={{eq this.value.length 0}}&gt;
+    Generate
+  &lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+</li>
+<li>
+<p><code>generate-avatar.glimmer</code>:</p>
+<pre><code class="language-hbs">&lt;script&gt;
+  import Component from '@glimmer/component';
+  import { tracked } from '@glimmer/tracking';
+  import Greet from './greet.glimmer';
+  import SetUsername from './set-username.glimmer';
+
+  function replaceLocation(el, { with: newUrl }) {
+    el.contentWindow.location.replace(newUrl);
+  }
+
+  export default class GenerateAvatar extends Component {
+    @tracked name = &quot;&quot;;
+
+    get previewUrl() {
+      return `http://www.example.com/avatars/${name}`;
+    }
+
+    updateName = (newName) =&gt; {
+      this.name = newName;
+    };
+  }
+&lt;/script&gt;
+
+&lt;Greet @name={{this.name}} /&gt;
+&lt;SetUsername
+  @name={{this.name}}
+  @onSaveName={{this.updateName}}
+/&gt;
+
+{{#if (gt 0 this.name.length)}}
+  &lt;iframe
+    title='Preview'
+    {{replaceLocation with=this.previewUrl}}
+  &gt;
+{{/if}}
+</code></pre>
+</li>
+</ul>
+</details>
+<p>This is very attractive in some ways, but it comes with three downsides:</p>
+<p>First, SFCs do not allow multiple components to be defined in a single file. This has been an ongoing sticking point with the Vue and Svelte designs, such that there is even an <a href="https://github.com/sveltejs/rfcs/blob/inline-components/text/0000-inline-components.md">RFC for Svelte for supporting at least a subset of this functionality</a>.</p>
+<p>Second, the scope handling for the default export is unusual and requires additional teaching.</p>
+<p>Third, and again most critically: as with the imports-only design, <strong>the SFC design requires that we continue to support a completely separate design for testing than for app code or use an incredibly verbose test authoring format.</strong> If we maintain the same authoring format, we end up with the same problems as in the imports-only proposal:</p>
+<pre><code class="language-js">import { module, test } from 'qunit';
+import { hbs } from 'ember-cli-htmlbars';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
+
+module('demonstrates the problem', function (hooks) {
+  setupRenderingTest(hooks);
+
+  test('by rendering an imported component', async function (assert) {
+    await render(hbs`
+      &lt;script&gt;
+        import ComponentToTest from 'my-app/components/component-to-test';
+      &lt;/script&gt;
+
+      &lt;ComponentToTest /&gt;
+    `);
+  });
+
+  test('then again with an argument', async function (assert) {
+    await render(hbs`
+      &lt;script&gt;
+        import ComponentToTest from 'my-app/components/component-to-test';
+      &lt;/script&gt;
+
+      &lt;ComponentToTest @anArg={{123}} /&gt;
+    `);
+  });
+});
+</code></pre>
+<p>Besides having all the same problems as the imports-only approach does, notice that this also substantially increases the cost of tooling even at the level of syntax highlighting, because now we need multiple nested layers of syntax highlighting: <code>hbs</code> strings include both HTML and JavaScript! While some syntax highlighters support this, it is a much higher lift for those which do not.</p>
+<p>And, once again, avoiding those problems more or less requires that we fully implement first-class component templates to avoid this!</p>
+<h4 id="template-literals-hbs"><a class="header" href="#template-literals-hbs">Template literals (<code>hbs</code>)</a></h4>
+<p>The “template literals” design takes as its starting point the <code>hbs</code> template strings Ember has used for testing since the 1.x era. It is relatively similar to the <code>&lt;template&gt;</code> design, in that it uses JavaScript/TypeScript files as the basis for its design. Unlike <code>template</code>, it uses an explicit <code>hbs</code> import, presumably from <code>@glimmer/component</code>. For components with a backing class, the template is defined as a static class field.</p>
+<details><summary>Motivating example shown with <code>hbs</code></summary>
+<pre><code class="language-js">import Component, { hbs } from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+
+const Greet = hbs`
+  &lt;p&gt;Hello, {{@name}}!&lt;/p&gt;
+`;
+
+class SetUsername extends Component {
+  @tracked name = '';
+
+  updateName = ({ target: { value } }) =&gt; {
+    this.name = value;
+  }
+
+  saveName = (submitEvent) =&gt; {
+    submitEvent.preventDefault();
+    this.args.onSaveName(this.name);
+  };
+
+  static template = hbs`
+    &lt;form {{on &quot;submit&quot; this.saveName}}&gt;
+      &lt;label for='name'&gt;Set username:&lt;/label&gt;
+      &lt;input
+        id='name'
+        value={{this.value}}
+        {{on &quot;input&quot; this.updateName}}
+      /&gt;
+      &lt;button type='submit' disabled={{eq this.value.length 0}}&gt;
+        Generate
+      &lt;/button&gt;
+    &lt;/form&gt;
+  `;
+}
+
+function replaceLocation(el, { with: newUrl }) {
+  el.contentWindow.location.replace(newUrl);
+}
+
+export default class GenerateAvatar extends Component {
+  @tracked name = &quot;&quot;;
+
+  get previewUrl() {
+    return `http://www.example.com/avatars/${name}`;
+  }
+
+  updateName = (newName) =&gt; {
+    this.name = newName;
+  };
+
+  static template = hbs`
+    &lt;Greet @name={{this.name}} /&gt;
+    &lt;SetUsername
+      @name={{this.name}}
+      @onSaveName={{this.updateName}}
+    /&gt;
+
+    {{#if (gt 0 this.name.length)}}
+      &lt;iframe
+        title='Preview'
+        {{replaceLocation with=this.previewUrl}}
+      &gt;
+    {{/if}}
+  `;
+}
+</code></pre>
+</details>
+<p>This has a few significant advantages!</p>
+<p>First, unlike with the <code>&lt;template&gt;</code> proposal, Prettier can <em>parse</em> a file using <code>hbs</code> string with no further changes. (It cannot <em>format</em> them, however: it treats the contents of the string opaquely.) This is a small, but significant, decrease in the cost of supporting the format both up front and over time.</p>
+<p>Second, it feels familiar to developers in the Ember ecosystem used to using <code>hbs</code> strings with their tests.</p>
+<p>Third, the broader JavaScript ecosystem makes use of a number of template string syntaxes, e.g. with <code>css</code> from <a href="https://emotion.sh/docs/@emotion/css">Emotion</a> or <a href="https://www.apollographql.com/docs/react/data/queries/"><code>graphql</code> from Apollo</a>, so it has familiarity for people coming from <em>outside</em> the Ember ecosystem as well.</p>
+<p>Fourth, we do not need to introduce custom syntax for providing types: we can type <code>hbs</code> as a function which accepts the args/signature as a type parameter, and teach people to perform.</p>
+<p>Finally, it shares many of the other strongly-positive properties of the <code>&lt;template&gt;</code> design, including that it works exactly the same way for testing and app code.</p>
+<p>These advantages are strong enough that this is <em>absolutely</em> the second-best move in the design space for us, and given a choice between maintaining the status quo and using <code>hbs</code> (i.e. if <code>&lt;template&gt;</code> were off the table), <em><strong>we should absolutely choose <code>hbs</code></strong></em>.</p>
+<p>Those positives notwithstanding, <strong>it also has some significant disadvantages compared to <code>&lt;template&gt;</code></strong>.</p>
+<p>First, the design re-purposes JavaScript syntax and gives it totally different semantics—like <code>&lt;template&gt;</code> does with HTML, but with <em>zero</em> signal from the context that it is doing something special.</p>
+<ul>
+<li>
+<p><code>hbs</code> is <em>not</em> actually a template string literal; it is a compile-time macro. Attempting to use it like a template string literal (e.g. by using <code>${...}</code> string interpolation) is a build-time error. This substantially undercuts the familiarity of the design: <code>css</code> and <code>graphql</code> and similar are <em>actual</em> string templates, not compile-time macros, and accordingly developers can use normal JavaScript semantics with them.</p>
+</li>
+<li>
+<p>The use of <code>static template = ...</code> has the wrong semantics: static class fields do not have access to an instance’s <code>this</code>—but templates quite expressly <em>do</em>. The whole point of a component with a backing class is to provide a normal JavaScript <code>this</code>, so this is a significant mismatch, which has consequences for both teaching and tooling.</p>
+</li>
+</ul>
+<p>Second, the learning path is <em>much</em> less gradual: the simplest possible component requires showing and at least minimally explaining JavaScript import and export semantics and template literals <em>and</em> that it isn’t a normal template literal as described above.</p>
+<p>Third, explaining what exactly <code>hbs</code> invocations produce is also strange: they aren’t actually JavaScript expressions, but they <em>appear</em> to be. In a template-only context, “invoking” <code>hbs</code> produces a component; in a class, it produces the <em>template</em> for that component. This is the same as with the <code>&lt;template&gt;</code> proposal, but it has the additional quirk of using JavaScript syntax to do it, rather than shifting languages.</p>
+<p>Fourth, while supplying a type definition which allows <code>hbs</code> to receive a type parameter initially appears nicer than the custom syntax for <code>&lt;template&gt;</code>, that form <em>appears</em> like an unsafe type cast in TypeScript, the same as writing <code>as TC&lt;Signature&gt;</code> after the definition. In terms of how we implement the transform, it would actually be safe in practice (the compiled output would be the same as with <code>&lt;template[Signature]&gt;</code>, and therefore would constrain the body of the template in the same way)—but only because the thing passed to <code>hbs</code> is <em>not</em> a template string. People can therefore not rely on any of their intuitions on the TypeScript side, either.</p>
+<p>Net, while there are some nice features to the <code>hbs</code> proposal, it comes out significantly worse than <code>&lt;template&gt;</code> in most ways we care about. The decreased tooling costs are real, but they are much smaller than the other downsides of the format.</p>
+<h2 id="unresolved-questions"><a class="header" href="#unresolved-questions">Unresolved questions</a></h2>
+<ul>
+<li>
+<p>Introducing a new file extension also provides an easy opportunity to change the default component manager for class-backed components in, and only in, the new file type—eliminating the need to subclass from Glimmer's <code>Component</code>. From the motivating example:</p>
+<pre><code class="language-js">class SetUsername {
+  @tracked name = '';
+
+  updateName = ({ target: { value } }) =&gt; {
+    this.name = value;
+  }
+
+  saveName = (submitEvent) =&gt; {
+    submitEvent.preventDefault();
+    this.args.onSaveName(this.name);
+  };
+
+  &lt;template&gt;
+    &lt;form {{on &quot;submit&quot; this.saveName}}&gt;
+      &lt;label for='name'&gt;Set username:&lt;/label&gt;
+      &lt;input
+        id='name'
+        value={{this.value}}
+        {{on &quot;input&quot; this.updateName}}
+      /&gt;
+      &lt;button type='submit' disabled={{eq this.value.length 0}}&gt;
+        Generate
+      &lt;/button&gt;
+    &lt;/form&gt;
+  &lt;/template&gt;
+}
+</code></pre>
+<p>However, this is, at present, not yet well-motivated: it’s not clear what the actual advantage it provides over an explicit inheritance-driven interface. Additionally, has unresolved complexities around providing the types needed for Glint, which requires a home for the information about the element(s) and yield(s) for the component. Today, Glint uses type-only declarations on Glimmer <code>Component</code>, which cannot be straightforwardly translated to this mode. This is likely tractable, and a future RFC may introduce it (including for defaulting <code>.gjs</code> and <code>.gts</code> into it automatically), but it is large enough that it is probably worth addressing separately.</p>
+</li>
+<li>
+<p>Does the possible confusion with the platform <code>&lt;template&gt;</code> warrant adopting an alternative syntax, whether component-like (<code>&lt;Template&gt;</code>) or using an additional sigil (<code>&lt;[template]&gt;</code>, <code>&lt;% ... %&gt;</code>, <code>&lt;$ ... $&gt;</code> etc.)? If so, what design? Here we must keep in mind that the design should not be ambiguous with “dynamic” behavior (e.g. <code>&lt;{template}&gt;</code> which is suggestive of the Svelte and React expression marker, and which we might find attractive for future iterations of template language ourselves).</p>
+</li>
+<li>
+<p>Are <code>.gjs</code> and <code>.gts</code> the best file extensions?</p>
+</li>
+<li>
+<p>How does this relate to the currently un-merged <a href="https://github.com/emberjs/rfcs/pull/731">RFC #0731: Add <code>setRouteComponent</code> API</a>? That is: can we merge this and proceed with authoring components while there is an unresolved design problem for the related issue of routes, controllers, and their host components? Or should we see this as a helpful part of resolving <em>that</em> design question? (I believe we can move forward in parallel.)</p>
+<p>The primary challenge here is that, as things stand, our guides would have some fairly substantial incoherence until we solve the problems which #0731 is addressing: route templates would be totally different from component templates in their semantics and behavior. This points to the ongoing and increasing divergence of the <code>Route</code> and <code>Controller</code> design from the rest of the framework, but it’s directly connected to <em>this</em> RFC pedagogically.</p>
+</li>
+<li>
+<p>Should we include a plan for a staged rollout of deprecating namespace resolution in this RFC, rather than tackling it in a later RFC?</p>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="0776-typescript-blueprints.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="0794-ember-data-schema-definition-service-simplify.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="0776-typescript-blueprints.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="0794-ember-data-schema-definition-service-simplify.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>
