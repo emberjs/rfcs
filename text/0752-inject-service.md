@@ -1,10 +1,9 @@
 ---
 Stage: Recommended
 Start Date: 2021-06-10
-Release Date: FIXME
+Release Date: 2021-12-28
 Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
+  ember-source: v4.1.0
 Relevant Team(s): Ember.js, Learning
 RFC PR: https://github.com/emberjs/rfcs/pull/752
 ---

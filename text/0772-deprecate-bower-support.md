@@ -1,11 +1,9 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
+Stage: Ready for Release
 Start Date: 2021-10-21
 Release Date: Unreleased
 Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
+  ember-cli: vX.Y.Z
 Relevant Team(s): Ember CLI
 RFC PR: https://github.com/emberjs/rfcs/pull/772
 ---
