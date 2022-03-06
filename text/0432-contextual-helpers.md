@@ -1,9 +1,12 @@
 ---
+Stage: Released
 Start Date: 2018-12-17
+Release Date: 2021-05-03
+Release Versions:
+  ember-source: v3.27.0
 Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/432
 Tracking: https://github.com/emberjs/rfc-tracking/issues/6
-
 ---
 
 # Contextual Helpers and Modifiers (a.k.a. "first-class helpers/modifiers")

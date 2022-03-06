@@ -1,10 +1,9 @@
 ---
-Stage: Accepted
+Stage: Released
 Start Date: 2020-10-04
-Release Date: Unreleased
+Release Date: 2021-11-15
 Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
+  ember-source: v4.0.0
 Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/680
 ---

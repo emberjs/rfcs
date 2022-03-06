@@ -1,5 +1,9 @@
 ---
+Stage: Released
 Start Date: 2020-05-23
+Release Date: 2021-12-28
+Release Versions:
+  ember-source: v4.1.0
 Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/631
 
