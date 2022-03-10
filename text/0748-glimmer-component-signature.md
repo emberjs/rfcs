@@ -170,16 +170,20 @@ With these signature types defined, we can update the type for the Glimmer `Comp
 Previously:
 
 ```ts
-class Component<Args extends {} = {}> {
+declare class Component<Args extends {} = {}> {
   readonly args: Args;
+
+  constructor(owner: Owner, args: Args);
 }
 ```
 
 Updated:
 
 ```ts
-class Component<Signature> {
+declare class Component<Signature> {
   readonly args: ComponentArgs<Signature>;
+
+  constructor(owner: Owner, args: ComponentArgs<Signature>);
 }
 ```
 
