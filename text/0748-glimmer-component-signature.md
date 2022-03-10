@@ -13,7 +13,7 @@ RFC PR: https://github.com/emberjs/rfcs/pull/748
 
 In TypeScript, the `@glimmer/component` base class currently has a single `Args` type parameter. This parameter declares the names and types of the arguments the component expects to receive.
 
-This RFC proposes a change to that type parameter to become `Signature`, capturing more complete information about how components can be used in a template, including their expected **arguments**, the **blocks** they provide, and what type of **element(s)** they apply any received attributes and modifiers to.
+This RFC proposes a change to that type parameter to become `Signature`, capturing more complete information about how components can be used in a template, including their expected **arguments**, the **blocks** they accept, and what type of **element(s)** they apply any received attributes and modifiers to.
 
 This RFC is based in large part on prior work by [@gossi] and on learnings from [Glint].
 
