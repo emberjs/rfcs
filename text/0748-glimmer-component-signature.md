@@ -150,9 +150,7 @@ interface GlimmerComponentSignature {
     [argName: string]: unknown;
   };
   Blocks?: {
-    [blockName: string]:
-      | unknown[]
-      | { Positional: unknown[] }
+    [blockName: string]: unknown[]
   }
   Element?: Element | null;
 }
