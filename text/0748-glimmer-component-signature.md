@@ -113,7 +113,9 @@ Two points to notice about the signature:
 // arguments, and could be reused for helpers, modifiers, etc.
 interface InvokableSignature {
   Args?: {
-    Named?: Record<string, unknown>;
+    Named?: {
+      [argName: string]: unknown;
+    };
     Positional?: unknown[];
   };
 }
@@ -123,14 +125,18 @@ interface InvokableComponentSignature extends InvokableSignature {
   Element?: Element | null;
   Blocks?: {
     [blockName: string]: {
-      Positional?: unknown[];
+      Params?: {
+        Positional?: unknown[];
+      };
     }
   }
 }
 
 interface InvokableGlimmerComponentSignature extends InvokableComponentSignature {
   Args?: {
-    Named?: Record<string, unknown>;
+    Named?: {
+      [argName: string]: unknown;
+    };
     // empty tuple here means it does not allow *any* positional params
     Positional?: [];
   }
@@ -150,8 +156,8 @@ interface GlimmerComponentSignature {
     [argName: string]: unknown;
   };
   Blocks?: {
-    [blockName: string]: unknown[]
-  }
+    [blockName: string]: unknown[];
+  };
   Element?: Element | null;
 }
 ```
