@@ -58,11 +58,12 @@ The goal of this RFC, then, is to greatly simplify the testing model by removing
 
 ## Detailed design
 
-We will introduce several new/refactored utilities for use in rendering tests:
+We will introduce two new/refactored utilities for use in rendering tests:
 
 1. Update the `render` helper to accept either a component or a template snippet.
-1. A new `scopedTemplate` function that accepts a template and returns a component _that uses lexically scoped data_
 1. A new `rerender` function that would be used after the initial `render` call to wait for DOM updates
+
+These additions, used in concert with [First Class Component Templates](https://github.com/emberjs/rfcs/blob/master/text/0779-first-class-component-templates.md), should significantly improve the DX of writing component tests in Ember.
 
 ### Updated `render` helper
 
@@ -73,43 +74,6 @@ The updated version of `render` would be imported from `@ember/test-helpers` and
 ```ts
 function render(template: TemplateFactory | Component, options?: RenderOptions): Promise<void>;
 ```
-
-### `scopedTemplate`
-
-Now that we have a new version of `render`, we also need a convenient way of creating components to pass to it. This is where the `scopedTemplate` function comes in. `scopedTemplate` would accept a [strict-mode](https://github.com/emberjs/rfcs/blob/master/text/0496-handlebars-strict-mode.md) template and return a renderable component which could then be passed to our updated version of `render`:
-
-```ts
-function scopedTemplate(templateString: string): Component;
-```
-
-Much like `hbs`, `scopedTemplate` would be a Babel macro, meaning it could be invoked like a function (e.g. `scopedTemplate('<Foo />')`) or like a tagged template string (e.g. `` scopedTemplate`<Foo />` ``), and it does _not_ accept any kind of string interpolation or concatentation (i.e.`` scopedTemplate`<Foo @name=${'blah'} />` `` is not allowed).
-
-In addition, the template passed to `scopedTemplate` would have access to lexically scoped data, meaning that its values would pull _directly from the surrounding scope_, i.e. the values defined in the test itself. With this new approach, instead of having to call `this.set` for each value you want to reference in the template, you instead just define the data you want and reference it directly in the template. For example:
-
-```js
-import { render } from '@ember/test-helpers';
-import { scopedTemplate } from '@ember/template-compilation';
-
-// setup elided
-test('it works', async function (assert) {
-  const somePerson = {
-    name: 'Zoey',
-    age: 5,
-  };
-
-  const component = scopedTemplate`
-    <ProfileCard @name={{somePerson.name}} @age={{somePerson.age}} />
-  `;
-
-  await render(component);
-
-  assert.dom(this.element).hasText(somePerson.name);
-});
-```
-
-In the (near?) future, a proposal like `<template>` from [RFC #0779](https://github.com/chriskrycho/ember-rfcs/blob/fcct/text/0779-first-class-component-templates.md) could supersede `scopedTemplate`, as the components created with first-class component templates could be passed directly to `render` as well. This RFC can move forward and use lexical scoping _without_ requiring that full feature set to be implemented, however.
-
-Since `scopedTemplate` would require a strict-mode template, it would be supported back to v3.25. (If we had to also support loose mode, it'd only work starting in 3.28).
 
 ### `rerender`
 
@@ -129,7 +93,6 @@ Continuing the example from above, here's what we'd expect an update and re-rend
 
 ```js
 import { render, rerender } from '@ember/test-helpers';
-import { scopedTemplate } from '@ember/template-compilation';
 import { tracked } from '@glimmer/tracking';
 
 // setup elided
@@ -139,9 +102,9 @@ test('it works', async function (assert) {
     @tracked age = 5,
   };
 
-  const component = scopedTemplate`
+  const component = <template>
     <ProfileCard @name={{somePerson.name}} @age={{somePerson.age}} />
-  `;
+  </template>;
 
   await render(component);
 
@@ -163,9 +126,7 @@ We'd need to update the [testing components](https://guides.emberjs.com/release/
 
 We'd also need to update the [API docs for @ember/test-helpers](https://github.com/emberjs/ember-test-helpers/blob/master/API.md) for the new version of `render` as well as the newly introduced `rerender` function.
 
-Finally, we'd need to document the new `scopedTemplate` function in `@ember/template-compilation`.
-
-API documentation for the three new functions are included below:
+API documentation for the two new functions are included below:
 
 ### render
 
@@ -193,24 +154,7 @@ render(template: CompiledTemplate | Component, options?: RenderOptions): Promise
 rerender(): Promise<void>
 ```
 
-### scopedTemplate
-
-```ts
-/**
- Turns a lexically scoped strict-mode template into a Component. The string passed to `scopedTemplate` may not contain
- any interpolated values or other dynamic elements, but it may refer to other values/variables in the surrounding scope.
- @public
- @param {string} templateString a string containing a strict-mode template
- @returns {Component} a component that can be passed to `render`
- @example
-     let person = { name: 'Chris' };
-     scopedTemplate('<Foo @name={{person.name}} />`)
- **/
-
-function scopedTemplate(templateString: string): Component;
-```
-
-All things considered, the changes in this RFC should result in a component testing model that is ultimately _more_ intuitive. We could also introduce a configuration option to `@ember/test-helpers` that would allow users to turn on assertion that prevents rendering tests from being written using the old method to help codebases migrate.
+All things considered, the changes in this RFC should result in a component testing model that is ultimately _more_ intuitive. We could also introduce a configuration option to `@ember/test-helpers` that would allow users to turn on an assertion that prevents rendering tests from being written using the old method to help codebases migrate.
 
 ## Drawbacks
 
@@ -220,14 +164,8 @@ Ember's testing setup is one its most valuable features, and this RFC would intr
 
 - Leave things as they are.
 - Encourage people to use `precompileTemplate` along with the current version of `render`.
-- Only implement the changes to `render` and wait for first-class component templates rather than introducing `scopedTemplate`
-  - That said, the upside to implementing `scopedTemplate` along with the changes to `render` is that it would use the same primitives as first-class component templates, which allows tests written using `scopedTemplate` to be codemodded easily and safely, and allows us to moving the state of rendering tests forward without having to wait on the much larger first-class component template implementation. In addition, implementing `scopedTemplate` sooner provides a lot of value to TypeScript users immediately.
 
 ## Unresolved questions
-
-- Should we also support loose-mode templates for `scopedTemplate` in some way?
-  - This has the benefit of being more flexible and slightly better-suited to today's Ember template.
-  - On the other hand, the future of Ember templates is exclusively strict mode, and this RFC is really aimed at 4.0 and beyond, so support loose-mode may end up be an added cost without much additional value.
 
 > Optional, but suggested for first drafts. What parts of the design are still
 > TBD?
