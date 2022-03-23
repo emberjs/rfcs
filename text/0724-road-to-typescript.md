@@ -122,9 +122,7 @@ Additionally, this RFC does not propose changing the *default* experience from J
 
 #### Typed Templates
 
-This roadmap RFC explicitly does not require support for “typed templates” as part of the path to adopting TypeScript as a community. TypeScript-powered integration between the template layer and the JavaScript context is a key goal for the Typed Ember team already. However, it is not a *gating feature* for Ember to officially support TypeScript. Rather: the feature can be rolled out and integrated with Ember CLI, the Ember Language Server, and other tooling whenever it is ready, decoupled from the other efforts here. If we reach a point where full support for type-aware template integration exists and is sufficiently robust, we can consider adding it to our definition of official Ember support via a dedicated RFC.
-
-The *only* relationship those efforts have to this roadmap is that they will inform the design of the `@glimmer/component@2.x` TypeScript API (as described below under **Roadmap**).
+Given the importance of templates in Ember and Glimmer apps, “typed templates” are a key part of the path to adopting TypeScript as a community. TypeScript-powered integration between the template layer and the JavaScript context is a key goal for the Typed Ember team already. It is not a *gating feature* for Ember packages to officially supply TypeScript. Instead: the feature can be rolled out and integrated with Ember CLI, the Ember Language Server, and other tooling whenever it is ready, decoupled from the other efforts here. However, given its importance as one of the primary API boundaries within Ember and Glimmer apps, our definition of official Ember support would be incomplete without it.
 
 
 ### Roadmap
@@ -178,6 +176,10 @@ There are also a number of key implementation concerns which must be addressed, 
 - **Where do published type definition files live in the artifacts published to npm?** TypeScript generally assumes that types are published with packages of the same name. While there is [now](https://emberjs.github.io/rfcs/0706-deprecate-ember-global.html) a path to publishing actual packages like `"@ember/object"`, this effort should not be gated on any such effort, and there is additional work to be done. However, that work simply consists of implementation details, rather than defining new public API.
 
 - **How do app and addon authors *consume* published types?** There are a few “gotchas” about how TypeScript supports features like autocomplete in a project, which primarily affect the very first few interactions end users have with TypeScript, which we should address via tooling. How this works is closely related to where the type definition files are generated during publication, and so will likely need to be solved in conjunction with that issue.
+
+- **What should the final design for template-aware type checking be?** [Glint][glint] has a number of decisions which make good sense and indeed are necessary for template-aware type checking given both the design constraints of the Octane era and its own experimental status. However, we should nail these down before it becomes an officially-recommended tool!
+
+[glint]: https://github.com/typed-ember/glint
 
 
 #### Recommendations
