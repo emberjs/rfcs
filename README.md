@@ -110,6 +110,7 @@ further guidance.
 | Ember Data    | Ember Data                                                   |
 | Ember CLI     | Ember CLI                                                    |
 | Learning      | Documentation, Website, learning experiences                 |
+| TypeScript    | TypeScript integration and design                            |
 | Steering      | Governance                                                   |
  
 ### Finding a champion
