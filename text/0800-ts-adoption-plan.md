@@ -96,6 +96,8 @@ To fully support TypeScript across the Ember ecosystem, we need:
 - release infrastructure to allow us to handle pre-release testing, feature flags, and alpha and beta releases
 - updates to our documentation to include TypeScript as a first-class citizen of the ecosystem
 
+While we need full template-aware type checking to complete our support for TypeScript, this RFC intentionally defers that consideration to a dedicated RFC to hammer out the remaining design questions around [Glint][glint].
+
 
 ### Semantic Versioning
 
@@ -560,15 +562,13 @@ We will introduce a new `--typescript` (`-ts`) flag for the `ember new` and `emb
 
 [rfc-0776]: https://emberjs.github.io/rfcs/0776-typescript-blueprints.html
 
-We will also update the Glimmer Component blueprint in the Ember.js repo to include the component’s signature, so that it can be used by TypeScript.[^glint-signature]
+We will also update the Glimmer Component blueprint in the Ember.js repo to include [the component’s signature][rfc-0748], so that it can be used by TypeScript.
 
-We will *not* be eliminating `ember-cli-typescript` as part of this process, because it remains a useful home for some of the tooling, and may remain a useful configuration point in the future, for example if we incorporate [Glint][glint] into official Ember tooling. In this design, only the pieces which are *necessarily* shared will be hoisted into `ember-cli` itself, with the other pieces remaining in `ember-cli-typescript`. For example, the blueprint for generating `tsconfig.json` files should remain in `ember-cli-typescript`.
+We will *not* be eliminating `ember-cli-typescript` as part of this process, because it remains a useful home for some of the tooling, and may remain a useful configuration point in the future, for example when we incorporate [Glint][glint] into official Ember tooling. In this design, only the pieces which are *necessarily* shared will be hoisted into `ember-cli` itself, with the other pieces remaining in `ember-cli-typescript`. For example, the blueprint for generating `tsconfig.json` files should remain in `ember-cli-typescript`.
 
 [glint]: https://github.com/typed-ember/glint
 
 We will also deprecate the `ember-cli-typescript-blueprints` repository, since it will become defunct, with the blueprints moving to the host repository (`ember-source`, `ember-data`, and `ember-cli`) and being authored in TypeScript directly, with types stripped for JS consumers, so they remain in sync permanently. (See again [RFC #0776][rfc-0776] for details.)
-
-[^glint-signature]: If [RFC #0748][rfc-0748] is merged before we make these changes, we will use the final form of that signature. Otherwise, we will use the existing form, which only supports component arguments.
 
 [rfc-0748]: https://github.com/emberjs/rfcs/pull/748
 
