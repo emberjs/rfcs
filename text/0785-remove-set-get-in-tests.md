@@ -75,6 +75,10 @@ The updated version of `render` would be imported from `@ember/test-helpers` and
 function render(template: TemplateFactory | Component, options?: RenderOptions): Promise<void>;
 ```
 
+Since this new version of `render` will need to differentiate between components and templates, we'll also add an `isComponent` utility to the `@glimmer/runtime` package. This addition will significantly reduce the amount of private API that would be required when implementing the new `render` function.
+
+Additionally, since passing a component to `render` also precludes the user from being able to access the text context via `this` (since components will use their own local context rather than the test's), we'll display a warning message if someone passes a component to `render` while also using `this.set` in the same test. This will help avoid confusion in the case that they opt in to the new component-based testing model but then copy an example from the guides or an older writeup that uses `this.set`.
+
 ### `rerender`
 
 Finally, we need to handle cases where you want to update the backing data and assert against the resulting changes in the rendered output. In the current testing paradigm, we'd _usually_ just update the values using `this.set`, which immediately triggers a rerender. In more complex cases, e.g. where there is some async operation involved, we would wait for the state we want to assert against, likely using either `settled` or `waitFor`. This works, but has the downside of either waiting for _everything_ to finish (in the case of `settled`), or waiting for a single thing to finish (in the case of `waitFor`).
@@ -122,7 +126,9 @@ It's worth noting that rendering tests without `get`/`set` are actually possible
 
 ## How we teach this
 
-We'd need to update the [testing components](https://guides.emberjs.com/release/testing/testing-components/) section of the official guides to document this new approach.
+We'd need to add a new TypeScript-specific section to the [testing components](https://guides.emberjs.com/release/testing/testing-components/) section of the official guides to document this new approach for TypeScript users.
+
+We expect there will be a future RFC that introduces a form which also allows passing arguments into the invoking component, in addition to the approach described in this RFC that requires a backing class in order to mark primitives as tracked. As a result, for the time being, we'll only teach this new approach in a TypeScript-specific subsection of the guides on testing components until that followup RFC has been written and merged. We believe that the benefits to the TypeScript community (namely, no longer needing to fight with the type checker over the type of `this` in each test) still significantly outweigh the costs of the slightly awkward method of passing arguments.
 
 We'd also need to update the [API docs for @ember/test-helpers](https://github.com/emberjs/ember-test-helpers/blob/master/API.md) for the new version of `render` as well as the newly introduced `rerender` function.
 
