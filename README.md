@@ -12,6 +12,8 @@ consistent and controlled path for new features to enter the framework.
 
 [Active RFC List](https://github.com/emberjs/rfcs/pulls)
 
+[Approved RFC List](https://emberjs.github.io/rfcs/)
+
 ## When you need to follow this process
 
 You need to follow this process if you intend to make "substantial"
