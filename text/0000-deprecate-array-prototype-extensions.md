@@ -31,7 +31,7 @@ For convenient methods like `without`, `sortBy`, `uniqBy` etc., the replacement 
 
 For helper functions participating in the Ember classic reactivity system like `pushObject`, `removeObject`, the replacement functionality also already exists in the form of immutable update style with tracked propreties like `@tracked someArray = []`, or through utilizing `TrackedArray` from `tracked-built-ins`.
 
-During transition, we should still allow users to use `A` from `@ember/array`.
+During transition, we still allow users to use `A` from `@ember/array`.
 
 We don't need to build anything new specifically, however, the bulk of the transition will be
 focused on deprecating the array prototype extensions.
@@ -40,13 +40,14 @@ focused on deprecating the array prototype extensions.
 
 An entry to the [Deprecation Guides](https://deprecations.emberjs.com/v4.x) will be added outlining the different recommended transition strategies.
 
-We will create new eslint rule and template lint rule `no-array-prototype-extensions` and set examples. Examples should have recommendations for equivalences.
+Rule `ember/no-array-prototype-extensions` is available for both [eslint](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-array-prototype-extensions.md) and [template lint](https://github.com/ember-template-lint/ember-template-lint/blob/master/docs/rule/no-array-prototype-extensions.md). Rule examples have recommendations for equivalences.
 
-We will also create codemods to help with this migration.
+We can leverage the fixers of lint rule to auto fix some of the issues. We will also create codemods to help with this migration.
 
 ### Convenient methods
 Examples of deprecated and current code:
 ```js
+import Component from '@glimmer/component';
 import { uniqBy, sortBy } from 'lodash';
 
 export default class SampleComponent extends Component{
@@ -72,6 +73,7 @@ export default class SampleComponent extends Component{
 ### Observable based methods
 Examples of deprecated code:
 ```js
+import Component from '@glimmer/component';
 import { action } from '@ember/object';
 
 export default class SampleComponent extends Component{
@@ -87,6 +89,7 @@ export default class SampleComponent extends Component{
 Examples of current code. 
 #### Option 1: tracked properties
 ```js
+import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 
@@ -102,6 +105,7 @@ export default class SampleComponent extends Component{
 
 #### Option 2: `TrackedArray`
 ```js
+import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { TrackedArray } from 'tracked-built-ins';
@@ -114,6 +118,18 @@ export default class SampleComponent extends Component{
     abc.push(newItem);
   }
 };
+```
+
+### Properties in templates
+Examples of deprecated code:
+
+```hbs
+<Foo @bar={{@list.firstObject.name}} />
+```
+
+Examples of  current code.
+```hbs
+<Foo @bar={{get @list '0.name'}} />
 ```
 
 After the deprecated code is removed from Ember, we need to remove the [options to disable the array prototype extension](https://guides.emberjs.com/v4.2.0/configuring-ember/disabling-prototype-extensions/) from Official Guides and we also need to update the [Tracked Properties](https://guides.emberjs.com/v4.2.0/upgrading/current-edition/tracked-properties/#toc_arrays) `Arrays` section with updated suggestions.
