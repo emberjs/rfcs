@@ -1,11 +1,11 @@
 ---
 Stage: Accepted
-Start Date: 
+Start Date: 2022-02-11
 Release Date: Unreleased
 Release Versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
-Relevant Team(s): 
+Relevant Team(s): Ember Data
 RFC PR: https://github.com/emberjs/rfcs/pull/793
 ---
 
@@ -24,12 +24,18 @@ RFC PR: https://github.com/emberjs/rfcs/pull/793
 
 ## Summary
 
-1. Allow setting polymorph relations without inheritance and mixins.
-2. Deprecate using inheritance and mixins for polymorphic relations. Target version: 5.0.
+1. Allow setting polymorphic relationships without inheritance and mixins.
+2. Deprecate using inheritance and mixins for polymorphic relationships. Target version: 5.0.
 
 ## Motivation
 
-You could set polymorphic relations using two ways: inheritance or mixins.
+Currently, although undocumented and not explicitly supported, you can set polymorphic
+relationships using two mechanisms: inheritance and mixins. This RFC seeks to lay out
+an explicitly supported path for polymorphic relationships that composes well with
+native class usage, eliminates the dependency on instanceof checks and prototype chain
+walking, and is compatible with the schema service introduced in [RFC #487](https://github.com/emberjs/rfcs/blob/master/text/0487-custom-model-classes.md#exposing-schema-information)
+
+**Example Using Inheritance**
 
 ```js
 import Model, { belongsTo, hasMany } from '@ember-data/model';
@@ -48,7 +54,9 @@ class CommentModel extends TaggableModel {}
 class PostModel extends TaggableModel {}
 ```
 
-Now consider that this same post and comment class also both need to be "viewable", and that "viewable" is a trait also shared by other models that are not "taggable". Today this is only achievable via mixins.
+**Example via Mixins**
+
+Consider that this same post and comment class also both need to be "viewable", and that "viewable" is a trait also shared by other models that are not "taggable". Today this is only achievable via mixins.
 
 ```js
 import Model, { belongsTo, hasMany } from '@ember-data/model';
@@ -81,21 +89,21 @@ The polymorphic relationship **MUST** explicitly declare itself as polymorphic a
 
 Polymorphic relationships take the form:
 
-\```ts
+```ts
 hasMany(baseType: string, options: { polymorphic: true, inverse: string | null }) 
 belongsTo(baseType: string, options: { polymorphic: true, inverse: string | null }) 
-\```
+```
 
 Concrete Relationships which fulfill polymorphic relationships take the form:
 
-\```ts
+```ts
 hasMany(recordWithPolymorphicRelationship: string, options: { inverse: string, as: string }) 
 belongsTo(recordWithPolymorphicRelationship: string, options: { inverse: string, as: string }) 
-\```
+```
 
 So for instance, given a field named "tagged" that is a polymorphic hasMany with baseType "taggable", and inverse key "tags" the following would be the polymorphic relationship and concrete relationship.
 
-\```ts
+```ts
 // polymorphic relationship
 class Tag extends Model {
    @hasMany("taggable", { polymorphic: true, inverse: "tags" }) tagged;
@@ -104,29 +112,7 @@ class Tag extends Model {
 class Post extends Model {
    @hasMany("tag", { inverse: "tagged", as: "taggable" }) tags;
 }
-\```
-
-### Example
-
-```js
-import Model, { belongsTo, hasMany } from '@ember-data/model';
-
-class TagModel extends Model {
-  @belongsTo('taggable', { polymorphic: true, inverse: 'tag' }) taggable;
-}
-
-class ViewModel extends Model {
-  @belongsTo('viewable', { polymorphic: true, inverse: 'views' }) viewable;
-}
-
-class CommentModel extends Model {
-  @hasMany('views', { inverse: 'viewable', as: 'viewable' }) views;
-  @hasMany('tag', { inverse: 'taggable', as: 'taggable' }) tags;
-}
 ```
-
-`taggable` and `viewable` in this example should be typed as `extends Model`, so any model can take that spot. 
-JSON:API has enough information (`type` and `id`) to set this relation.
 
 ### Polymorphic Relationships without Inverses
 
@@ -138,11 +124,11 @@ Every polymorphic relationship has an implicit "base type" that represents the e
 
 In the below example, the polymporphic relationship implies the existence of the `base type` "taggable".
 
-\```
+```
 class Tag extends Model {
   @hasMany("taggable", { inverse: "tags", polymorphic: true }) taggables;
 }
-\```
+```
 
 It is only required that your app implement a model (or if using instantiateRecord and the schema service implement handling for that type) if your API will return entities whose type is the base type. If the base type is abstract and never directly interacted with, it is not required to implement a Model or other associated support.
 
