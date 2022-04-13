@@ -183,6 +183,7 @@ Deprecated API surface
 - `shiftObject`
 - `slice`
 - `sortBy`
+- `toArray`
 - `uniq`
 - `uniqBy`
 - `unshiftObject`
