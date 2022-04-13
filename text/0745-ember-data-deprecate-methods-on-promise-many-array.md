@@ -32,7 +32,7 @@ class Post extends Model {
 }
 ```
 
-A user today might acces and map over the comments for a post in the following manner.
+A user today might access and map over the comments for a post in the following manner.
 
 ```js
 const commentProxy = post.comments;
