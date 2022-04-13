@@ -20,7 +20,7 @@ Relevant Team(s): Ember Data
 RFC PR: https://github.com/emberjs/rfcs/pull/793
 -->
 
-# Polymorphic relations without inheritance
+# EmberData | Polymorphic Relationship Support
 
 ## Summary
 
