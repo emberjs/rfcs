@@ -27,8 +27,7 @@ Externally, we feel accessing schema information in this manner is a bad practic
 be avoided. Schema information is exposed at runtime via `store.modelFor` in pre- 
 [custom-model-class](https://github.com/emberjs/rfcs/blob/master/text/0487-custom-model-classes.md#custom-model-class-rfc)
 versions and via the schema definition service and store-wrapper in post- custom-model-class 
-versions (currently none, this feature though implemented has not been activated in any version 
-yet).
+versions (3.28+).
 
 Internally, the EmberData team wishes to explore removing our dependence on `computed` 
 properties and `eachComputedProperty` which make use of invoking `proto` for defining
