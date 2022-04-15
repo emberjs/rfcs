@@ -28,8 +28,6 @@ This RFC declares our intent to officially support TypeScript as a peer to JavaS
   - [Defining Official Support](#defining-official-support)
   - [Constraints](#constraints)
   - [Non-Goals](#non-goals)
-    - [Superseding or replacing JavaScript](#superseding-or-replacing-javascript)
-    - [Typed Templates](#typed-templates)
   - [Roadmap](#roadmap)
     - [RFC Required](#rfc-required)
       - [Types](#types)
@@ -97,6 +95,7 @@ Key implications of this commitment:
 
 - The Semantic Versioning specification, including definitions of SemVer for TypeScript types and TypeScript compiler support policy, will be a key artifact of this process. Without it, we will not be able to provide the stability guarantees Ember users have come to rely on.
 
+- Given the importance of templates in Ember and Glimmer apps, “typed templates” are a key part of the path to adopting TypeScript as a community. TypeScript-powered integration between the template layer and the JavaScript context is a key goal for the Typed Ember team already. It is not a *gating feature* for Ember packages to officially supply TypeScript. Instead: the feature can be rolled out and integrated with Ember CLI, the Ember Language Server, and other tooling whenever it is ready, decoupled from the other efforts here. However, given its importance as one of the primary API boundaries within Ember and Glimmer apps, our definition of official Ember support would be incomplete without it.
 
 ### Constraints
 
@@ -110,19 +109,11 @@ The following are our hard constraints in supporting TypeScript with Ember:
 
 ### Non-Goals
 
-The combination of constraints and ecosystem status lead us to several non-goals for this effort. A *non-goal* here means that it is not part of the initial road to making TypeScript available. 
-
-
-#### Superseding or replacing JavaScript
+The combination of constraints and ecosystem status lead us to a key non-goal for this effort. A *non-goal* here means that it is not part of the initial road to making TypeScript available.
 
 This RFC aims to *add* a new first-class language to the Ember support matrix. However, it does *not* recommend replacing JavaScript with TypeScript. To the contrary: this is an explicit non-goal. Per the constraints described above, adding first-class TypeScript support should be a net positive for JavaScript-only Ember developers.
 
 Additionally, this RFC does not propose changing the *default* experience from JavaScript to TypeScript even once we have full support for TypeScript.
-
-
-#### Typed Templates
-
-Given the importance of templates in Ember and Glimmer apps, “typed templates” are a key part of the path to adopting TypeScript as a community. TypeScript-powered integration between the template layer and the JavaScript context is a key goal for the Typed Ember team already. It is not a *gating feature* for Ember packages to officially supply TypeScript. Instead: the feature can be rolled out and integrated with Ember CLI, the Ember Language Server, and other tooling whenever it is ready, decoupled from the other efforts here. However, given its importance as one of the primary API boundaries within Ember and Glimmer apps, our definition of official Ember support would be incomplete without it.
 
 
 ### Roadmap
