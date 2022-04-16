@@ -232,7 +232,18 @@ de-sugaring into `template()` calls:
    import { template } from '@ember/template-compilation';
    import Foo form 'somewhere';
 
-   export default @template(`<Foo />`, () => ({ Foo }) class Bar {
+   export default @template(`<Foo />`, () => ({ Foo })) class Bar {
+   }
+   ```
+
+   **TBD**: or perhaps... (we should only pick one)
+
+   ```js
+   import { template } from '@ember/template-compilation';
+   import Foo form 'somewhere';
+
+   export default class Bar {
+     static { template(this, `<Foo />`, () => ({ Foo })) }
    }
    ```
 
