@@ -18,8 +18,8 @@ the `<template>` syntax extension defined in [RFC #779][rfc-779] using
 standard JavaScript:
 
 ```js
-import { template } from '@ember/template-compilation';
-import Hello from 'my-app/components/hello';
+import { template } from "@ember/template-compilation";
+import Hello from "my-app/components/hello";
 
 // <template><Hello></template> becomes...
 export default template(`<Hello />`, () => ({ Hello }));
@@ -30,9 +30,10 @@ export const Foo = template(`<Hello />`, () => ({ Hello }));
 // export class Bar {
 //   <template><Hello /></template>
 // }
-export
-@template(`<Hello />`, () => ({ Hello })
-class Bar {
+export class Bar {
+  static {
+    template(`<Hello />`, () => ({ Hello }), this);
+  }
 }
 ```
 
@@ -140,9 +141,9 @@ function that servers as a middle ground between the `<template>` language
 extension and the low-level primitives.
 
 - It is designed to have the same semantics as the `<template>` feature (such
-  as the strict-mode opt-in, returning a template-only component when invoked
-  as a standalone expression), providing the same high-level programming model
-  for authoring components in standard JavaScript environments.
+  as the strict-mode opt-in, returning a template-only component when not
+  attached to a class), providing the same high-level programming model for
+  authoring components in standard JavaScript environments.
 
 - It requires manually supplying the lexical scope variable bindings.
 
@@ -232,20 +233,16 @@ de-sugaring into `template()` calls:
    import { template } from '@ember/template-compilation';
    import Foo form 'somewhere';
 
-   export default @template(`<Foo />`, () => ({ Foo })) class Bar {
-   }
-   ```
-
-   **TBD**: or perhaps... (we should only pick one)
-
-   ```js
-   import { template } from '@ember/template-compilation';
-   import Foo form 'somewhere';
-
    export default class Bar {
-     static { template(this, `<Foo />`, () => ({ Foo })) }
+     static {
+       template(`<Foo />`, () => ({ Foo }), this);
+     }
    }
    ```
+
+   **Note**: In static initializer block isn't required here (though it is a
+   standard JavaScript feature). The `template()` function can wrap around the
+   class, or be applied after the class has been declared.
 
 In these small snippets, the scope bindings may look very verbose compared to
 the size of the templates, but in real-world templates, the ratio will improve.
@@ -337,6 +334,11 @@ lines anyway with an inline closure that you invoke inside the template.
 ## Alternatives
 
 **TBD**
+
+```js
+export @template(`<Hello />`, () => ({ Hello }) class Bar {
+}
+```
 
 ## Unresolved questions
 
