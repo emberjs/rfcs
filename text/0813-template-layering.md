@@ -13,9 +13,11 @@ RFC PR: https://github.com/emberjs/rfcs/pull/813
 
 ## Summary
 
-This RFC propose to introduce a `template()` function as an alternative for
-the `<template>` syntax extension defined in [RFC #779][rfc-779] using
-standard JavaScript:
+This RFC propose to introduce a `template()` function as an alternative for the
+`<template>` syntax extension defined in [RFC #779][rfc-779] using standard
+JavaScript:
+
+[rfc-779]: ./0779-first-class-component-templates.md
 
 ```js
 import { template } from "@ember/template-compilation";
@@ -37,17 +39,48 @@ export class Bar {
 }
 ```
 
-[rfc-779]: ./0779-first-class-component-templates.md
+Idiomatic usages of the `template()` function can be pre-compiled by a build
+step if desired, but a runtime implementation can also be used via an opt-in
+described below.
+
+We also propose an alternative form that uses the `template()` function as a
+tag function for JavaScript tagged template strings. However, this variant does
+not have a runtime implementation and must be handled by a build step:
+
+```js
+import { template } from "@ember/template-compilation";
+import Hello from "my-app/components/hello";
+
+// <template><Hello></template> becomes...
+export default template`<Hello />`;
+
+// export const Foo = <template><Hello /></template> becomes...
+export const Foo = template`<Hello />`;
+
+// export class Bar {
+//   <template><Hello /></template>
+// }
+export class Bar {
+  static {
+    template`<Hello />`;
+  }
+}
+```
+
+In addition, we also propose to add a `@ember/template-compilation/runtime`
+module as an opt-in to enable runtime template compilation.
 
 ## Motivation
 
-[RFC #779](rfc-779) introduced a first-class component syntax feature that has
+[RFC #779][rfc-779] introduced a first-class component syntax feature that has
 numerous benefits, among which are:
 
-1. Opt-in to strict mode (RFC #496)
-2. Eliminating the need for runtime name-based resolutions
-3. Ability to use imported components/helpers/modifiers
+1. Opt-in to strict mode ([RFC #496][rfc-496])
+2. Eliminating the need for name-based runtime resolutions
+3. Ability to use imported template constructs
 4. Ability to interact with the surrounding JavaScript scope
+
+[rfc-496]: ./0496-handlebars-strict-mode.md
 
 However, one of the drawbacks is that it requires a custom syntax extension
 (`<template>`) and a custom file format (`.gjs/.gts`), which requires a build
@@ -65,12 +98,12 @@ not acceptable:
 
 2. There may be editors and environments that are impossible for us to support,
    either because they don't have an extension system at all, or those systems
-   do not expose the capabilities we need. For example, CodeSandbox, CodPen,
+   do not expose the capabilities we need. For example, CodeSandbox, CodePen,
    TypeScript playground, etc.
 
 3. When publishing packages to NPM, it is important and desirable to publish
    only standard `.js` files that does not require further processing by the
-   consumer (see: [v2 Addon Format](./0507-embroider-v2-package-format.md)).
+   consumer (see [v2 Addon Format](./0507-embroider-v2-package-format.md)).
 
 4. There are use cases that prefer or require components that are directly
    runnable in the browser without a build step, such as bug report templates,
@@ -174,6 +207,19 @@ extension and the low-level primitives.
   `.gjs` format (such as Discord and GitHub today), but where it's desirable to
   still retain the highlighting for the JavaScript/TypeScript portions.
 
+This RFC also _recommends_ that the addon spec (v2.1?) to be updated to
+consider using `template(hbs-source, pre-compiled-scope-function)` as the
+primary publishing format for component templates and consider reducing and
+deprecating the need for other alternative mechanisms (such as shipping `.hbs`
+files). However, this is only a general recommendation, and a future RFC or
+amendment is needed to explore that further.
+
+It is notable that this update is only needed for the purpose of clarifying
+the recommended/preferred way of shipping templates in addons. However, because
+`template()` is just standard JavaScript, there is nothing stopping addons from
+adopting the format as long as their target Ember versions support the feature
+(or that they depend on a suitable polyfill for the feature).
+
 ## Detailed design
 
 This RFC proposes to re-specify the `<template>` language extension into a
@@ -182,7 +228,7 @@ de-sugaring into `template()` calls:
 1. Top-level declaration
 
    ```
-   import Foo form 'somewhere';
+   import Foo from "somewhere";
 
    <template>
      <Foo />
@@ -192,18 +238,21 @@ de-sugaring into `template()` calls:
    becomes
 
    ```js
-   import { template } from '@ember/template-compilation';
-   import Foo form 'somewhere';
+   import { template } from "@ember/template-compilation";
+   import Foo from "somewhere";
 
-   export default template(`
+   export default template(
+     `
      <Foo />
-   `, () => ({ Foo }));
+   `,
+     () => ({ Foo })
+   );
    ```
 
 2. Expression
 
    ```
-   import Foo form 'somewhere';
+   import Foo from "somewhere";
 
    export const Bar = <template><Foo /><template>;
    ```
@@ -211,8 +260,8 @@ de-sugaring into `template()` calls:
    becomes
 
    ```js
-   import { template } from '@ember/template-compilation';
-   import Foo form 'somewhere';
+   import { template } from "@ember/template-compilation";
+   import Foo from "somewhere";
 
    export const Bar = template(`<Foo />`, () => ({ Foo }));
    ```
@@ -220,7 +269,7 @@ de-sugaring into `template()` calls:
 3. Class
 
    ```
-   import Foo form 'somewhere';
+   import Foo from "somewhere";
 
    export default class Bar {
      <template><Foo /><template>
@@ -230,8 +279,8 @@ de-sugaring into `template()` calls:
    becomes
 
    ```js
-   import { template } from '@ember/template-compilation';
-   import Foo form 'somewhere';
+   import { template } from "@ember/template-compilation";
+   import Foo from "somewhere";
 
    export default class Bar {
      static {
@@ -241,8 +290,13 @@ de-sugaring into `template()` calls:
    ```
 
    **Note**: In static initializer block isn't required here (though it is a
-   standard JavaScript feature). The `template()` function can wrap around the
-   class, or be applied after the class has been declared.
+   standard JavaScript feature). The `template()` function can also be applied
+   after the class has been declared. If available, the static initializer
+   block allows the closest placement to the `<template>` equivalent (nested
+   inside the class body) which is why it is preferred.
+
+   **Note**: When used in this form, the function returns/passes through the
+   target supplied in the third argument (the component class).
 
 In these small snippets, the scope bindings may look very verbose compared to
 the size of the templates, but in real-world templates, the ratio will improve.
@@ -256,10 +310,15 @@ should be able to reason about `<template>` with this desugaring in mind.
 
 ### Tagged Template Literals
 
+Alternatively, the `template()` function can also be used as a tag function for
+a JavaScript tagged template string. This alternate form automatically captures
+the lexical scope variable bindings. However, this form does not have a runtime
+implementation and must be processed by a build step.
+
 1. Top-level declaration
 
    ```
-   import Foo form 'somewhere';
+   import Foo from "somewhere";
 
    <template>
      <Foo />
@@ -269,8 +328,8 @@ should be able to reason about `<template>` with this desugaring in mind.
    becomes
 
    ```js
-   import { template } from '@ember/template-compilation';
-   import Foo form 'somewhere';
+   import { template } from "@ember/template-compilation";
+   import Foo from "somewhere";
 
    export default template`<Foo />`;
    ```
@@ -278,7 +337,7 @@ should be able to reason about `<template>` with this desugaring in mind.
 2. Expression
 
    ```
-   import Foo form 'somewhere';
+   import Foo from "somewhere";
 
    export const Bar = template`<Foo />`;
    ```
@@ -286,8 +345,8 @@ should be able to reason about `<template>` with this desugaring in mind.
    becomes
 
    ```js
-   import { template } from '@ember/template-compilation';
-   import Foo form 'somewhere';
+   import { template } from "@ember/template-compilation";
+   import Foo from "somewhere";
 
    export const Bar = template`<Foo />`;
    ```
@@ -295,7 +354,7 @@ should be able to reason about `<template>` with this desugaring in mind.
 3. Class
 
    ```
-   import Foo form 'somewhere';
+   import Foo from "somewhere";
 
    export default class Bar {
      <template><Foo /><template>
@@ -305,41 +364,493 @@ should be able to reason about `<template>` with this desugaring in mind.
    becomes
 
    ```js
-   import { template } from '@ember/template-compilation';
-   import Foo form 'somewhere';
+   import { template } from "@ember/template-compilation";
+   import Foo from "somewhere";
 
    export default class Bar {
-     static { template`<Foo />` }
+     static {
+       template`<Foo />`;
+     }
    }
    ```
 
-**TBD**
+   **Note**: There is no alternative to using a static initializer block in
+   the tagged template literal format. Since this format intrinsically requires
+   customizing build tools, it is expected that it shouldn't be a big hurdle to
+   also configure the tools to recognize this syntax as well and transpile it
+   away as necessary. Since this is a standard JavaScript feature that is
+   quickly gaining support across the ecosystem, we don't anticipate this to be
+   too much of an issue in practice.
+
+### Build-time Transformations
+
+Typically, it is desirable to for Ember apps to precompile all templates at
+build time. By default, Ember does not include a template compiler in the
+bundle as it adds significant amount of code but most apps do not have a use
+for it.
+
+The `template()` function proposed in this RFC is designed so that idiomatic
+usages (defined in the next section) can be processed by a built step, which
+is enabled by default.
+
+Non-idiomatic usages are not guaranteed to be transformable at build time. If a
+transformation cannot be applied, the call will be left as-is for runtime
+processing. Note that since the runtime template compiler is not available by
+default (see below for how to opt-in), this default behavior will result in a
+runtime error.
+
+Because the rules for determining idiomatic usages are purely syntactical, they
+can also be checked by a linter. We propose to include a enabled-by-default
+lint rule to warn against accidental non-idiomatic usages.
+
+The purpose of specifying an idiomatic subset of the possible syntaxes and
+compositions is to reflect that this feature is intended to be an equivalent
+of the `<template>` feature in environments where the custom extensions are not
+viable. Therefore, developers should try to stick to the same set of semantics
+and affordances provided by `<template>`. It also defines the common subset of
+features that tools like codemods and linters must be able to handle.
+
+Deviating outside of this subset of idiomatic uses may result in degraded
+performance (due to requiring runtime template compilations) and development
+experience (due to tools not able to make static analysis on the templates), so
+developers should be very aware of these tradeoffs and should be a deliberate
+choice.
+
+That being said, we acknowledge that they are legitimate use cases for wanting
+the extra flexibility or needing runtime behavior. By including a runtime
+implementation of the feature (again, see below), we get handling for all the
+remaining edge cases "for free".
+
+#### Idiomatic Usages
+
+In either form, the `template()` function must be imported directly from the
+`@ember/template-compilation` module for the invocation to be considered
+idiomatic. Renaming the import binding is permitted. The import binding must
+be used directly in the invocations/call-sites. For example, if the imported
+value is stored into another constant storing the imported into another
+variable, then any indirect invocations are not considered an idiomatic use.
+
+For the function call form of the `template()` function, idiomatic usages are
+defined as:
+
+1. The first argument must be a single standalone inline string literal, which
+   must be:
+   1. Specified with single quotes, or
+   2. Specified with double quotes, or
+   3. Specified with backticks but without a tag and no interpolations.
+2. The second argument, if provided, must be a single standalone inline
+   anonymous function expression that:
+   1. Specified with either the `function` keyword or arrows, and
+   2. Does not have any modifiers (e.g. `async`, `function*`, etc), and
+   3. Does not take any arguments, and
+   4. Contains exactly the following function body:
+      1. A single return statement, which must return a standalone inline
+         object literal (a "POJO") that:
+         1. Does not contain duplicate property names, and
+         2. Does not contain computed property names, and
+         3. Does not contain any getters, setters or methods, and
+         4. Does not use the spread operator, and
+         5. Contains only name-value paris where the the value is a bare
+            JavaScript identifier (variable reference) and the name matches the
+            identifier exactly (i.e. cases where the shorthand property syntax
+            would have been allowed), and
+         6. Can optionally be specified using shorthand property syntax. Note
+            that because of the previous restriction this is always possible.
+      2. For arrow function expressions, the single expression shorthand is
+         also permitted, provided that the expression is an object literal
+         surrounded in a single pair of parenthesis that matches the above
+         specification.
+3. The third argument, if provided, must be a JavaScript identifier or the
+   `this` keyword.
+4. No more than three arguments can be passed.
+5. Comments are not permitted anywhere inside the arguments list.
+
+For the tagged template string form, idiomatic usages are defined as:
+
+1. The string must not contain any interpolations.
+2. For class association, the tagged template string must be placed in a static
+   initializer block where it is the only statement. Comments are not permitted
+   inside the block.
+
+Some examples of idiomatic usages:
+
+```js
+template("Hello world!");
+template(`Hello world!`);
+
+template("Hello world!", () => ({}));
+template("Hello world!", () => {
+  return {};
+});
+template("Hello world!", function () {
+  return {};
+});
+
+template("<Hello />", () => ({ Hello }));
+template("<Hello />", () => {
+  return { Hello };
+});
+template("<Hello />", function () {
+  return { Hello };
+});
+
+// Quoting the property names are also allowed
+template("<Hello />", () => ({ Hello: Hello }));
+template("<Hello />", () => {
+  return { Hello: Hello };
+});
+template("<Hello />", function () {
+  return { Hello: Hello };
+});
+
+class Foo {
+  static {
+    template("<Hello />", () => ({ Hello }), this);
+  }
+}
+
+class Bar {}
+
+template("<Hello />", () => ({ Hello }), Bar);
+```
+
+Some examples of non-idiomatic or incorrect usages:
+
+```js
+template();
+
+let t = template;
+t("Hello world!");
+
+let source = "Hello world!";
+template(source);
+
+template("Hello" + " " + "world!");
+template(`Hello ${audience}!`);
+template(stripIndent`
+  Hello
+`);
+
+template("Hello world!", () => {});
+
+const EMPTY_OBJECT = {};
+template("Hello world!", () => EMPTY_OBJECT);
+
+template("Hello world!", function scope() {
+  return {};
+});
+
+template("Hello world!", /* this is a comment */ () => {});
+
+template("<Hello />", () => ({ ...scope }));
+template("<Hello />", () => ({ ["Hello"]: Hello }));
+template("<Hello />", () => {
+  let scope = {};
+  scope["Hello"] = Hello;
+  return scope;
+});
+
+template("<Hello />", () => ({ Hello }), class Foo {});
+
+class Bar {
+  static template = template("<Hello />", () => ({ Hello }));
+}
+
+class Baz {
+  static {
+    debugger;
+    template`<Hello />`;
+  }
+}
+
+// This is also a syntax error in JavaScript anyway
+class Bat {
+  static {
+    return template`<Hello />`;
+  }
+}
+```
+
+As pointed out above, the philosophy around these restrictions is to maintain
+parity between the possible semantics with the `<template>` and restricting the
+syntactic variations to make it feasible for tools to perform the static
+analysis reliably.
+
+On the other hand, at least in some of the use cases we are targeting, these
+would be hand-written in hand-maintained source code files (as opposed to only
+being a compilation target). Therefore, it is also an important balancing act
+to not add gratuitous restrictions that prescribe a "canonical syntax" that is
+easy to violate by accident. For example, while would could mandate, say, that
+the scope function must be specified using arrow functions, it could be easily
+forgotten and get missed in code-reviews, which could subtly cause the template
+to fallback to runtime compilation. Formatting tools like prettier may also
+automatically rewrite the code between different equivalent styles.
+
+If the idiomatic usage rules are followed, a build-time processor will be able
+to provide warnings or errors for common mistakes, such as syntax errors within
+the Handlebars source code, missing or unused scope variables, etc. It may also
+be possible to provide some limited editor integration, though as pointed out
+by [RFC #779][rfc-779], there are some inherit challenges with this approach.
+
+### Runtime Compilation
+
+Ember has always had the ability to compile template at runtime. However, since
+this incur significant costs and most apps do not benefit from it, this feature
+is disabled by default and requires and explicit opt-in to include the runtime
+template compiler into the app's bundle. The mechanism of the opt-in will be
+discussed later in this section.
+
+If the template compiler is available at runtime, then it will be possible to
+use the `template()` function at runtime as well. However, as mentioned above,
+this does not extend to the "tagged template string" format. Attempting to use
+the `template()` function as a tag at runtime will result in a helpful error in
+debug builds and undefined behavior on production builds.
+
+If the template compiler is not available at runtime, then attempts to call the
+`template()` function at runtime will result in a helpful error in debug builds
+and undefined behavior on production builds. On production builds, it is not
+guaranteed that the `template` named export may be undefined (i.e. it may not
+even be a function), but developers must not rely on this to "feature-detect"
+the availability of runtime compilation.
+
+Notably, even when template compilation is available at runtime, the result of
+the compilations may be subtly different. This is because that applications may
+have custom glimmer/handlebars AST plugins in their build, and these plugins
+will not be available at runtime.
+
+This may change in the future, but it has always been true for runtime template
+compilation and will likely remain to be the case for the foreseeable future,
+as these plugins are often authored or packaged in ways that are inherently not
+browser-friendly. This usually only used for optional syntax extensions such as
+"inline {{let}}" so in practice it is not an issue. However, some polyfills for
+template features also uses the AST plugin API and those polyfilled features
+will not be available to templates compiled at runtime.
+
+#### Opting In
+
+Today, applications can opt-in to bundling the runtime compiler with something
+along these lines in their `ember-cli-build.js`:
+
+```js
+app.import("node_modules/ember-source/dist/ember-template-compiler.js");
+```
+
+The exact details depend on the version of `ember-source` and is not very well
+documented. It also does not align with the direction we are headed, where we
+encourage using the modules system and imports to express dependencies. This
+configuration is also not friendly to tree-shaking/code-splitting, as it forces
+the template compiler to be included into the main/initial bundle, when it may
+only be needed in one of the infrequently used routes.
+
+This RFC takes the opportunity to improve on this by proposing a new module –
+`@ember/template-compilation/runtime`. When this module is imported, either as
+a "side-effect" import statement, or if its exported values are imported, then
+it serves as an opt-in for enabling runtime template compilation.
+
+For the time being, we propose that this module should have a single named
+export – `template`, which is a re-export of the `template()` function we
+described above. It has the same semantics as `template()` from the main module
+except it is always invalid to use this imported function as a tag, so linters
+and TypeScript can trivial flag this invalid usage.
+
+The purpose of the re-exported `template()` from the runtime module is to
+signal to both human readers and build tools that the template compilation is
+deliberately deferred to runtime. These usages must not be processed at build
+time and linters must not warn about non-idiomatic usages.
+
+Typically, developers should favor importing `template()` from the main module
+so that their code can be agonistic against where the compilation is happening.
+However, since the intent is that build-time compilation should be _possible_,
+they should also take care to ensure they stay within the set of idiomatic set
+of usages to guarantee that is the case, and this re-export from the runtime
+module offers a way to signal that the deviations are deliberate.
+
+This RFC does not propose to add re-exports for other features found in the
+`@ember/template-compilation` package. Conceptually, it makes sense to provide
+the same ex-export for at least the `compile()` function. However, as we move
+to a world where components are used everywhere and the need for "standalone
+templates" dwindles, it is unclear that the `compile()` function is needed in
+the long run. In any case, if that turns out to be necessary, a future RFC can
+propose to add support for that and the precedence set forth in this RFC should
+make that a straightforward process.
+
+### TypeScript
+
+We don't expect this feature to pose any significant challenges in terms of
+TypeScript support, other than having a few overloaded signatures/purpose on
+the same `template()` function may make things a little cumbersome, but not
+prohibitively so. The signature of the function can be described as such:
+
+```ts
+// These types are defined in other RFCs
+interface Signature {
+  /* ... */
+}
+interface Component<S extends Signature> {
+  /* ... */
+}
+
+type Scope = () => Record<string, unknown>;
+
+function template<S extends Signature>(source: string): Component<S>;
+function template<S extends Signature>(
+  source: string,
+  scope: Scope
+): Component<S>;
+function template<S extends Signature, C extends Component<S>>(
+  source: string,
+  scope: Scope,
+  target: C
+): C;
+
+// For the build-time tagged template literal extension. By not specifying
+// additional arguments here, TypeScript actually enforces that the tagged
+// string literal cannot have any interpolation expressions.
+function template<S extends Signature>(
+  source: TemplateStringsArray
+): Component<S>;
+```
+
+One nice thing about this design is that there is a natural place for the type
+(generic) argument for the template's signature, negating the need for the
+special `<template[Signature]>` syntax.
 
 ## How we teach this
 
-**TBD**: While the `template()` function is a bit cumbersome to use in practice
-I think what it does is in fact quite easy to understand and teach. It may
-actually help with teaching `<template>` if we can show what it desugars into.
+The teaching recommendations in [RFC #779][rfc-779] shall remain in full force.
+We continue to recommend teaching materials to be focused around `<template>`
+and `.gjs`. The `template()` feature is recommended only in standard JavaScript
+environments where adoption of `<template>` and `.gjs` is not feasible.
+
+Because `template()` is a standard JavaScript API that has a "real" import
+location, there is a natural place to document and describe its behavior in the
+API docs. This should be the primary reference of the feature, and should also
+where we document the idiomatic subset as well.
+
+In the section of the guides where we teach `<template>`, there should also be
+a small subsection discussing using `template()` as an alternative, including
+what the appropriate use cases and its potential drawbacks. There may also be
+value in teaching `<template>` in terms of its desugaring into `template()` in
+the guides. Some developers may find it easier to appreciate what `<template>`
+is or does and its benefits by comparing it to the equivalent standard
+JavaScript desugaring.
 
 ## Drawbacks
 
-**TBD**: Having the ability to supply the variable binding closure manually may
-open it up to misuse (i.e. the closure does more than just simply capturing the
-surrounding lexical scope, or does so in ways we didn't intend). However, this
-is not a new problem in a sense, as the primitives already exists, and the
-status quo is "if you cannot use `<template>`, use the primitives directly.
-Also, with default helper manager, you can pretty much do anything along those
-lines anyway with an inline closure that you invoke inside the template.
+Exposing the ability to manually pass a scope function can expose flexibility
+that we don't intend on providing and opening it up to misuse. For example, the
+closure could do more than just simply capturing the surrounding lexical scope,
+impart side-effects, observe the timing of the call, etc.
+
+However, this is not a new problem in a sense, as the primitives already exists
+and the current status quo is that users who cannot use `<template>` must use
+those primitives directly. With good linting and the ability to precompile and
+analyze templates statically, it provides good incentives for developers to
+stick with the idiomatic subset, which is carefully defined to have the same
+semantics and power as `<template>`.
+
+In any case, a lot of these "dangerous" patterns are already possible outside
+of the scope function, especially after the [default helper manager][rfc-756]
+making it easy to define inline helpers.
+
+[rfc-756]: ./0756-helper-default-manager.md
+
+With the ability to fallback to runtime compilation, the existence of these
+edge cases do not create a lot of additional implementation complexity.
 
 ## Alternatives
 
-**TBD**
+### Class Decorators
+
+We could use class decorators to associate templates to classes instead of the
+static initializer block approach. However, in practice it feels pretty awkward
+due to the length of the source text and the amount of arguments needed, even
+for trivial examples. It also doesn't help this case that stage 3 decorators
+require that class decorators come after the `export` and `default` keywords:
 
 ```js
 export @template(`<Hello />`, () => ({ Hello }) class Bar {
 }
 ```
 
+### Reserving Space For "Attributes"
+
+It seems likely that the `<template>` tag will eventually gain some kind of
+"attributes" syntax for configuring things like whitespace handling (see the
+next section).
+
+One option is to "reserve space" for that now, but it can also be done later by
+optionally allowing the current "scope closure" argument to be a options object
+where the scope closure would be passed as `{ scope: () => ({ ... }) }`.
+
 ## Unresolved questions
 
-**TBD**
+### Whitespace Handling
+
+One thing that [RFC #779][rfc-779] did _not_ specify is that how whitespace
+should be handled. The default conclusion is probably that the whitespaces
+should be preserved exactly the way they appear in the `.gjs` source text.
+While this technically works, it is a conclusion that pleases and benefits no
+one, and will likely be revised/refined during the "spec work" process before
+the feature is shipped.
+
+On the one hand, there is the argument that whitespaces are typically not
+significant in almost all HTML contexts templates. Shipping all these useless
+whitespace just to have the browser fold them away when rendered into the DOM
+is a not insignificant amount of wasted space in app bundles today. It also
+just creates unnecessary work for the browser and the rendering layer.
+
+On the other hand, there is the argument that whitespaces _can_ be significant.
+Sometimes, this can be observed from uses of the `<pre>` element, but really,
+the whitespace handling for any element (including `<pre>`) can be changed
+using the CSS `white-space` property, so it is not necessarily safe to assume
+that we can fold/collapse whitespaces in templates just because that's the
+default behavior of the browser.
+
+However, even with that in mind, the default conclusion for the whitespace
+handling in `<template>` tags is _still_ not useful, _especially_ when the
+author is trying to preserve significant whitespace for something like code
+samples. This is because `<template>` tags often appears in JavaScript
+contexts that already has leading indentation (such as inside a class body), so
+in practice, if we preserve the whitespace exactly as it appears inside the
+`<template>` tag, it still would not do what the author was trying to
+accomplish.
+
+It seems likely that we would need to define some default (perhaps globally
+configurable) whitespace handling rules, along with some mechanisms for local
+overrides. Perhaps something like `<template white-space="pre">`.
+
+Once we decide that for `<template>`, then we have to make the additional
+choice of what to do about `template()`. Because they are the same feature,
+they face the same challenges. Again, the default course of action would be to
+do nothing/preserve the whitespaces exactly, but it's a solution that serves no
+one for the same reasons.
+
+It is the same challenge that multi-line backtick string literals faces in
+normal JavaScript. Perhaps it would have been ideal if the language specified
+backticks to have `stripIndent` semantics, but that ship has sailed now.
+
+In the build time version of `template()`, we could certainly apply the same
+whitespace handling semantics as we have the full source text available to us
+for the analysis. Depends on what those semantics are, we may or may not be
+able to do the same in the runtime version, and it may be a divergence that we
+have to accept.
+
+Of course, in those cases, since the compilation runs at runtime anyway,
+developers can apply arbitrary whitespace normalization on the source text
+themselves before passing them into the `template()` function, such as using
+the popular [strip-indent][strip-indent] NPM package, so it does not create any
+functional limitations per-se. The main issue here is whether we end up with
+different semantics in this area between the build-time and runtime versions,
+and whether it is acceptable to require the few developers needing runtime
+compilation to know that the difference exists. Then again, because of the lack
+of AST plugins at runtime, this may not be the only or even the most notable
+difference in a given application anyway.
+
+[strip-indent]: https://www.npmjs.com/package/strip-indent
+
+In any case, we don't necessarily have to solve this problem as part of this
+RFC, as we would still have to do the same amendment on `<template>`, with that
+conclusion being the primary driver for the decision in `template()`. However,
+it is import to come to some conclusion before either of these features is
+officially shipped as it would be hard to change after.
