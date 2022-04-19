@@ -15,7 +15,8 @@ RFC PR: https://github.com/emberjs/rfcs/pull/813
 
 This RFC propose to introduce a `template()` function as an alternative for the
 `<template>` syntax extension defined in [RFC #779][rfc-779] using standard
-JavaScript:
+JavaScript, for use in environments where the custom syntax extension is not
+available, and also as a publishing format for addons on NPM:
 
 [rfc-779]: ./0779-first-class-component-templates.md
 
