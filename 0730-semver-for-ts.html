@@ -1,0 +1,1215 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>0730-semver-for-ts</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="0001-transform-attribute-meta-parameter.html">0001-transform-attribute-meta-parameter</a></li><li class="chapter-item expanded "><a href="0003-block-params.html">0003-block-params</a></li><li class="chapter-item expanded "><a href="0003-cli-ember-doctor.html">0003-cli-ember-doctor</a></li><li class="chapter-item expanded "><a href="0010-engines.html">0010-engines</a></li><li class="chapter-item expanded "><a href="0011-improved-cp-syntax.html">0011-improved-cp-syntax</a></li><li class="chapter-item expanded "><a href="0012-help-json-output.html">0012-help-json-output</a></li><li class="chapter-item expanded "><a href="0015-the-road-to-ember-2-0.html">0015-the-road-to-ember-2-0</a></li><li class="chapter-item expanded "><a href="0020-sri-default.html">0020-sri-default</a></li><li class="chapter-item expanded "><a href="0023-command-line-completion.html">0023-command-line-completion</a></li><li class="chapter-item expanded "><a href="0024-bound-attributes.html">0024-bound-attributes</a></li><li class="chapter-item expanded "><a href="0028-app-import-output-file.html">0028-app-import-output-file</a></li><li class="chapter-item expanded "><a href="0029-addon-black-and-whitelist-for-apps.html">0029-addon-black-and-whitelist-for-apps</a></li><li class="chapter-item expanded "><a href="0045-internet-explorer.html">0045-internet-explorer</a></li><li class="chapter-item expanded "><a href="0046-cli-improved-release-process.html">0046-cli-improved-release-process</a></li><li class="chapter-item expanded "><a href="0046-registry-reform.html">0046-registry-reform</a></li><li class="chapter-item expanded "><a href="0050-cli-production-code-stripping.html">0050-cli-production-code-stripping</a></li><li class="chapter-item expanded "><a href="0050-improved-actions.html">0050-improved-actions</a></li><li class="chapter-item expanded "><a href="0053-helpers.html">0053-helpers</a></li><li class="chapter-item expanded "><a href="0055-anonymous-amd.html">0055-anonymous-amd</a></li><li class="chapter-item expanded "><a href="0056-improved-release-cycle.html">0056-improved-release-cycle</a></li><li class="chapter-item expanded "><a href="0057-ember-data-reference-unification.html">0057-ember-data-reference-unification</a></li><li class="chapter-item expanded "><a href="0058-helper-listing.html">0058-helper-listing</a></li><li class="chapter-item expanded "><a href="0061-ember-data-background-fetch.html">0061-ember-data-background-fetch</a></li><li class="chapter-item expanded "><a href="0064-contextual-component-lookup.html">0064-contextual-component-lookup</a></li><li class="chapter-item expanded "><a href="0065-deprecation-warning-handlers.html">0065-deprecation-warning-handlers</a></li><li class="chapter-item expanded "><a href="0080-serve-file-api.html">0080-serve-file-api</a></li><li class="chapter-item expanded "><a href="0086-firefox-in-ci.html">0086-firefox-in-ci</a></li><li class="chapter-item expanded "><a href="0090-addon-tree-caching.html">0090-addon-tree-caching</a></li><li class="chapter-item expanded "><a href="0091-cli-addon-instrumentation-experimental-hooks.html">0091-cli-addon-instrumentation-experimental-hooks</a></li><li class="chapter-item expanded "><a href="0091-weakmap.html">0091-weakmap</a></li><li class="chapter-item expanded "><a href="0092-blueprint-remove-old-files.html">0092-blueprint-remove-old-files</a></li><li class="chapter-item expanded "><a href="0095-cli-standardise-targets.html">0095-cli-standardise-targets</a></li><li class="chapter-item expanded "><a href="0095-router-service.html">0095-router-service</a></li><li class="chapter-item expanded "><a href="0096-enable-yarn-usage.html">0096-enable-yarn-usage</a></li><li class="chapter-item expanded "><a href="0101-ember-data-friendly-errors.html">0101-ember-data-friendly-errors</a></li><li class="chapter-item expanded "><a href="0105-addons-optionalDependencies.html">0105-addons-optionalDependencies</a></li><li class="chapter-item expanded "><a href="0108-add-custom-transform.html">0108-add-custom-transform</a></li><li class="chapter-item expanded "><a href="0110-packaging.html">0110-packaging</a></li><li class="chapter-item expanded "><a href="0114-add-template-lint-addon.html">0114-add-template-lint-addon</a></li><li class="chapter-item expanded "><a href="0116-qunit-dom.html">0116-qunit-dom</a></li><li class="chapter-item expanded "><a href="0120-cli-guides.html">0120-cli-guides</a></li><li class="chapter-item expanded "><a href="0120-route-serializers.html">0120-route-serializers</a></li><li class="chapter-item expanded "><a href="0121-remove-ember-cli-eslint.html">0121-remove-ember-cli-eslint</a></li><li class="chapter-item expanded "><a href="0136-contains-to-includes.html">0136-contains-to-includes</a></li><li class="chapter-item expanded "><a href="0139-isHtmlSafe.html">0139-isHtmlSafe</a></li><li class="chapter-item expanded "><a href="0143-module-unification.html">0143-module-unification</a></li><li class="chapter-item expanded "><a href="0150-factory-for.html">0150-factory-for</a></li><li class="chapter-item expanded "><a href="0176-javascript-module-api.html">0176-javascript-module-api</a></li><li class="chapter-item expanded "><a href="0178-deprecate-ember-k.html">0178-deprecate-ember-k</a></li><li class="chapter-item expanded "><a href="0181-deprecate-ember-data-initializers.html">0181-deprecate-ember-data-initializers</a></li><li class="chapter-item expanded "><a href="0186-track-unique-history-location-state.html">0186-track-unique-history-location-state</a></li><li class="chapter-item expanded "><a href="0191-deprecate-component-lifecycle-hook-args.html">0191-deprecate-component-lifecycle-hook-args</a></li><li class="chapter-item expanded "><a href="0194-deprecate-custom-event-manager.html">0194-deprecate-custom-event-manager</a></li><li class="chapter-item expanded "><a href="0213-custom-components.html">0213-custom-components</a></li><li class="chapter-item expanded "><a href="0225-ember-engines-mount-params.html">0225-ember-engines-mount-params</a></li><li class="chapter-item expanded "><a href="0226-named-blocks.html">0226-named-blocks</a></li><li class="chapter-item expanded "><a href="0229-deprecate-testing-restricted-resolver.html">0229-deprecate-testing-restricted-resolver</a></li><li class="chapter-item expanded "><a href="0232-simplify-qunit-testing-api.html">0232-simplify-qunit-testing-api</a></li><li class="chapter-item expanded "><a href="0236-deprecation-ember-string.html">0236-deprecation-ember-string</a></li><li class="chapter-item expanded "><a href="0237-deprecation-ember-map.html">0237-deprecation-ember-map</a></li><li class="chapter-item expanded "><a href="0240-es-classes.html">0240-es-classes</a></li><li class="chapter-item expanded "><a href="0252-browser-support-changes.html">0252-browser-support-changes</a></li><li class="chapter-item expanded "><a href="0268-acceptance-testing-refactor.html">0268-acceptance-testing-refactor</a></li><li class="chapter-item expanded "><a href="0272-deprecation-native-function-prototype-extensions.html">0272-deprecation-native-function-prototype-extensions</a></li><li class="chapter-item expanded "><a href="0276-named-args.html">0276-named-args</a></li><li class="chapter-item expanded "><a href="0278-template-only-components.html">0278-template-only-components</a></li><li class="chapter-item expanded "><a href="0280-remove-application-wrapper.html">0280-remove-application-wrapper</a></li><li class="chapter-item expanded "><a href="0281-es5-getters.html">0281-es5-getters</a></li><li class="chapter-item expanded "><a href="0286-block-let-template-helper.html">0286-block-let-template-helper</a></li><li class="chapter-item expanded "><a href="0287-promote-in-element-to-public-api.html">0287-promote-in-element-to-public-api</a></li><li class="chapter-item expanded "><a href="0293-record-data.html">0293-record-data</a></li><li class="chapter-item expanded "><a href="0294-optional-jquery.html">0294-optional-jquery</a></li><li class="chapter-item expanded "><a href="0297-deprecate-ember-logger.html">0297-deprecate-ember-logger</a></li><li class="chapter-item expanded "><a href="0300-rfc-process-update.html">0300-rfc-process-update</a></li><li class="chapter-item expanded "><a href="0308-deprecate-property-lookup-fallback.html">0308-deprecate-property-lookup-fallback</a></li><li class="chapter-item expanded "><a href="0311-angle-bracket-invocation.html">0311-angle-bracket-invocation</a></li><li class="chapter-item expanded "><a href="0318-array-helper.html">0318-array-helper</a></li><li class="chapter-item expanded "><a href="0322-deprecate-copy-copyable.html">0322-deprecate-copy-copyable</a></li><li class="chapter-item expanded "><a href="0324-deprecate-component-isvisible.html">0324-deprecate-component-isvisible</a></li><li class="chapter-item expanded "><a href="0326-ember-data-filter-deprecation.html">0326-ember-data-filter-deprecation</a></li><li class="chapter-item expanded "><a href="0329-deprecated-ember-evented-in-ember-data.html">0329-deprecated-ember-evented-in-ember-data</a></li><li class="chapter-item expanded "><a href="0331-deprecate-globals-resolver.html">0331-deprecate-globals-resolver</a></li><li class="chapter-item expanded "><a href="0332-ember-data-record-links-and-meta.html">0332-ember-data-record-links-and-meta</a></li><li class="chapter-item expanded "><a href="0335-deprecate-send-action.html">0335-deprecate-send-action</a></li><li class="chapter-item expanded "><a href="0337-native-class-constructor-update.html">0337-native-class-constructor-update</a></li><li class="chapter-item expanded "><a href="0340-deprecate-ember-merge.html">0340-deprecate-ember-merge</a></li><li class="chapter-item expanded "><a href="0345-discord.html">0345-discord</a></li><li class="chapter-item expanded "><a href="0364-roadmap-2018.html">0364-roadmap-2018</a></li><li class="chapter-item expanded "><a href="0369-deprecate-computed-clobberability.html">0369-deprecate-computed-clobberability</a></li><li class="chapter-item expanded "><a href="0370-deprecate-computed-volatile.html">0370-deprecate-computed-volatile</a></li><li class="chapter-item expanded "><a href="0372-ember-data-model-factory-for.html">0372-ember-data-model-factory-for</a></li><li class="chapter-item expanded "><a href="0373-Element-Modifier-Managers.html">0373-Element-Modifier-Managers</a></li><li class="chapter-item expanded "><a href="0375-deprecate-computed-property-modifier.html">0375-deprecate-computed-property-modifier</a></li><li class="chapter-item expanded "><a href="0386-remove-jquery.html">0386-remove-jquery</a></li><li class="chapter-item expanded "><a href="0389-dynamic-tag-names.html">0389-dynamic-tag-names</a></li><li class="chapter-item expanded "><a href="0391-router-helpers.html">0391-router-helpers</a></li><li class="chapter-item expanded "><a href="0392-deprecate-component-manager-string-lookup.html">0392-deprecate-component-manager-string-lookup</a></li><li class="chapter-item expanded "><a href="0395-ember-data-packages.html">0395-ember-data-packages</a></li><li class="chapter-item expanded "><a href="0398-RouteInfo-Metadata.html">0398-RouteInfo-Metadata</a></li><li class="chapter-item expanded "><a href="0403-ember-data-identifiers.html">0403-ember-data-identifiers</a></li><li class="chapter-item expanded "><a href="0408-decorators.html">0408-decorators</a></li><li class="chapter-item expanded "><a href="0410-tracked-properties.html">0410-tracked-properties</a></li><li class="chapter-item expanded "><a href="0415-render-element-modifiers.html">0415-render-element-modifiers</a></li><li class="chapter-item expanded "><a href="0416-glimmer-components.html">0416-glimmer-components</a></li><li class="chapter-item expanded "><a href="0418-deprecate-route-render-methods.html">0418-deprecate-route-render-methods</a></li><li class="chapter-item expanded "><a href="0421-deprecate-application-controller-props.html">0421-deprecate-application-controller-props</a></li><li class="chapter-item expanded "><a href="0425-website-redesign.html">0425-website-redesign</a></li><li class="chapter-item expanded "><a href="0431-guides-restructure.html">0431-guides-restructure</a></li><li class="chapter-item expanded "><a href="0432-contextual-helpers.html">0432-contextual-helpers</a></li><li class="chapter-item expanded "><a href="0435-modifier-splattributes.html">0435-modifier-splattributes</a></li><li class="chapter-item expanded "><a href="0440-decorator-support.html">0440-decorator-support</a></li><li class="chapter-item expanded "><a href="0445-deprecate-with.html">0445-deprecate-with</a></li><li class="chapter-item expanded "><a href="0446-contribution-guides.html">0446-contribution-guides</a></li><li class="chapter-item expanded "><a href="0449-deprecate-partials.html">0449-deprecate-partials</a></li><li class="chapter-item expanded "><a href="0451-injection-parameter-normalization.html">0451-injection-parameter-normalization</a></li><li class="chapter-item expanded "><a href="0452-ember-data-medium-term-plan.html">0452-ember-data-medium-term-plan</a></li><li class="chapter-item expanded "><a href="0457-nested-lookups.html">0457-nested-lookups</a></li><li class="chapter-item expanded "><a href="0459-angle-bracket-built-in-components.html">0459-angle-bracket-built-in-components</a></li><li class="chapter-item expanded "><a href="0460-yieldable-named-blocks.html">0460-yieldable-named-blocks</a></li><li class="chapter-item expanded "><a href="0461-ember-data-singleton-record-data.html">0461-ember-data-singleton-record-data</a></li><li class="chapter-item expanded "><a href="0463-record-data-state.html">0463-record-data-state</a></li><li class="chapter-item expanded "><a href="0465-record-data-errors.html">0465-record-data-errors</a></li><li class="chapter-item expanded "><a href="0466-request-state-service.html">0466-request-state-service</a></li><li class="chapter-item expanded "><a href="0468-classic-decorator.html">0468-classic-decorator</a></li><li class="chapter-item expanded "><a href="0470-fn-helper.html">0470-fn-helper</a></li><li class="chapter-item expanded "><a href="0471-on-modifier.html">0471-on-modifier</a></li><li class="chapter-item expanded "><a href="0477-blueprints-update.html">0477-blueprints-update</a></li><li class="chapter-item expanded "><a href="0478-tracked-properties-updates.html">0478-tracked-properties-updates</a></li><li class="chapter-item expanded "><a href="0481-component-templates-co-location.html">0481-component-templates-co-location</a></li><li class="chapter-item expanded "><a href="0486-deprecate-mouseenter.html">0486-deprecate-mouseenter</a></li><li class="chapter-item expanded "><a href="0487-custom-model-classes.html">0487-custom-model-classes</a></li><li class="chapter-item expanded "><a href="0491-deprecate-disconnect-outlet.html">0491-deprecate-disconnect-outlet</a></li><li class="chapter-item expanded "><a href="0494-async-observers.html">0494-async-observers</a></li><li class="chapter-item expanded "><a href="0496-handlebars-strict-mode.html">0496-handlebars-strict-mode</a></li><li class="chapter-item expanded "><a href="0507-embroider-v2-package-format.html">0507-embroider-v2-package-format</a></li><li class="chapter-item expanded "><a href="0519-2019-2020-roadmap.html">0519-2019-2020-roadmap</a></li><li class="chapter-item expanded "><a href="0521-find-by-identifier.html">0521-find-by-identifier</a></li><li class="chapter-item expanded "><a href="0522-default-serializers-and-adapters.html">0522-default-serializers-and-adapters</a></li><li class="chapter-item expanded "><a href="0523-model-argument-for-route-templates.html">0523-model-argument-for-route-templates</a></li><li class="chapter-item expanded "><a href="0554-deprecate-getwithdefault.html">0554-deprecate-getwithdefault</a></li><li class="chapter-item expanded "><a href="0558-edition-detection.html">0558-edition-detection</a></li><li class="chapter-item expanded "><a href="0560-add-equality-operators.html">0560-add-equality-operators</a></li><li class="chapter-item expanded "><a href="0561-add-numeric-comparison-operators.html">0561-add-numeric-comparison-operators</a></li><li class="chapter-item expanded "><a href="0562-add-logical-operators.html">0562-add-logical-operators</a></li><li class="chapter-item expanded "><a href="0566-memo-decorator.html">0566-memo-decorator</a></li><li class="chapter-item expanded "><a href="0580-destroyables.html">0580-destroyables</a></li><li class="chapter-item expanded "><a href="0581-new-test-waiters.html">0581-new-test-waiters</a></li><li class="chapter-item expanded "><a href="0585-improved-ember-registry-apis.html">0585-improved-ember-registry-apis</a></li><li class="chapter-item expanded "><a href="0615-autotracking-memoization.html">0615-autotracking-memoization</a></li><li class="chapter-item expanded "><a href="0617-rfc-stages.html">0617-rfc-stages</a></li><li class="chapter-item expanded "><a href="0625-helper-managers.html">0625-helper-managers</a></li><li class="chapter-item expanded "><a href="0626-invoke-helper.html">0626-invoke-helper</a></li><li class="chapter-item expanded "><a href="0628-prettier.html">0628-prettier</a></li><li class="chapter-item expanded "><a href="0631-refresh-method-for-router-service.html">0631-refresh-method-for-router-service</a></li><li class="chapter-item expanded "><a href="0635-ember-new-lang.html">0635-ember-new-lang</a></li><li class="chapter-item expanded "><a href="0637-customizable-test-setups.html">0637-customizable-test-setups</a></li><li class="chapter-item expanded "><a href="0638-interactive-app-creation.html">0638-interactive-app-creation</a></li><li class="chapter-item expanded "><a href="0639-replace-blacklist-whitelist.html">0639-replace-blacklist-whitelist</a></li><li class="chapter-item expanded "><a href="0645-add-ember-page-title-addon.html">0645-add-ember-page-title-addon</a></li><li class="chapter-item expanded "><a href="0649-deprecation-staging.html">0649-deprecation-staging</a></li><li class="chapter-item expanded "><a href="0659-unique-id-helper.html">0659-unique-id-helper</a></li><li class="chapter-item expanded "><a href="0669-tracked-storage-primitive.html">0669-tracked-storage-primitive</a></li><li class="chapter-item expanded "><a href="0671-modernize-built-in-components-1.html">0671-modernize-built-in-components-1</a></li><li class="chapter-item expanded "><a href="0673-deprecate-tryinvoke.html">0673-deprecate-tryinvoke</a></li><li class="chapter-item expanded "><a href="0674-deprecate-transition-methods-of-controller-and-route.html">0674-deprecate-transition-methods-of-controller-and-route</a></li><li class="chapter-item expanded "><a href="0680-implicit-injection-deprecation.html">0680-implicit-injection-deprecation</a></li><li class="chapter-item expanded "><a href="0685-new-browser-support-policy.html">0685-new-browser-support-policy</a></li><li class="chapter-item expanded "><a href="0686-deprecate-old-manager-capabilities-versions.html">0686-deprecate-old-manager-capabilities-versions</a></li><li class="chapter-item expanded "><a href="0689-deprecate-has-block.html">0689-deprecate-has-block</a></li><li class="chapter-item expanded "><a href="0690-deprecate-attrs-in-templates.html">0690-deprecate-attrs-in-templates</a></li><li class="chapter-item expanded "><a href="0691-deprecate-class-binding-and-class-name-bindings.html">0691-deprecate-class-binding-and-class-name-bindings</a></li><li class="chapter-item expanded "><a href="0692-deprecate-array-observers.html">0692-deprecate-array-observers</a></li><li class="chapter-item expanded "><a href="0698-deprecate-link-to-positional-arguments.html">0698-deprecate-link-to-positional-arguments</a></li><li class="chapter-item expanded "><a href="0702-eslint-plugin-qunit.html">0702-eslint-plugin-qunit</a></li><li class="chapter-item expanded "><a href="0704-deprecate-octane-optional-features.html">0704-deprecate-octane-optional-features</a></li><li class="chapter-item expanded "><a href="0705-deprecate-jquery-optional-feature.html">0705-deprecate-jquery-optional-feature</a></li><li class="chapter-item expanded "><a href="0706-deprecate-ember-global.html">0706-deprecate-ember-global</a></li><li class="chapter-item expanded "><a href="0707-modernize-built-in-components-2.html">0707-modernize-built-in-components-2</a></li><li class="chapter-item expanded "><a href="0711-deprecate-auto-location.html">0711-deprecate-auto-location</a></li><li class="chapter-item expanded "><a href="0724-road-to-typescript.html">0724-road-to-typescript</a></li><li class="chapter-item expanded "><a href="0730-semver-for-ts.html" class="active">0730-semver-for-ts</a></li><li class="chapter-item expanded "><a href="0738-ember-data-deprecate-model-reopen.html">0738-ember-data-deprecate-model-reopen</a></li><li class="chapter-item expanded "><a href="0739-ember-data-deprecate-non-strict-relationships.html">0739-ember-data-deprecate-non-strict-relationships</a></li><li class="chapter-item expanded "><a href="0742-ember-data-deprecate-helper-functions.html">0742-ember-data-deprecate-helper-functions</a></li><li class="chapter-item expanded "><a href="0748-glimmer-component-signature.html">0748-glimmer-component-signature</a></li><li class="chapter-item expanded "><a href="0750-deprecate-ember-assign.html">0750-deprecate-ember-assign</a></li><li class="chapter-item expanded "><a href="0752-inject-service.html">0752-inject-service</a></li><li class="chapter-item expanded "><a href="0756-helper-default-manager.html">0756-helper-default-manager</a></li><li class="chapter-item expanded "><a href="0772-deprecate-bower-support.html">0772-deprecate-bower-support</a></li><li class="chapter-item expanded "><a href="0776-typescript-blueprints.html">0776-typescript-blueprints</a></li><li class="chapter-item expanded "><a href="0779-first-class-component-templates.html">0779-first-class-component-templates</a></li><li class="chapter-item expanded "><a href="0785-remove-set-get-in-tests.html">0785-remove-set-get-in-tests</a></li><li class="chapter-item expanded "><a href="0786-ember-cookbook.html">0786-ember-cookbook</a></li><li class="chapter-item expanded "><a href="0794-ember-data-schema-definition-service-simplify.html">0794-ember-data-schema-definition-service-simplify</a></li><li class="chapter-item expanded "><a href="0795-ember-data-return-promise-save.html">0795-ember-data-return-promise-save</a></li><li class="chapter-item expanded "><a href="0796-ember-data-deprecate-rsvp.html">0796-ember-data-deprecate-rsvp</a></li><li class="chapter-item expanded "><a href="0800-ts-adoption-plan.html">0800-ts-adoption-plan</a></li><li class="chapter-item expanded "><a href="0801-deprecate-blacklist-and-whitelist-build-options.html">0801-deprecate-blacklist-and-whitelist-build-options</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <hr />
+<h2>Stage: Accepted
+Start Date: 2021-03-23
+Release Date: Unreleased
+Release Versions:
+ember-source: vX.Y.Z
+ember-data: vX.Y.Z
+Relevant Team(s): Ember.js, Steering, Ember Data, Ember CLI
+RFC PR: https://github.com/emberjs/rfcs/pull/730</h2>
+<h1 id="semantic-versioning-for-typescript-types"><a class="header" href="#semantic-versioning-for-typescript-types">Semantic Versioning for TypeScript Types</a></h1>
+<h2 id="note-on-authoritative-source"><a class="header" href="#note-on-authoritative-source">Note on Authoritative Source</a></h2>
+<p><strong>The living specification to which Ember is committed lives at <a href="https://www.semver-ts.org">www.semver-ts.org</a>.</strong></p>
+<p>The text below represents the RFC as it was merged as part of Ember.js’ RFC process. However, <a href="#how-we-teach-this">per the text below</a>, this is not the authoritative form of this specification:</p>
+<blockquote>
+<p>If these recommendations are adopted, the <strong>Detailed Design</strong> section shall be published to a dedicated, standalone repository to ease linking to it (including by TypeScript packages beyond the Ember ecosystem, if they find it useful, as we hope they will!).</p>
+</blockquote>
+<p>Accordingly, the text below represents the state of the specification at the time it was accepted as for Ember’s purposes, with the expectation that it will continue to evolve and be improved over time.</p>
+<hr />
+<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
+<p>This RFC proposes a definition of <a href="https://semver.org">Semantic Versioning</a> for managing changes to TypeScript types, including when the TypeScript compiler makes breaking changes in its type-checking and type emit across a “minor” release.(Note that this RFC addresses <em>only</em> type checking and type emit, <em>not</em> the “transpilation” mode of the TypeScript compiler.)</p>
+<p>(While this RFC is being authored in the context of <a href="https://github.com/emberjs/rfcs/pull/724">Ember.js’ adoption of TypeScript as a first-class supported language</a>, its recommendations are intentionally general, in hopes that these recommendations can be widely adopted by the broader TypeScript community.)</p>
+<h3 id="design-overview"><a class="header" href="#design-overview">Design overview</a></h3>
+<p>This section is a non-normative short summary for easy digestion. See <a href="#detailed-design"><strong>Detailed Design</strong></a> below for normative text.</p>
+<h4 id="for-package-consumers"><a class="header" href="#for-package-consumers">For package consumers</a></h4>
+<p>Things a package may do in a non-breaking way:</p>
+<ul>
+<li>widen what it accepts from you</li>
+<li>narrow what it provides to you</li>
+<li>add new exports</li>
+</ul>
+<p>Things which constitute breaking changes in a package:</p>
+<ul>
+<li>narrowing what it accepts from you</li>
+<li>widening what it provides to you</li>
+<li>removing exports</li>
+</ul>
+<p>Note that this summary elides <em>many</em> important details, and those details may surprise you! In particular &quot;what it accepts&quot; and &quot;what it provides&quot; have considerable depth and nuance: they include interfaces or types you can construct, function arguments, class field mutability, and more.</p>
+<h4 id="for-package-authors"><a class="header" href="#for-package-authors">For package authors</a></h4>
+<ul>
+<li>
+<p>Public published types are part of the SemVer contract of a package, and must be versioned accordingly, per the specification above.</p>
+</li>
+<li>
+<p>Adding a new TypeScript version to the support matrix <em>may</em> cause breaking changes. When it does not, adding it is a normal minor release. When it <em>does</em> cause a breaking change, the package must either mitigate that breakage (so consumers are not broken) <em>or</em> the package must release a major version.</p>
+</li>
+<li>
+<p>Removing a TypeScript version from the support matrix is a breaking change, except when it falls out of the supported version range under the “rolling support windows” policy.</p>
+</li>
+<li>
+<p>There are two recommended support policies for TypeScript compiler versions: <em>simple majors</em> and <em>rolling window</em>.</p>
+<ul>
+<li>
+<p>In <em>simple majors</em>, dropping support for a previously supported compiler version requires a breaking change.</p>
+</li>
+<li>
+<p>In <em>rolling window</em>, a package may declare a range of supported versions which moves over time, similar to supporting evergreen browsers.</p>
+<p>Packages using the “rolling window” policy should normally support all TypeScript versions released during the current ‘LTS’ of other core packages/runtimes/etc. they support, and drop support for them only when they drop support for that ‘LTS’, to minimize the number of major versions in the ecosystem.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Both the currently-supported compiler versions and the compiler version support policy must be documented.</p>
+</li>
+<li>
+<p>Packages must be authored with the following compiler options:</p>
+<ul>
+<li><code>strict: true</code></li>
+<li><code>noUncheckedIndexedAccess: true</code></li>
+</ul>
+</li>
+<li>
+<p>Libraries should generally be authored with the following compiler options:</p>
+<ul>
+<li><code>esModuleInterop: false</code></li>
+<li><code>allowSyntheticDefaultImports: false</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="outline"><a class="header" href="#outline">Outline <!-- omit in toc --></a></h3>
+<ul>
+<li><a href="#summary">Summary</a>
+<ul>
+<li><a href="#design-overview">Design overview</a>
+<ul>
+<li><a href="#for-package-consumers">For package consumers</a></li>
+<li><a href="#for-package-authors">For package authors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#detailed-design">Detailed design</a>
+<ul>
+<li><a href="#background-typescript-and-semantic-versioning">Background: TypeScript and Semantic Versioning</a></li>
+<li><a href="#defining-breaking-changes">Defining breaking changes</a>
+<ul>
+<li><a href="#definitions">Definitions</a></li>
+<li><a href="#reasons-for-breaking-changes">Reasons for Breaking Changes</a></li>
+</ul>
+</li>
+<li><a href="#changes-to-types">Changes to types</a>
+<ul>
+<li><a href="#variance">Variance</a></li>
+<li><a href="#breaking-changes">Breaking Changes</a></li>
+<li><a href="#non-breaking-changes">Non-breaking changes</a></li>
+<li><a href="#bug-fixes">Bug fixes</a></li>
+</ul>
+</li>
+<li><a href="#compiler-considerations">Compiler considerations</a></li>
+<li><a href="#conformance">Conformance</a></li>
+</ul>
+</li>
+<li><a href="#how-we-teach-this">How we teach this</a></li>
+<li><a href="#drawbacks">Drawbacks</a></li>
+<li><a href="#alternatives">Alternatives</a>
+<ul>
+<li><a href="#no-policy">No policy</a></li>
+<li><a href="#decouple-typescript-support-from-lts-cycles">Decouple TypeScript support from LTS cycles</a></li>
+</ul>
+</li>
+<li><a href="#unresolved-questions">Unresolved questions</a></li>
+<li><a href="#appendices">Appendices</a>
+<ul>
+<li><a href="#appendix-a-existing-implementations">Appendix A: Existing Implementations</a></li>
+<li><a href="#appendix-b-tooling">Appendix B: Tooling</a>
+<ul>
+<li><a href="#documenting-supported-versions-and-policy">Documenting supported versions and policy</a></li>
+<li><a href="#detect-breaking-changes-in-types">Detect breaking changes in types</a></li>
+<li><a href="#mitigate-breaking-changes">Mitigate breaking changes</a></li>
+<li><a href="#matching-exports-to-public-api">Matching exports to public API</a></li>
+</ul>
+</li>
+<li><a href="#appendix-c-on-variance-in-typescript">Appendix C: On Variance in TypeScript</a>
+<ul>
+<li><a href="#inference-and-pervasive-mutability">Inference and pervasive mutability</a></li>
+<li><a href="#structural-typing">Structural typing</a></li>
+<li><a href="#higher-order-type-operations">Higher-order type operations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="motivation"><a class="header" href="#motivation">Motivation</a></h2>
+<p>For TypeScript packages be good citizens of the broader, semantically-versioned JavaScript ecosystem, package authors need a useful definition of SemVer for TypeScript’s type system.</p>
+<p>This is somewhat more complicated than in other languages, even those other statically-typed languages with language-level SemVer guarantees (such as <a href="https://rust-lang.github.io/rfcs/1122-language-semver.html">Rust</a> and Elm), because TypeScript has an unusually flexible type system. In particular, its <a href="https://en.wikipedia.org/wiki/Structural_type_system">structural type system</a> means many more kinds of both breaking and non-breaking changes are possible than in languages with a <a href="https://en.wikipedia.org/wiki/Nominal_type_system">nominal type system</a>.<sup class="footnote-reference"><a href="#other-structural-types">1</a></sup> Accordingly, this document proposes a definition of SemVer which accounts for the extra flexibility afforded by these features.</p>
+<p>Furthermore, unlike the rest of the JavaScript ecosystem, the TypeScript compiler explicitly <em>rejects</em> SemVer. TypeScript's core team argues that <em>every</em> change to a compiler is a breaking change, and that SemVer is therefore meaningless for TypeScript. We do not agree with this characterization, but take the TypeScript team's position as a given for the purposes of this document. Accordingly, every TypeScript non-patch release may be a breaking change, and &quot;major&quot; numbers for releases signify nothing beyond having reached <code>x.9</code> in the previous cycle.</p>
+<p>This means that defining SemVer for TypeScript Types requires that we specify a definition of Semantic Versioning which can absorb breaking changes in the TypeScript compiler as well as intentional changes by package authors. As such, it also requires clearly defined TypeScript compiler version support policies.</p>
+<div class="footnote-definition" id="other-structural-types"><sup class="footnote-definition-label">1</sup>
+<p>Many languages include structural typing in certain contexts, including Swift's protocols, Elm's record types, and row-polymorphic types in OCaml, PureScript, etc. However, of these only Elm provides language-level guidance or tooling, and at the time of authoring there is no public specification of its behavior. Its current algorithm is <a href="https://github.com/elm/compiler/blob/770071accf791e8171440709effe71e78a9ab37c/builder/src/Deps/Diff.hs#L128-L136">implementations-specified</a> and roughly checks for addition or removal of fields.</p>
+</div>
+<h2 id="detailed-design"><a class="header" href="#detailed-design">Detailed design</a></h2>
+<p>TypeScript types should be treated with exactly the same (or even greater!) rigor as other elements of the JavaScript ecosystem, with the same level of commitment to stability, clear and accurate use of Semantic Versioning, testing, and clear policies about breaking changes.</p>
+<p>TypeScript introduces two new concerns around breaking changes for packages which publish types.</p>
+<ol>
+<li>
+<p>TypeScript does not adhere to the same norms around Semantic Versioning as the rest of the npm ecosystem, so it is important for package authors to understand when TypeScript versions may introduce breaking changes without any other change made to the package.</p>
+</li>
+<li>
+<p>The runtime behavior of the package is no longer the only source of potentially-breaking changes: types may be as well. In a well-typed package, runtime behavior and types should be well-aligned, but it is possible to introduce breaking changes to types without changing runtime behavior and vice versa.</p>
+</li>
+</ol>
+<p>Accordingly, we must define breaking changes precisely and carefully.</p>
+<h3 id="background-typescript-and-semantic-versioning"><a class="header" href="#background-typescript-and-semantic-versioning">Background: TypeScript and Semantic Versioning</a></h3>
+<p>TypeScript <em><strong>does not</strong></em> adhere to Semantic Versioning, but since it participates in the npm ecosystem, it uses the same format for its version numbers: <code>&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;</code>.</p>
+<p>In Semantic Versioning, <code>&lt;major&gt;</code> would be a breaking change release, <code>&lt;minor&gt;</code> would be a backwards-compatible feature-addition release, and <code>&lt;patch&gt;</code> would be a &quot;bug fix&quot; release.</p>
+<p>In TypeScript, both <code>&lt;major&gt;</code> and <code>&lt;minor&gt;</code> releases <em>may</em> introduce breaking changes of the sort that Semantic Versioning reserves for the <code>&lt;major&gt;</code> slot in the version number. Not all <code>&lt;minor&gt;</code> <em>or</em> <code>&lt;major&gt;</code> releases <em>do</em> introduce breaking changes in the normal Semantic Versioning sense, but either <em>may</em>. Accordingly, and for simplicity, the JavaScript ecosystem should treat <em>all</em> TypeScript <code>&lt;major&gt;.&lt;minor&gt;</code> releases as a major release.</p>
+<p>TypeScript's use of patch releases is more in line with the rest of the ecosystem's use of patch versions. The TypeScript Wiki <a href="https://github.com/microsoft/TypeScript/wiki/TypeScript&#x27;s-Release-Process/e669ab1ad96edc1a7bcef5f6d9e35e24397891e5">currently summarizes patch releases</a> as follows:</p>
+<blockquote>
+<p>Patch releases are periodically pushed out for any of the following:</p>
+<ul>
+<li>High-priority regression fixes</li>
+<li>Performance regression fixes</li>
+<li>Safe fixes to the language service/editing experience</li>
+</ul>
+<p>These fixes are typically weighed against the cost (how hard it would be for the team to retroactively apply/release a change), the risk (how much code is changed, how understandable is the fix), as well as how feasible it would be to wait for the next version.</p>
+</blockquote>
+<p>These three categories of fixes are well within the normally-understood range of fixes that belong in a &quot;bug fix&quot; release in the npm ecosystem. In these cases, a user's code may stop type-checking, but <em>only</em> if they were depending on buggy behavior. This matches users' expectations around runtime code: a SemVer patch release to a package which fixes a bug may cause packages which were depending on that bug to stop working.</p>
+<p>By example:</p>
+<ul>
+<li><code>4.8.3</code> to <code>4.8.4</code>: always considered a bug fix</li>
+<li><code>4.8.3</code> to <code>4.9.0</code>: <em>may or may not</em> introduce breaking changes; equivalent to a major in the rest of the ecosystem</li>
+<li><code>4.9.0</code> to <code>5.0.0</code>: <em>may or may not</em> introduce breaking changes; equivalent to a major in the rest of the ecosystem</li>
+</ul>
+<h3 id="defining-breaking-changes"><a class="header" href="#defining-breaking-changes">Defining breaking changes</a></h3>
+<p>Changes to the types of the public interface are subject to the same constraints as runtime code: <em>breaking the public published types entails a breaking change.</em> Not all changes to published types are <em>breaking</em>, however:</p>
+<ul>
+<li>Some changes will continue to allow user code to continue working without any issue.</li>
+<li>Some published types represent private API.</li>
+</ul>
+<p>It is impossible to define the difference between breaking and non-breaking changes purely in the abstract. Instead, we must define exactly what changes are &quot;backwards-compatible&quot; and which are &quot;breaking,&quot; and we must further define what constitutes a legitimate &quot;bug fix&quot; for type definitions designed to represent runtime behavior. Note that this is a <em>socio-technical</em> contract, not a purely-technical contract, and therefore (contra <a href="http://www.hyrumslaw.com">Hyrum’s Law</a>) a breaking change is not simply <em>any observable change to a system</em> but rather <em>a change to the system which violates the contract</em>.</p>
+<p>Accordingly, we propose the following specific definitions of breaking, non-breaking, and bug-fix changes for TypeScript types. Because types are designed to represent runtime behavior, we assume throughout that these changes <em>do</em> in fact correctly represent changes to runtime behavior, and that changes which <em>incorrectly</em> represent runtime behavior are <em>bugs</em>.</p>
+<p><strong>Note:</strong> The examples supplied throughout via links to the TypeScript are illustrative rather than normative. However, the distinction between &quot;observed&quot; and &quot;promised&quot; behavior in TypeScript is quite loose: there is no independent specification, so the formal behavior of the type system is implementation-specified.</p>
+<h4 id="definitions"><a class="header" href="#definitions">Definitions</a></h4>
+<dl>
+<dt>Symbols</dt>
+<dd>
+<p>There are two kinds of <em>symbols</em> in TypeScript: value symbols and type symbols. (Note that these are distinct from the <a href="http://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol">Symbol</a> object in JavaScript.)</p>
+<p>Value symbols represent values present at runtime in JavaScript:</p>
+<ul>
+<li><code>let</code>, <code>const</code>, and <code>var</code> bindings</li>
+<li><code>function</code> declarations</li>
+<li><code>class</code> declarations</li>
+<li><code>enum</code> and <code>const enum</code> declarations</li>
+<li><code>namespace</code> declarations (which produce or represent <em>objects</em> at runtime)</li>
+</ul>
+<p>Type symbols represent types which are used in type checking:</p>
+<ul>
+<li><code>interface</code> declarations</li>
+<li><code>type</code> (type alias) declarations</li>
+<li><code>function</code> declarations</li>
+<li><code>class</code> declarations</li>
+<li><code>enum</code> and <code>const enum</code> declarations</li>
+</ul>
+<p>(Note that <code>namespace</code> declarations can also be present in type-only declarations, as when a type is exported from a namespace and referenced like <code>let val: SomeNamespace.ExportedInterface</code>, but the value produced by the <code>namespace</code> is not itself a type.)</p>
+</dd>
+<dt>Functions</dt>
+<dd>
+<p>Unless otherwise specified, &quot;functions&quot; always refers interchangeably to: functions in standalone scope, whether defined with either <code>function</code> or an arrow; class methods; and class constructors.</p>
+</dd>
+<dt>User constructibility</dt>
+<dd>
+<p>A type is user-constructible if the consumer of a package is allowed to create their own objects which match a given type structurally, that is, <em>without</em> using a function or class exported from the package which provides the type.</p>
+<p>For example, a package may choose to export an interface to allow users to name the type returned by a function, while specifying that the only legal way to construct such an interface is via that exported function, in which case the type is <em>not</em> user-constructible.</p>
+<p>Alternatively, a package may export an interface or type alias explicitly for users to construct objects implementing that type, in which case the type <em>is</em> user-constructible.</p>
+</dd>
+<dd>
+<p>Using the type-level <code>typeof</code> operator to construct a type using the type of an exported item from a library wholly defeats the ability of authors to specify a public API. Accordingly:</p>
+<ol>
+<li>Authors who wish to treat any given type as user-constructible should export a type definition for it under their public API contract (see the next section).</li>
+<li>A type defined in terms of <code>typeof</code> which “breaks” under the rules discussed below is <em>not</em> breaking, because it was not legally user-constructible.</li>
+</ol>
+</dd>
+<dd>
+<p>One challenge for this definition is the common scenario where code is not ordinarily user-constructible but may need to be mocked for tests. Changes to these <em>do not</em> constitute breaking changes—but library authors can also mitigate the challenge presented by this scenario. (See discussion below under <a href="#avoiding-user-constructibility">Appendix B: Tooling – Mitigate Breaking Changes – Avoiding User constructibility</a>.)</p>
+</dd>
+<dd>
+<p><strong>Non-normative example:</strong> in Ember.js today, the interface for a <code>Transition</code> is public API and consumers can rely on its stability, but only Ember is allowed to create <code>Transition</code> instances.</p>
+<p>If a user imported the <code>Transition</code> interface and wrote a <code>class CustomTransition implements Transition { ... }</code>, this would be stepping outside the SemVer contract.</p>
+</dd>
+<dt>Public API</dt>
+<dd>
+<p><strong>Overview:</strong> Some packages may choose to specify that the public API consists of <em>documented</em> exports, in which case no published type may be considered public API unless it is in the documentation. Other packages may choose to say the reverse: all exports are public unless explicitly defined as private (for example with the <code>@private</code> JSDoc annotation, a note in the docs, etc.).
+In either case, no change to a type documented as private is a breaking change, whether or not the type is exported, where <em>documented as private</em> is defined in terms of the documentation norm of the package in question.</p>
+</dd>
+<dd>
+<p><strong>Documentation of user constructibility:</strong> Exported types (interfaces, type aliases, and the type side of classes) may be defined by documentation to be user-constructible or not.</p>
+</dd>
+<dd>
+<p><strong>Documentation of subclassibility:</strong> Exported classes may be defined by documentation to be user-subclassible or not.</p>
+</dd>
+<dd>
+<p><strong>Re-exports:</strong> using the <code>export * from</code> re-export syntax can in theory cause breakage by causing export conflicts: if the library being re-exported and the library doing the re-export both export the same name. For this reason, changes caused by the <code>export * from ...</code> are never breaking changes.<sup class="footnote-reference"><a href="#re-export-antipattern">2</a></sup></p>
+</dd>
+<div class="footnote-definition" id="re-export-antipattern"><sup class="footnote-definition-label">2</sup>
+<p>In general, it is an antipattern for one package to re-export another package directly like this, and the cases where it makes sense (e.g. Ember re-exporting Glimmer APIs) are cases of collaborators which can manage this.</p>
+</div>
+<h4 id="reasons-for-breaking-changes"><a class="header" href="#reasons-for-breaking-changes">Reasons for Breaking Changes</a></h4>
+<p>Each of the kinds of breaking changes defined below will trigger a compiler error for consumers, surfacing the error. As such, they should be easily detectable by testing infrastructure (see below under <a href="#detect-breaking-changes-in-types">Tooling: Detect breaking changes in types</a>).</p>
+<p>There are several reasons why breaking changes may occur:</p>
+<ol>
+<li>
+<p>The author of the package may choose to change the API for whatever reason. This is no different than the situation today for packages which do not support TypeScript. This would be a major version independent of types.</p>
+</li>
+<li>
+<p>The author of the package may need to make changes to adapt to changes in the JavaScript ecosystem, for example to support Octane idioms in Ember.js. This is likewise identical with the situation for packages which do not support TypeScript: it would require a major version regardless.</p>
+</li>
+<li>
+<p>Adopting a new version of TypeScript may change the meaning of existing types. For example, in TypeScript 3.5, generic types without a specified default type changed their default value from <code>{}</code> to <code>unknown</code>. This improved type safety, but broke many existing types, as <a href="https://github.com/microsoft/TypeScript/issues/33272">described in detail by Google</a>.</p>
+</li>
+<li>
+<p>Adopting a new version of TypeScript may change the type definitions emitted in <code>.d.ts</code> files in backwards-incompatible ways. For example, changing to use the finalized ECMAScript spec for class fields meant that <a href="https://github.com/microsoft/TypeScript/pull/33470">types emitted by TypeScript 3.7 were incompatible with TypeScript 3.5 and earlier</a>.</p>
+</li>
+</ol>
+<p>The kinds of breaking changes represented by reasons (1) and (2) are described below under <a href="#changes-to-types"><strong>Changes to Types</strong></a>; reasons (3) and (4) are discussed below in <a href="#compiler-considerations"><strong>Compiler Considerations</strong></a>.</p>
+<p>Additionally, there are some changes which we define <em>not</em> to be breaking changes because, while they will cause the compiler to produce a type error, they will do so in a way which simply allows the removal of now-defunct code.</p>
+<h3 id="changes-to-types"><a class="header" href="#changes-to-types">Changes to types</a></h3>
+<h4 id="variance"><a class="header" href="#variance">Variance</a></h4>
+<p>Virtually all of the rules around what constitutes a breaking change to types come down to <em>variance</em>.<sup class="footnote-reference"><a href="#variance">3</a></sup> In a real sense, everything in the discussion below is a way of showing the variance rules by example.<sup class="footnote-reference"><a href="#thanks-to-ryan">4</a></sup></p>
+<div class="footnote-definition" id="variance"><sup class="footnote-definition-label">3</sup>
+<p>For the purposes of this discussion, I will <em>assume</em> knowledge of variance, rather than explaining it.</p>
+</div>
+<div class="footnote-definition" id="thanks-to-ryan"><sup class="footnote-definition-label">4</sup>
+<p>Thanks to <a href="https://github.com/RyanCavanaugh">Ryan Cavanaugh</a> of the TypeScript team for pointing out the various examples which motivated this discussion.</p>
+</div>
+<p>In many cases, these are the standard variance rules applicable in any and all languages with types:</p>
+<ul>
+<li>read-only types (sources) may be covariant</li>
+<li>write-only types (sinks) may be contravariant</li>
+<li>read-write (mutable) types must be invariant</li>
+</ul>
+<p>These basic intuitions underlie the guidelines below. However, several factors complicate them.</p>
+<p>First of all, notice that the vast majority of objects in JavaScript are mutable, which means they must be <em>invariant</em>. When combined with type inference, this effectively means that <em>any</em> change to an object type <em>can</em> cause breakage for consumers. (The only real counter-examples are <code>readonly</code> types.)</p>
+<p>Additionally, TypeScript has two other features many other languages do not which complicate reasoning about variance: <em>structural typing</em>, <em>higher-order type operations</em>. The result of these additional features is a further impossibility of safely writing types which can be <em>guaranteed</em> never to stop compiling for runtime-safe changes.</p>
+<p>Accordingly, we propose the rules below, with the caveat that (as noted in several places throughout) they will <em>not</em> prevent all possible breakage—only the majority of it, and substantially the worst of it. Most of all, they give us a workable approach which can be well-tested and well-understood, and the edge cases identified here do not prevent the rules from being generally useful or applicable.<sup class="footnote-reference"><a href="#satisficery">5</a></sup></p>
+<div class="footnote-definition" id="satisficery"><sup class="footnote-definition-label">5</sup>
+<p>Precisely because SemVer is a <em>sociological</em> and not only a <em>technical</em> contract, the problem is tractable: We define a breaking change as above, and accept the reality that some changes are not preventable (but may in many cases be mitigated or fixed automatically). This is admittedly unsatisfying, but we believe it <a href="https://www.merriam-webster.com/dictionary/satisfice">satisfices</a> our constraints.</p>
+</div>
+<p>For a more detailed explanation and analysis of the impact of variance on these rules, see <a href="#appendix-c-on-variance-in-typescript"><strong>Appendix C</strong></a>.</p>
+<h4 id="breaking-changes"><a class="header" href="#breaking-changes">Breaking Changes</a></h4>
+<h5 id="symbols"><a class="header" href="#symbols">Symbols</a></h5>
+<p>Changing a symbol is a breaking change when:</p>
+<ul>
+<li>
+<p>changing the name of an exported symbol (type or value), since users' existing imports will need to be updated. This is breaking for value exports (<code>let</code>, <code>const</code>, <code>class</code>, <code>function</code>) independent of types, but renaming exported <code>interface</code>, <code>type</code> alias, or <code>namespace</code> declarations is breaking as well.</p>
+</li>
+<li>
+<p>removing an exported symbol, since users' existing imports will stop working. This is a breaking change for value exports (<code>let</code>, <code>const</code>, <code>class</code>, <code>function</code>) independent of types, but removing exported <code>interface</code>, <code>type</code> alias, or <code>namespace</code> declarations is breaking as well.</p>
+<p>This includes changing a previously type-and-value export such as <code>export class</code> to either—</p>
+<ul>
+<li>
+<p>a type-only export, since the exported value symbol has been removed:</p>
+<pre><code class="language-diff">-export class Foo {
++class Foo {
+  neato: string;
+}
++
++export type { Foo };
+</code></pre>
+</li>
+<li>
+<p>a value-only export, since the exported type symbol has been removed:</p>
+<pre><code class="language-diff">-export class Foo {
++class _Foo {
+  neato: string;
+}
++
++export let Foo: typeof _Foo;
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>changing the kind (<em>value</em> vs. <em>type</em>) of an exported symbol in any way, since users' imports and own definitions may both be broken, since imports resolve all symbols imported together if they share a name:</p>
+<ul>
+<li>
+<p>Given a <em>value</em>-only exported symbol, including <code>namespace</code> declarations, adding a <em>type</em> export with the same name as the <em>value</em> may break users' code: they may have imported the value and safely created a type of the same name. Their existing import will now cause a re-declaration conflict. Note that this is distinct from adding an entirely new type export where there was no type or value export previously, since the user could never accidentally introduce the conflict, and could work around the conflict using the <code>as</code> import specifier when introducing the import.</p>
+</li>
+<li>
+<p>Given a <em>type</em>-only exported symbol, including <code>type</code>, <code>interface</code>, or <code>export type</code> for a type or value, adding a <em>value</em> export with the same name may break users' code: they may have imported the type and safely created a value of the same name. Their existing import will now cause a re-declaration conflict. Note that this is distinct from adding an entirely new value export where there was no type or value export previously, since the user could never accidentally introduce the conflict, and could work around the conflict using the <code>as</code> import specifier when introducing the import. (Type-only imports via <code>import type</code> do not change this because they still import the symbol into value space to use with <code>typeof</code>, e.g. to get a class' constructor.)</p>
+</li>
+<li>
+<p>Given a <code>namespace</code> export, changing it to a value-only export (that is, to an exported object) will break all nested type access, since types cannot be exported as nested members of non-<code>namespace</code> values. (<code>namespace</code> exports cannot be directly converted to type-only exports.)</p>
+</li>
+</ul>
+</li>
+<li>
+<p>changing an <code>interface</code> to a <code>type</code> alias will break any user code which used interface merging</p>
+</li>
+<li>
+<p>changing a <code>namespace</code> export to any other type will break any code which used namespace merging</p>
+</li>
+<li>
+<p>changing a <code>class</code> export to a type-only export will break any code which extended the class or constructed an instance of the class (<a href="https://www.typescriptlang.org/play?#code/PTAEEEDtQIgewE4EsDmTIEMA2NQBMBTAYywwQwBck5IAaUAdwAsCEDQKXGm4t2SMAZ0GMhoAgA8ADogoE8AOgBQhAW1ADhoAOpCAotNnzQAbwC+SpSFAAVJkhEOOXAgEcArkgBu2ApAqgcABmoBgcAJ5SBAC0NFjh4oYIAcGhGqTC9MxIREyMcO5YeKCQiAC22PFWYABG7AzIFHLQWEgA1uycDgBc1aB9AAZDfZoiuoIGMsnG5n2SUwEUkewmOvpJcsUW1kMDSqOgAPoAcnAUk0bFs0tRoKfnG8YAvEf3F9N4ANyWBwDK7jVRgAxRDvTaJZp4MbrBYzCx-AHAxBvR7FSSQkQo2FXCwqYikdRBdyQIhUGgcDAdQTjMHyAAUDBhl26awmqIAlCyvHAkF88Wp2ESSWToBRKQRBFjLgymR8WVKPpzQNzed99jRBAFGWzsaAXpACAxWbS8HT2d8iBqAqUHrr9Ya7mcTWbPkA">playground</a>), and changing a <code>class</code> export to a value-only export will break any code which referred to the class as a type (<a href="https://www.typescriptlang.org/play?#code/PTAEEEDtQIgewE4EsDmTIEMA2NQBMBTAYywwQwBck5IAaUAdwAsCEDQKXGm4t2SMAZ0GMhoAgA8ADogoE8AOgBQhAW1ADhoAOpCAotNnzQAbwC+SpSFAAVJkhEOOXAgEcArkgBu2ApAqgcABmoBigPljuBAC0NFgAnuKGCAHBoRqkwgqgAHKIALbYCaDxcO6MZVh4VmAMyHLOTgxInKAABpIyKaB8FG2g5JyszhjQbaqk6r1typoiAPp5FAZdcnimFhNk7L25cMvJawBcHPFSBGmL+ytGeADclnOgAMruAEZzAGKINynGknJIHgRLpBL81hslE9Xh9MoJvggluD-hJAcC9gdVsZzJYtuogu5IEQqDQOBgANYEQSg5F4AAUDH0h3kJxpzLwAEoTl44Eh7ipiJN2ASiSToBQKVSkeyGUysXgTtL5Vzwrz+VCaIIAoywezQABeUCQAgMHRy250jkPIiagKQa56w3G01Ki1WoA">playground</a>)</p>
+</li>
+</ul>
+<h5 id="interfaces-type-aliases-and-classes"><a class="header" href="#interfaces-type-aliases-and-classes">Interfaces, Type Aliases, and Classes</a></h5>
+<p>Object types may be defined with interfaces, type aliases, or classes. Interfaces and type aliases define type symbols only. Classes define both type symbols and value symbols. The <code>namespace</code> construct defines a value symbol (as well as introducing a context in which you can name other nested type or value symbols). The additional constraints for the value symbols introduced by classes are covered above under <a href="#symbols">Breaking Changes: Symbols</a>.</p>
+<p>A change to any object type (user constructible or not) is breaking when:</p>
+<ul>
+<li>
+<p>a non-<code>readonly</code> object property's type changes in any way:</p>
+<ul>
+<li>
+<p>if it was previously <code>string</code> but now is <code>string | number</code>, some of the user's existing <em>reads</em> of the property will now be wrong (<a href="https://www.typescriptlang.org/play?#code/JYOwLgpgTgZghgYwgAgOrADYfQEwiZAbwFgAoZC5OALmQGcwpQBzAbjIF8yzRJZEUAEWA5c+ImUpVaDJiGbIAPshABXALYAjaO1JdSZGKpAIwwAPYEAFnBA4MEOuixiQACgBucDKoi1n2CL4AJS0alrQEuSUUBBgqlAEXj4QAHRwqQ7yYFa6+mR4CBhwscgOYMgA7piBeCD+Na66NnYOTo1B7tUuncG6BRBFJSjlyDgirrTCop3NtvaOAa5u4zN1fWRAA">playground</a>). Note that this includes making a property optional.</p>
+</li>
+<li>
+<p>if it was previously <code>string | number</code> but now is <code>string</code>, some of the user's existing <em>writes</em> to the property will now be wrong (<a href="https://www.typescriptlang.org/play?#code/JYOwLgpgTgZghgYwgAgOrADYYHJylAewHdkBvAWAChkbk4AuZAZzClAHNkAfZEAVwC2AI2gBuKgF8qVUJFiIUAEWAATXPmJkqtOo37Cxk6ZRh8QCMMAIhkRNpCYAVAuizrCRABQA3OBj4QjK44eB4AlFrUtL7+EAB0cMgAvMgA5AAWEFgEqeKUUpRUKhAIGHgoGBBgtpghGkRBte7EeXbADs7BzV5ETaHEYXlFJWVQFVXIKqrdjMpq-UR5U-P1CcnIAEQADgRgcGAEG6LIAPQnyPCYTFRtHS599Z7L3YOn50x8CEgQKkzI0IQQBACHwmBgAJ5UIA">playground</a>). Note that this includes making a previously-optional property required. </p>
+<p>Note that at present, TypeScript cannot actually catch all variants of this error. <a href="https://www.typescriptlang.org/play?#code/JYOwLgpgTgZghgYwgAgOrADYYHJylAewHdkBvAWAChkbk4AuZAZzClAHNkAfZEAVwC2AI2gBuKgF8qVUJFiIUAEWAATXPmJkqtOo37Cxk6ZRh8QCMMAIhkRNpCYAVAuizrCRABQA3OBj4QjK44eB4AlFrUtL7+EAB0cMgAvMgA5AAWEFgEqeKUUpRUKhAIGHgoGBBgtpghGkRBte7EeXbADs7BzV5ETaHEYXlFJWVQFVXIKqrdjMpq-UR5U-P1CcnIAEQADgRgcGAEG6LIAPQnyPCYTFRtHS599Z7L3YOn50x8CEgQKkzI0IQQBACHwmBgAJ5UIA">This playground</a> demonstrates that there is a runtime error but no <em>type</em> error in one scenario. TypeScript's type system understands these types in terms of <em>assignability</em>, rather than local <em>mutability</em>. However, package authors should test for the catchable variant of this condition.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>a property is removed from the type entirely, since some of the user's existing uses of the type will break, even if the property was optional (<a href="https://www.typescriptlang.org/play?#code/JYOwLgpgTgZghgYwgAgEIHU4GcDyAHMYAexDgBtkBvAWAChkHk4AuZAIyKLIjhAG46jdgH5WHLj350AvnTqhIsRClQAlCAFsiANwgATKoMYt2nbrwG1ZtOtzDISZAJ4BBVBBhEoEVhmz5CEnJkAF4qJlYwKABXFGlLO2RQBDJovX1Ud09vX0xcAmJSCjDKCOQo2IAadlZ4Miw4y1sIe0dXFxhFX3UtXQMSsorG5vtk1PS9VA6utB6dfVDwkyHqtlryBuR4oA">optional</a>, <a href="https://www.typescriptlang.org/play?#code/JYOwLgpgTgZghgYwgAgEIHU4GcBKECOArsFBACbIDeAsAFDIPJwBcyARgPYcA2EcIAbjqN2rTjz6C6AXzp1QkWIhSo8AWw4A3clWGMW7Lr35Das2nV5hkoBN0JlyqVBBgdSrDNjxESOgLxUTKxgUIQQADSiyPDcWCjSppYQ1rb2jmSoAIIwip7qWgFBBqHhUWyssfHIiUA">required</a>)</p>
+</li>
+</ul>
+<p>A change to a user-constructible type is breaking when:</p>
+<ul>
+<li>a required property is added to the type, since all of the user's existing constructions of the type will be incorrect (<a href="https://www.typescriptlang.org/play?#code/JYOwLgpgTgZghgYwgAgEIRgeyig3gWAChkTk4AuZAI00wBsI4QBuIgXyKNElkRQEEYPZAWKkK1WgyasxJKpRABXALZVosjoSIg4KiAGcADnzQZsEAKpGAJnEgiipZAzDIEmEAbBQlCMMCelOhYOMgAvCJklD5KKGyanIS6+samgjzWdg6izq7unt6+-oEglBnQEVESsfGJhEA">new-required-property</a>)</li>
+</ul>
+<p>A change to a non-user-constructible object type is breaking when:</p>
+<ul>
+<li>
+<p>a <code>readonly</code> object property type becomes a <em>less specific (&quot;wider&quot;) type</em>, for example if it was previously <code>string</code> but now is <code>string | string[]</code>—since the user's existing handling of the property will be wrong in some cases (<a href="https://www.typescriptlang.org/play/#code/CYUwxgNghgTiAEkoGdnwPIwJYHMsDsoJ4BvAKHnjimAHt8IBPeABxlpZBgBdGAueMm7Z8OANxkAvmTKgkcRNFTwA6llD4QwUhSoga9Jq3ace-QcII54AHwsicAbQC6UmQDMArvjDcs9eAALKHxgCBBkTFwCIgA5WHYAdwAKADciTxABKLxCCABKAXxPAFsAIy4dSjhuTxh8eHSITIA6Ng4uXhbw0W5AiWlZcGgFcO54KGzsXKIJORGEMfgygTUNLQlg0PDI6ZiIeJgk5Kh8zZCwiJz9w+Oys7IgA">playground</a>—the playground uses a class but an interface or type alias would have the same behavior).</p>
+<p>Note that this includes making a property optional, since these are equivalent for the purposes of type-checking:</p>
+<pre><code class="language-diff">interface A {
+- a: string;
++ a?: string;
+}
+</code></pre>
+<pre><code class="language-diff">interface A {
+- a: string;
++ a: string | undefined;
+}
+</code></pre>
+</li>
+</ul>
+<h5 id="functions"><a class="header" href="#functions">Functions</a></h5>
+<p>For functions which return or accept user-constructible types, the rules specified for <a href="#interfaces-type-aliases-and-classes">Breaking Changes: Interfaces, Type Aliases, and Classes</a> hold. Otherwise, a change to the type of a function is breaking when:</p>
+<ul>
+<li>
+<p>an argument or return type changes entirely, for example if a function previously accepted <code>number</code> and now accepts <code>{ count: number }</code>, or previously returned <code>string</code> and now returns <code>boolean</code>—since the user will have to change all call sites for the function (<a href="https://www.typescriptlang.org/play?#code/PTAEEkFsEMHMEsB2BTUALZAnVAXN0dQ9UAiRaSZAZwAdoBjZE0BnAV2gBtOBPUAKzZVC2GtirJEOKkQwAoEKCoVU8SDQD2mHAC5QAAzWbtoAN6hYyHADUubVAF9QAM0wbIoAORV3yALTQACaBGoieANz6cnKByPSc0NigkBqBbJyoAPKY8AjknGZyoMUubIj0OPChLPSMNNK2nPYAFIEE0HqIbJAARlgAlHoAbhrwgeFyDtGx8Ymo5JS0DKgAwviIloGFJaXlldUMdQ12yK3teub0GmW6oF29WKAOg6AjYxNTctm5SFwAdIdkPUqI0WgBGABMAGZ+hM1tANshAgDakDjk1TpCYeEgA">playground</a>)</p>
+</li>
+<li>
+<p>a function (including a class constructor or methods) argument <em>requires a more specific (&quot;narrower&quot;) type</em>, for example if it previously accepted <code>string | number</code> but now requires <code>string</code>—since the user will have to change some calls to the function (<a href="https://www.typescriptlang.org/play?#code/PTAEEkFsEMHMEsB2BTUALZAnVAXN0dQ9UAiRaSZAZwAdoBjZE0BnAV2gBtOBPUAKzZVC2GtirJEOKkQwAoEKCoVU8SDQD2mHAC5QAAzWbtoAN6hYyHADUubVAF9QAM0wbIoAORV3yALTQACaBGoieANz6cnKByPSc0Nig5JS0DKgA8pjwCOScZnKgRS5siPQ48KEs9Iw00rac9gAUgQTQesLZiLCgAD7JbJAARlgAlHoAbhrwgeFyDtGx8YmoKdR0jKAA6jOSyIEFxSVlFVUMtfV2yC1tHThdsOOgUzNzCwpgQlig9BqxclkckguAA6c7IOpUBrNACMACYAMyjOaA3Kg8GQ6HXTwYbgaTzIuQ7WIoQJgmoQy6Na7wpFzYl7MkYqnNHHIPEE8JAA">playground</a>)</p>
+</li>
+<li>
+<p>a function (including a class constructor or method) <em>returns a less specific (&quot;wider&quot;) type</em>, for example if it previously returned <code>string</code> but now returns <code>string | null</code>—since the user's existing handling of the return value will be wrong in some cases (<a href="https://www.typescriptlang.org/play?#code/PTAEEkFsEMHMEsB2BTUALZAnVAXN0dQ9UAiRaSZAZwAdoBjZE0BnAV2gBtOBPUAKzZVC2GtirJEOKkQwAoEKCoVU8SDQD2mHAC5QAAzWbtoAN6hYyHADUubVAF9QAM0wbIoAORV3yALTQACaBGoieANz6cnKByPSc0Nig5JS0DKgA8pjwCOScZnKgRS5siPQ48KEWVrac9gAUAJR6wtmIsOFyDtGx8YmoKdR0jKAA6vCxKIEFxSVlFVWWNnbITS04bbCgAD7JbNyd3QpgQlig9Bqxcs6l5ZWI6NCIgZzIAErU+zj1AG4r65tGjNith2JgHn86sgAHSvdp4Q7RfDPV4fKhfepZHJILjQpa1BqNRqdZEvd6fTjfcaTZCBPE1FZNYlyIA">playground</a>).</p>
+<p>This includes widening from a <em>type guard</em> to a more general check. For example:</p>
+<pre><code class="language-diff">-function isString(x: string | number): x is string {
++function isString(x: string): boolean {
+  return typeof x === 'string';
+}
+</code></pre>
+<p>This change would cause user-land code that expects narrowing to break:</p>
+<pre><code class="language-ts">if (isString(value)) {
+  return value.length;
+} else {
+  return value;
+}
+</code></pre>
+</li>
+<li>
+<p>a function (including a class constructor or method) adds any new <em>required</em> arguments—since all user invocations of the function will now be broken (<a href="https://www.typescriptlang.org/play/#code/CYUwxgNghgTiAEAzArgOzAFwJYHtXwAc4A3XZAZwAooAuecjGLVAcwEo7ictgBuAKFCRYCFOmx54yAsCgYQwanQZNWAGngAjOqmQBbTSBgd4XHgP4QQGeFHgBeQiTJUA5ARwY5OV2wFWbTQcpGTkFSndPb19eIA">playground</a>)</p>
+</li>
+<li>
+<p>a function (including a class constructor or method) removes an existing argument entirely—since user invocations of the function may now fail to type-check</p>
+<ul>
+<li>
+<p>if the argument was required, <em>all</em> invocations will fail to type-check (<a href="https://www.typescriptlang.org/play/?ssl=2&amp;ssc=35&amp;pln=2&amp;pc=47#code/CYUwxgNghgTiAEAzArgOzAFwJYHtXwAc4A3XZAZwAooAuecjGLVAcwBp4AjO1ZAW04gYASjrEcWYAG4AUKEiwEKdNjzxkBYFAwhg1OgyatR8cZNkyIIDPCjwAvIRJkqAcgI4M2nK44BGACZhWSsbTgd1TW1dSndPb194QOCgA">playground</a>)</p>
+</li>
+<li>
+<p>if the argument was optional, any invocations which used it will fail to type-check (<a href="https://www.typescriptlang.org/play?#code/CYUwxgNghgTiAEAzArgOzAFwJYHtXwAc4A3XZAZwAooAuecjGLVAcwBp4AjAfjtWQC2nEDACUdYjizAA3AChQkWAhTpseeMgLAoGEMGp0GTVuPiTp8uRBAZ4UeAF5CJMlQDkBHBl053HAEYAJlF5GztOJ01tXX1KT29ff3hg0OtbeDAoohBSHAp4rx8MPzTw+GAorR09AwTi0vkgA">playground</a>)</p>
+</li>
+</ul>
+</li>
+<li>
+<p>changing a function from a <code>function</code> declaration to an arrow function declaration, since it changes the type of <code>this</code>, the effect of calling <code>bind</code> or <code>call</code> on the function, and requires parameters to be contravariant instead of allowing bivariance</p>
+</li>
+</ul>
+<h4 id="non-breaking-changes"><a class="header" href="#non-breaking-changes">Non-breaking changes</a></h4>
+<p>In each of these cases, some user code becomes <em>superfluous</em>, but it neither fails to type-check nor causes any runtime errors.</p>
+<h5 id="symbols-1"><a class="header" href="#symbols-1">Symbols</a></h5>
+<p>A change to an exported symbol is <em>not</em> breaking when:</p>
+<ul>
+<li>a symbol is exported which was not previously exported and which does not share a name with another symbol which was previously exported</li>
+</ul>
+<h5 id="interfaces-type-aliases-and-classes-1"><a class="header" href="#interfaces-type-aliases-and-classes-1">Interfaces, Type Aliases, and Classes</a></h5>
+<p>Any change to a non-user-constructible type is <em>not</em> breaking when:</p>
+<ul>
+<li>
+<p>a new optional property is added to the type, since all existing code will continue working (<a href="https://www.typescriptlang.org/play?#code/JYOwLgpgTgZghgYwgAgPJWAc1HANsgbwFgAoZc5OALmQGcwMRMBuUgX1NNElkRQFUADgBM4kYYVIVKNeoxZSKAIwD8NEAFcAtkuisSHEqWEQEuOFBQwNIBGGAB7EMktgNUELXRYcuABQAlDTe2CB4+iZmFlY2do7Oru6eQqLigTQpYhDC+sam5pbI1rb2TshgcADWEF4YoXh+AB7Bdb5ByABuDsA5eVGFxXFlFdW0mWnNyOPZ7V09uSRhWjWCfMgAQhAwDpbTkmQUAPSHyAhOchpDIIrkuBBgMmitYfgAvISPAEQAFhC4uA5Psg2AtpMcXPcktlkEoAJ7IXDAJRQCywm4I+4wlo+F7Id6JDy1HENAKgo4nBB4cxKYCIsBog7kEY1EK+PxwUno5lE+r+AhfX7-QHAgLsTiLODLWirJDIACCMB4e2IjOQ4LOngYl1K11Vdwe1CmIiyEne-MNPz+AKBIPFYJOBJA0LhCKRKKgDOk+qxT2JbwhbkJ02EgTJ5HVVLgNLpnoo3NZL3ZnNV3ODSf00njzwaSmTmaqNTTuYzcYLY2NaXNNEtQptooMpCAA">playground</a>)</p>
+</li>
+<li>
+<p>a <code>readonly</code> object property on the type becomes a <em>more specific (&quot;narrower&quot;) type</em>, for example if it was previously <code>string | string[]</code> and now is always <code>string[]</code>—since all user code will continue working and type-checking (<a href="https://www.typescriptlang.org/play?#code/CYUwxgNghgTiAEkoGdnwPIwJYHMsDsoJ4BvAKHngAcYB7KkGAFwE8AueZJ7fHeAH07cCOANoBdANxkAvmTKgkcRNFTwAcrDoB3EMFIVqdBs3ZCeOWfIBmAV3xgmWWvngALKPmAQQyTLgIiTRgdAAoANyJbEA5-PEIIAEoOfFsAWwAjRgNKOCZbGFdIiGiAOhp6RlZSn14mN2k5BXBoZR8meChY7HiiaUVWhHb4DI5gnT1pDy8fPx7AiHHabVCoRKnPb184haWVjPWyIA">playground</a>). Note that this includes a previously-optional property becoming required.<sup class="footnote-reference"><a href="#nit-on-comparability">6</a></sup></p>
+</li>
+<li>
+<p>a new required property is added to the object—since its presence does not require the consuming code to use the property at a type level (<a href="https://www.typescriptlang.org/play?#code/JYOwLgpgTgZghgYwgAgPJWAc1HANsgbwFgAoZc5OALmQGcwMRMBuUgX1NNElkRQFUADgBM4kYYVIVKNeoxZSKAIxogArgFsl0ViQ4lSwiAlxwoKGGpAIwwAPYhk5sGqgha6LDlwAKAJQ0ntggeLpGJmYWVjb2js6u7kKi4v40SWIQwrqGxqbmyJbWtg7IYHAA1hAeGMF4PgAegTXeAcgAbnbAWTkR+YUxJWWVtOkpjcijma0dXdkkIRpVgnzIAEIQMHbmk5JkFAD0+04QLm6ZyEoAnsi4wEpQZpeK5LgnMmjNIfgAvMen7kFvP5dNJXmBkKAYNBzBJfvE3NUvF9gZw9uRDsgEHhTEpgLcwNcAO7AMAACz+CUyz1KFSqgORcD8IIoQzpnzqkOhU10+lICyWKwAgjAeDtiGjkBj4SBzlcbncHlAnhKMQBhUlwJigTClUkoYAaQRbcHAWiYrbmGwXYxwNS0fWOMkocx4drQWixZB2GC600AGmpGMudjUyEJIdwEm0yGEnSYyAABgajVBwQRkABlOyLACS4Gg8CQyDYBSg2eQAHJaNmIABaW73R4V5gJgMqo6aiRO5BqEQZCTcAsrcNqSPIDVtFDd2hwRbIfl+uh2XUoCD1QS3BAkwMd2gezAgRbgMMRiT0PH4ZZ75A+OBmteCYziPzIABUndfNwyUB79ohIB3c183qMAzUJUlgAQclzAARzUYB8m7QQy0fVMiVPShcGra1fzgJRXjDElSRDMBAI0OxhGAGBILEWJqTBd5JlhCkESY4FJSOc9cHwO99xCfCIHot5OSgGFkDhE4EhGPsUiZVFpAxLFuLwvESSJIiWJlYRqVZRFal8RlmXIXT6Q5EAoVE7kdNpaTkkyW85IlXS2JEmFHP0IA">playground</a>)<sup class="footnote-reference"><a href="#variance-in-discriminating">7</a></sup></p>
+</li>
+</ul>
+<div class="footnote-definition" id="nit-on-comparability"><sup class="footnote-definition-label">6</sup>
+<p>Strictly speaking, one value may stop being comparable to another value in this scenario. However, this is both a rare edge case and fits under the standard rule where changes which simply let users delete now-defunct code are allowed.</p>
+</div>
+<div class="footnote-definition" id="variance-in-discriminating"><sup class="footnote-definition-label">7</sup>
+<p>Mostly, anyway—see <a href="#higher-order-type-operations">Appendix C: On Variance in TypeScript – Higher-order type operations</a> below for a discussion of how the <code>in</code> operator (or similar operations discriminating between unions) makes this cause breakage in some cases. These are rare enough, and easily-enough solved, that the rule remains workable.</p>
+</div>
+<h5 id="functions-1"><a class="header" href="#functions-1">Functions</a></h5>
+<p>For functions which return or accept user-constructible types, the rules specified for <a href="#interfaces-type-aliases-and-classes-1">Non-breaking Changes: Interfaces, Type Aliases, and Classes</a> hold. Otherwise, a change to a function declaration is <em>not</em> breaking when:</p>
+<ul>
+<li>
+<p>a function (including a class method or constructor) <em>accepts a less specific (&quot;wider&quot;) type</em>, for example if it previously accepted only a <code>boolean</code> but now accepts <code>boolean | undefined</code>—since all existing user code will continue working and type-checking (<a href="https://www.typescriptlang.org/play?#code/PTAEEkFsEMHMEsB2BTUALZAnVAXN0dQ9UAiRaSZAZwAdoBjZE0BnAV2gBtOBPUAKzZVC2GtirJEOKkQwAoEKCoVU8SDQD2mHAC5QAAzWbtoAN6hYyHADUubVAF9QAM0wbIoAORV3yALTQACaBGoieANz6cnKByPSc0Nig5JS0DKgA8pjwCOScZnKgRS5siPQ48KEs9Iw00rac9gAUgQTQegBGGhqcyNCIAJR6AG4a8IHhcg7RsfGJqCnUdIygAOrjksiBBcUlZRVVDLX1dsgtbZ3dvf2gAD6gpbHOSFtDoKPjk9MKYEJYoPQNLE5FkckguAA6I7IOpUBrNHCYewDSag3KQ6Gw+FnZxcCQouTrWIoQJQmowk6NM6I5GTImbUmYynNXGcfHhIA">playground</a>)</p>
+</li>
+<li>
+<p>a function (including a class method) which <em>returns a more specific (&quot;narrower&quot;) type</em>, for example if it previously returned <code>number | undefined</code> and now always returns <code>number</code>—since all user code will continue working and type-checking (<a href="https://www.typescriptlang.org/play?#code/PTAEEkFsEMHMEsB2BTUALZAnVAXN0dQ9UAiRaSZAZwAdoBjZE0BnAV2gBtOBPUAKzZVC2GtirJEOKkQwAoEKCoVU8SDQD2mHAC5QAAzWbtoAN6hYyHADUubVAF9QAM0wbIoAORV3yALTQACaBGoieANz6cnKByPSc0Nig5JS0DKgA8pjwCOScZnKgRS5siPQ48KEWVrac9gAUAJR6wtmIsKAAPsls3OFyDtGx8YmoKdR0jKAAcoluAO7IgQXFJWUVVZY2dshNLThtsP2DCmBCWKD0GrFyzqXllYjo0IiBnMgAStS9OPUAbjt9ocuj1uM0epAAEYXUyFYrYdiYJ4AurIAD8ADp3u08KA0WjQAAGY7RfCvd5fKg-epZHJILgYra1BqNRr9MlvT7fTi-WaYBZLRk1HZNNlyIA">playground</a>)</p>
+</li>
+<li>
+<p>a function (including a class constructor or method) makes a previously-required argument optional—since all existing user code will continue to work with it (<a href="https://www.typescriptlang.org/play/#code/CYUwxgNghgTiAEAzArgOzAFwJYHtXwAc4A3XZAZwAooAuecjGLVAcwBp4AjO1ZAW04gYASjrEcWYAG4AUKEiwEKdNjzxkBYFAwhg1OgyasOnAPw9+gkWInSZMiCAzwo8ALyESZKgHICODG0cHw4ARgAmYVlHZ053dU1tXUo-AKCQ+AiooA">playground</a>)</p>
+</li>
+<li>
+<p>changing a function from an arrow function declaration to <code>function</code> declaration, since it allows the caller to use <code>bind</code> or <code>call</code> meaningfully where they could not before. (Note that at the time of authoring, current TypeScript version 4.3, such a change introduces parameter bivariance. This is not breaking, but may be undesirable.)</p>
+</li>
+</ul>
+<h4 id="bug-fixes"><a class="header" href="#bug-fixes">Bug fixes</a></h4>
+<p>As with runtime code, types may have bugs. We define a ‘bug' here as a mismatch between types and runtime code. That is: if the types allow code which will cause a runtime type error, or if they forbid code which is allowed at runtime, the types are buggy. Types may be buggy by being inappropriately <em>wider</em> or <em>narrower</em> than runtime.</p>
+<p>For example (noting that this list is illustrative, not exhaustive):</p>
+<ul>
+<li>
+<p>If a function is typed as accepting <code>any</code> but actually requires a <code>string</code>, this will cause an error at runtime, and is a bug.</p>
+</li>
+<li>
+<p>If a function is typed as returning <code>string | number</code> but is intended to return only <code>string</code>, this is a bug. Note that this is distinct from the runtime behavior: a package author may intentionally specify the type as wider than the current implementation with the expectation of future changes. This will not cause an error at runtime, since consumers must &quot;narrow&quot; the type to use it, and narrowing the type would not even be a breaking change.</p>
+</li>
+<li>
+<p>If an interface is defined as having a property which is <em>not</em> part of the public API of the runtime object, or if an interface is defined as <em>missing</em> a property which the public API of the runtime object does have, this is a bug.</p>
+</li>
+</ul>
+<p>As with runtime bugs, authors are free to fix type bugs in a patch release. As with runtime code, this may break consumers who were relying on the buggy behavior. However, as with runtime bugs, this is well-understood to be part of the sociotechnical contract of semantic versioning.</p>
+<p>In practice, this suggests two key considerations around type bugs:</p>
+<ol>
+<li>
+<p>It is essential that types be well-tested! See discussion below under <a href="#tooling"><strong>Tooling</strong></a>.</p>
+</li>
+<li>
+<p>If a given type bug has existed for long enough, an author may choose to treat it as <a href="https://twitter.com/wycats/status/918644693759488005">&quot;intimate API&quot;</a> and change the <em>runtime</em> behavior to match the types rather than vice versa.</p>
+</li>
+</ol>
+<h3 id="compiler-considerations"><a class="header" href="#compiler-considerations">Compiler considerations</a></h3>
+<p>To reiterate, Semantic Versioning is a matter of adherence to a specified contract. This is particularly important when dealing with transitive or peer dependencies, especially at the level of ecosystem dependencies—including Node versions, browsers, compilers, and frameworks (such as Ember, React, Vue, Svelte, etc.). Accordingly, the specification of breaking changes as described below is further defined in terms of the TypeScript compiler support version adopted by any given package as well as specific settings.</p>
+<h5 id="supported-compiler-versions"><a class="header" href="#supported-compiler-versions">Supported compiler versions</a></h5>
+<p>Conforming packages must adopt and clearly specify one of two support policies: <em>simple majors</em> or <em>rolling support windows</em>.</p>
+<h6 id="simple-majors"><a class="header" href="#simple-majors">Simple majors</a></h6>
+<p>In “simple majors” pattern, dropping a previously-supported TypeScript version constitutes a breaking change, because it has the same kind of impact on users of the package as dropping support for a previously-supported version of Node: they must upgrade a <em>different</em> dependency to guarantee their code continues to work. Thus, whenever dropping a previously-supported TypeScript release, packages using “simple majors” should publish a new major version.</p>
+<p>However, bug fix/patch releases to TypeScript (as described above under <a href="#bug-fixes">Bug fixes</a>) qualify for bug fix releases for packages using the “simple majors” policy. For example, if a package initially publishes support for TypeScript 4.5.0, but a critical bug is discovered and fixed in 4.5.1, the package may drop support for 4.5.0 without a major release. Dropping support for a bad version does not require publishing a new release, only documenting the change.</p>
+<p>In this case, packages should generally couple dropping support for previously-supported TypeScript versions with dropping support for other ecosystem-level dependencies, such as previously-supported Node.js LTS versions, Ember LTS releases, React major versions, etc. (This is not a requirement for conformance, but makes for a generally healthier ecosystem.)</p>
+<p>This pattern is recommended for “normal” packages, where major versions do not themselves have ecosystem-wide implications. For example, a package like <a href="https://true-myth.js.org">True Myth</a> (maintained by the primary author of this RFC) is small and not presently foundational to any broader ecosystem. It is safely using the “simple majors” approach today for both Node and TypeScript versions.</p>
+<h6 id="rolling-support-windows"><a class="header" href="#rolling-support-windows">Rolling support windows</a></h6>
+<p>The “rolling support windows” policy decouples compiler version support from major breaking changes, by specifying a rolling window of supported versions. For example, Ember and Ember CLI <a href="https://github.com/ember-cli/ember-cli/blob/master/docs/node-support.md">specify</a> that any change landing on <code>master</code> must work on the <a href="https://nodejs.org/en/about/releases/">Current, Active LTS, and Maintenance LTS Node versions</a> at the time the change lands, and that when the Node Working Group drops support for an LTS, Ember and Ember CLI do so as well <em>without a breaking change</em>. This allows the CLI to use new Node features as part of its public API over time, rather than being fixed at the set of features available at the time of the latest release of the CLI (e.g. Node 8 for the Ember CLI 3.x series).</p>
+<p>Following this pattern, core ecosystem components (hypothetically including examples such <code>ember-source</code>, <code>react</code>, <code>@vue/cli</code>, etc.) could adopt a similar policy for supported TypeScript compiler versions, allowing the component to adopt new TypeScript features which impact the published types (e.g. in type emit, type system features such as conditional types, etc.) rather than being coupled to the features available at the time of release. Conforming projects which adopt this may choose any rolling support window they choose, except that if they have an LTS release schedule, upgrading to a new LTS shall not require upgrading to a new version of TypeScript.</p>
+<p>Bug fix/patch releases to TypeScript (as described above under <a href="#bug-fixes">Bug fixes</a>) qualify for bug fix releases for packages using the “rolling support windows” policy. For example, if a package initially publishes support for TypeScript 4.5.0, but a critical bug is discovered and fixed in 4.5.1, the package may drop support for 4.5.0 without a major release. Dropping support for a bad version does not require publishing a new release, only documenting the change.</p>
+<h5 id="strictness"><a class="header" href="#strictness">Strictness</a></h5>
+<p>Type-checking in TypeScript behaves differently under different “strictness” settings, and the compiler adds more strictness settings over time. Changes to types which are not breaking under looser compiler settings may be breaking under stricter compiler settings.</p>
+<p>For example: a package with <code>strictNullChecks: false</code> could make a function return type nullable without the compiler reporting it within the package or the package’s type tests. However, as described above, this is a breaking change for consumers which have <code>strictNullChecks: true</code>. (By contrast, a <em>consumer</em> may disable strictness settings safely: code which type-checks under a stricter setting also type-checks under a less strict setting.) Likewise, with <code>noUncheckedIndexedAccess: false</code>, an author could change a type <code>SomeObj</code> from <code>{ a: string }</code> to <code>{ [key: string]: string }</code> and accessing <code>someObj.a.length</code> would now error.</p>
+<p>Accordingly, conforming packages must use <code>strict: true</code> in their compiler settings. Additionally, communities may define further strictness settings to which they commit to conform which include “pedantic” strictness settings like <code>noUncheckedIndexedAccess</code>. For example, the Ember community might commit to a set of <em>additional</em> strictness flags it supports for its own types for any LTS release, published in Ember’s own TypeScript documentation.</p>
+<p><strong>Note:</strong> While the TypeScript compiler may include new strictness flags under <code>strict: true</code> in any release, this is simply a special case of TypeScript’s policy on breaking changes.</p>
+<h5 id="module-interop"><a class="header" href="#module-interop">Module interop</a></h5>
+<p>The two flags <code>esModuleInterop</code> and <code>allowSyntheticDefaultImports</code> smooth the interoperation between ES Modules and CommonJS, AMD, and UMD modules for <em>emit</em> from TypeScript and <em>type resolution</em> by TypeScript respectively. The options are viral: enabling them in a package requires all downstream consumers to enable them as well (even if this is not desirable for whatever reasons). The reasons for this are details of how CommonJS and ES Modules interoperate for bundlers (Webpack, Parcel, etc.), and are beyond the scope of this document.</p>
+<p>Here, it is enough to note that changing from <code>esModuleInterop: true</code> to <code>esModuleInterop: false</code> on a package which emits <em>is a breaking change</em>:</p>
+<ul>
+<li>with <code>esModuleInterop: true</code>: <a href="https://www.typescriptlang.org/play?target=7#code/CYUwxgNghgTiAEBbA9sArhBByAzsxIAtGgA44AucUihEAlgEYywCeW8A3gLABQ8-8MMgB2FeADNkyAFzwAFAEp4AXgB88CjDrCA5gG5eA+CAAeJZDHIqJUgzwC+vXqEiwEKdJnhZELWo2YYNk5DATpEc0sbZAkYfG88AmIyShBqfyZWLDtQ-lNIqyFRK18AFQALbR1Zbj4jAUkZeHIWEhBkcWi7eoEGWFlFFXVhNEQGEBhugUcHIA">playground</a></li>
+<li>with <code>esModuleInterop: false</code>: <a href="https://www.typescriptlang.org/play?esModuleInterop=false&amp;target=7#code/CYUwxgNghgTiAEBbA9sArhBByAzsxIAtGgA44AucUihEAlgEYywCeW8A3gLABQ8-8MMgB2FeADNkyAFzwAFAEp4AXgB88CjDrCA5gG5eA+CAAeJZDHIqJUgzwC+vXqEiwEKdJnhZELWo2YYNk5DATpEc0sbZAkYfG88AmIyShBqfyZWLDtQ-lNIqyFRK18AFQALbR1Zbj4jAUkZeHIWEhBkcWi7eoEGWFlFFXVhNEQGEBhugUcHIA">playground</a></li>
+</ul>
+<p>Accordingly, library authors should set both <code>allowSyntheticDefaultImports</code> and <code>esModuleInterop</code> to <code>false</code>. This allows consumers to opt into these semantics, but does not <em>require</em> them to do so. Consumers can always safely use alternative import syntaxes (including falling back to <code>require()</code> and <code>import()</code>), or can enable these flags and opt into this behavior themselves.</p>
+<p>(If the Node ecosystem migrates fully to ES modules over the next few years, this problem will be substantially mitigated.)</p>
+<h3 id="conformance"><a class="header" href="#conformance">Conformance</a></h3>
+<p>To conform to this standard, a package must:</p>
+<ul>
+<li>link to the final published version of this specification</li>
+<li>specify the compiler support policy</li>
+<li>specify the currently-supported versions of TypeScript</li>
+<li>specify the definition of “public API” used by the library (e.g. “only documented types” vs. “all published types” etc.)</li>
+<li>author and publish its types with <code>strict: true</code> and <code>noUncheckedIndexedAccess: true</code> in its compiler configuration</li>
+</ul>
+<h2 id="how-we-teach-this"><a class="header" href="#how-we-teach-this">How we teach this</a></h2>
+<p>If these recommendations are adopted, the <a href="#detailed-design"><strong>Detailed Design</strong></a> section shall be published to a dedicated, standalone repository to ease linking to it (including by TypeScript packages beyond the Ember ecosystem, if they find it useful, as we hope they will!).</p>
+<p>When any Ember package begins publishing types, it shall follow the rules specified in <a href="#conformance"><strong>Conformance</strong></a>. In the case of Ember, Ember CLI, and Ember Data, the link to the published spec shall be added alongside the existing links to the Node SemVer support policies. Additionally, Ember should publish a table showing supported versions in the same format as the Node version support table.</p>
+<p>Other official Ember packages which publish types must publish their supported TypeScript versions and compiler version policy, but may do so in whatever form is appropriate for the package, for example badges in the README linking to the published specification text and to CI.</p>
+<h2 id="drawbacks"><a class="header" href="#drawbacks">Drawbacks</a></h2>
+<ul>
+<li>
+<p>The definition of breaking changes above, while precise, may prove difficult to maintain without investment in specific supporting tooling to identify and mitigate breakage (which this RFC does not require, though see <a href="#appendix-b-tooling"><strong>Appendix B: Tooling</strong></a> for some recommendations).</p>
+</li>
+<li>
+<p>Providing the “rolling support window” option means that consumers still have to deal with some potentially-breaking changes to supported TypeScript versions during a single major version of a package. While this allows more flexibility for authors of packages which publish types, it does decrease the strength of the stability guarantees for those types.</p>
+</li>
+<li>
+<p>Adopting <em>any</em> policy constricts the options available to packages which publish types.</p>
+</li>
+</ul>
+<h2 id="alternatives"><a class="header" href="#alternatives">Alternatives</a></h2>
+<h3 id="no-policy"><a class="header" href="#no-policy">No policy</a></h3>
+<p>Currently, no frameworks and few packages in the broader TypeScript ecosystem have any specific TypeScript support policy. Instead, they just roughly track the latest TypeScript version and expect downstream consumers of the types to absorb the changes. This strategy <em>could</em> work if libraries were honest about the SemVer implications of this and cut major releases any time a new TypeScript version resulted in breaking changes. Notably, the Ember TypeScript ecosystem has largely operated in this mode to date, and it has worked all right so far—though not without some challenges.</p>
+<p>However, there are three major problems with this approach.</p>
+<ul>
+<li>
+<p>First, it does not scale well. While many packages are using TypeScript today, as the community of TypeScript users grows and especially as it increasingly includes packages used extensively throughout the community (e.g. frameworks or core libraries), the cost of breaking changes grows in an unbounded fashion, with all of that cost being borne by the consumers of those changes, and worst of all <em>there is no signal about these breaking changes</em>.</p>
+</li>
+<li>
+<p>Second, and closely related, the more central a package is to the ecosystem, the worse the impact is—especially when combined with any attempts to enforce “Highlander” rules for web bundling (e.g. Ember CLI will only resolve a single major version of an Ember package). Without a strategy for specifying breaking changes and therefore opportunities to mitigate them, core packages could easily end up fragmenting the ecosystem.</p>
+</li>
+<li>
+<p>Third, in the absence of a specific policy, each package ends up developing its own <em>ad hoc</em> support policy. Many parts of the TypeScript ecosystem would benefit from adopting a shared solution and improving stability—preferring to avoid churn and risk through policies and definitions such as those outlined in this RFC. Accordingly, a policy which aligns TypeScript support with existing community norms around supported versions would make TypeScript adoption more palatable both at the community level in general and specifically to large/enterprise engineering organizations with a lower appetite for risk.</p>
+</li>
+</ul>
+<h3 id="decouple-typescript-support-from-lts-cycles"><a class="header" href="#decouple-typescript-support-from-lts-cycles">Decouple TypeScript support from LTS cycles</a></h3>
+<p>The “rolling support window” policy could be decoupled from LTS requirements. Similarly, the “simple majors” policy could drop the recommendation to combine dropping Node versions, TypeScript versions, and other LTS packages. This would simplify the rule for adopting packages. However, it comes with the previously mentioned challenges when multiple major versions of a package exist in a given ecosystem. While a strategy for resolving those challenges at the ecosystem level would be nice, it is far beyond the scope of <em>this</em> RFC and indeed is a general challenge for package-rich ecosystems like Node’s.</p>
+<h2 id="unresolved-questions"><a class="header" href="#unresolved-questions">Unresolved questions</a></h2>
+<ul>
+<li>
+<p>What policy should this RFC adopt for compiler settings which behave in both lint-like and strictness-checking-like ways, but which cannot cause type breakage for consumers, such as <code>noUncheckedIndexAccess</code>?</p>
+<p>The semantics of this check is that it effectively exposes <code>| undefined</code> in more places, but authors of types cannot construct a type which <em>avoids</em> emitting <code>T | undefined</code> if the consumer enables <code>noUncheckedIndexAccess</code> and <code>strictNullChecks</code>. That is: if an author publishes <code>function foo(): Array&lt;string&gt;</code> <em>or</em> <code>function foo(): Array&lt;string | undefined&gt;</code>, then <em>whether or not</em> the author has <code>noUncheckedIndexedAccess</code> enabled, the semantics are the same for downstream consumers, and is dependent on <em>their</em> setting. The only safety improvement would be to publish types as <code>SafeArray&lt;string&gt;</code> where:</p>
+<pre><code class="language-ts">type SafeArray&lt;T&gt; = Array&lt;T | undefined&gt;;
+</code></pre>
+</li>
+<li>
+<p>Are there any type system edge cases not covered by this policy?</p>
+</li>
+<li>
+<p>Are there any compiler version change scenarios not covered by this policy?</p>
+</li>
+<li>
+<p>Is the recommended compiler version support policy appropriate? There are other options available, like Typed Ember's current commitment to support the latest two (<i>N−1</i>) versions in the types. (In practice, the Typed Ember team did not bump most of the Ember types' minimum version from TypeScript 2.8 until the release of TypeScript 3.9, at which time they bumped minimum supported TypeScript version to 3.7.)</p>
+</li>
+<li>
+<p>How should transitive dependencies be expected to be handled? Should package authors be expected to absorb any upstream differences in SemVer handling?</p>
+</li>
+</ul>
+<h2 id="appendices"><a class="header" href="#appendices">Appendices</a></h2>
+<p>These sections are non-normative.</p>
+<h3 id="appendix-a-existing-implementations"><a class="header" href="#appendix-a-existing-implementations">Appendix A: Existing Implementations</a></h3>
+<p>The recommendations in this RFC have been fully implemented in <a href="https://github.com/ember-modifier/ember-modifier"><code>ember-modifier</code></a>, <a href="https://true-myth.js.org">True Myth</a>, and <a href="https://github.com/chriskrycho/ember-async-data">ember-async-data</a>; and partly implemented in <a href="https://github.com/machty/ember-concurrency"><code>ember-concurrency</code></a>. <code>ember-modifier</code>, <code>ember-async-data</code>, and <code>true-myth</code> all publish types generated from implementation code. <code>ember-concurrency</code> supplies a standalone, hand-written type definition file. Since adopting this policy in these implementations (beginning in early summer 2020), no known issues have emerged, and the experience of implementing earlier versions of the recommendations from this RFC were incorporated into the final form of this RFC.</p>
+<p>There are, to the best of our knowledge, no other major adopters of these recommendations, and no similar such recommendations in the TypeScript ecosystem at large.</p>
+<h3 id="appendix-b-tooling"><a class="header" href="#appendix-b-tooling">Appendix B: Tooling</a></h3>
+<p>To successfully adopt this RFC’s recommendations, package authors need to be able to <em>detect</em> breaking changes (whether from their own changes or from TypeScript itself) and to <em>mitigate</em> them. Package <em>consumers</em> need to know the support policy for the library.</p>
+<h4 id="documenting-supported-versions-and-policy"><a class="header" href="#documenting-supported-versions-and-policy">Documenting supported versions and policy</a></h4>
+<p>In line with ecosystem norms, badges linking to CI status</p>
+<ul>
+<li>
+<p>An example supported versions badge (which could link to CI config):</p>
+<p><img src="https://img.shields.io/badge/TS%20Versions-4.1%20%7C%204.2%20%7C%20next-blue" alt="supported TypeScript versions: 4.1, 4.2 and next" /></p>
+</li>
+<li>
+<p>Example support policy badges (which could link to the published recommendation from this RFC):</p>
+<p><img src="https://img.shields.io/badge/TS%20Support-Rolling%20Window-purple" alt="TypeScript support policy" /> <img src="https://img.shields.io/badge/TS%20Support-Simple%20Majors-purple" alt="TypeScript support policy" /></p>
+</li>
+</ul>
+<h4 id="detect-breaking-changes-in-types"><a class="header" href="#detect-breaking-changes-in-types">Detect breaking changes in types</a></h4>
+<p>As with runtime code, it is essential to prevent unintentional changes to the API of types supplied by a package. We can accomplish this using <em>type tests</em>: tests which assert that the types exposed by the public API of the package are stable.</p>
+<p>Package authors publishing types can use whatever tools they find easiest to use and integrate, within the constraint that the tools must be capable of catching all the kinds of breaking changes outlined above. Additionally, they must be able to run against multiple supported versions of TypeScript, so that users can detect and account for breaking changes in TypeScript.</p>
+<p>The current options include:</p>
+<ul>
+<li>
+<p><a href="https://github.com/microsoft/dtslint"><code>dtslint</code></a>—used to support the DefinitelyTyped ecosystem, so it is well-tested and fairly robust. It uses the TypeScript compiler API directly, and is maintained by the TypeScript team directly. Accordingly, it is very unlikely to stop working against the versions of TypeScript it supports. However, there are several significant downsides as well:</p>
+<ul>
+<li>
+<p>The tool checks against string representations of types, which makes it relatively fragile: it can be disturbed by changes to the representation of a type, even when those changes would not impact type-checking.</p>
+</li>
+<li>
+<p>As its name suggests, it is currently powered by <a href="https://github.com/palantir/tslint">tslint</a>, which is deprecated in favor of <a href="https://github.com/eslint/eslint">eslint</a>. While there is <a href="https://github.com/microsoft/dtslint/issues/300">initial interest</a> in migrating to eslint, there is no active effort to accomplish this task.</p>
+</li>
+<li>
+<p>The developer experience of authoring assertions with dtslint is poor, with no editor-powered feedback or indication of whether you've actually written the test correctly at all. For example, if a user types <code>ExpectType</code> instead of <code>$ExpectType</code>, the assertion will simply be silently ignored.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><a href="https://github.com/SamVerschueren/tsd"><code>tsd</code></a>—a full solution for testing types by writing <code>.test-d.ts</code> files with a small family of assertions and using the <code>tsd</code> command to validate all <code>.test-d.ts</code> files. Authoring has robust editor integration, since the type assertions are normal TS imports, and the type assertions are specific enough to catch all the kinds of breakage identified above. It is implemented using the TS compiler version directly, which makes its assertions fairly robust. Risks and downsides:</p>
+<ul>
+<li>
+<p>The tool uses a patched version of the TypeScript compiler, which increases the risk of errors and the risk that at some points it will simply be unable to support a new version of TypeScript.</p>
+</li>
+<li>
+<p>Because the assertions are implemented as type definitions, the library is subject to the same risk of compiler breakage as the types it is testing.</p>
+</li>
+<li>
+<p><strong>BLOCKER:</strong>  currently only supports a single version of TypeScript at a time. While the author is <a href="https://github.com/SamVerschueren/tsd/issues/47">interested</a> in supporting multiple versions, it is not currently possible.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><a href="https://github.com/mmkal/ts/tree/master/packages/expect-type#readme"><code>expect-type</code></a>—a library with a variety of type assertions, inspired by Jest's matchers but tailored to types and with no runtime implementation. Like <code>tsd</code>, it is implemented as a series of function types which can be imported, and accordingly it has excellent editor integration. However, unlike <code>tsd</code>, it does <em>not</em> use the compiler API. Instead,  It is robust enough to catch all the varieties of breaking type changes. The risks with expect-type are:</p>
+<ul>
+<li>
+<p>It currently has a single maintainer, and relatively few users.</p>
+</li>
+<li>
+<p>It is relatively young, having been created only about a year ago, and therefore having existed for only 5 TypeScript releases. While its track record is good so far, there is not yet evidence of how it would deal with serious breaking changes like those introduced in TypeScript 3.5.</p>
+</li>
+<li>
+<p>Because the assertions are implemented as type definitions, the library is subject to the same risk of compiler breakage as the types it is testing.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>At present, <code>expect-type</code> seems to be the best option, and several libraries both in the Ember ecosystem and elsewhere in the TS community are already using <code>expect-type</code> successfully (see <a href="#appendix-a-existing-implementations"><strong>Appendix A</strong></a> above). However, for the purposes of <em>this</em> RFC, we do not make a specific recommendation about which library to use. The tradeoffs above are offered to help authors make an informed choice in this space.</p>
+<p>Users should add one of these libraries and generate a set of tests corresponding to their public API. These tests should be written is such a way as to test the imported API as consumers will consume the library. For example, type tests should not import using relative paths, but using the absolute paths at which the types should resolve, just as consumers would. </p>
+<p>These type tests should be specific and precise. It is important, for example, to guarantee that an API element never <em>accidentally</em> becomes <code>any</code>, thereby making many things allowable which should not be in the case of function arguments, and &quot;infecting&quot; the caller's code by eliminating type safety on the result in the case of function return values. For example, the <code>expect-type</code> library's <code>.toEqualTypeOf</code> assertion is robust against precisely this scenario; package authors are also encouraged to use its <code>.not</code> modifier and <code>.toBeAny()</code> method where appropriate to prevent this failure mode.</p>
+<p>To be safe, these tests should be placed in a directory which does not emit runtime code—either colocated with the library's runtime tests, or in a dedicated <code>type-tests</code> directory. Additionally, type tests should <em>never</em> export any code.</p>
+<p>In addition to <em>writing</em> these tests, package authors should make sure to run the tests (as appropriate to the testing tool chosen) in their continuous integration configuration, so that any changes made to the library are validated to make sure the API has not been changed accidentally.</p>
+<p>Further, just as packages are encouraged to test against a matrix of Ember versions which includes the current stable release, the currently active Ember LTS release, and the canary and beta releases, packages should test the types against all versions of TypeScript supported by the package (see the <a href="#policy-for-supported-typescript-versions">suggested policy for version support</a> below) as well as the upcoming version (the <code>next</code> tag for the <code>typescript</code> package on npm).</p>
+<p>Type tests can run as normal <a href="https://github.com/ember-cli/ember-try">ember-try</a> variations or similar CI. Typed Ember will document a conventional setup for ember-try configurations, so that correct integration into CI setups will be straightforward for package authors.</p>
+<h4 id="mitigate-breaking-changes"><a class="header" href="#mitigate-breaking-changes">Mitigate breaking changes</a></h4>
+<p>It is insufficient merely to be <em>aware</em> of breaking changes. It is also important to <em>mitigate</em> them, to minimize churn and breakage for package users.</p>
+<h5 id="avoiding-user-constructibility"><a class="header" href="#avoiding-user-constructibility">Avoiding user constructibility</a></h5>
+<p>For types where it is useful to publish an interface for end users, but where users should not construct the interface themselves, authors have a number of options (noting that this list is not exhaustive):</p>
+<ul>
+<li>
+<p>The type can simply be documented as non-user-constructible. This is the easiest, and allows an escape hatch for scenarios like testing, where users will recognize that if the public interface changes, they will necessarily need to update their test mocks to match. This can further be mitigated by providing a sanctioned test helper to construct test versions of the types.</p>
+</li>
+<li>
+<p>Export a nominal-like version of the type, using <code>export type</code> with a class with a private field:</p>
+<details>
+<summary>implementation of a nominal-like class in TS</summary>
+<pre><code class="language-ts">class Person {
+  // 1.  The private brand means this cannot be constructed other than the
+  //     class's own constructor, because other approaches cannot add the
+  //     private field. Even if you write a class yourself with a matching
+  //     private field, TS will treat them as distinct.
+  // 2.  Using `declare` means this marker has no runtime over head: it will
+  //     not be emitted by TypeScript or Babel.
+  // 3.  Because the class itself is declared but not exported, the only way
+  //     to construct it is using the function exported lower in the module.
+  declare private __brand: void;
+
+  name: string;
+  age: number;
+
+  constructor(name: string, age: number) {
+    this.name = name;
+    this.age = age;
+  }
+}
+
+// This exports only the *type* side of `Person`, not the *value* side, so
+// users can neither call `new Person(...)` nor subclass it. Per the note
+// above, they also cannot *implement* their own version of `Person`, since
+// they do not have the ability to add the private field.
+export type { Person };
+
+// This is the controlled way of building a person: users can only get a
+// `Person` by calling this function, even though they can *name* the type
+// by doing `import type { Person} from '...';`.
+export function buildPerson(name: string, age: number): Person {
+  return new Person(name, age);
+}
+</code></pre>
+</details>
+<p>This <em>cannot</em> be constructed outside the module. Note that it may be useful to provide corresponding test helpers for scenarios like this, since users cannot safely provide their own mocks.</p>
+</li>
+<li>
+<p>Document that users can create their own local aliases for these types, while <em>not</em> exporting the types in a public way. This has one of the same upsides as the use of the classes with a private brand: the type is not constructible other than via the module. It also shares the upside of being able to create your own instance of it for test code. However, it has ergonomic downsides, requiring the use of the <code>ReturnType</code> utility class and requiring all consumers to generate that utility type for themselves.</p>
+</li>
+<li>
+<p>Provide sanctioned mocks for testing purposes. Since these live alongside, and therefore can be tested with and kept in sync with the package they are mocks for, they can also be provided with the exact same versioning stability guarantees as the package code itself.</p>
+</li>
+</ul>
+<p>Each of these leaves this module in control of the construction of <code>Person</code>s, which allows more flexibility for evolving the API, since non-user-constructible types are subject to fewer breaking change constraints than user-constructible types. Whichever is chosen for a given type, authors should document it clearly.</p>
+<h5 id="updating-types-to-maintain-compatibility"><a class="header" href="#updating-types-to-maintain-compatibility">Updating types to maintain compatibility</a></h5>
+<p>Sometimes, it is possible when TypeScript makes a breaking change to update the types so they are backwards compatible, without impacting consumers at all. For example, <a href="https://github.com/microsoft/TypeScript/issues/33272">TypeScript 3.5</a> changed the default resolution of an otherwise-unspecified generic type from the empty object <code>{}</code> to <code>unknown</code>. This change was an improvement in the robustness of the type system, but it meant that any code which happened to rely on the previous behavior broke.</p>
+<p>This example from <a href="https://github.com/microsoft/TypeScript/issues/33272">Google's writeup on the TS 3.5 changes</a> illustrates the point. Given this function:</p>
+<pre><code class="language-ts">function dontCarePromise() {
+  return new Promise((resolve) =&gt; {
+    resolve();
+  });
+}
+</code></pre>
+<p>In TypeScript versions before 3.5, the return type of this function was inferred to be <code>Promise&lt;{}&gt;</code>. From 3.5 forward, it became <code>Promise&lt;unknown&gt;</code>. If a user ever wrote down this type somewhere, like so:</p>
+<pre><code class="language-ts">const myPromise: Promise&lt;{}&gt; = dontCarePromise();
+</code></pre>
+<p>…then it broke on TS 3.5, with the compiler reporting an error (<a href="https://www.typescriptlang.org/play/?ts=3.5.1&amp;ssl=1&amp;ssc=27&amp;pln=1&amp;pc=40#code/GYVwdgxgLglg9mABAEwVAwgQwE4FMAK2cAtjAM64AUAlIgN4CwAUIonlCNkmLgO6KES5KpTxk4AGwBuuWgF4AfPWatWYyTJoBuFYgC+1HUz3NmEBGSiJiAT0GkKALgFEHuADx09SuSjRY8e2FtIA">playground</a>):</p>
+<blockquote>
+<p>Type 'Promise<unknown>' is not assignable to type 'Promise&lt;{}&gt;'.
+Type 'unknown' is not assignable to type '{}'.</p>
+</blockquote>
+<p>This change could be mitigated by supplying a default type argument equal to the original value (<a href="https://www.typescriptlang.org/play/?ts=3.5.1#code/GYVwdgxgLglg9mABAEwVAwgQwE4FMAK2cAtjAM64AUAlAFyKEnm4A8A3gL4B8ibAsAChEiPFBDYkYXAHcGRUhUqU8ZOABsAbrmqIAvD35DhI3Ks1VqAbkHCOVwR0GCICMlETEAnowW56P5nZuPRQ0LDwAxSsgA">playground</a>):</p>
+<pre><code class="language-ts">function dontCarePromise(): Promise&lt;{}&gt; {
+  return new Promise((resolve) =&gt; {
+    resolve();
+  });
+}
+</code></pre>
+<p>This is a totally-backwards compatible bugfix-style change, and should be released in a bugfix/point release. Users can then just upgrade to the bugfix release <em>before</em> upgrading their own TypeScript version—and will experience <em>zero</em> impact from the breaking TypeScript change.</p>
+<p>Later, the default type argument <code>Promise&lt;{}&gt;</code> could be dropped and defaulted to the new value for a major release of the library when desired (per the policy <a href="#policy-for-supported-type-script-versions">outlined below</a>, giving it the new semantics. (Also see <a href="#opt-in-future-types"><b>Opt-in future types</b></a> below for a means to allow users to <em>opt in</em> to these changes before the major version.)</p>
+<h5 id="downleveling-types"><a class="header" href="#downleveling-types">&quot;Downleveling&quot; types</a></h5>
+<p>When a new version of TypeScript includes a backwards-incompatible change to <em>emitted type definitions</em>, as they did in <a href="https://github.com/microsoft/TypeScript/pull/33470">3.7</a>, the strategy of changing the types directly may not work. However, it is still possible to provide backwards-compatible types, using the combination of <a href="https://github.com/sandersn/downlevel-dts">downlevel-dts</a> and <a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-1.html#version-selection-with-typesversions">typesVersions</a>. (In some cases, this may also require some manual tweaking of types, but this should be rare for most packages.)</p>
+<ul>
+<li>
+<p>The <a href="https://github.com/sandersn/downlevel-dts"><code>downlevel-dts</code></a> tool allows you to take a <code>.d.ts</code> file which is not valid for an earlier version of TypeScript (e.g. the changes to class field emit mentioned in <a href="#breaking-changes"><b>Breaking Changes</b></a>), and emit a version which <em>is</em> compatible with that version. It supports targeting all TypeScript versions later than 3.4.</p>
+</li>
+<li>
+<p>TypeScript supports using the <a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-1.html#version-selection-with-typesversions"><code>typesVersions</code></a> key in a <code>package.json</code> file to specify a specific set of type definitions (which may consist of one or more <code>.d.ts</code> files) which correspond to a specific TypeScript version.</p>
+</li>
+</ul>
+<p>The recommended flow would be as follows:</p>
+<ol>
+<li>
+<p>Add <code>downlevel-dts</code>, <code>npm-run-all</code>, and <code>rimraf</code>  to your dev dependencies:</p>
+<pre><code class="language-sh">npm install --save-dev downlevel-dts npm-run-all rimraf
+</code></pre>
+<p>or </p>
+<pre><code class="language-sh">yarn add --dev downlevel-dts npm-run-all rimraf
+</code></pre>
+</li>
+<li>
+<p>Create a script to downlevel the types to all supported TypeScript versions:</p>
+<pre><code class="language-sh"># scripts/downlevel.sh
+npm run downlevel-dts . --to 3.7 ts3.7
+npm run downlevel-dts . --to 3.8 ts3.8
+npm run downlevel-dts . --to 3.9 ts3.9
+npm run downlevel-dts . --to 4.0 ts4.0
+</code></pre>
+</li>
+<li>
+<p>Update the <code>scripts</code> key in <code>package.json</code>  to generate downleveled types generated by running <code>downlevel-dts</code> on the output from <code>tsc</code>, and to clean up the results after publication. For example, using <code>ember-cli-typescript</code>’s tooling:</p>
+<pre><code class="language-diff">{
+  &quot;scripts&quot;: {
+-   &quot;prepublishOnly&quot;: &quot;ember ts:precompile&quot;,
++   &quot;prepublish:types&quot;: &quot;ember ts:precompile&quot;,
++   &quot;prepublish:downlevel&quot;: &quot;./scripts/downlevel.sh&quot;,
++   &quot;prepublishOnly&quot;: &quot;run-s prepublish:types prepublish:downlevel&quot;,
+-   &quot;postpublish&quot;: &quot;ember ts:clean&quot;,
++   &quot;clean:ts&quot;: &quot;ember ts:clean&quot;,
++   &quot;clean:downlevel&quot;: &quot;rimraf ./ts3.7 ./ts3.8 ./ts3.9 ./ts4.0&quot;,
++   &quot;clean&quot;: &quot;npm-run-all --aggregate-output --parallel clean:*&quot;,
++   &quot;postpublish&quot;: &quot;npm run clean&quot;,
+  }
+}
+</code></pre>
+</li>
+<li>
+<p>Add a <code>typesVersions</code> key to <code>package.json</code>, with the following contents:</p>
+<pre><code class="language-json">{
+  &quot;types&quot;: &quot;index.d.ts&quot;,
+  &quot;typesVersions&quot;: {
+    &quot;3.7&quot;: { &quot;*&quot;: [&quot;ts3.7/*&quot;] },
+    &quot;3.8&quot;: { &quot;*&quot;: [&quot;ts3.8/*&quot;] },
+    &quot;3.9&quot;: { &quot;*&quot;: [&quot;ts3.9/*&quot;] },
+    &quot;4.0&quot;: { &quot;*&quot;: [&quot;ts4.0/*&quot;] },
+  }
+}
+</code></pre>
+<p>This will tell TypeScript how to use the types generated by this process. Note that we explicitly include the <code>types</code> key so TypeScript will fall back to the defaults for 3.9 and higher.</p>
+</li>
+<li>
+<p>If using the <code>files</code> key in <code>package.json</code> to specify files to include (unusual but not impossible for TypeScript-authored packages), add each of the output directories (<code>ts3.7</code>, <code>ts3.8</code>, <code>ts3.9</code>, <code>ts4.0</code>) to the list of entries.</p>
+</li>
+</ol>
+<p>Now consumers using older versions of TypeScript will be buffered from the breaking changes in type definition emit.</p>
+<p>If the community adopts this practice broadly we will want to invest in tooling to automate support for managing dependencies, downleveling, and type tests. However, the core constraints of this RFC do not depend on such tooling existing, and the exact requirements of those tools will emerge organically as the community begins implementing this RFC's recommendations.</p>
+<h5 id="opt-in-future-types"><a class="header" href="#opt-in-future-types">Opt-in future types</a></h5>
+<p>In the case of significant breaking changes to <em>only</em> the types—whether because the package author wants to make a change, or because of TypeScript version changes—packages may supply <em>future</em> types, which users may opt into <em>before</em> the library ships a breaking change. (We expect this use case will be rare, but important.)</p>
+<p>In this case, package authors will need to <em>hand-author</em> the types for the future version of the types, and supply them at a specific location which users can then import directly in their <code>types/my-app.d.ts</code> file—which will override the normal types location, while not requiring the user to modify the <code>paths</code> key in their <code>tsconfig.json</code>.</p>
+<p>This approach is a variant on <a href="#updating-types-to-maintain-compatibility"><strong>Updating types to maintain compatibility</strong></a>. Using that same example, a package author who wanted to provide opt-in future types instead (or in addition) would follow this procedure:</p>
+<ol>
+<li>
+<p>Backwards-compatibly <em>fix</em> the types by explicitly setting the return type on <code>dontCarePromise</code>, just as discussed above:</p>
+<pre><code class="language-diff">- function dontCarePromise() {
++ function dontCarePromise(): Promise&lt;{}&gt; {
+</code></pre>
+</li>
+<li>
+<p>Create a new directory, named something like <code>ts3.5</code>.</p>
+</li>
+<li>
+<p>Generate the type definition files for the package by running <code>ember ts:precompile</code>.</p>
+</li>
+<li>
+<p>Manually move the generated type definition files into <code>ts3.5</code>.</p>
+</li>
+<li>
+<p>In the <code>ts3.5</code> directory, either <em>remove</em> or <em>change</em> the explicit return type, so that the default from TypeScript 3.5 is restored:</p>
+<pre><code class="language-diff">- function dontCarePromise(): Promise&lt;{}&gt; {
++ function dontCarePromise(): Promise&lt;unknown&gt; {
+</code></pre>
+</li>
+<li>
+<p>Wrap each module file in the generated definition with a <code>declare module</code> specifying the <em>canonical</em> module name. For example, if our <code>dontCarePromise</code> definition were from a module at <code>my-library/sub-package</code>, we would have the following structure:</p>
+<pre><code>my-library/
+  ts3.5/
+    index.d.ts
+    sub-package.d.ts
+</code></pre>
+<p>—and the contents of <code>sub-package.d.ts</code> would be:</p>
+<pre><code class="language-ts">declare module 'my-library/sub-package' {
+  export function dontCarePromise(): Promise&lt;unknown&gt;;
+}
+</code></pre>
+</li>
+<li>
+<p>Explicitly include each such sub-module in the import graph available from <code>ts3.5/index.d.ts</code>—either via direct import in that file or via imports in the other modules. (Note that these imports can simply be of the form <code>import 'some-module';</code>, rather than importing specific types or values from the modules.)</p>
+</li>
+<li>
+<p>Commit the <code>ts3.5</code> directory, since it now needs to be maintained manually until a breaking change of the library is released which opts into the new behavior.</p>
+</li>
+<li>
+<p>Cut a release which includes the new fixes. With that release:</p>
+<ul>
+<li>
+<p>Inform users about the incoming breaking change.</p>
+</li>
+<li>
+<p>Tell users to add <code>import 'fancy-package/ts3.5';</code> to the entry point of their package or a similar location. For example, in Ember, users would add the import to the top of their <code>types/my-app.d.ts</code> or <code>types/my-package.d.ts</code> file (which are generated by <code>ember-cli-typescript</code>).</p>
+</li>
+</ul>
+</li>
+<li>
+<p>At a later point, cut a breaking change which opts into the TypeScript 3.5 behavior.</p>
+<ul>
+<li>
+<p>Remove the <code>ts3.5</code> directory from the repository.</p>
+</li>
+<li>
+<p>Note in the release notes that users who did not previously opt into the changes will need to do so now.</p>
+</li>
+<li>
+<p>Note in the release notes that users who <em>did</em> previously opt into the changes should remove the <code>import 'fancy-package/ts3.5';</code> import from <code>types/my-app.d.ts</code> or <code>types/my-package.d.ts</code>.</p>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="matching-exports-to-public-api"><a class="header" href="#matching-exports-to-public-api">Matching exports to public API</a></h4>
+<p>Another optional tool for managing public API is <a href="https://api-extractor.com">API Extractor</a>. Authors can mark their exports as <code>@public</code>, <code>@protected</code>, <code>@private</code>, <code>@alpha</code>, <code>@beta</code>, etc. and use the tool to generate type definitions accordingly. For example, for mitigating a future TypeScript version change, or experimenting on a new API, authors can use <code>@alpha</code> or <code>@beta</code> and use <code>typesVersions</code> to publish to a dedicated directory. Similarly, authors can make an export public for use through the package or even a set of related packages in a moinorepo, but mark it as <code>@private</code> and use API Extractor to generate types which exclude it when publishing to npm.</p>
+<h3 id="appendix-c-on-variance-in-typescript"><a class="header" href="#appendix-c-on-variance-in-typescript">Appendix C: On Variance in TypeScript</a></h3>
+<p>As alluded to in <a href="#variance">Changes to Types: Variance</a>, there are several complicating factors for the discussion of variance in TypeScript:</p>
+<ul>
+<li>the combination of inference with pervasive mutability</li>
+<li>structural typing</li>
+<li>what I will describe here as <em>higher-order type operations</em></li>
+</ul>
+<h4 id="inference-and-pervasive-mutability"><a class="header" href="#inference-and-pervasive-mutability">Inference and pervasive mutability</a></h4>
+<p>For example, by the classic rules, <code>Array&lt;T&gt;</code> should be invariant: it is a read-write (i.e. mutable) type. That means that a very simple change, otherwise apparently safe for consumers, can break it. Start with a library function which returns <code>string | number</code>:</p>
+<pre><code class="language-ts">declare function example(): string | number;
+</code></pre>
+<p>A consumer might use this code in the construction of an array, and then having leaned on inference, push both <code>string</code>s and <code>number</code>s into it:</p>
+<pre><code class="language-ts">const myArray = [example()]; // Array&lt;string | number&gt;
+myArray.push(123);           // ✅
+myArray.push(&quot;hello&quot;);       // ✅
+</code></pre>
+<p>The author of the library might later update <code>example</code> to return only <code>string</code>s:</p>
+<pre><code class="language-ts">declare function example(): string;
+</code></pre>
+<p>This would be safe under the rule for write-only types, which is the intuition underlying many of the definitions below—but for our array example, it is <em>not</em> safe: <code>.push()</code>-ing in a <code>number</code> is now illegal.</p>
+<pre><code class="language-ts">const myArray = [example()]; // Array&lt;string&gt;
+myArray.push(123);           // ❌ number not assignable to string
+myArray.push(&quot;hello&quot;);       // ✅
+</code></pre>
+<p>What's more, we don't need an object like an array to trigger this kind of behavior. Using a <code>let</code> binding instead of a <code>const</code> binding will produce exactly the same issue. Under the original definition of <code>example</code>, this would be perfectly legal:</p>
+<pre><code class="language-ts">let value = example(); // string | number
+value = 123;           // ✅
+value = &quot;hello&quot;;       // ✅
+</code></pre>
+<p>But it stops being valid as soon as <code>example</code> is narrowed:</p>
+<pre><code class="language-ts">let value = example(); // string
+value = 123;           // ❌ number not assignable to string
+value = &quot;hello&quot;;       // ✅
+</code></pre>
+<p>While lint guidelines preferring <code>const</code> may <em>help</em> mitigate the latter, they are controversial<sup class="footnote-reference"><a href="#const-controversy">8</a></sup> and they do not and cannot help with the <code>Array</code> example or others like it. Nor is it feasible to require a “functional” immutable-update style, given that JavaScript lacks robust immutable data structures, which would allow for recommending that approach.</p>
+<p>In this case, cautious users may work around this by explicitly annotating their types to match the return type of the:</p>
+<pre><code class="language-ts">const myArray: Array&lt;string | number&gt; = [example()];
+let value: string | number = example();
+</code></pre>
+<p>We do not expect this to be common, however: the cost of this is much higher than the cost of changing one's code in the cases where it may be broken.</p>
+<div class="footnote-definition" id="const-controversy"><sup class="footnote-definition-label">8</sup>
+<p>Rightly so, in my opinion!</p>
+</div>
+<h4 id="structural-typing"><a class="header" href="#structural-typing">Structural typing</a></h4>
+<p>Most programming languages where programmers must deal with variance have <em>nominal</em> type systems, and and subtyping relations can be straightforwardly specified in terms of the relations between the types—particular via subclassing (as in Java, C++, and C#) or between interfaces (as in Rust’s <code>trait</code> system). In TypeScript, however, subtyping relationships include both subclassing and interface-based subtypes and also <em>structural subtyping</em>.</p>
+<p>Given types <code>A</code> and <code>B</code>, <code>B</code> is a subtype of <code>A</code> for the purposes of assignability (e.g. in function calls) when it is a <em>superset</em> of <code>A</code>. Most simply:</p>
+<pre><code class="language-ts">type A = {
+  a: number;
+}
+
+type B = {
+  a: number;
+  b: string;
+}
+
+type C = {
+  a?: number;
+  b: string;
+}
+
+declare function takesA(a: A): void;
+
+declare let a: A;
+declare let b: B;
+declare let c: C;
+takesA(a); // ✅
+takesA(b); // ✅
+takesA(c); // ❌
+</code></pre>
+<p>Notice that this is <em>unlike</em> the dynamics in nominal type systems, where unless <code>B</code> explicitly declared a relationship to <code>A</code> (e.g. <code>class B extends A { }</code> or <code>interface B : A { }</code> or similar), the two are unrelated, regardless of their structural relationships. Similar dynamics play out for other kinds of types.</p>
+<h4 id="higher-order-type-operations"><a class="header" href="#higher-order-type-operations">Higher-order type operations</a></h4>
+<p>The second factor which makes dealing with TypeScript types difficult is its support for <em>type-level mutation</em>. Consider the type of <code>x</code> at points 1–4 in the following simple, but relatively idiomatic, TypeScript function definition:</p>
+<pre><code class="language-ts">function describe(x: string | number | undefined) {
+  switch (typeof x) {                 // 1
+    case 'string':
+      return `x is the string ${x}`;  // 2
+    case 'number':
+      return `x is the number ${x}`;  // 3
+    default:
+      return `x is &quot;undefined&quot;`;      // 4
+  }
+}
+</code></pre>
+<ol>
+<li>The type is <code>string | number | undefined</code>.</li>
+<li>The type is <code>string</code>.</li>
+<li>The type is <code>number</code>.</li>
+<li>The type is <code>undefined</code>.</li>
+</ol>
+<p>While this quickly becomes second-nature to TypeScript developers and we don’t give it a second thought, it’s important to take a step back and consider what is actually happening here: the type of <code>x</code> is a variable—a <em>type-level</em> variable—whose value changes over the body of the function. That is, it is a <em>mutable type-level variable</em>. While it is possible to construct values whose types in TypeScript are <em>not</em> mutable (e.g. with <code>never</code> or a boolean or numeric literal value), <em>most</em> values constructed in an ordinary TypeScript program have mutable types.</p>
+<p>What’s more, this combines with TypeScript’s use of structural typing and inference mean that many cases which would intuitively be “safe” to make changes around can in fact create compiler errors. For example, consider a function which today returns <code>string | number</code>:</p>
+<pre><code class="language-ts">declare function a(): string | number;
+</code></pre>
+<p>Using this function to create a value <code>x</code> will give us the type <code>x: string | number</code> as we would expect. Then we might <em>narrow</em> the type later:</p>
+<pre><code class="language-ts">const x = a(); // string | number
+const y = typeof x === 'string' ? x.length : x;  // ✅
+</code></pre>
+<p>In general by the rules of variance, we would expect that narrowing the return type of <code>a</code> to always return <code>number</code> would be fine. This is in a “write-only” position, and so we would expect that we should allow contravariance: a narrower type is permissible. From a runtime perspective, that is true, because all existing code will continue to work (even if there are some unnecessary branches). However, TypeScript will produce a type error here, because the type of <code>x</code> no longer includes <code>string</code>, and so the <code>typeof x === 'string'</code> check can be statically known to be.</p>
+<p>Practically speaking, this is an annoyance rather than a meaningful breaking change. It can, however, result in significant work across a code base! What is more, it is not possible to work around this merely with an explicit type definition today. Naïvely, we might expect explicit type declarations to allow us to dodge this problem in places we actually care about it:</p>
+<pre><code class="language-ts">const x: string | number = a();
+const y = typeof x === 'string' ? x.length : x;  // ❌
+</code></pre>
+<p>In practice, however, TypeScript today (up through 4.5) will first check that the type returned by <code>a()</code> is a subtype of the declared type of <code>x</code>, and then if <code>a()</code> returns a <em>narrower</em> type than that declared for <code>x</code>, it will actually set <code>x</code>'s type to the narrower type returned by <code>a()</code> instead of the explicitly-declared type. Thus, a user who wishes to avoid this problem must <em>everywhere</em> annotate their code with explicit type casts:</p>
+<pre><code class="language-ts">const x = a() as string | number;
+const y = typeof x === 'string' ? x.length : x;
+</code></pre>
+<p>This is very annoying; worse, it is also easy to break. TypeScript today silently allows an unsafe cast here, which can in turn produce runtime errors:</p>
+<pre><code class="language-ts">declare function a(): string | number;
+const x = a() as string; // 👎🏼
+const y = x.length;  // possible runtime error!
+</code></pre>
+<p>Thus, for the thoroughly pragmatic reason that no one would ever want to write these kinds of casts and the more principled reason that these kinds of casts as readily undermine as support the kinds of type safety TypeScript aims to provide <em>and</em> the versioning guarantees this RFC aims to provide, we simply acknowledge that from a practical standpoint, the pervasiveness of type-level mutation makes it impossible to provide a definition of breaking changes which forbids the introduction of compiler errors by even apparently-safe changes.</p>
+<p>The problem runs the other direction, too: while this example shows now-extraneous code which can be deleted, the same underlying issue can also require <em>adding</em> code, e.g. when adding a field to a library type which was previously being used to discriminate two objects.</p>
+<p>Given this starting code:</p>
+<pre><code class="language-ts">// provided by the library
+type LibType = {
+  a: boolean;
+}
+
+type MyType = {
+  b: string;
+}
+
+function takesEither(obj: LibType | MyType) {
+  if ('b' in obj) {
+      // narrowed obj to `MyType`
+    console.log(obj.b.substring(0));
+  }
+}
+</code></pre>
+<p>If the library adds a field <code>b</code> which is of any type but <code>string</code>—</p>
+<pre><code class="language-ts">type LibType = {
+  a: boolean;
+  b: number;
+}
+</code></pre>
+<p>—then we have a type error in <code>takesEither()</code> because the <code>in</code> operator no longer successfully discriminates between <code>LibType</code> and <code>MyType</code>:</p>
+<pre><code class="language-ts">function takesEither(obj: LibType | MyType) {
+  if ('b' in obj) {
+    // `obj` is still `LibType | MyType` so `b` is now `string | number`
+    console.log(obj.b.substring(0)); // ❌
+  }
+}
+</code></pre>
+<p>The compiler will dutifully report:</p>
+<blockquote>
+<p>Property 'substring' does not exist on type 'string | number'.</p>
+</blockquote>
+<p>In sum, just as pervasive runtime mutability and inference made it impossible to fully specify an approach which prevents users from experiencing breaking changes.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="0724-road-to-typescript.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="0738-ember-data-deprecate-model-reopen.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="0724-road-to-typescript.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="0738-ember-data-deprecate-model-reopen.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>
