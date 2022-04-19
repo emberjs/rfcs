@@ -11,6 +11,18 @@ RFC PR: https://github.com/emberjs/rfcs/pull/730
 
 # Semantic Versioning for TypeScript Types
 
+## Note on Authoritative Source
+
+**The living specification to which Ember is committed lives at [www.semver-ts.org](https://www.semver-ts.org).**
+
+The text below represents the RFC as it was merged as part of Ember.js’ RFC process. However, [per the text below](#how-we-teach-this), this is not the authoritative form of this specification:
+
+> If these recommendations are adopted, the **Detailed Design** section shall be published to a dedicated, standalone repository to ease linking to it (including by TypeScript packages beyond the Ember ecosystem, if they find it useful, as we hope they will!).
+
+Accordingly, the text below represents the state of the specification at the time it was accepted as for Ember’s purposes, with the expectation that it will continue to evolve and be improved over time.
+
+-----
+
 
 ## Summary
 
