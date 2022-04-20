@@ -26,7 +26,7 @@ of our codebases:
 * [eslint-plugin-ember](https://github.com/ember-cli/eslint-plugin-ember) - Ember JavaScript Best Practices
 * [eslint-plugin-node](https://github.com/mysticatea/eslint-plugin-node) - Node Best Practices
 * [eslint-plugin-qunit](https://github.com/platinumazure/eslint-plugin-qunit) - QUnit Best Practices
-* [prettier](https://prettier.io/) - Automated Code Styling
+* [prettier](https://prettier.io/) - Automated Code Styling [RFC](https://github.com/emberjs/rfcs/blob/master/text/0628-prettier.md)
 
 With all these amazing tools in place, however, we still have a major aspect of our Ember codebases 
 that are not benefiting from mature tooling to enforce best practices and automate code styling: CSS.
