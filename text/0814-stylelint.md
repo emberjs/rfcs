@@ -25,7 +25,7 @@ of our codebases:
 * [eslint](https://eslint.org/) - General JavaScript Best Practices
 * [eslint-plugin-ember](https://github.com/ember-cli/eslint-plugin-ember) - Ember JavaScript Best Practices
 * [eslint-plugin-node](https://github.com/mysticatea/eslint-plugin-node) - Node Best Practices
-* [eslint-plugin-qunit](https://github.com/platinumazure/eslint-plugin-qunit) - QUnit Best Practices
+* [eslint-plugin-qunit](https://github.com/platinumazure/eslint-plugin-qunit) - QUnit Best Practices [RFC](https://github.com/emberjs/rfcs/blob/master/text/0702-eslint-plugin-qunit.md)
 * [prettier](https://prettier.io/) - Automated Code Styling [RFC](https://github.com/emberjs/rfcs/blob/master/text/0628-prettier.md)
 
 With all these amazing tools in place, however, we still have a major aspect of our Ember codebases 
