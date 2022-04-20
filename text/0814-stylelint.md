@@ -3,9 +3,8 @@ Stage: Accepted
 Start Date: 2022-04-19
 Release Date: Unreleased
 Release Versions:
-ember-source: vX.Y.Z
-ember-data: vX.Y.Z
-Relevant Team(s): Ember.js
+ember-cli: vX.Y.Z
+Relevant Team(s): Ember CLI
 RFC PR: https://github.com/emberjs/rfcs/pull/814
 ---
 
@@ -71,9 +70,8 @@ by the stylelint, prettier, and Ember communities.
 ### Blueprint Changes
 
 In general, it is recommended that all blueprints provided by addons should satisfy the default 
-linting configuration of a new Ember application. As such the blueprints provided by ember-cli, 
-ember-source, and ember-data will be updated as needed to ensure that they satisfy these new 
-linting rules requirements.
+linting configuration of a new Ember application. As such, the blueprints provided by ember-cli 
+will be updated as needed to ensure that they satisfy these new linting requirements.
 
 #### `package.json` scripts
 
@@ -82,11 +80,20 @@ The `app` and `addon` blueprints will be updated to add style-related linting sc
 ```json title="package.json"
 {
   "scripts": {
-    "lint:style": "stylelint .",
-    "lint:style:fix": "stylelint . --fix",
+    "lint:css": "stylelint \"**/*.{css,scss,sass,less}\"",
+    "lint:css:fix": "stylelint \"**/*.{css,scss,sass,less}\" --fix",
   }
 }
 ```
+
+#### Linting Stylelint's Config
+
+`.stylelintrc.js` should be [linted as a node file](https://github.com/ember-cli/ember-cli/blob/master/blueprints/app/files/.eslintrc.js#L26-L38) 
+in eslint's config.
+
+#### npmignore
+
+`/.stylelintrc.js` should be added to the `addon` blueprint's [`npmignore` file](https://github.com/ember-cli/ember-cli/blob/master/blueprints/addon/files/npmignore).
 
 ## How we teach this
 
@@ -117,12 +124,12 @@ should strive to support that use-case. `stylelint` has readily-available suppor
 preprocessors built-in, and there are plugins like [`stylelint-scss`](https://github.com/stylelint-scss/stylelint-scss) 
 that add rules specific to those ecosystems for teams to opt into.
 
->Why name the scripts `lint:style` instead of `lint:css`?
+>Why name the scripts `lint:css` instead of something more universal like `lint:style`?
 
-Given that we know many teams using Ember make different choices of style preprocessing and formats, 
-`style` is a more universal name than `css`. Additionally, it matches well with the name of the tooling 
-itself, `stylelint`, so there should be no expectation of confusion with other general concepts like 
-"code style".
+With CSS being the default in Ember applications, this is consistent with our existing linting strategy. 
+While teams may choose to adopt a preprocessor like SASS in the same way they could adopt TypeScript 
+over JavaScript, we still default to `lint:js` and `lint:hbs` to match the standard file types of 
+a new Ember application.
 
 >Why use `stylelint-config-standard` over `stylelint-config-recommended`?
 
