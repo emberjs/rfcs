@@ -67,6 +67,41 @@ There are many rules, configs, and plugins available for stylelint and prettier,
 intentionally avoiding being prescriptive on anything that isn't nearly universally agreed upon 
 by the stylelint, prettier, and Ember communities.
 
+#### Lint Ignores
+
+A `.stylelintignore` file will be added with the following contents:
+
+```title=".stylelintignore"
+# unconventional js
+/blueprints/*/files/
+/vendor/
+
+# compiled output
+/dist/
+/tmp/
+
+# dependencies
+/bower_components/
+/node_modules/
+
+# misc
+/coverage/
+!.*
+.*/
+.eslintcache
+.lint-todo/
+
+# ember-try
+/.node_modules.ember-try/
+/bower.json.ember-try
+/npm-shrinkwrap.json.ember-try
+/package.json.ember-try
+/package-lock.json.ember-try
+/yarn.lock.ember-try
+```
+
+These contents are based on the existing `.eslintignore` and `.prettierignore` files for consistency.
+
 ### Blueprint Changes
 
 In general, it is recommended that all blueprints provided by addons should satisfy the default 
@@ -80,8 +115,8 @@ The `app` and `addon` blueprints will be updated to add style-related linting sc
 ```json title="package.json"
 {
   "scripts": {
-    "lint:css": "stylelint \"**/*.{css,scss,sass,less}\"",
-    "lint:css:fix": "stylelint \"**/*.{css,scss,sass,less}\" --fix",
+    "lint:css": "stylelint \"**/*.{css}\"",
+    "lint:css:fix": "stylelint \"**/*.{css}\" --fix",
   }
 }
 ```
