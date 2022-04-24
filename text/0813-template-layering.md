@@ -527,7 +527,7 @@ experience (due to tools not able to make static analysis on the templates), so
 developers should be very aware of these tradeoffs and should be a deliberate
 choice.
 
-That being said, we acknowledge that they are legitimate use cases for wanting
+That being said, we acknowledge that there are legitimate use cases for wanting
 the extra flexibility or needing runtime behavior. By including a runtime
 implementation of the feature (again, see below), we get handling for all the
 remaining edge cases "for free".
@@ -874,10 +874,12 @@ edge cases do not create a lot of additional implementation complexity.
 ### Class Decorators
 
 We could use class decorators to associate templates to classes instead of the
-static initializer block approach. However, in practice it feels pretty awkward
-due to the length of the source text and the amount of arguments needed, even
-for trivial examples. It also doesn't help this case that stage 3 decorators
-require that class decorators come after the `export` and `default` keywords:
+static initializer block approach. The biggest drawback is that we would not be
+able to access private fields with this design. In addition, in practice it
+feels pretty awkward to use due to the length of the source text and the amount
+of arguments needed, even for trivial examples. It also doesn't help this case
+that stage 3 decorators require that class decorators come after the `export`
+and `default` keywords:
 
 ```js
 export @template(`<Hello />`, () => ({ Hello }) class Bar {
