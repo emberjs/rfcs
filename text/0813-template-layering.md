@@ -13,10 +13,10 @@ RFC PR: https://github.com/emberjs/rfcs/pull/813
 
 ## Summary
 
-This RFC propose to introduce a `template()` function as an alternative for the
-`<template>` syntax extension defined in [RFC #779][rfc-779] using standard
-JavaScript, for use in environments where the custom syntax extension is not
-available, and also as a publishing format for addons on NPM:
+This RFC propose to introduce a `template()` function as an substitution for
+the `<template>` syntax extension defined in [RFC #779][rfc-779] using
+standard JavaScript, for use in environments where the custom syntax extension
+is not available, and also as a publishing format for addons on NPM:
 
 [rfc-779]: ./0779-first-class-component-templates.md
 
@@ -24,7 +24,7 @@ available, and also as a publishing format for addons on NPM:
 import { template } from "@ember/template-compilation";
 import Hello from "my-app/components/hello";
 
-// <template><Hello></template> becomes...
+// <template><Hello /></template> becomes...
 export default template(`<Hello />`, () => ({ Hello }));
 
 // export const Foo = <template><Hello /></template> becomes...
@@ -52,7 +52,7 @@ not have a runtime implementation and must be handled by a build step:
 import { template } from "@ember/template-compilation";
 import Hello from "my-app/components/hello";
 
-// <template><Hello></template> becomes...
+// <template><Hello /></template> becomes...
 export default template`<Hello />`;
 
 // export const Foo = <template><Hello /></template> becomes...
@@ -68,7 +68,7 @@ export class Bar {
 }
 ```
 
-In addition, we also propose to add a `@ember/template-compilation/runtime`
+In addition, we also propose a new `@ember/template-compilation/runtime`
 module as an opt-in to enable runtime template compilation.
 
 ## Motivation
@@ -85,16 +85,17 @@ numerous benefits, among which are:
 
 However, one of the drawbacks is that it requires a custom syntax extension
 (`<template>`) and a custom file format (`.gjs/.gts`), which requires a build
-step and other custom tooling. RFC #779 makes a good case for why this is
-necessary and preferable to the alternatives.
+step and other custom tooling.
 
-However, there remain cases where this drawback is highly undesirable or simply
-not acceptable:
+RFC #779 makes a good case for why this is necessary and preferable to the
+alternatives. We stand by the rationales given in RFC #779, and this RFC does
+not intend to revisit its recommendations. However, there remain cases where
+this drawback is highly undesirable or simply not acceptable:
 
 1. Until we have implemented good editor integration, the developer experience
    of using `.gjs`/`.gts` could be abysmal (without any syntax highlighting or
    completion at all, etc). Even after we ship good editor integration for the
-   mainstream editors, this will probably remain the case for a subset of less
+   mainstream editors, this will likely remain the case for a subset of less
    used editors that we did not or could not prioritize supporting.
 
 2. There may be editors and environments that are impossible for us to support,
@@ -115,11 +116,12 @@ JavaScript environments". Under these circumstances, users would be unable to
 adopt the `<template>` feature, which means they cannot take advantage of the
 numerous benefits unlocked by the feature, such as the strict mode opt-in.
 
-Also, if an addon chose to only provide its template constructs exclusively via
-importable modules (as opposed to merging into "App Javascript"), then there is
-no easy way to access these template constructs from those environments.
+Also, if an addon chose to only provide template constructs (e.g. helpers and
+components) exclusively via importable modules (as opposed to merging them into
+"App Javascript"), then there will be no easy way to access these template
+constructs from those environments.
 
-It is not technically impossible to accomplish the same goals in standard
+It is not technically impossible to accomplish these same goals in standard
 JavaScript environments. After all, the `<template>` feature is specified using
 primitives that already exist. Users in standard JavaScript environments can
 just use those primitives directly.
@@ -130,10 +132,11 @@ users read, write and reason about components in the next edition of Ember when
 the feature is fully rolled out.
 
 On the other hand, the primitives it is based on are very low-level, verbose,
-and were more intended as a compilation target than an user-facing authoring
-format. Their low-level nature and flexibility also makes it easy to get the
-details wrong, such as forgetting to pass the `strictMode: true` flag. It would
-be unfortunate if being restricted to the standard JavaScript environment also
+error-prone and were more intended as a compilation target than an user-facing
+authoring format. Their low-level nature and flexibility also makes it easy to
+get the details wrong, such as forgetting to pass the `strictMode: true` flag
+and or deviate from the normal lexical scope capturing rules. It would be
+unfortunate if being restricted to the standard JavaScript environment also
 means dropping down to a completely different programming model for components.
 
 Currently, the addon [ember-template-imports][ember-template-imports] provides
@@ -150,22 +153,22 @@ route:
    should be transitioned into a compliant polyfill, which means removing the
    alternative `hbs` form.
 
-2. The naming conflicts with the "official" `hbs`. This would have been okay if
-   we chose to go that route in RFC #779 and have plans to evolve the official
-   version to have the same feature. With RFC #779 favoring the `<template>`
-   approach, this is not going to happen and this conflict will now be quite
-   confusing, especially since they actually do very different things (e.g.
-   the "official" `hbs` does not return a component).
+2. The naming conflicts with the "official" `hbs` from `ember-cli-htmlbars`.
+   This would have been fine if we chose to go that route in RFC #779 and have
+   plans to evolve the official version to have the same feature. With RFC #779
+   favoring the `<template>` approach, this is not going to happen and this
+   conflict will now be quite confusing, especially since they actually do very
+   different things (e.g. the "official" `hbs` does not return a component).
 
-3. It uses a standard JavaScript syntax in a non-standard way, semantics-wise –
-   it looks like a JavaScript string but has access to the lexical scope around
-   it (without using the `${ ... }` syntax), which can be confusing. It also
-   means that it is impossible to provide a runtime implementation using the
-   same syntax that works in environments that does not permit a build step.
+3. It uses a standard JavaScript syntax in a non-standard way, semantics-wise.
+   It looks like an inert JavaScript string but has access to the lexical scope
+   around it (without using the `${ ... }` syntax), which can be confusing. It
+   also means that it is impossible to provide a runtime implementation using
+   the same syntax that works in environments that does not permit a build step.
 
 4. It uses `static template = ` to associate templates to classes. This implies
-   a runtime behavior that is actually not true (e.g. TypeScript will believe
-   the `template` property exists on the class).
+   runtime behavior that is actually not true (e.g. TypeScript will believe the
+   `template` property exists on the class).
 
 5. Values consumed by the template but is otherwise unused in the rest of the
    file may generate errors/warnings from linters or language servers.
@@ -179,7 +182,12 @@ extension and the low-level primitives.
   attached to a class), providing the same high-level programming model for
   authoring components in standard JavaScript environments.
 
-- It requires manually supplying the lexical scope variable bindings.
+- It requires manually supplying the lexical scope variable bindings (the
+  "scope function").
+
+- It uses a [static initializer block][static-block] to associate the template.
+
+  [static-block]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Class_static_initialization_blocks
 
 - While it is more cumbersome to use and have a degraded experience (e.g.
   possibly lacking hbs syntax highlighting) compared to first-class component
@@ -196,7 +204,7 @@ extension and the low-level primitives.
   which automatically captures the lexical scope variable bindings. This
   directly replaces [ember-template-imports][ember-template-imports]'s "hbs
   backtick" format but brings its naming into alignment with the `<template>`
-  feature, and uses a static initializer block to associate the template.
+  feature.
 
   This form will produce an error at runtime if not pre-processed out
   as a correct runtime implementation is impossible.
@@ -209,17 +217,17 @@ extension and the low-level primitives.
   still retain the highlighting for the JavaScript/TypeScript portions.
 
 This RFC also _recommends_ that the addon spec (v2.1?) to be updated to
-consider using `template(hbs-source, pre-compiled-scope-function)` as the
-primary publishing format for component templates and consider reducing and
-deprecating the need for other alternative mechanisms (such as shipping `.hbs`
-files). However, this is only a general recommendation, and a future RFC or
-amendment is needed to explore that further.
+consider using `template()` (the function call version, not the tagged template
+literal form) as the primary publishing format for component templates and
+consider reducing and deprecating the need for the alternative mechanisms (such
+as shipping `.hbs` modules). However, this is only a general recommendation,
+and a future RFC or amendment is needed to explore that further.
 
-It is notable that this update is only needed for the purpose of clarifying
-the recommended/preferred way of shipping templates in addons. However, because
-`template()` is just standard JavaScript, there is nothing stopping addons from
-adopting the format as long as their target Ember versions support the feature
-(or that they depend on a suitable polyfill for the feature).
+That being said, such an update is only needed for the purpose of clarifying
+the _recommended_ way of shipping templates in addons. Because `template()` is
+just standard JavaScript, there is nothing stopping addons from adopting the
+format as long as their target Ember versions support the feature, or that they
+depend on a suitable polyfill.
 
 ## Detailed design
 
@@ -228,7 +236,7 @@ de-sugaring into `template()` calls:
 
 1. Top-level declaration
 
-   ```
+   ```gjs
    import Foo from "somewhere";
 
    <template>
@@ -252,7 +260,7 @@ de-sugaring into `template()` calls:
 
 2. Expression
 
-   ```
+   ```gjs
    import Foo from "somewhere";
 
    export const Bar = <template><Foo /><template>;
@@ -269,7 +277,7 @@ de-sugaring into `template()` calls:
 
 3. Class
 
-   ```
+   ```gjs
    import Foo from "somewhere";
 
    export default class Bar {
@@ -290,24 +298,32 @@ de-sugaring into `template()` calls:
    }
    ```
 
-   **Note**: In static initializer block isn't required here (though it is a
-   standard JavaScript feature). The `template()` function can also be applied
-   after the class has been declared. If available, the static initializer
-   block allows the closest placement to the `<template>` equivalent (nested
-   inside the class body) which is why it is preferred.
+   When used in this form, the function returns/passes through the target
+   supplied in the third argument (the component class).
 
-   **Note**: When used in this form, the function returns/passes through the
-   target supplied in the third argument (the component class).
+   Note that the use of a static initializer block here is important for
+   capturing access to private fields. This will be discussed in a subsequent
+   section.
 
 In these small snippets, the scope bindings may look very verbose compared to
 the size of the templates, but in real-world templates, the ratio will improve.
 
-**TBD**: I think we should amend the v2 addon spec to make this the recommended
-publishing format.
+This de-sugaring specified in this section is intended to **subsume** the parts
+of RFC #779 which references its compilation output, and where it specified the
+feature in terms of the low-level primitives such as `precompileTemplate()`. If
+this RFC is accepted, the `<template>` feature should only be understood in
+terms of `template()`, which will be a stable and public API that stands on its
+own.
 
-**Note**: Whether we actually implement `<template>` using this desugaring is
-an internal implementation detail. However, the semantics should work and users
-should be able to reason about `<template>` with this desugaring in mind.
+Any build-time optimization that pre-compiles the `template()` calls at build
+time are required to ensure their output to have equivalent semantics as the
+runtime `template()` calls, assuming the same set of AST plugins are applied.
+Their exact compilation output should be considered private implementation
+details which may change over time and should not be relied upon.
+
+Once this RFC is accepted, any future changes (including deprecations) to the
+primitive APIs referenced in RFC #779 should have no direct bearing on the
+`<template>` or `template()` features.
 
 ### Tagged Template Literals
 
@@ -318,7 +334,7 @@ implementation and must be processed by a build step.
 
 1. Top-level declaration
 
-   ```
+   ```gjs
    import Foo from "somewhere";
 
    <template>
@@ -337,7 +353,7 @@ implementation and must be processed by a build step.
 
 2. Expression
 
-   ```
+   ```gjs
    import Foo from "somewhere";
 
    export const Bar = template`<Foo />`;
@@ -354,7 +370,7 @@ implementation and must be processed by a build step.
 
 3. Class
 
-   ```
+   ```gjs
    import Foo from "somewhere";
 
    export default class Bar {
@@ -375,13 +391,107 @@ implementation and must be processed by a build step.
    }
    ```
 
-   **Note**: There is no alternative to using a static initializer block in
-   the tagged template literal format. Since this format intrinsically requires
-   customizing build tools, it is expected that it shouldn't be a big hurdle to
-   also configure the tools to recognize this syntax as well and transpile it
-   away as necessary. Since this is a standard JavaScript feature that is
-   quickly gaining support across the ecosystem, we don't anticipate this to be
-   too much of an issue in practice.
+   Again, the use of a static initializer block is important for capturing
+   access to private fields.
+
+   In this form, the tagged template string literal _must_ be the **only**
+   statement in the static initializer block. However, the JavaScript standard
+   permits multiple static initializer blocks in the same class body, so any
+   other initialization logic can be placed in separate blocks as needed. It is
+   an error for a class body to contain multiple templates associated this way,
+   just as it is for a class body to contain multiple `<template>` blocks.
+
+### Access to Private Fields
+
+The `<template>` feature proposed by RFC #779 explicitly chose not to provide
+access to private fields when a `<template>` is associated with a class, citing
+limitations to the compilation output, specifically that the compiled template,
+as proposed, would be placed outside of the class body, rendering it impossible
+to access any private fields. RFC #779 acknowledges that is a gap that should
+be addressed in a future RFC.
+
+With the advancement of [static initialization blocks][static-block], it is
+now possible to place the associated template directly inside the class body.
+This RFC takes advantage of this and propose an adornment to allow access to
+private fields inside `<template>` tags and the proposed `template()`:
+
+```gjs
+import { tracked } from "@glimmer/tracking";
+
+export default class Foo {
+  @tracked #value;
+
+  <template>
+    My value is {{this.#value}}.
+    The other value is {{@other.#value}}.
+  </template>
+}
+```
+
+```js
+import { template } from "@ember/template-compilation";
+import { tracked } from "@glimmer/tracking";
+
+export default class Foo {
+  @tracked #value;
+
+  static {
+    template`
+      My value is {{this.#value}}.
+      The other value is {{@other.#value}}.
+    `;
+  }
+}
+```
+
+```js
+import { template } from "@ember/template-compilation";
+import { tracked } from "@glimmer/tracking";
+
+export default class Foo {
+  @tracked #value;
+
+  static {
+    template(`
+      My value is {{this.#value}}.
+      The other value is {{@other.#value}}.
+    `, () => ({ '#value': (_) => _.#value }, this);
+  }
+}
+```
+
+As shown in this last example, it requires a small amendment to the "scope
+function". The scope function was first introduced in RFC #496, and then
+subsequently modified slightly from returning an array to an object literal.
+
+The purpose of the scope function is to provide the rendering layer with the
+needed lexical scope variable bindings that are referenced in the template,
+in the form of key-value pairs in the returned object literal, where the key
+is the identifier (variable) as referenced in the template, and the value is
+the value referenced by the identifier.
+
+To support private field access, we propose to extend this format to allow
+keys that starts with a leading `#` character. For each unique private field
+reference in the template (any `.#` access), a corresponding entry must be
+added to the object literal where the key matches the name of the private
+field in string form. This is not a legal JavaScript identifier thus it does
+not generate a conflict with the current format, and will require quoting. The
+value of the entry is expected to be a JavaScript "accessor function" that
+takes a single argument – an object instance of the same class – and returns
+the current value of the private field at the time of the call.
+
+This will require an update to the glimmer-vm rendering engine to support this
+format. Internally, it will compile the template in such a way that any access
+to a private field in the template will go through the corresponding accessor
+function. Since the accessor functions are embedded inside the class body, they
+will be permitted to access the private fields declared for the class. It is
+therefore crucial that the `template()` call is embedded inside a static
+initializer block in the class body.
+
+With this change, we can fully support private fields in templates. As shown in
+the examples, this applies to both direct access (`this.#field`) as well as
+indirect access (`some.nested.object.of.the.same.kind.#field`), as long as it
+is of the same instance type, fully matching the JavaScript semantics.
 
 ### Build-time Transformations
 
