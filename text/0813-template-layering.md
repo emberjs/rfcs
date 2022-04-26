@@ -544,44 +544,62 @@ variable, then any indirect invocations are not considered an idiomatic use.
 For the function call form of the `template()` function, idiomatic usages are
 defined as:
 
-1. The first argument must be a single standalone inline string literal, which
-   must be:
-   1. Specified with single quotes, or
-   2. Specified with double quotes, or
-   3. Specified with backticks but without a tag and no interpolations.
-2. The second argument, if provided, must be a single standalone inline
-   anonymous function expression that:
-   1. Specified with either the `function` keyword or arrows, and
-   2. Does not have any modifiers (e.g. `async`, `function*`, etc), and
-   3. Does not take any arguments, and
-   4. Contains exactly the following function body:
-      1. A single return statement, which must return a standalone inline
-         object literal (a "POJO") that:
-         1. Does not contain duplicate property names, and
-         2. Does not contain computed property names, and
-         3. Does not contain any getters, setters or methods, and
-         4. Does not use the spread operator, and
-         5. Contains only name-value paris where the the value is a bare
-            JavaScript identifier (variable reference) and the name matches the
-            identifier exactly (i.e. cases where the shorthand property syntax
-            would have been allowed), and
-         6. Can optionally be specified using shorthand property syntax. Note
-            that because of the previous restriction this is always possible.
-      2. For arrow function expressions, the single expression shorthand is
-         also permitted, provided that the expression is an object literal
-         surrounded in a single pair of parenthesis that matches the above
-         specification.
-3. The third argument, if provided, must be a JavaScript identifier or the
-   `this` keyword.
-4. No more than three arguments can be passed.
-5. Comments are not permitted anywhere inside the arguments list.
+1. Unless otherwise specified:
 
-For the tagged template string form, idiomatic usages are defined as:
+   1. All string literals inside the call (arguments, property keys, etc) must:
+      1. Be quoted with single quotes, or
+      2. Be quoted with double quotes, or
+      3. Be quoted with backticks but without a tag and without interpolations.
+   2. All object literals ("POJOs") inside the call must:
+      1. Not contain duplicate property names, and
+      2. Not contain computed property names, even if the computed name is just
+         a string literal, and
+      3. Not contain any getters, setters or methods, and
+      4. Not use the spread operator.
+   3. All function expressions must:
+      1. Be specified with either the `function` keyword or arrows, and
+      2. Be anonymous, and
+      3. Not have any modifiers (e.g. `async`, `function*`, etc), and
+      4. Have exactly one statement in the function body, which must be a
+         `return` statement. For arrow function expressions, this implies the
+         single-expression implicit return shorthand syntax can be used, which
+         is encouraged but optional.
 
-1. The string must not contain any interpolations.
-2. For class association, the tagged template string must be placed in a static
-   initializer block where it is the only statement. Comments are not permitted
-   inside the block.
+2. The first argument to the call must be a string literal containing the
+   template source.
+
+3. The second argument to the call is optional. If provided, it must be a
+   function expression that:
+
+   1. Has no parameters, and
+   2. Returns an object literal where every name-value pair must be in the form
+      of:
+      1. The property name must be a valid JavaScript identifier and its
+         value must be a reference to the variable with the same name. This
+         implies that the JavaScript shorthand property syntax can be used,
+         which is encouraged but optional. Alternatively,
+      2. When the `template()` function is called from within a `static` block
+         inside a class body, the property name can also be a valid JavaScript
+         private field name (i.e. a valid JavaScript identifier prefixed by the
+         `#` character), which must be quoted. Its value must be a function
+         expression that:
+         1. Has exactly one parameter, and
+         2. Returns the current value of the corresponding private field (with
+            the same name as the object key) on the object passed in the
+            parameter.
+
+4. When, and only when, the `template()` function is called from within a
+   `static` block inside a class body, then a third argument must be supplied
+   to the call, and this argument must be the `this` keyword.
+
+5. No additional arguments can be passed.
+
+For the tagged template string literal form, idiomatic usages are defined as:
+
+1. The string literal must not contain any interpolations.
+2. For class association, the tagged template string must be placed inside a
+   `static` block within the class body, where it must be the only statement in
+   the block.
 
 Some examples of idiomatic usages:
 
@@ -674,10 +692,9 @@ class Baz {
   }
 }
 
-// This is also a syntax error in JavaScript anyway
 class Bat {
   static {
-    return template`<Hello />`;
+    let template = template`<Hello />`;
   }
 }
 ```
