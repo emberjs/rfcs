@@ -637,10 +637,6 @@ class Foo {
     template("<Hello />", () => ({ Hello }), this);
   }
 }
-
-class Bar {}
-
-template("<Hello />", () => ({ Hello }), Bar);
 ```
 
 Some examples of non-idiomatic or incorrect usages:
@@ -680,6 +676,8 @@ template("<Hello />", () => {
 });
 
 template("<Hello />", () => ({ Hello }), class Foo {});
+
+template("<Hello />", () => ({ Hello }), Foo);
 
 class Bar {
   static template = template("<Hello />", () => ({ Hello }));
