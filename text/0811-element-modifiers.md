@@ -37,7 +37,7 @@ Ember Octane introduced Glimmer Components as a replacement for Classic
 Components. They are simpler, more ergonomic, and more declarative. In contrast
 with Classic Components, Glimmer Components don't have any element/DOM based
 properties or hooks giving access to DOM. This was an intentional move as
-component baking class gets disconnected from DOM manipulation.
+component backing class gets disconnected from DOM manipulation.
 
 Modifiers are similar to template helpers: they are functions or classes that can be used
 in templates directly using `{{double-curlies}}` syntax. The major difference with modifiers
@@ -57,7 +57,8 @@ in Ember application, like components or helpers. However today, developers need
 an additional library to be able to define custom modifiers.
 
 This RFC seeks to fill this gap in Ember.js' development mental model by
-providing `ember-modifier` in the blueprint.
+providing `ember-modifier` in the blueprint. `ember-modifier` will be added
+to `devDependencies`, same as e.g. @glimmer/component.
 
 A basic element modifier is defined with the type of `modifier`.
 For example these paths would be global element modifiers in an application:
