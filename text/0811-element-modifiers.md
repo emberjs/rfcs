@@ -188,6 +188,47 @@ This has the advantage (over including it as an implicit dependency), that
 apps and addons that don't want to use it for some reason can opt out by
 removing the dependency from their `package.json` file.
 
+**Notes:**
+1. This is *not* the usual path for delivering features into Ember: we do not
+   generally introduce community addons directly into the blueprint. In this
+   specific case, we think it is the right move:
+
+    - The addon has intentionally been reworked to rationalize it in
+      terms of the rest of the Octane programming model, explicitly with an eye to adoption in this way.
+    - We do *not* want to introduce `@glimmer/modifier` with exactly this
+      API, at least not yet, because we believe we may want to introduce
+      a slightly updated API from that package *without* requiring
+      breaking changes in the future.
+2. We are intentionally introducing more "incoherence" to the programming
+   model with this addition. (Or rather, we are acknowledging the *existing*
+   incoherence in the ecosystem, with an eye to making progress on resolving
+   it!) In particular, as the community begins adopting strict mode templates
+   via First-Class Component Templates in the months ahead, they will often
+   end up importing from both `ember-modifier` and `@ember/modifier`:
+
+   ```js
+   import { on } from '@ember/modifier';
+   import { modifier } from 'ember-modifier';
+   const playWhen = modifier((el, [shouldPlay]) => {
+     if (shouldPlay) {
+       el.play();
+     } else {
+       el.pause();
+     }
+   });
+   <template>
+     <audio
+       src={{@src}}
+       {{on "error" @onBadLoad}}
+       {{playWhen @shouldPlay}}
+     />
+   </template>
+   ```
+
+   As noted in (1) above, we have ideas on how to resolve this, but are
+   intentionally not blocking on those in favor of unlocking this key
+   functionality for Ember users in the Octane programming model *today*.
+
 ## How we teach this
 
 Ember Guides already teach how to use modifiers in "Template Lifecycle, DOM, and Modifiers"
