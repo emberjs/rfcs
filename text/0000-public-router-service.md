@@ -34,9 +34,9 @@ Today, users of [`ember-engines`](https://github.com/ember-engines/ember-engines
 custom components, helpers and services for linking. This leaves the experience feeling sub-par, in addition to introducing
 extra maintenance friction attempting to keep these primitives aligned with those in `ember-source`.
 
-By providing public a import for `RouterService`, `ember-engines` would be able to provide its own router service
-implementation extending from the base implementation. Combined with minor changes to the engines-specfici behavior of
-`link-to`,  this change would allow us to fill the existing DX gap when it comes to navigating between an Engine
+By providing a public import for `RouterService`, `ember-engines` would be able to provide its own router service
+implementation extending from the base implementation. Combined with minor changes to the engines-specific behavior of
+`link-to`, this change would allow us to fill the existing DX gap when it comes to navigating between an Engine
 and a host App *and* allow engines to eliminate use of the legacy components required to support 4.x versions of Ember.
 
 These proposed changes would further allow `ember-engines` to deprecate the `<LinkToExternal />`
@@ -90,6 +90,32 @@ Once this RFC gets implemented, above snippet could be replaced with
 
 ### `ember-source` package
 
+This proposal does not seek to make any changes to the default blueprint.
+App author may or may not introduce overridden `RouterService` via `app/services/router.js`.
+
+If app author decide to do so and provide extended `RouterService`, it may look like:
+
+```js
+// app/services/router.js
+import RouterService from '@ember/routing/service';
+
+export default class extends RouterService {
+    // ...
+}
+```
+
+In order to make this possible, method `buildRegistry` of `Application` class will be updated to have logic like so:
+
+```js
+import { RouterService } from '@ember/-internals/routing';
+
+// ...
+
+if (!registry.has('service:router')) {
+  registry.register('service:router', RouterService);
+}
+```
+
 #### `<LinkTo />` component
 
 The use of `-routing` service in `<LinkTo />` component would be replaced with the `router` service.
@@ -104,26 +130,28 @@ Currently, those methods of `-routing` service used:
 * `transitionTo`
 * `isActiveForRoute`
 
-Additionally any engines specific code or assertions for url and path generation would be removed, delegating
- these responsibilities instead to the router service. For instance, `<LinkTo />` should not be aware of `mountPoint`.
+Additionally, any engines specific code or assertions for url and path generation would be removed, delegating
+these responsibilities instead to the router service. For instance, `<LinkTo />` should not be aware of `mountPoint`.
 
 #### `RouterService`
 
-Provide public import via `@ember/routing/router-service`.
+Provide public import via `@ember/routing/service`.
 
 #### Router Helpers
 
-The changes outlined here improve the DX for engines for the not-yet implemented url helpers specified by [RFC#391](https://emberjs.github.io/rfcs/0391-router-helpers.html). Since those helpers will also utilize the routing service,
+The changes outlined here improve the DX for engines for the not-yet implemented url helpers
+specified by [RFC#391](https://emberjs.github.io/rfcs/0391-router-helpers.html).
+Since those helpers will also utilize the routing service,
 they would be compatible with both internal and external engines paths immediately.
 
 ### `ember-engines` package
 
 While not the scope of this RFC to detail the exact specifics, once these changes are implemented, `ember-engines`
-will provide a `router` service that extends from `@ember/routing/router-service`.
+will provide a `router` service that extends from `@ember/routing/service`.
 
 ```javascript
-# ember-engines/addon/services/router.js
-import RouterService from '@ember/routing/router-service';
+// ember-engines/addon/services/router.js
+import RouterService from '@ember/routing/service';
 
 export default class extends RouterService {
   // ...
@@ -148,10 +176,15 @@ Transition path needs to be published on [ember-engines.com](https://ember-engin
 
 1. Replace use of `<LinkToExternal @route="external-route" />` component
    with `<LinkTo @route="external-route" />` in every engine codebase.
-2. Users using `ember-engines-router-service` would need to replace any of it's usage with
+2. Users using `ember-engines-router-service` would need to replace any of its usage with
    the `RouterService` provided by `ember-engines`. This addon was created to solve part of
    this problem previously, and would likely be updated to become a true polyfill for the ember-engines
    routing service.
+
+Ember Guides should be updated to rationalize and explain the difference between `app/router.js` and `app/services/router.js`.
+The confusion between those two distinct yet different entities exists even today.
+However, it's less a problem today as there is only one thing named `router.js` can exist in the app today and
+ability to create another such file (even with different purpose and semantics) may be confusing.
 
 ## Drawbacks
 
@@ -169,7 +202,7 @@ Some prior discussion on this point is [viewable here](https://github.com/ember-
 In the case of this RFC, it would similarly become the responsibility of the engine's routing service to prefix such a url with the
 engine's mount path as appropriate, or decide to error, to preserve encapsulation.
 
-In practice we feel the flexibility and improved DX of this solution outweighs these drawbacks, and intend to
+In practice, we feel the flexibility and improved DX of this solution outweighs these drawbacks, and intend to
 continue enforcing the same constraints via the engines provided service.
 
 ## Alternatives
