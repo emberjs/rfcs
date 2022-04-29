@@ -265,6 +265,8 @@ on the impact of the API churn on existing apps, etc.
 
 ## Unresolved questions
 
+- What, if any, substantive changes to the APIs presented by `tracked-built-ins` should we make?
+
 - Should we introduce these at something like `@glimmer/tracking` instead?
 
   ```js
