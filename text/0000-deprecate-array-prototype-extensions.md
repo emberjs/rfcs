@@ -29,7 +29,7 @@ Continuing in that direction, we should consider recommending the usage of nativ
 
 For convenient methods like `without`, `sortBy`, `uniqBy` etc., the replacement functionality already exists either through generic array functions or utility libraries like [lodash](https://lodash.com), [Ramda](https://ramdajs.com), etc.
 
-For helper functions participating in the Ember classic reactivity system like `pushObject`, `removeObject`, the replacement functionality also already exists in the form of immutable update style with tracked propreties like `@tracked someArray = []`, or through utilizing `TrackedArray` from `tracked-built-ins`.
+For helper functions participating in the Ember classic reactivity system like `pushObject`, `removeObject`, the replacement functionality also already exists in the form of immutable update style with tracked properties like `@tracked someArray = []`, or through utilizing `TrackedArray` from `tracked-built-ins`.
 
 During transition, we still allow users to use `A` from `@ember/array`.
 
