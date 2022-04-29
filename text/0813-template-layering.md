@@ -769,9 +769,29 @@ the template compiler to be included into the main/initial bundle, when it may
 only be needed in one of the infrequently used routes.
 
 This RFC takes the opportunity to improve on this by proposing a new module –
-`@ember/template-compilation/runtime`. When this module is imported, either as
+`@ember/template-compilation/runtime`. When the `template()` module is imported
+from this location, it guarantees that those calls will _not_ be pre-processed
+at build time. It will also ensure the runtime template compiler is included in
+the bundle to support the runtime calls.
+
+In addition, this module can also be imported for side-effect. Like the above,
+this again ensures the runtime template compiler is included in the build. It
+essentially serves as an alternative to the `app.import()` opt-in today. Note
+that merely including this side-effect import does not _preclude_ build-time
+pre-processing from happening, which is controlled by other build config such
+as the inclusion of the relevant Babel plugins. It simply ensures that if, for
+any reason, there were unprocessed `template()` calls left in the build, they
+will work correctly at runtime without producing any errors.
+
+The general recommendation is that the `@ember/template-compilation` module
+should be used (and the idiomatic usage guidelines are followed) in most
+situations and whenever possible, so that the code can be agnostic against how
+and where the compilation happens. Whether the application or environment is
+set up for build-time pre-processing,
+
+either as
 a "side-effect" import statement, or if its exported values are imported, then
-it serves as an opt-in for enabling runtime template compilation.
+it serves as an opt-in for making runtime template compilation available.
 
 For the time being, we propose that this module should have a single named
 export – `template`, which is a re-export of the `template()` function we
@@ -809,21 +829,18 @@ prohibitively so. The signature of the function can be described as such:
 
 ```ts
 // These types are defined in other RFCs
-interface Signature {
-  /* ... */
-}
-interface Component<S extends Signature> {
+interface Component<Signature> {
   /* ... */
 }
 
 type Scope = () => Record<string, unknown>;
 
-function template<S extends Signature>(source: string): Component<S>;
-function template<S extends Signature>(
+function template<Signature>(source: string): Component<Signature>;
+function template<Signature>(
   source: string,
   scope: Scope
-): Component<S>;
-function template<S extends Signature, C extends Component<S>>(
+): Component<Signature>;
+function template<Signature, C extends Component<Signature>>(
   source: string,
   scope: Scope,
   target: C
@@ -832,9 +849,9 @@ function template<S extends Signature, C extends Component<S>>(
 // For the build-time tagged template literal extension. By not specifying
 // additional arguments here, TypeScript actually enforces that the tagged
 // string literal cannot have any interpolation expressions.
-function template<S extends Signature>(
+function template<Signature>(
   source: TemplateStringsArray
-): Component<S>;
+): Component<Signature>;
 ```
 
 One nice thing about this design is that there is a natural place for the type
