@@ -132,7 +132,7 @@ Examples of  current code.
 <Foo @bar={{get @list '0.name'}} />
 ```
 
-After the deprecated code is removed from Ember, we need to remove the [options to disable the array prototype extension](https://guides.emberjs.com/v4.2.0/configuring-ember/disabling-prototype-extensions/) from Official Guides and we also need to update the [Tracked Properties](https://guides.emberjs.com/v4.2.0/upgrading/current-edition/tracked-properties/#toc_arrays) `Arrays` section with updated suggestions.
+After the deprecated code is removed from Ember (at 5.0), we need to remove the [options to disable the array prototype extension](https://guides.emberjs.com/v4.2.0/configuring-ember/disabling-prototype-extensions/) from Official Guides and we also need to update the [Tracked Properties](https://guides.emberjs.com/v4.2.0/upgrading/current-edition/tracked-properties/#toc_arrays) `Arrays` section with updated suggestions.
 
 ## Drawbacks
 - For users relying on Ember array prototype extensions, they will have to refactor their code and use equivalences appropriately.
