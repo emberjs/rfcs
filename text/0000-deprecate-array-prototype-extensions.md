@@ -138,6 +138,7 @@ After the deprecated code is removed from Ember (at 5.0), we need to remove the 
 - For users relying on Ember array prototype extensions, they will have to refactor their code and use equivalences appropriately.
 - A lot of existing Ember forums/blogs had been assuming the enabling of array prototype extensions which could cause confusions for users referencing them.
 - Increase package sizes, for example, before `this.abc.filterBy('x');`, now `this.abc.filter(el => el !== 'x');`.
+- Although `tracked-built-ins` is on the path to stabilization as an official API via [RFC #812](https://github.com/emberjs/rfcs/pull/812), it is not yet officially recommended and its API may change somewhat between now and stabilization.
 
 ## Alternatives
 - Continuing allowing array prototype extensions but turning the EXTEND_PROTOTYPES off by default.
