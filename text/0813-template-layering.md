@@ -577,29 +577,38 @@ defined as:
       1. The property name must be a valid JavaScript identifier and its
          value must be a reference to the variable with the same name. This
          implies that the JavaScript shorthand property syntax can be used,
-         which is encouraged but optional. Alternatively,
-      2. When the `template()` function is called from within a `static` block
-         inside a class body, the property name can also be a valid JavaScript
-         private field name (i.e. a valid JavaScript identifier prefixed by the
-         `#` character), which must be quoted. Its value must be a function
-         expression that:
-         1. Has exactly one parameter, and
-         2. Returns the current value of the corresponding private field (with
-            the same name as the object key) on the object passed in the
-            parameter.
+         which is encouraged but optional.
 
-4. When, and only when, the `template()` function is called from within a
-   `static` block inside a class body, then a third argument must be supplied
-   to the call, and this argument must be the `this` keyword.
+4. In order to associate a template with a component class:
+
+   1. The `template()` function must be called from within a `static` block on
+      the class, where it must be the only statement in the block, and
+   2. A third argument must be supplied to the call, and it must be the `this`
+      keyword, and
+   3. The specifications for the object literal described in 3.2. is expanded
+      to permit the following:
+      1. The property name can also be a valid JavaScript private field name
+         (i.e. a valid JavaScript identifier prefixed by the `#` character),
+         which must be quoted. Its value must be a function expression that:
+         1. Has exactly one parameter, and
+         2. When called with an object instance of the same class as parameter,
+            it must return the value of the corresponding private field on the
+            object.
 
 5. No additional arguments can be passed.
+
+6. Comments are permitted in any positions allowable by JavaScript, and any
+   conforming tool must be configured to ignore comments when applying these
+   rules. However, there is no guarantee that the comments will be preserved in
+   the output, and even if they are preserved, there are no guarantee around
+   the placements of these comments in the output.
 
 For the tagged template string literal form, idiomatic usages are defined as:
 
 1. The string literal must not contain any interpolations.
 2. For class association, the tagged template string must be placed inside a
-   `static` block within the class body, where it must be the only statement in
-   the block.
+   `static` block on the class, where it must be the only statement in the
+   block.
 
 Some examples of idiomatic usages:
 
@@ -635,6 +644,15 @@ template("<Hello />", function () {
 class Foo {
   static {
     template("<Hello />", () => ({ Hello }), this);
+  }
+}
+
+class Bar {
+  static {
+    // Note: this does meet the requirements for associating the template with
+    // the surrounding `Bar` class (rule 4). However, it is otherwise perfectly
+    // legal to have an *unassociated* template() call inside a static block.
+    this.bar = template("<Hello />");
   }
 }
 ```
@@ -679,20 +697,14 @@ template("<Hello />", () => ({ Hello }), class Foo {});
 
 template("<Hello />", () => ({ Hello }), Foo);
 
-class Bar {
+class Foo {
   static template = template("<Hello />", () => ({ Hello }));
 }
 
-class Baz {
+class Bar {
   static {
     debugger;
     template`<Hello />`;
-  }
-}
-
-class Bat {
-  static {
-    let template = template`<Hello />`;
   }
 }
 ```
