@@ -1,6 +1,6 @@
 ---
 Stage: Initial
-Start Date: 2022-4-01
+Start Date: 2022-5-01
 Release Date: Unreleased
 Release Versions:
   ember-source: vX.Y.Z
@@ -23,27 +23,26 @@ Those convenient methods increase the likelihood of becoming potential roadblock
 
 We had deprecated [Functions](https://github.com/emberjs/rfcs/blob/master/text/0272-deprecation-native-function-prototype-extensions.md) and [Strings](https://github.com/emberjs/rfcs/blob/master/text/0236-deprecation-ember-string.md) prototype extensions. Array is the last step. And internally we had already been preferring generic array methods over prototype extensions ([epic](https://github.com/emberjs/ember.js/issues/15501)).
 
-Continuing in that direction, we should consider recommending the usage of native array functions as opposed to convenient prototype extension functions, and the usage of new tracked properties or `TrackedArray` over classic reactivity methods.
+Continuing in that direction, we should consider recommending the usage of native array functions as opposed to convenient prototype extension methods, and the usage of `@tracked` properties or `TrackedArray` over classic reactivity methods.
 
 ## Transition Path
 
-For convenient methods like `without`, `sortBy`, `uniqBy` etc., the replacement functionality already exists either through generic array functions or utility libraries like [lodash](https://lodash.com), [Ramda](https://ramdajs.com), etc.
+For convenient methods like `without`, `sortBy`, `uniqBy` etc., the replacement functionalities already exist either through native array methods or utility libraries like [lodash](https://lodash.com), [Ramda](https://ramdajs.com), etc.
 
-For helper functions participating in the Ember classic reactivity system like `pushObject`, `removeObject`, the replacement functionality also already exists in the form of immutable update style with tracked properties like `@tracked someArray = []`, or through utilizing `TrackedArray` from `tracked-built-ins`.
-
-During transition, we still allow users to use `A` from `@ember/array`.
+For mutation methods (like `pushObject`, `removeObject`) or observable properties (like `firstObject`, `lastObject`) participating in the Ember classic reactivity system, the replacement functionalities also already exist in the form of immutable update style with tracked properties like `@tracked someArray = []`, or through utilizing `TrackedArray` from `tracked-built-ins`.
 
 We don't need to build anything new specifically, however, the bulk of the transition will be
-focused on deprecating the array prototype extensions.
+focused on deprecating the existing usages of array prototype extensions.
 
 ## How We Teach This
 
-An entry to the [Deprecation Guides](https://deprecations.emberjs.com/v4.x) will be added outlining the different recommended transition strategies.
+An entry to the [Deprecation Guides](https://deprecations.emberjs.com/v4.x) will be added outlining the different recommended transition strategies. (WIP [Deprecation Guide](https://github.com/smilland/rfcs/pull/1))
 
-Rule `ember/no-array-prototype-extensions` is available for both [eslint](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-array-prototype-extensions.md) and [template lint](https://github.com/ember-template-lint/ember-template-lint/blob/master/docs/rule/no-array-prototype-extensions.md). Rule examples have recommendations for equivalences.
+Rule `ember/no-array-prototype-extensions` is available for both [eslint](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-array-prototype-extensions.md) and [template lint](https://github.com/ember-template-lint/ember-template-lint/blob/master/docs/rule/no-array-prototype-extensions.md) usages. Rule examples have recommendations for equivalences.
 
 We can leverage the fixers of lint rule to auto fix some of the issues. We will also create codemods to help with this migration.
 
+Examples (taken from [Deprecation Guide](https://github.com/smilland/rfcs/pull/1)): 
 ### Convenient methods
 Examples of deprecated and current code:
 ```js
@@ -70,7 +69,7 @@ export default class SampleComponent extends Component{
 };
 ```
 
-### Observable based methods
+### Observable based methods and properties in js
 Examples of deprecated code:
 ```js
 import Component from '@glimmer/component';
@@ -79,8 +78,14 @@ import { action } from '@ember/object';
 export default class SampleComponent extends Component{
   abc = [];
 
+  // observable property
+  get lastObj() {
+    return this.abc.lastObject;
+  }
+
   @action
   someAction(newItem) {
+    // observable method
     this.abc.pushObject('1');
   }
 };
@@ -95,6 +100,10 @@ import { tracked } from '@glimmer/tracking';
 
 export default class SampleComponent extends Component{
   @tracked abc = [];
+
+  get lastObj() {
+    return this.abc.at(-1);
+  }
 
   @action
   someAction(newItem) {
@@ -113,6 +122,10 @@ import { TrackedArray } from 'tracked-built-ins';
 export default class SampleComponent extends Component{
   @tracked abc = new TrackedArray();
 
+  get lastObj() {
+    return this.abc.at(-1);
+  }
+
   @action
   someAction(newItem) {
     abc.push(newItem);
@@ -120,7 +133,7 @@ export default class SampleComponent extends Component{
 };
 ```
 
-### Properties in templates
+### Observable properties in templates
 Examples of deprecated code:
 
 ```hbs
@@ -146,5 +159,3 @@ After the deprecated code is removed from Ember (at 5.0), we need to remove the 
 
 ### Unresolved questions
 - Some methods like `removeObject`, `removeObjects` that have non-trival logics might require custom helper function in application to ease the migration.
-- `replace` method is one of ember array extensions but also be string native proptypes, which adds uncertainty for lint rules and can cause issues during the deprecation.
-- Shall we deprecate `Ember.A()` as well or still allowing users to use it?
