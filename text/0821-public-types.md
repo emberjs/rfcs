@@ -290,7 +290,7 @@ These concepts all already exist, but need updates to and in some cases wholly n
 
 ### `Owner`
 
-- We need to introduce API documentation in a new, dedicate module for `Owner`, `@ember/owner`. The docs on `Owner` itself should become the home for much of the documentation currently shared across the `EngineInstance` and `ApplicationInstance` classes.
+- We need to introduce API documentation in a new, dedicated module for `Owner`, `@ember/owner`. The docs on `Owner` itself should become the home for much of the documentation currently shared across the `EngineInstance` and `ApplicationInstance` classes.
 - We need to document the relationship between `EngineInstance` and `ApplicationInstance` as implementations of `Owner`.
 
 
@@ -305,7 +305,7 @@ These types need two updates to the existing API documentation:
 
   And:
 
-  > While the `RouteInfo` interface can be imported to name the type for use in your own code, it is not user-implementable. The only supported way to get a `RouteInfo` is from an of [the `Transition` class](https://api.emberjs.com/ember/4.3/classes/Transition).
+  > While the `RouteInfo` interface can be imported to name the type for use in your own code, it is not user-implementable. The only supported way to get a `RouteInfo` is using the `from` or `to` properties on an instance of [the `Transition` class](https://api.emberjs.com/ember/4.3/classes/Transition)
 
 
 ### Blog post
