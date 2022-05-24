@@ -315,6 +315,7 @@ These concepts all already exist, but need updates to and in some cases wholly n
 These types need two updates to the existing API documentation:
 
 - Specify the modules they can be imported from (as noted above).
+
 - Specify that these types are *not* meant to be implemented by end users. For example:
 
   > While the `Transition` interface can be imported to name the type for use in your own code, it is not user-implementable. The only supported way to get a `Transition` is by using Ember's routing APIs, like [the `transitionTo` method](https://api.emberjs.com/ember/4.3/classes/RouterService/methods/transitionTo?anchor=transitionTo) on [the router service](https://api.emberjs.com/ember/4.3/classes/RouterService).
