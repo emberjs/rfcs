@@ -19,7 +19,7 @@ RFC PR: https://github.com/emberjs/rfcs/pull/821
 
 Introduce public import locations for type-only imports which have previously had no imports, and fully specify their public APIs for end users:
 
-- `Owner`, with `TypeOptions` and `FactoryManager`
+- `Owner`, with `TypeOptions` and `Factory`
 - `Transition`
 - `RouteInfo` and `RouteInfoWithAttributes`
 
@@ -49,7 +49,7 @@ export default interface Owner {
 
   register<T>(
     fullName: string,
-    factory: FactoryManager<T>,
+    factory: Factory<T>,
     options?: TypeOptions
   ): void;
 
@@ -57,18 +57,18 @@ export default interface Owner {
 
   resolveRegistration(
     fullName: string
-  ): FactoryManager<unknown> | object | undefined;
+  ): Factory<unknown> | object | undefined;
 }
 ```
 
-It is the default import from a new module, `@ember/owner`. With it come two other new types: `TypeOptions` and `FactoryManager`.
+It is the default import from a new module, `@ember/owner`. With it come two other new types: `TypeOptions` and `Factory`.
 
-#### `TypeOptions`
+#### `RegisterOptions`
 
-`TypeOptions` is a user-constructible interface:
+`RegisterOptions` is a user-constructible interface:
 
 ```ts
-export interface TypeOptions {
+export interface RegisterOptions {
   instantiate?: boolean | undefined;
   singleton?: boolean | undefined;
 }
@@ -77,29 +77,29 @@ export interface TypeOptions {
 Although users will not usually need to use it directly, instead simply passing it as a POJO to `Owner#register`, it is available as a named export from `@ember/owner`:
 
 ```ts
-import { type TypeOptions } from '@ember/owner';
+import { type RegisterOptions } from '@ember/owner';
 ```
 
 JS users can refer to it in JSDoc comments using `import()` syntax:
 
 ```js
 /**
- * @param {import('@ember/owner').TypeOptions} typeOptions
+ * @param {import('@ember/owner').RegisterOptions} registerOptions
  */
-function useTypeOptions(typeOptions) {
+function useRegisterOptions(registerOptions) {
   // ...
 }
 ```
 
 
-#### `FactoryManager`
+#### `Factory`
 
-`FactoryManager` is an existing concept available to users via [the `Engine#factoryFor` API][ff].[^factory-name] The public API to date has included only two fields, `class` and `create`, and we maintain that in this RFC. The result is this user-constructible interface:
+`Factory` is an existing concept available to users via [the `Engine#factoryFor` API][ff].[^factory-name] The public API to date has included only two fields, `class` and `create`, and we maintain that in this RFC. The result is this user-constructible interface:
 
 [ff]: https://api.emberjs.com/ember/4.3/classes/EngineInstance/methods/factoryFor?anchor=factoryFor
 
 ```ts
-export interface FactoryManager<Class> {
+export interface Factory<Class> {
   class: Class;
   create(
     initialValues?: {
@@ -119,19 +119,19 @@ type InstanceOf<T> = T extends new (...args: any) => infer R ? R : never;
 
 </details>
 
-`FactoryManager` is now available as a named import from `@ember/owner`:
+`Factory` is now available as a named import from `@ember/owner`:
 
 ```ts
-import { type FactoryManager } from '@ember/owner';
+import { type Factory } from '@ember/owner';
 ```
 
 JS users can refer to it in JSDoc comments using `import()` syntax:
 
 ```js
 /**
- * @param {import('@ember/owner').FactoryManager} factoryManager
+ * @param {import('@ember/owner').Factory} Factory
  */
-function useFactoryManager(factoryManager) {
+function useFactory(Factory) {
   // ...
 }
 ```
@@ -139,13 +139,13 @@ function useFactoryManager(factoryManager) {
 Note that the `Class` type parameter must be defined using `typeof SomeClass`, *not* `SomeClass`:
 
 ```ts
-import { type FactoryManager } from '@ember/owner';
+import { type Factory } from '@ember/owner';
 
 class Person {
   constructor(public name: string, public age: number) {}
 }
 
-class PersonManager implements FactoryManager<typeof Person> {
+class PersonManager implements Factory<typeof Person> {
   class = Person;
   create({ name = "", age = 0 } = {}) {
     return new this.class(name, age);
@@ -155,7 +155,7 @@ class PersonManager implements FactoryManager<typeof Person> {
 
 (This is not the actual usual internal implementation in Ember, but shows that it can be implemented safely with these types.)
 
-[^factory-name]: In Ember’s types today, this type is known as `Factory`, and the `class` is named `FactoryClass`. However, Ember’s public API docs already refer to this type as `FactoryManager`, *not* `Factory`. I have chosen `FactoryManager` to match in this RFC
+[^factory-name]: In Ember’s internal types today, this type is known as `Factory`, and the `class` is named `FactoryClass`. Ember’s public API docs refer to this type as a "factory manager", *not* `Factory`. However, that term is not really appropriate, so I have chosen to stick with `Factory` here; see discussion under [How We Teach This: Owner](#owner-1) for details on updating the docs.
 
 
 ### `Transition`
@@ -291,7 +291,10 @@ These concepts all already exist, but need updates to and in some cases wholly n
 ### `Owner`
 
 - We need to introduce API documentation in a new, dedicated module for `Owner`, `@ember/owner`. The docs on `Owner` itself should become the home for much of the documentation currently shared across the `EngineInstance` and `ApplicationInstance` classes.
+
 - We need to document the relationship between `EngineInstance` and `ApplicationInstance` as implementations of `Owner`.
+
+- We must update the existing docs for `factoryFor` to match the updated types: we return a *factory* rather than a *factory manager*. A "manager" is an existing concept in Ember (component managers, helper managers, modifier managers, etc.), and the factory returned by `factoryFor` is *not* one of those and not similar to them.
 
 
 ### `Transition`, `RouteInfo`, and `RouteInfoWithAttributes`
