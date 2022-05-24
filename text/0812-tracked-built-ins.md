@@ -77,12 +77,12 @@ class TrackedMap {
 This pattern is problematic however, because it's not obvious what the
 purpose of re-setting the property is. A developer unfamiliar with Ember may
 mistakenly believe this was an error, and remove this statement, causing
-bugs. It's not a very google-able pattern either, which makes it more
+bugs. This pattern is not easy to search on the Internet, which makes it more
 difficult to learn and to teach. Finally, it's fairly easy this way for the
 state to get out of sync with the rest of the system if a developer forgets
 to add the extra re-set after mutating the value.
 
-Over time, it's become clear that this pattern is in actuality an antipattern
+Over time, it's become clear that this pattern is actually an anti-pattern
 for these reasons, and something we should begin to discourage in general.
 
 [RFC #669 "Tracked Storage Primitives"][rfc-0669] introduced low level primitives
@@ -207,7 +207,7 @@ export default class Scoreboard extends Component {
 }
 ```
 
-Lets lake a look into another example involving a shopping cart, where we keep track
+Let's take a look into another example involving a shopping cart, where we keep track
 of the items added to cart using tracked version of JavaScript's [Array][global-objects-array].
 
 ```js
