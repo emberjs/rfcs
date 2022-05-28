@@ -1,5 +1,5 @@
 ---
-Stage: Proposed
+Stage: Accepted
 Start Date: 2021-05-13
 Release Date: Unreleased
 Release Versions:
