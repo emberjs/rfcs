@@ -116,7 +116,7 @@ The `app` and `addon` blueprints will be updated to add style-related linting sc
 {
   "scripts": {
     "lint:css": "stylelint \"**/*.{css}\"",
-    "lint:css:fix": "stylelint \"**/*.{css}\" --fix",
+    "lint:css:fix": "npm-run-all \"lint:css --fix\"",
   }
 }
 ```
