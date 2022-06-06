@@ -159,7 +159,7 @@ See **Macro System** for the full details.
 
 To provide **App Javascript**, a package includes the `app-js` key in **Ember package metadata**. For example, to duplicate the behavior of v1 packages, you could say:
 
-    "ember": {
+    "ember-addon": {
       "version": 2,
       "app-js": "./app"
     }
@@ -272,7 +272,7 @@ An example of when you may need `externals` is when you need to consume a script
 To provide **Assets**, a package includes the `public-assets` key in **Ember package metadata**. It's a mapping from local paths to app-relative URLs that should be available in the final app. For example:
 
     "name": "my-addon",
-    "ember": {
+    "ember-addon": {
       "version": 2,
       "public-assets": {
         "./public/image.png": "/my-addon/image.png"
