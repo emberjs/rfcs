@@ -322,7 +322,11 @@ These types need two updates to the existing API documentation:
 
   And:
 
-  > While the `RouteInfo` interface can be imported to name the type for use in your own code, it is not user-implementable. The only supported way to get a `RouteInfo` is using the `from` or `to` properties on an instance of [the `Transition` class](https://api.emberjs.com/ember/4.3/classes/Transition)
+  > While the `RouteInfo` interface can be imported to name the type for use in your own code, it is not user-implementable. The only supported way to get a `RouteInfo` is using a public API which provides it, including but not limited to:
+  >
+  > - the `from` or `to` properties on an instance of [the `Transition` class](https://api.emberjs.com/ember/4.3/classes/Transition)
+  > - the `currentRoute` property on [the `RouterService` class](https://api.emberjs.com/ember/4.4/classes/RouterService)
+  > - the `child` or `parent` properties on another `RouteInfo` instance, or as returned from the `find()` method on a `RouteInfo`
 
 
 ### Blog post
