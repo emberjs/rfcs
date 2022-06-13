@@ -94,9 +94,9 @@ function useRegisterOptions(registerOptions) {
 
 #### `Factory`
 
-`Factory` is an existing concept available to users via [the `Engine#factoryFor` API][ff].[^factory-name] The public API to date has included only two fields, `class` and `create`, and we maintain that in this RFC. The result is this user-constructible interface:
+`Factory` is an existing concept available to users via [the `Engine#lookup` API][ff]. The public API to date has included only two fields, `class` and `create`, and we maintain that in this RFC. The result is this user-constructible interface:
 
-[ff]: https://api.emberjs.com/ember/4.3/classes/EngineInstance/methods/factoryFor?anchor=factoryFor
+[ff]: https://api.emberjs.com/ember/4.3/classes/EngineInstance/methods/factoryFor?anchor=lookup
 
 ```ts
 export interface Factory<Class> {
