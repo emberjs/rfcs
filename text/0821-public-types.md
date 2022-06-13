@@ -19,7 +19,7 @@ RFC PR: https://github.com/emberjs/rfcs/pull/821
 
 Introduce public import locations for type-only imports which have previously had no imports, and fully specify their public APIs for end users:
 
-- `Owner`, with `TypeOptions` and `Factory`
+- `Owner`, with `RegisterOptions` and `Factory`
 - `Transition`
 - `RouteInfo` and `RouteInfoWithAttributes`
 
@@ -50,7 +50,7 @@ export default interface Owner {
   register<T>(
     fullName: string,
     factory: Factory<T>,
-    options?: TypeOptions
+    options?: RegisterOptions
   ): void;
 
   hasRegistration(fullName: string): boolean;
@@ -61,7 +61,7 @@ export default interface Owner {
 }
 ```
 
-It is the default import from a new module, `@ember/owner`. With it come two other new types: `TypeOptions` and `Factory`.
+It is the default import from a new module, `@ember/owner`. With it come two other new types: `RegisterOptions` and `Factory`.
 
 #### `RegisterOptions`
 
