@@ -41,7 +41,7 @@ Additionally, the lack of a public import or contract for the `Owner` interface 
 
 ### `Owner`
 
-`Owner` is a user-constructible interface, with an intentionally-minimal subset of the :
+`Owner` is a user-constructible interface, with an intentionally-minimal subset of the existing `Owner` API, aimed at what we *want* to support for `Owner` in the future:
 
 ```ts
 export default interface Owner {
@@ -55,9 +55,7 @@ export default interface Owner {
 
   hasRegistration(fullName: string): boolean;
 
-  resolveRegistration(
-    fullName: string
-  ): Factory<unknown> | object | undefined;
+  factoryFor(fullName: string): FactoryFor<unknown> | undefined;
 }
 ```
 
@@ -155,7 +153,42 @@ class PersonManager implements Factory<typeof Person> {
 
 (This is not the actual usual internal implementation in Ember, but shows that it can be implemented safely with these types.)
 
-[^factory-name]: In Ember’s internal types today, this type is known as `Factory`, and the `class` is named `FactoryClass`. Ember’s public API docs refer to this type as a "factory manager", *not* `Factory`. However, that term is not really appropriate, so I have chosen to stick with `Factory` here; see discussion under [How We Teach This: Owner](#owner-1) for details on updating the docs.
+
+#### `FactoryFor`
+
+`FactoryFor` is an existing concept available to users via [the `Engine#factoryFor` API][ff].[^factory-for-name] The public API to date has included only two fields, `class` and `create`, and we maintain that in this RFC. The result is this **non-user-constructible** interface:
+
+[ff]: https://api.emberjs.com/ember/4.3/classes/EngineInstance/methods/factoryFor?anchor=lookup
+
+```ts
+export class FactoryFor<Class> {
+  readonly class: Factory<T>;
+  create(
+    initialValues?: {
+      [K in keyof InstanceOf<Class>]?: InstanceOf<Class>[K];
+    }
+  ): InstanceOf<Class>;
+}
+```
+
+`FactoryFor` is now available as a named import from `@ember/owner`:
+
+```ts
+import { type FactoryFor } from '@ember/owner';
+```
+
+JS users can refer to it in JSDoc comments using `import()` syntax:
+
+```js
+/**
+ * @param {import('@ember/owner').FactoryFor} factoryForObj
+ */
+function useFactoryForObj(factoryForObj) {
+  // ...
+}
+```
+
+[^factory-for-name]: In Ember’s internal types today, this type is known as `FactoryManager`, and the `class` is the `Factory`, which may in turn have a `FactoryClass` as *its* `class` property. Ember’s public API docs refer to this type as a "factory manager", *not* `Factory`. However, that term is not really appropriate, so I have chosen to use `FactoryFor` here; see discussion under [How We Teach This: Owner](#owner-1) for details on updating the docs.
 
 
 ### `Transition`
@@ -307,7 +340,7 @@ These concepts all already exist, but need updates to and in some cases wholly n
 
 - We need to document the relationship between `EngineInstance` and `ApplicationInstance` as implementations of `Owner`.
 
-- We must update the existing docs for `factoryFor` to match the updated types: we return a *factory* rather than a *factory manager*. A "manager" is an existing concept in Ember (component managers, helper managers, modifier managers, etc.), and the factory returned by `factoryFor` is *not* one of those and not similar to them.
+- We must update the existing docs for `factoryFor` to match the updated types: we return a `FactoryFor` rather than a *factory manager*. A "manager" is an existing concept in Ember (component managers, helper managers, modifier managers, etc.), and the factory returned by `factoryFor` is *not* one of those and not similar to them.
 
 
 ### `Transition`, `RouteInfo`, and `RouteInfoWithAttributes`
