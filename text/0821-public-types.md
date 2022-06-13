@@ -28,7 +28,7 @@ Introduce public import locations for type-only imports which have previously ha
 
 Prior to supporting TypeScript, Ember has defined certain types as part of its API, but *without* public imports, since the types were not designed to be imported, subclassed, etc. by users. For the community-maintained type definitions, the Typed Ember team chose to match that policy so as to avoid committing the main project to public API. With the introduction of TypeScript as a first-class language (see esp. RFCs [0724: Official TypeScript Support][0724] and [0800: TypeScript Adoption Plan][0800]) those types now need public imports so that users can reference them; per the [Semantic Versioning for TypeScript Types spec][spec], they also need to define *how* they are public: can they be sub-classed, re-implemented, etc.?
 
-[0274]: https://rfcs.emberjs.com/id/0724-road-to-typescript
+[0724]: https://rfcs.emberjs.com/id/0724-road-to-typescript
 [0800]: https://rfcs.emberjs.com/id/0800-ts-adoption-plan
 [spec]: https://www.semver-ts.org
 
