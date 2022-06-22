@@ -141,7 +141,6 @@ RFC PR: https://github.com/ember-cli/rfcs/pull/23</p>
 <hr />
 <h1 id="summary"><a class="header" href="#summary">Summary</a></h1>
 <p>Adds command line completion <em>(tab completion)</em> to ember-cli that fills in partially typed commands by the user and suggests available sub commands or options. <em>(from now on i will refer to &quot;strings in the command line&quot; as &quot;cli-commands&quot; and &quot;generate&quot; and &quot;new&quot; as unprefixed &quot;commands&quot;)</em></p>
-<p><img src="http://zippy.gfycat.com/PrestigiousLoneHalicore.gif" alt="" /></p>
 <h1 id="motivation"><a class="header" href="#motivation">Motivation</a></h1>
 <p>With all the already existing commands and especially all blueprints, plus the fact that any addon can add even more blueprints to your tool kit, users can get overwhelmed. Currently, when you want to execute a specific task and you don't quite know the correct cli-command you have to invoke <code>ember help</code> which is noisy and slow <em>( especially when you just want to know the spelling of a specific thing)</em>. This feature will enable the user to choose from all existing cli-commands by pressing <strong>[tab]</strong> or just to let ember-cli fill partially typed cli-commands for speed.</p>
 <h1 id="detailed-design"><a class="header" href="#detailed-design">Detailed design</a></h1>

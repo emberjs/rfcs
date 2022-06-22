@@ -145,7 +145,7 @@ Tracking: https://github.com/emberjs/rfc-tracking/issues/37</p>
 <p>Create a syntax for invoking components nested inside of directories in angle-bracket syntax. The invocation <code>&lt;AppIcons::Warning&gt;</code> refers to the component <code>app/components/app-icons/warning.js</code> when using the default resolver, and looks up <code>component:app-icons/warning</code> in the container.</p>
 <h2 id="motivation"><a class="header" href="#motivation">Motivation</a></h2>
 <p>Today's angle-bracket syntax conversion guide says this:</p>
-<p><img src="../images/457-when-to-use-curlies.jpg" alt="existing documentation" /></p>
+<p><img src="/images/457-when-to-use-curlies.jpg" alt="existing documentation" /></p>
 <p>This has been an acceptable interim step as we have worked on completing the work of revamping the component model, but it's a source of incoherence (and a reported adoption blocker for some apps) in the Ember design, and we need to eliminate this source of incoherence in order to recommend angle bracket components in the Octane edition.</p>
 <p>For positional arguments, we recommend that add-on authors migrate to named arguments. There is one exception to this rule: addons that are mimicking control-flow syntax (like <code>liquid-if</code>). These addons should clearly document that they are meant to be used with curly syntax.</p>
 <p>For components nested inside of directories, this RFC proposes a new syntax to allow users to migrate directly to angle bracket invocation.</p>
@@ -196,7 +196,7 @@ Tracking: https://github.com/emberjs/rfc-tracking/issues/37</p>
 <h2 id="how-we-teach-this"><a class="header" href="#how-we-teach-this">How we teach this</a></h2>
 <p>We currently don't cover directory nesting in the guides, and directory nesting is not an extremely early-stage Ember feature. That said, most Ember developers encounter a need or desire to group components together relatively quickly, and it does make sense to cover it.</p>
 <p>RFC #311 introduced a normalization rule for angle bracket invocation, and the guides mention that <code>&lt;NavBar&gt;</code> invokes a component that appears in the file system as <code>nav-bar</code>.</p>
-<p><img src="../images/457-dasherization.jpg" alt="rental-listing in the docs" /></p>
+<p><img src="/images/457-dasherization.jpg" alt="rental-listing in the docs" /></p>
 <p>After this RFC, the documentation should add a &quot;Zoey says&quot; sidebar that describes the rule in more detail, and mentions that you can refer to components nested in a directory with the <code>::</code> separator.</p>
 <p>Finally, the goal of this RFC is to make it possible to recommend that users always use angle-bracket invocation for components other than control flow (<code>if</code>, <code>each</code>).</p>
 <p>This means that we should update the syntax conversion guide to no longer say that <code>{{</code> syntax is sometimes required, and avoid recommending it.</p>
@@ -209,7 +209,7 @@ Tracking: https://github.com/emberjs/rfc-tracking/issues/37</p>
 &lt;AppIcons/Warning&gt;&lt;/AppIcons/Warning&gt;
 </code></pre>
 <p>Additionally, some autocomplete systems assume that <code>&lt;AppIcons/</code> is the beginning of a self-closing tag.</p>
-<p><img src="../images/457-autocomplete-problem.gif" alt="an example of an IDE confusing this syntax as a self-closing tag" /></p>
+<p><img src="/images/457-autocomplete-problem.gif" alt="an example of an IDE confusing this syntax as a self-closing tag" /></p>
 <p>Another drawback of this proposal is that it uses <code>::</code> syntax for today's templates, and we don't expect that syntax to be relevant to templates using template imports. It's possible that we would want to use this syntax, which might be considered valuable, in templates using template imports. That said, there is no specific proposal for what we might want to use this syntax for, and we could compatibly reclaim it in the context of template imports, at the cost of some mental churn.</p>
 <p>Another alternative is to recommend that people use <code>#let</code> with <code>(component)</code> in situations where nesting is required.</p>
 <pre><code class="language-hbs">{{#let (component 'app-icons/warning') as |Warning|}}
