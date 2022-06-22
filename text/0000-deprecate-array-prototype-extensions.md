@@ -1,6 +1,6 @@
 ---
 Stage: Initial
-Start Date: 2022-5-01
+Start Date: 2022-6-21
 Release Date: Unreleased
 Release Versions:
   ember-source: vX.Y.Z
@@ -27,7 +27,7 @@ Continuing in that direction, we should consider recommending the usage of nativ
 
 ## Transition Path
 
-For convenient methods like `without`, `sortBy`, `uniqBy` etc., the replacement functionalities already exist either through native array methods or utility libraries like [lodash](https://lodash.com), [Ramda](https://ramdajs.com), etc.
+For convenient methods like `filterBy`, `compact`, `sortBy` etc., the replacement functionalities already exist either through native array methods or utility libraries like [lodash](https://lodash.com), [Ramda](https://ramdajs.com), etc.
 
 For mutation methods (like `pushObject`, `removeObject`) or observable properties (like `firstObject`, `lastObject`) participating in the Ember classic reactivity system, the replacement functionalities also already exist in the form of immutable update style with tracked properties like `@tracked someArray = []`, or through utilizing `TrackedArray` from `tracked-built-ins`.
 
@@ -49,11 +49,11 @@ Examples of deprecated and current code:
 import Component from '@glimmer/component';
 import { uniqBy, sortBy } from 'lodash';
 
-export default class SampleComponent extends Component{
-  abc = ['x', 'y', 'z', 'x'];
+export default class SampleComponent extends Component {
+  abc = ['x', 'y', 'z', undefined, 'x'];
   
   // deprecated
-  def = this.abc.without('x');
+  def = this.abc.compact();
   ghi = this.abc.uniq();
   jkl = this.abc.toArray();
   mno = this.abc.uniqBy('y');
@@ -61,15 +61,20 @@ export default class SampleComponent extends Component{
   // ...
 
   // current
-  def = this.abc.filter(el => el !== 'x');
+  // compact
+  def = this.abc.filter(el => el !== null && el !== undefined);
+  // uniq
   ghi = [...new Set(this.abc)];
+  // toArray
   jkl = [...this.abc];
+  // uniqBy
   mno = uniqBy(this.abc, 'y');
+  // sortBy
   pqr = sortBy(this.abc, 'z');
 };
 ```
 
-### Observable based methods and properties in js
+### Observable properties and methods in js
 Examples of deprecated code:
 ```js
 import Component from '@glimmer/component';
@@ -86,13 +91,13 @@ export default class SampleComponent extends Component{
   @action
   someAction(newItem) {
     // observable method
-    this.abc.pushObject('1');
+    this.abc.pushObject(newItem);
   }
 };
 ```
 
 Examples of current code. 
-#### Option 1: tracked properties
+#### Option 1: use `tracked` property
 ```js
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
@@ -112,15 +117,14 @@ export default class SampleComponent extends Component{
 };
 ```
 
-#### Option 2: `TrackedArray`
+#### Option 2: use `TrackedArray`
 ```js
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
-import { tracked } from '@glimmer/tracking';
 import { TrackedArray } from 'tracked-built-ins';
 
 export default class SampleComponent extends Component{
-  @tracked abc = new TrackedArray();
+  abc = new TrackedArray();
 
   get lastObj() {
     return this.abc.at(-1);
@@ -140,7 +144,7 @@ Examples of deprecated code:
 <Foo @bar={{@list.firstObject.name}} />
 ```
 
-Examples of  current code.
+Examples of current code:
 ```hbs
 <Foo @bar={{get @list '0.name'}} />
 ```
@@ -156,6 +160,3 @@ After the deprecated code is removed from Ember (at 5.0), we need to remove the 
 ## Alternatives
 - Continuing allowing array prototype extensions but turning the EXTEND_PROTOTYPES off by default.
 - Do nothing.
-
-### Unresolved questions
-- Some methods like `removeObject`, `removeObjects` that have non-trival logics might require custom helper function in application to ease the migration.
