@@ -41,29 +41,3 @@ jobs:
         if: ${{ steps.files.outputs.added }}
         run: |
           node rfcs-tooling/lint-rfc-frontmatter.js ${{ steps.files.outputs.added }}
-
-  validate-mdbook:
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Setup mdBook
-        uses: peaceiris/actions-mdbook@v1
-        with:
-          mdbook-version: "0.4.15"
-
-      - name: "[mdBook] Prepare files"
-        run: |
-          if [ ! -d src ]; then
-              mkdir src
-          fi
-          echo "[Introduction](introduction.md)\n" > src/SUMMARY.md
-          for f in $(ls text/* | sort)
-          do
-              echo "- [$(basename $f ".md")]($(basename $f))" >> src/SUMMARY.md
-              cp $f src
-          done
-          cp README.md src/introduction.md
-
-      - name: "[mdBook] Build mdBook"
-        run: mdbook build
