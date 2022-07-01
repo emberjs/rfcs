@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request: {}
 
 jobs:
@@ -26,10 +26,18 @@ jobs:
         run: node lint-rfc-frontmatter.js ../text/*.md || true # Don't want to fail on old RFCs just yet
         working-directory: rfcs-tooling
 
-      - id: files
-        uses: jitterbit/get-changed-files@v1
+      - name: Get Changed Files
+        uses: lots0logs/gh-action-get-changed-files@2.1.4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Filter Added Files to added RFCs
+        id: files
+        run: |
+          added_files=`jq -r '[.[] | select(startswith("text/"))] | join(" ")' ${HOME}/files_added.json`
+          echo "::set-output name=added::$added_files"
 
       - name: Lint added RFCs frontmatter
         if: ${{ steps.files.outputs.added }}
-        run: node lint-rfc-frontmatter.js ${{ steps.files.outputs.added }}
-        working-directory: rfcs-tooling
+        run: |
+          node rfcs-tooling/lint-rfc-frontmatter.js ${{ steps.files.outputs.added }}

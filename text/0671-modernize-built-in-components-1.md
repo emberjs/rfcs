@@ -23,6 +23,7 @@ propose to:
    3. `Ember.TextArea`
    4. `Ember.TextField`
    5. `Ember.TextSupport` (already private, no import path available)
+   6. `Ember.TargetActionSupport` (already private, no import path available)
 3. Deprecate calling `reopen` or `reopenClass` on the classes and mixins listed
    above, whether they were obtained through an import or the `Ember` global
 4. Deprecate calling `reopen` or `reopenClass` on the `Ember.Component` super
@@ -175,8 +176,8 @@ learning materials (this is currently being addressed).
 In addition, for a variety of historical reasons, the implementation of the
 built-in components, that is, the `Checkbox`, `LinkComponent`, `TextArea` and
 `TextField` component classes were documented as public API, as well as the
-`TextSupport` mixin, which is considered private but is well-documented and is
-accessible through the `Ember` global.
+`TextSupport` and `TargetActionSupport` mixins, which are considered private
+but are well-documented and accessible through the `Ember` global.
 
 Because of this, the fact that they are implemented as `Ember.Component`
 subclasses are highly observable. Some common use cases and consequences are:
@@ -272,6 +273,7 @@ This RFC proposes the following deprecations:
    3. `Ember.TextArea`
    4. `Ember.TextField`
    5. `Ember.TextSupport` (already private, no import path available)
+   6. `Ember.TargetActionSupport` (already private, no import path available)
 3. Deprecate calling `reopen` or `reopenClass` on the classes and mixins listed
    above, whether they were obtained through an import or the `Ember` global
 4. Deprecate calling `reopen` or `reopenClass` on the `Ember.Component` super
@@ -304,11 +306,27 @@ The first two sets of deprecations removes the classes themselves from being
 public APIs.
 
 In order to support apps that have implemented custom components by subclassing
-these built-in classes, the current implementations will be moved to a legacy
-addon and remain "frozen" in there. Future versions of Ember will stop basing
-the built-in components on these legacy implementaitons, but custom subclasses
-will continue to work. The deprecation message should provide information about
-this legacy addon, or link to the deprecation details page that does.
+these built-in classes, the current implementations of the `Ember.Checkbox`,
+`Ember.LinkComponent`, `Ember.TextArea` and `Ember.TextField` classes will be
+moved to a legacy addon and remain "frozen" in there. Future versions of Ember
+will stop basing the built-in components on these legacy implementations, but
+custom subclasses will continue to work. The deprecation message should provide
+information about the legacy addon, or link to the deprecation details page
+with the relevant information.
+
+The private mixins, on the other hand, will be deprecated without replacement.
+
+Note that in accordance with [RFC #496](0496-handlebars-strict-mode.md), the
+following import paths will be made available for use in strict mode:
+
+* `Input` (`import { Input } from '@ember/component`)
+* `LinkTo` (`import { LinkTo } from '@ember/routing`)
+* `Textarea` (`import { Textarea } from '@ember/component'`)
+
+However, unlike the deprecated import paths in group 1, these modules provide
+opaque values that are intended for use in templates only. Since they do not
+expose the implementation details of the built-in components, these new import
+paths do not have the same issue described in this RFC.
 
 The third and forth prevents globally modifiying the behavior of built-in
 components. Users are encouraged to create wrapper components for use in their
@@ -335,8 +353,8 @@ Example deprecation message:
 
 ```
 Using Ember.Checkbox or importing from '@ember/component/checkbox' has been
-deprecated, install the `ember-legacy-built-in-components` addon and use
-`import { Checkbox } from 'ember-legacy-built-in-components';` instead.
+deprecated, install the `@ember/legacy-built-in-components` addon and use
+`import { Checkbox } from '@ember/legacy-built-in-components';` instead.
 ```
 
 * * *
@@ -347,8 +365,8 @@ Example that causes deprecation:
 import Checkbox from '@ember/component/checkbox';
 //                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Using Ember.Checkbox or importing from '@ember/component/checkbox' has been
-// deprecated, install the `ember-legacy-built-in-components` addon and use
-// `import { Checkbox } from 'ember-legacy-built-in-components';` instead.
+// deprecated, install the `@ember/legacy-built-in-components` addon and use
+// `import { Checkbox } from '@ember/legacy-built-in-components';` instead.
 
 export class MyCheckbox extends Checkbox {
   // ...
@@ -375,8 +393,8 @@ export function initialize(owner) {
     Ember.Checkbox.extend({ /* ... */ })
 //  ~~~~~~~~~~~~~~
 // Using Ember.Checkbox or importing from '@ember/component/checkbox' has been
-// deprecated, install the `ember-legacy-built-in-components` addon and use
-// `import { Checkbox } from 'ember-legacy-built-in-components';` instead.
+// deprecated, install the `@ember/legacy-built-in-components` addon and use
+// `import { Checkbox } from '@ember/legacy-built-in-components';` instead.
   );
 }
 ```
@@ -651,7 +669,7 @@ export default class MyBetterInput extends Component {
 ## How we teach this
 
 The API documentation should be updated to document the built-in components as
-components, not as classes. When reaidng the documentation, developers should
+components, not as classes. When reading the documentation, developers should
 be able to understand the components in terms of what _arguments_ they are able
 to pass. The exact format for documenting components is left unspecified to
 provide the learning team some flexibility in accomplish this goal.

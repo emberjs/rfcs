@@ -121,8 +121,8 @@ interface DeprecationOptions {
   id: string;
   until: string;
   url?: string;
-+ for: string;
-+ since: {
++ for?: string;
++ since?: {
 +   available: string;
 +   enabled: string;
 + }
@@ -155,10 +155,13 @@ Stepping through the new options individually:
   assertions, depending on the app or addon configuration. This is explained
   more below.
 
-If the `since` key is not provided (as is the case for existing deprecations),
-the deprecation is assumed to be `enabled`. This RFC also... wait for it... deprecates
-the usage of the `deprecate()` function without a `since` key. This meta deprecation
-will be enabled at the same time as it becomes available like this:
+  If the `since` key is not provided (as is the case for existing
+  deprecations), the deprecation is assumed to be `enabled`.
+
+This RFC also... wait for it... deprecates the usage of the `deprecate()`
+function without the `for` or `since` keys. This meta deprecation will be
+enabled at the same time as it becomes available like this (using `since` as the
+example):
 
 ```js
 
@@ -174,6 +177,23 @@ deprecate('Calling deprecate() without the \'since\' key is deprecated', false, 
     enabled: NEXT_VERSION,
   }
 })
+```
+
+At 4.0, both `for` and `since` will become required:
+
+```diff
+interface DeprecationOptions {
+  id: string;
+  until: string;
+  url?: string;
+- for?: string;
++ for: string;
+- since?: {
++ since: {
+    available: string;
+    enabled: string;
+  }
+}
 ```
 
 ### Configuring Apps

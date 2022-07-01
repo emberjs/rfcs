@@ -117,7 +117,7 @@ In case consumers face timing issues while refactoring to
 their project to be compatible with the timing provided by these two methods.
 The deprecation phase should be long enough to allow all applications to adopt.
 For now it's assumed that it will be enough time for all relevant projects to
-migrate before *v4.0* release. The deprecation period might be increased if a
+migrate before *v5.0* release. The deprecation period might be increased if a
 relevant number of projects weren't able to migrate before that date.
 
 ## How We Teach This

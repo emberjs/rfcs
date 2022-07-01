@@ -116,7 +116,7 @@ export default Route.extend({
   renderTemplate() {
     if (this.user.isLoggedIn) {
       this.render('account', {
-        into: 'applcation',
+        into: 'authenticated',
         outlet: 'account',
         controller: 'account'
       });
