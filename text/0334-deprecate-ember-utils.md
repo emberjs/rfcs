@@ -1,22 +1,39 @@
-- Start Date: 2018-05-22
-- RFC PR: https://github.com/emberjs/rfcs/pull/334
-- Ember Issue: https://github.com/emberjs/rfcs/issues/333
+---
+Stage: Accepted
+Start Date:  2018-05-22
+Release Date: Unreleased
+Release Versions:
+  ember-source: vX.Y.Z
+  ember-data: vX.Y.Z
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/334
+---
+
+<!--- 
+Directions for above: 
+
+Stage: Leave as is
+Start Date: Fill in with today's date, YYYY-MM-DD
+Release Date: Leave as is
+Release Versions: Leave as is
+Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies
+RFC PR: Fill this in with the URL for the Proposal RFC PR
+-->
 
 # Deprecate Ember Utils & dependent Computed Properties
 
 ## Summary
 
-This RFC proposes the deprecation of the following [methods](https://api.emberjs.com/ember/release/modules/@ember%2Futils):
-- `Ember.compare`
-- `Ember.isBlank`
-- `Ember.isEmpty`
-- `Ember.isEqual`
-- `Ember.isNone`
-- `Ember.isPresent`
-- `Ember.tryInvoke`
-- `Ember.typeOf`
+This RFC proposes the deprecation of the following [methods](https://api.emberjs.com/ember/4.4/modules/@ember%2Futils):
+- `compare`
+- `isBlank`
+- `isEmpty`
+- `isEqual`
+- `isNone`
+- `isPresent`
+- `typeOf`
 
-As well as [computed properties](http://api.emberjs.com/ember/release/modules/@ember%2Fobject) that rely on these methods:
+As well as [computed properties](http://api.emberjs.com/ember/4.4/modules/@ember%2Fobject#functions-computed) that rely on these methods:
 - `notEmpty`
 - `empty`
 - `none`
@@ -31,11 +48,11 @@ A simple example of this cognitive load would be checking for the presence of a 
 
 In addition, when checking whether a primitive value is truthy, a user can choose from `isPresent`, `isBlank`, `isNone`, or `isEmpty`.  This can can lead to some confusion for users as there are many options to do the same thing.
 
-Lastly, `Ember.isEmpty` documented [here](https://www.emberjs.com/api/ember/release/functions/@ember%2Futils/isEmpty) will return false for an empty object.  Defining what an empty object is can be a bit tricky and `isEmpty` provided specific semantics that may not fit a users definition.  This problem of specific semantics not fitting a users definition also applies to the other utility methods as well.
+Lastly, `isEmpty` documented [here](https://www.emberjs.com/api/ember/release/functions/@ember%2Futils/isEmpty) will return false for an empty object.  Defining what an empty object is can be a bit tricky and `isEmpty` provided specific semantics that may not fit a users definition.  This problem of specific semantics not fitting a users definition also applies to the other utility methods as well.
 
 ## Detailed design
 
-`Ember.compare`, `Ember.isBlank`, `Ember.isEmpty`, `Ember.isEqual`, `Ember.isNone`, `Ember.isPresent`, `Ember.tryInvoke`, `Ember.typeOf`, `notEmpty`, `empty`, and `none` will be deprecated at first with an addon that extracts these methods for users that still find value in these utility methods.  Any instantiation of one of these functions imported from `@ember/utils` will log a deprecation warning, notifying the user that this method is deprecated and provide a link to the supported addon.
+`compare`, `isBlank`, `isEmpty`, `isEqual`, `isNone`, `isPresent`, `typeOf`, `notEmpty`, `empty`, and `none` will be deprecated at first with an addon that extracts these methods for users that still find value in these utility methods.  Any instantiation of one of these functions imported from `@ember/utils` will log a deprecation warning, notifying the user that this method is deprecated and provide a link to the supported addon.
 
 Addons that previously relied on these utility methods would also be expected to install this package. Moreover, to ease adoption of the external addon, a codemod will become available for the community.
 
@@ -98,7 +115,7 @@ For many existing codebases, it should be as simple as installing the extracted 
 ### compare
 
 Install and import `ember-util` to `compare` two types.
-until: 4.0.0
+until: 5.0.0
 id: use-ember-util-package--compare
 
 ```js
@@ -122,7 +139,7 @@ compare(['code'], []); // 1
 ### isBlank
 
 Install and import `ember-util` to check `isBlank` status.
-until: 4.0.0
+until: 5.0.0
 id: use-ember-util-package--isBlank
 
 ```js
@@ -144,7 +161,7 @@ isBlank([]); // true
 ### isEmpty
 
 Install and import `ember-util` to check `isEmpty` status.
-until: 4.0.0
+until: 5.0.0
 id: use-ember-util-package--isEmpty
 
 ```js
@@ -166,7 +183,7 @@ isEmpty([]); // true
 ### isEqual
 
 Install and import `ember-util` to check `isEqual` status.
-until: 4.0.0
+until: 5.0.0
 id: use-ember-util-package--isEqual
 
 ```js
@@ -190,7 +207,7 @@ isEqual(['code'], ['code']); // false
 ### isNone
 
 Install and import `ember-util` to check `isNone` status.
-until: 4.0.0
+until: 5.0.0
 id: use-ember-util-package--isNone
 
 ```js
@@ -214,7 +231,7 @@ isNone(''); // false
 ### isPresent
 
 Install and import `ember-util` to check `isPresent` status.
-until: 4.0.0
+until: 5.0.0
 id: use-ember-util-package--isPresent
 
 ```js
@@ -235,32 +252,10 @@ isPresent([]); // false
 isPresent('hi der'); // true
 ```
 
-### tryInvoke
-
-Install and import `ember-util` to invoke a method on a target object.
-until: 4.0.0
-id: use-ember-util-package--tryInvoke
-
-```js
-import { tryInvoke } from '@ember/util';
-
-let d = new Date('03/15/2013');
-tryInvoke(d, 'getMilliseconds'); // 0
-```
-
-To avoid the `tryInvoke` deprecation, you can install the `ember-util` package and do the following
-
-```js
-import { tryInvoke } from 'ember-util';
-
-let d = new Date('03/15/2013');
-tryInvoke(d, 'getMilliseconds'); // 0
-```
-
 ### typeOf
 
 Install and import `ember-util` to check `typeOf` on an input.
-until: 4.0.0
+until: 5.0.0
 id: use-ember-util-package--typeOf
 
 ```js
@@ -282,7 +277,7 @@ typeOf(noop); // 'function'
 ### notEmpty
 
 Install and import `ember-util` to check `notEmpty` on a property.
-until: 4.0.0
+until: 5.0.0
 id: use-ember-util-package--notEmpty
 
 ```js
@@ -314,7 +309,7 @@ class ToDoList {
 ### empty
 
 Install and import `ember-util` to check `empty` on a property.
-until: 4.0.0
+until: 5.0.0
 id: use-ember-util-package--empty
 
 ```js
@@ -346,7 +341,7 @@ class ToDoList {
 ### none
 
 Install and import `ember-util` to check `none` on a property.
-until: 4.0.0
+until: 5.0.0
 id: use-ember-util-package--none
 
 ```js
@@ -376,6 +371,8 @@ Given the example above, some users see a lot of value for the safety checks `is
 ## Alternatives
 
 Another option would be to improve existing utility cases such as `isEmpty({}) === true`.  Moreover, we could also consider scoping existing utility methods to specific types. For example, `isEmpty` would be specific to checking objects, collections, maps or sets to reduce confusion of when these utility methods should be used.
+
+Instead of deprecating the `notEmpty`, `empty`, `none` computed macros one-by-one, it would probably be good to deprecate the entire `@ember/object/computed` module because everything else in there is not aligned with current idioms.
 
 ## Unresolved questions
 
