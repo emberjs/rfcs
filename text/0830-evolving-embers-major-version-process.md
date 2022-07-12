@@ -21,7 +21,7 @@ Introduce a standard release train for *major* releases, analogous to Ember's re
 
 **The result is a steady 60-week cadence between Ember major releases, complementing our steady 6-week cadence between Ember minor releases.**
 
-<details><summary>How this would work in practice for Ember's lifecycle from 4.8 to 7.0</summary>
+How this would work in practice for Ember's lifecycle from 4.8 to 7.0
 
 | Ember Release |    Approximate date    |
 | ------------- | ---------------------- |
@@ -38,8 +38,6 @@ Introduce a standard release train for *major* releases, analogous to Ember's re
 | 6.8           | early February 2025    |
 | 6.8 LTS       | mid March 2025         |
 | **7.0**       | **late April 2025**    |
-
-</details>
 
 
 ### Note <!-- omit in toc -->
