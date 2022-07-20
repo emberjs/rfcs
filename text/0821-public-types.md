@@ -41,7 +41,7 @@ Additionally, the lack of a public import or contract for the `Owner` interface 
 
 ### `Owner`
 
-`Owner` is a user-constructible interface, with an intentionally-minimal subset of the existing `Owner` API, aimed at what we *want* to support for `Owner` in the future:
+`Owner` is a **non-user-constructible** interface, with an intentionally-minimal subset of the existing `Owner` API, aimed at what we *want* to support for `Owner` in the future:
 
 ```ts
 export default interface Owner {
@@ -59,7 +59,12 @@ export default interface Owner {
 }
 ```
 
-It is the default import from a new module, `@ember/owner`. With it come two other new types: `RegisterOptions` and `Factory`.
+`Owner` is the default import from a new module, `@ember/owner`. With it come two other new types: `RegisterOptions` and `Factory`.
+
+`Owner` is non-user-constructible because constructing it correctly also requires the ability to provide a factory manager.[^existing-owner-usage]
+
+[^existing-owner-usage]: Existing usage of the Owner interface this way (e.g. setting custom owners for tests) mostly falls under the "intimate API" rules, and will likely be deprecated after a future introduction of createOwner() hook so that that there is a public API way to get the required type.
+
 
 #### `RegisterOptions`
 
