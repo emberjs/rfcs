@@ -5,10 +5,7 @@ Release Date: Unreleased
 Release Versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
-Relevant Team(s):
-  - Ember.js
-  - TypeScript
-  - Learning
+Relevant Team(s): "Ember.js, TypeScript,  Learning"
 RFC PR: https://github.com/emberjs/rfcs/pull/821
 ---
 
