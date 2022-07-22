@@ -66,7 +66,7 @@ themselves while also having a standard command that everyone can run in any pro
 and get an expected output, regardless of what's going on under the hood.
 
 Consider cases where the author of an addon sets up yarn test to run with ember-exam.
-Un such cases, one shouldn't be manually changing the default documentation for a script that already existed.
+In such cases, one shouldn't be manually changing the default documentation for a script that already existed.
 
 In another case of using the `package.json` script for start/test, it allows teams to abstract details about their specific dev environment,
 which makes developers' jobs easier. They can use "yarn start" or 
