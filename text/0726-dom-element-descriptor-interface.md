@@ -86,7 +86,7 @@ class MyDescriptorData {
   get element() {
     return document.querySelectorAll('.list-item')[2];
   }
-  description = 'second list item';
+  readonly description = 'second list item';
 }
 let descriptor = createDOMDescriptor(new MyDescriptorData());
 
@@ -112,12 +112,16 @@ This RFC proposes implementing a library that exports two core functions, and se
 #### Core functions
 
 ```ts
-interface IDOMElementDescriptor {}
+const IS_DESCRIPTOR = Symbol('is descriptor');
+
+interface IDOMElementDescriptor {
+  readonly [IS_DESCRIPTOR]: any;
+}
 
 interface DescriptorData {
-  element?: Element | null;
-  elements?: Element[];
-  description?: string;
+  readonly element?: Element | null;
+  readonly elements?: Iterable<Element>;
+  readonly description?: string;
 }
 
 function registerDescriptorData(descriptor: IDOMElementDescriptor, data: DescriptorData): void;
@@ -126,20 +130,20 @@ function lookupDescriptorData(descriptor: IDOMElementDescriptor): DescriptorData
 
 (the interfaces have been simplified a bit for illustrative purposes -- in particular, `DescriptorData` would need to enforce that at least one of `element` and `elements` is defined)
 
-`IDOMElementDescriptor` is a "no-op interface" -- it has no properties or methods, and only exists to support typing. So typescript concerns aside, it can be thought of as just `object`.
+`IDOMElementDescriptor` is a "no-op interface" -- it has no properties or methods, and only exists to support typing. So typescript concerns aside, it can be thought of as just `object`. However since the compiler will implicitly cast anything to an empty interface, we give it a symbol property so the compiler can help prevent accidentally passing non-descriptors to functions that accept descriptors.
 
-`DescriptorData` is a type that contains an `element` property and/or an `elements` property, and also an optional `description` property. The `element` and `elements` properties exist to support usage in both single-element contexts (the equivalent of passing a selector to `querySelector()`) and multi-element contexts (the equivalent of passing a selector to `querySelectorAll()`). At least one of them must be defined, and both may be defined. If only the `element` property is defined, then multi-element contexts should act as if the `elements` property were defined to be either an empty array or a singleton array, depending on whether the `element` property evaluates to `null` or an `Element`. If only the `elements` property is defined, then single-element contexts should act as if `element` were defined to be the first element of the `elements` property, or `null` if the `elements` property evaluates to an empty array. To illustrate further, here are two possible implementations of functions to resolve descriptors to DOM elements:
+`DescriptorData` is a type that contains an `element` property and/or an `elements` property, and also an optional `description` property. The `element` and `elements` properties exist to support usage in both single-element contexts (the equivalent of passing a selector to `querySelector()`) and multi-element contexts (the equivalent of passing a selector to `querySelectorAll()`). At least one of them must be defined, and both may be defined. If only the `element` property is defined, then multi-element contexts should act as if the `elements` property were defined to be either an empty iterable or a singleton iterable, depending on whether the `element` property evaluates to `null` or an `Element`. If only the `elements` property is defined, then single-element contexts should act as if `element` were defined to be the first element of the `elements` property, or `null` if the `elements` property evaluates to an empty iterable. To illustrate further, here are two possible implementations of functions to resolve descriptors to DOM elements:
 
 ```ts
 function getDescriptorElement(data: DescriptorData): Element | null {
   if (data.element !== undefined) {
     return data.element;
   } else {
-    return data.elements[0] || null;
+    return Array.from(data.elements)[0] || null;
   }
 }
 
-function getDescriptorElements(data: DescriptorData): Element[] {
+function getDescriptorElements(data: DescriptorData): Iterable<Element> {
   if (data.elements) {
     return data.elements;
   } else {
@@ -167,7 +171,7 @@ The library will also include some functions for use by DOM helpers when using D
 
 ```ts
 function resolveDOMElement(target: IDOMElementDescriptor | DescriptorData): Element | null;
-function resolveDOMElements(target: IDOMElementDescriptor | DescriptorData): Element[];
+function resolveDOMElements(target: IDOMElementDescriptor | DescriptorData): Iterable<Element>;
 ```
 
 It may make sense to implement some kind of
