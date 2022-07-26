@@ -27,7 +27,7 @@ For instance, given the following `Post` model.
 
 ```js
 class Post extends Model {
-  @hasMany('comment` { inverse: null, async: true })
+  @hasMany('comment' { inverse: null, async: true })
   comments
 }
 ```
