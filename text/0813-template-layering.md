@@ -13,54 +13,43 @@ RFC PR: https://github.com/emberjs/rfcs/pull/813
 
 ## Summary
 
-This RFC propose to introduce a `template()` function as an substitution for
-the `<template>` syntax extension defined in [RFC #779][rfc-779] using
-standard JavaScript, for use in environments where the custom syntax extension
-is not available, and also as a publishing format for addons on NPM:
+This RFC propose to re-specify the user-facing `<template>` syntax extension
+proposed in [RFC #779][rfc-779] in terms of some lower-level syntaxes and APIs
+specified in standard JavaScript.
 
 [rfc-779]: ./0779-first-class-component-templates.md
 
-```js
-import { template } from "@ember/template-compilation";
+Consider this `.gjs` file:
+
+```
 import Hello from "my-app/components/hello";
 
-// <template><Hello /></template> becomes...
-export default template(`<Hello />`, () => ({ Hello }));
+<template>
+  <Hello />
+</template>
 
-// export const Foo = <template><Hello /></template> becomes...
-export const Foo = template(`<Hello />`, () => ({ Hello }));
+export const Foo =
+  <template>
+    <Hello />
+  </template>;
 
-// export class Bar {
-//   <template><Hello /></template>
-// }
 export class Bar {
-  static {
-    template(`<Hello />`, () => ({ Hello }), this);
-  }
+  <template>
+    <Hello />
+  </template>
 }
 ```
 
-Idiomatic usages of the `template()` function can be pre-compiled by a build
-step if desired, but a runtime implementation can also be used via an opt-in
-described below.
-
-We also propose an alternative form that uses the `template()` function as a
-tag function for JavaScript tagged template strings. However, this variant does
-not have a runtime implementation and must be handled by a build step:
+Under this proposal, this `.gjs` file is specified to be _syntactically_
+equivalent to the following `.js` file:
 
 ```js
-import { template } from "@ember/template-compilation";
 import Hello from "my-app/components/hello";
 
-// <template><Hello /></template> becomes...
-export default template`<Hello />`;
+template`<Hello />`;
 
-// export const Foo = <template><Hello /></template> becomes...
 export const Foo = template`<Hello />`;
 
-// export class Bar {
-//   <template><Hello /></template>
-// }
 export class Bar {
   static {
     template`<Hello />`;
@@ -68,10 +57,67 @@ export class Bar {
 }
 ```
 
-In addition, we also propose a new `@ember/template-compilation/runtime`
-module as an opt-in to enable runtime template compilation.
+This proposed intermediate format encodes the `<template>` syntax extension
+using tagged template string literals, a standard JavaScript syntax. Note that
+this syntactic transformation included rules on removal of leading whitespaces
+in the `<template>` tag, which is specified in this RFC.
+
+Furthermore, both syntaxes are specified to be _semantically_ equivalent to the
+following JavaScript code:
+
+```js
+import { template } from "@ember/template-compilation";
+import Hello from "my-app/components/hello";
+
+export default template("<Hello />", () => ({ Hello }));
+
+export const Foo = template("<Hello />", () => ({ Hello }));
+
+export class Bar {
+  static {
+    template("<Hello />", () => ({ Hello }), this);
+  }
+}
+```
+
+The proposed `template()` function accepts the Handlebars source code and a
+closure that supplies any lexical variables referenced by the template, and
+returns a component. Alternatively, it can be given a component class, in which
+case the given template will be _associated_ with the component class.
+
+This function call contains all the necessary information for _compiling_ the
+Handlebars template into a form suitable for rendering in Ember. This function
+can be implemented using standard JavaScript, and a runtime implementation will
+be provided with an opt-in described in this RFC.
+
+However, in most applications, it is desirable to _precompile_ these templates
+at build time, so as to completely eliminate any runtime overhead associated
+with template compilation, as well as the need for shipping a template compiler
+to the browser.
+
+The proposed `template()` function is designed with this use case in mind. This
+RFC also proposes a set of optional syntactic restrictions for its invocations.
+When these restrictions are met, it is guaranteed that these invocations are
+statically reversible into a semantically equivalent `<template>...</template>`
+or <code>template&#96;...&#96;</code>, making them suitable for precompilation
+and other static analysis.
+
+In addition, the design proposed in this RFC also resolves a few open questions
+left in [RFC #779][rfc-779]:
+
+1. Specifying the behavior for whitespace handling in `<template>` tags.
+2. Providing a mechanism for using the `<template>` feature when the Handlebars
+   template itself contains an HTML `<template>` tag. (Further RFCs may provide
+   additional escape mechanisms in addition to the one described here.)
+3. Providing a suitable location for API-level documentation for `<template>`.
+4. Providing a way to reference private fields from class-associated templates.
+
+Finally, this RFC also took the opportunity to rationalize some pieces of the
+runtime template compilation APIs in Ember.
 
 ## Motivation
+
+### Long Term Vision
 
 [RFC #779][rfc-779] introduced a first-class component syntax feature that has
 numerous benefits, among which are:
@@ -80,12 +126,75 @@ numerous benefits, among which are:
 2. Eliminating the need for name-based runtime resolutions
 3. Ability to use imported template constructs
 4. Ability to interact with the surrounding JavaScript scope
+5. Ease of refactoring between templates and JavaScript code
 
 [rfc-496]: ./0496-handlebars-strict-mode.md
 
+In conjunction with other supporting RFCs (such as [RFC #432][rfc-432] and
+[RFC #756][rfc-756]), collectively they represent a significant and coherent
+set of improvements to Ember's components programming model. This streamlined
+programming model is poised to become the main way Ember users work with and
+reason about components when the features are fully rolled out in the next
+edition of Ember (Polaris).
+
+The importance of this paradigm shift could not be understated.
+
+In the Octane Edition, one of the most significant changes to the programming
+model was the adoption of JavaScript's native class syntax. Together with other
+supporting features (such as `@tracked`), it substantially transformed the way
+Ember users author classes. A lot of previously tricky limitations of the Ember
+class syntax and edge cases in the Ember object model are now easily solved by
+simply using standard JavaScript features in ways that weren't possible before.
+
+In time, we believe the changes to the component programming model in Polaris
+will have a similar effect. By allowing templates to seamlessly interact with
+the JavaScript module system and the surrounding JavaScript lexical scope, it
+resolves a lot of limitations in code organization, structure, navigation and
+composition for templates, using the same JavaScript patterns and techniques
+that feels immediately familiar. Everyday tasks like "how to call a helper
+function from an external library like lodash" and "how to access config values
+from within templates" will have straightforward solutions that doesn't require
+special knowledge.
+
+Strictly speaking, these are not "new" capabilities. Of course, developers have
+always been able to perform these tasks in Ember. It's just that they required
+extra boilerplate code, such as wrapping functions into a global Ember helpers,
+introducing a JavaScript class just to import a value and make it available to
+the template. These bottlenecks will be eliminated in the new, streamlined
+programming model. The extra steps that once made logical sense will feel like
+clumsy workarounds.
+
+In the longer term, we expect this new programming model to make obsolete the
+current programming model, just as native classes did to the classic object
+model since Octane. In this new world, most developers will be working with
+`.gjs` files and `<template>` tags, and "standalone templates" (`.hbs` files)
+will become an [exception to the norm](components-over-templates).
+
+[components-over-templates]: https://github.com/emberjs/rfcs/pull/779#issuecomment-1014097294
+
+To be very clear, this future is not here yet and won't be for quite some time.
+We do not discourage uses of the present programming model _today_.
+
+While [RFC #779][rfc-779] focused on designing the user-facing syntax suitable
+for day-to-day use, this RFC aims to describe ("desugar") the `<template>`
+custom syntax extension into some equivalent lower-level syntaxes and APIs
+specified in standard JavaScript. This allow this new programming model to be
+encoded in and transported in standard JavaScript, and in some cases, written
+directly as standard JavaScript.
+
+These lower-level syntaxes and APIs are not necessarily designed with
+
+This makes the same programming model available for use in
+situations where the custom syntax extension cannot be used
+
+that forms the basis of the new components programming model in the next edition of Ember. This
+
+[rfc-432]: ./0432-contextual-helpers.md
+[rfc-756]: ./0756-helper-default-manager.md
+
 However, one of the drawbacks is that it requires a custom syntax extension
 (`<template>`) and a custom file format (`.gjs/.gts`), which requires a build
-step and other custom tooling.
+step and other investment in custom tooling.
 
 RFC #779 makes a good case for why this is necessary and preferable to the
 alternatives. We stand by the rationales given in RFC #779, and this RFC does
@@ -96,7 +205,7 @@ this drawback is highly undesirable or simply not acceptable:
    of using `.gjs`/`.gts` could be abysmal (without any syntax highlighting or
    completion at all, etc). Even after we ship good editor integration for the
    mainstream editors, this will likely remain the case for a subset of less
-   used editors that we did not or could not prioritize supporting.
+   popular editors that we did not or could not prioritize supporting.
 
 2. There may be editors and environments that are impossible for us to support,
    either because they don't have an extension system at all, or those systems
