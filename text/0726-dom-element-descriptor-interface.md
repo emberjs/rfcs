@@ -112,7 +112,7 @@ This RFC proposes implementing a library that exports two core functions, and se
 #### Core functions
 
 ```ts
-const IS_DESCRIPTOR = Symbol('is descriptor');
+const IS_DESCRIPTOR = '__is_descriptor__';
 
 interface IDOMElementDescriptor {
   readonly [IS_DESCRIPTOR]: any;
@@ -130,7 +130,7 @@ function lookupDescriptorData(descriptor: IDOMElementDescriptor): DescriptorData
 
 (the interfaces have been simplified a bit for illustrative purposes -- in particular, `DescriptorData` would need to enforce that at least one of `element` and `elements` is defined)
 
-`IDOMElementDescriptor` is a "no-op interface" -- it has no properties or methods, and only exists to support typing. So typescript concerns aside, it can be thought of as just `object`. However since the compiler will implicitly cast anything to an empty interface, we give it a symbol property so the compiler can help prevent accidentally passing non-descriptors to functions that accept descriptors.
+`IDOMElementDescriptor` is a "no-op interface" -- it has no properties or methods, and only exists to support typing. So typescript concerns aside, it can be thought of as just `object`. However since the compiler will implicitly cast anything to an empty interface, we give it a property so the compiler can help prevent accidentally passing non-descriptors to functions that accept descriptors.
 
 `DescriptorData` is a type that contains an `element` property and/or an `elements` property, and also an optional `description` property. The `element` and `elements` properties exist to support usage in both single-element contexts (the equivalent of passing a selector to `querySelector()`) and multi-element contexts (the equivalent of passing a selector to `querySelectorAll()`). At least one of them must be defined, and both may be defined. If only the `element` property is defined, then multi-element contexts should act as if the `elements` property were defined to be either an empty iterable or a singleton iterable, depending on whether the `element` property evaluates to `null` or an `Element`. If only the `elements` property is defined, then single-element contexts should act as if `element` were defined to be the first element of the `elements` property, or `null` if the `elements` property evaluates to an empty iterable. To illustrate further, here are two possible implementations of functions to resolve descriptors to DOM elements:
 
