@@ -5,7 +5,7 @@ Release Date: Unreleased
 Release Versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
-Relevant Team(s): Learning team, CLU
+Relevant Team(s): Learning team, CLI
 RFC PR: https://github.com/emberjs/rfcs/pull/831
 ---
 
