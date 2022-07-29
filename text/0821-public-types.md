@@ -50,8 +50,6 @@ export default interface Owner {
     options?: RegisterOptions
   ): void;
 
-  hasRegistration(fullName: string): boolean;
-
   factoryFor(fullName: string): FactoryManager<unknown> | undefined;
 }
 ```
