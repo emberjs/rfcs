@@ -24,7 +24,7 @@ RFC PR: Fill this in with the URL for the Proposal RFC PR
 
 ## Summary
 
-Adding the default workspace settings will help new developers to start working in Ember project.
+Adding the default workspace settings will help new developers to start working in Ember projects.
 
 ## Motivation
 
@@ -35,18 +35,18 @@ For example, what features can give us [Visual Studio Code](https://code.visuals
 ```json
 // .vscode/extensions.json
 {
-	"recommendations": [
+  "recommendations": [
     "EditorConfig.EditorConfig",
-		"esbenp.prettier-vscode",
-		"dbaeumer.vscode-eslint",
-		"lifeart.vscode-ember-unstable",
-		"lifeart.vscode-glimmer-syntax",
-		"chiragpat.vscode-glimmer",
-	],
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "lifeart.vscode-ember-unstable",
+    "lifeart.vscode-glimmer-syntax",
+    "chiragpat.vscode-glimmer",
+  ],
 }
 ```
 
-### Settings for to debug inside VS Code
+### Settings for debugging inside VS Code
 
 ```json
 // .vscode/launch.json
@@ -69,7 +69,7 @@ For example, what features can give us [Visual Studio Code](https://code.visuals
 }
 ```
 
-### Tasks to run the scripts
+### Tasks
 
 ```json
 // .vscode/tasks.json
@@ -101,11 +101,11 @@ For example, what features can give us [Visual Studio Code](https://code.visuals
 }
 ```
 
-Another code editors may have different opinions.
+Another code editors may have different options.
 
 ## Detailed design
 
-Optional flag `--code-editor=vscode` of the `new` command will add workspace settings in new projects from the blueprint. Usually code editors store the workspace settings in the root, like VS Code uses `.vscode` folder. `--code-editor` flag can have another values for various code editors. If the flag is not settled, cli will do nothing.
+Optional flag `--code-editor=vscode` of the `new` command will add workspace settings in new projects from the blueprint. Usually code editors store the workspace settings in the root, like VS Code uses `.vscode` folder. `--code-editor` flag can have another values for various code editors. If the flag is not settled, cli will do nothing with it.
 
 ## How we teach this
 
@@ -114,7 +114,7 @@ We would need to add new feature to the [CLI commands reference](https://cli.emb
 
 ## Drawbacks
 
-This feature shouldn't touch other existing or planned features or existing apps.
+This feature shouldn't touch other existing or planned features, or existing apps.
 
 ## Alternatives
 
