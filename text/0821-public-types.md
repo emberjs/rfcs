@@ -239,7 +239,7 @@ Although users will not usually need to use it directly, instead simply passing 
 import { type FullName } from '@ember/owner';
 ```
 
-S users can refer to it in JSDoc comments using `import()` syntax:
+JS users can refer to it in JSDoc comments using `import()` syntax:
 
 ```js
 /**
