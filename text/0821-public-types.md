@@ -12,13 +12,35 @@ RFC PR: https://github.com/emberjs/rfcs/pull/821
 # Public API for Type-Only Imports
 
 
-## Summary
+## Summary <!-- omit in toc -->
 
 Introduce public import locations for type-only imports which have previously had no imports, and fully specify their public APIs for end users:
 
 - `Owner`, with `RegisterOptions` and `Factory`
 - `Transition`
 - `RouteInfo` and `RouteInfoWithAttributes`
+
+
+## Outline <!-- omit in toc -->
+
+- [Motivation](#motivation)
+- [Detailed design](#detailed-design)
+  - [`Owner`](#owner)
+    - [`RegisterOptions`](#registeroptions)
+    - [`Factory`](#factory)
+    - [`FactoryManager`](#factorymanager)
+    - [`FullName`](#fullname)
+  - [`Transition`](#transition)
+    - [`getOwner` and `setOwner`](#getowner-and-setowner)
+  - [`RouteInfo`](#routeinfo)
+    - [`RouteInfoWithAttributes`](#routeinfowithattributes)
+- [How we teach this](#how-we-teach-this)
+  - [`Owner`](#owner-1)
+  - [`Transition`, `RouteInfo`, and `RouteInfoWithAttributes`](#transition-routeinfo-and-routeinfowithattributes)
+  - [Blog post](#blog-post)
+- [Drawbacks](#drawbacks)
+- [Alternatives](#alternatives)
+- [Unresolved questions](#unresolved-questions)
 
 
 ## Motivation
@@ -38,27 +60,51 @@ Additionally, the lack of a public import or contract for the `Owner` interface 
 
 ### `Owner`
 
-`Owner` is a **non-user-constructible** interface, with an intentionally-minimal subset of the existing `Owner` API, aimed at what we *want* to support for `Owner` in the future:
+`Owner` is a **non-user-constructible** interface, with an intentionally minimal subset of the existing `Owner` API, aimed at what we *want* to support for `Owner` in the future:
 
 ```ts
 export default interface Owner {
-  lookup(name: string): unknown;
+  lookup(fullName: FullName): unknown;
 
-  register<T>(
-    fullName: string,
-    factory: Factory<T>,
+  register(
+    fullName: FullName,
+    factory: Factory<unknown> | object,
     options?: RegisterOptions
   ): void;
 
-  factoryFor(fullName: string): FactoryManager<unknown> | undefined;
+  factoryFor(fullName: FullName): FactoryManager<unknown> | undefined;
 }
 ```
 
-`Owner` is the default import from a new module, `@ember/owner`. With it come two other new types: `RegisterOptions` and `Factory`.
+`Owner` is the default import from a new module, `@ember/owner`:
+
+```ts
+import type Owner from '@ember/owner';
+
+function useOwner(owner: Owner) {
+  let someService = owner.lookup('service:some-service');
+  // ...
+}
+```
+
+JS users can refer to it in JSDoc comments using `import()` syntax:
+
+```js
+/**
+ * @param {import('@ember/owner').default} owner
+ */
+function useOwner(owner) {
+  let someService = owner.lookup('service:some-service');
+  // ...
+}
+```
+
 
 `Owner` is non-user-constructible because constructing it correctly also requires the ability to provide a factory manager.[^existing-owner-usage]
 
-[^existing-owner-usage]: Existing usage of the Owner interface this way (e.g. setting custom owners for tests) mostly falls under the "intimate API" rules, and will likely be deprecated after a future introduction of createOwner() hook so that that there is a public API way to get the required type.
+In support of `Owner`, there are also four other newly-public types: `RegisterOptions`, `Factory`, `FactoryManager`, and `FullName`.
+
+[^existing-owner-usage]: Existing usage of the Owner interface this way (e.g. setting custom owners for tests) mostly falls under the "intimate API" rules, and will likely be deprecated after a future introduction of a `createOwner()` hook so that that there is a public API way to get the required type.
 
 
 #### `RegisterOptions`
@@ -92,61 +138,53 @@ function useRegisterOptions(registerOptions) {
 
 #### `Factory`
 
-`Factory` is an existing concept available to users via [the `Engine#lookup` API][ff]. The public API to date has included only two fields, `class` and `create`, and we maintain that in this RFC. The result is this user-constructible interface:
+`Factory` is an existing concept available to users via [the `Engine#lookup` API][ff]. The public API only includes a `create` method, and we maintain that in this RFC. The result is this user-constructible interface:
 
 [ff]: https://api.emberjs.com/ember/4.3/classes/EngineInstance/methods/factoryFor?anchor=lookup
 
 ```ts
-export interface Factory<Class> {
-  class: Class;
-  create(
-    initialValues?: {
-      [K in keyof InstanceOf<Class>]?: InstanceOf<Class>[K];
-    }
-  ): InstanceOf<Class>;
+export interface Factory<T> {
+  create(initialValues?: Partial<T>): T;
 }
 ```
 
-<details><summary>The <code>InstanceOf<T></code> and <code>ClassProps</code> type</summary>
-
-The `InstanceOf<T>` type here is a utility type which is *not* exported, because it is only necessary to guarantee that `create` accepts and returns the appropriate values: the fields to set on the class instance, and the instance after construction respectively. It is provided here only for completeness.
-
-```ts
-type InstanceOf<T> = T extends new (...args: any) => infer R ? R : never;
-```
-
-</details>
-
-`Factory` is now available as a named import from `@ember/owner`:
+`Factory` is available as a named import from `@ember/owner`:
 
 ```ts
 import { type Factory } from '@ember/owner';
+
+function useFactory(factory: Factory<unknown>) {
+  let instance = factory.create();
+}
 ```
 
 JS users can refer to it in JSDoc comments using `import()` syntax:
 
 ```js
 /**
- * @param {import('@ember/owner').Factory} Factory
+ * @param {import('@ember/owner').Factory<unknown>} factory
  */
-function useFactory(Factory) {
-  // ...
+function useFactory(factory) {
+  let instance = factory.create();
 }
 ```
-
-Note that the `Class` type parameter must be defined using `typeof SomeClass`, *not* `SomeClass`:
 
 ```ts
 import { type Factory } from '@ember/owner';
 
 class Person {
-  constructor(public name: string, public age: number) {}
+  name: string;
+  age: number;
+
+  private constructor(name: string, age: number) {
+    this.name = name;
+    this.age = age;
+  }
 }
 
-class PersonManager implements Factory<typeof Person> {
-  class = Person;
+class PersonFactory implements Factory<Person> {
   create({ name = "", age = 0 } = {}) {
-    return new this.class(name, age);
+    return new Person(name, age);
   }
 }
 ```
@@ -161,13 +199,9 @@ class PersonManager implements Factory<typeof Person> {
 [ff]: https://api.emberjs.com/ember/4.3/classes/EngineInstance/methods/factoryFor?anchor=lookup
 
 ```ts
-export class FactoryManager<Class> {
+export interface FactoryManager<T> {
   readonly class: Factory<T>;
-  create(
-    initialValues?: {
-      [K in keyof InstanceOf<Class>]?: InstanceOf<Class>[K];
-    }
-  ): InstanceOf<Class>;
+  create(initialValues?: Partial<T>): T;
 }
 ```
 
@@ -184,6 +218,34 @@ JS users can refer to it in JSDoc comments using `import()` syntax:
  * @param {import('@ember/owner').FactoryManager} factoryManager
  */
 function useFactoryManager(factoryManager) {
+  // ...
+}
+```
+
+
+#### `FullName`
+
+The `FullName` type is a user-constructible alias for Ember’s string namespacing:
+
+```ts
+export type FullName = `${string}:${string}`;
+```
+
+This form allows both the namespaced (`namespace@type:name`) and non-namespaced (`type:name`) variants of these keys. It does not fully validate that these match Ember’s own internal rules for these types, but provides a bare-minimum check on the type safety of strings passed into `Owner` APIs.
+
+Although users will not usually need to use it directly, instead simply passing it as a string literal to `Owner#lookup`, `Owner#register`, or `Owner#factoryFor`, it is available as a named import from `@ember/owner`:
+
+```ts
+import { type FullName } from '@ember/owner';
+```
+
+S users can refer to it in JSDoc comments using `import()` syntax:
+
+```js
+/**
+ * @param {import('@ember/owner').FullName} fullName
+ */
+function useFullName(fullName) {
   // ...
 }
 ```
