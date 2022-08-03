@@ -1,5 +1,10 @@
 ---
+# FIXME: This may be a further stage
+Stage: Accepted
 Start Date: 2017-04-26
+Release Date: FIXME
+Release Versions: FIXME
+Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/225
 Ember Issue: https://github.com/emberjs/ember.js/pull/15174
 

@@ -1,5 +1,9 @@
 ---
+# FIXME: May be Recommended
+Stage: Released
 Start Date: 2020-05-23
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/631
 
@@ -53,7 +57,7 @@ The following documentation will be added to the method:
  * Returns a promise that will be resolved once the refresh is complete.
  * All resetController, beforeModel, model, afterModel, redirect, and setupController
  * hooks will be called again. You will get new data from the model hook.
- * 
+ *
  * @method refresh
  * @param {String} [pivotRouteName] the route to refresh (along with all child routes)
  * @return Transition

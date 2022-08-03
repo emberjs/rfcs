@@ -1,5 +1,9 @@
 ---
+Stage: Recommended
 Start Date: 2017-11-05
+Release Date: FIXME
+Release Versions: FIXME
+Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/268
 
 ---
@@ -58,7 +62,7 @@ that we can iterate faster while supporting multiple Ember versions
 independently and easily support multiple testing frameworks build on top of
 the primitives in `@ember/test-helpers`. Ultimately, the existing [ember-testing](https://github.com/emberjs/ember.js/tree/master/packages/ember-testing) system
 will be deprecated but that deprecation will be added well after the new system has been
-released and adopted by the community. 
+released and adopted by the community.
 
 Lets take a look at a basic example (lifted from [the guides](https://guides.emberjs.com/v2.16.0/testing/acceptance/)):
 
@@ -103,7 +107,7 @@ The following new methods will be exposed from `ember-qunit`:
 
 ```ts
 declare module 'ember-qunit' {
-  // ...snip... 
+  // ...snip...
   export function setupApplicationTest(hooks: QUnitModuleHooks): void;
 }
 ```

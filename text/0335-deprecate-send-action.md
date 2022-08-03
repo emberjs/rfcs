@@ -1,5 +1,9 @@
 ---
+Stage: Recommended
 Start Date: 2018-05-29
+Release Date: FIXME
+Release Versions: FIXME
+Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/335
 
 ---
@@ -96,7 +100,7 @@ export default Component.extend({
       // if (this.salute) {
       //   this.salute()
       // }
-      // 
+      //
       // Alternatively, you can also define a noop salute function:
       // salute() {}
       //

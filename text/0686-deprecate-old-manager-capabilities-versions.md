@@ -1,4 +1,5 @@
 ---
+# FIXME: This seems to be at least partially implemented
 Stage: Accepted
 Start Date: 2020-11-28
 Release Date: Unreleased

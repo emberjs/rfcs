@@ -1,5 +1,9 @@
 ---
+# FIXME: This may be a further stage
+Stage: Accepted
 Start Date: 2019-03-13
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): data
 RFC PR: https://github.com/emberjs/rfcs/pull/465
 Tracking: https://github.com/emberjs/rfc-tracking/issues/46
@@ -25,7 +29,7 @@ When a user sends a record save request, it can fail in two different ways:
 
 ## Detailed design
 
-Currently on a failed save, Record Data receives a call to 
+Currently on a failed save, Record Data receives a call to
 
 `commitWasRejected(recordIdentifier: RecordIdentifier): void;`
 
@@ -46,7 +50,7 @@ interface RecordData {
 }
 ```
 
-`RecordValidationError` follows the subset of the JSON api errors spec. For example, if the record being saved was rejected because the attribute `password` was empty, the `RecordValidationError` could look like: 
+`RecordValidationError` follows the subset of the JSON api errors spec. For example, if the record being saved was rejected because the attribute `password` was empty, the `RecordValidationError` could look like:
 
 ```ts
 {
@@ -58,7 +62,7 @@ interface RecordData {
 }
 ```
 
-The source pointer is a JSON pointer relative to the Resource Object.   
+The source pointer is a JSON pointer relative to the Resource Object.
 
 We would also add a method on the `RecordDataStoreWrapper` to enable Record Data to notify the store that the errors properties have changed.
 ```ts
@@ -71,7 +75,7 @@ There would be no api for changing the errors from the client side, they would b
 
 ## How we teach this
 
-We currently do not have a comprehensive way to teach the RecordData api. This RFC will be taught alongisde the rest of upcoming Record Data docs. 
+We currently do not have a comprehensive way to teach the RecordData api. This RFC will be taught alongisde the rest of upcoming Record Data docs.
 
 ## Alternatives
 

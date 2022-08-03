@@ -1,5 +1,8 @@
 ---
+Stage: Recommended
 Start Date: 2020-06-24
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): Ember CLI
 RFC PR: https://github.com/emberjs/rfcs/pull/645
 Authors: Benjamin Jegard, Melanie Sumner, Ricardo Mendes

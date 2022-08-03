@@ -1,5 +1,8 @@
 ---
+Stage: Recommended
 Start Date: 2019-02-17
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Teams: Ember.js, Learning
 RFC PR: https://github.com/emberjs/rfcs/pull/449
 Tracking: https://github.com/emberjs/rfc-tracking/issues/38
@@ -14,7 +17,7 @@ Partials are an old Ember construct that have no benefits and many downsides whe
 
 ## Motivation
 
-Partials have a number of downsides when compared with components: 
+Partials have a number of downsides when compared with components:
 
  - They are hard to reason about as they inherit the scope of the calling template
  - They perform poorly in comparison to components

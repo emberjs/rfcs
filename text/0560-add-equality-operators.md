@@ -1,7 +1,13 @@
-- Start Date: 2019-12-08
-- Relevant Team(s): (fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies)
-- RFC PR: https://github.com/emberjs/rfcs/pull/560
-- Tracking: (leave this empty)
+---
+Stage: Accepted
+Start Date: 2019-12-08
+Release Date: Unreleased
+Release Versions:
+  ember-source: vX.Y.Z
+  ember-data: vX.Y.Z
+Relevant Team(s): Ember.js
+RFC PR: https://github.com/emberjs/rfcs/pull/560
+---
 
 # Adding Equality Operators to Templates
 

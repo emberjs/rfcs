@@ -1,5 +1,9 @@
 ---
+# FIXME: This may be at a further stage.
+Stage: Accepted
 Start Date: 2019-03-09
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): data
 RFC PR: https://github.com/emberjs/rfcs/pull/466
 Tracking: https://github.com/emberjs/rfc-tracking/issues/52
@@ -7,7 +11,7 @@ Tracking: https://github.com/emberjs/rfc-tracking/issues/52
 ---
 
 # Request State Service
-    
+
 
 ## Summary
 
@@ -87,7 +91,7 @@ Expose a service on the store
 ```ts
 class Store {
   getRequestStateService(): RequestStateService
-}   
+}
 ```
 
 Using these  we can reimplement the current `isSaving` method on `DS.Model`

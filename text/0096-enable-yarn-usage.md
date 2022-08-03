@@ -1,5 +1,8 @@
 ---
+Stage: Recommended
 Start Date: 2017-02-02
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): Ember CLI
 RFC PR: https://github.com/ember-cli/rfcs/pull/96
 

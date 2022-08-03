@@ -1,5 +1,10 @@
 ---
+Stage: Recommended
 Start Date: 2014-08-18
+Release Date: 2015-02-07
+Release Versions:
+  ember-source: v1.10.0
+Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/3
 Issues:
   Ember Stream support: emberjs/ember.js#5522

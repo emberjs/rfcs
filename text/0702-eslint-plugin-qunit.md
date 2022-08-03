@@ -1,7 +1,7 @@
 ---
-Stage: Accepted
+Stage: Recommended
 Start Date: 2021-01-09
-Release Date: Unreleased
+Release Date: FIXME
 Release Versions:
   ember-cli: vX.Y.Z
 Relevant Team(s): Ember CLI

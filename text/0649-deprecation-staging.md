@@ -1,5 +1,9 @@
 ---
+# FIXME: This seems to be at least partially implemented
+Stage: Accepted
 Start Date: 2020-06-18
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): Ember.js, Learning, Steering, Ember CLI
 RFC PR: https://github.com/emberjs/rfcs/pull/649
 

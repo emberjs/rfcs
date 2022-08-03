@@ -1,5 +1,8 @@
 ---
+Stage: Recommended
 Start Date: 2019-02-19
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): Ember.js, Ember Data, Learning
 RFC PR: https://github.com/emberjs/rfcs/pull/451
 Tracking: https://github.com/emberjs/rfc-tracking/issues/34

@@ -1,5 +1,9 @@
 ---
+# FIXME: Is this correct? Or is it Discontinued?
+Stage: Accepted
 Start Date: 2016-05-09
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/143
 Tracking: https://github.com/emberjs/rfc-tracking/issues/27 / https://github.com/emberjs/ember.js/issues/14882

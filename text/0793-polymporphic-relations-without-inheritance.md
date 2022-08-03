@@ -1,4 +1,5 @@
 ---
+# FIXME: This may be a further stage
 Stage: Accepted
 Start Date: 2022-02-11
 Release Date: Unreleased
@@ -9,8 +10,8 @@ Relevant Team(s): Ember Data
 RFC PR: https://github.com/emberjs/rfcs/pull/793
 ---
 
-<!--- 
-Directions for above: 
+<!---
+Directions for above:
 
 Stage: Leave as is
 Start Date: 2022-02-11
@@ -90,15 +91,15 @@ The polymorphic relationship **MUST** explicitly declare itself as polymorphic a
 Polymorphic relationships take the form:
 
 ```ts
-hasMany(baseType: string, options: { polymorphic: true, inverse: string | null }) 
-belongsTo(baseType: string, options: { polymorphic: true, inverse: string | null }) 
+hasMany(baseType: string, options: { polymorphic: true, inverse: string | null })
+belongsTo(baseType: string, options: { polymorphic: true, inverse: string | null })
 ```
 
 Concrete Relationships which fulfill polymorphic relationships take the form:
 
 ```ts
-hasMany(recordWithPolymorphicRelationship: string, options: { inverse: string, as: string }) 
-belongsTo(recordWithPolymorphicRelationship: string, options: { inverse: string, as: string }) 
+hasMany(recordWithPolymorphicRelationship: string, options: { inverse: string, as: string })
+belongsTo(recordWithPolymorphicRelationship: string, options: { inverse: string, as: string })
 ```
 
 So for instance, given a field named "tagged" that is a polymorphic hasMany with baseType "taggable", and inverse key "tags" the following would be the polymorphic relationship and concrete relationship.

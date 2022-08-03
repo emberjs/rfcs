@@ -1,5 +1,9 @@
 ---
+Stage: Recommended
 Start Date: 2015-09-24
+Release Date: FIXME
+Release Versions: FIXME
+Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/95
 Ember Issue: https://github.com/emberjs/ember.js/pull/14805
 
@@ -10,7 +14,7 @@ Ember Issue: https://github.com/emberjs/ember.js/pull/14805
 This RFC proposes:
 
  - creating a public `router` service that is a superset of today's `Ember.Router`.
- 
+
  - codifying and expanding the supported public API for the `transition` object that is currently passed to `Route` hooks.
 
  - introducing the `get-route-info` template helper
@@ -163,7 +167,7 @@ So we should deprecate willTransition and didTransition in favor of the followin
 
 ### New Events: routeWillChange & routeDidChange
 
-The `routeWillChange` event fires whenever a new route is chosen as the desired target of a transition. This includes `transitionTo`, `replaceWith`, all redirection for any reason including error handling, and abort. Aborting implies changing the desired target back to where you already were. Once a transition has completed, `routeDidChange` fires. 
+The `routeWillChange` event fires whenever a new route is chosen as the desired target of a transition. This includes `transitionTo`, `replaceWith`, all redirection for any reason including error handling, and abort. Aborting implies changing the desired target back to where you already were. Once a transition has completed, `routeDidChange` fires.
 
 Both events receive a single `transition` argument as described in the "Transition Object" section below, which explains the meaning of `from` and `to` in more detail.
 
@@ -314,7 +318,7 @@ We propose `readsRouteInfo` for defining a component that reads route info:
 let MyComponent = Ember.Component.extend({
   didInsertElement() {
     // Accessing routInfo here is intended to be indistinguishable
-    // from a normal, explicitly-passed input argument. 
+    // from a normal, explicitly-passed input argument.
     doSomethingWith(this.get('routeInfo'));
   }
 });
@@ -344,7 +348,7 @@ We propose the `#with-route-info` keyword for setting a new route info:
 {{#with-route-info someValue}}
   {{!-
     within this block AND ALL ITS DESCENDANTS until
-    otherwise overridden by another set-route-info statement, 
+    otherwise overridden by another set-route-info statement,
     `get-route-info` returns someValue.
   -}}
 {{/with-route-info}}
@@ -368,7 +372,7 @@ Ember.Helper.extend({
 });
 ```
 
-A more complete version that also matches models and queryParams can be written in the same way. 
+A more complete version that also matches models and queryParams can be written in the same way.
 
 2. We can improve `link-to` so that it always finds implicit model arguments from the local context, rather than trying to locate them on the global router service. This will fix longstanding bugs like https://github.com/ember-animation/liquid-fire/issues/347 and it will make it easier to test components that contain `{{link-to}}`. This would also open the door to relative link-tos.
 

@@ -1,4 +1,5 @@
 ---
+Stage: Accepted
 Start Date: 2015-08-18
 Relevant Team(s): Ember CLI
 RFC PR: https://github.com/ember-cli/rfcs/pull/23

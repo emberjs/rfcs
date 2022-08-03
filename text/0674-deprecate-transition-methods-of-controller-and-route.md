@@ -1,5 +1,8 @@
 ---
+Stage: Recommended
 Start Date: 2020-10-12
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/674
 
@@ -208,12 +211,12 @@ Three possible alternative are discovered so far:
    `Controller#transitionToRoute` and `Controller#replaceWith` we could try to
    align their implementations to match `RouterService#transitionTo` and
    `RouterService.replaceWith` in regards to timing and other details.
-  
+
    Doing so will very likely require breaking changes as existing applications
    do very likely depend onto the existing timings and other details. Even if
    not being specified and documented these details became part of our public
    API over the years.
-  
+
    Therefore we would need to introduce an optional feature which allows
    applications to opt-in into the new timings as soon as they have verifed
    everything is working as expected.
@@ -248,7 +251,7 @@ No open questions have been discovered so far.
    - https://github.com/emberjs/ember.js/issues/18416
    - https://github.com/emberjs/ember.js/issues/18577
    - https://github.com/emberjs/ember.js/issues/19037
-  
+
    This list does not contain a represantive list of bugs. Neither does it
    include bugs, which I verified myself. It's nothing more than a collection
    of bug reports that I found by [searching for issues containing

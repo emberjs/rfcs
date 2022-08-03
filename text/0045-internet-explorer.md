@@ -1,5 +1,10 @@
 ---
+# FIXME: Is this correct?
+Stage: Discontinued
 Start Date: 2015-06-07
+Release Date: FIXME
+Release Versions: FIXME
+Relevant Team(s): FIXME
 RFC PR: https://github.com/emberjs/rfcs/pull/45
 
 ---

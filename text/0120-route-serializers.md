@@ -1,5 +1,10 @@
 ---
+# FIXME: Is this correct? Doesn't appear to be the recommended way of doing it.
+Stage: Discontinued
 Start Date: 2016-02-11
+Release Date: FIXME
+Release Versions: FIXME
+Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/120
 Ember Issue: https://github.com/emberjs/ember.js/pull/13016
 

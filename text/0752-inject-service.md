@@ -1,7 +1,7 @@
 ---
-Stage: Accepted
+Stage: Recommended
 Start Date: 2021-06-10
-Release Date: Unreleased
+Release Date: FIXME
 Release Versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
@@ -9,8 +9,8 @@ Relevant Team(s): Ember.js, Learning
 RFC PR: https://github.com/emberjs/rfcs/pull/752
 ---
 
-<!--- 
-Directions for above: 
+<!---
+Directions for above:
 
 Stage: Leave as is
 Start Date: Fill in with today's date, YYYY-MM-DD
@@ -49,7 +49,7 @@ This RFC proposes to actually provide this as a `service` import directly.
 
 ## Motivation
 
-You cannot properly/easily use editor autocompletion to import `@service`. 
+You cannot properly/easily use editor autocompletion to import `@service`.
 
 Even in the guides, `inject` is aliased to `service` (see: https://guides.emberjs.com/release/services/#toc_accessing-services)
 
@@ -98,7 +98,7 @@ want to support both versions.
 
 ## Alternatives
 
-We could leave the import as it is, continuing to suggest people rename the import to `service`. 
+We could leave the import as it is, continuing to suggest people rename the import to `service`.
 
 Or we could stop suggesting the import and push for the community to simply use `@inject myService`.
 

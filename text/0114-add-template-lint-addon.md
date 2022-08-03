@@ -1,5 +1,9 @@
 ---
+# FIXME: Is this correct? We don't quite do what is specified here
+Stage: Discontinued
 Start Date: 2018-01-04
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): Ember CLI
 RFC PR: https://github.com/ember-cli/rfcs/pull/114
 

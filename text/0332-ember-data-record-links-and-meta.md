@@ -1,5 +1,9 @@
 ---
+# FIXME: This may be a further stage
+Stage: Accepted
 Start Date: 2018-10-24
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): Ember Data
 RFC PR: https://github.com/emberjs/rfcs/pull/332
 Tracking: https://github.com/emberjs/rfc-tracking/issues/19
@@ -17,7 +21,7 @@ Enable users to associate `links` and `meta` information with individual records
 
 Sometimes users have meta or links information to associate with a specific record.
 Users of the `json-api` specification will commonly understand this information as
-belonging to an individual `resource`.  
+belonging to an individual `resource`.
 
 While `ember-data` allows for this information to exist on relationships, it does
  not allow for it to exist on records, which has to this point been a glaring omission
@@ -110,7 +114,7 @@ let record = store.push({
         data: [
           {
             type: 'project',
-            id: '1',         
+            id: '1',
             meta: {}, // ignored
             links: {} // ignored
           }
@@ -135,7 +139,7 @@ let record = store.push({
         data: [
           {
             type: 'project',
-            id: '1',         
+            id: '1',
           }
         ],
         meta: {}, // available on the Record's hasMany relationship

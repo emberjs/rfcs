@@ -1,7 +1,7 @@
 ---
-Stage: Accepted
+Stage: Recommended
 Start Date: 2021-05-26
-Release Date: Unreleased
+Release Date: FIXME
 Release Versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z

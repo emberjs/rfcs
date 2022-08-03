@@ -1,5 +1,9 @@
 ---
+# FIXME: This may be a further stage
+Stage: Accepted
 Start Date: 2018-09-06
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): Ember Data
 RFC PR: https://github.com/emberjs/rfcs/pull/372
 Tracking: https://github.com/emberjs/rfc-tracking/issues/16
@@ -21,7 +25,7 @@ Ember differentiates between `klass` and `factory` for classes registered with t
 `ember-data` has carried two APIs for accessing one or the other for some time. The public `modelFor`
  provides access to the `klass` where schema information is stored, while the private `_modelFactoryFor`
  provides access to the factory for instantiation.
- 
+
 We provide access to the class with `modelFor` roughly implemented as `store._modelFactoryFor(modelName).klass`.
 We instantiate records from this class roughly implemented as `store._modelFactoryFor(modelName).create({ ...args })`.
 
@@ -81,14 +85,14 @@ export default Store.extend({
     if (someCustomCondition) {
       return getOwner(this).factoryFor(someFactoryName);
     }
-    
+
     return this._super(modelName);
   }
 });
 ```
- 
+
  #### `Model.modelName`
- 
+
  `ember-data` currently sets `modelName` onto the `klass` accessible via the `factory`. For classes that do not
    inherit from `DS.Model` this would not be done, although end users may do so themselves in their implementations
    if so desired.
@@ -99,7 +103,7 @@ The default export of a custom ModelClass **MUST** conform to the requirements o
  of `factoryFor` are currently underspecified; however, in practice, this means that the default export is an
  instantiable class with a static `create` method and an instance `destroy` method or that inherits from `EmberObject`
  (which provides such methods).
- 
+
 **Example 2:**
 
 ```javascript
@@ -132,7 +136,7 @@ export default class CustomModel extends EmberObject {
 
 Custom classes for models should expect their constructor to receive a single argument: an object with *at least*
  the following.
- 
+
 - A `recordData` instance accessible via `getRecordData` (see below)
 - Any properties passed as the second arg to `createRecord`
 - An `owner` accessible via `Ember.getOwner`
@@ -143,11 +147,11 @@ Custom classes for models should expect their constructor to receive a single ar
 
 Every `record` (instance of the class returned by `modelFactoryFor`) will have an associated [RecordData](https://github.com/emberjs/rfcs/pull/293)
  which contains the backing data for the id, type, attributes and relationships of that record.
- 
+
 This backing data can be accessed by using the `getRecordData` util on the `record` (or on the `createArgs` passed to
  a record). Using `getRecordData` on a `record` is only guaranteed after the record has been instantiated. During
  instantiation, this call should be made on the `createArgs` object passed into the record.
- 
+
 **Example 4**
 
 ```javascript

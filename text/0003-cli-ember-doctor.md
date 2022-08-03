@@ -1,5 +1,10 @@
 ---
+Stage: Accepted
 Start Date: 2015-01-10
+Release Date: Unreleased
+Release Versions:
+  ember-source: vX.Y.Z
+  ember-data: vX.Y.Z
 Relevant Team(s): Ember CLI
 RFC PR: https://github.com/ember-cli/rfcs/pull/3
 

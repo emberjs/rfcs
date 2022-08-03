@@ -1,5 +1,9 @@
 ---
+# FIXME: This may be a further stage
+Stage: Accepted
 Start Date: 2019-03-13
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): data
 RFC PR: https://github.com/emberjs/rfcs/pull/463
 Tracking: https://github.com/emberjs/rfc-tracking/issues/47
@@ -7,7 +11,7 @@ Tracking: https://github.com/emberjs/rfc-tracking/issues/47
 ---
 
 # Record State on Record Data RFC
-  
+
 
 ## Summary
 
@@ -23,16 +27,16 @@ RecordData handles managing local and server state for records. While the curren
 
 Add the following methods on the RecordData interface:
 
-```ts    
+```ts
 interface RecordData {
-    
+
   // To be added in this RFC
   isNew(identifier: RecordIdentifier): boolean
 
   isDeleted(identifier: RecordIdentifier): boolean
 
   isDeletionCommitted(identifier: RecordIdentifier): boolean
-    
+
   setIsDeleted(identifier: RecordIdentifier, boolean: isDeleted): void
 }
 ```
@@ -73,14 +77,14 @@ export interface RecordDataStoreWrapper {
 }
 ```
 
-Currently calling `rollbackAttributes` rolls back `isDeleted` to a non deleted state. This logic would be the responsibility of Record Data to implement. 
+Currently calling `rollbackAttributes` rolls back `isDeleted` to a non deleted state. This logic would be the responsibility of Record Data to implement.
 
 ## How we teach this
-We currently do not have a comprehensive way to teach RecordData api. This RFC will be tought alongisde the rest of upcoming Record Data docs. 
+We currently do not have a comprehensive way to teach RecordData api. This RFC will be tought alongisde the rest of upcoming Record Data docs.
 
 
 ## Alternatives
 
-Instead of separate methods, have a single methods, somehting like `getState` that returns a POJO with keys like 
+Instead of separate methods, have a single methods, somehting like `getState` that returns a POJO with keys like
 
     { isDeleted: true, isNew: false }

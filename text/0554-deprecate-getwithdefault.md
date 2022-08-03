@@ -1,5 +1,9 @@
 ---
+Stage: Recommended
 Start Date: 2019-11-08
+Release Date: FIXME
+Release Versions:
+  ember-source: v3.21.0
 Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/554
 
@@ -19,7 +23,7 @@ Given the JavaScript language will soon (currently in Stage 3) give us the appro
 
 ## Transition Path
 
-Ember will start logging deprecation messages for `getWithDefault` usage. 
+Ember will start logging deprecation messages for `getWithDefault` usage.
 
 We can codemod our current usage of `getWithDefault` with the equivalent behaviour using plain JavaScript. The migration guide will cover this example:
 
@@ -119,7 +123,7 @@ let { falseValue = defaultValue } = obj;
 
 Add the transition path to the [Ember Deprecation Guide](https://deprecations.emberjs.com/).
 
-The references to `getWithDefault` will need to be removed from the [API docs](https://api.emberjs.com/ember/release/functions/@ember%2Fobject/getWithDefault). 
+The references to `getWithDefault` will need to be removed from the [API docs](https://api.emberjs.com/ember/release/functions/@ember%2Fobject/getWithDefault).
 
 There are no changes needed for the [Ember Guides](https://guides.emberjs.com/release/) since we do not use it anywhere.
 

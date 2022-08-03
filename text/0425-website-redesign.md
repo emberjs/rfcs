@@ -1,5 +1,8 @@
 ---
+Stage: Recommended
 Start Date: 2018-12-21
+Release Date: FIXME
+Release Versions: N/A
 Relevant Team(s): Learning, Steering
 RFC PR: https://github.com/emberjs/rfcs/pull/425
 Tracking: https://github.com/emberjs/rfc-tracking/issues/35

@@ -1,5 +1,9 @@
 ---
+# FIXME: This may be a further stage
+Stage: Accepted
 Start Date: 2020-06-15
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): Ember CLI, Learning
 RFC PR: https://github.com/emberjs/rfcs/pull/639
 

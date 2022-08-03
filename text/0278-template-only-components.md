@@ -1,5 +1,9 @@
 ---
+Stage: Recommended
 Start Date: 2017-12-11
+Release Date: FIXME
+Release Versions: FIXME
+Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/278
 Ember Issue: https://github.com/emberjs/ember.js/pull/15974
 
@@ -154,8 +158,8 @@ in a few limited ways:
 
 3. It is possible (but very rare) to configure global injections on the
    component type. Since no component is being instantiated here, those
-   properties will not be accessible in the template. 
-   
+   properties will not be accessible in the template.
+
    More broadly, `{{this.foo}}` or the shorthand `{{foo}}` (where it
    would have resolved into a `this` lookup) will always be `undefined`
    (or `null`, perhaps).

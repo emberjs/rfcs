@@ -1,5 +1,8 @@
 ---
+Stage: Recommended
 Start Date: 2017-05-05
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/226
 Tracking: https://github.com/emberjs/rfc-tracking/issues/13

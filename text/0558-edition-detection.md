@@ -1,5 +1,8 @@
 ---
+Stage: Recommended
 Start Date: 2019-11-20
+Release Date: FIXME
+Release Versions: FIXME
 Relevant Team(s): Ember.js, Ember CLI, Ember Data
 RFC PR: https://github.com/emberjs/rfcs/pull/558
 
