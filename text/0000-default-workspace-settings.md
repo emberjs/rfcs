@@ -32,7 +32,7 @@ For example, what features can give us [Visual Studio Code](https://code.visuals
 
 ### Recommended extensions
 
-```json
+```jsonc
 // .vscode/extensions.json
 {
   "recommendations": [
@@ -48,7 +48,7 @@ For example, what features can give us [Visual Studio Code](https://code.visuals
 
 ### Settings for debugging inside VS Code
 
-```json
+```jsonc
 // .vscode/launch.json
 {
   "version": "0.2.0",
@@ -71,7 +71,7 @@ For example, what features can give us [Visual Studio Code](https://code.visuals
 
 ### Tasks
 
-```json
+```jsonc
 // .vscode/tasks.json
 {
   "version": "2.0.0",
@@ -92,7 +92,7 @@ For example, what features can give us [Visual Studio Code](https://code.visuals
 
 ### Other useful settings
 
-```json
+```jsonc
 // .vscode/settings.json
 {
   "search.exclude": {
