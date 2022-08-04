@@ -1,5 +1,6 @@
 ---
-Stage: Discontinued
+# FIXME: Should this be discontinued?
+Stage: Recommended
 Start Date: 2016-04-16
 Release Date: FIXME
 Release Versions: FIXME

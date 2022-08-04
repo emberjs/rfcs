@@ -1,6 +1,6 @@
 ---
 # FIXME: This may be a further stage
-Stage: Accepted
+Stage: Recommended
 Start Date: 2018-04-18
 Release Date: FIXME
 Release Versions: FIXME

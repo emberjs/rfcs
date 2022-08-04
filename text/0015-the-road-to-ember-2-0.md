@@ -2,9 +2,12 @@
 # FIXME: Is this correct?
 Stage: Discontinued
 Start Date: 2014-12-03
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): FIXME
+Release Date: 2015-08-13
+Release Versions:
+  ember-source: v2.0.0
+  ember-data: v2.0.0
+  ember-cli: v2.0.0
+Relevant Team(s): All Teams
 RFC PR: https://github.com/emberjs/rfcs/pull/15
 Ember Issue: This RFC is implemented over many Ember PRs
 

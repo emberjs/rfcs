@@ -1,9 +1,10 @@
 ---
-# FIXME: This may actually be a further stage
-Stage: Accepted
+# FIXME: This may actually be Recommended
+Stage: Released
 Start Date: 2019-05-09
-Release Date: FIXME
-Release Versions: FIXME
+Release Date: 2019-09-19
+Release Versions:
+  ember-source: v3.13.0
 Relevant Team(s): data
 RFC PR: https://github.com/emberjs/rfcs/pull/487
 Tracking: https://github.com/emberjs/rfc-tracking/issues/53

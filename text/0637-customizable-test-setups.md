@@ -1,10 +1,12 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
+# FIXME: Is this Recommended?
+Stage: Released
 Start Date: 2020-06-01
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Ember-CLI
+Release Date: 2020-05-02
+Release Versions:
+  ember-source: v4.4.0
+  ember-cli: FIXME
+Relevant Team(s): Ember.js, Ember-CLI
 RFC PR: https://github.com/emberjs/rfcs/pull/637
 
 ---

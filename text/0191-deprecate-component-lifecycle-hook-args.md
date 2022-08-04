@@ -1,4 +1,5 @@
 ---
+# FIXME: Is this Discontinued now?
 Stage: Recommended
 Start Date: 2016-12-14
 Release Date: FIXME

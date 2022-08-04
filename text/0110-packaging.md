@@ -1,5 +1,6 @@
 ---
-# FIXME: This may be a further stage
+# FIXME: This may be a further stage or Discontinued.
+# The v3.20.0 changelog mentions deprecating the packager experiment. Does that refer to this?
 Stage: Accepted
 Start Date: 2017-09-07
 Release Date: FIXME

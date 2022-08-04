@@ -1,9 +1,9 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
+Stage: Recommended
 Start Date: 2015-11-02
-Release Date: FIXME
-Release Versions: FIXME
+Release Date: 2017-01-23
+Release Versions:
+  ember-cli: v2.11.0
 Relevant Team(s): Ember CLI
 RFC PR: https://github.com/ember-cli/rfcs/pull/28
 

@@ -1,5 +1,5 @@
 ---
-# FIXME: This may be a further stage
+# FIXME: This may be a further stage or Discontinued since we now have allowlist and blocklist.
 Stage: Accepted
 Start Date: 2015-11-11
 Release Date: FIXME

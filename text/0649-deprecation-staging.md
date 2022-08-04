@@ -1,5 +1,5 @@
 ---
-# FIXME: This seems to be at least partially implemented
+# FIXME: This seems to be at least partially implemented in Ember 3.24
 Stage: Accepted
 Start Date: 2020-06-18
 Release Date: FIXME

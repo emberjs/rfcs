@@ -1,8 +1,9 @@
 ---
 Stage: Recommended
 Start Date: 2018-05-01
-Release Date: FIXME
-Release Versions: FIXME
+Release Date: 2019-09-20
+Release Versions:
+  ember-data: v3.13.0
 Relevant Team(s): Ember Data
 RFC PR: https://github.com/emberjs/rfcs/pull/329
 Tracking: https://github.com/emberjs/rfc-tracking/issues/21

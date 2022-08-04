@@ -1,11 +1,10 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
+# FIXME: This may be Recommended
+Stage: Released
 Start Date: 2021-11-30
-Release Date: Unreleased
+Release Date: 2022-06-13
 Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
+  ember-source: v4.5.0
 Relevant Team(s): Ember
 RFC PR: https://github.com/emberjs/rfcs/pull/785
 ---

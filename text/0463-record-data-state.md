@@ -2,8 +2,9 @@
 # FIXME: This may be a further stage
 Stage: Accepted
 Start Date: 2019-03-13
-Release Date: FIXME
-Release Versions: FIXME
+Release Date: Unimplemented
+Release Versions:
+  ember-data: vX.Y.Z
 Relevant Team(s): data
 RFC PR: https://github.com/emberjs/rfcs/pull/463
 Tracking: https://github.com/emberjs/rfc-tracking/issues/47

@@ -1,9 +1,10 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
+# FIXME: This may be Recommended
+Stage: Released
 Start Date: 2015-05-20
-Release Date: FIXME
-Release Versions: FIXME
+Release Date: 2016-02-29
+Release Versions:
+  ember-data: v2.4.0
 Relevant Team(s): Ember Data
 RFC PR: https://github.com/emberjs/rfcs/pull/57
 Ember Issue: https://github.com/emberjs/data/pull/3303

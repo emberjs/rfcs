@@ -1,9 +1,9 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
+Stage: Recommended
 Start Date: 2018-09-10
-Release Date: FIXME
-Release Versions: FIXME
+Release Date: 2019-02-18
+Release Versions:
+  ember-source: v3.8.0
 Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/373
 

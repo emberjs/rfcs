@@ -1,5 +1,5 @@
 ---
-# FIXME: This may be a further stage
+# FIXME: Appears to be at least partially released in v3.15
 Stage: Accepted
 Start Date: 2018-10-24
 Release Date: FIXME

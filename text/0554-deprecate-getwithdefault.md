@@ -1,7 +1,7 @@
 ---
 Stage: Recommended
 Start Date: 2019-11-08
-Release Date: FIXME
+Release Date: 2020-08-24
 Release Versions:
   ember-source: v3.21.0
 Relevant Team(s): Ember.js

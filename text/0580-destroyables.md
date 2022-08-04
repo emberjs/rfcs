@@ -1,9 +1,10 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
+# FIXME: Is this Recommended?
+Stage: Released
 Start Date: 2020-01-10
-Release Date: FIXME
-Release Versions: FIXME
+Release Date: 2020-10-05
+Release Versions:
+  ember-source: v3.22.0
 Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/580
 

@@ -1,9 +1,9 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
+Stage: Released
 Start Date: 2019-06-21
-Release Date: FIXME
-Release Versions: FIXME
+Release Date: 2021-06-25
+Release Versions:
+  ember-cli: v3.27.0
 Relevant Team(s): Ember CLI, Ember.js, Learning
 RFC PR: https://github.com/emberjs/rfcs/pull/507
 

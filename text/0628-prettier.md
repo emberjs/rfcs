@@ -1,8 +1,9 @@
 ---
 Stage: Recommended
 Start Date: 2020-05-18
-Release Date: FIXME
-Release Versions: FIXME
+Release Date: 2021-01-05
+Release Versions:
+  ember-cli: v3.24.0
 Relevant Team(s): Ember CLI
 RFC PR: https://github.com/emberjs/rfcs/pull/628
 

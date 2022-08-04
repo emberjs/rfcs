@@ -1,8 +1,9 @@
 ---
 Stage: Recommended
 Start Date: 2020-10-02
-Release Date: FIXME
-Release Versions: FIXME
+Release Date: 2020-12-28
+Release Versions:
+  ember-source: v3.24.0
 Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/673
 
