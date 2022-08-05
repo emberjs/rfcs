@@ -2,13 +2,15 @@
 start-date: 2019-04-12T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v3.13.0
+
 teams: 
   - framework
   - cli
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/481
 project-link: 
-stage: accepted
+stage: recommended
 ---
 
 # Component Templates Co-location

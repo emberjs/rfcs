@@ -2,12 +2,14 @@
 start-date: 2018-12-05T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v3.13.0
+
 teams: 
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/410
 project-link: 
-stage: accepted
+stage: recommended
 meta:
   tracking: https://github.com/emberjs/rfc-tracking/issues/4
   authors: Tom Dale, Chris Garrett, Chad Hietala, Yehuda Katz

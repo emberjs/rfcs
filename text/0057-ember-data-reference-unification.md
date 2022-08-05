@@ -2,12 +2,14 @@
 start-date: 2015-05-20T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-data: v2.4.0
+
 teams: 
-  - framework ## FIXME - added automatically as it was missing during migration
+  - data
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/57
 project-link: 
-stage: accepted
+stage: released
 meta:
   ember-issue: https://github.com/emberjs/data/pull/3303
 ---

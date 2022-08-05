@@ -2,6 +2,8 @@
 start-date: 2020-11-28T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v4.0.0
+
 teams: 
   - framework
   - data
@@ -12,7 +14,7 @@ teams:
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/685
 project-link: 
-stage: accepted
+stage: released
 ---
 
 # New Browser Support Policy

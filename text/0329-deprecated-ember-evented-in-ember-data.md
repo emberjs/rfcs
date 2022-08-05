@@ -2,12 +2,14 @@
 start-date: 2018-05-01T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-data: v3.13.0
+
 teams: 
   - data
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/329
 project-link: 
-stage: accepted
+stage: recommended
 meta:
   tracking: https://github.com/emberjs/rfc-tracking/issues/21
 ---

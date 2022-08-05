@@ -2,6 +2,17 @@
 start-date: 2018-10-22T00:00:00.000Z
 release-date:
 release-versions: 
+  0: U
+  1: n
+  2: r
+  3: e
+  4: l
+  5: e
+  6: a
+  7: s
+  8: e
+  9: d
+
 teams: 
   - framework
 prs:

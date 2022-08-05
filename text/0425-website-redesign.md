@@ -2,13 +2,17 @@
 start-date: 2018-12-21T00:00:00.000Z
 release-date:
 release-versions: 
+  0: N
+  1: /
+  2: A
+
 teams: 
   - learning
   - steering
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/425
 project-link: 
-stage: accepted
+stage: recommended
 meta:
   tracking: https://github.com/emberjs/rfc-tracking/issues/35
 ---

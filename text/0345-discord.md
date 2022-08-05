@@ -2,12 +2,16 @@
 start-date: 2019-07-11T00:00:00.000Z
 release-date:
 release-versions: 
+  0: N
+  1: /
+  2: A
+
 teams: 
-  - framework ## FIXME - added automatically as it was missing during migration
+  - # FIXME
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/345
 project-link: 
-stage: accepted
+stage: recommended
 ---
 
 # RFC to move the Ember community chat to Discord
@@ -60,7 +64,7 @@ First, it has caused many of the most prolific contributors to be less active in
 
 Second, and perhaps worst of all, it undermines the transparency and open governance that we have worked hard to create. Our bar is higher than just making it possible to contribute—we go out of our way to actively welcome and encourage everyone to participate, learn and contribute.
 
-Finally, this is not intended to replace [the forum](https://discuss.emberjs.com/), and that should be made clear. The forum is still the preferred place for asyncronous, threaded conversations where in-depth discussion is desired. 
+Finally, this is not intended to replace [the forum](https://discuss.emberjs.com/), and that should be made clear. The forum is still the preferred place for asyncronous, threaded conversations where in-depth discussion is desired.
 
 ## Detailed design
 
@@ -70,9 +74,9 @@ We will need these things to transition the community smoothly:
 
 - a period of time when we use both chat platforms during the transition, put the equivalent Discord channel information in the Slack channel topic
 - a clear guide (with illustrations)
-- once all of the setup is complete, the Discord server invites can be distributed. 
+- once all of the setup is complete, the Discord server invites can be distributed.
 
-Note: the current Discord chat will be closed while this RFC is under consideration. If the RFC is accepted, then a detailed implementation plan (mostly role/channel/server setup) & invitation strategy will be carried out.  
+Note: the current Discord chat will be closed while this RFC is under consideration. If the RFC is accepted, then a detailed implementation plan (mostly role/channel/server setup) & invitation strategy will be carried out.
 
 #### Initial Setup
 
@@ -80,13 +84,13 @@ Because Discord has fine-grained controls, we will be able to implement categori
 
 We intend to have the "welcome" channel as the initial channel for everyone who joins the Discord server. This channel will be read-only and will list the rules for the Discord server.
 
-We also intend to have a "setup" channel. This channel will give you a complete guide of how to take advantage of the personalization, privacy and security, and notification controls in Discord. 
+We also intend to have a "setup" channel. This channel will give you a complete guide of how to take advantage of the personalization, privacy and security, and notification controls in Discord.
 
 **Verification Level**
 Initially, we will be implementing the "low" verification level, which means users will need to have a verified email on their Discord account. If this proves to be too easy of a target for spammers, we will implement a higher level of verification (levels include amount of time a user has to be a verified member of the server before they can post).
 
 **Explicit Content Filter**
-Since this is a public Discord server, we will be setting an explicit content filter- it will scan messages from all members without a role. Email-verified members will be given a community member role to start, and other roles may be added to users over time. 
+Since this is a public Discord server, we will be setting an explicit content filter- it will scan messages from all members without a role. Email-verified members will be given a community member role to start, and other roles may be added to users over time.
 
 **Categories and Channels**
 Community members will then have the option of visiting the "setup" channel and learning more about fine-grained controls, such as:
@@ -101,7 +105,7 @@ The following proposed initial category and channel list was chosen based on the
 
 **Category/Channel List:**
 - (No Category)
-  - welcome (community guidelines are posted here) <--readonly & the server invite puts users in this channel first. 
+  - welcome (community guidelines are posted here) <--readonly & the server invite puts users in this channel first.
   - setup-profile (how to setup your profile) <--readonly
 - Admin
   - community-feedback (questions, comments, concerns, requests)
@@ -156,13 +160,13 @@ The following proposed initial category and channel list was chosen based on the
   - Media (livestreams, videos, podcasts)
   - Pets
   - Women in Ember 🔒
-  
+
 **Integrations**
 Discord's integration game is strong. Discord has a [very detailed API](https://discordapp.com/developers/docs/intro) and many integrations already exist, and with no limitation (compared to free Slack instances, that have limited numbers of integrations).
 
 ## How do we teach this?
 
-In addition to having a setup channel available upon login (with illustrated instructions), here are some links where community members can read more: 
+In addition to having a setup channel available upon login (with illustrated instructions), here are some links where community members can read more:
 
 - [Discord Loves Open Source](https://discordapp.com/open-source)
 - [Discord Community Guidelines](https://discordapp.com/guidelines)
@@ -174,9 +178,9 @@ In addition to having a setup channel available upon login (with illustrated ins
 
 There is some concern that there is already some confusion on Slack about where to get help learning/using Ember, and where to coordinate working on Ember. We need to have a clear delineation so that the folks who are spending their volunteer time to ship Ember features can continue to concentrate and do that.
 
-### Losing Community Members 
+### Losing Community Members
 
-There is some concern that we may lose some community members due to this move. This could happen for a variety of reasons- the nature of OSS work means that some are not always active on the chat community, or the user doesn't want a different chat app, etc. We believe that the former is probably more likely than the latter, since many of us are on at least 2-3 chat apps already. 
+There is some concern that we may lose some community members due to this move. This could happen for a variety of reasons- the nature of OSS work means that some are not always active on the chat community, or the user doesn't want a different chat app, etc. We believe that the former is probably more likely than the latter, since many of us are on at least 2-3 chat apps already.
 
 ## Alternatives
 

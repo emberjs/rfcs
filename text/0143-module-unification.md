@@ -2,12 +2,14 @@
 start-date: 2016-05-09T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-cli: FIXME
+
 teams: 
-  - framework
+  - cli
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/143
 project-link: 
-stage: accepted
+stage: released
 meta:
   tracking: https://github.com/emberjs/rfc-tracking/issues/27 / https://github.com/emberjs/ember.js/issues/14882
 ---

@@ -2,12 +2,14 @@
 start-date: 2014-08-14T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-data: v2.5.0
+
 teams: 
-  - framework ## FIXME - added automatically as it was missing during migration
+  - data
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/1
 project-link: 
-stage: accepted
+stage: released
 meta:
   ember-issue: https://github.com/emberjs/data/pull/4086
 ---
@@ -15,7 +17,7 @@ meta:
 # Summary
 
 For Ember Data. Pass through attribute meta data, which includes `parentType`, `options`, `name`, etc.,
-to the transform associated with that attribute. This will allow provide the following function signiture updates to `DS.Transform`: 
+to the transform associated with that attribute. This will allow provide the following function signiture updates to `DS.Transform`:
 
 * `transform.serialize(deserialized, attributeMeta)`
 * `transform.deserialize(serialized, attributeMeta)`
@@ -73,10 +75,10 @@ App.MarkdownTransform = DS.Transform.extend({
   serialize: function (deserialized, attributeMeta) {
     return deserialized.raw;
   },
-  
+
   deserialize: function (serialized, attributeMeta) {
     var options = attributeMeta.options.markdown || {};
-    
+
     return marked(serialized, options);
   }
 });

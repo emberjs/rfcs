@@ -10,17 +10,6 @@ project-link:
 stage: accepted
 ---
 
-<!--- 
-Directions for above: 
-
-Stage: Leave as is
-Start Date: Fill in with today's date, YYYY-MM-DD
-Release Date: Leave as is
-Release Versions: Leave as is
-Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies
-RFC PR: Fill this in with the URL for the Proposal RFC PR
--->
-
 # Deprecate Ember Utils & dependent Computed Properties
 
 ## Summary

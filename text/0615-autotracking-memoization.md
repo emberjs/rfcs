@@ -2,12 +2,14 @@
 start-date: 2020-04-17T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v3.22.0
+
 teams: 
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/615
 project-link: 
-stage: accepted
+stage: recommended
 ---
 
 # Autotracking Memoization

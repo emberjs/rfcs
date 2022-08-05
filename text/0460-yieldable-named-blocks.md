@@ -2,12 +2,14 @@
 start-date: 2019-03-06T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v3.25.0
+
 teams: 
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/460
 project-link: 
-stage: accepted
+stage: recommended
 ---
 
 # Yieldable Named Blocks

@@ -2,21 +2,23 @@
 start-date: 2018-03-28T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v3.15.0
+
 teams: 
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/324
 project-link: 
-stage: accepted
+stage: recommended
 meta:
   tracking: https://github.com/emberjs/rfc-tracking/issues/22
 ---
 
 # Summary
 
-The aim of this RFC is to deprecate the component's `isVisible` property. 
+The aim of this RFC is to deprecate the component's `isVisible` property.
 It is not used by Ember internally and left undefined unless manually set.
-It's poorly documented and component visibility it better managed in 
+It's poorly documented and component visibility it better managed in
 template space rather than JS.
 
 # Motivation
@@ -35,14 +37,14 @@ Simply put, removing `isVisible` will reduce confusion amongst users.
 
 # Transition Path
 
-Whenever `isVisible` is used a deprecation will be issued with a link to 
+Whenever `isVisible` is used a deprecation will be issued with a link to
 the deprecation guide explaining the deprecation and how to refactor in order
 to avoid it.
 
 Given that `Component#isVisible` is a public API, deprecating now would
 schedule for removal in the next major version release (4.0).
 
-There are several options available to hiding elements 
+There are several options available to hiding elements
 such as `<div hidden={{boolean}}></div>`(hidden is valid for all elements
 and is semantically correct) or wrapping the component in a template
 conditional `{{#if}}` statement. Components `classNames` and `classNameBindings`

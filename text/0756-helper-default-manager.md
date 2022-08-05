@@ -2,13 +2,15 @@
 start-date: 2021-05-17T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v4.5.0
+
 teams: 
   - framework
   - learning
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/756
 project-link: 
-stage: accepted
+stage: released
 ---
 
 # Default Helper Manager

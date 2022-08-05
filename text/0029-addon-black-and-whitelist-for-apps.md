@@ -2,6 +2,12 @@
 start-date: 2015-11-11T00:00:00.000Z
 release-date:
 release-versions: 
+  0: F
+  1: I
+  2: X
+  3: M
+  4: E
+
 teams: 
   - cli
 prs:

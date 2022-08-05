@@ -7,7 +7,7 @@ teams:
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/707
 project-link: 
-stage: accepted
+stage: recommended
 ---
 
 # Reduce API Surface of Built-In Components

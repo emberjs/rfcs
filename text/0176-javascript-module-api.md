@@ -2,12 +2,16 @@
 start-date: 2016-11-05T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v2.16.0
+
 teams: 
-  - framework ## FIXME - added automatically as it was missing during migration
+  - framework
+  - data
+  - cli
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/176
 project-link: 
-stage: accepted
+stage: recommended
 ---
 
 # Summary

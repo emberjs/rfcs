@@ -2,6 +2,12 @@
 start-date: 2019-03-13T00:00:00.000Z
 release-date:
 release-versions: 
+  0: F
+  1: I
+  2: X
+  3: M
+  4: E
+
 teams: 
   - data
 prs:
@@ -31,7 +37,7 @@ When a user sends a record save request, it can fail in two different ways:
 
 ## Detailed design
 
-Currently on a failed save, Record Data receives a call to 
+Currently on a failed save, Record Data receives a call to
 
 `commitWasRejected(recordIdentifier: RecordIdentifier): void;`
 
@@ -52,7 +58,7 @@ interface RecordData {
 }
 ```
 
-`RecordValidationError` follows the subset of the JSON api errors spec. For example, if the record being saved was rejected because the attribute `password` was empty, the `RecordValidationError` could look like: 
+`RecordValidationError` follows the subset of the JSON api errors spec. For example, if the record being saved was rejected because the attribute `password` was empty, the `RecordValidationError` could look like:
 
 ```ts
 {
@@ -64,7 +70,7 @@ interface RecordData {
 }
 ```
 
-The source pointer is a JSON pointer relative to the Resource Object.   
+The source pointer is a JSON pointer relative to the Resource Object.
 
 We would also add a method on the `RecordDataStoreWrapper` to enable Record Data to notify the store that the errors properties have changed.
 ```ts
@@ -77,7 +83,7 @@ There would be no api for changing the errors from the client side, they would b
 
 ## How we teach this
 
-We currently do not have a comprehensive way to teach the RecordData api. This RFC will be taught alongisde the rest of upcoming Record Data docs. 
+We currently do not have a comprehensive way to teach the RecordData api. This RFC will be taught alongisde the rest of upcoming Record Data docs.
 
 ## Alternatives
 

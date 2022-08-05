@@ -2,12 +2,14 @@
 start-date: 2021-10-21T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-cli: v4.3.0
+
 teams: 
   - cli
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/772
 project-link: 
-stage: accepted
+stage: recommended
 ---
 
 # Deprecate Bower Support

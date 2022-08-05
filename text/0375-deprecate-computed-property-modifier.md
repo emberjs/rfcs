@@ -2,12 +2,14 @@
 start-date: 2019-09-13T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v3.9.0
+
 teams: 
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/375
 project-link: 
-stage: accepted
+stage: recommended
 meta:
   tracking: https://github.com/emberjs/rfc-tracking/issues/15
 ---

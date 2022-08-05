@@ -2,6 +2,8 @@
 start-date: 2019-11-20T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-cli: v3.15.0
+
 teams: 
   - framework
   - cli
@@ -9,7 +11,7 @@ teams:
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/558
 project-link: 
-stage: accepted
+stage: recommended
 ---
 
 # Edition detection

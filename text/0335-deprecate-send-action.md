@@ -2,12 +2,14 @@
 start-date: 2018-05-29T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v3.4.0
+
 teams: 
-  - framework ## FIXME - added automatically as it was missing during migration
+  - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/335
 project-link: 
-stage: accepted
+stage: recommended
 ---
 
 # Deprecate `.sendAction`
@@ -102,7 +104,7 @@ export default Component.extend({
       // if (this.salute) {
       //   this.salute()
       // }
-      // 
+      //
       // Alternatively, you can also define a noop salute function:
       // salute() {}
       //

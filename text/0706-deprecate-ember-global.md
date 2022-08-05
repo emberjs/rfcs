@@ -2,12 +2,14 @@
 start-date: 2021-02-01T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v3.27.0
+
 teams: 
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/706
 project-link: 
-stage: accepted
+stage: recommended
 ---
 
 # Deprecate the Ember Global

@@ -2,12 +2,14 @@
 start-date: 2020-01-14T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v3.26.0
+
 teams: 
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/705
 project-link: 
-stage: accepted
+stage: recommended
 ---
 
 # Deprecate jQuery Integration Optional Feature

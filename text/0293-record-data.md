@@ -2,12 +2,14 @@
 start-date: 2018-01-10T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-data: v3.5.0
+
 teams: 
   - data
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/293
 project-link: 
-stage: accepted
+stage: released
 meta:
   tracking: https://github.com/emberjs/rfc-tracking/issues/24
 ---
@@ -16,7 +18,7 @@ meta:
 
 Currently, incrementally experimenting with Ember Data internals is hard both for addon authors
 and Ember Data contributors. This RFC rationalizes the internals and establishes clear boundaries
-for record data storage and manipulation allowing us to expose a public api for addon authors to experiment with. 
+for record data storage and manipulation allowing us to expose a public api for addon authors to experiment with.
 
 ### Motivation
 
@@ -39,7 +41,7 @@ This RFC proposes rationalizing and extracting ED's core record data handling la
 #### after
 ![image](https://user-images.githubusercontent.com/715175/33341155-e5f170c2-d432-11e7-9c50-4a3e977331fe.png)
 
-This will allow us to rationalize internal ED APIs, establish clearer internal boundaries, 
+This will allow us to rationalize internal ED APIs, establish clearer internal boundaries,
 allow experimentation by addon authors, and create a path for internal ED experimentation.
 
 You can think of Record Data as a layer that can receive JSON api payloads for a record,
@@ -47,13 +49,13 @@ apply local changes to it, and can be queried for the current state of the data.
 
 Examples of things this would enable:
 
-1) By shipping a custom RecordData, EmberDataModelFragments can implement a large part of their 
+1) By shipping a custom RecordData, EmberDataModelFragments can implement a large part of their
 funcionality without relying on private apis. Spike at [model fragments](https://github.com/igorT/ember-data.model-fragments/tree/igor/model-data)
 
 2) A spike of Ember Data backed by Orbit, can be implemented as an addon, where most of the work
 is in implementing a Record Data backed by Orbit. Spike at [data-orbit](https://github.com/igorT/data-orbit/tree/orbit-model-data)
 
-3) By using an ES6 class for Record Data implementation, this brings us closer to an Emberless 
+3) By using an ES6 class for Record Data implementation, this brings us closer to an Emberless
 Ember Data running.
 
 4) If you needed to implement a GraphQL like projection API, Adapters and Serializers would be enough
@@ -81,10 +83,10 @@ we can use RecordData as the main building block around which we can refactor th
 Ember Data would define a RecordData interface, and ship a default implementation. Addons would
 be able to swap their own implementation of the RecordData interface.
 
-RecordData is an interface defining the api for how the store and DS.Models 
+RecordData is an interface defining the api for how the store and DS.Models
 store and apply changes to data. RecordDatas hold
 the backing data for each record, and act as a bridge between the Store, DS.Model, and Snapshots.
- It is per record, and defines apis that respond to 
+ It is per record, and defines apis that respond to
 store api calls like `pushData`, `adapterDidCommit` and DS.Model updates like `setAttribute`.
 RecordData represents the bucket of state that is backing a particular DS.Model.
 
@@ -105,16 +107,16 @@ The interface for RecordData is:
 export default class RecordData {
   constructor(modelName: string, clientId?: string, id?: string, storeApisWrapper: StoreApisWrapper) {
     /*
-      Exposing the entire store api to the RecordData seems very risky and would 
+      Exposing the entire store api to the RecordData seems very risky and would
       limit the kind of refactors we can do in the future. We would provide a wrapper
-      to the RecordData that would enable funcionality MD absolutely needs 
+      to the RecordData that would enable funcionality MD absolutely needs
     */
   }
 
 
   /*
     Hooks through which the store tells the Record Data about the data
-    changes. They all take JSON API and return a list of keys that the 
+    changes. They all take JSON API and return a list of keys that the
     record will need to update
   */
 
@@ -183,7 +185,7 @@ export default class RecordData {
 
   getHasMany(modelName: string, id?: string, clientId?: string, key: string) {
   }
-  
+
   addToHasMany(modelName: string, id?: string, clientId?: string, key: string, jsonApiResources, idx: number) {
   }
 
@@ -208,7 +210,7 @@ export default class StoreApiWrapper {
   /* clientId is used as a fallback in the case of client side creation */
   createRecordDataFor(modelName, id, clientId)
   notifyPropertyChanges(modelName, id, clientId, keys)
-  /* 
+  /*
   in order to not expose ModelClasses to RecordData, we need to supply it with
   model schema information. Because a schema design is out of scope for this RFC,
   for now we expose these two methods we intend to deprecate once we have a schema
@@ -261,7 +263,7 @@ _setupRelationships(data) {
   ....
 }
 ```
-   
+
 The DS.Model interactions would look like:
 
 ```js
@@ -310,7 +312,7 @@ get() {
 }
 ->
 // Record Data returns
-{[ 
+{[
   data: { id: 5, type: 'house'},
   links: { related: '/houses' },
   meta: { realMetaFromServer: 'hi', _ED: { hasAllIds: true, needToLoadLink: false } }
@@ -320,7 +322,7 @@ get() {
 
 ```
 
-ED extends the relationship payload with a custom meta, which gives the store information 
+ED extends the relationship payload with a custom meta, which gives the store information
 about whether we have information about the entire relationship (we couldn't be sure we
 have all the ids if we loaded from the belongsTo side) and whether the link should be refetched
 (we might need to refetch the link in the case it potentially changed)
@@ -334,7 +336,7 @@ the backing data store
 let anotherHouse = store.push({data: { type: 'house', id: '5' }});
 clemens.get('houses').then((houses) => {
   houses.pushObject(anotherHouse);
-  -> 
+  ->
   // internally
   clemensRecordData.addToHasMany('houses', { data: { type: 'house', id: '5' } })
 });
@@ -358,8 +360,8 @@ clemens.get('houses').then((houses) => {
   clemensRecordData.addToHasMany('houses', { data: { type: 'house', id: null, { meta: _ED: { clientId: 1}} } })
 });
 clemens.get('houses') ->
-{ data: 
-  [ { id: 5, type: 'house'}, 
+{ data:
+  [ { id: 5, type: 'house'},
     { id: null, type: 'house', meta: { _ED: { clientId: 1 } } }],
   links: { related: '/hi' },
   meta: { realMetaFromServer: 'hi', _ED: { loaded: true, needToLoadLink: false } }
@@ -393,7 +395,7 @@ replacing ED's Record Data implementation
 
 ```
 recordDataFor(modelName, id, options, storeWrapper) {
-  return new OrbitRecordData(modelName, id, storeApisWrapper) 
+  return new OrbitRecordData(modelName, id, storeApisWrapper)
 }
 ```
 
@@ -402,12 +404,12 @@ recordDataFor(modelName, id, options, storeWrapper) {
 If a large app was loading thousands of instances of a particular record type, which was read-only,
 it could use a read only ED addon, which implemented a simplified RecordData without any change tracking.
 
-The addon would implement a `recordDataFor` on the store as 
+The addon would implement a `recordDataFor` on the store as
 
 ```
 recordDataFor(modelName, id, options, storeWrapper) {
   if (addonDecidesIfReadOnly(modelName))  {
-    return new ReadOnlyRecordData(modelName, id, storeApisWrapper) 
+    return new ReadOnlyRecordData(modelName, id, storeApisWrapper)
   }
   return this._super(modelName, id, options, storeWrapper);
 }
@@ -451,7 +453,7 @@ a great way to teach new addon authors about the purpose and implementation of t
 
 This change would increase the public API surface area, in a codebase that is already pretty complex.
 However, this would codify and simplifyA APIs addon authors have already had to interact with, while
-creating a path for future simplification of the codebase. 
+creating a path for future simplification of the codebase.
 
 #### It allows people to do very non-standard changes that will complexify their app needlessly
 
@@ -488,7 +490,7 @@ it's apis would not map as well to ED behavior.
 Our current implementation of `internalModel` is deeply monkeypatched by at least few addons. I think
 we have to consider it as an semi-intimate api, even though it literally has `internal` in the name(I've been told adding couple undescores to the name would have helped).
 Because the number of addons monkeypatching it is limited, we can manually migrate them onto the new
-apis. However this requires us to make the new apis public from the get go, and doesn't allow for a long period of api evolution. 
+apis. However this requires us to make the new apis public from the get go, and doesn't allow for a long period of api evolution.
 
 The following options are available, none of them great:
 
@@ -517,10 +519,10 @@ to do it in RecordDataFor or by using a singleton import. Some ceremony being re
 isn't super bad, because it will discourage app authors from customizing it for trivial/innapropriate
 things.
 
-#### What do we do with the record state management? 
+#### What do we do with the record state management?
 
 Currently RecordData has no interaction with the state machine. I think we should punt on this
-for now. 
+for now.
 
 #### { meta: { _ED: { props here } } } alternatives?
 

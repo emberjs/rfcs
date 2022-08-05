@@ -2,19 +2,25 @@
 start-date: 2019-07-12T00:00:00.000Z
 release-date:
 release-versions: 
+  0: F
+  1: I
+  2: X
+  3: M
+  4: E
+
 teams: 
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/421
 project-link: 
-stage: accepted
+stage: recommended
 meta:
   tracking: https://github.com/emberjs/rfc-tracking/issues/5
 ---
 
 # Deprecate Application Controller Router Properties
 
-## Summary 
+## Summary
 
 This RFC proposes the deprecation of `ApplicationController#currentPath` and `ApplicationController#currentRouteName`.
 

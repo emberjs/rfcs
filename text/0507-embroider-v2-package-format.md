@@ -2,6 +2,8 @@
 start-date: 2019-06-21T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-cli: v3.27.0
+
 teams: 
   - cli
   - framework
@@ -9,7 +11,7 @@ teams:
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/507
 project-link: 
-stage: accepted
+stage: released
 ---
 
 # v2 Addon Format (Embroider Compatibility)

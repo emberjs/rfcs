@@ -2,12 +2,14 @@
 start-date: 2020-05-18T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-cli: v3.24.0
+
 teams: 
   - cli
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/628
 project-link: 
-stage: accepted
+stage: recommended
 ---
 
 # Add Prettier

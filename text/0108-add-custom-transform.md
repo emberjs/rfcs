@@ -2,12 +2,14 @@
 start-date: 2017-06-18T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-cli: v2.16.0
+
 teams: 
   - cli
 prs:
   accepted: https://github.com/ember-cli/rfcs/pull/108
 project-link: 
-stage: accepted
+stage: released
 ---
 
 # Summary

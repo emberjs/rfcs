@@ -2,13 +2,15 @@
 start-date: 2019-08-05T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v3.14.0
+
 teams: 
   - framework
   - learning
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/523
 project-link: 
-stage: accepted
+stage: recommended
 ---
 
 # Provide `@model` named argument to route templates

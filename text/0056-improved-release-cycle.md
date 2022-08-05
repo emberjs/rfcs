@@ -2,20 +2,26 @@
 start-date: 2015-10-02T00:00:00.000Z
 release-date:
 release-versions: 
+  0: F
+  1: I
+  2: X
+  3: M
+  4: E
+
 teams: 
-  - framework ## FIXME - added automatically as it was missing during migration
+  - # FIXME
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/56
 project-link: 
-stage: accepted
+stage: recommended
 ---
 
 # Refining the Release Process
 
 Ember balances a desire for overall stability with a desire for continued improvements using a two-pronged approach:
 
-* General adherence to Semantic Versioning, which means that we don't 
-  make breaking changes to public, documented APIs except when the 
+* General adherence to Semantic Versioning, which means that we don't
+  make breaking changes to public, documented APIs except when the
   major version changes.
 * A rapid release cycle that allows us to ship additive changes to the
   framework on a regular, digestible basis.
@@ -49,13 +55,13 @@ Ember 2.0 is the first major release cycle where we have followed these refineme
 * New features are added predictably, and it's relatively easy to
   follow the list of new APIs that are under development, and where
   they are in the process.
-* There is little pressure for contributors to land a feature 
+* There is little pressure for contributors to land a feature
   prematurely, because missing a release deadline isn't
   catastrophic–there will be another train six weeks hence.
 * We have a lot of very good automation tools that keep the trains
-  running–commits can be (mostly) automatically backported to the 
+  running–commits can be (mostly) automatically backported to the
   current beta or release version.
-* Upgrading Ember itself from version to version is typically a quick 
+* Upgrading Ember itself from version to version is typically a quick
   process, except when private APIs are in use. We aim for upgrades to
   be possible to slot into existing product sprints, and the nature of
   the process means that we tend to hit this goal for most users.
@@ -70,10 +76,10 @@ The process of getting from *here* to *there* is a series of incremental release
 
 While the approach we're using has provided a lot of benefits, there are a number of areas that could still use improvement:
 
-* While it is in theory possible to upgrade only once every few 
+* While it is in theory possible to upgrade only once every few
   releases, there is no guidance about exactly how to do that, and
   little clarity about how many releases we plan to support with
-  security fixes. (Because of the two-step deprecations of heavily 
+  security fixes. (Because of the two-step deprecations of heavily
   used  private APIs, it is in practice important to go through each
   intermediate release to clear deprecation warnings before
   proceeding.)
@@ -89,7 +95,7 @@ While the approach we're using has provided a lot of benefits, there are a numbe
   churn in the experience of using Ember without actual breakages.
 * While deprecations technically don't force you to change anything,
   in practice clearing deprecations is a part of the upgrade process.
-  A constant stream of deprecations, like in the lead-up to Ember 2.0, 
+  A constant stream of deprecations, like in the lead-up to Ember 2.0,
   can feel almost as bad as breaking changes.
 * In the lead-up to Ember 2.0, a desire to remove as much cruft as
   quickly as possible led to a need to land new features with much
@@ -127,15 +133,15 @@ In theory, it's possible to upgrade every few releases, instead of every release
 
 This means:
 
-* We will only remove heavily used private APIs if they were 
+* We will only remove heavily used private APIs if they were
   deprecated in a previous LTS release. This means that
-  if a feature is deprecated in 2.3, the first LTS release that 
-  the deprecation will appear in is 2.4, and it can therefore be 
+  if a feature is deprecated in 2.3, the first LTS release that
+  the deprecation will appear in is 2.4, and it can therefore be
   removed in 2.5.
 * We will provide release notes for each LTS release that
   roll up the changes for the releases it includes, including new
   deprecations and new features.
-* We will use the LTS releases to provide better big-picture 
+* We will use the LTS releases to provide better big-picture
   messaging on the goals of any deprecations and changes to
   idiomatic Ember.
 * Security fixes will always be backported to the most recent
@@ -143,7 +149,7 @@ This means:
 * We will encourage the Ember ecosystem to maintain support for
   the LTS releases, and lead by example with our own
   projects that have not yet reached SemVer stability. Ideally, this
-  will give more of a voice to people who are upgrading less 
+  will give more of a voice to people who are upgrading less
   frequently.
 
 This means that people who want to stay on the latest and greatest can continue to upgrade every six weeks (with the same SemVer guarantees we've come to expect), and people who want to upgrade less frequently can do so.

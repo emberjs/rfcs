@@ -31,9 +31,9 @@ The original RFC proposed the following interface:
 
 ```typescript
 interface SchemaDefinitionService {
-  // Following the existing RD implementation 
+  // Following the existing RD implementation
   attributesDefinitionFor(identifier: RecordIdentifier | type: string): AttributesDefinition
-  
+
   // Following the existing RD implementation
   relationshipsDefinitionFor(identifier: RecordIdentifier | type: string): RelationshipsDefinition
   doesTypeExist(type: string): boolean
@@ -44,9 +44,9 @@ We can simplify `attributesDefinitionFor` and `relationshipsDefinitionFor` metho
 
 ```typescript
 interface SchemaDefinitionService {
-  // Following the existing RD implementation 
+  // Following the existing RD implementation
   attributesDefinitionFor(identifier: RecordIdentifier | { type: string }): AttributesDefinition
-  
+
   // Following the existing RD implementation
   relationshipsDefinitionFor(identifier: RecordIdentifier | { type: string }): RelationshipsDefinition
 

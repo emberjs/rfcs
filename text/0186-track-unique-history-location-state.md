@@ -2,12 +2,14 @@
 start-date: 2016-12-05T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v2.13.0
+
 teams: 
-  - framework ## FIXME - added automatically as it was missing during migration
+  - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/186
 project-link: 
-stage: accepted
+stage: recommended
 ---
 
 # Summary
@@ -20,7 +22,7 @@ The path alone does not provide enough information. For example, if you
 visit page A, scroll down, then click on a link to page B, then click on
 a link back to page A. Your actual browser history stack is [A, B, A].
 Each of those nodes in the history should have their own unique scroll
-position. In order to record this position we need a UUID 
+position. In order to record this position we need a UUID
 for each node in the history.
 
 This API will allow other libraries to reflect upon each location to

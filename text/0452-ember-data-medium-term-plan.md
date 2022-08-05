@@ -2,6 +2,12 @@
 start-date: 2019-02-20T00:00:00.000Z
 release-date:
 release-versions: 
+  0: F
+  1: I
+  2: X
+  3: M
+  4: E
+
 teams: 
   - data
 prs:
@@ -53,9 +59,9 @@ However, we will not succeed in delivering this future vision in a timely manner
 
 # Increasing velocity and stability
 
-Ember Data has continuously evolved over seven years and over time acquired several layers of cruft along with a intimately connected internal architecture. The current state of the library is not particularly hospitable to new contributors while at the same time being hard to iterate on in a stable manner. Lots of Ember Data's public apis have been designed with stability and extensibility in mind, but the internal layers of the library have not benefited from the same amount of design work. The unspecified internal layers together with a host of implicit dependencies make it hard to expose parts of Ember Data to addon developers as well as prevent ED contributors from being able to easily do experimental iterative work. 
+Ember Data has continuously evolved over seven years and over time acquired several layers of cruft along with a intimately connected internal architecture. The current state of the library is not particularly hospitable to new contributors while at the same time being hard to iterate on in a stable manner. Lots of Ember Data's public apis have been designed with stability and extensibility in mind, but the internal layers of the library have not benefited from the same amount of design work. The unspecified internal layers together with a host of implicit dependencies make it hard to expose parts of Ember Data to addon developers as well as prevent ED contributors from being able to easily do experimental iterative work.
 
-The three main problems this internal structure causes us is: 
+The three main problems this internal structure causes us is:
 
 - It is hard for developers to grok the codebase and become prolific contributors due to the complexity
 - Testing ideas in addons is usually a great way to move faster and derisk ideas. However due to the internal structure of ED, such addons use a large surface area of internal apis, negating most of the benefits
@@ -85,7 +91,7 @@ Success criteria for this plan is shipping an Ember data release which:
 
 While the internal apis and interfaces will be designed with an eye towards the future public and addon use, in this phase of the work we will not be exposing all of them to apps and addons as fully stable public apis, or we will do so for addon author with an explicit plan to deprecate and replace.
 
-Moreover, as part of the RFC we will not be deciding on, or baking in the future app level public apis. 
+Moreover, as part of the RFC we will not be deciding on, or baking in the future app level public apis.
 
 # High Level plan
 
@@ -110,7 +116,7 @@ While the overall shape of the architecture looks as you might expect, our curre
 - Entire library implicitly relies on DS.Model classes, Ember's object model
 - The division of responsibilities between internalModel, RecordData, Store are not clear
 
-This medium size ball of mud should be refactored to the following high level pieces: (add diagram here): 
+This medium size ball of mud should be refactored to the following high level pieces: (add diagram here):
 
 ![](https://i.imgur.com/C3tNcH2.png)
 
@@ -125,7 +131,7 @@ This medium size ball of mud should be refactored to the following high level pi
 - Query builder - a service which takes user queries such as `findRecord` and turns them into Orbit.js like query objects that can be passed around
 - Fetching service - layer that takes user queries, relationship queries and save requests and decides whether they need fulfillment, and if so delegates to adapter/serialzier. Currently done by a mix of store and internal model.
 
-Adapter, Serializer and Snapshots would not have major changes at this time, other than those needed to make use of the schema service and public apis for accessing records. 
+Adapter, Serializer and Snapshots would not have major changes at this time, other than those needed to make use of the schema service and public apis for accessing records.
 
 It is important to note that none of the existing public user apis would change, and that the bulk of this work is taking existing code structures and making the specified and isolated.
 

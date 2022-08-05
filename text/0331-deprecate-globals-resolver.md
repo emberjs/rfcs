@@ -2,12 +2,14 @@
 start-date: 2018-05-08T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v3.16.0
+
 teams: 
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/331
 project-link: 
-stage: accepted
+stage: released
 meta:
   tracking: https://github.com/emberjs/rfc-tracking/issues/20
 ---

@@ -2,12 +2,14 @@
 start-date: 2020-01-10T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v3.22.0
+
 teams: 
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/580
 project-link: 
-stage: accepted
+stage: released
 ---
 
 # Destroyables

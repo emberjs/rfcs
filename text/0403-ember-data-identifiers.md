@@ -2,6 +2,12 @@
 start-date: 2018-11-25T00:00:00.000Z
 release-date:
 release-versions: 
+  0: F
+  1: I
+  2: X
+  3: M
+  4: E
+
 teams: 
   - data
 prs:
@@ -12,7 +18,7 @@ meta:
   tracking: https://github.com/emberjs/rfc-tracking/issues/31
 ---
 
-# Ember Data | Identifiers 
+# Ember Data | Identifiers
 
 ## Summary
 
@@ -30,44 +36,44 @@ In doing so we provide a framework for future RFCs and/or addons to address many
 
 ## Motivation
 
-This groundwork RFC represents the union of a diverse set of motivations, each of which 
- is discussed below in no particular order of importance, outside of the first. **This 
+This groundwork RFC represents the union of a diverse set of motivations, each of which
+ is discussed below in no particular order of importance, outside of the first. **This
  RFC is not seeking to immediately address each of the motivations below, we are adding
  infrastructure to make future RFCs possible in these spaces**
 
 ### Unified concept of Identity
 
 Identity is a core concept to managing a cache and guaranteeing [atomicity, consistency,
- isolation, and durability](https://en.wikipedia.org/wiki/ACID_(computer_science)). 
- Currently, `ember-data` has no unified mechanism for Identity. This missing mechanism 
- introduces errors in application code, makes `ember-data` internals needlessly complex, 
+ isolation, and durability](https://en.wikipedia.org/wiki/ACID_(computer_science)).
+ Currently, `ember-data` has no unified mechanism for Identity. This missing mechanism
+ introduces errors in application code, makes `ember-data` internals needlessly complex,
  and complicates the method signatures of many public APIs.
 
-Creating a unified `Identity` concept will allow `ember-data` to expose `identity` as a 
-first-class primitive to our users, improving the mental model, improving application 
-resiliance to errors, and providing a clear language of communication between `ember-data`'s 
+Creating a unified `Identity` concept will allow `ember-data` to expose `identity` as a
+first-class primitive to our users, improving the mental model, improving application
+resiliance to errors, and providing a clear language of communication between `ember-data`'s
 various primitives.
 
 Today, we handle `identity` in a myriad of ad-hoc ways:
 
 * `InternalModel` instances as keys for most internal methods and the relationship layer.
 * `type+id` for serializing/deserializing a `record` or [`resource`](https://jsonapi.org/format/#document-resource-object-identification)
-* `type+clientId` for caching newly created records on the client and communicating 
+* `type+clientId` for caching newly created records on the client and communicating
    about them with `RecordData`.
-* Various other non-serializable forms of identity for tracking requests, relationship 
+* Various other non-serializable forms of identity for tracking requests, relationship
    membership and state.
-* In some cases we have no concept at all where one is needed (for instance, caching 
+* In some cases we have no concept at all where one is needed (for instance, caching
   queries)
 
 We wish to simplify and codify our handling of identity.
 
 ### Simplify StoreWrapper and RecordData APIs
 
-Today, to deal with the lack of a unified `identifier` concept, we overload many 
+Today, to deal with the lack of a unified `identifier` concept, we overload many
  `StoreWrapper` and `RecordData` API method signatures with `modelName`, `id`, `clientId`
  as arguments. This leads to method signatures being long and needlessly unwieldy.
 
-Note: We had initially intended to overload all of these classes method signatures in 
+Note: We had initially intended to overload all of these classes method signatures in
 this way, to ensure that `RecordData` implementations could be `singleton`s, but we failed
 to correctly implement the `RecordData` RFC in this regard and a near future RFC will look
 at rectifying this using the `Identity` APIs introduced here.
@@ -77,13 +83,13 @@ Moving to a unified concept of `identity` opens up a path to clean up these meth
 
 ### Operations
 
-Operations are a foundational concept for `acid` transactions. Without the ability to 
+Operations are a foundational concept for `acid` transactions. Without the ability to
  describe an operation and a clear mental model of what operations exist and achieve, it
  is difficult to understand how an action affects state. Granularity and clarity is key.
 
 While `ember-data` does not yet have concepts of operations or transactions, mutations and
  updates are applied directly, there are many areas we could improve upon by introducing
-them. As with data, operations upon data should be serializable so that local state can 
+them. As with data, operations upon data should be serializable so that local state can
 be accurately cached on local clients.
 
 ### Nested Saves / API Transactions / Websocket Support
@@ -93,23 +99,23 @@ Many applications wish to create or update and save multiple records together. A
  is correctly matching data received back from the API to the newly created records already
  on the client.
 
-A similar edge case occurs when a newly created record is saved for the first time and 
+A similar edge case occurs when a newly created record is saved for the first time and
  prior to receiving the request response the same record is recieved via another means
 (background polling, websocket subscription, etc.). We have no means of matching the record
-returned by the alternative means to that of the request, leading to a second cache entry 
+returned by the alternative means to that of the request, leading to a second cache entry
 being created and an error once the initial request completes.
 
 One solution has been to generate and assign `id`s for records on the client, but this is
  not always desireable. These scenarios are a major motivation for `lid` in the `json-api`
-spec. Users wishing to solve these cases would be able to serialize the `lid` of the 
-`Identifier` for a newly created record and reflect that `lid` back in any payloads send 
+spec. Users wishing to solve these cases would be able to serialize the `lid` of the
+`Identifier` for a newly created record and reflect that `lid` back in any payloads send
 from their API for the session to correctly match the payloads to the record.
 
 ### Better Cache Serialization & Improved Infra for Offline Support
 
-In order to enable users to achieve full offline support, or to serialize the store 
+In order to enable users to achieve full offline support, or to serialize the store
  or transport across the wire (for example as an advanced fastboot rehydration mode)
-the entire state of the store needs to be serializable. This RFC introduces the 
+the entire state of the store needs to be serializable. This RFC introduces the
 foundation for mechanisms through which this can be later achieved.
 
 ----
@@ -128,20 +134,20 @@ export interface RecordIdentifier extends Identifier {
 ```
 
 Note: the referential stability (object reference) of all identifiers created by the
-`store` is guaranteed. E.g. any data that results in the lookup of an identifier 
-producing the same `lid` token will return the same `Identifier` instance. This is 
+`store` is guaranteed. E.g. any data that results in the lookup of an identifier
+producing the same `lid` token will return the same `Identifier` instance. This is
 useful for being able to use identifiers for either `Map` or `WeakMap` cache solutions.
 
 ### Buckets
 
 In an ideal world, the `lid` of each `Identifier` would be a `v4` [uuid](https://en.wikipedia.org/wiki/Universally_unique_identifier),
  making it practically unique in all contexts. However, due to requirements around design
- flexibility and performance we are only requiring that `Identifiers` be unique _within 
+ flexibility and performance we are only requiring that `Identifiers` be unique _within
  their bucket_ for the data they are intended to reference.
 
 Each underlying primitive will have its own bucket, as new primitives are formalized, new
  buckets will emerge. Initially we expect only a `record` bucket which aligns with today's
-`IdentityMap` cache for `Record`s. Examples of future buckets may include a cache for 
+`IdentityMap` cache for `Record`s. Examples of future buckets may include a cache for
 `queries`, `documents`, `transactions`, `operations`, `errors`, `meta` or any number of other
  concepts that represent state required to be serializable.
 
@@ -154,12 +160,12 @@ In our ideal world, the `lid` would then be a `uuid-v4` that is practically uniq
  rendering.
 
 This cost is primarily due to the need to generate large quantities of random bytes: a cost
- that is necessarily cpu intensive. Additionally, many forms of data (such as `json-api` 
+ that is necessarily cpu intensive. Additionally, many forms of data (such as `json-api`
  resources) come with unique or nearly unique identifying information already (`type` + `id`,
 `href` etc.).  Some APIs already make use of `v4` `uuid`s as IDs, and for these APIs it would
  make the most sense to implement a custom generation method to reuise these `id`s as `lid`s
  when present.
-  
+
 To balance performance with the requirements of `identity`, we are choosing what we feel is a
  *sensible default*.  Users for whom this default does not meet their requirements may override
 the appropriate hooks to generate identifiers that do.
@@ -183,7 +189,7 @@ Indeed in this vein, we have not provided a mechanism for distinguishing what in
  using this availability to affect your generation method.
 
 Supplying custom `lid` generation can be done using `setIdentifierGenerationMethod`. Currently
- there is only one bucket (`record`) as discussed above, but we reserve the ability to add 
+ there is only one bucket (`record`) as discussed above, but we reserve the ability to add
  additional buckets in the future.
 
 Users should do any identifier customization within an instance-initialize prior to making use
@@ -204,7 +210,7 @@ Users should do any identifier customization within an instance-initialize prior
   The method must return a unique (to at-least the given bucket) string identifier
   for the given data as a string to be used as the `lid` of an `Identifier` token.
 
-  This method will only be called by either `getOrCreateIdentifier` or 
+  This method will only be called by either `getOrCreateIdentifier` or
   `createIdentifierForNewRecord` when an identifier for the supplied data
   is not already known via `lid` or `type + id` combo and one needs to be
   generated or retrieved from a proprietary cache.
@@ -224,7 +230,7 @@ type GenerationMethod = (data: Object, bucket: string) => string;
  This method is called everytime `updateRecordIdentifier` is called and
   with the same arguments. It provides the opportunity to update secondary
   lookup tables for existing identifiers.
-  
+
  It will always be called after an identifier created with `createIdentifierForNewRecord`
   has been committed, or after an update to the `record` a `RecordIdentifier`
   is assigned to has been committed. Committed here meaning that the server
@@ -284,8 +290,8 @@ export default {
 
 ### Identifiers for Records
 
-When discussing identifiers for records it is useful to be familiar with `json-api` 
-interfaces for [ResourceObjects](https://jsonapi.org/format/#document-resource-objects) 
+When discussing identifiers for records it is useful to be familiar with `json-api`
+interfaces for [ResourceObjects](https://jsonapi.org/format/#document-resource-objects)
 and [ResourceIdentifierObjects](https://jsonapi.org/format/#document-resource-identifier-objects).
 
 Below, we expose a rough approximation of these interfaces as `Resource` including the
@@ -342,7 +348,7 @@ export default class IdentifierCache extends Service {
 
   /*
    Provides the opportunity to update secondary lookup tables for existing identifiers
-   
+
    Called with the attributes provided to createRecord after an identifier created with
    `createIdentifierForNewRecord` has been instantiated.
 
@@ -376,14 +382,14 @@ let identifierA = identifierCache.getOrCreateRecordIdentifier({
 let identifierB = identifierCache.getOrCreateRecordIdentifier({
   type: 'foo',
   id: '2',
-  lid: '123a' 
+  lid: '123a'
 }); // => { lid: '123a' }
-let identifierC = identifierCache.getOrCreateRecordIdentifier({ 
-  type: 'foo', 
-  lid: '123b' 
+let identifierC = identifierCache.getOrCreateRecordIdentifier({
+  type: 'foo',
+  lid: '123b'
 }); // => { lid: '123b' }
-let identifierD = identifierCache.getOrCreateRecordIdentifier({ 
-  lid: '123c' 
+let identifierD = identifierCache.getOrCreateRecordIdentifier({
+  lid: '123c'
 }); // => { lid: '123c' }
 
 // ... generating identifiers for newly created resources
@@ -396,9 +402,9 @@ let identifier3 = identifierCache.createIdentifierForNewRecord('bar'); // => { l
 ### Updating new record Identifiers with more complete information
 
 Called when an identifier has been generated for resource data prior to `id` being
- available for that resource and complete resource data is now available. `ember-data` 
+ available for that resource and complete resource data is now available. `ember-data`
  will automatically call this with the resolved payload after save for any newly created
- records. An `identifier` can only be updated once, and only when transitioning the 
+ records. An `identifier` can only be updated once, and only when transitioning the
  associated resource from a never-before-persisted to persisted state.
 
 Udating provides the opportunity to update the primary and secondary lookup tables for the
@@ -459,7 +465,7 @@ Whether and how to access an identifier during instantiation of a record will be
 
 A common edge case that `Identifiers` enables end users to solve is when multiple pieces
  of identifying information should reference the same data.
- 
+
 For instance, when using single-table polymorphism (in which `ferrari` and `bmw` extend
  `car` and share a common `id` space) then `ferrari:1` and `bmw:2` are the same vehicles
   as `car:1` and `car:2`.
@@ -468,8 +474,8 @@ A similar problem presents for the scenario in which we know that we wish to ref
 `user` with a given `username`, but do not yet have access to the `id` for that user. In
  this case, `user:@jackson5` and `user:abc123` are the same user.
 
-Today in these situations many users will encounter bugs resulting from there being two 
- records present in the cache instead of one. This problem can be solved with a custom 
+Today in these situations many users will encounter bugs resulting from there being two
+ records present in the cache instead of one. This problem can be solved with a custom
  identifier generation method that is aware of an application's polymorphic associations
  or additional indexing requirements.
 
@@ -497,7 +503,7 @@ export function initialize(applicationInstance) {
 
   setIdentifierGenerationMethod((resource: Resource) => {
     let { type, id, lid } = resource;
-    let username = (resource.type === 'user' 
+    let username = (resource.type === 'user'
       && resource.attributes
       && resource.attributes.username);
     let cacheKey, altCacheKey;
@@ -546,8 +552,8 @@ export default {
  ```
 
 #### Handling Updates to Alternative Cache Keys
- 
- Note that in our above example we treat `username` a stable, immutable alternative 
+
+ Note that in our above example we treat `username` a stable, immutable alternative
   primary-key. Some APIs allow users to change the value of such "unique keys" (`email`
   `phone` `username` being common examples).
 
@@ -567,7 +573,7 @@ export default {
  export function updateUsernameForIdentifier(
    // application instance is the result of `getOwner`
    // on something like the `store` or a `component`
-   owner: Owner, 
+   owner: Owner,
    identifier: Identifier,
    oldUsername: string,
    newUsername: string
@@ -591,7 +597,7 @@ export default {
  ### Identifier Stability
 
 Identifiers handed to public APIs by `ember-data` will **always** be _referentially stable_
- Public `ember-data` APIs that **expect** an `Identifier` will normalize the object they 
+ Public `ember-data` APIs that **expect** an `Identifier` will normalize the object they
  are given into the stable `Identifier` if it is not one already. This is done to allow
  for serialized identifiers and identifying information from the API to more easily be worked
  with without extra normalization effort.
@@ -656,9 +662,9 @@ a multitude of benefits, including:
 
 * **debugging:** enhanced debugging by associating additional information with the
   identifier in development builds
-* **debugging:** enhanced debugging by users being able to see type and id at a 
+* **debugging:** enhanced debugging by users being able to see type and id at a
   glance when inspecting state.
-* **bug prevention:** enforcement of the use of the identifier generation process 
+* **bug prevention:** enforcement of the use of the identifier generation process
   (to ensure lookup tables are properly populated)
 * **debugging:** ability to tell at a glance that an identifier was properly processed
 * **ergonomics:** closer alignment to `jsonapi` that makes it true that all `RecordIdentifiers`

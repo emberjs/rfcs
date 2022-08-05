@@ -2,12 +2,14 @@
 start-date: 2021-11-30T00:00:00.000Z
 release-date:
 release-versions: 
+  ember-source: v4.5.0
+
 teams: 
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/785
 project-link: 
-stage: accepted
+stage: released
 ---
 
 <!---

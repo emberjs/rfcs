@@ -45,7 +45,7 @@ The implementation follows the standard feature-flagging process in Ember and Em
 ```
   save(options) {
     const savePromise = this._internalModel.save(options).then(() => this);
-    
+
     if (DS_MODEL_SAVE_PROMISE) {
       return savePromise;
     } else {

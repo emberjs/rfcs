@@ -2,8 +2,14 @@
 start-date: 2019-03-06T00:00:00.000Z
 release-date:
 release-versions: 
+  0: F
+  1: I
+  2: X
+  3: M
+  4: E
+
 teams: 
-  - framework ## FIXME - added automatically as it was missing during migration
+  - data
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/461
 project-link: 
