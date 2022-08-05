@@ -8,6 +8,8 @@ prs:
   accepted: https://github.com/emberjs/rfcs/pull/143
 project-link: 
 stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/27 / https://github.com/emberjs/ember.js/issues/14882
 ---
 
 > Note: This RFC replaces the closely related RFC for [Module

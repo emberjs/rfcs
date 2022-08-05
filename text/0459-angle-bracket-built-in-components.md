@@ -8,6 +8,8 @@ prs:
   accepted: https://github.com/emberjs/rfcs/pull/459
 project-link: 
 stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/36
 ---
 
 # Angle Bracket Invocations For Built-in Components

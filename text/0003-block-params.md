@@ -8,6 +8,11 @@ prs:
   accepted: https://github.com/emberjs/rfcs/pull/3
 project-link: 
 stage: accepted
+meta:
+  issues: 
+    Ember Stream support: emberjs/ember.js#5522
+    Handlebars parser support: wycats/handlebars.js#906
+    HTMLBars compiler support: tildeio/htmlbars#147
 ---
 
 # Summary

@@ -8,6 +8,8 @@ prs:
   accepted: https://github.com/emberjs/rfcs/pull/286
 project-link: 
 stage: accepted
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/pull/16076
 ---
 
 # Block `let` template helper

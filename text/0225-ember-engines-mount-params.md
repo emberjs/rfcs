@@ -8,6 +8,8 @@ prs:
   accepted: https://github.com/emberjs/rfcs/pull/225
 project-link: 
 stage: accepted
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/pull/15174
 ---
 
 # Summary

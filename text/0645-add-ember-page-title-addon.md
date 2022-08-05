@@ -8,6 +8,8 @@ prs:
   accepted: https://github.com/emberjs/rfcs/pull/645
 project-link: 
 stage: accepted
+meta:
+  authors: Benjamin Jegard, Melanie Sumner, Ricardo Mendes
 ---
 
 # Add ember-page-title to the app blueprint

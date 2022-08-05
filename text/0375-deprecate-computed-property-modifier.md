@@ -8,6 +8,8 @@ prs:
   accepted: https://github.com/emberjs/rfcs/pull/375
 project-link: 
 stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/15
 ---
 
 # Summary

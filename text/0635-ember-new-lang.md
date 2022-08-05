@@ -9,6 +9,8 @@ prs:
   accepted: https://github.com/emberjs/rfcs/pull/635
 project-link: 
 stage: accepted
+meta:
+  authors: Joseph Sumner, Ava Wroten, Jamie White, Melanie Sumner
 ---
 
 # Ember New Lang

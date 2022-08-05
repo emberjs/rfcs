@@ -9,6 +9,8 @@ prs:
   accepted: https://github.com/emberjs/rfcs/pull/470
 project-link: 
 stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/33
 ---
 
 # `{{fn}}` Helper

@@ -10,6 +10,8 @@ prs:
   accepted: https://github.com/emberjs/rfcs/pull/468
 project-link: 
 stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/55
 ---
 
 # `@classic` Decorator

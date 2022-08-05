@@ -8,6 +8,8 @@ prs:
   accepted: https://github.com/emberjs/rfcs/pull/61
 project-link: 
 stage: accepted
+meta:
+  ember-issue: This RFC is implemented over many Ember Data PRs
 ---
 
 # Summary

@@ -9,6 +9,8 @@ prs:
   accepted: https://github.com/emberjs/rfcs/pull/449
 project-link: 
 stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/38
 ---
 
 # Deprecate `{{partial}}`

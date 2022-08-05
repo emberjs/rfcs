@@ -9,6 +9,8 @@ prs:
   accepted: https://github.com/emberjs/rfcs/pull/478
 project-link: 
 stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/45
 ---
 
 # Tracked Properties Updates

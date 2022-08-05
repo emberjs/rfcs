@@ -8,6 +8,9 @@ prs:
   accepted: https://github.com/emberjs/rfcs/pull/410
 project-link: 
 stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/4
+  authors: Tom Dale, Chris Garrett, Chad Hietala, Yehuda Katz
 ---
 
 # Tracked Properties

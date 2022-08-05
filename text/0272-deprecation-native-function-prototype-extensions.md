@@ -8,6 +8,8 @@ prs:
   accepted: https://github.com/emberjs/rfcs/pull/272
 project-link: 
 stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/12
 ---
 
 # Deprecate Function.prototype.on, Function.prototype.observes and Function.prototype.property
