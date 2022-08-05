@@ -1,9 +1,13 @@
 ---
-Start Date: 2018-08-31
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/370
-Tracking: https://github.com/emberjs/rfc-tracking/issues/17
-
+start-date: 2018-08-31T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/370
+project-link: 
+stage: accepted
 ---
 
 # Summary

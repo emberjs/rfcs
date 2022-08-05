@@ -1,8 +1,13 @@
 ---
-Start Date: 2015-05-20
-RFC PR: https://github.com/emberjs/rfcs/pull/57
-Ember Issue: https://github.com/emberjs/data/pull/3303
-
+start-date: 2015-05-20T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework ## FIXME - added automatically as it was missing during migration
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/57
+project-link: 
+stage: accepted
 ---
 
 # Summary

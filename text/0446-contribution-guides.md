@@ -1,9 +1,13 @@
 ---
-Start Date: 2019-02-14
-Relevant Team(s): Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/446
-Tracking: https://github.com/emberjs/rfc-tracking/issues/39
-
+start-date: 2019-02-14T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/446
+project-link: 
+stage: accepted
 ---
 
 # Contribution Guides

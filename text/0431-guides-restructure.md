@@ -1,9 +1,13 @@
 ---
-Start Date: 2018-01-13
-Relevant Team(s): Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/431
-Tracking: https://github.com/emberjs/rfc-tracking/issues/29
-
+start-date: 2018-01-13T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/431
+project-link: 
+stage: accepted
 ---
 
 # Restructuring the Guides Table of Contents

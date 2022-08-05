@@ -1,12 +1,16 @@
 ---
-Stage: Accepted
-Start Date: 2021-03-23
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember.js, Steering, Ember Data, Ember CLI
-RFC PR: https://github.com/emberjs/rfcs/pull/730
+start-date: 2021-03-23T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+  - steering
+  - data
+  - cli
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/730
+project-link: 
+stage: accepted
 ---
 
 # Semantic Versioning for TypeScript Types

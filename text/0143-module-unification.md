@@ -1,9 +1,13 @@
 ---
-Start Date: 2016-05-09
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/143
-Tracking: https://github.com/emberjs/rfc-tracking/issues/27 / https://github.com/emberjs/ember.js/issues/14882
-
+start-date: 2016-05-09T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/143
+project-link: 
+stage: accepted
 ---
 
 > Note: This RFC replaces the closely related RFC for [Module

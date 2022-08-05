@@ -1,8 +1,13 @@
 ---
-Start Date: 2016-04-06
-Relevant Team(s): Ember CLI
-RFC PR: https://github.com/ember-cli/rfcs/pull/50
-
+start-date: 2016-04-06T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - cli
+prs:
+  accepted: https://github.com/ember-cli/rfcs/pull/50
+project-link: 
+stage: accepted
 ---
 
 # Summary

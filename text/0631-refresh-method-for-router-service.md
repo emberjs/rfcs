@@ -1,8 +1,13 @@
 ---
-Start Date: 2020-05-23
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/631
-
+start-date: 2020-05-23T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/631
+project-link: 
+stage: accepted
 ---
 
 # RouterService#refresh

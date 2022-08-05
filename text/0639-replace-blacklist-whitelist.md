@@ -1,8 +1,14 @@
 ---
-Start Date: 2020-06-15
-Relevant Team(s): Ember CLI, Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/639
-
+start-date: 2020-06-15T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - cli
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/639
+project-link: 
+stage: accepted
 ---
 
 # Replace terms blacklist & whitelist in Ember CLI

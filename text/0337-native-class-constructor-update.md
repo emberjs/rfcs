@@ -1,8 +1,13 @@
 ---
-Start Date: 2018-06-14
-RFC PR: https://github.com/emberjs/rfcs/pull/337
-Ember Issue: https://github.com/emberjs/ember.js/pull/16795
-
+start-date: 2018-06-14T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework ## FIXME - added automatically as it was missing during migration
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/337
+project-link: 
+stage: accepted
 ---
 
 # Native Class Constructor Update

@@ -1,13 +1,17 @@
 ---
-Stage: Accepted
-Start Date: 2021-03-11
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember.js, Ember Data, Ember CLI, Learning, Steering
-RFC PR: https://github.com/emberjs/rfcs/pull/724
-
+start-date: 2021-03-11T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+  - data
+  - cli
+  - learning
+  - steering
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/724
+project-link: 
+stage: accepted
 ---
 
 # Official TypeScript Support

@@ -1,12 +1,13 @@
 ---
-Stage: Accepted
-Start Date: 2021-01-23
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/711
+start-date: 2021-01-23T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/711
+project-link: 
+stage: accepted
 ---
 
 # Deprecate AutoLocation

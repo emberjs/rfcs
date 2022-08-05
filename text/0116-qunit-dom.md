@@ -1,8 +1,13 @@
 ---
-Start Date: 2018-02-12
-Relevant Team(s): Ember CLI
-RFC PR: https://github.com/ember-cli/rfcs/pull/116
-
+start-date: 2018-02-12T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - cli
+prs:
+  accepted: https://github.com/ember-cli/rfcs/pull/116
+project-link: 
+stage: accepted
 ---
 
 # Summary

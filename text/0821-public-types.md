@@ -1,12 +1,15 @@
 ---
-Stage: Accepted
-Start Date: 2022-05-23
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): "Ember.js, TypeScript,  Learning"
-RFC PR: https://github.com/emberjs/rfcs/pull/821
+start-date: 2022-05-23T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+  - typescript
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/821
+project-link: 
+stage: accepted
 ---
 
 # Public API for Type-Only Imports

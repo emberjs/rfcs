@@ -1,9 +1,13 @@
 ---
-Start Date: 2019-03-13
-Relevant Team(s): data
-RFC PR: https://github.com/emberjs/rfcs/pull/465
-Tracking: https://github.com/emberjs/rfc-tracking/issues/46
-
+start-date: 2019-03-13T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/465
+project-link: 
+stage: accepted
 ---
 
 # Record Data Errors RFC

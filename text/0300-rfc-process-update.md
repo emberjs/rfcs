@@ -1,9 +1,13 @@
 ---
-Start Date: 2018-02-04
-Relevant Team(s): Steering
-RFC PR: https://github.com/emberjs/rfcs/pull/300
-Tracking: https://github.com/emberjs/rfc-tracking/issues/1
-
+start-date: 2018-02-04T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - steering
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/300
+project-link: 
+stage: accepted
 ---
 
 # RFC (Request for Comments) Process Update

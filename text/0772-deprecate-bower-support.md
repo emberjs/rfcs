@@ -1,12 +1,13 @@
 ---
-Stage: Accepted
-Start Date: 2021-10-21
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember CLI
-RFC PR: https://github.com/emberjs/rfcs/pull/772
+start-date: 2021-10-21T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - cli
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/772
+project-link: 
+stage: accepted
 ---
 
 # Deprecate Bower Support
