@@ -4,7 +4,7 @@ Start Date: 2016-11-18
 Release Date: 2017-03-14
 Release Versions:
   ember-source: v2.12.0
-Relevant Team(s): Rmber.js
+Relevant Team(s): Ember.js
 RFC PR: https://github.com/emberjs/rfcs/pull/178
 Ember Issue: https://github.com/emberjs/ember.js/issues/14746
 

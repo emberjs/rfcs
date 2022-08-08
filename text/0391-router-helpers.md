@@ -1,7 +1,6 @@
 ---
 Stage: Accepted
 Start Date: 2018-10-22
-Relevant Team(s): Ember.js
 Release Date: Unreleased
 Release Versions: Unreleased
 Relevant Team(s): Ember.js

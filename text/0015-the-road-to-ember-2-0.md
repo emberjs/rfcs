@@ -1,16 +1,25 @@
 ---
-# FIXME: Is this correct?
-Stage: Discontinued
-Start Date: 2014-12-03
-Release Date: 2015-08-13
-Release Versions:
+
+stage: discontinued # FIXME: Is this correct?
+start-date: 2014-12-03T00:00:00.000Z
+release-date: 2015-08-13T00:00:00.000Z
+release-versions:
   ember-source: v2.0.0
   ember-data: v2.0.0
   ember-cli: v2.0.0
-Relevant Team(s): All Teams
-RFC PR: https://github.com/emberjs/rfcs/pull/15
-Ember Issue: This RFC is implemented over many Ember PRs
 
+teams:
+  - framework
+  - data
+  - cli
+  - learning
+  - typescript
+  - steering
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/15
+project-link:
+meta:
+  ember-issue: This RFC is implemented over many Ember PRs
 ---
 
 # The Road to Ember 2.0

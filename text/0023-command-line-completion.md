@@ -1,9 +1,14 @@
 ---
-Stage: Accepted
-Start Date: 2015-08-18
-Relevant Team(s): Ember CLI
-RFC PR: https://github.com/ember-cli/rfcs/pull/23
 
+stage: accepted
+start-date: 2015-08-18T00:00:00.000Z
+release-date: 
+release-versions: 
+teams: 
+  - cli
+prs:
+  accepted: https://github.com/ember-cli/rfcs/pull/23
+project-link: 
 ---
 
 # Summary

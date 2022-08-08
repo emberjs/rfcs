@@ -1,12 +1,18 @@
 ---
-Stage: Released
-Start Date: 2014-08-14
-Release Date: 2016-05-03
-Release Versions:
+
+stage: released
+start-date: 2014-08-14T00:00:00.000Z
+release-date: 2016-05-03T00:00:00.000Z
+release-versions: 
   ember-data: v2.5.0
-Relevant Team(s): Ember Data
-RFC PR: https://github.com/emberjs/rfcs/pull/1
-Ember Issue: https://github.com/emberjs/data/pull/4086
+
+teams: 
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/1
+project-link: 
+meta:
+  ember-issue: https://github.com/emberjs/data/pull/4086
 ---
 
 # Summary
