@@ -1,14 +1,14 @@
 ---
+stage: accepted
 start-date: 2019-05-30T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework
   - learning
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/494
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # Async Observers

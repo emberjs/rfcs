@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2019-08-29T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - data
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/521
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # [DATA] findRecord/peekRecord via Identifier

@@ -1,17 +1,17 @@
 ---
+stage: accepted
 start-date: 2016-03-26T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - cli
 prs:
   accepted: https://github.com/ember-cli/rfcs/pull/46
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # Improved Release Process
- 
+
 ## Summary & Motivation
 
 ember-cli has followed an ad hoc release process throughout its existence which has made it difficult to know exactly when releases would come out, what features would and would not be supported, and the degree to which it would support existing Ember applications. With the proposal for lockstep SemVer there were ideals of guaranteeing compatibility, which we have mostly met, but that resulted in making decisions of delaying an official 2.X release of ember-cli to avoid additional major version bumps.
@@ -25,7 +25,7 @@ To begin there will be three separate channels: canary, beta, and release. We in
 - **Canary**: represents the latest work in ember-cli, and is synonymous with the `HEAD` of the `master` branch and is the least stable of all channels.
 - **Beta**: branched off of master every six weeks, exact commit decided upon manually. Updated and released weekly with commits that are prefixed `[BUGFIX beta]`. Less stable than `release` as it is a proving ground. No new features will be added once the branch has been created to allow for existing features to mature. Tags will match Ember's patterns, for example `v2.6.0-beta.1`. Branch name: `beta`.
 - **Release**: branched off of Beta every six weeks. Only rarely will this be updated, but possible for security issues and uncaught regressions. Branch name: `release`.
- 
+
 ember-cli will not support daily releases as time-based packaging doesn't make a lot of sense.
 
 ## New Features
@@ -54,7 +54,7 @@ In order to undertake this task, there are multiple workflows which must occur:
 - [ ] Teaching new patterns to ember-cli contributors, most specifically commit tagging and feature flagging.
 - [ ] Increased automation of the release process.
 - [ ] Tooling to support feature flags.
- 
+
 ## References
 
 - [Ember's Post-1.0 Release Cycle](http://emberjs.com/blog/2013/09/06/new-ember-release-process.html)

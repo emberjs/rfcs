@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2018-11-02T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/398
-project-link: 
-stage: accepted
+project-link:
 meta:
   tracking: https://github.com/emberjs/rfc-tracking/issues/10
 ---

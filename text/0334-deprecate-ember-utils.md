@@ -1,17 +1,17 @@
 ---
+stage: accepted
 start-date: 2018-05-22T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/334
-project-link: 
-stage: accepted
+project-link:
 ---
 
-<!--- 
-Directions for above: 
+<!---
+Directions for above:
 
 Stage: Leave as is
 Start Date: Fill in with today's date, YYYY-MM-DD

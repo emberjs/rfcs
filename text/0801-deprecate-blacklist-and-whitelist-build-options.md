@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2022-02-25T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - cli
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/801
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # Deprecate `blacklist` and `whitelist` build options

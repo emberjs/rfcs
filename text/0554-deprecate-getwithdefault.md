@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2019-11-08T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/554
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # Deprecate getWithDefault
@@ -24,7 +24,7 @@ Given the JavaScript language will soon (currently in Stage 3) give us the appro
 
 ## Transition Path
 
-Ember will start logging deprecation messages for `getWithDefault` usage. 
+Ember will start logging deprecation messages for `getWithDefault` usage.
 
 We can codemod our current usage of `getWithDefault` with the equivalent behaviour using plain JavaScript. The migration guide will cover this example:
 
@@ -124,7 +124,7 @@ let { falseValue = defaultValue } = obj;
 
 Add the transition path to the [Ember Deprecation Guide](https://deprecations.emberjs.com/).
 
-The references to `getWithDefault` will need to be removed from the [API docs](https://api.emberjs.com/ember/release/functions/@ember%2Fobject/getWithDefault). 
+The references to `getWithDefault` will need to be removed from the [API docs](https://api.emberjs.com/ember/release/functions/@ember%2Fobject/getWithDefault).
 
 There are no changes needed for the [Ember Guides](https://guides.emberjs.com/release/) since we do not use it anywhere.
 

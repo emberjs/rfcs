@@ -1,14 +1,14 @@
 ---
+stage: accepted
 start-date: 2020-06-15T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - cli
   - learning
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/639
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # Replace terms blacklist & whitelist in Ember CLI

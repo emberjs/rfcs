@@ -1,14 +1,14 @@
 ---
+stage: accepted
 start-date: 2021-05-17T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework
   - learning
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/756
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # Default Helper Manager

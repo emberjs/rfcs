@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2017-09-25T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework ## FIXME - added automatically as it was missing during migration
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/252
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # Summary
@@ -38,7 +38,7 @@ Some of the features (unavailable in IE9, IE10, or PhantomJS) that addons will b
 - XHR advanced features ([caniuse](https://caniuse.com/#feat=xhr2), [specification](https://www.w3.org/TR/2012/WD-XMLHttpRequest-20120117/))
 - HTTP2 ([caniuse](http://caniuse.com/#feat=http2), [wikipedia](https://en.wikipedia.org/wiki/HTTP/2))
 - Web Workers ([caniuse](http://caniuse.com/#feat=webworkers), [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers))
-- IndexedDB ([caniuse](http://caniuse.com/#feat=indexeddb), [MDN](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API)) 
+- IndexedDB ([caniuse](http://caniuse.com/#feat=indexeddb), [MDN](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API))
 - WebGL ([caniuse](http://caniuse.com/#feat=webgl), [MDN](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API))
 - File API ([caniuse](http://caniuse.com/#feat=fileapi), [MDN](https://developer.mozilla.org/en-US/docs/Web/API/File))
 - PageTransitionEvent ([caniuse](http://caniuse.com/#feat=page-transition-events), [MDN](https://developer.mozilla.org/en-US/docs/Web/API/PageTransitionEvent))
@@ -82,7 +82,7 @@ IE10 introduced support for `requestAnimationFrame`, an efficient way to schedul
 When using Ember applications in IE9, IE10, or PhantomJS, Ember will cause an appropriate deprecation to be issued. The deprecation will be “until 3.0” and will reference an entry in the deprecation guide. The guide entry will describe For example:
 
 > Using Ember.js in IE9, IE10, or PhantomJS is deprecated and will be unsupported in Ember.js 3.0. We recommend using Ember’s 2.x LTS releases if your applications must support those browsers.
-> 
+>
 > PhantomJS is often used for continuous integration testing. We strongly suggest adopting headless Chrome or Firefox to run CI tests.
 
 # Drawbacks

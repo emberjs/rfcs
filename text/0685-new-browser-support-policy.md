@@ -1,8 +1,9 @@
 ---
+stage: accepted
 start-date: 2020-11-28T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework
   - data
   - cli
@@ -11,8 +12,7 @@ teams:
   - steering
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/685
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # New Browser Support Policy

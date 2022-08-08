@@ -1,16 +1,16 @@
 ---
+stage: accepted
 start-date: 2021-03-23T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework
   - steering
   - data
   - cli
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/730
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # Semantic Versioning for TypeScript Types
@@ -358,7 +358,7 @@ Changing a symbol is a breaking change when:
 -   removing an exported symbol, since users' existing imports will stop working. This is a breaking change for value exports (`let`, `const`, `class`, `function`) independent of types, but removing exported `interface`, `type` alias, or `namespace` declarations is breaking as well.
 
     This includes changing a previously type-and-value export such as `export class` to either—
-    
+
     -   a type-only export, since the exported value symbol has been removed:
 
         ```diff
@@ -369,7 +369,7 @@ Changing a symbol is a breaking change when:
         +
         +export type { Foo };
         ```
-    
+
     -   a value-only export, since the exported type symbol has been removed:
 
         ```diff
@@ -410,7 +410,7 @@ A change to any object type (user constructible or not) is breaking when:
 
     -   if it was previously `string` but now is `string | number`, some of the user's existing *reads* of the property will now be wrong ([playground][reads-of-property]). Note that this includes making a property optional.
 
-    -   if it was previously `string | number` but now is `string`, some of the user's existing *writes* to the property will now be wrong ([playground][writes-to-property]). Note that this includes making a previously-optional property required. 
+    -   if it was previously `string | number` but now is `string`, some of the user's existing *writes* to the property will now be wrong ([playground][writes-to-property]). Note that this includes making a previously-optional property required.
 
         Note that at present, TypeScript cannot actually catch all variants of this error. [This playground][writes-to-property] demonstrates that there is a runtime error but no *type* error in one scenario. TypeScript's type system understands these types in terms of *assignability*, rather than local *mutability*. However, package authors should test for the catchable variant of this condition.
 
@@ -783,7 +783,7 @@ The current options include:
 
 At present, `expect-type` seems to be the best option, and several libraries both in the Ember ecosystem and elsewhere in the TS community are already using `expect-type` successfully (see [**Appendix A**](#appendix-a-existing-implementations) above). However, for the purposes of *this* RFC, we do not make a specific recommendation about which library to use. The tradeoffs above are offered to help authors make an informed choice in this space.
 
-Users should add one of these libraries and generate a set of tests corresponding to their public API. These tests should be written is such a way as to test the imported API as consumers will consume the library. For example, type tests should not import using relative paths, but using the absolute paths at which the types should resolve, just as consumers would. 
+Users should add one of these libraries and generate a set of tests corresponding to their public API. These tests should be written is such a way as to test the imported API as consumers will consume the library. For example, type tests should not import using relative paths, but using the absolute paths at which the types should resolve, just as consumers would.
 
 These type tests should be specific and precise. It is important, for example, to guarantee that an API element never *accidentally* becomes `any`, thereby making many things allowable which should not be in the case of function arguments, and "infecting" the caller's code by eliminating type safety on the result in the case of function return values. For example, the `expect-type` library's `.toEqualTypeOf` assertion is robust against precisely this scenario; package authors are also encouraged to use its `.not` modifier and `.toBeAny()` method where appropriate to prevent this failure mode.
 
@@ -931,9 +931,9 @@ The recommended flow would be as follows:
     ```sh
     npm install --save-dev downlevel-dts npm-run-all rimraf
     ```
-    
-    or 
-    
+
+    or
+
     ```sh
     yarn add --dev downlevel-dts npm-run-all rimraf
     ```
@@ -1027,7 +1027,7 @@ This approach is a variant on [**Updating types to maintain compatibility**](#up
     ```
 
     —and the contents of `sub-package.d.ts` would be:
-    
+
     ```ts
     declare module 'my-library/sub-package' {
       export function dontCarePromise(): Promise<unknown>;

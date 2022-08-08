@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2020-10-02T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/671
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # Stop Leaking Implementation Details of Built-in Components

@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2016-12-11T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - cli
 prs:
   accepted: https://github.com/ember-cli/rfcs/pull/90
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # Summary

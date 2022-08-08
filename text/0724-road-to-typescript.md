@@ -1,8 +1,9 @@
 ---
+stage: accepted
 start-date: 2021-03-11T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework
   - data
   - cli
@@ -10,8 +11,7 @@ teams:
   - steering
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/724
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # Official TypeScript Support
@@ -105,7 +105,7 @@ Key implications of this commitment:
 
 The following are our hard constraints in supporting TypeScript with Ember:
 
-- We must not compromise our commitment to “stability without stagnation” and our strong Semantic Versioning guarantees. 
+- We must not compromise our commitment to “stability without stagnation” and our strong Semantic Versioning guarantees.
 - Using TypeScript should never be mandatory for anyone who uses Ember.
 - TypeScript support must never *degrade* the experience of JavaScript users, and wherever possible it should benefit both JavaScript and TypeScript developers.
 - Types are published in the packages they represent, *not* in a third-party package.

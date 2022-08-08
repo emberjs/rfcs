@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2020-09-26T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/669
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # Tracked Storage Primitives
