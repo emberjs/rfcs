@@ -1,7 +1,13 @@
 ---
-Start Date: 2016-11-05
-RFC PR: https://github.com/emberjs/rfcs/pull/176
-
+start-date: 2016-11-05T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework ## FIXME - added automatically as it was missing during migration
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/176
+project-link: 
+stage: accepted
 ---
 
 # Summary

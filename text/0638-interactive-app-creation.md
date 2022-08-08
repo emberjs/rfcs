@@ -1,8 +1,15 @@
 ---
-Start Date: 2020-06-12
-Relevant Team(s): ember-cli, framework, learning
-RFC PR: https://github.com/emberjs/rfcs/pull/638
-
+start-date: 2020-06-12T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - cli
+  - framework
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/638
+project-link: 
+stage: accepted
 ---
 
 # Interactive New Ember App Creation

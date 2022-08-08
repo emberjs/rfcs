@@ -1,12 +1,13 @@
 ---
-Stage: Accepted
-Start Date: 2021-04-23
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): ember-data
-RFC PR: https://github.com/emberjs/rfcs/pull/740
+start-date: 2021-04-23T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/740
+project-link: 
+stage: accepted
 ---
 
 # EmberData | Deprecate Non Strict Types

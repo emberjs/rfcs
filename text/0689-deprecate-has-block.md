@@ -1,12 +1,13 @@
 ---
-Stage: Accepted
-Start Date: 2020-12-22
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/689
+start-date: 2020-12-22T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/689
+project-link: 
+stage: accepted
 ---
 
 # Deprecate `{{hasBlock}}` and `{{hasBlockParams}}` in templates

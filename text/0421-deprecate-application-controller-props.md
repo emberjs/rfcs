@@ -1,9 +1,15 @@
 ---
-Start Date: 2018-19-12
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/421
-Tracking: https://github.com/emberjs/rfc-tracking/issues/5
-
+start-date: 2019-07-12T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/421
+project-link: 
+stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/5
 ---
 
 # Deprecate Application Controller Router Properties

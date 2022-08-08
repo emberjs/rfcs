@@ -1,7 +1,13 @@
 ---
-Start Date: 2018-04-18
-RFC PR: https://github.com/emberjs/rfcs/pull/326
-
+start-date: 2018-04-18T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework ## FIXME - added automatically as it was missing during migration
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/326
+project-link: 
+stage: accepted
 ---
 
 # Ember Data Filter Deprecation

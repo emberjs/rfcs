@@ -1,8 +1,13 @@
 ---
-Start Date: 2020-06-01
-Relevant Team(s): Ember-CLI
-RFC PR: https://github.com/emberjs/rfcs/pull/637
-
+start-date: 2020-06-01T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - cli
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/637
+project-link: 
+stage: accepted
 ---
 
 # Facilitate customization of setupTest* functions

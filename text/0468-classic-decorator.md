@@ -1,9 +1,17 @@
 ---
-Start Date: 2019-03-14
-Relevant Team(s): Ember.js, Ember Data, Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/468
-Tracking: https://github.com/emberjs/rfc-tracking/issues/55
-
+start-date: 2019-03-14T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+  - data
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/468
+project-link: 
+stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/55
 ---
 
 # `@classic` Decorator

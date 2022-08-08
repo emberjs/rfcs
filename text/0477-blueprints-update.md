@@ -1,8 +1,13 @@
 ---
-Start Date: 2019-04-17
-Relevant Team(s): Ember CLI
-RFC PR: https://github.com/emberjs/rfcs/pull/477
-
+start-date: 2019-04-17T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - cli
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/477
+project-link: 
+stage: accepted
 ---
 
 # Syncing Blueprints

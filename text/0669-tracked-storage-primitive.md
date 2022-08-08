@@ -1,12 +1,13 @@
 ---
-Stage: Accepted
-Start Date: 2020-09-26
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/669
+start-date: 2020-09-26T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/669
+project-link: 
+stage: accepted
 ---
 
 # Tracked Storage Primitives

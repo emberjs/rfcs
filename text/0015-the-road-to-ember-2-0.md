@@ -1,8 +1,15 @@
 ---
-Start Date: 2014-12-03
-RFC PR: https://github.com/emberjs/rfcs/pull/15
-Ember Issue: This RFC is implemented over many Ember PRs
-
+start-date: 2014-12-03T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework ## FIXME - added automatically as it was missing during migration
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/15
+project-link: 
+stage: accepted
+meta:
+  ember-issue: This RFC is implemented over many Ember PRs
 ---
 
 # The Road to Ember 2.0

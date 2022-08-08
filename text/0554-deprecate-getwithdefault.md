@@ -1,8 +1,13 @@
 ---
-Start Date: 2019-11-08
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/554
-
+start-date: 2019-11-08T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/554
+project-link: 
+stage: accepted
 ---
 
 # Deprecate getWithDefault

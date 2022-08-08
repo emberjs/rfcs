@@ -1,9 +1,15 @@
 ---
-Start Date: 2019-05-09
-Relevant Team(s): data
-RFC PR: https://github.com/emberjs/rfcs/pull/487
-Tracking: https://github.com/emberjs/rfc-tracking/issues/53
-
+start-date: 2019-05-09T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/487
+project-link: 
+stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/53
 ---
 
 # Custom Model Class RFC

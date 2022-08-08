@@ -1,8 +1,15 @@
 ---
-Start Date: 2019-03-06
-RFC PR: https://github.com/emberjs/rfcs/pull/461
-Tracking: https://github.com/emberjs/rfc-tracking/issues/51
-
+start-date: 2019-03-06T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework ## FIXME - added automatically as it was missing during migration
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/461
+project-link: 
+stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/51
 ---
 
 # Singleton Record Data

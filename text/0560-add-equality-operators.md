@@ -1,7 +1,14 @@
-- Start Date: 2019-12-08
-- Relevant Team(s): (fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies)
-- RFC PR: https://github.com/emberjs/rfcs/pull/560
-- Tracking: (leave this empty)
+---
+start-date: 2019-12-08T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework ## FIXME - added automatically as it was missing during migration
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/560
+project-link: 
+stage: accepted
+---
 
 # Adding Equality Operators to Templates
 

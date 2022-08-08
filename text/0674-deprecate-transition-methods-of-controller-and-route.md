@@ -1,8 +1,13 @@
 ---
-Start Date: 2020-10-12
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/674
-
+start-date: 2020-10-12T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/674
+project-link: 
+stage: accepted
 ---
 
 # Deprecate transition methods of controller and route
@@ -68,7 +73,7 @@ and `Controller.replaceRoute` should trigger a deprecation if being used.
 The deprecation message should recommend using `RouterService#transitionTo`
 or `RouterService#replaceWith` instead.
 
-```patch
+```diff
   // app/route/foo.js
 
   import Route from '@ember/routing/route';
@@ -87,7 +92,7 @@ or `RouterService#replaceWith` instead.
   }
 ```
 
-```patch
+```diff
   // app/controllers/foo.js
 
   import Controller from '@ember/controller';

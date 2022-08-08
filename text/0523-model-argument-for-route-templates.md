@@ -1,8 +1,14 @@
 ---
-Start Date: 2019-08-05
-Relevant Team(s): Ember.js, Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/523
-
+start-date: 2019-08-05T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/523
+project-link: 
+stage: accepted
 ---
 
 # Provide `@model` named argument to route templates

@@ -1,8 +1,13 @@
 ---
-Start Date: 2019-07-27
-Relevant Team(s): Ember Data
-RFC PR: https://github.com/emberjs/rfcs/pull/522
-
+start-date: 2019-07-27T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/522
+project-link: 
+stage: accepted
 ---
 
 # Deprecate default Adapter and Serializer fallbacks

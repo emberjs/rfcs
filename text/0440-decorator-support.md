@@ -1,9 +1,15 @@
 ---
-Start Date: 2019-02-06
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/440
-Tracking: https://github.com/emberjs/rfc-tracking/issues/41
-
+start-date: 2019-02-06T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/440
+project-link: 
+stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/41
 ---
 
 # Decorator Support

@@ -1,8 +1,15 @@
 ---
-Start Date: 2017-12-21
-RFC PR: https://github.com/emberjs/rfcs/pull/286
-Ember Issue: https://github.com/emberjs/ember.js/pull/16076
-
+start-date: 2017-12-21T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework ## FIXME - added automatically as it was missing during migration
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/286
+project-link: 
+stage: accepted
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/pull/16076
 ---
 
 # Block `let` template helper

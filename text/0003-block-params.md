@@ -1,11 +1,18 @@
 ---
-Start Date: 2014-08-18
-RFC PR: https://github.com/emberjs/rfcs/pull/3
-Issues:
-  Ember Stream support: emberjs/ember.js#5522
-  Handlebars parser support: wycats/handlebars.js#906
-  HTMLBars compiler support: tildeio/htmlbars#147
-
+start-date: 2014-08-18T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework ## FIXME - added automatically as it was missing during migration
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/3
+project-link: 
+stage: accepted
+meta:
+  issues: 
+    Ember Stream support: emberjs/ember.js#5522
+    Handlebars parser support: wycats/handlebars.js#906
+    HTMLBars compiler support: tildeio/htmlbars#147
 ---
 
 # Summary

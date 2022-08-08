@@ -1,9 +1,15 @@
 ---
-Start Date: 2019-03-09
-Relevant Team(s): data
-RFC PR: https://github.com/emberjs/rfcs/pull/466
-Tracking: https://github.com/emberjs/rfc-tracking/issues/52
-
+start-date: 2019-03-09T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/466
+project-link: 
+stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/52
 ---
 
 # Request State Service

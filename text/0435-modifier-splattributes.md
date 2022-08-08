@@ -1,9 +1,15 @@
 ---
-Start Date: 2019-01-18
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/435
-Tracking: https://github.com/emberjs/rfc-tracking/issues/9
-
+start-date: 2019-01-18T00:00:00.000Z
+release-date:
+release-versions: 
+teams: 
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/435
+project-link: 
+stage: accepted
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/9
 ---
 
 # Forwarding Element Modifiers with "Splattributes"
