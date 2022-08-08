@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2021-04-23T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - data
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/742
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # EmberData | Deprecate Helper Functions
@@ -39,7 +39,7 @@ format. For refactoring `normalizeModelName` we also recommend following [RFC#74
 
 ## How we teach this
 
-Generally usage has not been widely observed and these are not methods commonly shown in 
+Generally usage has not been widely observed and these are not methods commonly shown in
 examples or docs. We should make sure to audit for usages and remove them if they exist.
 
 ## Drawbacks

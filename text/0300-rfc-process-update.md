@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2018-02-04T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - steering
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/300
-project-link: 
-stage: accepted
+project-link:
 meta:
   tracking: https://github.com/emberjs/rfc-tracking/issues/1
 ---
@@ -16,7 +16,7 @@ meta:
 
 ## Summary
 
-Refine the Ember RFC process and have it apply to all Ember teams. 
+Refine the Ember RFC process and have it apply to all Ember teams.
 
 ## Motivation
 
@@ -24,7 +24,7 @@ The Ember community has been using the RFC process to great effect over the last
 Proposals by both Core and community members are discussed and refined
 with the result coming out much stronger.
 
-During this time, the community and the core teams have identified shortcomings 
+During this time, the community and the core teams have identified shortcomings
 of the RFC process as well as new requirements, which this RFC intends to address:
 
 ### Confusion between emberjs/rfcs and ember-cli/rfcs
@@ -53,20 +53,20 @@ but this has instead given a negative impression of staleness, as RFCs linger op
 ### The process for an RFC after it has been accepted
 
 At the moment the process does not specify what happens when an RFC is accepted and merged. This has led to many questions about the status of merged RFCs.
-  
+
 ## Detailed design
 
 ### One RFC Process for all of Ember
 
-Ember is [organized into teams](https://emberjs.com/team/), with each team being responsible for certain projects. 
-The RFC process will be a useful tool for all of those projects. 
+Ember is [organized into teams](https://emberjs.com/team/), with each team being responsible for certain projects.
+The RFC process will be a useful tool for all of those projects.
 The header of the RFC template will be updated to include a spot to specify the relevant team(s). The header will have "Ember Issue:" removed.
 
-A list of the teams and respective projects will be added to the instructions, 
+A list of the teams and respective projects will be added to the instructions,
 possibly with the addition of per-team instructions on specifics of the project.
 Additional templates might be created as well, such a design work template.
 
-Each team will be responsible for reviewing new RFCs and, if an RFC requires work from their team, ensuring that the RFC reflects that. 
+Each team will be responsible for reviewing new RFCs and, if an RFC requires work from their team, ensuring that the RFC reflects that.
 As it is with the wider community, the RFC process is the time for teams and team members to push back on, encourage, refine, or otherwise comment on proposals.
 
 ### Require a Core Champion
@@ -76,17 +76,17 @@ One goal is that in seeking a champion from the team,
 the RFC author starts a dialogue with the team and gets some early feedback.
 That champion is then responsible for representing the RFC in team meetings, and for shepherding its progress. We will import a version of this process to emberjs/rfcs:
 
-Each RFC will require a champion from the primary core team to which the RFC has been marked relevant. 
+Each RFC will require a champion from the primary core team to which the RFC has been marked relevant.
 The champion must be found by the opener of the RFC or other community member. They are not assigned by the core teams.
-The champion will assign themselves on the RFC on Github. 
+The champion will assign themselves on the RFC on Github.
 The champion will be responsible for:
  - achieving consensus from the team(s) to move the RFC through the stages of the RFC process.
- - ensuring the RFC follows the RFC process. 
+ - ensuring the RFC follows the RFC process.
  - shepherding the planning and implementation of the RFC.
 Before the RFC is accepted, the champion may remove themselves.
-The champion may find a replacement champion at any time. 
+The champion may find a replacement champion at any time.
 
-A section on 'Finding a champion' will be added to the instructions on proposing an RFC. 
+A section on 'Finding a champion' will be added to the instructions on proposing an RFC.
 
 ### Introduce the concept of "FCP to close"
 
@@ -125,20 +125,20 @@ Going forward, the numbering should be unified by virtue of having a single repo
 
 ### Track RFCs after they are accepted
 
-At the moment it is not clear what happens to an RFC after it has been merged. 
+At the moment it is not clear what happens to an RFC after it has been merged.
 
-This RFC proposes that after an RFC is merged, the relevant teams, guided by the champion, 
+This RFC proposes that after an RFC is merged, the relevant teams, guided by the champion,
 will plan implementation by creating tracking issues in the relevant projects.
 
-This RFC proposes having a single place to track the implementation of each RFC. 
-Each RFC will have a header `Tracking:` that will be filled out with a link. At that link all issues related to that RFC, across all projects and organizations, will be enumerated.    
+This RFC proposes having a single place to track the implementation of each RFC.
+Each RFC will have a header `Tracking:` that will be filled out with a link. At that link all issues related to that RFC, across all projects and organizations, will be enumerated.
 
 ## How We Teach This
 
 To ensure that contributors are updated on the RFC process and the process is clear,
 the documentation should be improved in a couple of ways.
 
-The README will be updated to reflect process changes described in this RFC. 
+The README will be updated to reflect process changes described in this RFC.
 We will add checklists to the instructions for each stage of the RFC process to make it very clear what needs to happen.
 
 ## Drawbacks

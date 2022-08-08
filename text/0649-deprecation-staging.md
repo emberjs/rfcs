@@ -1,16 +1,16 @@
 ---
+stage: accepted
 start-date: 2020-06-18T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework
   - learning
   - steering
   - cli
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/649
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # Deprecation Staging

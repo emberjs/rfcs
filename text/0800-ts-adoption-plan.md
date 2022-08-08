@@ -1,16 +1,16 @@
 ---
+stage: accepted
 start-date: 2022-02-24T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework
   - data
   - cli
   - learning
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/800
-project-link: 
-stage: accepted
+project-link:
 ---
 
 
@@ -121,7 +121,7 @@ The only exceptions to the “no new red squiggles” rule are:
     <details><summary>example of this kind of change</summary>
 
     Assume a library provides a function, `idFor`, which gives back the `id` for a given item. Maybe it finds an `id` field on the object and hands it back if it exists, or generates a UUID otherwise, or similar—the details are unimportant, as we only care about the type signature.
-    
+
     In v1.0 of the library, it specifies that it always returns a `string` or  a `number`:
 
     ```ts
@@ -139,8 +139,8 @@ The only exceptions to the “no new red squiggles” rule are:
 
     ```ts
     function idFor(obj: unknown): string;
-    ```    
-    
+    ```
+
     This is perfectly safe from a runtime perspective. Any code which worked before will work now. However, TypeScript is smart enough to see that the `typeof` check is dead code:
 
     ```ts
@@ -233,7 +233,7 @@ Accordingly, we include this as part of Ember’s own strictness settings and de
 The primary packages in the ecosystem, `ember-source`, `ember-data`, and `ember-cli`, will adopt the [rolling window](https://github.com/chriskrycho/ember-rfcs/blob/semver-for-ts/text/0730-semver-for-ts.md#rolling-support-windows) policy:
 
 > In *rolling window*, a package may declare a range of supported versions which moves over time, similar to supporting evergreen browsers.
-> 
+>
 > Packages using the “rolling window” policy should normally support all TypeScript versions released during the current ‘LTS’ of other core packages/runtimes/etc. they support, and drop support for them only when they drop support for that ‘LTS’, to minimize the number of major versions in the ecosystem.
 
 This aligns the support policy for these packages with the existing policy for Node and browser versions, both of which already operate on exactly this model.
@@ -291,7 +291,7 @@ The key points to notice in this upgrade cycle:
 
 - Regular minor versions may add support for new TS versions, if one has been released.
 
-- Ember may also choose not to support a given TS version if it cannot reasonably do so. 
+- Ember may also choose not to support a given TS version if it cannot reasonably do so.
 
 - LTS versions *may* drop support for old TS versions, but are not *required* to. In this example:
 
@@ -439,7 +439,7 @@ Per the edition support policy, we will provide minimal support for Ember Classi
     It is not possible to provide a good experience working with those types (in particular, working with mixins *at all* requires extensive unsafe casting), and they are no longer recommended for any new code. We will support them only because they are *required* for migrating some critical ecosystem code which still depends on them (especially around Ember Data).
 
     <details><summary>detailed discussion of classic class system updates</summary>
-    
+
     All of the relevant tweaks to class types can be represented using [declaration merging][declaration-merging]. Given a class `Demo`:
 
     - including a `Mixin` with `.extend()` can be represented with a type alias for the mixin `type TheMixin = ...` and `interface Demo extends TheMixin {}`
@@ -672,21 +672,21 @@ Besides the per-package documentation, we will also include a discussion of how 
 Additionally, when each new version of Ember is released, any updates to supported versions should be included in the blog post associated with that version in a dedicated section at the same level as the **Ember**, **Ember Data**, and **Ember CLI** sections today. For example, in an Ember 4.6 release which added support for TypeScript 4.7, the section might look like this, immediately following the Ember CLI section:
 
 > ### TypeScript support
-> 
+>
 > Using Ember does not require using TypeScript, but Ember provides first-class TypeScript integration for users who wish to use TypeScript, with strong backwards-compatibility guarantees.
-> 
+>
 > You can always update TypeScript to a supported version independently of updating your Ember, Ember Data, and Ember CLI versions.
-> 
+>
 > Ember.js, Ember Data, and Ember CLI 4.6 all **added support for TypeScript 4.7**. Supported TypeScript versions now include 4.5, 4.6, and 4.7.
 
 In an Ember 4.8 LTS release which *dropped* support for TypeScript 4.5 (as described in [the example above](#example)), we would emphasize this in the text:
 
 > ### TypeScript support
-> 
+>
 > Using Ember does not require using TypeScript, but Ember provides first-class TypeScript integration for users who wish to use TypeScript, with strong backwards-compatibility guarantees.
-> 
+>
 > You can always update TypeScript to a supported version independently of updating your Ember, Ember Data, and Ember CLI versions.
-> 
+>
 > Ember.js, Ember Data, and Ember CLI 4.6 all **added support for TypeScript 4.7** and **dropped support for TypeScript version 4.5**. Supported TypeScript versions now include 4.6, and 4.7. To upgrade to Ember 4.8, you should first upgrade to at least TypeScript 4.6.
 
 

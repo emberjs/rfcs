@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2021-04-23T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - data
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/745
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # EmberData | Modernize PromiseManyArray
@@ -194,12 +194,12 @@ Deprecated API surface
 ## How we teach this
 
 As this deprecation targets 4.x, users would need to have upgraded to Octane paradigms before
-they could encounter the deprecations listed here. This means for *most* apps this should be as 
+they could encounter the deprecations listed here. This means for *most* apps this should be as
 trivial as adding an `await` where necessary.
 
 ## Drawbacks
 
-It has become fairly common to interact with async hasMany relationships as if they are 
+It has become fairly common to interact with async hasMany relationships as if they are
 synchronous, and it is not easy to programmatically codemod a conversion. This may result in
 a sizeable amount of "find the missing await" for some applications.
 

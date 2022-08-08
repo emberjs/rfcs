@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2020-06-24T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - cli
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/645
-project-link: 
-stage: accepted
+project-link:
 meta:
   authors: Benjamin Jegard, Melanie Sumner, Ricardo Mendes
 ---

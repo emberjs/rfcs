@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2018-05-29T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework ## FIXME - added automatically as it was missing during migration
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/335
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # Deprecate `.sendAction`
@@ -102,7 +102,7 @@ export default Component.extend({
       // if (this.salute) {
       //   this.salute()
       // }
-      // 
+      //
       // Alternatively, you can also define a noop salute function:
       // salute() {}
       //

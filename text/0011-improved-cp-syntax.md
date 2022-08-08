@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2014-09-30T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework ## FIXME - added automatically as it was missing during migration
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/11
-project-link: 
-stage: accepted
+project-link:
 meta:
   ember-issue: https://github.com/emberjs/ember.js/pull/9527
 ---

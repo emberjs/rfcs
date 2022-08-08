@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2020-05-23T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/631
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # RouterService#refresh
@@ -58,7 +58,7 @@ The following documentation will be added to the method:
  * Returns a promise that will be resolved once the refresh is complete.
  * All resetController, beforeModel, model, afterModel, redirect, and setupController
  * hooks will be called again. You will get new data from the model hook.
- * 
+ *
  * @method refresh
  * @param {String} [pivotRouteName] the route to refresh (along with all child routes)
  * @return Transition

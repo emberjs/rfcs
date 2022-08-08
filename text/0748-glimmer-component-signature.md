@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2021-05-13T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/748
-project-link: 
-stage: accepted
+project-link:
 ---
 
 ## Summary <!-- omit in toc -->

@@ -1,13 +1,13 @@
 ---
+stage: accepted
 start-date: 2021-02-01T00:00:00.000Z
 release-date:
-release-versions: 
-teams: 
+release-versions:
+teams:
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/706
-project-link: 
-stage: accepted
+project-link:
 ---
 
 # Deprecate the Ember Global
