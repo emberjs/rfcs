@@ -1,11 +1,18 @@
 ---
-Stage: Accepted
-Start Date: 2020-04-22
-Release Date: Unreleased
-Release Versions: N/A
-Relevant Team(s): All teams
-RFC PR: https://github.com/emberjs/rfcs/pull/617
-
+stage: accepted
+start-date: 2020-04-22T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - framework
+  - data
+  - cli
+  - learning
+  - typescript
+  - steering
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/617
+project-link:
 ---
 
 # RFC Stages

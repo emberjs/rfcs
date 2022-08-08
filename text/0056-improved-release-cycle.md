@@ -1,11 +1,13 @@
 ---
-Stage: Recommended
-Start Date: 2015-10-02
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): FIXME
-RFC PR: https://github.com/emberjs/rfcs/pull/56
-
+stage: recommended
+start-date: 2015-10-02T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - # FIXME
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/56
+project-link:
 ---
 
 # Refining the Release Process

@@ -1,13 +1,15 @@
 ---
-# FIXME: May be Recommended
-Stage: Released
-Start Date: 2020-05-23
-Release Date: 2021-12-28
-Release Versions:
+stage: released # FIXME: This may be recommended
+start-date: 2020-05-23T00:00:00.000Z
+release-date: 2021-12-28T00:00:00.000Z
+release-versions:
   ember-source: v4.1.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/631
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/631
+project-link:
 ---
 
 # RouterService#refresh

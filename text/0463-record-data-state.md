@@ -1,14 +1,15 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
-Start Date: 2019-03-13
-Release Date: Unimplemented
-Release Versions:
-  ember-data: vX.Y.Z
-Relevant Team(s): data
-RFC PR: https://github.com/emberjs/rfcs/pull/463
-Tracking: https://github.com/emberjs/rfc-tracking/issues/47
-
+stage: accepted # FIXME: This may be a further stage
+start-date: 2019-03-13T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/463
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/47
 ---
 
 # Record State on Record Data RFC

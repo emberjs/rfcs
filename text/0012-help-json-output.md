@@ -1,5 +1,4 @@
 ---
-
 stage: released
 start-date: 2015-05-16T00:00:00.000Z
 release-date:

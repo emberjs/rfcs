@@ -1,14 +1,17 @@
 ---
-# FIXME: Is this recommended
-Stage: Released
-Start Date: 2017-03-13
-Release Date: 2018-08-27
-Release Versions:
+stage: released # FIXME: Is this recommended?
+start-date: 2017-03-13T00:00:00.000Z
+release-date: 2018-08-27T00:00:00.000Z
+release-versions:
   ember-source: v3.4.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/213
-Ember Issue: https://github.com/emberjs/ember.js/issues/16301
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/213
+project-link:
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/issues/16301
 ---
 
 # Summary

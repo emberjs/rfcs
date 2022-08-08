@@ -1,12 +1,15 @@
 ---
-Stage: Recommended
-Start Date: 2018-01-13
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/431
-Tracking: https://github.com/emberjs/rfc-tracking/issues/29
-
+stage: recommended
+start-date: 2018-01-13T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/431
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/29
 ---
 
 # Restructuring the Guides Table of Contents

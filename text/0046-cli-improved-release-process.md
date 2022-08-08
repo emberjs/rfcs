@@ -1,11 +1,13 @@
 ---
-Stage: Recommended
-Start Date: 2016-03-26
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Ember CLI
-RFC PR: https://github.com/ember-cli/rfcs/pull/46
-
+stage: recommended
+start-date: 2016-03-26T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - cli
+prs:
+  accepted: https://github.com/ember-cli/rfcs/pull/46
+project-link:
 ---
 
 # Improved Release Process

@@ -1,16 +1,15 @@
 ---
-
 stage: discontinued
 start-date: 2014-09-30T00:00:00.000Z
 release-date: 2014-10-28T00:00:00.000Z
-release-versions: 
+release-versions:
   ember-source: v1.8.0
 
-teams: 
+teams:
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/11
-project-link: 
+project-link:
 meta:
   ember-issue: https://github.com/emberjs/ember.js/pull/9527
 ---

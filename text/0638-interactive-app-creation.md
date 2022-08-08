@@ -1,12 +1,15 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
-Start Date: 2020-06-12
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): ember-cli, framework, learning
-RFC PR: https://github.com/emberjs/rfcs/pull/638
-
+stage: accepted # FIXME: This may be a further stage
+start-date: 2020-06-12T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - cli
+  - framework
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/638
+project-link:
 ---
 
 # Interactive New Ember App Creation

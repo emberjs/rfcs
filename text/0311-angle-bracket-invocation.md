@@ -1,12 +1,15 @@
 ---
-Stage: Recommended
-Start Date: 2018-03-09
-Release Date: 2018-08-27
-Release Versions:
+stage: recommended
+start-date: 2018-03-09T00:00:00.000Z
+release-date: 2018-08-27T00:00:00.000Z
+release-versions:
   ember-source: v3.4.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/311
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/311
+project-link:
 ---
 
 # Angle Bracket Invocation

@@ -1,13 +1,17 @@
 ---
-Stage: Recommended
-Start Date: 2018-10-20
-Release Date: 2019-05-13
-Release Versions:
+stage: recommended
+start-date: 2018-10-20T00:00:00.000Z
+release-date: 2019-05-13T00:00:00.000Z
+release-versions:
   ember-source: v3.10.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/408
-Tracking: https://github.com/emberjs/rfc-tracking/issues/7
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/408
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/7
 ---
 
 # Decorators

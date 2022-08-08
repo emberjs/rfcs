@@ -1,14 +1,17 @@
 ---
-# FIXME: Is this Recommended?
-Stage: Released
-Start Date: 2020-06-01
-Release Date: 2020-05-02
-Release Versions:
+stage: released # FIXME: This may be recommended
+start-date: 2020-06-01T00:00:00.000Z
+release-date: 2020-05-02T00:00:00.000Z
+release-versions:
   ember-source: v4.4.0
   ember-cli: FIXME
-Relevant Team(s): Ember.js, Ember-CLI
-RFC PR: https://github.com/emberjs/rfcs/pull/637
 
+teams:
+  - framework
+  - cli
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/637
+project-link:
 ---
 
 # Facilitate customization of setupTest* functions

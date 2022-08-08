@@ -1,12 +1,17 @@
 ---
 # FIXME: This seems to be at least partially implemented in Ember 3.24
-Stage: Accepted
-Start Date: 2020-06-18
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Ember.js, Learning, Steering, Ember CLI
-RFC PR: https://github.com/emberjs/rfcs/pull/649
-
+stage: accepted
+start-date: 2020-06-18T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - framework
+  - learning
+  - steering
+  - cli
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/649
+project-link:
 ---
 
 # Deprecation Staging

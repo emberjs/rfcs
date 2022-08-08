@@ -1,14 +1,18 @@
 ---
-Stage: Recommended
-Start Date: 2018-12-05
-Release Date: 2019-09-19
-Release Versions:
+stage: recommended
+start-date: 2018-12-05T00:00:00.000Z
+release-date: 2019-09-19T00:00:00.000Z
+release-versions:
   ember-source: v3.13.0
-RFC PR: https://github.com/emberjs/rfcs/pull/410
-Relevant Team(s): Ember.js
-Authors: Tom Dale, Chris Garrett, Chad Hietala, Yehuda Katz
-Tracking: https://github.com/emberjs/rfc-tracking/issues/4
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/410
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/4
+  authors: Tom Dale, Chris Garrett, Chad Hietala, Yehuda Katz
 ---
 
 # Tracked Properties

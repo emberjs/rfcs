@@ -1,13 +1,15 @@
 ---
-# FIXME: Is this Discontinued now?
-Stage: Recommended
-Start Date: 2016-12-14
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/191
-Ember Issue: https://github.com/emberjs/ember.js/pull/14711
-
+stage: recommended # FIXME: Is this Discontinued now?
+start-date: 2016-12-14T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/191
+project-link:
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/pull/14711
 ---
 
 # Summary

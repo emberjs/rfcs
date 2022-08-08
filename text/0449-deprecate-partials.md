@@ -1,13 +1,18 @@
 ---
-Stage: Recommended
-Start Date: 2019-02-17
-Release Date: 2019-12-09
-Release Versions:
+stage: recommended
+start-date: 2019-02-17T00:00:00.000Z
+release-date: 2019-12-09T00:00:00.000Z
+release-versions:
   ember-source: v3.15.0
-Relevant Teams: Ember.js, Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/449
-Tracking: https://github.com/emberjs/rfc-tracking/issues/38
 
+teams:
+  - framework
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/449
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/38
 ---
 
 # Deprecate `{{partial}}`

@@ -1,13 +1,17 @@
 ---
-Stage: Recommended
-Start Date: 2019-04-28
-Release Date: 2019-09-19
-Release Versions:
+stage: recommended
+start-date: 2019-04-28T00:00:00.000Z
+release-date: 2019-09-19T00:00:00.000Z
+release-versions:
   ember-source: v3.13.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/486
-Tracking: https://github.com/emberjs/rfc-tracking/issues/54
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/486
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/54
 ---
 
 # Deprecate support for mouseEnter/Leave/Move Ember events

@@ -1,12 +1,15 @@
 ---
-Stage: Recommended
-Start Date: 2019-11-08
-Release Date: 2020-08-24
-Release Versions:
+stage: recommended
+start-date: 2019-11-08T00:00:00.000Z
+release-date: 2020-08-24T00:00:00.000Z
+release-versions:
   ember-source: v3.21.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/554
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/554
+project-link:
 ---
 
 # Deprecate getWithDefault

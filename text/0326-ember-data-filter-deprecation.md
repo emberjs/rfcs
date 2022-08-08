@@ -1,12 +1,13 @@
 ---
-# FIXME: This may be a further stage
-Stage: Recommended
-Start Date: 2018-04-18
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Ember Data
-RFC PR: https://github.com/emberjs/rfcs/pull/326
-
+stage: recommended
+start-date: 2018-04-18T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/326
+project-link:
 ---
 
 # Ember Data Filter Deprecation

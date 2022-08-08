@@ -1,14 +1,17 @@
 ---
-# FIXME: This may actually be Recommended
-Stage: Released
-Start Date: 2019-05-09
-Release Date: 2019-09-19
-Release Versions:
+stage: released # FIXME: This may be recommended
+start-date: 2019-05-09T00:00:00.000Z
+release-date: 2019-09-19T00:00:00.000Z
+release-versions:
   ember-source: v3.13.0
-Relevant Team(s): data
-RFC PR: https://github.com/emberjs/rfcs/pull/487
-Tracking: https://github.com/emberjs/rfc-tracking/issues/53
 
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/487
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/53
 ---
 
 # Custom Model Class RFC

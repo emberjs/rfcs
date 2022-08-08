@@ -1,13 +1,15 @@
 ---
-# FIXME: This may be at a further stage.
-Stage: Accepted
-Start Date: 2019-03-09
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): data
-RFC PR: https://github.com/emberjs/rfcs/pull/466
-Tracking: https://github.com/emberjs/rfc-tracking/issues/52
-
+stage: accepted # FIXME: This may be a further stage
+start-date: 2019-03-09T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/466
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/52
 ---
 
 # Request State Service

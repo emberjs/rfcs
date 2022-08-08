@@ -1,16 +1,15 @@
 ---
-
 stage: recommended
 start-date: 2015-07-10T00:00:00.000Z
 release-date: 2015-07-29T00:00:00.000Z
-release-versions: 
+release-versions:
   ember-cli: v1.13.5
 
-teams: 
+teams:
   - cli
 prs:
   accepted: https://github.com/ember-cli/rfcs/pull/20
-project-link: 
+project-link:
 ---
 
 # Summary

@@ -1,12 +1,17 @@
 ---
-Stage: Recommended
-Start Date: 2019-03-14
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Ember.js, Ember Data, Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/468
-Tracking: https://github.com/emberjs/rfc-tracking/issues/55
-
+stage: recommended
+start-date: 2019-03-14T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - framework
+  - data
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/468
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/55
 ---
 
 # `@classic` Decorator

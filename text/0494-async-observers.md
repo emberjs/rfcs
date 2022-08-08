@@ -1,12 +1,14 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
-Start Date: 2019-05-30
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Ember.js, Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/494
-
+stage: accepted # FIXME: This may be a further stage
+start-date: 2019-05-30T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - framework
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/494
+project-link:
 ---
 
 # Async Observers

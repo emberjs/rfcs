@@ -1,12 +1,15 @@
 ---
-Stage: Recommended
-Start Date: 2017-01-03
-Release Date: 2017-04-29
-Release Versions:
+stage: recommended
+start-date: 2017-01-03T00:00:00.000Z
+release-date: 2017-04-29T00:00:00.000Z
+release-versions:
   ember-cli: v2.13.0
-Relevant Team(s): Ember CLI
-RFC PR: https://github.com/ember-cli/rfcs/pull/95
 
+teams:
+  - cli
+prs:
+  accepted: https://github.com/ember-cli/rfcs/pull/95
+project-link:
 ---
 
 # Summary

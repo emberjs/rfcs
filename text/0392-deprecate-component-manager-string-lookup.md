@@ -1,12 +1,13 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
-Start Date: 2018-10-23
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/392
-
+stage: accepted # FIXME: This may be a further stage
+start-date: 2018-10-23T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/392
+project-link:
 ---
 
 # Summary

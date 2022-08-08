@@ -1,13 +1,17 @@
 ---
-Stage: Recommended
-Start Date: 2017-07-14
-Release Date: 2020-12-28
-Release Versions:
+stage: recommended
+start-date: 2017-07-14T00:00:00.000Z
+release-date: 2020-12-28T00:00:00.000Z
+release-versions:
   ember-source: v3.24.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/236
-Tracking: https://github.com/emberjs/rfc-tracking/issues/26
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/236
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/26
 ---
 
 # Summary

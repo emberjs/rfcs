@@ -1,11 +1,13 @@
 ---
-Stage: Recommended
-Start Date: 2014-11-26
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/24
-
+stage: recommended
+start-date: 2014-11-26T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/24
+project-link:
 ---
 
 # Summary

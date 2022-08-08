@@ -1,13 +1,13 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
-Start Date: 2022-02-13
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): ember-data
-RFC PR: https://github.com/emberjs/rfcs/pull/795
+stage: accepted # FIXME: This may be a further stage
+start-date: 2022-02-13T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/795
+project-link:
 ---
 
 # Return a Promise from Model.save()

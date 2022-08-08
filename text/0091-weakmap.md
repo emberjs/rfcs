@@ -1,12 +1,15 @@
 ---
-Stage: Discontinued
-Start Date: 2015-09-11
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/91
-Ember Issue: https://github.com/emberjs/ember.js/pull/12224 / https://github.com/emberjs/ember.js/pull/12990 / https://github.com/emberjs/ember.js/pull/13688
-
+stage: discontinued
+start-date: 2015-09-11T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/91
+project-link:
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/pull/12224 / https://github.com/emberjs/ember.js/pull/12990 / https://github.com/emberjs/ember.js/pull/13688
 ---
 
 # Summary

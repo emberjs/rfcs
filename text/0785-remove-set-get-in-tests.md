@@ -1,12 +1,15 @@
 ---
-# FIXME: This may be Recommended
-Stage: Released
-Start Date: 2021-11-30
-Release Date: 2022-06-13
-Release Versions:
+stage: released # FIXME: This may be recommended
+start-date: 2021-11-30T00:00:00.000Z
+release-date: 2022-06-13T00:00:00.000Z
+release-versions:
   ember-source: v4.5.0
-Relevant Team(s): Ember
-RFC PR: https://github.com/emberjs/rfcs/pull/785
+
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/785
+project-link:
 ---
 
 <!---

@@ -1,12 +1,15 @@
 ---
-Stage: Recommended
-Start Date: 2020-10-02
-Release Date: 2020-12-28
-Release Versions:
+stage: recommended
+start-date: 2020-10-02T00:00:00.000Z
+release-date: 2020-12-28T00:00:00.000Z
+release-versions:
   ember-source: v3.24.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/673
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/673
+project-link:
 ---
 
 # Deprecate `tryInvoke`

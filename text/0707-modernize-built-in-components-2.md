@@ -1,12 +1,13 @@
 ---
-Stage: Recommended
-Start Date: 2021-01-14
-Release Date: FIXME
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/707
+stage: recommended
+start-date: 2021-01-14T00:00:00.000Z
+release-date: FIXME
+release-versions:
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/707
+project-link:
 ---
 
 # Reduce API Surface of Built-In Components

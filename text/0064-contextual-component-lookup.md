@@ -1,12 +1,15 @@
 ---
-Stage: Recommended
-Start Date: 2015-06-12
-Release Date: 2015-03-28
-Release Versions:
+stage: recommended
+start-date: 2015-06-12T00:00:00.000Z
+release-date: 2015-03-28T00:00:00.000Z
+release-versions:
   ember-source: v1.11.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/64
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/64
+project-link:
 ---
 
 # Summary

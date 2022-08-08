@@ -1,13 +1,17 @@
 ---
-Stage: Recommended
-Start Date: 2016-12-24
-Release Date: 2018-02-13
-Release Versions:
+stage: recommended
+start-date: 2016-12-24T00:00:00.000Z
+release-date: 2018-02-13T00:00:00.000Z
+release-versions:
   ember-source: v3.0.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/194
-Ember Issue: https://github.com/emberjs/ember.js/issues/14754
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/194
+project-link:
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/issues/14754
 ---
 
 # Summary

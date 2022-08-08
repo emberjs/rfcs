@@ -1,12 +1,15 @@
 ---
-Stage: Recommended
-Start Date: 2019-02-14
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/446
-Tracking: https://github.com/emberjs/rfc-tracking/issues/39
-
+stage: recommended
+start-date: 2019-02-14T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/446
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/39
 ---
 
 # Contribution Guides

@@ -1,13 +1,13 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
-Start Date: 2021-01-11
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember Learn
-RFC PR: https://github.com/emberjs/rfcs/pull/786
+stage: accepted # FIXME: This may be a further stage
+start-date: 2021-01-11T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/786
+project-link:
 ---
 
 <!---

@@ -1,15 +1,17 @@
 ---
-# FIXME: Is this correct? Or is it Discontinued?
-Stage: Released
-Start Date: 2016-05-09
-Release Date: FIXME
-Release Versions:
-  # v2.16 or earlier
-  ember-cli: FIXME
-Relevant Team(s): Ember CLI
-RFC PR: https://github.com/emberjs/rfcs/pull/143
-Tracking: https://github.com/emberjs/rfc-tracking/issues/27 / https://github.com/emberjs/ember.js/issues/14882
+stage: released # FIXME: Is this correct? Or is it Discontinued?
+start-date: 2016-05-09T00:00:00.000Z
+release-date: FIXME
+release-versions:
+  ember-cli: FIXMEa # v2.16 or earlier
 
+teams:
+  - cli
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/143
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/27 / https://github.com/emberjs/ember.js/issues/14882
 ---
 
 > Note: This RFC replaces the closely related RFC for [Module

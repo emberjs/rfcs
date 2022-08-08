@@ -1,12 +1,15 @@
 ---
-Stage: Recommended
-Start Date: 2018-19-12
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/421
-Tracking: https://github.com/emberjs/rfc-tracking/issues/5
-
+stage: recommended
+start-date: 2019-07-12T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/421
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/5
 ---
 
 # Deprecate Application Controller Router Properties

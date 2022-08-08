@@ -1,13 +1,17 @@
 ---
-Stage: Recommended
-Start Date: 2018-19-12
-Release Date: 2021-05-03
-Release Versions:
+stage: recommended
+start-date: 2019-07-12T00:00:00.000Z
+release-date: 2021-05-03T00:00:00.000Z
+release-versions:
   ember-source: v3.27.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/418
-Tracking: https://github.com/emberjs/rfc-tracking/issues/30
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/418
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/30
 ---
 
 # Deprecate Route render APIs

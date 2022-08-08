@@ -1,13 +1,17 @@
 ---
-Stage: Recommended
-Start Date: 2015-06-03
-Release Date: 2015-06-16
-Release Versions:
+stage: recommended
+start-date: 2015-06-03T00:00:00.000Z
+release-date: 2015-06-16T00:00:00.000Z
+release-versions:
   ember-data: v1.13.0
-Relevant Team(s): Ember Data
-RFC PR: https://github.com/emberjs/rfcs/pull/61
-Ember Issue: This RFC is implemented over many Ember Data PRs
 
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/61
+project-link:
+meta:
+  ember-issue: This RFC is implemented over many Ember Data PRs
 ---
 
 # Summary

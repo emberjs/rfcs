@@ -1,13 +1,15 @@
 ---
-Stage: Recommended
-Start Date: 2016-12-11
-Release Date: FIXME
-Release Versions:
-  # Probably 2.12 or earlier
-  ember-cli: FIXME
-Relevant Team(s): Ember CLI
-RFC PR: https://github.com/ember-cli/rfcs/pull/90
+stage: recommended
+start-date: 2016-12-11T00:00:00.000Z
+release-date: FIXME
+release-versions:
+  ember-cli: FIXME # Probably 2.12 or earlier
 
+teams:
+  - cli
+prs:
+  accepted: https://github.com/ember-cli/rfcs/pull/90
+project-link:
 ---
 
 # Summary

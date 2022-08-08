@@ -1,13 +1,17 @@
 ---
-Stage: Discontinued
-Start Date: 2015-05-24
-Release Date: 2016-06-12
-Release Versions:
+stage: discontinued
+start-date: 2015-05-24T00:00:00.000Z
+release-date: 2016-06-12T00:00:00.000Z
+release-versions:
   ember-source: v1.13.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/58
-Ember Issue: https://github.com/emberjs/ember.js/pull/11393
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/58
+project-link:
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/pull/11393
 ---
 
 # Summary

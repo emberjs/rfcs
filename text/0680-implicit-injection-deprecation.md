@@ -1,11 +1,15 @@
 ---
-Stage: Recommended
-Start Date: 2020-10-04
-Release Date: 2021-11-15
-Release Versions:
+stage: recommended
+start-date: 2020-10-04T00:00:00.000Z
+release-date: 2021-11-15T00:00:00.000Z
+release-versions:
   ember-source: v4.0.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/680
+
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/680
+project-link:
 ---
 
 # Implicit Injection Deprecation

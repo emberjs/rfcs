@@ -1,13 +1,15 @@
 ---
-# FIXME: This may actually be Recommended
-Stage: Released
-Start Date: 2019-08-29
-Release Date: 2021-12-11
-Release Versions:
+stage: released # FIXME: This may actually be recommended
+start-date: 2019-08-29T00:00:00.000Z
+release-date: 2021-12-11T00:00:00.000Z
+release-versions:
   ember-data: v4.0.0
-Relevant Team(s): EmberData
-RFC PR: https://github.com/emberjs/rfcs/pull/521
 
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/521
+project-link:
 ---
 
 # [DATA] findRecord/peekRecord via Identifier

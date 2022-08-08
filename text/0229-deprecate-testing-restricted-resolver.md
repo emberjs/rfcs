@@ -1,12 +1,13 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
-Start Date: 2017-06-11
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): FIXME
-RFC PR: https://github.com/emberjs/rfcs/pull/229
-
+stage: accepted # FIXME: This may be a further stage
+start-date: 2017-06-11T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - framework ## FIXME - added automatically as it was missing during migration'
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/229
+project-link:
 ---
 
 # Summary

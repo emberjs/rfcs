@@ -1,12 +1,15 @@
 ---
-Stage: Recommended
-Start Date: 2018-06-19
-Release Date: 2018-12-06
-Release Versions:
+stage: recommended
+start-date: 2018-06-19T00:00:00.000Z
+release-date: 2018-12-06T00:00:00.000Z
+release-versions:
   ember-source: v3.6.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/340
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/340
+project-link:
 ---
 
 # Deprecate Ember.merge in favor of Ember.assign

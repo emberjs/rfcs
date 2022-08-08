@@ -1,13 +1,15 @@
 ---
-# FIXME: This may be a further stage
-Stage: Recommended
-Start Date: 2020-04-17
-Release Date: 2020-10-05
-Release Versions:
+stage: recommended # FIXME: This may be a further stage
+start-date: 2020-04-17T00:00:00.000Z
+release-date: 2020-10-05T00:00:00.000Z
+release-versions:
   ember-source: v3.22.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/615
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/615
+project-link:
 ---
 
 # Autotracking Memoization

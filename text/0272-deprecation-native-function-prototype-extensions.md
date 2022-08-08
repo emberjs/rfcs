@@ -1,13 +1,17 @@
 ---
-Stage: Recommended
-Start Date: 2017-11-20
-Release Date: 2019-03-11
-Release Versions:
+stage: recommended
+start-date: 2017-11-20T00:00:00.000Z
+release-date: 2019-03-11T00:00:00.000Z
+release-versions:
   ember-source: v3.11.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/272
-Tracking: https://github.com/emberjs/rfc-tracking/issues/12
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/272
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/12
 ---
 
 # Deprecate Function.prototype.on, Function.prototype.observes and Function.prototype.property

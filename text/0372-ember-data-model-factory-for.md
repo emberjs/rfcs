@@ -1,13 +1,15 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
-Start Date: 2018-09-06
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Ember Data
-RFC PR: https://github.com/emberjs/rfcs/pull/372
-Tracking: https://github.com/emberjs/rfc-tracking/issues/16
-
+stage: accepted
+start-date: 2018-09-06T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/372
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/16
 ---
 
 # ember-data | modelFactoryFor

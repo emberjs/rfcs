@@ -1,14 +1,17 @@
 ---
-# FIXME: This may be Recommended
-Stage: Released
-Start Date: 2018-01-10
-Release Date: 2018-10-12
-Release Versions:
+stage: released # FIXME: This may be Recommended
+start-date: 2018-01-10T00:00:00.000Z
+release-date: 2018-10-12T00:00:00.000Z
+release-versions:
   ember-data: v3.5.0
-Relevant Team(s): Ember Data
-RFC PR: https://github.com/emberjs/rfcs/pull/293
-Tracking: https://github.com/emberjs/rfc-tracking/issues/24
 
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/293
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/24
 ---
 
 ### Summary

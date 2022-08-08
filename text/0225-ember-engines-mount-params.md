@@ -1,14 +1,17 @@
 ---
-# FIXME: This may be a further stage
-Stage: Released
-Start Date: 2017-04-26
-Release Date: 2017-08-31
-Release Versions:
+stage: released # FIXME: Is this recommended?
+start-date: 2017-04-26T00:00:00.000Z
+release-date: 2017-08-31T00:00:00.000Z
+release-versions:
   ember-source: v2.15.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/225
-Ember Issue: https://github.com/emberjs/ember.js/pull/15174
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/225
+project-link:
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/pull/15174
 ---
 
 # Summary

@@ -1,12 +1,15 @@
 ---
-Stage: Accepted
-Start Date: 2018-10-22
-Release Date: Unreleased
-Release Versions: Unreleased
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/391
-Tracking: https://github.com/emberjs/rfc-tracking/issues/14
-
+stage: accepted
+start-date: 2018-10-22T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/391
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/14
 ---
 
 # Router Helpers

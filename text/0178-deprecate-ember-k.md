@@ -1,13 +1,17 @@
 ---
-Stage: Recommended
-Start Date: 2016-11-18
-Release Date: 2017-03-14
-Release Versions:
+stage: recommended
+start-date: 2016-11-18T00:00:00.000Z
+release-date: 2017-03-14T00:00:00.000Z
+release-versions:
   ember-source: v2.12.0
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/178
-Ember Issue: https://github.com/emberjs/ember.js/issues/14746
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/178
+project-link:
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/issues/14746
 ---
 
 # Summary

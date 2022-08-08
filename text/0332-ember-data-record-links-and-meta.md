@@ -1,13 +1,15 @@
 ---
-# FIXME: Appears to be at least partially released in v3.15
-Stage: Accepted
-Start Date: 2018-10-24
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Ember Data
-RFC PR: https://github.com/emberjs/rfcs/pull/332
-Tracking: https://github.com/emberjs/rfc-tracking/issues/19
-
+stage: accepted # FIXME: Appears to be at least partially released in v3.15
+start-date: 2018-10-24T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/332
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/19
 ---
 
 # Ember Data Record Links & Meta

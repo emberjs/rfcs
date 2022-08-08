@@ -1,11 +1,15 @@
 ---
-Stage: Recommended
-Start Date: 2021-01-09
-Release Date: 2021-06-25
-Release Versions:
+stage: recommended
+start-date: 2021-01-09T00:00:00.000Z
+release-date: 2021-06-25T00:00:00.000Z
+release-versions:
   ember-cli: v3.27.0
-Relevant Team(s): Ember CLI
-RFC PR: https://github.com/emberjs/rfcs/pull/702
+
+teams:
+  - cli
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/702
+project-link:
 ---
 
 # Add eslint-plugin-qunit to ember-cli blueprint

@@ -1,14 +1,18 @@
 ---
-# FIXME: May be recommended
-Stage: Released
-Start Date: 2020-05-29
-Release Date: 2020-09-01
-Release Versions:
+stage: released # FIXME: This may be recommended
+start-date: 2020-05-29T00:00:00.000Z
+release-date: 2020-09-01T00:00:00.000Z
+release-versions:
   ember-cli: v3.21.0
-Relevant Team(s): CLI, Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/635
-Authors: Joseph Sumner, Ava Wroten, Jamie White, Melanie Sumner
 
+teams:
+  - cli
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/635
+project-link:
+meta:
+  authors: Joseph Sumner, Ava Wroten, Jamie White, Melanie Sumner
 ---
 
 # Ember New Lang

@@ -1,5 +1,4 @@
 ---
-
 stage: released # FIXME: Is this Recommended?
 start-date: 2014-10-24T00:00:00.000Z
 release-date: 2016-09-08T00:00:00.000Z

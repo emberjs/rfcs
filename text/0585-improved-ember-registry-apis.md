@@ -1,13 +1,14 @@
 ---
-Stage: Accepted
-Start Date: 2020-01-27
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember.js, Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/585
-
+stage: accepted
+start-date: 2020-01-27T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - framework
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/585
+project-link:
 ---
 
 # Improved Ember Registry APIs

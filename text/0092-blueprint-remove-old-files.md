@@ -1,12 +1,13 @@
 ---
-# FIXME: This may be a further stage
-Stage: Accepted
-Start Date: 2016-12-17
-Release Date: FIXME
-Release Versions: FIXME
-Relevant Team(s): Ember CLI
-RFC PR: https://github.com/ember-cli/rfcs/pull/92
-
+stage: accepted # FIXME: This may be a further stage
+start-date: 2016-12-17T00:00:00.000Z
+release-date: FIXME
+release-versions: FIXME
+teams:
+  - cli
+prs:
+  accepted: https://github.com/ember-cli/rfcs/pull/92
+project-link:
 ---
 
 # Summary

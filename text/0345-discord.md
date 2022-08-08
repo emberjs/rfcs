@@ -1,11 +1,13 @@
 ---
-Stage: Recommended
-Start Date: 2019-07-11
-Release Date: FIXME
-Release Versions: N/A
-Relevant Team(s): FIXME
-RFC PR: https://github.com/emberjs/rfcs/pull/345
-
+stage: recommended
+start-date: 2019-07-11T00:00:00.000Z
+release-date: FIXME
+release-versions:
+teams:
+  - framework ## FIXME - added automatically as it was missing during migration'
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/345
+project-link:
 ---
 
 # RFC to move the Ember community chat to Discord
