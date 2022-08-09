@@ -45,7 +45,8 @@ jobs:
       - name: Test RFC stage matches PR labels
         env:
           ROOTDIR: ${{ github.workspace }}
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
         run: |
-          labels=$(echo ${{ toJSON(github.event.pull_request.labels.*.name) }} | jq "join(',')")
+          labels=$(echo "$LABELS" | jq 'join(",")')
           node validate-labels.js "$labels" ${{ steps.files.outputs.added }}
         working-directory: rfcs-tooling
