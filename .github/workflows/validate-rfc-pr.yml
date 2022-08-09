@@ -7,7 +7,7 @@ on:
       - 'text/*.md'
 
 jobs:
-  validate-rfc-cp:
+  validate-rfc-pr:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
