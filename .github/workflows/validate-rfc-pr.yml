@@ -10,7 +10,7 @@ jobs:
   validate-rfc-cp:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Get Changed Files
         uses: lots0logs/gh-action-get-changed-files@2.1.4
@@ -24,9 +24,11 @@ jobs:
           echo "::set-output name=added::$added_files"
 
       - name: Checkout tools repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
-          repository: emberjs/rfcs-tooling
+          # FIXME: Change back to emberjs
+          repository: wagenet/rfcs-tooling
+          branch: rfc-stages
           path: rfcs-tooling
 
       - uses: actions/setup-node@v2.1.2
@@ -40,41 +42,7 @@ jobs:
         run: node check-filename-matches-pr.js $PR_NUMBER ${{ steps.files.outputs.added }}
         working-directory: rfcs-tooling
 
-      - name: Determine Appropriate Labels
-        id: determine-labels
-        if: steps.files.outputs.added
+      - name: Test RFC stage matches PR labels
         run: |
-          stage=$(grep '^stage:' ${{ steps.files.outputs.added }} | awk '{print $2}')
-
-          if [[ "$stage" = "accepted" ]]; then
-            valid="S-Proposed,S-Exploring,S-Accepted"
-          elif [[ "$stage" = "ready-for-release" ]]; then
-            valid="S-Ready for Release"
-          elif [[ "$stage" = "released" ]]; then
-            valid="S-Released"
-          elif [[ "$stage" = "recommended" ]]; then
-            valid="S-Recommended"
-          elif [[ "$stage" = "discontinued" ]]; then
-            valid="S-Discontinued"
-          elif [[ -n "$stage" ]]; then
-            echo "Invalid Stage: $stage"
-            exit 1
-          else
-            valid=""
-          fi
-
-          invalid=$(echo $valid | jq -R '["S-Proposed","S-Exploring","S-Accepted","S-Ready for Release","S-Released","S-Recommended","S-Discontinued"] - (. | split(","))  | join(",")')
-
-          echo "::set-output name=valid::$valid"
-          echo "::set-output name=invalid::$invalid"
-
-      # Ideally we could still verify invalid labels, but this action currently only works if
-      # we actually have a specified valid label.
-      - name: Verify Label
-        if: steps.determine-labels.outputs.valid
-        uses: jesusvasquez333/verify-pr-label-action@v1.4.0
-        with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
-          valid-labels: '${{ steps.determine-labels.outputs.valid }}'
-          invalid-labels: '${{ steps.determine-labels.outputs.invalid }}'
-          pull-request-number: '${{ github.event.pull_request.number }}'
+          node validate-labels.js "${{ github.event.pull_request.labels.*.name }}" ${{ steps.files.outputs.added }}
+        working-directory: rfcs-tooling
