@@ -1,0 +1,79 @@
+name: Ensure Filename of RFCs
+
+on:
+  pull_request:
+    types: [opened, labeled, unlabeled, synchronize]
+    paths:
+      - 'text/*.md'
+
+jobs:
+  validate-rfc-cp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get Changed Files
+        uses: lots0logs/gh-action-get-changed-files@2.1.4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Filter Added Files to Added RFCs
+        id: files
+        run: |
+          added_files=`jq -r '[.[] | select(startswith("text/"))] | join(" ")' ${HOME}/files_added.json`
+          echo "::set-output name=added::$added_files"
+
+      - name: Checkout tools repo
+        uses: actions/checkout@v2
+        with:
+          repository: emberjs/rfcs-tooling
+          path: rfcs-tooling
+
+      - uses: actions/setup-node@v2.1.2
+
+      - run: yarn install
+        working-directory: rfcs-tooling
+
+      - name: Test RFC Filename matches PR Number that adds it
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: node check-filename-matches-pr.js $PR_NUMBER ${{ steps.files.outputs.added }}
+        working-directory: rfcs-tooling
+
+      - name: Determine Appropriate Labels
+        id: determine-labels
+        run: |
+          stage=$(grep '^stage:' ${{ steps.files.outputs.added }} | awk '{print $2}')
+          if [[ "$stage" = "accepted" ]]; then
+            echo "::set-output name=valid::S-Proposed,S-Exploring,S-Accepted"
+            echo "::set-output name=invalid::S-Ready for Release,S-Released,S-Recommended,S-Discontinued"
+          elif [[ "$stage" = "ready-for-release" ]]; then
+            echo "::set-output name=valid::S-Ready for Release"
+            echo "::set-output name=invalid::S-Proposed,S-Exploring,S-Accepted,S-Released,S-Recommended,S-Discontinued"
+          elif [[ "$stage" = "released" ]]; then
+            echo "::set-output name=valid::S-Released"
+            echo "::set-output name=invalid::S-Proposed,S-Exploring,S-Accepted,S-Ready for Release,S-Recommended,S-Discontinued"
+          elif [[ "$stage" = "recommended" ]]; then
+            echo "::set-output name=valid::S-Recommended"
+            echo "::set-output name=invalid::S-Proposed,S-Exploring,S-Accepted,S-Ready for Release,S-Released,S-Discontinued"
+          elif [[ "$stage" = "discontinued" ]]; then
+            echo "::set-output name=valid::S-Discontinued"
+            echo "::set-output name=invalid::S-Proposed,S-Exploring,S-Accepted,S-Ready for Release,S-Released,S-Recommended"
+          elif [[ -n "$stage" ]]; then
+            echo "Invalid Stage: $stage"
+            exit 1
+          else
+            echo "::set-output name=valid::"
+            echo "::set-output name=invalid::S-Proposed,S-Exploring,S-Accepted,S-Ready for Release,S-Released,S-Recommended"
+          fi
+
+      # Ideally we could still verify invalid labels, but this action currently only works if
+      # we actually have a specified valid label.
+      - name: Verify Label
+        if: steps.determine-labels.outputs.valid
+        uses: jesusvasquez333/verify-pr-label-action@v1.4.0
+        with:
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          valid-labels: '${{ steps.determine-labels.outputs.valid }}'
+          invalid-labels: '${{ steps.determine-labels.outputs.invalid }}'
+          pull-request-number: '${{ github.event.pull_request.number }}'

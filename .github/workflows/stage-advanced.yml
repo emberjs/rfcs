@@ -1,0 +1,35 @@
+name: Stage Advanced
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  advance-stage:
+    - uses: actions/checkout@v3
+
+    - id: get_merged_pr
+      uses: actions-ecosystem/action-get-merged-pull-request@v1.0.1
+
+    - if: steps.get_merged_pr.outputs.number
+
+
+  # lint-frontmatter:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - name: Checkout tools repo
+  #       uses: actions/checkout@v3
+  #       with:
+  #         repository: emberjs/rfcs-tooling
+  #         path: rfcs-tooling
+  #         ref: 'v1.0.0'
+
+  #     - uses: actions/setup-node@v3
+
+  #     - run: yarn install
+  #       working-directory: rfcs-tooling
+
+  #     - name: Lint the frontmatter of all RFCs for informational purposes
+  #       run: node ./rfcs-tooling/lint-rfc-frontmatter.js text/*.md
