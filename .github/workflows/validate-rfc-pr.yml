@@ -28,7 +28,7 @@ jobs:
         with:
           # FIXME: Change back to emberjs
           repository: wagenet/rfcs-tooling
-          branch: rfc-stages
+          ref: rfc-stages
           path: rfcs-tooling
 
       - uses: actions/setup-node@v2.1.2
