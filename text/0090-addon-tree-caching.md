@@ -1,9 +1,9 @@
 ---
 stage: recommended
 start-date: 2016-12-11T00:00:00.000Z
-release-date: FIXME
+release-date: # FIXME
 release-versions:
-  ember-cli: FIXME # Probably 2.12 or earlier
+  # ember-cli: FIXME - Probably 2.12 or earlier
 
 teams:
   - cli

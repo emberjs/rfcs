@@ -3,8 +3,8 @@
 # The v3.20.0 changelog mentions deprecating the packager experiment. Does that refer to this?
 stage: accepted
 start-date: 2017-09-07T00:00:00.000Z
-release-date: FIXME
-release-versions: FIXME
+release-date: # FIXME
+release-versions: # FIXME
 teams:
   - cli
 prs:

@@ -1,8 +1,8 @@
 ---
 stage: recommended
 start-date: 2017-07-28T00:00:00.000Z
-release-date: FIXME
-release-versions: FIXME
+release-date: # FIXME
+release-versions: # FIXME
 teams:
   - framework
 prs:

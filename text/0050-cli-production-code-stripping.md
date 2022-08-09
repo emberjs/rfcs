@@ -1,8 +1,8 @@
 ---
 stage: recommended
 start-date: 2016-04-06T00:00:00.000Z
-release-date: FIXME
-release-versions: FIXME
+release-date: # FIXME
+release-versions: # FIXME
 teams:
   - cli
 prs:

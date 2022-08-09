@@ -1,8 +1,8 @@
 ---
 stage: discontinued # FIXME: Is this correct? Doesn't appear to be the recommended way of doing it.
 start-date: 2016-02-11T00:00:00.000Z
-release-date: FIXME
-release-versions: FIXME
+release-date: # FIXME
+release-versions: # FIXME
 teams:
   - framework
 prs:
