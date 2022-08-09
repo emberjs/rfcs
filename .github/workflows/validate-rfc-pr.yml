@@ -6,6 +6,10 @@ on:
     paths:
       - 'text/*.md'
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate-rfc-pr:
     runs-on: ubuntu-latest
