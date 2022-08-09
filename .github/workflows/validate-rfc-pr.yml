@@ -42,30 +42,31 @@ jobs:
 
       - name: Determine Appropriate Labels
         id: determine-labels
+        if: steps.files.outputs.added
         run: |
           stage=$(grep '^stage:' ${{ steps.files.outputs.added }} | awk '{print $2}')
+
           if [[ "$stage" = "accepted" ]]; then
-            echo "::set-output name=valid::S-Proposed,S-Exploring,S-Accepted"
-            echo "::set-output name=invalid::S-Ready for Release,S-Released,S-Recommended,S-Discontinued"
+            valid="S-Proposed,S-Exploring,S-Accepted"
           elif [[ "$stage" = "ready-for-release" ]]; then
-            echo "::set-output name=valid::S-Ready for Release"
-            echo "::set-output name=invalid::S-Proposed,S-Exploring,S-Accepted,S-Released,S-Recommended,S-Discontinued"
+            valid="S-Ready for Release"
           elif [[ "$stage" = "released" ]]; then
-            echo "::set-output name=valid::S-Released"
-            echo "::set-output name=invalid::S-Proposed,S-Exploring,S-Accepted,S-Ready for Release,S-Recommended,S-Discontinued"
+            valid="S-Released"
           elif [[ "$stage" = "recommended" ]]; then
-            echo "::set-output name=valid::S-Recommended"
-            echo "::set-output name=invalid::S-Proposed,S-Exploring,S-Accepted,S-Ready for Release,S-Released,S-Discontinued"
+            valid="S-Recommended"
           elif [[ "$stage" = "discontinued" ]]; then
-            echo "::set-output name=valid::S-Discontinued"
-            echo "::set-output name=invalid::S-Proposed,S-Exploring,S-Accepted,S-Ready for Release,S-Released,S-Recommended"
+            valid="S-Discontinued"
           elif [[ -n "$stage" ]]; then
             echo "Invalid Stage: $stage"
             exit 1
           else
-            echo "::set-output name=valid::"
-            echo "::set-output name=invalid::S-Proposed,S-Exploring,S-Accepted,S-Ready for Release,S-Released,S-Recommended"
+            valid=""
           fi
+
+          invalid=$(echo $valid | jq -R '["S-Proposed","S-Exploring","S-Accepted","S-Ready for Release","S-Released","S-Recommended","S-Discontinued"] - (. | split(","))  | join(",")')
+
+          echo "::set-output name=valid::$valid"
+          echo "::set-output name=invalid::$invalid"
 
       # Ideally we could still verify invalid labels, but this action currently only works if
       # we actually have a specified valid label.
