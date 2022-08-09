@@ -1,8 +1,8 @@
 ---
 stage: recommended # FIXME: Is this Discontinued now?
 start-date: 2016-12-14T00:00:00.000Z
-release-date: FIXME
-release-versions: FIXME
+release-date: # FIXME
+release-versions: # FIXME
 teams:
   - framework
 prs:

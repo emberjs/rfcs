@@ -1,10 +1,10 @@
 ---
 stage: discontinued # FIXME: Is this correct?
 start-date: 2015-06-07T00:00:00.000Z
-release-date: FIXME
-release-versions: FIXME
+release-date: # FIXME
+release-versions: # FIXME
 teams:
-  - framework ## FIXME - added automatically as it was missing during migration'
+  - framework # FIXME - added automatically as it was missing during migration
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/45
 project-link:

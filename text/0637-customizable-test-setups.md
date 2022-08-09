@@ -4,7 +4,7 @@ start-date: 2020-06-01T00:00:00.000Z
 release-date: 2020-05-02T00:00:00.000Z
 release-versions:
   ember-source: v4.4.0
-  ember-cli: FIXME
+  # ember-cli: FIXME
 
 teams:
   - framework

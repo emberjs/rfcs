@@ -1,8 +1,8 @@
 ---
 stage: accepted # FIXME: Appears to be at least partially released in v3.15
 start-date: 2018-10-24T00:00:00.000Z
-release-date: FIXME
-release-versions: FIXME
+release-date: # FIXME
+release-versions: # FIXME
 teams:
   - data
 prs:

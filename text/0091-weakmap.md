@@ -1,8 +1,8 @@
 ---
 stage: discontinued
 start-date: 2015-09-11T00:00:00.000Z
-release-date: FIXME
-release-versions: FIXME
+release-date: # FIXME
+release-versions: # FIXME
 teams:
   - framework
 prs:

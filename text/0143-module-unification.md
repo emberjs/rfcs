@@ -1,9 +1,9 @@
 ---
 stage: released # FIXME: Is this correct? Or is it Discontinued?
 start-date: 2016-05-09T00:00:00.000Z
-release-date: FIXME
+release-date: # FIXME
 release-versions:
-  ember-cli: FIXMEa # v2.16 or earlier
+  # ember-cli: FIXME - v2.16 or earlier
 
 teams:
   - cli
