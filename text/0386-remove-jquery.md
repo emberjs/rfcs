@@ -1,8 +1,10 @@
 ---
-stage: accepted
+stage: recommended
 start-date: 2018-10-07T00:00:00.000Z
-release-date:
+release-date: 2019-04-01T00:00:00.000Z
 release-versions:
+  ember-source: v3.9.0
+
 teams:
   - framework
 prs:

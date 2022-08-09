@@ -1,8 +1,10 @@
 ---
-stage: accepted
+stage: released # FIXME: This may be recommended
 start-date: 2019-12-22T00:00:00.000Z
-release-date:
+release-date: 2021-12-28T00:00:00.000Z
 release-versions:
+  ember-source: v4.1.0
+
 teams:
   - framework
 prs:

@@ -1,8 +1,10 @@
 ---
-stage: accepted
+stage: recommended
 start-date: 2019-05-20T00:00:00.000Z
-release-date:
+release-date: 2021-05-03T00:00:00.000Z
 release-versions:
+  ember-source: v3.27.0
+
 teams:
   - framework
   - learning

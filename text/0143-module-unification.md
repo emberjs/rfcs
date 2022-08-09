@@ -1,10 +1,12 @@
 ---
-stage: accepted
+stage: released # FIXME: Is this correct? Or is it Discontinued?
 start-date: 2016-05-09T00:00:00.000Z
-release-date:
+release-date: FIXME
 release-versions:
+  ember-cli: FIXMEa # v2.16 or earlier
+
 teams:
-  - framework
+  - cli
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/143
 project-link:

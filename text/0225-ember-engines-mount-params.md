@@ -1,10 +1,12 @@
 ---
-stage: accepted
+stage: released # FIXME: Is this recommended?
 start-date: 2017-04-26T00:00:00.000Z
-release-date:
+release-date: 2017-08-31T00:00:00.000Z
 release-versions:
+  ember-source: v2.15.0
+
 teams:
-  - framework ## FIXME - added automatically as it was missing during migration
+  - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/225
 project-link:

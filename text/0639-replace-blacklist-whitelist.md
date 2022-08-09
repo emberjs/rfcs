@@ -1,8 +1,10 @@
 ---
-stage: accepted
+stage: recommended
 start-date: 2020-06-15T00:00:00.000Z
-release-date:
+release-date: 2022-07-11T00:00:00.000Z
 release-versions:
+  ember-cli: v4.5.0
+
 teams:
   - cli
   - learning

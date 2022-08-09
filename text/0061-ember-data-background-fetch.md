@@ -1,10 +1,12 @@
 ---
-stage: accepted
+stage: recommended
 start-date: 2015-06-03T00:00:00.000Z
-release-date:
+release-date: 2015-06-16T00:00:00.000Z
 release-versions:
+  ember-data: v1.13.0
+
 teams:
-  - framework ## FIXME - added automatically as it was missing during migration
+  - data
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/61
 project-link:

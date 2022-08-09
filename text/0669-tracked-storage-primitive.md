@@ -1,5 +1,5 @@
 ---
-stage: accepted
+stage: accepted # FIXME: This may be a further stage
 start-date: 2020-09-26T00:00:00.000Z
 release-date:
 release-versions:

@@ -1,8 +1,10 @@
 ---
-stage: accepted
+stage: recommended
 start-date: 2018-08-13T00:00:00.000Z
-release-date:
+release-date: FIXME
 release-versions:
+  ember-cli: v3.17.0
+
 teams:
   - cli
 prs:

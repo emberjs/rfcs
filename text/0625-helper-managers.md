@@ -1,8 +1,10 @@
 ---
-stage: accepted
+stage: released # FIXME: This may be a further stage
 start-date: 2020-04-28T00:00:00.000Z
-release-date:
+release-date: 2020-11-16T00:00:00.000Z
 release-versions:
+  ember-source: v3.23.0
+
 teams:
   - framework
 prs:

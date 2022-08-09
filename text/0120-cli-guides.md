@@ -1,8 +1,8 @@
 ---
-stage: accepted
+stage: recommended
 start-date: 2018-07-30T00:00:00.000Z
-release-date:
-release-versions:
+release-date: FIXME
+release-versions: FIXME
 teams:
   - cli
 prs:

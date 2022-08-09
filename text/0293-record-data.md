@@ -1,8 +1,10 @@
 ---
-stage: accepted
+stage: released # FIXME: This may be Recommended
 start-date: 2018-01-10T00:00:00.000Z
-release-date:
+release-date: 2018-10-12T00:00:00.000Z
 release-versions:
+  ember-data: v3.5.0
+
 teams:
   - data
 prs:

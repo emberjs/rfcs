@@ -1,8 +1,8 @@
 ---
-stage: accepted
+stage: accepted # FIXME: This may be a further stage
 start-date: 2016-12-17T00:00:00.000Z
-release-date:
-release-versions:
+release-date: FIXME
+release-versions: FIXME
 teams:
   - cli
 prs:

@@ -1,8 +1,10 @@
 ---
-stage: accepted
+stage: released # FIXME: This may be recommended
 start-date: 2020-05-29T00:00:00.000Z
-release-date:
+release-date: 2020-09-01T00:00:00.000Z
 release-versions:
+  ember-cli: v3.21.0
+
 teams:
   - cli
   - learning

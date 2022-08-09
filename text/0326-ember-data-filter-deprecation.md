@@ -1,10 +1,10 @@
 ---
-stage: accepted
+stage: recommended
 start-date: 2018-04-18T00:00:00.000Z
-release-date:
-release-versions:
+release-date: FIXME
+release-versions: FIXME
 teams:
-  - framework ## FIXME - added automatically as it was missing during migration
+  - data
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/326
 project-link:

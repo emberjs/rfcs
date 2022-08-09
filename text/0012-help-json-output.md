@@ -1,8 +1,8 @@
 ---
-stage: accepted
+stage: released
 start-date: 2015-05-16T00:00:00.000Z
 release-date:
-release-versions:
+release-versions: # FIMXE: Prior to 3.0
 teams:
   - cli
 prs:

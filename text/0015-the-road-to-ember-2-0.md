@@ -1,10 +1,19 @@
 ---
-stage: accepted
+stage: discontinued # FIXME: Is this correct?
 start-date: 2014-12-03T00:00:00.000Z
-release-date:
+release-date: 2015-08-13T00:00:00.000Z
 release-versions:
+  ember-source: v2.0.0
+  ember-data: v2.0.0
+  ember-cli: v2.0.0
+
 teams:
-  - framework ## FIXME - added automatically as it was missing during migration
+  - framework
+  - data
+  - cli
+  - learning
+  - typescript
+  - steering
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/15
 project-link:

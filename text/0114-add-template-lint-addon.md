@@ -1,8 +1,8 @@
 ---
-stage: accepted
+stage: discontinued # FIXME: Is this correct? We don't quite do what is specified here
 start-date: 2018-01-04T00:00:00.000Z
-release-date:
-release-versions:
+release-date: FIXME
+release-versions: FIXME
 teams:
   - cli
 prs:

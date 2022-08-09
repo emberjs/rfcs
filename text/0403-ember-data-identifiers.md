@@ -1,8 +1,8 @@
 ---
-stage: accepted
+stage: accepted # FIXME: This may be a further stage
 start-date: 2018-11-25T00:00:00.000Z
-release-date:
-release-versions:
+release-date: FIXME
+release-versions: FIXME
 teams:
   - data
 prs:

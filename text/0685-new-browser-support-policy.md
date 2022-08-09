@@ -1,8 +1,10 @@
 ---
-stage: accepted
+stage: released
 start-date: 2020-11-28T00:00:00.000Z
-release-date:
+release-date: 2021-11-15T00:00:00.000Z
 release-versions:
+  ember-source: v4.0.0
+
 teams:
   - framework
   - data

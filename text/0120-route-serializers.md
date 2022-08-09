@@ -1,10 +1,10 @@
 ---
-stage: accepted
+stage: discontinued # FIXME: Is this correct? Doesn't appear to be the recommended way of doing it.
 start-date: 2016-02-11T00:00:00.000Z
-release-date:
-release-versions:
+release-date: FIXME
+release-versions: FIXME
 teams:
-  - framework ## FIXME - added automatically as it was missing during migration
+  - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/120
 project-link:

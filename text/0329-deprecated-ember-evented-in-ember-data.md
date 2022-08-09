@@ -1,8 +1,10 @@
 ---
-stage: accepted
+stage: recommended
 start-date: 2018-05-01T00:00:00.000Z
-release-date:
+release-date: 2019-09-20T00:00:00.000Z
 release-versions:
+  ember-data: v3.13.0
+
 teams:
   - data
 prs:

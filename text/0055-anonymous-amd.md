@@ -1,8 +1,10 @@
 ---
-stage: accepted
+stage: recommended
 start-date: 2016-06-14T00:00:00.000Z
-release-date:
+release-date: 2016-10-20T00:00:00.000Z
 release-versions:
+  ember-cli: v2.9.0
+
 teams:
   - cli
 prs:
