@@ -11,25 +11,30 @@ jobs:
     - id: get_merged_pr
       uses: actions-ecosystem/action-get-merged-pull-request@v1.0.1
 
-    - if: steps.get_merged_pr.outputs.number
+    - if: steps.get_merged_pr.outputs.labels
+      env:
+        LABELS: ${{ steps.get_merged_pr.outputs.labels }}
+      run: |
+        # TODO: We may need to check S-Proposed and S-Exploring for initial merges in case the
+        # label doesn't get updated before merge. Alternatively, we should not allow merging without
+        # the correct label.
+        if echo $LABELS | grep "S-Accepted" -q; then
+          current_stage=accepted
+          next_stage=ready-for-release
+        elif echo $LABELS | grep "S-Ready for Release" -q; then
+          current_stage=ready-for-release
+          next_stage=released
+        elif echo $LABELS | grep "S-Released" -q; then
+          current_stage=released
+          next_stage=recommended
+        fi
 
+        # FIXME: This should be the number of the RFC itself, not the last PR.
+        branch=advance-stage-${{ steps.get_merged_pr.outputs.number }}
+        git checkout -b $branch
 
-  # lint-frontmatter:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
+        # FIXME: We should actually do something here.
+        git commit -m "Bump stage to $next_stage" --allow-empty
 
-  #     - name: Checkout tools repo
-  #       uses: actions/checkout@v3
-  #       with:
-  #         repository: emberjs/rfcs-tooling
-  #         path: rfcs-tooling
-  #         ref: 'v1.0.0'
-
-  #     - uses: actions/setup-node@v3
-
-  #     - run: yarn install
-  #       working-directory: rfcs-tooling
-
-  #     - name: Lint the frontmatter of all RFCs for informational purposes
-  #       run: node ./rfcs-tooling/lint-rfc-frontmatter.js text/*.md
+        git push origin $branch
+        # FIXME: Actually make PR
