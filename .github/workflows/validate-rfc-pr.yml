@@ -43,6 +43,8 @@ jobs:
         working-directory: rfcs-tooling
 
       - name: Test RFC stage matches PR labels
+        env:
+          ROOTDIR: ${{ github.workspace }}
         run: |
           node validate-labels.js "${{ github.event.pull_request.labels.*.name }}" ${{ steps.files.outputs.added }}
         working-directory: rfcs-tooling
