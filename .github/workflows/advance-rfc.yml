@@ -1,0 +1,127 @@
+name: Open PR to advance an RFC to the next stage
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'text/*.md'
+
+jobs:
+  advance-rfc:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+
+    - name: Checkout tools repo
+      uses: actions/checkout@v3
+      with:
+        repository: emberjs/rfcs-tooling
+        path: rfcs-tooling
+        ref: 'kg-create-prs'
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+    - uses: actions/setup-node@v2.1.2
+
+    - run: yarn install
+      working-directory: rfcs-tooling
+
+    - name: Find added or modified RFCs
+      id: rfcs
+      uses: tj-actions/changed-files@v25
+      with:
+        path: 'text'
+        json: 'true'
+
+    - name: Fail if more than 1 RFC is added or modified
+      run: |
+        len=`echo "${{ steps.rfcs.outputs.all_changed_files }}" | jq '. | length'`
+        echo "RFCs added or modified: ${{ steps.rfcs.outputs.all_changed_files }}"
+        if [[ $len > 1 ]]; then
+          echo "::error::More than 1 RFC is added or modified in this PR; unable to automatically open PRs for advancement"
+          exit 1
+        fi
+
+    - name: Find modified or added RFC path
+      id: modified_rfc
+      run: |
+        changed_file=`echo "${{ steps.rfcs.outputs.all_changed_files }}" | jq '.[0]'`
+        echo "::set-output name=path::$changed_file" 
+        pr_number="${changed_file//[!0-9]/}"
+        echo "::set-output name=pr_number::$pr_number"
+
+    - name: Determine if stage has changed
+      id: has_stage_changed
+      run: |
+        len=`echo "${{ steps.rfcs.outputs.added_files }}" | jq '. | length'`
+        if [[ $len == 1 ]]; then
+          echo "::set-output name=value::true"
+        else
+          if `node rfcs-tooling/has-stage-changed.js ${{ github.event.push.base.sha }} ${{ steps.modified_rfc.outputs.path }}`; then
+            echo "::set-output name=value::true"
+          else
+            echo "::set-output name=value::false"
+          fi
+        fi
+
+    - name: Update frontmatter
+      id: stage
+      if: ${{ steps.has_stage_changed.outputs.value }} == true
+      run: |
+        new_stage=`node rfcs-tooling/find-next-stage.js ${{ steps.modified_rfc.outputs.path }}`
+        echo "::set-output name=value::$new_stage"
+        node rfcs-tooling/update-rfc-stage.js $new_stage ${{ steps.modified_rfc.outputs.path }}
+
+    - name: Set variables for use in PR
+      id: pr_variables
+      if: ${{ steps.has_stage_changed.outputs.value }} == true
+      run: |
+        frontmatter=`node rfcs-tooling/rfc-frontmatter.js ${{ steps.modified_rfc.outputs.path }}`
+        ready_for_release_pr=`echo $frontmatter | jq '.prs."ready-for-release"'`
+        ready_for_release_pr=${ready_for_release_pr//\"/}
+        released_pr=`echo $frontmatter | jq '.prs.released'`
+        released_pr=${released_pr//\"/}
+        if [[ ${{ steps.stage.outputs.value }} == "ready-for-release" ]]; then
+          pretty_stage="Ready for Release"
+          template=`sed -e 's/__RFC_NUMBER__/${{ steps.modified_rfc.outputs.pr_number }}/g' .github/PULL_REQUEST_TEMPLATE/advance-to-ready-for-release.md`  
+        elif [[ ${{ steps.stage.outputs.value }} == "released" ]]; then
+          pretty_stage="Released"
+          template=`sed -e 's/__RFC_NUMBER__/${{ steps.modified_rfc.outputs.pr_number }}/g' -e "s>__READY_FOR_RELEASE_PR__>$ready_for_release_pr>g" .github/PULL_REQUEST_TEMPLATE/advance-to-released.md`
+        elif [[ ${{ steps.stage.outputs.value }} == "recommended" ]]; then
+          pretty_stage="Recommended"
+          template=`sed -e 's/__RFC_NUMBER__/${{ steps.modified_rfc.outputs.pr_number }}/g' -e "s>__READY_FOR_RELEASE_PR__>$ready_for_release_pr>g" -e "s>__RELEASED_PR__>$released_pr>g" .github/PULL_REQUEST_TEMPLATE/advance-to-recommended.md`
+        fi
+        # Hacks to pass multi-line strings around in GH Workflows
+        template="${template//'%'/'%25'}"
+        template="${template//$'\n'/'%0A'}"
+        template="${template//$'\r'/'%0D'}"
+        echo "::set-output name=body::$template"
+        echo "::set-output name=pretty_stage::$pretty_stage"
+
+    - name: Open PR
+      if: ${{ steps.has_stage_changed.outputs.value }} == true
+      id: create_pr
+      uses: peter-evans/create-pull-request@v4
+      with:
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        commit-message: "Advance RFC to Stage ${{ steps.stage.outputs.value }}"
+        add-paths: 'text'
+        branch: "advance-rfc-${{ steps.modified_rfc.outputs.pr_number }}"
+        title: "Advance RFC #${{ steps.modified_rfc.outputs.pr_number}} to Stage ${{ steps.pr_variables.outputs.pretty_stage }}"
+        body: "${{ steps.pr_variables.outputs.body }}"
+        labels: "RFC Advancement,S-${{ steps.pr_variables.outputs.pretty_stage}}"
+
+    - name: Add new PR link to RFC frontmatter
+      if: ${{ steps.has_stage_changed.outputs.value }} == true
+      run: |
+        node rfcs-tooling/update-advancement-pr.js ${{ steps.modified_rfc.outputs.path }} ${{ steps.stage.outputs.value}} ${{ steps.create_pr.outputs.pull-request-url }}
+
+    - name: Update PR
+      if: ${{ steps.has_stage_changed.outputs.value }} == true
+      run: |
+        git config --local user.email 'ember-rfcs@example.com'
+        git config --local user.name 'Ember.js RFCS CI'
+        git add ${{ steps.modified_rfc.outputs.path }}
+        git commit -m "Update RFC ${{ steps.modified_rfc.outputs.pr_number }} ${{ steps.stage.outputs.value }} PR URL"
+        git push origin advance-rfc-${{ steps.modified_rfc.outputs.pr_number }}
