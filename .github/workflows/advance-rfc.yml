@@ -75,7 +75,7 @@ jobs:
 
     - name: Set variables for use in PR
       id: pr_variables
-      if: ${{ steps.has_stage_changed.outputs.value }} == true
+      if: ${{ steps.stage.outputs.value }}
       run: |
         frontmatter=`node rfcs-tooling/rfc-frontmatter.js ${{ steps.modified_rfc.outputs.path }}`
         ready_for_release_pr=`echo $frontmatter | jq '.prs."ready-for-release"'`
@@ -100,7 +100,7 @@ jobs:
         echo "::set-output name=pretty_stage::$pretty_stage"
 
     - name: Open PR
-      if: ${{ steps.has_stage_changed.outputs.value }} == true
+      if: ${{ steps.stage.outputs.value }}
       id: create_pr
       uses: peter-evans/create-pull-request@v4
       with:
@@ -111,14 +111,15 @@ jobs:
         title: "Advance RFC #${{ steps.modified_rfc.outputs.pr_number}} to Stage ${{ steps.pr_variables.outputs.pretty_stage }}"
         body: "${{ steps.pr_variables.outputs.body }}"
         labels: "RFC Advancement,S-${{ steps.pr_variables.outputs.pretty_stage}}"
+        draft: true
 
     - name: Add new PR link to RFC frontmatter
-      if: ${{ steps.has_stage_changed.outputs.value }} == true
+      if: ${{ steps.stage.outputs.value }}
       run: |
         node rfcs-tooling/update-advancement-pr.js ${{ steps.modified_rfc.outputs.path }} ${{ steps.stage.outputs.value}} ${{ steps.create_pr.outputs.pull-request-url }}
 
     - name: Update PR
-      if: ${{ steps.has_stage_changed.outputs.value }} == true
+      if: ${{ steps.stage.outputs.value }}
       run: |
         git config --local user.email 'ember-rfcs@example.com'
         git config --local user.name 'Ember.js RFCS CI'
