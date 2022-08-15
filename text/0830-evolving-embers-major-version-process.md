@@ -1,12 +1,17 @@
 ---
-Stage: Accepted
-Start Date: 2022-07-12
-Release Date: Unreleased
-Release Versions:
+stage: accepted
+start-date: 2022-07-12
+release-date: Unreleased
+release-versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
-Relevant Team(s): "Steering, Ember.js, Learning"
-RFC PR: https://github.com/emberjs/rfcs/pull/830
+teams:
+  - steering
+  - framework
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/830
+
 ---
 
 # Evolving Ember's Major Version Process
