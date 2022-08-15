@@ -15,29 +15,26 @@ RFC PR: https://github.com/emberjs/rfcs/pull/830
 
 Introduce a standard release train for *major* releases, analogous to Ember's release train for minor releases:
 
-- After every `X.8` minor release, Ember will ship a new major, `(X+1).0`, which removes any deprecated code targeted for that major release.
-- Deprecations targeting the next major cannot be introduced later than the `X.7` release.
-- There will be a planned 12 week cycle for the transition between an `X.8` and an `(X+1).0` release to allow for stabilizing the `X.*` LTS release while working on the `(X+1).0` release.
+- After every `M.12` minor release, Ember will ship a new major, `(M+1).0`, which removes any deprecated code targeted for that major release.
+- Deprecations targeting the next major cannot be introduced later than the `M.10` release.
 
-**The result is a steady 60-week cadence between Ember major releases, complementing our steady 6-week cadence between Ember minor releases.**
+**The result is a steady 18-month cadence between Ember major releases, complementing our steady 6-week cadence between Ember minor releases.**
 
 How this would work in practice for Ember's lifecycle from 4.8 to 7.0
 
-| Ember Release |    Approximate date    |
-| ------------- | ---------------------- |
-| 4.8           | mid October 2022       |
-| 4.8 LTS       | late November 2022     |
-| **5.0**       | **early January 2023** |
-| 5.4           | late June 2023         |
-| 5.4 LTS       | early August 2023      |
-| 5.8           | early December 2023    |
-| 5.8 LTS       | late January 2024      |
-| **6.0**       | **early March 2024**   |
-| 6.4           | mid August 2024        |
-| 6.4 LTS       | late September 2024    |
-| 6.8           | early February 2025    |
-| 6.8 LTS       | mid March 2025         |
-| **7.0**       | **late April 2025**    |
+| Ember Release |   Release date    |   LTS date    |
+| ------------- | ----------------- | ------------- |
+| 4.8           | October 2022      | November 2022 |
+| 4.12          | April 2023        | May 2023      |
+| **5.0**       | **May 2023**      |               |
+| 5.4           | October 2023      | December 2023 |
+| 5.8           | April 2024        | May 2024      |
+| 5.12          | September 2024    | November 2024 |
+| **6.0**       | **November 2024** |               |
+| 6.4           | April 2025        | May 2024      |
+| 6.8           | October 2025      | November 2025 |
+| 6.12          | March 2026        | May 2026      |
+| **7.0**       | **May 2026**      |               |
 
 
 ### Note <!-- omit in toc -->
@@ -54,12 +51,8 @@ However, those questions are orthogonal to this proposal: we can maintain lockst
 
 - [Motivation](#motivation)
 - [Detailed design](#detailed-design)
-  - [Freeze deprecations at `X.7`](#freeze-deprecations-at-x7)
-  - [Formalize a 12-week gap between `X.8` and `(X+1).0`](#formalize-a-12-week-gap-between-x8-and-x10)
-  - [Bootstrap with Ember v5](#bootstrap-with-ember-v5)
-    - [Ember v5 deprecations](#ember-v5-deprecations)
-    - [Ember CLI v5 deprecations](#ember-cli-v5-deprecations)
-    - [Ember Data v5 deprecations](#ember-data-v5-deprecations)
+  - [Freeze deprecations at `M.10`](#freeze-deprecations-at-m10)
+  - [Bootstrap with Ember v5.0](#bootstrap-with-ember-v50)
   - [Prior art](#prior-art)
 - [How we teach this](#how-we-teach-this)
   - [Publicize the change](#publicize-the-change)
@@ -127,7 +120,7 @@ For example: imagine a deprecation of some major piece of Ember landing early in
 ## Detailed design
 
 
-### Freeze deprecations at `X.7`
+### Freeze deprecations at `M.10`
 
 One of the major things we learned from the 1.13 → 2.0 transition was that having too many deprecations piled up at the end of a major release can *feel* like it violates Ember's commitment to "stability without stagnation". Since then, we have frozen deprecations targeting the next major release late in the previous major release cycle. However, there have been two ongoing issues with this:
 
@@ -135,37 +128,12 @@ One of the major things we learned from the 1.13 → 2.0 transition was that hav
 
 - There has been a tendency to rush to get in deprecations in the period just before the freeze (in large part because major releases have been unpredictable: if you don't get it in *now*, it may be *years* before the deprecation takes effect!), which again undermines.
 
-Given a known major release cadence, we can explicitly target a specific release as the last allowed time to target a given major. However, we can *also* keep landing deprecations past that freeze: they just have to target the next major. You could, for example, land a deprecation in 4.8 targeting 6.0, or even 7.0!
+Given a known major release cadence, we can explicitly target a specific release as the last allowed time to target a given major. However, we can *also* keep landing deprecations past that freeze: they just have to target the next major. You could, for example, land a deprecation in 4.11 targeting 6.0, or even 7.0!
 
 
-### Formalize a 12-week gap between `X.8` and `(X+1).0`
+### Bootstrap with Ember v5.0
 
-Major releases have sometimes taken longer than the targeted 6-week cadence to release. For example, there was an 8 week gap between 1.13 and 2.0, a 6 week gap between 2.18 and 3.0, and a 14-week gap between the releases of Ember 3.28 and Ember 4.0. We should embrace the that a major release is likely to be more work than a normal minor release, and make it *easy* to hit the cadence.
-
-Accordingly, introduce an extra 6-week buffer for the major release. This also has the happy effect of making the release cadence super easy to explain and remember: 6 weeks between minor releases, 60 weeks between major releases.
-
-
-### Bootstrap with Ember v5
-
-When Ember adopted its 6-week "release train" cadence for minor releases, it used the 1.1 release to "bootstrap" the process and help the team learn how to do it, identify gaps, etc., with no features added. We should do the same here with 5.0. There are *very* few deprecations currently targeting Ember v5, so we can use this in a similar way.
-
-
-#### Ember v5 deprecations
-
-- [`Ember.assign`](https://deprecations.emberjs.com/v4.x#toc_ember-polyfills-deprecate-assign), replaced by `Object.assign` or object spread
-- [implicit injections](https://deprecations.emberjs.com/v4.x#toc_implicit-injections) (already a no-op and do nothing, and just need to be removed)
-- [AutoLocation class](https://deprecations.emberjs.com/v4.x#toc_deprecate-auto-location), switching to explicitly using `'history'` or `'hash'` as appropriate
-
-
-#### Ember CLI v5 deprecations
-
-- removal of Bower (via a number of separate feature deprecations)
-- deprecate "blacklist" and "whitelist" build options
-
-
-#### Ember Data v5 deprecations
-
-N/A: none exist at the time of authoring.
+When Ember adopted its 6-week "release train" cadence for minor releases, it used the 1.1 release to "bootstrap" the process and help the team learn how to do it, identify gaps, etc., with no features added. We should do the same here with 5.0.
 
 
 ### Prior art
@@ -174,7 +142,7 @@ N/A: none exist at the time of authoring.
 
 - Node uses a six-month cadence for major releases, with every other major release (the even-numbered releases) being an LTS release.
 
-- TypeScript uses a quarterly release cadence, and releases a "major" once they  hit the `X.9` release. Notably, they do not use SemVer, so this is not a particularly relevant comparison for *how* we approach this. It is relevant mostly by way of providing another example of a standard cadence for releases.
+- TypeScript uses a quarterly release cadence, and releases a "major" once they  hit the `M.9` release. Notably, they do not use SemVer, so this is not a particularly relevant comparison for *how* we approach this. It is relevant mostly by way of providing another example of a standard cadence for releases.
 
 
 ## How we teach this
@@ -196,7 +164,7 @@ Update the **Our Goals** section:
 
     Updated:
 
-    > - Make a minor release about every six weeks and a major release about every sixty weeks, so teams that use Ember can plan their work
+    > - Make a minor release about every six weeks and a major release about every eighteen months, so teams that use Ember can plan their work
 
 - Wholly reframe this bullet point:
 
@@ -210,17 +178,17 @@ Update the **How Ember uses SemVer** section to clarify that we want to make bre
 
 The previous text:
 
-> You might notice that although Ember has been around for a long time, it's version number is low. That is because Ember aims to ship new features in minor releases, and make major releases as rare as possible. When you see a library or framework that has many major versions, each one of those numbers represents a "breaking change." Breaking changes force development teams to spend time researching the changes and modifing their codebase before they can upgrade. The bigger the codebase, or the more complex the app, the more time and effort it takes. Ember is committed to providing a better experience than that.
+> You might notice that although Ember has been around for a long time, it's version number is low. That is because Ember aims to ship new features in minor releases, and make major releases as rare as possible. When you see a library or framework that has many major versions, each one of those numbers represents a "breaking change." Breaking changes force development teams to spend time researching the changes and modifying their codebase before they can upgrade. The bigger the codebase, or the more complex the app, the more time and effort it takes. Ember is committed to providing a better experience than that.
 
 Updated:
 
-> Ember aims to ship new features in minor releases, to make breaking changes rare, and to make major releases predictable. Breaking changes force development teams to spend time researching the changes and modifing their codebase before they can upgrade. The bigger the codebase, or the more complex the app, the more time and effort it takes. Ember is committed to providing a better experience than that:
+> Ember aims to ship new features in minor releases, to make breaking changes rare, and to make major releases predictable. Breaking changes force development teams to spend time researching the changes and modifying their codebase before they can upgrade. The bigger the codebase, or the more complex the app, the more time and effort it takes. Ember is committed to providing a better experience than that:
 >
 > 1. **We never couple the addition of new features to breaking changes.** Instead, we introduce a new feature to replace an existing feature, provide a migration path, then sometime later deprecate the old feature, and finally remove the old feature in a later major release.
 >
 > 2. **Ember major versions only remove deprecated features. They never introduce new features.** This means major releases are not exciting, just a predictable point where some cleanup happens.
 >
-> 3. **Ember's big releases are "Editions.** An Edition lands in a minor release and is therefore always backwards compatible. It represents the point where all the features we shipped in minor releases are polished, well-documented, and recommended for everyone to use. [Read more here.](https://emberjs.com/editions/)
+> 3. **Ember's big releases are *Editions*.** An Edition lands in a minor release and is therefore always backwards compatible. It represents the point where all the features we shipped in minor releases are polished, well-documented, and recommended for everyone to use. [Read more here.](https://emberjs.com/editions/)
 
 
 ## Drawbacks
@@ -242,28 +210,20 @@ Keep our existing approach, releasing new majors rarely. Focus *all* of our effo
 
 ### Pick a different cadence
 
-We could adopt a time-based cadence: the proposed 60-week cadence takes just *over* a year, so the cycle drifts through following years, and does not align *especially* well with most teams' planning processes. Aligning major releases to something which predictably fits year or quarter boundaries could be helpful.
+We could adopt a different time-based cadence:
 
-- **Annual:**  This would involve doing a major release just 4 weeks after the `X.8` release, which is a very compressed timeline, so we might need to instead target `X.7` as an LTS, followed by a 10-week cycle for the major release. Alternatively, we could shift to 8-week release cycles and update our LTS cadence accordingly.
+- This RFC originally proposed a **60-week cadence**, including the idea of an extra-long cycle for doing the major release.
 
-- **18- or 24-month cycles:** the same basic idea as an annual cycle, just longer. Similar issues apply for aligning the timing (though see below).
+**Annual:**  This would involve doing a major release just 4 weeks after the `M.8` release, which is a very compressed timeline, so we might need to instead target `M.7` as an LTS, followed by a 10-week cycle for the major release. Alternatively, we could shift to 4- or 8-week release cycles and update our LTS cadence accordingly.
 
-Both of those have the downside of requiring *additional* changes to our existing process and communications.
-
-We could also keep the idea of this RFC, but pick a longer cadence:
-
-- **11 minor releases:** This would see us do e.g. 4.8 LTS, 4.11 LTS, 5.0, etc. This would make the release cycle just a bit longer, and slot in at *exactly* an 18-month cadence if we kept the extra long (12-week) cycle for a major.
-
-- **12 minor releases:** This is the other way of getting to an 18-month cadence for major releases, *if* we maintain the requirement that there be only 6 weeks between releases. (Keeping it to only six weeks may be easier than it was for e.g. 3.28 → 4.0, given a predictable *and* a shorter release cadence.)
-
-- **an even longer cycle:** 16 minor releases, 24 minor releases, etc. That would still make the releases *predictable*, but we would still pile up deprecations for longer, and the work for both users and maintainers at the release cycle would still be higher. Additionally, we know from experience in software in general (especially around "devops") that the longer the cycles involved in any given process, the harder they tend to be. A higher cadence for releases actually tends to be *easier*.
+**An longer cycle:** 16 minor releases, 24 minor releases, etc. That would still make the releases *predictable*, but we would still pile up deprecations for longer, and the work for both users and maintainers at the release cycle would still be higher. Additionally, we know from experience in software in general (especially around "devops") that the longer the cycles involved in any given process, the harder they tend to be. A higher cadence for releases actually tends to be *easier*.
 
 That might suggest picking an even shorter cadence: new majors after every LTS release, e.g. 5.0, 5.4 LTS, 6.0, etc. That *would* help with the planning and we would get quite good at the process. There is also precedent, in that this is how both Angular and Node work. However, Angular and Node also *constantly* have LTS releases in active support across major releases, which ups the maintenance burden significantly. Picking a timeline of approximately a year (2 LTS releases) seems to best balance these tradeoffs.
 
 
 ### Different point for freezing deprecations
 
-The `X.7` release is chosen as a point late in the cycle, and matches the point we have frozen deprecations relative to the next major in the pas. It is also relatively arbitrary, though! By taking the pressure off of any given major release, it's also less important. Our only *hard* constraint is that new deprecations targeting the next major not be introduced in the final LTS, so we could equally well choose `X.6`. And of course, if we picked a different cadence, we would pick a different value here as well.
+The `M.10` release is chosen as a point late in the cycle, and is actually earlier the point we have frozen deprecations relative to the next major in the pas. It is also relatively arbitrary, though! By taking the pressure off of any given major release, it's also less important. Our only *hard* constraint is that new deprecations targeting the next major not be introduced in the final LTS, so we could equally well choose `M.9` or `M.11`. And of course, if we picked a different cadence, we would pick a different value here as well.
 
 
 ## Unresolved Questions
