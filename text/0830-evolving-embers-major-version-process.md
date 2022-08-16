@@ -58,6 +58,7 @@ However, those questions are orthogonal to this proposal: we can maintain lockst
 - [Detailed design](#detailed-design)
   - [Freeze deprecations at `M.10`](#freeze-deprecations-at-m10)
   - [Bootstrap with Ember v5.0](#bootstrap-with-ember-v50)
+  - [Simplify major version process](#simplify-major-version-process)
   - [Prior art](#prior-art)
 - [How we teach this](#how-we-teach-this)
   - [Publicize the change](#publicize-the-change)
@@ -139,6 +140,21 @@ Given a known major release cadence, we can explicitly target a specific release
 ### Bootstrap with Ember v5.0
 
 When Ember adopted its 6-week "release train" cadence for minor releases, it used the 1.1 release to "bootstrap" the process and help the team learn how to do it, identify gaps, etc., with no features added. We should do the same here with 5.0.
+
+
+### Simplify major version process
+
+Given the commitment to ship a major version on a schedule, it is critical that we make it as easy as possible to do so. We will therefore simplify the process of enabling a major so that there is no need for a large amount of work to be done immediately before its release.
+
+**The following is non-normative but reflects our current best thinking:**
+
+One likely mechanic for the `ember-source` package (and its internal subpackages) is to update our deprecation workflow and mechanics in the following ways:
+
+1. Introduce new tooling to Ember's internal tests which simulate the mode in which the deprecation fails. (We already have some of this, but need to iterate on it.)
+
+2. Require that all new deprecations test both the deprecated and non-deprecated paths, so we can be confident that removing the deprecation will not cause test failures. (This was an issue in the run up to 4.0.)
+
+3. When releasing a major, the deprecations will be enabled *automatically* because they target that major version. Then the dead (deprecated) code paths can be removed incrementally and at will, rather than it *having* to be removed prior to the major release.
 
 
 ### Prior art
