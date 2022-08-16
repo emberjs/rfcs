@@ -158,5 +158,12 @@ After the deprecated code is removed from Ember (at 5.0), we need to remove the 
 - Although `tracked-built-ins` is on the path to stabilization as an official API via [RFC #812](https://github.com/emberjs/rfcs/pull/812), it is not yet officially recommended and its API may change somewhat between now and stabilization.
 
 ## Alternatives
-- Continuing allowing array prototype extensions but turning the EXTEND_PROTOTYPES off by default.
+- Do the deprecation as suggested here for use within Ember itself, but extract it as a standalone library for users who want to use it. This will only work as long as the underlying Ember Classic reactivity system is supported.
+
+    As a variation on this, we could do this but explicitly only support it up through the first LTS release in the 5.x series.
+
+- Continuing allowing array prototype extensions but turning the `EXTEND_PROTOTYPES` off by default.
+
+- Do one of these, but target Ember v6 instead.
+
 - Do nothing.
