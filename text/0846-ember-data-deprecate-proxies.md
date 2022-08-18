@@ -1,12 +1,15 @@
 ---
-Stage: Accepted
-Start Date: 2022-08-18
-Release Date: Unreleased
-Release Versions:
+stage: accepted
+start-date: 2022-08-18
+release-date: Unreleased
+release-versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
-Relevant Team(s): Ember Data
-RFC PR: https://github.com/emberjs/rfcs/pull/846
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/846
+  
 ---
 
 <!--- 
