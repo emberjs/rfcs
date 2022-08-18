@@ -9,7 +9,7 @@ teams:
   - data
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/846
-  
+
 ---
 
 <!--- 
@@ -63,14 +63,17 @@ in effect make this a near possibility.
 
 > Utilizing EmberObject APIs or ArrayLike APIs that do not correlate to Native Array APIs will be deprecated.
 
-- **Affected APIs:** `store.query|findAll|peekAll` and `hasMany` relationships
+- **Affected APIs:** `store.query|findAll|peekAll` and `hasMany` relationships on `@ember-data/model`
 - **Resolution:** Convert to the corresponding native array API. In the most common case of `toArray()` this means to use `slice()` instead.
 
 ----
 
 ### PromiseBelongsTo
 
-Since there is no path for a PromiseProxy to not exist for belongsTo relationships, deprecating this promise proxy is left for the deprecation of Model / belongsTo more broadly.
+Since there is no path for a PromiseProxy to not exist for belongsTo relationships, deprecating 
+this promise proxy is left for the deprecation of Model / belongsTo more broadly.
+
+- **Affected APIs:** async `belongsTo` relationships on instances of `@ember-data/model`
 
 In the interest of parity and in order to make native property access usage easier to refactor to we considered converting PromiseBelongsTo into a native proxy which would allow dot notation access to work. However, this would encourage not resolving the value before interacting with it, and encouraging folks to refactor towards `await` before use is key for the next stage in which async relationships will not exist at all in their current form. For this reason, we choose to leave this Proxy as-is.
 
