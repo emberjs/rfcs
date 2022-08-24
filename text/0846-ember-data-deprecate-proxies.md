@@ -27,7 +27,7 @@ RFC PR: Fill this in with the URL for the Proposal RFC PR
 
 ## Summary
 
-Deprecates usage of proxy apis provided by `Ember.ObjectProxy`, `Ember.PromisePrxoyMixin` and `Ember.ArrayProxy` in favor of Promises, Native Arrays, and Native Proxies where appropriate.
+Deprecates usage of proxy apis provided by `Ember.ObjectProxy`, `Ember.PromiseProxyMixin` and `Ember.ArrayProxy` in favor of Promises, Native Arrays, and Native Proxies where appropriate.
 
 Specifically this affects `RecordArray` `AdapterPopulatedRecordArray`, `ManyArray`, `PromiseArray`, and `PromiseRecord` but not `PromiseBelongsTo`.
 
