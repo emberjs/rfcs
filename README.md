@@ -14,9 +14,23 @@ The process is intended to provide a consistent and controlled path for new
 features and changes to enter the framework. RFCs can be opened by any member
 of the community.
 
-[Active RFC List](https://github.com/emberjs/rfcs/pulls)
 
-[Approved RFC List](https://emberjs.github.io/rfcs/)
+**Quick links for Pull Requests for proposed and advancing RFCs**
+
+- [Proposed RFCs](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc+label%3AS-Proposed)
+- [Exploring RFCs](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc+label%3AS-Exploring)
+
+- [PRs to advance an RFC to Ready for Release Stage](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc+label%3A%22S-Ready+for+Release%22)
+- [PRs to advance an RFC to Released Stage](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc+label%3AS-Released)
+- [PRs to advance an RFC to Recommended Stage](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc+label%3AS-Recommended)
+
+- [RFCs in Final Comment Period for any Stage](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc+label%3A%22Final+Comment+Period%22)
+- [RFCs in FCP to Close](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc+label%3A%22FCP+to+close%22)
+
+
+**[RFC Website](https://rfcs.emberjs.com)**
+
+This site shows the current state and text of all RFCs in Accepted or later stages.
 
 ## Table of Contents
 [Table of Contents]: #table-of-contents
