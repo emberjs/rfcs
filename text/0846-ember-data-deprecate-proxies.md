@@ -68,14 +68,14 @@ in effect make this a near possibility.
 
 ----
 
-### PromiseBelongsTo
+### PromiseBelongsTo | Model.errors
 
 Since there is no path for a PromiseProxy to not exist for belongsTo relationships, deprecating 
 this promise proxy is left for the deprecation of Model / belongsTo more broadly.
 
-- **Affected APIs:** async `belongsTo` relationships on instances of `@ember-data/model`
+- **Affected APIs:** async `belongsTo` relationships on instances of `@ember-data/model`, `errors` property on instance of `@ember-data/model`
 
-In the interest of parity and in order to make native property access usage easier to refactor to we considered converting PromiseBelongsTo into a native proxy which would allow dot notation access to work. However, this would encourage not resolving the value before interacting with it, and encouraging folks to refactor towards `await` before use is key for the next stage in which async relationships will not exist at all in their current form. For this reason, we choose to leave this Proxy as-is.
+In the interest of parity and in order to make native property access usage easier to refactor to we considered converting Errors and PromiseBelongsTo into native proxies which would allow dot notation access to work. However, for PromiseBelongsTo this would encourage not resolving the value before interacting with it, and encouraging folks to refactor towards `await` before use is key for the next stage in which async relationships will not exist at all in their current form. For this reason, we choose to leave this Proxy as-is. For `Errors` we have the complication that Errors is a recursive proxy that functions as an `ArrayProxy` an `ObjectProxy` and its own class. We prefer to find a replacement API that would not have the confusion of both `errors.name[0]` and `errors[0]` being valid interactions.
 
 We would note that even if Model / belongsTo are not deprecated before 5.0, their replacements will be available.
 
