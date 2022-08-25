@@ -29,7 +29,13 @@ Each Ember core team will be requested as a reviewer on the PR to move into this
 - [ ] Any necessary learning materials have been updated
 - [ ] The Ember team is ready to commit to the stability of any interfaces exposed by the current implementation of the feature 
 - [ ] Criteria for moving to Recommended Stage has been filled out
-- [ ] Each [team](https://github.com/emberjs/rfcs#teams) has reviewed and approved
+- [ ] Each [team](https://github.com/emberjs/rfcs#relevant-teams) has been added as a reviewer to the PR and approved.
+  * [ ] Framework @emberjs/framework
+  * [ ] Data @emberjs/ember-data-core
+  * [ ] CLI @emberjs/cli
+  * [ ] Learning @emberjs/learning-core
+  * [ ] Typescript @emberjs/typescript-core
+  * [ ] Steering @emberjs/steering
 
 
 ## Criteria for moving to Recommended (required)

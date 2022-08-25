@@ -41,3 +41,12 @@ An FCP is required to enter this stage. Multiple RFCs may be moved as a batch in
 - [ ] If the proposal updates or replaces an existing feature, high-quality codemods are available
 - [ ] If needed, Ember debugging tools as well as popular IDE support have been updated to support the feature.
 - [ ] If the feature is part of a suite of features that were designed to work together for best ergonomics, the other features are also ready to be "Recommended".
+
+## Criteria for moving to Recommended (required)
+
+<-- Copy and paste the criteria for "Recommended" from the Ready For Release stage here -->
+
+A set of criteria for moving this RFC to the Recommended Stage, following release:
+
+1.
+2. 
