@@ -335,14 +335,14 @@ The RFC template requires indicating the relevant core teams. The following tabl
 offers a reference of teams responsible for each project. Please reach out for
 further guidance.
 
-|   Core Team   |    Project/Topics                                            |
-|---------------|--------------------------------------------------------------|
-| Ember.js      | Ember.js                                                     |
-| Ember Data    | Ember Data                                                   |
-| Ember CLI     | Ember CLI                                                    |
-| Learning      | Documentation, Website, learning experiences                 |
-| TypeScript    | TypeScript integration and design                            |
-| Steering      | Governance                                                   |
+|   Core Team   | Project/Topics                               | Github Team                |
+|---------------|----------------------------------------------|----------------------------|
+| Ember.js      | Ember.js                                     | `@emberjs/Framework`       |
+| Ember Data    | Ember Data                                   | `@emberjs/ember-data-core` |
+| Ember CLI     | Ember CLI                                    | `@emberjs/cli`             |
+| Learning      | Documentation, Website, learning experiences | `@emberjs/learning-core`   |
+| TypeScript    | TypeScript integration and design            | `@emberjs/typescript-core` |
+| Steering      | Governance                                   | `@emberjs/steering`        |
 
 ## Finding a champion
 [Finding a Champion]: #finding-a-champion
