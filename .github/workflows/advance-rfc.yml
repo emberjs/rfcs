@@ -68,67 +68,12 @@ jobs:
           echo "::set-output name=value::$new_stage"
 
   advance-rfc:
-    name: Open PR to advance RFC to the next stage
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/open-advancement-pr.yml
     needs: [ check-rfcs ]
     if: needs.check-rfcs.outputs.new-stage
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup RFCs tooling
-        uses: ./.github/actions/setup-rfcs-tooling
-
-      - name: Update frontmatter
-        run: |
-          node rfcs-tooling/update-rfc-stage.js ${{ needs.check-rfcs.outputs.new-stage}} ${{ needs.check-rfcs.outputs.modified-rfc }}
-
-      - name: Set variables for use in PR
-        id: pr-variables
-        run: |
-          frontmatter=`node rfcs-tooling/rfc-frontmatter.js ${{ needs.check-rfcs.outputs.modified-rfc }}`
-          ready_for_release_pr=`echo $frontmatter | jq '.prs."ready-for-release"'`
-          ready_for_release_pr=${ready_for_release_pr//\"/}
-          released_pr=`echo $frontmatter | jq '.prs.released'`
-          released_pr=${released_pr//\"/}
-          if [[ ${{ needs.check-rfcs.outputs.new-stage }} == "ready-for-release" ]]; then
-            pretty_stage="Ready for Release"
-            template=`sed -e 's/__RFC_NUMBER__/${{ needs.check-rfcs.outputs.rfc-number }}/g' .github/PULL_REQUEST_TEMPLATE/advance-to-ready-for-release.md`  
-          elif [[ ${{ needs.check-rfcs.outputs.new-stage }} == "released" ]]; then
-            pretty_stage="Released"
-            template=`sed -e 's/__RFC_NUMBER__/${{ needs.check-rfcs.outputs.rfc-number }}/g' -e "s>__READY_FOR_RELEASE_PR__>$ready_for_release_pr>g" .github/PULL_REQUEST_TEMPLATE/advance-to-released.md`
-          elif [[ ${{ needs.check-rfcs.outputs.new-stage }} == "recommended" ]]; then
-            pretty_stage="Recommended"
-            template=`sed -e 's/__RFC_NUMBER__/${{ needs.check-rfcs.outputs.rfc-number }}/g' -e "s>__READY_FOR_RELEASE_PR__>$ready_for_release_pr>g" -e "s>__RELEASED_PR__>$released_pr>g" .github/PULL_REQUEST_TEMPLATE/advance-to-recommended.md`
-          fi
-          # Hacks to pass multi-line strings around in GH Workflows
-          template="${template//'%'/'%25'}"
-          template="${template//$'\n'/'%0A'}"
-          template="${template//$'\r'/'%0D'}"
-          echo "::set-output name=body::$template"
-          echo "Pretty Stage: $pretty_stage"
-          echo "::set-output name=pretty-stage::$pretty_stage"
-
-      - name: Open PR
-        id: create-pr
-        uses: peter-evans/create-pull-request@v4
-        with:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          commit-message: "Advance RFC to Stage ${{ needs.check-rfcs.outputs.new-stage }}"
-          add-paths: 'text'
-          branch: "advance-rfc-${{ needs.check-rfcs.outputs.rfc-number }}"
-          title: "Advance RFC #${{ needs.check-rfcs.outputs.rfc-number}} to Stage ${{ steps.pr-variables.outputs.pretty-stage }}"
-          body: "${{ steps.pr-variables.outputs.body }}"
-          labels: "RFC Advancement,S-${{ steps.pr-variables.outputs.pretty-stage}}"
-          draft: true
-
-      - name: Add new PR link to RFC frontmatter
-        run: |
-          node rfcs-tooling/update-advancement-pr.js ${{ needs.check-rfcs.outputs.modified-rfc }} ${{ needs.check-rfcs.outputs.new-stage}} ${{ steps.create-pr.outputs.pull-request-url }}
-
-      - name: Update PR
-        run: |
-          git config --local user.email 'ember-rfcs@example.com'
-          git config --local user.name 'Ember.js RFCS CI'
-          git add ${{ needs.check-rfcs.outputs.modified-rfc }}
-          git commit -m "Update RFC ${{ needs.check-rfcs.outputs.rfc-number }} ${{ needs.check-rfcs.outputs.new-stage }} PR URL"
-          git push origin advance-rfc-${{ needs.check-rfcs.outputs.rfc-number }}
+    with:
+      rfc-path: ${{ needs.check-rfcs.outputs.modified-rfc }}
+      rfc-number: ${{ needs.check-rfcs.outputs.rfc-number }}
+      new-stage: ${{ needs.check-rfcs.outputs.new-stage }}
+    secrets:
+      personal-access-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

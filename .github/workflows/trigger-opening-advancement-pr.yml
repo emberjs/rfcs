@@ -1,0 +1,50 @@
+name: Trigger the opening of a PR to advance an RFC to the next stage
+
+on:
+  workflow_dispatch:
+    inputs:
+      rfc-path:
+        type: string
+        required: true
+        description: Path to the RFC to open PR for advancement to the next stage
+
+jobs:
+  gather-rfc-info:
+    name: 'Gather RFC info'
+    runs-on: ubuntu-latest
+    outputs:
+      new-stage: ${{ steps.new-stage.outputs.value }}
+      rfc-number: ${{ steps.modified-rfc.outputs.rfc-number }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup RFCs tooling
+        uses: ./.github/actions/setup-rfcs-tooling
+
+      - name: Find modified RFC Number
+        id: modified-rfc
+        run: |
+          changed_file=${{ inputs.rfc-path }}
+          rfc_number="${changed_file//[!0-9]/}"
+          echo "RFC Number: $rfc_number"
+          echo "::set-output name=rfc-number::$rfc_number"
+
+      - name: Find new stage
+        id: new-stage
+        run: |
+          new_stage=`node rfcs-tooling/find-next-stage.js ${{ inputs.rfc-path }}`
+          echo "New Stage: $new_stage"
+          echo "::set-output name=value::$new_stage"
+
+
+  advance-rfc:
+    uses: ./.github/workflows/open-advancement-pr.yml
+    needs: [ gather-rfc-info ]
+    if: needs.gather-rfc-info.outputs.new-stage
+    with:
+      rfc-path: ${{ inputs.rfc-path }}
+      rfc-number: ${{ needs.gather-rfc-info.outputs.rfc-number }}
+      new-stage: ${{ needs.gather-rfc-info.outputs.new-stage }}
+    secrets:
+      personal-access-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
