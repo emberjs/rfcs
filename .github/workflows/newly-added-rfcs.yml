@@ -40,7 +40,7 @@ jobs:
       - name: Ensure the RFC is in the Exploring Stage before merge is allowed
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'S-Exploring') }}
         run: |
-          echo "::error::Newly added RFCs must advance to the Exploring Stage before merging to Accepted is allowed"
+          echo "::error::Newly added RFCs must advance to the Exploring Stage (via label) before merging to Accepted is allowed"
           exit 1
 
   verify-only-in-one-stage:
@@ -103,3 +103,28 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: node check-filename-matches-pr.js $PR_NUMBER ${{ needs.check-rfcs.outputs.modified-rfc }}
         working-directory: rfcs-tooling
+
+  check-accepted-pr-url:
+    name: Verify Accepted PR URL is correct
+    runs-on: ubuntu-latest
+    needs: [ check-rfcs ]
+    if: needs.check-rfcs.outputs.rfcs-added == 'true'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup RFCs tooling
+        uses: ./.github/actions/setup-rfcs-tooling
+
+      - name: Verify Accepted PR URL is correct
+        run: |
+          frontmatter=`node rfcs-tooling/rfc-frontmatter.js ${{ needs.check-rfcs.outputs.modified-rfc }}`
+          accepted_pr=`echo $frontmatter | jq '.prs.accepted'`
+          accepted_pr=${accepted_pr//\"/}
+          expected_pr="${{ github.event.pull_request.html_url }}"
+          expected_pr=${expected_pr//\"/}
+          if [[ $accepted_pr != $expected_pr ]]; then
+            echo "Accepted PR in frontmatter: $accepted_pr"
+            echo "Expected PR in frontmatter: $expected_pr"
+            echo "::error::Accepted PR URL is incorrect, please update the frontmatter prs.accepted to \"${{ github.event.pull_request.html_url }}\""
+            exit 1
+          fi
