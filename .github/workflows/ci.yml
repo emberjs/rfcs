@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [master, main]
   pull_request: {}
 
 jobs:
@@ -11,17 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Checkout tools repo
-        uses: actions/checkout@v3
-        with:
-          repository: emberjs/rfcs-tooling
-          path: rfcs-tooling
-          ref: 'v1.1.0'
-
-      - uses: actions/setup-node@v3
-
-      - run: yarn install
-        working-directory: rfcs-tooling
+      - name: Setup RFCs tooling
+        uses: ./.github/actions/setup-rfcs-tooling
 
       - name: Lint the frontmatter of all RFCs
         run: node ./rfcs-tooling/lint-rfc-frontmatter.js text/*.md
