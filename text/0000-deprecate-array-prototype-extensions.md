@@ -42,7 +42,7 @@ Rule `ember/no-array-prototype-extensions` is available for both [eslint](https:
 
 We can leverage the fixers of lint rule to auto fix some of the issues, e.g. the built-in [fixer](https://github.com/ember-template-lint/ember-template-lint/blob/master/docs/rule/no-array-prototype-extensions.md) of `firstObject` usages in template. 
 
-We also should create codemods or autofixers in lint rules for some of the convinient functions like `reject`, `compact`, `any` etc.
+We also should create codemods or autofixers in lint rules for some of the convinient functions like `reject`, `compact`, `any` etc. More discussions on **Unresolved Questions** section.
 
 Examples (taken from [Deprecation Guide](https://github.com/smilland/rfcs/pull/1)): 
 ### Convenient methods
