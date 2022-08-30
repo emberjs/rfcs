@@ -84,22 +84,20 @@ This RFC proposes to allow explicitly declaring polymorphic traits similar to [r
 
 ### API
 
-The inverse relationship, if one exists, of a polymorphic relationship must be concrete (e.g. not also polymorphic).
-
 The polymorphic relationship **MUST** explicitly declare itself as polymorphic and **MUST** explicitly declare it's inverse as either a key or `null`. All records that satisfy the polymorphic type must declare a matching inverse via that key.
 
 Polymorphic relationships take the form:
 
 ```ts
-hasMany(baseType: string, options: { polymorphic: true, inverse: string | null })
-belongsTo(baseType: string, options: { polymorphic: true, inverse: string | null })
+hasMany(abstractType: string, options: { async: boolean, polymorphic: true, inverse: string | null })
+belongsTo(abstractType: string, options: { async: boolean, polymorphic: true, inverse: string | null })
 ```
 
-Concrete Relationships which fulfill polymorphic relationships take the form:
+Concrete Relationships which fulfill polymorphic relationships take the form below where the string supplied to `as` should be the same `abstractType` supplied to the polymorphic definition above.
 
 ```ts
-hasMany(recordWithPolymorphicRelationship: string, options: { inverse: string, as: string })
-belongsTo(recordWithPolymorphicRelationship: string, options: { inverse: string, as: string })
+hasMany(recordWithPolymorphicRelationship: string, options: { async: boolean, inverse: string, as: string })
+belongsTo(recordWithPolymorphicRelationship: string, options: { async: boolean, inverse: string, as: string })
 ```
 
 So for instance, given a field named "tagged" that is a polymorphic hasMany with baseType "taggable", and inverse key "tags" the following would be the polymorphic relationship and concrete relationship.
@@ -107,11 +105,11 @@ So for instance, given a field named "tagged" that is a polymorphic hasMany with
 ```ts
 // polymorphic relationship
 class Tag extends Model {
-   @hasMany("taggable", { polymorphic: true, inverse: "tags" }) tagged;
+   @hasMany("taggable", { async: false, polymorphic: true, inverse: "tags" }) tagged;
 }
 // an inverse concrete relationship
 class Post extends Model {
-   @hasMany("tag", { inverse: "tagged", as: "taggable" }) tags;
+   @hasMany("tag", { async: false, inverse: "tagged", as: "taggable" }) tags;
 }
 ```
 
@@ -121,22 +119,116 @@ class Post extends Model {
 
 ### Base Types
 
-Every polymorphic relationship has an implicit "base type" that represents the entity on the other side of the relationship.
+Every polymorphic relationship has an implicit "abstract type" that represents the entity on the other side of the relationship.
 
-In the below example, the polymporphic relationship implies the existence of the `base type` "taggable".
+In the below example, the polymporphic relationship implies the existence of the `abstract type` "taggable".
 
-```
+```ts
 class Tag extends Model {
-  @hasMany("taggable", { inverse: "tags", polymorphic: true }) taggables;
+  @hasMany("taggable", { async: false, inverse: "tags", polymorphic: true }) taggables;
 }
 ```
 
-It is only required that your app implement a model (or if using instantiateRecord and the schema service implement handling for that type) if your API will return entities whose type is the base type. If the base type is abstract and never directly interacted with, it is not required to implement a Model or other associated support.
+It is only required that your app implement a model (or if using instantiateRecord and the schema service implement handling for that type) if your API will return entities whose type is the abstract type. If the abstract type is never directly interacted with, it is not required to implement a Model or other associated support.
+
+### Polymorphic to Polymorphic Relationships
+
+A Polymorphic to Polymorphic Relationship can be declared by both sides of the relationship declaring both `polymorphic: true` and `as: <abstract-type>`. For instance taggables that could also be editables might be implemented like below:
+
+```ts
+class Tag extends Model {
+   @hasMany('taggable', { async: false, polymorphic: true, inverse: 'tags', as: 'editable' }) tagged;
+}
+
+class Post extends Model {
+   @hasMany('editable', { async: false, polymorphic: true, inverse: 'tagged', as: 'taggable' }) tags;
+}
+```
 
 ### Limitations
 
-- polymorphic to polymorphic relationships are not allowed. One side of the relationship MUST be a concrete entity type or have no inverse.
-- this includes self-referential relationships
+**Using @ember-data/model but not implementing a model for the abstract type**
+
+When no model exists for the abstract type EmberData has no mechanism for validating whether the
+ associated relationship is single-resource relationship (belongsTo) or a collection relationship (hasMany). The simpest way when using `@ember-data/model` to ensure this information is available is to implement the abstract model as well; however, this is not the *best* mechanism.
+
+The best way to inform the store of the shape of the relationship on the abstract type is to supply
+ the information via the `SchemaDefinitionService`. When not using `@ember-data/model` this service is always supplied by the app or by another addon (for instance `ember-m3`). That implementation should be designed such that it responds to queries for schema for the abstract type with the appropriate information.
+
+When using `@ember-data/model`, you can use the delegator pattern to achieve this. Below we show the `taggable` and `editable` abstract types from our last example above being handled in this way.
+
+```ts
+import Store from '@ember-data/store';
+
+// Relationship Schemas for the abstract types
+// An app could hard code this, import it, or load it as needed
+// via their API.
+const AbstractSchemas = new Map([
+  [
+    'taggable',
+    {
+      tags: {
+        kind: 'hasMany',
+        type: 'editable',
+        name: 'tags',
+        options: {
+          async: false,
+          polymorphic: true,
+          inverse: 'tagged',
+          as: 'taggable'
+        }
+      }
+    }
+  ],
+  [
+    'editable',
+    {
+      tagged: {
+        kind: 'hasMany',
+        type: 'taggable',
+        name: 'tagged',
+        options: {
+          async: false,
+          polymorphic: true,
+          inverse: 'tags',
+          as: 'editable'
+        }
+      }
+    }
+  ],
+]);
+
+class SchemaDelegator {
+  constructor(schema) {
+    this._schema = schema;
+  }
+
+  doesTypeExist(type: string): boolean {
+    if (AbstractSchemas.has(type)) {
+      return false; // some apps may want `true`
+    }
+    return this._schema.doesTypeExist(type);
+  }
+
+  attributesDefinitionFor(identifier: RecordIdentifier | { type: string }): AttributesSchema {
+    return this._schema.attributesDefinitionFor(identifier);
+  }
+
+  relationshipsDefinitionFor(identifier: RecordIdentifier | { type: string }): RelationshipsSchema {
+    const schema = AbstractSchemas.get(identifier.type);
+    return schema || this._schema.relationshipsDefinitionFor(identifier);
+  }
+}
+
+export default class extends Store {
+  constructor(...args) {
+    super(...args);
+
+    const schema = this.getSchemaDefinitionService();
+    this.registerSchemaDefinitionService(new SchemaDelegator(schema));
+  }
+}
+```
 
 ### Deprecation Design
 
@@ -159,8 +251,6 @@ None
 We could require a more explicit API that declares the full-intent and full-resolvability on one or even both sides. The advantage of both sides is both less work to do on the part of the ember-data to determine validity and increased clarity to the reader in that both sides show the config.
 
 However, This can have some drawbacks in that as an API grows to have more entities that satisfy a polymorphic relationship the config becomes increasingly and unnecessarily large and prevents runtime additions to the schema.
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
 
 ## Questions
 
