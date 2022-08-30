@@ -117,7 +117,7 @@ class Post extends Model {
 
 - polymorphic relationships need not have an inverse, in which case they must specify `inverse: null`.
 
-### Base Types
+### Abstract Types
 
 Every polymorphic relationship has an implicit "abstract type" that represents the entity on the other side of the relationship.
 
