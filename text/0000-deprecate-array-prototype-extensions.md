@@ -1,6 +1,6 @@
 ---
 Stage: Initial
-Start Date: 2022-6-21
+Start Date: 2022-8-21
 Release Date: Unreleased
 Release Versions:
   ember-source: vX.Y.Z
@@ -40,7 +40,9 @@ An entry to the [Deprecation Guides](https://deprecations.emberjs.com/v4.x) will
 
 Rule `ember/no-array-prototype-extensions` is available for both [eslint](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-array-prototype-extensions.md) and [template lint](https://github.com/ember-template-lint/ember-template-lint/blob/master/docs/rule/no-array-prototype-extensions.md) usages. Rule examples have recommendations for equivalences.
 
-We can leverage the fixers of lint rule to auto fix some of the issues. We will also create codemods to help with this migration.
+We can leverage the fixers of lint rule to auto fix some of the issues, e.g. the built-in [fixer](https://github.com/ember-template-lint/ember-template-lint/blob/master/docs/rule/no-array-prototype-extensions.md) of `firstObject` usages in template. 
+
+We also should create codemods or autofixers in lint rules for some of the convinient functions like `reject`, `compact`, `any` etc.
 
 Examples (taken from [Deprecation Guide](https://github.com/smilland/rfcs/pull/1)): 
 ### Convenient methods
@@ -167,3 +169,10 @@ After the deprecated code is removed from Ember (at 5.0), we need to remove the 
 - Do one of these, but target Ember v6 instead.
 
 - Do nothing.
+
+## Unresolved questions
+- Current lint rule [ember/no-array-prototype-extensions](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-array-prototype-extensions.md) gives a lot of false positives giving the limitation of static analysis.
+- Difficulties for providing stable codemods or autofixers:
+  1. giving false positives on lint rules, same will apply to codemods or autofixers;
+  2. when migrating certain methods, we need to access object. Shall we use Ember `get` or native way? Unless we fully remove ObjectProxy dependency, codemods or autofixers would still require manual work in certain cases.
+  3. observable functions or properties requires manual refactoring;
