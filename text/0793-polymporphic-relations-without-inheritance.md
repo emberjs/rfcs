@@ -145,9 +145,7 @@ class Post extends Model {
 }
 ```
 
-### Limitations
-
-**Using @ember-data/model but not implementing a model for the abstract type**
+### Schemas for Abstract Types
 
 When no model exists for the abstract type EmberData has no mechanism for validating whether the
  associated relationship is single-resource relationship (belongsTo) or a collection relationship (hasMany). The simpest way when using `@ember-data/model` to ensure this information is available is to implement the abstract model as well; however, this is not the *best* mechanism.
