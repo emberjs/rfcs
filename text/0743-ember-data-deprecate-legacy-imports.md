@@ -8,7 +8,7 @@ release-versions:
 teams:
   - data
 prs:
-  accepted: [https://github.com/emberjs/rfcs/pull/743](https://github.com/emberjs/rfcs/pull/743)
+  accepted: https://github.com/emberjs/rfcs/pull/743
 
 ---
 
