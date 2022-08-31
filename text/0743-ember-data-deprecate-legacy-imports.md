@@ -1,12 +1,15 @@
 ---
-Stage: Accepted
-Start Date: 2021-04-23
-Release Date: Unreleased
-Release Versions:
+stage: accepted
+start-date: 2021-04-23
+release-date: Unreleased
+release-versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
-Relevant Team(s): ember-data
-RFC PR: https://github.com/emberjs/rfcs/pull/743
+teams:
+  - data
+prs:
+  accepted: [https://github.com/emberjs/rfcs/pull/743](https://github.com/emberjs/rfcs/pull/743)
+
 ---
 
 # EmberData | Deprecate Legacy Imports
