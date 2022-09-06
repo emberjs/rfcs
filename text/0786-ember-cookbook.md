@@ -1,12 +1,13 @@
 ---
-Stage: Accepted
-Start Date: 2021-01-11
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember Learn
-RFC PR: https://github.com/emberjs/rfcs/pull/786
+stage: accepted # FIXME: This may be a further stage
+start-date: 2021-01-11T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/786
+project-link:
 ---
 
 <!---
@@ -35,16 +36,16 @@ Additionally, many Ember users over the years have requested a cookbook-like res
 ## Detailed design
 
 ### Creation
-Ember-cookbook will be a repo under [ember learn](https://github.com/ember-learn). We start by introducing an Ember Cookbook section in the ember docs dropdown. 
+Ember-cookbook will be a repo under [ember learn](https://github.com/ember-learn). We start by introducing an Ember Cookbook section in the ember docs dropdown.
 
-Currently, there is a lot of material out there in the form of blogs, stackoverflow answers and efforts like Ember Atlas. The challenge is to make sure they are discoverable.  
-An official Ember cookbook will be a great way to officially endorse patterns, since not all patterns found on all blogs can be trusted. 
+Currently, there is a lot of material out there in the form of blogs, stackoverflow answers and efforts like Ember Atlas. The challenge is to make sure they are discoverable.
+An official Ember cookbook will be a great way to officially endorse patterns, since not all patterns found on all blogs can be trusted.
 
 Sourcing information for the cookbook can be done a few ways:
 Officially endorsing existing articles and blogs
-Monitoring most asked questions on stackoverflow 
-Create entries for [really good explanations](https://discuss.emberjs.com/t/adding-a-delete-row-button-from-a-table/18623) from the ember forum. 
-Create sections that would make it easier for the developer to navigate through the different guides. Ember-data's adapter/serializer cookbook articles can go under a specific section called "Ember Data" within the cookbook. 
+Monitoring most asked questions on stackoverflow
+Create entries for [really good explanations](https://discuss.emberjs.com/t/adding-a-delete-row-button-from-a-table/18623) from the ember forum.
+Create sections that would make it easier for the developer to navigate through the different guides. Ember-data's adapter/serializer cookbook articles can go under a specific section called "Ember Data" within the cookbook.
 
 For the MVP we can include the following articles and topics, or similar content.
 [How to create a grid/table with Ember Data and creating a CRUD form with Ember data](https://discuss.emberjs.com/t/looking-for-an-example-of-a-grid-and-form/18490)
@@ -54,12 +55,12 @@ For the MVP we can include the following articles and topics, or similar content
 [Updating entries from previous cookbook](https://guides.emberjs.com/v1.12.0/cookbook/)
 
 ### Contributing & Maintaining
-The Ember learn team will manage this repository and will guide what goes into the cookbook. 
+The Ember learn team will manage this repository and will guide what goes into the cookbook.
 In addition, we could have a set of volunteers sign up to add content to the cookbook regularly. Some of the tasks to maintain the cookbook would include,
 Monitoring stack overflow and other forums to come up with most-asked questions
-Work closely with the Ember Core team on upgrades to add, modify or delete information from Ember Guides. 
+Work closely with the Ember Core team on upgrades to add, modify or delete information from Ember Guides.
 
-A cookbook template will be used to keep all the entries uniform. The template would contain the following sections, 
+A cookbook template will be used to keep all the entries uniform. The template would contain the following sections,
 
 #### Title
   This is an intro section that lets someone know what they will learn by the time they are done reading.
@@ -83,10 +84,10 @@ After reading this recipe you should now know what is a cookbook and what is the
 The cookbook articles will be drafted in markdown format. Once there is a critical mass of 5 articles, they can be published. The cookbook will be hosted at cookbook.emberjs.com
 The cookbook will use Guidemaker, similar to cli.emberjs.com
 We will mention it in the Ember Newsletter.
-To Evangelize it further, we can share the links on social media and as answers to stackoverflow questions. 
+To Evangelize it further, we can share the links on social media and as answers to stackoverflow questions.
 
 ### Versioning
-We can show a single version of the recipe and have a “last updated at” and a field that shows the range of versions that it is applicable to. This would make it easier to maintain. 
+We can show a single version of the recipe and have a “last updated at” and a field that shows the range of versions that it is applicable to. This would make it easier to maintain.
 
 
 What kinds of content belong in the Cookbook?
@@ -114,7 +115,7 @@ If a topic becomes obsolete for any reason, we could add a warning at the top. A
 
 ## Drawbacks
 
-We will need to maintain the cookbooks as we have major Ember version upgrades. 
+We will need to maintain the cookbooks as we have major Ember version upgrades.
 
 ### Language support
 

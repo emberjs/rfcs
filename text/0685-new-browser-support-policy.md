@@ -1,12 +1,20 @@
 ---
-Stage: Accepted
-Start Date: 2020-11-28
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): All
-RFC PR: https://github.com/emberjs/rfcs/pull/685
+stage: released
+start-date: 2020-11-28T00:00:00.000Z
+release-date: 2021-11-15T00:00:00.000Z
+release-versions:
+  ember-source: v4.0.0
+
+teams:
+  - framework
+  - data
+  - cli
+  - learning
+  - typescript
+  - steering
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/685
+project-link:
 ---
 
 # New Browser Support Policy

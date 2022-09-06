@@ -1,8 +1,15 @@
 ---
-Start Date: 2019-03-06
-RFC PR: https://github.com/emberjs/rfcs/pull/461
-Tracking: https://github.com/emberjs/rfc-tracking/issues/51
-
+stage: accepted # FIXME: This may be a further stage
+start-date: 2019-03-06T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/461
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/51
 ---
 
 # Singleton Record Data

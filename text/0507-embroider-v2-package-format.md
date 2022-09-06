@@ -1,8 +1,17 @@
 ---
-Start Date: 2019-06-21
-Relevant Team(s): Ember CLI, Ember.js, Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/507
+stage: released
+start-date: 2019-06-21T00:00:00.000Z
+release-date: 2021-06-25T00:00:00.000Z
+release-versions:
+  ember-cli: v3.27.0
 
+teams:
+  - cli
+  - framework
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/507
+project-link:
 ---
 
 # v2 Addon Format (Embroider Compatibility)

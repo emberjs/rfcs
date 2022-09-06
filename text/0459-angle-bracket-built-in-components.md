@@ -1,9 +1,17 @@
 ---
-Start Date: 2019-03-05
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/459
-Tracking: https://github.com/emberjs/rfc-tracking/issues/36
+stage: recommended
+start-date: 2019-03-05T00:00:00.000Z
+release-date: 2019-05-13T00:00:00.000Z
+release-versions:
+  ember-source: v3.10.0
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/459
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/36
 ---
 
 # Angle Bracket Invocations For Built-in Components

@@ -1,8 +1,14 @@
 ---
-Start Date: 2020-01-27
-Relevant Team(s): Ember.js, Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/585
-
+stage: accepted
+start-date: 2020-01-27T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - framework
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/585
+project-link:
 ---
 
 # Improved Ember Registry APIs
@@ -172,7 +178,7 @@ Besides the recent use of capabilities in the modifier and component managers, t
 
 ### Owner APIs
 
-The owner APIs all change to use `Identifier` (or `FactoryTypeIdentifier` as appropriate) instead of strings. 
+The owner APIs all change to use `Identifier` (or `FactoryTypeIdentifier` as appropriate) instead of strings.
 
 Throughout, for the purposes of registration lookup, we use deep object value equality, *not* object identity. This specifically applies to:
 
@@ -209,7 +215,7 @@ Some APIs refer to *factories* and *factory managers*. The API for these classes
  interface FactoryClass {
    positionalParams?: string | string[] | undefined | null;
  }
- 
+
  interface Factory<T, C extends FactoryClass | object = FactoryClass> {
    class?: C;
 -  fullName?: string; // DEPRECATED
@@ -217,7 +223,7 @@ Some APIs refer to *factories* and *factory managers*. The API for these classes
 +  identifier: FactoryIdentifier;
    create(props?: { [prop: string]: any }): T;
  }
- 
+
  interface FactoryManager<T = object> {
    readonly class: Factory<T>;
 -  readonly fullName?: string; // DEPRECATED
@@ -305,13 +311,13 @@ The `'<namespace>@<name>'` form is deprecated and will be removed at 4.0. The no
 
     export default class Example {
       @service foo;
-      
+
       @service('bar')
       barRenamed;
-      
+
       @service({ name: 'quux' })
       quuxViaIdentifier;
-      
+
       @service({ namespace: 'baz', name: 'neato' })
       neatoNamespaced;
     }
@@ -357,11 +363,11 @@ The majority of uses are likely to be codemoddable, but not *all* will.
 > #### Deprecate registry string-based microsyntax
 > ##### until: 4.0.0
 > ##### id: ember-resolver.string-based-microsyntax
-> 
+>
 > Ember has historically supported a string-based microsyntax of the format `'<namespace>@<type>:<name>'` (where both `<namespace>@` and `:<name>` are optional) for registering, resolving, looking up, and injecting items into Ember’s dependency injection container. These have been replaced with an object-based API where each part of the registry identifier is named explicitly.
-> 
+>
 > You should replace calls using the string-based microsyntax with the new API. For example, these lookups in a test context:
-> 
+>
 > ```js
 > this.owner.lookup('service:session');
 > this.owner.register(
@@ -374,7 +380,7 @@ The majority of uses are likely to be codemoddable, but not *all* will.
 > ```
 >
 > Should be changed to:
-> 
+>
 > ```js
 > this.owner.lookup({ type: 'service', name: 'session' });
 > this.owner.register(
@@ -522,7 +528,7 @@ Another brief syntax might use the type as the key and the name as its value:
 lookup({ service: 'foo' })
 ```
 
-While this initially seems nice from the perspective of the consumer of the API, it muddies the API substantially and makes the implementation worse as well. 
+While this initially seems nice from the perspective of the consumer of the API, it muddies the API substantially and makes the implementation worse as well.
 
 On the API front, for example, what would this mean?
 
@@ -579,7 +585,7 @@ export default class Session extends Service {
   login(email: string, password: string) {
     // ...
   }
-  
+
   logout() {
     // ...
   }
@@ -607,23 +613,23 @@ The Typed Ember blueprints generate that boilerplate for users, which (hopefully
 
 ```diff
   import Service from '@ember/service';
-  
+
   export default class Session extends Service {
     login(email: string, password: string) {
       // ...
     }
-    
+
     logout() {
       // ...
     }
   }
-  
+
   declare module '@ember/service' {
     interface Registry {
       session: Session;
     }
   }
-  
+
 + declare module 'TBD-some-registry-spot' {
 +   interface Registry {
 +     'service:session': typeof Session;

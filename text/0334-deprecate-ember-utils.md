@@ -1,24 +1,14 @@
 ---
-Stage: Accepted
-Start Date:  2018-05-22
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/334
+stage: accepted
+start-date: 2018-05-22T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/334
+project-link:
 ---
-
-<!--- 
-Directions for above: 
-
-Stage: Leave as is
-Start Date: Fill in with today's date, YYYY-MM-DD
-Release Date: Leave as is
-Release Versions: Leave as is
-Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies
-RFC PR: Fill this in with the URL for the Proposal RFC PR
--->
 
 # Deprecate Ember Utils & dependent Computed Properties
 

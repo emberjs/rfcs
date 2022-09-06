@@ -1,8 +1,15 @@
 ---
-Start Date: 2016-02-11
-RFC PR: https://github.com/emberjs/rfcs/pull/120
-Ember Issue: https://github.com/emberjs/ember.js/pull/13016
-
+stage: discontinued # FIXME: Is this correct? Doesn't appear to be the recommended way of doing it.
+start-date: 2016-02-11T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/120
+project-link:
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/pull/13016
 ---
 
 # Summary

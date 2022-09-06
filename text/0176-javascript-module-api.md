@@ -1,7 +1,17 @@
 ---
-Start Date: 2016-11-05
-RFC PR: https://github.com/emberjs/rfcs/pull/176
+stage: recommended
+start-date: 2016-11-05T00:00:00.000Z
+release-date: 2017-10-09T00:00:00.000Z
+release-versions:
+  ember-source: v2.16.0
 
+teams:
+  - framework
+  - data
+  - cli
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/176
+project-link:
 ---
 
 # Summary

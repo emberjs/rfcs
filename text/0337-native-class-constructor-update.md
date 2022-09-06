@@ -1,8 +1,17 @@
 ---
-Start Date: 2018-06-14
-RFC PR: https://github.com/emberjs/rfcs/pull/337
-Ember Issue: https://github.com/emberjs/ember.js/pull/16795
+stage: recommended
+start-date: 2018-06-14T00:00:00.000Z
+release-date: 2018-12-06T00:00:00.000Z
+release-versions:
+  ember-source: v3.6.0
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/337
+project-link:
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/pull/16795
 ---
 
 # Native Class Constructor Update

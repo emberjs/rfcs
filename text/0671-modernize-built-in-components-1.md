@@ -1,8 +1,15 @@
 ---
-Start Date: 2020-10-02
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/671
+stage: recommended
+start-date: 2020-10-02T00:00:00.000Z
+release-date: 2021-05-03T00:00:00.000Z
+release-versions:
+  ember-source: v3.27.0
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/671
+project-link:
 ---
 
 # Stop Leaking Implementation Details of Built-in Components
