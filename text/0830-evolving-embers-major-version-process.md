@@ -1,10 +1,8 @@
 ---
 stage: accepted
 start-date: 2022-07-12
-release-date: Unreleased
+release-date:
 release-versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
 teams:
   - steering
   - framework
