@@ -175,7 +175,7 @@ After the deprecated code is removed from Ember (at 5.0), we need to remove the 
 - Do nothing.
 
 ## Unresolved questions
-- Current lint rule [ember/no-array-prototype-extensions](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-array-prototype-extensions.md) gives a lot of false positives giving the limitation of static analysis.
+- The current lint rule [ember/no-array-prototype-extensions](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-array-prototype-extensions.md) has some false positives because static analysis can't always know when a given object is a native array vs. an `EmberArray` (which has the same array convenience methods) vs. another class with overlapping method names (although the rule does employ some heuristics to avoid false positives when possible).
 - Difficulties for providing stable codemods or autofixers:
   1. giving false positives on lint rules, same will apply to codemods or autofixers;
   2. when migrating certain methods, we need to access object. Shall we use Ember `get` or native way? Unless we fully remove ObjectProxy dependency, codemods or autofixers would still require manual work in certain cases.
