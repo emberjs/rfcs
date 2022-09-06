@@ -36,6 +36,10 @@ focused on deprecating the existing usages of array prototype extensions.
 
 ## How We Teach This
 
+We should turn off `EmberENV.EXTEND_PROTOTYPES` by default for new applications.
+
+For existing apps, a deprecation message will be displayed when `EmberENV.EXTEND_PROTOTYPES` flag is not set to `false`. Clear instructions will be provided about turning off the flag and fixing any existing breaks.
+
 An entry to the [Deprecation Guides](https://deprecations.emberjs.com/v4.x) will be added outlining the different recommended transition strategies. ([Proposed deprecation guide](https://github.com/ember-learn/deprecation-app/pull/1192))
 
 Rule `ember/no-array-prototype-extensions` is available for both [eslint](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-array-prototype-extensions.md) and [template lint](https://github.com/ember-template-lint/ember-template-lint/blob/master/docs/rule/no-array-prototype-extensions.md) usages. Rule examples have recommendations for equivalences.
