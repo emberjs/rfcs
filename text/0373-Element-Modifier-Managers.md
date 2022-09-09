@@ -1,7 +1,15 @@
 ---
-Start Date: 2018-09-10
-RFC PR: https://github.com/emberjs/rfcs/pull/373
+stage: recommended
+start-date: 2018-09-10T00:00:00.000Z
+release-date: 2019-02-18T00:00:00.000Z
+release-versions:
+  ember-source: v3.8.0
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/373
+project-link:
 ---
 
 # Element Modifier Manager

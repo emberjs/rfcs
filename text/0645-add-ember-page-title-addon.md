@@ -1,9 +1,17 @@
 ---
-Start Date: 2020-06-24
-Relevant Team(s): Ember CLI
-RFC PR: https://github.com/emberjs/rfcs/pull/645
-Authors: Benjamin Jegard, Melanie Sumner, Ricardo Mendes
+stage: recommended
+start-date: 2020-06-24T00:00:00.000Z
+release-date: 2021-01-05T00:00:00.000Z
+release-versions:
+  ember-cli: v3.24.0
 
+teams:
+  - cli
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/645
+project-link:
+meta:
+  authors: Benjamin Jegard, Melanie Sumner, Ricardo Mendes
 ---
 
 # Add ember-page-title to the app blueprint

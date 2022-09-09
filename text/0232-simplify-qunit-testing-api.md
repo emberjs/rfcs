@@ -1,31 +1,40 @@
 ---
-Start Date: 2017-06-13
-RFC PR: https://github.com/emberjs/rfcs/pull/232
+stage: recommended
+start-date: 2017-06-13T00:00:00.000Z
+release-date: 2018-02-13T00:00:00.000Z
+release-versions:
+  ember-source: v3.0.0
 
+teams:
+  - framework
+  - cli
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/232
+project-link:
 ---
 
 # Summary
 
 In order to embrace newer features being added by QUnit (our chosen default
 testing framework), we need to reduce the brittle coupling between `ember-qunit`
-and QUnit itself. 
+and QUnit itself.
 
 This RFC proposes a new testing syntax, that will expose QUnit API directly while
-also making tests much easier to understand. 
+also making tests much easier to understand.
 
 # Motivation
 
 QUnit feature development has been accelerating since the ramp up to QUnit 2.0.
 A number of new features have been added that make testing our applications
-much easier, but the current structure of `ember-qunit` impedes our ability 
+much easier, but the current structure of `ember-qunit` impedes our ability
 to take advantage of some of these features.
 
 Developers are often confused by our `moduleFor*` APIs, questions like these
-are very common: 
+are very common:
 
-* What "magic" is `ember-qunit` doing? 
-* Where are the lines between QUnit and ember-qunit? 
-* How can I use QUnit for plain JS objects? 
+* What "magic" is `ember-qunit` doing?
+* Where are the lines between QUnit and ember-qunit?
+* How can I use QUnit for plain JS objects?
 
 The way that `ember-qunit` wraps QUnit functionality makes the division
 of responsiblity much harder to understand, and leads folks to believe that there
@@ -39,7 +48,7 @@ current tools were authored). Instead of things like `this.subject`, `this.regis
 functions in Ember via the owner API.
 
 When this RFC has been implemented and rolled out, these questions should all be
-addressed and our testing system will both: embrace QUnit much more **and** 
+addressed and our testing system will both: embrace QUnit much more **and**
 be much more framework agnostic, all the while dropping custom testing only APIs
 in favor of public APIs that work across tests and app code.
 
@@ -92,11 +101,11 @@ module('x-foo', function(hooks) {
 
 As you can see, this proposal leverages QUnit's nested module API in a way that
 makes it much clearer what is going on. It is quite obvious what QUnit is doing
-(acting like a general testing framework) and what `ember-qunit` is doing 
+(acting like a general testing framework) and what `ember-qunit` is doing
 (setting up rendering functionality).
 
-This API was heavily influenced by the work that 
-[Tobias Bieniek](https://github.com/Turbo87) did in 
+This API was heavily influenced by the work that
+[Tobias Bieniek](https://github.com/Turbo87) did in
 [emberjs/ember-mocha#84](https://github.com/emberjs/ember-mocha/pull/84).
 
 ## QUnit Nested Modules API
@@ -140,7 +149,7 @@ and `after` callbacks, and it also allows for arbitrary nesting of modules.
 
 You can read more about QUnit nested modules
 [here](http://api.qunitjs.com/QUnit/module#nested-module-nested-hooks-). The new APIs
-proposed in this RFC expect to be leveraging nested modules. 
+proposed in this RFC expect to be leveraging nested modules.
 
 ## New APIs
 
@@ -155,7 +164,7 @@ interface QUnitModuleHooks {
 }
 
 declare module 'ember-qunit' {
-  // ...snip... 
+  // ...snip...
   export function setupTest(hooks: QUnitModuleHooks): void;
   export function setupRenderingTest(hooks: QUnitModuleHooks): void;
 }
@@ -177,10 +186,10 @@ This function will:
 This function will:
 
 * run the `setupTest` implementation
-* setup `this.$` method to run jQuery selectors rooted to the testing container 
+* setup `this.$` method to run jQuery selectors rooted to the testing container
 * setup a getter for `this.element` which returns the DOM element representing
   the element that was rendered via `this.render`
-* setup Ember's renderer and create a `this.render` method which accepts a 
+* setup Ember's renderer and create a `this.render` method which accepts a
   compiled template to render and returns a promise which resolves once rendering
   is completed
 * setup `this.clearRender` method which clears any previously rendered DOM (
@@ -211,8 +220,8 @@ These changes generally do not affect our ability to write a codemod to aide in 
 
 ## Migration Examples
 
-The migration can likely be largely automated (following the 
-[excellent codemod](https://github.com/Turbo87/ember-mocha-codemods) that 
+The migration can likely be largely automated (following the
+[excellent codemod](https://github.com/Turbo87/ember-mocha-codemods) that
 [Tobias Bieniek](https://github.com/turbo87) wrote for a similar `ember-mocha`
 the transition), but it is still useful to review concrete scenarios
 of tests before and after this RFC is implemented.
@@ -313,13 +322,13 @@ moduleFor('service:flash', 'Unit | Service | Flash', {
 
 test('should allow messages to be queued', function (assert) {
   assert.expect(4);
-  
+
   let subject = this.subject();
-  
+
   subject.show('some message here');
-  
+
   let messages = subject.messages;
-  
+
   assert.deepEqual(messages, [
     'some message here'
   ]);
@@ -332,16 +341,16 @@ import { setupTest } from 'ember-qunit';
 
 module('Unit | Service | Flash', function(hooks) {
   setupTest(hooks);
-  
+
   test('should allow messages to be queued', function (assert) {
     assert.expect(4);
-  
+
     let subject = this.owner.lookup('service:flash');
-  
+
     subject.show('some message here');
-  
+
     let messages = subject.messages;
-  
+
     assert.deepEqual(messages, [
       'some message here'
     ]);
@@ -352,7 +361,7 @@ module('Unit | Service | Flash', function(hooks) {
 
 ## Ecosystem Updates
 
-The blueprints in all official projects (and any provided by popular addons) 
+The blueprints in all official projects (and any provided by popular addons)
 will need to be updated to detect `ember-qunit` version and emit the correct
 output.
 
@@ -373,8 +382,8 @@ and revamped to match the proposal here.
 
 ## Deprecate older APIs
 
-Once this RFC is implemented, the older APIs will be deprecated and retained 
-for a full LTS cycle (assuming speedy landing, this would mean the older APIs 
+Once this RFC is implemented, the older APIs will be deprecated and retained
+for a full LTS cycle (assuming speedy landing, this would mean the older APIs
 would be deprecated around Ember 2.20). After that timeframe, the older APIs
 will be removed from `ember-qunit` and `ember-test-helpers` and they will
 release with SemVer major version bumps.
@@ -382,7 +391,7 @@ release with SemVer major version bumps.
 Note that while the older `moduleFor` and `moduleForComponent` APIs will be
 deprecated, they will still be possible to use since the host application can
 pin to a version of `ember-qunit` / `ember-test-helpers` that support its own
-usage. This is a large benefit of migrating these testing features away from 
+usage. This is a large benefit of migrating these testing features away from
 `Ember`'s internals, and into the addon space.
 
 ## Relationship to "Grand Testing Unification"
@@ -403,9 +412,9 @@ confusion, making it easier to teach and understand testing in Ember.
 
 As mentioned in [emberjs/rfcs#229](https://github.com/emberjs/rfcs/pull/229), test
 related churn is quite painful and annoying. In order to maintain the general
-goodwill of folks, we must ensure that we avoid needless churn. 
+goodwill of folks, we must ensure that we avoid needless churn.
 
-This RFC should be implemented in conjunction with 
+This RFC should be implemented in conjunction with
 [emberjs/rfcs#229](https://github.com/emberjs/rfcs/pull/229) so that we can avoid
 multiple back to back changes in the blueprints.
 

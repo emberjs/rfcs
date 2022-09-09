@@ -1,9 +1,17 @@
 ---
-Start Date: 2018-12-13
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/416
-Tracking: https://github.com/emberjs/rfc-tracking/issues/2
+stage: recommended
+start-date: 2018-12-13T00:00:00.000Z
+release-date: 2019-05-13T00:00:00.000Z
+release-versions:
+  ember-source: v3.10.0
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/416
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/2
 ---
 
 # Glimmer Components

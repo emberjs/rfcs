@@ -1,8 +1,15 @@
 ---
-Start Date: 2020-04-28
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/625
+stage: released # FIXME: This may be a further stage
+start-date: 2020-04-28T00:00:00.000Z
+release-date: 2020-11-16T00:00:00.000Z
+release-versions:
+  ember-source: v3.23.0
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/625
+project-link:
 ---
 
 # Helper Managers

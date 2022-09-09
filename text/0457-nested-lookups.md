@@ -1,9 +1,17 @@
 ---
-Start Date: 2019-03-05
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/457
-Tracking: https://github.com/emberjs/rfc-tracking/issues/37
+stage: recommended
+start-date: 2019-03-05T00:00:00.000Z
+release-date: 2019-05-13T00:00:00.000Z
+release-versions:
+  ember-source: v3.10.0
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/457
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/37
 ---
 
 # Nested Invocations in Angle Bracket Syntax
@@ -16,7 +24,7 @@ Create a syntax for invoking components nested inside of directories in angle-br
 
 Today's angle-bracket syntax conversion guide says this:
 
-![existing documentation](../images/457-when-to-use-curlies.jpg)
+![existing documentation](/images/457-when-to-use-curlies.jpg)
 
 This has been an acceptable interim step as we have worked on completing the work of revamping the component model, but it's a source of incoherence (and a reported adoption blocker for some apps) in the Ember design, and we need to eliminate this source of incoherence in order to recommend angle bracket components in the Octane edition.
 
@@ -95,7 +103,7 @@ We currently don't cover directory nesting in the guides, and directory nesting 
 
 RFC #311 introduced a normalization rule for angle bracket invocation, and the guides mention that `<NavBar>` invokes a component that appears in the file system as `nav-bar`.
 
-![rental-listing in the docs](../images/457-dasherization.jpg)
+![rental-listing in the docs](/images/457-dasherization.jpg)
 
 After this RFC, the documentation should add a "Zoey says" sidebar that describes the rule in more detail, and mentions that you can refer to components nested in a directory with the `::` separator.
 
@@ -120,7 +128,7 @@ On the other hand, it has poor syntax highlighting in virtually all existing hig
 
 Additionally, some autocomplete systems assume that `<AppIcons/` is the beginning of a self-closing tag.
 
-![an example of an IDE confusing this syntax as a self-closing tag](../images/457-autocomplete-problem.gif)
+![an example of an IDE confusing this syntax as a self-closing tag](/images/457-autocomplete-problem.gif)
 
 Another drawback of this proposal is that it uses `::` syntax for today's templates, and we don't expect that syntax to be relevant to templates using template imports. It's possible that we would want to use this syntax, which might be considered valuable, in templates using template imports. That said, there is no specific proposal for what we might want to use this syntax for, and we could compatibly reclaim it in the context of template imports, at the cost of some mental churn.
 

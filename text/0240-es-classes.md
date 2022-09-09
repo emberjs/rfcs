@@ -1,7 +1,13 @@
 ---
-Start Date: 2017-07-28
-RFC PR: https://github.com/emberjs/rfcs/pull/240
-
+stage: recommended
+start-date: 2017-07-28T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/240
+project-link:
 ---
 
 # Summary

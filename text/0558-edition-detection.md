@@ -1,8 +1,17 @@
 ---
-Start Date: 2019-11-20
-Relevant Team(s): Ember.js, Ember CLI, Ember Data
-RFC PR: https://github.com/emberjs/rfcs/pull/558
+stage: recommended
+start-date: 2019-11-20T00:00:00.000Z
+release-date: 2019-12-19T00:00:00.000Z
+release-versions:
+  ember-cli: v3.15.0
 
+teams:
+  - framework
+  - cli
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/558
+project-link:
 ---
 
 # Edition detection

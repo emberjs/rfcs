@@ -1,12 +1,13 @@
 ---
-Stage: Accepted
-Start Date: 2019-12-08
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/561
+stage: accepted
+start-date: 2019-12-08T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/561
+project-link:
 ---
 
 # Adding Comparison Operators to Templates

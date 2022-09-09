@@ -1,9 +1,17 @@
 ---
-Start Date: 2018-03-24
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/318
-Tracking: https://github.com/emberjs/rfc-tracking/issues/23
+stage: recommended
+start-date: 2018-03-24T00:00:00.000Z
+release-date: 2019-04-01T00:00:00.000Z
+release-versions:
+  ember-source: v3.9.0
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/318
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/23
 ---
 
 # `array` helper

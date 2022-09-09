@@ -2,42 +2,26 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request: {}
 
 jobs:
   lint-frontmatter:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Checkout tools repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: emberjs/rfcs-tooling
           path: rfcs-tooling
+          ref: 'v1.1.0'
 
-      - uses: actions/setup-node@v2.1.2
+      - uses: actions/setup-node@v3
 
       - run: yarn install
         working-directory: rfcs-tooling
 
-      - name: Lint the frontmatter of all RFCs for informational purposes
-        run: node lint-rfc-frontmatter.js ../text/*.md || true # Don't want to fail on old RFCs just yet
-        working-directory: rfcs-tooling
-
-      - name: Get Changed Files
-        uses: lots0logs/gh-action-get-changed-files@2.1.4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Filter Added Files to added RFCs
-        id: files
-        run: |
-          added_files=`jq -r '[.[] | select(startswith("text/"))] | join(" ")' ${HOME}/files_added.json`
-          echo "::set-output name=added::$added_files"
-
-      - name: Lint added RFCs frontmatter
-        if: ${{ steps.files.outputs.added }}
-        run: |
-          node rfcs-tooling/lint-rfc-frontmatter.js ${{ steps.files.outputs.added }}
+      - name: Lint the frontmatter of all RFCs
+        run: node ./rfcs-tooling/lint-rfc-frontmatter.js text/*.md

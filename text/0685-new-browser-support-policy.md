@@ -1,12 +1,20 @@
 ---
-Stage: Accepted
-Start Date: 2020-11-28
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): All
-RFC PR: https://github.com/emberjs/rfcs/pull/685
+stage: released
+start-date: 2020-11-28T00:00:00.000Z
+release-date: 2021-11-15T00:00:00.000Z
+release-versions:
+  ember-source: v4.0.0
+
+teams:
+  - framework
+  - data
+  - cli
+  - learning
+  - typescript
+  - steering
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/685
+project-link:
 ---
 
 # New Browser Support Policy
@@ -76,7 +84,7 @@ In the new support policy, Ember will support the following browsers:
   3. Safari
 - Testing
   1. Headless Chrome
-  2. Headless Safari
+  2. Headless Firefox
 
 Any browser which is not listed here may work, but is not explicitly supported.
 
@@ -343,7 +351,7 @@ Ember supports the following major browsers:
   3. Safari
 - Testing
   1. Headless Chrome
-  2. Headless Safari
+  2. Headless Firefox
 
 Other browsers may work with Ember.js, but are not explicitly supported. If you
 would like to add support for a new browser, please [submit an RFC or RFC issue for discussion](https://github.com/emberjs/rfcs)!
@@ -362,7 +370,7 @@ either **evergreen** or **non-evergreen**. The categorization is as follows:
     2. Mozilla Firefox
   - Testing
     1. Headless Chrome
-    2. Headless Safari
+    2. Headless Firefox
 
 - Non-evergreen
   - Desktop

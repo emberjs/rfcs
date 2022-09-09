@@ -1,8 +1,15 @@
 ---
-Start Date: 2020-01-10
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/580
+stage: released # FIXME: This may be recommended
+start-date: 2020-01-10T00:00:00.000Z
+release-date: 2020-10-05T00:00:00.000Z
+release-versions:
+  ember-source: v3.22.0
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/580
+project-link:
 ---
 
 # Destroyables
