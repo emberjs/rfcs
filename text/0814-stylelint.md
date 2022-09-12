@@ -1,11 +1,13 @@
 ---
-Stage: Accepted
-Start Date: 2022-04-19
-Release Date: Unreleased
-Release Versions:
-ember-cli: vX.Y.Z
-Relevant Team(s): Ember CLI
-RFC PR: https://github.com/emberjs/rfcs/pull/814
+stage: accepted
+start-date: 2022-04-19
+release-date:
+release-versions:
+teams:
+  - cli
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/814
+project-link:
 ---
 
 # Add stylelint to Ember blueprints
