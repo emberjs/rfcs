@@ -1,23 +1,27 @@
 ---
-Stage: Accepted
-Start Date: 2022-03-29
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember CLI, Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/811
+stage: accepted
+start-date: 2022-03-29T00:00:00.000Z
+release-date:
+release-versions:
+teams: # delete teams that aren't relevant
+  - cli
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/811
+project-link:
 ---
 
 <!--- 
 Directions for above: 
 
-Stage: Leave as is
-Start Date: Fill in with today's date, YYYY-MM-DD
-Release Date: Leave as is
-Release Versions: Leave as is
-Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies
-RFC PR: Fill this in with the URL for the Proposal RFC PR
+stage: Leave as is
+start-date: Fill in with today's date, 2032-12-01T00:00:00.000Z
+release-date: Leave as is
+release-versions: Leave as is
+teams: Include only the [team(s)](README.md#relevant-teams) for which this RFC applies
+prs:
+  accepted: Fill this in with the URL for the Proposal RFC PR
+project-link: Leave as is
 -->
 
 # Element Modifiers
@@ -26,7 +30,7 @@ RFC PR: Fill this in with the URL for the Proposal RFC PR
 
 This RFC introduces the concept of user defined element modifiers and proposes
 adding [ember-modifier](https://github.com/ember-modifier/ember-modifier)
-to the blueprints that back `ember new` and `ember addon`, providing an
+to the blueprint that back `ember new`, providing an
 officially-supported path for using modifiers out of the box.
 
 This RFC supersedes the original [RFC #353 "Modifiers"][rfc-0353].
@@ -181,11 +185,14 @@ export default class SlideUpCard extends Component {
 ## Detailed design
 
 The necessary changes to `ember-cli` are relatively small since we only need
-to add the dependency to the `app` blueprint, and the `addon` blueprint will
-inherit it automatically.
+to add the dependency to the `app` blueprint.
+
+Note that `addon` blueprint will not include `ember-modifier` due to
+unresolved question (at the time of writing this RFC) regarding how addons
+should declare dependencies like `@glimmer/component`, `@glimmer/tracking`, `ember-modifier` etc.
 
 This has the advantage (over including it as an implicit dependency), that
-apps and addons that don't want to use it for some reason can opt out by
+apps that don't want to use it for some reason can opt out by
 removing the dependency from their `package.json` file.
 
 **Notes:**
