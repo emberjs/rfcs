@@ -37,6 +37,7 @@ Introduce public import locations for type-only imports which have previously ha
     - [`getOwner` and `setOwner`](#getowner-and-setowner)
   - [`RouteInfo`](#routeinfo)
     - [`RouteInfoWithAttributes`](#routeinfowithattributes)
+  - [`Resolver`](#resolver)
 - [How we teach this](#how-we-teach-this)
   - [`Owner`](#owner-1)
   - [`Transition`, `RouteInfo`, and `RouteInfoWithAttributes`](#transition-routeinfo-and-routeinfowithattributes)
@@ -388,6 +389,28 @@ JS users can refer to it in JSDoc comments using `import()` syntax:
  */
 function takesRouteInfoWithAttributes(routeInfoWithAttributes) {
   // ...
+}
+```
+
+
+### `Resolver`
+
+The resolver is a contract implemented by libraries outside Ember itself, such as `ember-resolver`, `ember-strict-resolver`, and any number of custom resolvers which exist in apps across the ecosystem. It has never had public documentation, but is fully public API. It is a user-constructible interface with the following definition (using the `Factory` and `FullName` types exported from the new `@ember/owner` module), available as a new named type-only export from the `@ember/engine` package:
+
+```ts
+import EmberObject from '@ember/object';
+import type { Factory, FullName } from '@ember/owner';
+
+type KnownForTypeResult<Name extends string> = {
+  [fullName in `${Name}:${string}`]: boolean | undefined;
+};
+
+export interface Resolver extends EmberObject {
+  knownForType?: <Name extends string>(type: Name) => KnownForTypeResult<Name>;
+  lookupDescription?: (fullName: FullName) => string;
+  makeToString?: (factory: Factory<object>, fullName: FullName) => string;
+  normalize?: (fullName: FullName) => string;
+  resolve(name: string): Factory<object> | object | undefined;
 }
 ```
 
