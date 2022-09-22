@@ -1,13 +1,17 @@
 ---
-Stage: Accepted
-Start Date: 2021-03-11
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember.js, Ember Data, Ember CLI, Learning, Steering
-RFC PR: https://github.com/emberjs/rfcs/pull/724
-
+stage: accepted
+start-date: 2021-03-11T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - framework
+  - data
+  - cli
+  - learning
+  - steering
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/724
+project-link:
 ---
 
 # Official TypeScript Support
@@ -28,8 +32,6 @@ This RFC declares our intent to officially support TypeScript as a peer to JavaS
   - [Defining Official Support](#defining-official-support)
   - [Constraints](#constraints)
   - [Non-Goals](#non-goals)
-    - [Superseding or replacing JavaScript](#superseding-or-replacing-javascript)
-    - [Typed Templates](#typed-templates)
   - [Roadmap](#roadmap)
     - [RFC Required](#rfc-required)
       - [Types](#types)
@@ -97,12 +99,13 @@ Key implications of this commitment:
 
 - The Semantic Versioning specification, including definitions of SemVer for TypeScript types and TypeScript compiler support policy, will be a key artifact of this process. Without it, we will not be able to provide the stability guarantees Ember users have come to rely on.
 
+- Given the importance of templates in Ember and Glimmer apps, “typed templates” are a key part of the path to adopting TypeScript as a community. TypeScript-powered integration between the template layer and the JavaScript context is a key goal for the Typed Ember team already. It is not a *gating feature* for Ember packages to officially supply TypeScript. Instead: the feature can be rolled out and integrated with Ember CLI, the Ember Language Server, and other tooling whenever it is ready, decoupled from the other efforts here. However, given its importance as one of the primary API boundaries within Ember and Glimmer apps, our definition of official Ember support would be incomplete without it.
 
 ### Constraints
 
 The following are our hard constraints in supporting TypeScript with Ember:
 
-- We must not compromise our commitment to “stability without stagnation” and our strong Semantic Versioning guarantees. 
+- We must not compromise our commitment to “stability without stagnation” and our strong Semantic Versioning guarantees.
 - Using TypeScript should never be mandatory for anyone who uses Ember.
 - TypeScript support must never *degrade* the experience of JavaScript users, and wherever possible it should benefit both JavaScript and TypeScript developers.
 - Types are published in the packages they represent, *not* in a third-party package.
@@ -110,21 +113,11 @@ The following are our hard constraints in supporting TypeScript with Ember:
 
 ### Non-Goals
 
-The combination of constraints and ecosystem status lead us to several non-goals for this effort. A *non-goal* here means that it is not part of the initial road to making TypeScript available. 
-
-
-#### Superseding or replacing JavaScript
+The combination of constraints and ecosystem status lead us to a key non-goal for this effort. A *non-goal* here means that it is not part of the initial road to making TypeScript available.
 
 This RFC aims to *add* a new first-class language to the Ember support matrix. However, it does *not* recommend replacing JavaScript with TypeScript. To the contrary: this is an explicit non-goal. Per the constraints described above, adding first-class TypeScript support should be a net positive for JavaScript-only Ember developers.
 
 Additionally, this RFC does not propose changing the *default* experience from JavaScript to TypeScript even once we have full support for TypeScript.
-
-
-#### Typed Templates
-
-This roadmap RFC explicitly does not require support for “typed templates” as part of the path to adopting TypeScript as a community. TypeScript-powered integration between the template layer and the JavaScript context is a key goal for the Typed Ember team already. However, it is not a *gating feature* for Ember to officially support TypeScript. Rather: the feature can be rolled out and integrated with Ember CLI, the Ember Language Server, and other tooling whenever it is ready, decoupled from the other efforts here. If we reach a point where full support for type-aware template integration exists and is sufficiently robust, we can consider adding it to our definition of official Ember support via a dedicated RFC.
-
-The *only* relationship those efforts have to this roadmap is that they will inform the design of the `@glimmer/component@2.x` TypeScript API (as described below under **Roadmap**).
 
 
 ### Roadmap
@@ -178,6 +171,10 @@ There are also a number of key implementation concerns which must be addressed, 
 - **Where do published type definition files live in the artifacts published to npm?** TypeScript generally assumes that types are published with packages of the same name. While there is [now](https://emberjs.github.io/rfcs/0706-deprecate-ember-global.html) a path to publishing actual packages like `"@ember/object"`, this effort should not be gated on any such effort, and there is additional work to be done. However, that work simply consists of implementation details, rather than defining new public API.
 
 - **How do app and addon authors *consume* published types?** There are a few “gotchas” about how TypeScript supports features like autocomplete in a project, which primarily affect the very first few interactions end users have with TypeScript, which we should address via tooling. How this works is closely related to where the type definition files are generated during publication, and so will likely need to be solved in conjunction with that issue.
+
+- **What should the final design for template-aware type checking be?** [Glint][glint] has a number of decisions which make good sense and indeed are necessary for template-aware type checking given both the design constraints of the Octane era and its own experimental status. However, we should nail these down before it becomes an officially-recommended tool!
+
+[glint]: https://github.com/typed-ember/glint
 
 
 #### Recommendations

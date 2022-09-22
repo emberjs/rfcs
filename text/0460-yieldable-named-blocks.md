@@ -1,8 +1,15 @@
 ---
-Start Date: 2019-03-06
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/460
+stage: recommended
+start-date: 2019-03-06T00:00:00.000Z
+release-date: 2021-02-08T00:00:00.000Z
+release-versions:
+  ember-source: v3.25.0
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/460
+project-link:
 ---
 
 # Yieldable Named Blocks

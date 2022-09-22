@@ -1,9 +1,15 @@
 ---
-Start Date: 2018-01-13
-Relevant Team(s): Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/431
-Tracking: https://github.com/emberjs/rfc-tracking/issues/29
-
+stage: recommended
+start-date: 2018-01-13T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/431
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/29
 ---
 
 # Restructuring the Guides Table of Contents
@@ -53,7 +59,7 @@ We are confident that this is possible thanks to the incredible response and eff
 
 There are many different types of documentation within Ember, so it's important to identify a target audience for each, in order to guide decision making and provide a learning flow that grows with the reader.
 
-There are 3 main audiences for our resources: 
+There are 3 main audiences for our resources:
 
 1. newcomers
 2. upgraders
@@ -95,7 +101,7 @@ The following Table of Contents will be applied iteratively over the course of m
 - Deploying
 - Upgrading (will contain links to upgrade resources, Editions, Deprecations)
 - Developer Tools (currently named Ember Inspector)
-- Reference 
+- Reference
     - Accessibility
     - Syntax conversion guide
 

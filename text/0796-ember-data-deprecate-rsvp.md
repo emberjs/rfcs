@@ -1,12 +1,13 @@
 ---
-Stage: Proposed
-Start Date: 2022-02-20
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): ember-data 
-RFC PR: https://github.com/emberjs/rfcs/pull/796
+stage: accepted
+start-date: 2022-02-20T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/796
+project-link:
 ---
 
 # Deprecate `RSVP.Promise` for native Promise
@@ -57,7 +58,7 @@ The final implementation will look something like:
 
 We do not believe this requires any update to the Ember curriculum. API documentation may be needed to remove traces of `RSVP.Promise`.
 
-See the informal [docs](https://github.com/emberjs/data/blob/fa18fd148e9881a860343eabf0ba15b6f048c3ea/packages/private-build-infra/addon/current-deprecations.ts) on how to configure your compatibility with ember-data deprecations. 
+See the informal [docs](https://github.com/emberjs/data/blob/fa18fd148e9881a860343eabf0ba15b6f048c3ea/packages/private-build-infra/addon/current-deprecations.ts) on how to configure your compatibility with ember-data deprecations.
 
 ## Drawbacks
 
