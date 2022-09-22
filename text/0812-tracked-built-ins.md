@@ -1,23 +1,27 @@
 ---
-Stage: Accepted
-Start Date: 2022-03-29
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember CLI, Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/812
+stage: accepted
+start-date: 2022-03-29T00:00:00.000Z
+release-date:
+release-versions:
+teams: # delete teams that aren't relevant
+  - cli
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/812
+project-link:
 ---
 
 <!--- 
 Directions for above: 
 
-Stage: Leave as is
-Start Date: Fill in with today's date, YYYY-MM-DD
-Release Date: Leave as is
-Release Versions: Leave as is
-Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies
-RFC PR: Fill this in with the URL for the Proposal RFC PR
+stage: Leave as is
+start-date: Fill in with today's date, 2032-12-01T00:00:00.000Z
+release-date: Leave as is
+release-versions: Leave as is
+teams: Include only the [team(s)](README.md#relevant-teams) for which this RFC applies
+prs:
+  accepted: Fill this in with the URL for the Proposal RFC PR
+project-link: Leave as is
 -->
 
 # Add tracked-built-ins
@@ -25,7 +29,7 @@ RFC PR: Fill this in with the URL for the Proposal RFC PR
 ## Summary
 
 This RFC proposes adding [tracked-built-ins](https://github.com/tracked-tools/tracked-built-ins)
-to the blueprints that back `ember new` and `ember addon`.
+to the blueprint that back `ember new`.
 
 ## Motivation
 
@@ -131,11 +135,14 @@ class Foo {
 ## Detailed design
 
 The necessary changes to `ember-cli` are relatively small since we only need
-to add the dependency to the `app` blueprint, and the `addon` blueprint will
-inherit it automatically.
+to add the dependency to the `app` blueprint.
+
+Note that `addon` blueprint will not include `tracked-built-ins` due to
+unresolved question (at the time of writing this RFC) regarding how addons
+should declare dependencies like `@glimmer/component`, `@glimmer/tracking`, `tracked-built-ins` etc.
 
 This has the advantage (over including it as an implicit dependency), that
-apps and addons that don't want to use it for some reason can opt out by
+apps that don't want to use it for some reason can opt out by
 removing the dependency from their `package.json` file.
 
 ## How we teach this
@@ -251,7 +258,7 @@ on the impact of the API churn on existing apps, etc.
 
 ## Alternatives
 
-- `tracked-built-ins` can be added only to the `app` blueprint and not to the `addon` blueprint.
+- `tracked-built-ins` can be added both to the `app` and `addon` blueprints.
 
 - Do nothing and recommend using re-setting the property to track data structure changes.
 
