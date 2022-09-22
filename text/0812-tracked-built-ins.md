@@ -145,6 +145,59 @@ This has the advantage (over including it as an implicit dependency), that
 apps that don't want to use it for some reason can opt out by
 removing the dependency from their `package.json` file.
 
+At the time of writing this RFC, `tracked-built-ins` provides
+autotracked alternatives only to the 6 data structure types
+most commonly used in real-world JavaScript today:
+
+- `Object`
+- `Array`
+- `Map`
+- `Set`
+- `WeakMap`
+- `WeakSet`
+
+However, this should not be considered final and immutable list of types,
+and we are open to adding other built-in data structures in the future
+*if and as usage demonstrates the necessity thereof*.
+
+The tracked data structures create a *shallow* copy of the original object
+in order to avoid its mutation which may lead to issues.
+
+The tracked data structures provided by `tracked-built-ins` addon are *not* deeply tracked.
+This can be demonstrated in such example:
+
+```ts
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+import { TrackedObject } from 'tracked-built-ins';
+
+export default class Scoreboard extends Component {
+  obj = new TrackedObject({
+    foo: {
+      bar: 'baz'
+    },
+    bar: 'baz'
+  });
+
+  @action
+  myAction() {
+    this.obj.bar = 'barBaz'; // is autotracked and triggers re-render.
+    this.obj.foo.bar = 'barBaz'; // is *not* autotracked and *does not* trigger re-render.
+  }
+
+  <template>
+    bar: {{this.obj.bar}}
+    foo.bar: {{this.obj.foo.bar}}
+
+    <button type="button" {{on "click" this.myAction}}>press me</button>
+  </template>
+}
+```
+
+There several reasons for that limitation:
+ - the correct semantics for a framework-level hook there aren't obvious.
+ - it is possible to build variants on it fairly cheaply in user-land given `tracked()` as updated here.
+
 ## How we teach this
 
 The following guide should be added to the Autotracking In-Depth guide in the official guides, and the
