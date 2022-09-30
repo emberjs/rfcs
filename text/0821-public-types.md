@@ -395,23 +395,28 @@ function takesRouteInfoWithAttributes(routeInfoWithAttributes) {
 
 ### `Resolver`
 
-The resolver is a contract implemented by libraries outside Ember itself, such as `ember-resolver`, `ember-strict-resolver`, and any number of custom resolvers which exist in apps across the ecosystem. It has never had public documentation, but is fully public API. It is a user-constructible interface with the following definition (using the `Factory` and `FullName` types exported from the new `@ember/owner` module), available as a new named type-only export from the `@ember/engine` package:
+The resolver is a contract implemented by libraries outside Ember itself, such as `ember-resolver`, `ember-strict-resolver`, and any number of custom resolvers which exist in apps across the ecosystem. It has never had public documentation, but is fully public API. It is a user-constructible interface with the following definition (using the `Factory` and `FullName` types exported from the new `@ember/owner` module):
 
 ```ts
-import EmberObject from '@ember/object';
-import type { Factory, FullName } from '@ember/owner';
-
-type KnownForTypeResult<Name extends string> = {
+export type KnownForTypeResult<Name extends string> = {
   [fullName in `${Name}:${string}`]: boolean | undefined;
 };
 
-export interface Resolver extends EmberObject {
+export interface Resolver {
   knownForType?: <Name extends string>(type: Name) => KnownForTypeResult<Name>;
   lookupDescription?: (fullName: FullName) => string;
   makeToString?: (factory: Factory<object>, fullName: FullName) => string;
   normalize?: (fullName: FullName) => string;
   resolve(name: string): Factory<object> | object | undefined;
 }
+```
+
+The `KnownForTypeResult` utility type associated with it is also available as a named export. Unfortunately, due to currently limitations with TypeScript, you will generally have to *cast* to it, but it provides some type safety to callers, because it will *only* allow types corresponding to the passed string if users pass a string literal.
+
+Both are available as named, type-only, user-constructible interfaces from `@ember/owner`:
+
+```ts
+import { Resolver, KnownForTypeResult } from '@ember/owner';
 ```
 
 
