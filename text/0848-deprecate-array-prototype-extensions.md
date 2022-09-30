@@ -1,12 +1,13 @@
 ---
-Stage: Initial
-Start Date: 2022-8-21
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember.js
-RFC PR: 
+stage: accepted
+start-date: 2022-08-21T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/848
+project-link:
 ---
 
 # Deprecate array prototype extensions
