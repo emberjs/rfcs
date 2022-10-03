@@ -1,12 +1,12 @@
 ---
-Stage: Accepted
-Start Date: 2021-11-14
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/774 
+stage: accepted
+start-date: 2021-11-14
+release-date: 
+release-versions:
+teams: # delete teams that aren't relevant
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/774 
 ---
 
 # Deprecate Implicit Record Loading in Routes
