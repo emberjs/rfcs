@@ -82,7 +82,8 @@ If that period is successful, with no new unaddressed concerns raised, the RFC
 is merged and is now in the [Accepted] stage.
 
 An RFC that does not achieve consensus to be accepted may enter a
-[Final Comment Period](#final-comment-periods-fcp) to [Close] the RFC.
+[Final Comment Period](#final-comment-periods-fcp) to move the RFC to the 
+[Closed] stage.
 
 ### Merged Proposals
 
