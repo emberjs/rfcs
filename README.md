@@ -16,7 +16,7 @@ of the community.
 
 --- 
 ## Quick links for Pull Requests for proposed and advancing RFCs
-[Quick links for Pull Requests for proposed and advancing RFCs]: #quick-links
+[Quick links for Pull Requests for proposed and advancing RFCs]: #quick-links-for-pull-requests-for-proposed-and-advancing-rfcs
 
 - [Proposed RFCs](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc+label%3AS-Proposed)
 - [Exploring RFCs](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc+label%3AS-Exploring)
@@ -39,7 +39,7 @@ This site shows the current state and text of all RFCs in Accepted or later stag
 [Table of Contents]: #table-of-contents
 
 - [Introduction](#ember-rfcs)
-- [Quick links](#quick-links)
+- [Quick links](#quick-links-for-pull-requests-for-proposed-and-advancing-rfcs)
 - [Table of Contents]
 - [How it works](#how-it-works)
 - [Stages]
