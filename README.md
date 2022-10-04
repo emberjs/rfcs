@@ -280,12 +280,12 @@ Watching the repository will alert you to any newly created RFCs. Setting up
 notifications on a particular pull request will help you follow the progress of 
 that RFC.
 
-RFCs in Final Comment Periods(#final-comment-periods-fcp) are labeled with
+RFCs in [Final Comment Periods](#final-comment-periods-fcp) are labeled with
 [Final Comment Period](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc+label%3A%22Final+Comment+Period%22)
 and are announced on the [Ember twitter account](https://twitter.com/emberjs).
 
-[Quick links](#quick-links) are provided at the top of the README to help you
-review what you are interested in.
+[Quick links](#quick-links-for-pull-requests-for-proposed-and-advancing-rfcs) 
+are provided at the top of the README to help you review what you are interested in.
 
 
 ## Commenting on an RFC
