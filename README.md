@@ -11,11 +11,12 @@ through a bit of a design process and produce a consensus among the Ember
 core teams.
 
 The process is intended to provide a consistent and controlled path for new
-features and changes to enter the framework. RFCs can be opened by any member
+features and changes to enter the framework. RFCs can be created by any member
 of the community.
 
-
-**Quick links for Pull Requests for proposed and advancing RFCs**
+--- 
+## Quick links for Pull Requests for proposed and advancing RFCs
+[Quick links for Pull Requests for proposed and advancing RFCs]: #quick-links
 
 - [Proposed RFCs](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc+label%3AS-Proposed)
 - [Exploring RFCs](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc+label%3AS-Exploring)
@@ -32,30 +33,278 @@ of the community.
 
 This site shows the current state and text of all RFCs in Accepted or later stages.
 
+---
+
 ## Table of Contents
 [Table of Contents]: #table-of-contents
 
 - [Introduction](#ember-rfcs)
+- [Quick links](#quick-links)
 - [Table of Contents]
-- [When you need to follow this process]
-- [Gathering feedback before submitting an RFC]
-- [The Process]
-  - [How to create a new RFC]
-  - [Stages]
-    - [Proposed]
-    - [Exploring]
-    - [Accepted]
-    - [Ready for Release]
-    - [Released]
-    - [Recommended]
+- [How it works](#how-it-works)
+- [Stages]
+  - [Proposed]
+  - [Exploring]
+  - [Accepted]
+  - [Ready for Release]
+  - [Released]
+  - [Recommended]
+- [Following RFC Progress](#following-rfc-progress)
+- [Commenting on an RFC](#commenting-on-an-rfc)
+- [Creating an RFC](#creating-an-rfc)
+  - [When you need to follow this process]
+  - [Gathering feedback before submitting an RFC]
+  - [The Process]
+    - [How to create a new RFC]
+    - [Finding a champion]
+- [Implementing an RFC]
+- [Editing merged RFCs]
+- [Reference]
+  - [Relevant Teams]
   - [Final Comment Periods (FCP)](#final-comment-periods-fcp)
     - [FCP to close]
-  - [Editing merged RFCs]
-- [Relevant Teams]
-- [Finding a champion]
-- [Implementing an RFC]
+- [For Core Team Members](#for-core-team-members)
 
-## When you need to follow this process
+
+## How it works
+[How it works]: #how-it-works
+
+### New Proposals
+
+New proposals for changes are submitted as pull requests to this repo using one
+of the RFC templates, depending on what the RFC is proposing. The newly opened RFC
+is in the [Proposed] stage. The RFC is then reviewed and commented upon by
+core team members and the community. The core teams may move the RFC to the
+[Exploring] stage via a label if they believe the RFC is worth exploring further.
+From there, with refinement, community consensus, and agreement by the relevant
+core teams, the RFC enters a [Final Comment Period](#final-comment-periods-fcp) (FCP).
+If that period is successful, with no new unaddressed concerns raised, the RFC
+is merged and is now in the [Accepted] stage.
+
+An RFC that does not achieve consensus to be accepted may enter a
+[Final Comment Period](#final-comment-periods-fcp) to [Close] the RFC.
+
+### Merged Proposals
+
+Once the RFC is accepted, a draft pull request is automatically opened to advance
+the RFC to the [Ready for Release] stage. This pull request has a template that outlines
+what is necessary to merge the RFC into this stage. This pull request is where the
+community can track the progress of the implementation of the RFC. Once the criteria
+to move to [Ready for Release] are met, including commitment of the team to the
+feature's stability, the PR to advance may be merged after a [Final Comment Period](#final-comment-periods-fcp).
+Each core team needs to review the PR and approve it before the end of the FCP.
+If the FCP is successful, the RFC is merged and becomes [Ready for Release].
+
+Once the RFC is merged as [Ready for Release], a pull request is automatically opened
+to advance the RFC to the [Released] stage. This pull request has a template that outlines
+what is necessary to merge the RFC into this stage. The pull request is merged
+when those requirements are met and the relevant team has consensus that the RFC
+has been [Released]. No FCP is required for this stage.
+
+Once the RFC is merged as [Released], a pull request is automatically opened to
+advance the RFC to the [Recommended] stage. This pull request has a template that outlines
+what is necessary to merge the RFC into this stage and can be used for community
+coordination. This advancement requires a
+[Final Comment Period](#final-comment-periods-fcp) to merge.
+
+At this point, the RFC is [Recommended] and complete.
+
+RFCs that have been merged to the repo can also move to the [Discontinued] stage at
+any point via a pull request. This is done when the RFC is no longer relevant or
+the feature is no longer supported.
+
+Read more about the RFC [Stages].
+
+## Stages
+[Stages]: #stages
+
+| Stage| Description| Requires FCP to enter? |
+| -----| -----------|----- |
+| [0 - Proposed](#Proposed) | A proposal for a change to Ember or its processes that is offered for community and team evaluation. | no |
+| [1 - Exploring](#Exploring) | An RFC deemed worth pursuing but in need of refinement. | no |
+| [2 - Accepted](#Accepted) | A fully specified RFC. Waiting for or in the process of implementation. | yes |
+| [3 - Ready for Release](#Ready-for-Release) | The implementation of the RFC is complete, including learning materials. | yes |
+| [4 - Released](#Released) | The work is published. If it is codebase-related work, it is in a stable version of the relevant package(s). | no |
+| [5 - Recommended](#Recommended) | The feature/resource is recommended for general use. | yes |
+
+There are two additional statuses for RFCs that will not move forward:
+
+- **[Discontinued](#Discontinued)** - a previously [Accepted] RFC that is either in conflict with Ember's evolving programming model or is superseded by another active RFC.
+- **[Closed](#Closed)** - Proposed RFCs that will not be moved into the next stage.
+
+### Proposed
+[Proposed]: #proposed
+
+Proposed RFCs are opened as pull requests to the RFC repository. Anybody may
+create an RFC. The format should follow the templates in the RFC repository.
+
+An RFC's number is the number of it's original proposal PR.
+
+From "Proposed" an RFC may move to [Exploring],
+or [Closed] stages.
+To move to [Closed] an FCP is required as in the existing process.
+A "Proposed" RFC may be moved to "Exploring" by consensus of the relevant
+team(s) without an FCP. See [Exploring].
+
+### Exploring
+[Exploring]: #exploring
+
+An Exploring RFC is one the Ember team believes should be pursued, but the RFC
+may still need some more work, discussion, answers to open questions,
+and/or a champion before it can move to the next stage.
+
+An RFC is moved into Exploring with consensus of the relevant teams. The
+relevant team expects to spend time helping to refine the proposal. The
+RFC remains a PR and will have an `Exploring` label applied.
+
+An Exploring RFC that is successfully completed can move to [Accepted]
+with an FCP is required as in the existing process. It may also be moved to
+[Closed] with an FCP.
+
+### Accepted
+[Accepted]: #accepted
+
+An RFC that has been "accepted" has complete prose and has successfully passed
+through an "FCP to Accept" period in which the community has weighed in and
+consensus has been achieved on the direction. The relevant teams believe that
+the proposal is well-specified and ready for implementation. The RFC has a
+champion within one of the relevant teams.
+
+If there are unanswered questions, we have outlined them and expect that they
+will be answered before [Ready for Release].
+
+When an RFC is merged and moved to "Accepted", a new PR will be opened to move
+it to [Ready for Release]. This PR should be used to track
+the implementation progress and gain consensus to move to the next stage.
+
+### Ready for Release
+[Ready for Release]: #ready-for-release
+
+The implementation is complete according to plan outlined in the RFC, and is in
+harmony with any changes in Ember that have occurred since the RFC was first
+written. This includes any necessary learning materials. At this stage, features
+or deprecations may be available for use behind a feature flag, or with an
+optional package, etc. The team reviews the work to determine when it can be
+included in a stable release. For codebase changes, there are no open questions
+that are anticipated to require breaking changes; the Ember team is ready to
+commit to the stability of any interfaces exposed by the current implementation
+of the feature. Today, this would be the "go/no-go" decision by a particular
+team.
+
+This stage should include a list of criteria for determining when the proposal
+can be considered [Recommended] after being [Released].
+
+A PR is opened on the repo (see [Accepted]) to move an accepted RFC
+into this stage. An FCP is required to move into this stage.
+
+Each Ember core team will be requested as a reviewer on the PR to move into this
+stage. A representative of each team adds a review. If a team does not respond
+to the request, and after the conclusion of the FCP, it is assumed that the
+release may proceed.
+
+### Released
+[Released]: #released
+
+The work is published. If it is codebase-related work, it is in a stable version
+of the relevant package(s). If there are any critical deviations from the
+original RFC, they are briefly noted at the top of the RFC.
+
+If the work for an RFC is spread across multiple releases of Ember or other packages,
+the RFC is considered to be in the Released stage when all features are available in
+stable releases and those packages and versions are noted in the RFC frontmatter.
+
+Ember's RFC process can be used for process and work plans that are not about code.
+Some examples include Roadmap RFCs, changes to the RFC process itself, and
+changes to learning resources.
+When such an RFC is a candidate for Released, the work should be shipped as described,
+and the result should presented to the team with the intent of gathering feedback
+about whether anything is missing. If there is agreement that the work is complete,
+the RFC may be marked "Released" and a date is provided instead of a version.
+
+An RFC is moved into "Released" when the above is verified by consensus of the
+relevant team(s) via a PR to update the stage.
+
+### Recommended
+[Recommended]: #recommended
+
+The "Recommended" stage is the final milestone for an RFC. It provides a signal
+to the wider community to indicate that a feature has been put through its
+ecosystem paces and is ready to use.
+
+The "Recommended" stage is most important for suites of features that are designed
+as a number of separate RFCs. It allows the Ember maintainers to stabilize individual
+features once they are technically feature complete, an important goal for maintaining
+technical velocity.
+
+To reach the "Recommended" stage, the following should be true:
+
+- If appropriate, the feature is integrated into the tutorial and the guides prose.
+  API documentation is polished and updates are carried through to other areas of
+  API docs that may not directly pertain to the feature.
+- If the proposal replaces an existing feature, the addon ecosystem has largely
+  updated to work with both old and new features.
+- If the proposal updates or replaces an existing feature, high-quality codemods are
+  available
+- If needed, Ember debugging tools as well as popular IDE support have been
+  updated to support the feature.
+- If the feature is part of a suite of features that were designed to work together
+  for best ergonomics, the other features are also ready to be "Recommended".
+- Any criteria for "Recommended" for this proposal that were established in the
+  [Ready For Release] stage have been met.
+
+An RFC is moved into "Recommended" via PR to update the stage. An FCP is required
+to enter this stage. Multiple RFCs may be moved as a batch into "Recommended" with
+the same PR.
+
+### Closed
+[Closed]: #closed
+
+A [Proposed] or [Exploring] RFC may be closed after an FCP period. This is the same
+as the existing process. A closed RFC is discontinued.
+
+### Discontinued
+[Discontinued]: #discontinued
+
+A previously [Accepted] RFC may be discontinued at any point. The RFC
+may be superseded, out-of-date, or no longer consistent with the direction of
+Ember.
+
+## Following RFC Progress
+[Following RFC Progress]: #following-rfc-progress
+
+Following the RFC repository is the best way to keep up with the proposed
+changes to Ember and with the implementation of accepted changes.
+
+Watching the repository will alert you to any newly created RFCs. Setting up 
+notifications on a particular pull request will help you follow the progress of 
+that RFC.
+
+RFCs in Final Comment Periods(#final-comment-periods-fcp) are labeled with
+[Final Comment Period](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc+label%3A%22Final+Comment+Period%22)
+and are announced on the [Ember twitter account](https://twitter.com/emberjs).
+
+[Quick links](#quick-links) are provided at the top of the README to help you
+review what you are interested in.
+
+
+## Commenting on an RFC
+[Commenting on an RFC]: #commenting-on-an-rfc
+
+Comments are the very heart of the RFC process. Comments are the primary way community 
+members and core team members can provide feedback and collaborate on the design 
+of a feature. 
+
+Comments should also be used to ensure the author has completed the RFC template 
+and addressed implications of the feature across the Ember project, including 
+documentation, addons, and tooling. 
+
+Comments should be constructive and respectful, following our 
+[Community Guidelines](http://emberjs.com/guidelines/).
+
+## Creating an RFC
+[Creating an RFC]: #creating-an-rfc
+
+### When you need to follow this process
 [When you need to follow this process]: #when-you-need-to-follow-this-process
 
 You need to follow this process if you intend to make "substantial"
@@ -84,7 +333,7 @@ If you submit a pull request to implement a new feature without going
 through the RFC process, it may be closed with a polite request to
 submit an RFC first.
 
-## Gathering feedback before submitting an RFC
+### Gathering feedback before submitting an RFC
 [Gathering feedback before submitting an RFC]: #gathering-feedback-before-submitting-an-rfc
 
 It's often helpful to get feedback on your concept before diving into the
@@ -94,14 +343,14 @@ eventually formulating an RFC pull request with the specific implementation
  design. We also **_highly recommend_** sharing drafts of RFCs in `#dev-rfc` on
 the [Ember Discord](https://discord.gg/emberjs) for early feedback.
 
-## The Process
+### The Process
 [The Process]: #the-process
 
 The process for a successful RFC involves several [Stages] that take
 the proposed change all the way from proposal to implemented and widely adopted.
 A newly opened RFC is in the first stage, appropriately named, [Proposed].
 
-### How to create a new RFC
+#### How to create a new RFC
 [How to create a new RFC]: #how-to-create-a-new-rfc
 
 * Fork the RFC repo http://github.com/emberjs/rfcs
@@ -127,186 +376,37 @@ add a link to the PR in the header of the RFC.
 are much more likely to make progress than those that don't receive any
 comments.
 * From here, the RFC moves to the [Exploring] stage or [Closed] in the process
-explained below in [Stages].
+explained in [Stages].
 
-### Stages
-[Stages]: #stages
+### Finding a champion
+[Finding a Champion]: #finding-a-champion
 
-| Stage| Description| Requires FCP to enter? |
-| -----| -----------|----- |
-| [0 - Proposed](#Proposed) | A proposal for a change to Ember or its processes that is offered for community and team evaluation. | no |
-| [1 - Exploring](#Exploring) | An RFC deemed worth pursuing but in need of refinement. | no |
-| [2 - Accepted](#Accepted) | A fully specified RFC. Waiting for or in the process of implementation. | yes |
-| [3 - Ready for Release](#Ready-for-Release) | The implementation of the RFC is complete, including learning materials. | yes |
-| [4 - Released](#Released) | The work is published. If it is codebase-related work, it is in a stable version of the relevant package(s). | no |
-| [5 - Recommended](#Recommended) | The feature/resource is recommended for general use. | yes |
+The RFC Process requires finding a champion from the relevant core teams. The
+champion is responsible for representing the RFC in team meetings, and for
+shepherding its progress. [Read more about the Champion's job](#champion-responsibilities)
 
-There are two additional statuses for RFCs that will not move forward:
+- *Find one via Discord.*
+  The `dev-rfc` channel on the [Ember Discord](https://discord.gg/emberjs) is
+  reserved for the discussion of RFCs. We highly recommend circulating early drafts of
+  your RFC in this channel to both receive early feedback and to find a champion.
 
-- **[Discontinued](#Discontinued)** - a previously [Accepted] RFC that is either in conflict with Ember's evolving programming model or is superseded by another active RFC.
-- **[Closed](#Closed)** - Proposed RFCs that will not be moved into the next stage.
+- *Ask for a champion via an issue, or in the RFC itself.*
+  We monitor the RFC repository. We will circulate requests for champions, but highly
+  recommend discussing the RFC in Discord.
 
-#### Proposed
-[Proposed]: #proposed
+## Implementing an RFC
+[Implementing an RFC]: #implementing-an-rfc
 
-Proposed RFCs are opened as pull requests to the RFC repository. Anybody may
-create an RFC. The format should follow the templates in the RFC repository.
+Coordination and tracking of implementation of an RFC is done primarily on the 
+pull request to advance the RFC to the [Ready for Release] stage.
 
-An RFC's number is the number of it's original proposal PR.
+The author of an RFC is not obligated to implement it. Of course, the
+RFC author (like any other developer) is welcome to work on the implementation.
 
-From "Proposed" an RFC may move to [Exploring],
-or [Closed] stages.
-To move to [Closed] an FCP is required as in the existing process.
-A "Proposed" RFC may be moved to "Exploring" by consensus of the relevant
-team(s) without an FCP. See [Exploring].
-
-#### Exploring
-[Exploring]: #exploring
-
-An Exploring RFC is one the Ember team believes should be pursued, but the RFC
-may still need some more work, discussion, answers to open questions,
-and/or a champion before it can move to the next stage.
-
-An RFC is moved into Exploring with consensus of the relevant teams. The
-relevant team expects to spend time helping to refine the proposal. The
-RFC remains a PR and will have an `Exploring` label applied.
-
-An Exploring RFC that is successfully completed can move to [Accepted]
-with an FCP is required as in the existing process. It may also be moved to
-[Closed] with an FCP.
-
-#### Accepted
-[Accepted]: #accepted
-
-An RFC that has been "accepted" has complete prose and has successfully passed
-through an "FCP to Accept" period in which the community has weighed in and
-consensus has been achieved on the direction. The relevant teams believe that
-the proposal is well-specified and ready for implementation. The RFC has a
-champion within one of the relevant teams.
-
-If there are unanswered questions, we have outlined them and expect that they
-will be answered before [Ready for Release].
-
-When an RFC is merged and moved to "Accepted", a new PR will be opened to move
-it to [Ready for Release]. This PR should be used to track
-the implementation progress and gain consensus to move to the next stage.
-
-#### Ready for Release
-[Ready for Release]: #ready-for-release
-
-The implementation is complete according to plan outlined in the RFC, and is in
-harmony with any changes in Ember that have occurred since the RFC was first
-written. This includes any necessary learning materials. At this stage, features
-or deprecations may be available for use behind a feature flag, or with an
-optional package, etc. The team reviews the work to determine when it can be
-included in a stable release. For codebase changes, there are no open questions
-that are anticipated to require breaking changes; the Ember team is ready to
-commit to the stability of any interfaces exposed by the current implementation
-of the feature. Today, this would be the "go/no-go" decision by a particular
-team.
-
-This stage should include a list of criteria for determining when the proposal
-can be considered [Recommended] after being [Released].
-
-A PR is opened on the repo (see [Accepted]) to move an accepted RFC
-into this stage. An FCP is required to move into this stage.
-
-Each Ember core team will be requested as a reviewer on the PR to move into this
-stage. A representative of each team adds a review. If a team does not respond
-to the request, and after the conclusion of the FCP, it is assumed that the
-release may proceed.
-
-#### Released
-[Released]: #released
-
-The work is published. If it is codebase-related work, it is in a stable version
-of the relevant package(s). If there are any critical deviations from the
-original RFC, they are briefly noted at the top of the RFC.
-
-If the work for an RFC is spread across multiple releases of Ember or other packages,
-the RFC is considered to be in the Released stage when all features are available in
-stable releases and those packages and versions are noted in the RFC frontmatter.
-
-Ember's RFC process can be used for process and work plans that are not about code.
-Some examples include Roadmap RFCs, changes to the RFC process itself, and
-changes to learning resources.
-When such an RFC is a candidate for Released, the work should be shipped as described,
-and the result should presented to the team with the intent of gathering feedback
-about whether anything is missing. If there is agreement that the work is complete,
-the RFC may be marked "Released" and a date is provided instead of a version.
-
-An RFC is moved into "Released" when the above is verified by consensus of the
-relevant team(s) via a PR to update the stage.
-
-#### Recommended
-[Recommended]: #recommended
-
-The "Recommended" stage is the final milestone for an RFC. It provides a signal
-to the wider community to indicate that a feature has been put through its
-ecosystem paces and is ready to use.
-
-The "Recommended" stage is most important for suites of features that are designed
-as a number of separate RFCs. It allows the Ember maintainers to stabilize individual
-features once they are technically feature complete, an important goal for maintaining
-technical velocity.
-
-To reach the "Recommended" stage, the following should be true:
-
-- If appropriate, the feature is integrated into the tutorial and the guides prose.
-API documentation is polished and updates are carried through to other areas of
-API docs that may not directly pertain to the feature.
-- If the proposal replaces an existing feature, the addon ecosystem has largely
-updated to work with both old and new features.
-- If the proposal updates or replaces an existing feature, high-quality codemods are
-available
-- If needed, Ember debugging tools as well as popular IDE support have been
-updated to support the feature.
-- If the feature is part of a suite of features that were designed to work together
-for best ergonomics, the other features are also ready to be "Recommended".
-- Any criteria for "Recommended" for this proposal that were established in the
-[Ready For Release] stage have been met.
-
-An RFC is moved into "Recommended" via PR to update the stage. An FCP is required
-to enter this stage. Multiple RFCs may be moved as a batch into "Recommended" with
-the same PR.
-
-#### Closed
-[Closed]: #closed
-
-A [Proposed] or [Exploring] RFC may be closed after an FCP period. This is the same
-as the existing process. A closed RFC is discontinued.
-
-#### Discontinued
-[Discontinued]: #discontinued
-
-A previously [Accepted] RFC may be discontinued at any point. The RFC
-may be superseded, out-of-date, or no longer consistent with the direction of
-Ember.
-
-### Final comment periods (FCP)
-[FCP]: #final-comment-periods-fcp
-
-For certain stage advancements, a _final comment period_ (FCP) is required. This
-is a period lasting 7 days. The beginning of this period will be signaled with a
-comment and tag on the RFC's pull request. Furthermore,
-[Ember's official Twitter account](https://twitter.com/emberjs) will post a
-tweet about the RFC to attract the community's attention.
-
-An RFC can be modified based upon feedback from the [core teams] and community
-during the final comment period. Significant modifications may trigger a new
-final comment period.
-
-At the end of a successful FCP, the RFC moves into the stage specified.
-
-#### FCP to close
-[FCP to close]: #fcp-to-close
-
-An RFC may be closed or discontinued by the [core teams] after public discussion
-has settled and comments have been made summarizing the rationale for closing.
-The RFC will enter a "final comment period to close" lasting 7 days. At the end
-of the "FCP to close" period, the PR will be closed.
-
-An RFC author may withdraw their own RFC by closing it themselves.
+If you are interested in working on the implementation for an [Accepted]
+RFC, but cannot determine if someone else is already working on it,
+please ask (e.g. by leaving a comment on the pull request to advance the RFC to 
+the [Ready for Release] stage).
 
 ### Editing merged RFCs
 [Editing merged RFCs]: #editing-merged-rfcs
@@ -322,13 +422,13 @@ about this feature." This note is not intended to be updated across time.
 - Updating any part of the RFC prose, in order to keep a written record of the
 changes and rationale.
 
-Today, these types of changes do happen. We just don't write them down. So,
-merge criteria should be very loose.
+Major changes should have a new RFC. The old RFC is moved to the [Discontinued] 
+stage when the replacement is merged.
 
-Major changes should have a new RFC. The old RFC is later marked "Discontinued"
-when the replacement is merged.
+## Reference
+[Reference]: #reference
 
-## Relevant Teams
+### Relevant Teams
 [Relevant Teams]: #relevant-teams
 
 The RFC template requires indicating the relevant core teams. The following table
@@ -344,34 +444,33 @@ further guidance.
 | TypeScript    | TypeScript integration and design            | `@emberjs/typescript-core` |
 | Steering      | Governance                                   | `@emberjs/steering`        |
 
-## Finding a champion
-[Finding a Champion]: #finding-a-champion
+## Final comment periods (FCP)
+[FCP]: #final-comment-periods-fcp
 
-The RFC Process requires finding a champion from the relevant core teams. The
-champion is responsible for representing the RFC in team meetings, and for
-shepherding its progress. [Read more about the Champion's job](#champion-responsibilities)
+For certain stage advancements, a _final comment period_ (FCP) is required. This
+is a period lasting 7 days. The beginning of this period will be signaled with a
+comment and tag on the RFC's pull request. Furthermore,
+[Ember's official Twitter account](https://twitter.com/emberjs) will post a
+tweet about the RFC to attract the community's attention.
 
-- *Find one via Discord.*
-The `dev-rfc` channel on the [Ember Discord](https://discord.gg/emberjs) is
-reserved for the discussion of RFCs. We highly recommend circulating early drafts of
-your RFC in this channel to both receive early feedback and to find a champion.
+An RFC can be modified based upon feedback from the [core teams] and community
+during the final comment period. Significant modifications may trigger a new
+final comment period.
 
-- *Ask for a champion via an issue, or in the RFC itself.*
-We monitor the RFC repository. We will circulate requests for champions, but highly
-recommend discussing the RFC in Discord.
+At the end of a successful FCP, the RFC moves into the stage specified.
 
-## Implementing an RFC
-[Implementing an RFC]: #implementing-an-rfc
+### FCP to close
+[FCP to close]: #fcp-to-close
 
-The author of an RFC is not obligated to implement it. Of course, the
-RFC author (like any other developer) is welcome to post an
-implementation for review after the RFC has been accepted.
+An RFC may be closed or discontinued by the [core teams] after public discussion
+has settled and comments have been made summarizing the rationale for closing.
+The RFC will enter a "final comment period to close" lasting 7 days. At the end
+of the "FCP to close" period, the PR will be closed.
 
-If you are interested in working on the implementation for an [Accepted]
-RFC, but cannot determine if someone else is already working on it,
-please ask (e.g. by leaving a comment on the associated issue).
+An RFC author may withdraw their own RFC by closing it themselves.
 
 ## For Core Team Members
+[For Core Team Members]: #for-core-team-members
 
 ### Reviewing RFCs
 
