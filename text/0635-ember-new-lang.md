@@ -1,9 +1,18 @@
 ---
-Start Date: 2020-05-29
-Relevant Team(s): CLI, Learning
-RFC PR: https://github.com/emberjs/rfcs/pull/635
-Authors: Joseph Sumner, Ava Wroten, Jamie White, Melanie Sumner
+stage: released # FIXME: This may be recommended
+start-date: 2020-05-29T00:00:00.000Z
+release-date: 2020-09-01T00:00:00.000Z
+release-versions:
+  ember-cli: v3.21.0
 
+teams:
+  - cli
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/635
+project-link:
+meta:
+  authors: Joseph Sumner, Ava Wroten, Jamie White, Melanie Sumner
 ---
 
 # Ember New Lang
@@ -24,7 +33,7 @@ This RFC and its proposed approach have both been developed within the Ember.js 
 >
 > **Source: [WCAG Success Criterion 3.1.1: Intent](https://www.w3.org/WAI/WCAG21/Understanding/language-of-page.html#intent)**
 
-When the language of the page cannot be identified, the integrity of the above information cannot be guaranteed. 
+When the language of the page cannot be identified, the integrity of the above information cannot be guaranteed.
 Consider the following use case:
 
 - the application developer is unaware that Ember now includes the lang attribute
@@ -48,14 +57,14 @@ To see what happens when this information does not match, we created a new Ember
 If no lang attribute is set for the page or the parts:
 
 - the screen reader defaults to the operating system (OS) language
-- it reads Spanish in an English accent, and the button element was also still read in English 
+- it reads Spanish in an English accent, and the button element was also still read in English
 - for the Chinese and Russian letters, it spelled out the letters (i.e., "Cyrillic Letter E")
 
 #### Language Defined
 
 We then changed the lang attribute value and listened to these buttons in Chinese(zh), Spanish(es) and Russian(ru). Here's what happened:
 
-- in each case, the announcer's voice changed for the content 
+- in each case, the announcer's voice changed for the content
 - since the OS was set to English, the supporting element information that the assistive tech (AT) announces was in the OS language (English)
 - when set to Chinese, the AT read the English, Chinese and Spanish well enough to understand, but did not read out the Russian; likewise, Russian behaved similarly (read all of them except the Chinese)
 
@@ -83,7 +92,7 @@ Accordingly, while the primary motivation of this RFC is to address an unresolve
 
 Link to [candidate implementation](https://github.com/josephdsumner/ember-cli/compare/master...ember-new-lang-base).
 
-We have explicitly chosen `--lang` as the flag (vs `--language`) for consistency with the HTML attribute itself. 
+We have explicitly chosen `--lang` as the flag (vs `--language`) for consistency with the HTML attribute itself.
 
 ```bash
 ember new my-app --lang en-US
@@ -187,13 +196,13 @@ Information about using the `--lang` flag:
 2. Update the [Ember.js CLI Guides](https://cli.emberjs.com/release/basic-use/cli-commands/) to reflect the new flag much like we demonstrate `--yarn` usage.
 3. Update the Ember CLI `--help` command so it explains what kind of value is expected to be passed to the `--lang` flag.
 4. Update the Super Rental tutorial to include updated information.
-5. Update the Guides - specifically the section that discusses the language attribute. 
+5. Update the Guides - specifically the section that discusses the language attribute.
 
 ### For the Ember CLI Guides:
 
 The `--lang` flag can be used to set the spoken language of the app or addon.
 
-To use with a language code only, this is the syntax that would be used: 
+To use with a language code only, this is the syntax that would be used:
 
 ```bash
 ember new my-app --lang en
@@ -229,7 +238,7 @@ The popular [localization library ember-intl](https://github.com/ember-intl/embe
 * Users may be confused about whether or not they are supposed to specify a human language or a programming language (i.e. `--lang typescript`). However, we think we've mitigated this by using the HTML attribute as the flag name, and having helpful error messages that guide developers in the right direction.
 
 ## Alternatives
-These are the alternative approaches that we are aware of; if more become apparent in discussion, this RFC will be updated to include them. 
+These are the alternative approaches that we are aware of; if more become apparent in discussion, this RFC will be updated to include them.
 
 - Set the default html lang attribute to `en-US` (the language of the Ember.js project) and assume users will either change the `lang` value themselves, or rely exclusively on `ember-intl` (and not just for apps that require full globalization).
   - [Valuable discussion points in this issue](https://github.com/emberjs/rfcs/issues/595)

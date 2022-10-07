@@ -1,8 +1,13 @@
 ---
-Start Date: 2018-01-04
-Relevant Team(s): Ember CLI
-RFC PR: https://github.com/ember-cli/rfcs/pull/114
-
+stage: discontinued # FIXME: Is this correct? We don't quite do what is specified here
+start-date: 2018-01-04T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - cli
+prs:
+  accepted: https://github.com/ember-cli/rfcs/pull/114
+project-link:
 ---
 
 # Summary

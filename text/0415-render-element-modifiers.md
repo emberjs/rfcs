@@ -1,9 +1,15 @@
 ---
-Start Date: 2018-12-13
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/415
-Tracking: https://github.com/emberjs/rfc-tracking/issues/8
-
+stage: recommended
+start-date: 2018-12-13T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/415
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/8
 ---
 
 # Render Element Modifiers

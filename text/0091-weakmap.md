@@ -1,8 +1,15 @@
 ---
-Start Date: 2015-09-11
-RFC PR: https://github.com/emberjs/rfcs/pull/91
-Ember Issue: https://github.com/emberjs/ember.js/pull/12224 / https://github.com/emberjs/ember.js/pull/12990 / https://github.com/emberjs/ember.js/pull/13688
-
+stage: discontinued
+start-date: 2015-09-11T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/91
+project-link:
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/pull/12224 / https://github.com/emberjs/ember.js/pull/12990 / https://github.com/emberjs/ember.js/pull/13688
 ---
 
 # Summary
@@ -23,7 +30,7 @@ just choose a direction.
 *Note: Just like ES2015 WeakMap, only non null Objects can be used as keys*
 *Note: `Ember.WeakMap` can be used interchangibly with the ES2015 WeakMap. This
 will allow us to eventually cut over entirely to the Native WeakMap.*
- 
+
 # Motivation
 
 It is a common pattern to want to store private state about a specific object.
