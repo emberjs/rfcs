@@ -5,7 +5,9 @@ Release Date: Unreleased
 Release Versions:
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
-Relevant Team(s):
+Relevant Team(s):  
+  - Ember CLI
+  - Learning
 RFC PR:
 ---
 
@@ -20,7 +22,7 @@ Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to w
 RFC PR: Fill this in with the URL for the Proposal RFC PR
 -->
 
-# Default workspace settings for code editor
+# Default workspace settings for code editors
 
 ## Summary
 
