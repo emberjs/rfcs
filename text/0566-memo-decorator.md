@@ -1,12 +1,15 @@
 ---
-Stage: Accepted
-Start Date: 2019-12-22
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/566
+stage: released # FIXME: This may be recommended
+start-date: 2019-12-22T00:00:00.000Z
+release-date: 2021-12-28T00:00:00.000Z
+release-versions:
+  ember-source: v4.1.0
+
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/566
+project-link:
 ---
 
 # @cached

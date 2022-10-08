@@ -1,7 +1,13 @@
 ---
-Start Date: 2018-04-18
-RFC PR: https://github.com/emberjs/rfcs/pull/326
-
+stage: recommended
+start-date: 2018-04-18T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/326
+project-link:
 ---
 
 # Ember Data Filter Deprecation
@@ -16,7 +22,7 @@ behind a private `ENV` variable that was enabled by the addon
 
 The `filter` API was a "memory leak by design". [Patterns exist](https://github.com/ember-data/ember-data-filter#recommended-refactor-guide)
 with no-worse ergonomics that have better performance and do not incur memory leak penalties.
- 
+
 While the change in ergonomics for end consumers in minimal, the change to `ember-data` is substantial.
 The code for this feature required significant amounts of confusing internal plumbing to ensure that
 filters were rerun every time any form of mutation (update, addition, deletion) occurred to any record.

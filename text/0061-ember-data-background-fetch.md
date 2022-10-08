@@ -1,8 +1,17 @@
 ---
-Start Date: 2015-06-03
-RFC PR: https://github.com/emberjs/rfcs/pull/61
-Ember Issue: This RFC is implemented over many Ember Data PRs
+stage: recommended
+start-date: 2015-06-03T00:00:00.000Z
+release-date: 2015-06-16T00:00:00.000Z
+release-versions:
+  ember-data: v1.13.0
 
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/61
+project-link:
+meta:
+  ember-issue: This RFC is implemented over many Ember Data PRs
 ---
 
 # Summary
@@ -152,7 +161,7 @@ displaying a loading spinner.
 
 `shouldRefetchRecord` is a new method on the adapter that will be called by the store to make initial decision whether to refetch the record form the adapter or return the cached record from the store. This could method could be used to implement caching logic (e.g. only refetch this record after the time specified in its cache expires token) or for improved offline support (e.g. always refetch unless there is no internet connection then use cached record).
 
-This record would only be called if the record was already found in the store and is in the loaded state. 
+This record would only be called if the record was already found in the store and is in the loaded state.
 
 This method is only checked by `store.findById` and `store.findAll`. Methods with `fetch` in their name always refetch the record(s) from the adapter.
 
@@ -162,7 +171,7 @@ This method is only checked by `store.findById` and `store.findAll`. Methods wit
    `shouldRefetchRecord` returns true if the adapter determines the record is
    stale and should be refetch. It should return false if the record
    is not stale or some other condition indicates that a fetch should
-   not happen at this time (e.g. loss of internet connection). 
+   not happen at this time (e.g. loss of internet connection).
 
    This method is synchronous.
 
@@ -176,7 +185,7 @@ This method is only checked by `store.findById` and `store.findAll`. Methods wit
 }
 ```
 
-The method `shouldBackgroundUpdate` would be used by the store to make the decision to re-fetch the record after it has already been returned to the user. This would allow realtime adapter to opt out of the background fetch if the adapter is already subscribing to changes on the record. 
+The method `shouldBackgroundUpdate` would be used by the store to make the decision to re-fetch the record after it has already been returned to the user. This would allow realtime adapter to opt out of the background fetch if the adapter is already subscribing to changes on the record.
 
 ```js
 {
@@ -184,7 +193,7 @@ The method `shouldBackgroundUpdate` would be used by the store to make the decis
    `shouldBackgroundUpdate` returns true if the store should re fetch a
    record in the store after returning it to the user to ensure the
    record has the most up to date data.
-   
+
    This method is synchronous.
 
    @method shouldBackgroundUpdate
@@ -198,7 +207,7 @@ The method `shouldBackgroundUpdate` would be used by the store to make the decis
 ```
 
 
-In the next major version of Ember Data the recommend way of finding a record 
+In the next major version of Ember Data the recommend way of finding a record
 will be:
 
 ```js
@@ -260,7 +269,7 @@ Models have an `isReloading` flag. This will be deprecated in favor of the new `
 
 Why should we *not* do this?
 
-After the record has been updated in the background Ember's Data binding will cause any views to automatically update with the latest changes. This can result an a surprising "popping" effect which is especially pronounced when the background fetch resolves quickly (The user sees an initial render with the stale data then a quick re-render with the fresh data).  
+After the record has been updated in the background Ember's Data binding will cause any views to automatically update with the latest changes. This can result an a surprising "popping" effect which is especially pronounced when the background fetch resolves quickly (The user sees an initial render with the stale data then a quick re-render with the fresh data).
 
 
 
@@ -269,12 +278,12 @@ After the record has been updated in the background Ember's Data binding will ca
 
 What other designs have been considered? What is the impact of not doing this?
 
-One alternate option could be for Ember Data to track an expires token on a model. This would allow Ember 
-Data to behave like a caching proxy when fetching. If the record is expired, fetch should block. 
+One alternate option could be for Ember Data to track an expires token on a model. This would allow Ember
+Data to behave like a caching proxy when fetching. If the record is expired, fetch should block.
 If the record is not expired it would return a resolve the record right away however still issue a
-second request. 
+second request.
 
-When used with backends that do not return an expires token. Ember Data would assume that the 
+When used with backends that do not return an expires token. Ember Data would assume that the
 record is stale (this could be configured on the adapter).
 
 

@@ -1,12 +1,13 @@
 ---
-Stage: Accepted
-Start Date: 2022-02-12
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): ember-data 
-RFC PR: https://github.com/emberjs/rfcs/pull/794
+stage: accepted # FIXME: This may be a further stage
+start-date: 2022-02-12T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/794
+project-link:
 ---
 
 # Simplify Schema Definition Service methods in Ember Data
@@ -30,9 +31,9 @@ The original RFC proposed the following interface:
 
 ```typescript
 interface SchemaDefinitionService {
-  // Following the existing RD implementation 
+  // Following the existing RD implementation
   attributesDefinitionFor(identifier: RecordIdentifier | type: string): AttributesDefinition
-  
+
   // Following the existing RD implementation
   relationshipsDefinitionFor(identifier: RecordIdentifier | type: string): RelationshipsDefinition
   doesTypeExist(type: string): boolean
@@ -43,9 +44,9 @@ We can simplify `attributesDefinitionFor` and `relationshipsDefinitionFor` metho
 
 ```typescript
 interface SchemaDefinitionService {
-  // Following the existing RD implementation 
+  // Following the existing RD implementation
   attributesDefinitionFor(identifier: RecordIdentifier | { type: string }): AttributesDefinition
-  
+
   // Following the existing RD implementation
   relationshipsDefinitionFor(identifier: RecordIdentifier | { type: string }): RelationshipsDefinition
 

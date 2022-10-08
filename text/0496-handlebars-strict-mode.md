@@ -1,8 +1,15 @@
 ---
-Start Date: 2019-02-14
-Relevant Team(s): Ember.js
-RFC PR: https://github.com/emberjs/rfcs/pull/496
+stage: released
+start-date: 2019-02-14T00:00:00.000Z
+release-date: 2021-05-03T00:00:00.000Z
+release-versions:
+  ember-source: v3.27.0
 
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/496
+project-link:
 ---
 
 # Handlebars Strict Mode

@@ -1,19 +1,20 @@
 ---
-Stage: Accepted
-Start Date: 2021-04-23
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): ember-data
-RFC PR: https://github.com/emberjs/rfcs/pull/740
+stage: accepted # FIXME: This may be a further stage
+start-date: 2021-04-23T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/740
+project-link:
 ---
 
 # EmberData | Deprecate Non Strict Types
 
 ## Summary
 
-Deprecates when the `type` for a record provided by a user differs from the resolved 
+Deprecates when the `type` for a record provided by a user differs from the resolved
 type, thereby removing the need to configure `ember-inflector` to treat `types` as `uncountable`
 in order to use plural model names, and removing the dasherization constraint.
 
@@ -55,7 +56,7 @@ received. This deprecation would target `5.0` and become `enabled` no-sooner tha
 `available` before then.
 
 To resolve issues with `dasherization`, users would need to dasherize in advance of providing data or arguments
-to `store` methods (generally this is done in the serializer's normalization hooks for payloads and at 
+to `store` methods (generally this is done in the serializer's normalization hooks for payloads and at
 call-sights for method args that take `modelName`).
 
 To resolve issues with `singularization`, users would need either to configure `ember-inflector` to return the
@@ -71,7 +72,7 @@ time and users may supply types in any format so long as their usage is (1) cons
 Generally these changes remove a thing to be taught (that all types anywhere in a payload or as args should
 be normalized to the singular+dasherized form) in favor of teaching that usage of a `type` should be consistent
 and that the name of the `model` should match what is being used as `type`.
-  
+
 ## Drawbacks
 
 Potentially some churn if it turns out that lots of users rely on the dasherization aspect. We already stopped

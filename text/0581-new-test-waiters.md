@@ -1,7 +1,13 @@
 ---
-Start Date: 2020-01-14
-RFC PR: https://github.com/emberjs/rfcs/pull/581
-
+stage: accepted # FIXME: This may be a further stage
+start-date: 2020-01-14T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/581
+project-link:
 ---
 
 # Summary

@@ -1,12 +1,15 @@
 ---
-Stage: Accepted
-Start Date: 2021-12-03
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Ember.js, Learning, Ember CLI
-RFC PR: https://github.com/emberjs/rfcs/pull/779
+stage: accepted
+start-date: 2021-12-03T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - framework
+  - learning
+  - cli
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/779
+project-link:
 ---
 
 
@@ -93,7 +96,7 @@ export default class GenerateAvatar extends Component {
       @name={{this.name}}
       @onSaveName={{this.updateName}}
     />
-    
+
     {{#if (gt 0 this.name.length)}}
       <iframe
         title='Preview'
@@ -209,7 +212,7 @@ Over time, these all lead to a proliferation of backing classes which are only p
 
 [scopes]: https://docs.npmjs.com/cli/v8/using-npm/scope
 
-  
+
 ### Ecosystem integration
 
 Tools which assume they will be used in JavaScript contexts more or less don’t work with our templates today, because the templates have no way to access them. Think of CSS tools like [CSS Modules][css-modules], which is widely used in the Ember ecosystem via [Ember CSS Modules][e-css-m]: our current implementation has to jump through many hoops and do many hacks to work at all. These problems are fundamental to the current model. A format which makes JavaScript values available in template scope would let us drop *all* of that special sauce—and this goes for *all* such JavaScript-side tooling.[^other-css-tools]
@@ -233,7 +236,7 @@ Additionally, introducing test-only components is quite painful, requiring use o
 [^testing-rfc]: The test helper `render()` also does not actually render components today—but the *mental model* is that it does. See [RFC #0785][rfc-0785] which will allow `render` to work not only with templates (the _status quo_) but also with components. This will be an independent change which helps eliminate a number of quirks in the testing infrastructure today as well as make it more TypeScript friendly, but it complements *this* RFC by allowing local definition of tests.
 
 [^microsyntax]: made that much more bespoke since [RFC #0585](https://emberjs.github.io/rfcs/0585-improved-ember-registry-apis.html) is accepted but not yet implemented
-  
+
 [rfc-0785]: https://github.com/emberjs/rfcs/pull/785
 
 
@@ -786,7 +789,7 @@ const UI = {
 ```
 
 Accordingly, we should switch to generating *without* a class name: `ember generate component greeting --component-class=@glimmer/component` should produce a class named `Greeting`, *not* `GreetingComponent`. The generated names for routes, services, and controllers can remain as they are, since they are never invoked this way.
-  
+
 [^polaris]: Polaris was announced as planned at EmberConf 2021. This plan assumes we ship Polaris before Ember 5. If we ship Ember 5 first, the dynamics would be much the same, but with the major version as the point when we switch the default instead.
 
 [^ts-component-name]: In TypeScript, this also extends to `GreetingComponentArgs` (or, with [RFC #0748][rfc-0748], something like `GreetingComponentSignature`), which gets *really* unwieldy!
