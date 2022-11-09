@@ -33,8 +33,8 @@ Introduce public import locations for type-only imports which have previously ha
     - [`Factory`](#factory)
     - [`FactoryManager`](#factorymanager)
     - [`FullName`](#fullname)
-  - [`Transition`](#transition)
     - [`getOwner` and `setOwner`](#getowner-and-setowner)
+  - [`Transition`](#transition)
   - [`RouteInfo`](#routeinfo)
     - [`RouteInfoWithAttributes`](#routeinfowithattributes)
   - [`Resolver`](#resolver)
@@ -255,6 +255,20 @@ function useFullName(fullName) {
 ```
 
 
+#### `getOwner` and `setOwner`
+
+Both of the existing `getOwner` and `setOwner` functions now make *much* more sense as named exports from `@ember/owner`. They will also now take `owner` as the type of their argument explicitly:
+
+```ts
+export function getOwner(object): Owner | undefined;
+export function setOwner(object: unknown, owner: Owner): void;
+```
+
+The existing exports from `@ember/application` will become re-exports of these functions. The existing exports will also be deprecated, with the deprecation becoming "Available" no earlier than the first minor *after* an LTS containing the updated import location. For example, if `getOwner` and `setOwner` are available to import from `@ember/owner` in Ember v4.7, the deprecation for the imports from `@ember/application` would not be deprecated until at least Ember v4.9, after Ember v4.8 LTS.[^timeline]
+
+[^timeline]: This is in line with our normal approach to deprecation: it allows the addon ecosystem to absorb the change via LTS support releases, so that consuming apps are not flooded with deprecations without recourse.
+
+
 ### `Transition`
 
 `Transition` is a non-user-constructible, non-user-subclassable class. It is identical to the *existing* public API, with two new features:
@@ -311,20 +325,6 @@ function takesTransition(theTransition) {
   // ...
 }
 ```
-
-#### `getOwner` and `setOwner`
-
-Both of the existing `getOwner` and `setOwner` functions now make *much* more sense as named exports from `@ember/owner`. They will also now take `owner` as the type of their argument explicitly:
-
-```ts
-export function getOwner(object): Owner | undefined;
-export function setOwner(object: unknown, owner: Owner): void;
-```
-
-The existing exports from `@ember/application` will become re-exports of these functions. The existing exports will also be deprecated, with the deprecation becoming "Available" no earlier than the first minor *after* an LTS containing the updated import location. For example, if `getOwner` and `setOwner` are available to import from `@ember/owner` in Ember v4.7, the deprecation for the imports from `@ember/application` would not be deprecated until at least Ember v4.9, after Ember v4.8 LTS.[^timeline]
-
-[^timeline]: This is in line with our normal approach to deprecation: it allows the addon ecosystem to absorb the change via LTS support releases, so that consuming apps are not flooded with deprecations without recourse.
-
 
 ### `RouteInfo`
 
