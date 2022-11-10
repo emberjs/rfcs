@@ -25,9 +25,9 @@ Standardize the use of yarn and npm scripts in the Ember experience
 
 ## Summary
 
-This change encourages developers to use `npm` or `yarn` 
+This change encourages developers to use scripts in `package.json` 
 for certain commands when working with Ember
-applications, rather than using global Ember CLI commands like `ember serve`.
+applications, rather than using global Ember CLI commands like `ember serve` or focusing on npm/yarn.
 This aligns Ember with norms in the JavaScript community, and
 helps in reducing the confusion around Ember-specific commands.
 
@@ -63,7 +63,7 @@ As a result, a lot of developer time is  saved and it also reduces the human err
 
 If documentation encouraged using `yarn` or `npm`, this would allow developers to customize the scripts
 themselves while also having a standard command that everyone can run in any project 
-and get an expected output, regardless of what's going on under the hood.
+and get an expected output, regardless of what's going on under the hood. We can include a link to "prior art" of showing npm start in CLI output.
 
 Consider cases where the author of an addon sets up yarn test to run with ember-exam.
 In such cases, one shouldn't be manually changing the default documentation for a script that already existed.
@@ -90,8 +90,9 @@ The following resources would need to change:
 * Ember guides 
 * Ember API documentation 
 * The Super Rentals tutorial
-* Readme.md and contributing.md of repos
+* Readme.md and Contributing.md of repos
 * Blueprints in ember-cli
+* We should mention that developers should always refer to Contributing.md for full instructions when working with a new app or addon. And following commands as examples: start, test, build, and prepare.
 
 ## Drawbacks
 
