@@ -80,7 +80,7 @@ This will involve two steps
 
 1. We should decide whether we want a Standardize the use of yarn/npm scripts.
 
-2. Then we make the changes in readmes, contributing guides, CLI output, and in learning docs.
+2. Then we make the changes in READMEs, contributing guides, CLI output, and in learning docs.
 
 ## How we teach this
 
