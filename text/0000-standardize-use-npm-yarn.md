@@ -69,8 +69,8 @@ Consider cases where the author of an addon sets up `yarn test` to run with `emb
 In such cases, one shouldn't be manually changing the default documentation for a script that already existed.
 
 In another case of using the `package.json` script for start/test, it allows teams to abstract details about their specific dev environment,
-which makes developers' jobs easier. They can use "yarn start" or 
-"pnpm start" without actually having to know which command starts the server.
+which makes developers' jobs easier. They can use `yarn start` or 
+`pnpm start` without actually having to know which command starts the server.
 Moreover, using tooling abstraction provided by npm/yarn helps in staying consistent with industry standards rather than having to use bespoke
 tools.
 
