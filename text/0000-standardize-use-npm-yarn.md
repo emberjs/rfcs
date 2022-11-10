@@ -91,7 +91,7 @@ The following resources would need to change:
 * Ember API documentation 
 * The Super Rentals tutorial
 * Readme.md and Contributing.md of repos
-* Blueprints in ember-cli
+* Blueprints in `ember-cli`
 * We should mention that developers should always refer to Contributing.md for full instructions when working with a new app or addon. And following commands as examples: start, test, build, and prepare.
 
 ## Drawbacks
