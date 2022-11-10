@@ -50,10 +50,10 @@ ember test
 
 Notably, `ember test` and `npm test` give different results.
 
-When we run `ember test`, it sets the environment to test and performs Ember.onerror validation by default.
-Whereas, In the case of `npm test`, there is an abstraction of the underlying commands that allows the user to run extra checks such as lint tests across the files  and finally performs `ember test`.
+When we run `ember test`, it sets the environment to test and performs `Ember.onerror` validation by default.
+Whereas, in the case of `npm test`, there is an abstraction of the underlying commands that allows the user to run extra checks such as lint tests across the files and finally performs `ember test`.
 This is useful in carrying on a sequence of instructions and using them without having to worry about how they function behind the hood.
-As a result, a lot of developer time is  saved and it also reduces the human error that might have been made if the abstract tooling was not used.
+As a result, a lot of developer time is saved and it also reduces the human error that might have been made if the abstract tooling was not used.
 
 `ember test`
 ![Ember test](/images/ember_test.png)
