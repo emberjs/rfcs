@@ -65,7 +65,7 @@ If documentation encouraged using `yarn` or `npm`, this would allow developers t
 themselves while also having a standard command that everyone can run in any project 
 and get an expected output, regardless of what's going on under the hood. We can include a link to "prior art" of showing `npm start` in CLI output.
 
-Consider cases where the author of an addon sets up yarn test to run with ember-exam.
+Consider cases where the author of an addon sets up `yarn test` to run with `ember-exam`.
 In such cases, one shouldn't be manually changing the default documentation for a script that already existed.
 
 In another case of using the `package.json` script for start/test, it allows teams to abstract details about their specific dev environment,
