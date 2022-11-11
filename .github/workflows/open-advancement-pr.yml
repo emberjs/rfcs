@@ -48,17 +48,15 @@ jobs:
             pretty_stage="Recommended"
             template=`sed -e 's/__RFC_NUMBER__/${{ inputs.rfc-number }}/g' -e "s>__READY_FOR_RELEASE_PR__>$ready_for_release_pr>g" -e "s>__RELEASED_PR__>$released_pr>g" .github/PULL_REQUEST_TEMPLATE/advance-to-recommended.md`
           fi
-          # Hacks to pass multi-line strings around in GH Workflows
-          template="${template//'%'/'%25'}"
-          template="${template//$'\n'/'%0A'}"
-          template="${template//$'\r'/'%0D'}"
-          echo "::set-output name=body::$template"
+          echo 'body<<EOF' >> $GITHUB_OUTPUT
+          echo "$template" >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT     
           echo "Pretty Stage: $pretty_stage"
-          echo "::set-output name=pretty-stage::$pretty_stage"
+          echo "pretty-stage=$pretty_stage" >> $GITHUB_OUTPUT
 
       - name: Open PR
         id: create-pr
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v4.2.0
         with:
           token: ${{ secrets.personal-access-token }}
           commit-message: "Advance RFC to Stage ${{ inputs.new-stage }}"
@@ -80,3 +78,4 @@ jobs:
           git add ${{ inputs.rfc-path }}
           git commit -m "Update RFC ${{ inputs.rfc-number }} ${{ inputs.new-stage }} PR URL"
           git push origin advance-rfc-${{ inputs.rfc-number }}
+          echo "## Opened PR ${{ steps.create-pr.outputs.pull-request-url }}" >> $GITHUB_STEP_SUMMARY

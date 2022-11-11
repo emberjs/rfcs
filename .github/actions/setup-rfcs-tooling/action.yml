@@ -12,6 +12,8 @@ runs:
         ref: 'v2.0.0'
 
     - uses: actions/setup-node@v3
+      with:
+        node-version: 16
 
     - run: yarn install
       shell: bash
