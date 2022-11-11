@@ -1,6 +1,8 @@
 name: Find added or modified RFCs
 description: 'Find added or modified RFC'
 
+# Any workflow using this action requires using actions/checkout with a fetch-depth: 0
+
 inputs:
   base-sha:
     description: 'Base SHA'
@@ -25,7 +27,7 @@ runs:
   steps:
     - name: Find added or modified RFCs
       id: rfcs
-      uses: tj-actions/changed-files@v25
+      uses: tj-actions/changed-files@v31
       with:
         path: 'text'
         json: 'true'
@@ -36,14 +38,14 @@ runs:
       id: counts
       shell: bash
       run: |
-        changed_len=`echo "${{ steps.rfcs.outputs.all_changed_files }}" | jq '. | length'`
-        echo "::set-output name=all_changed::$changed_len"
+        changed_len=`echo "${{ steps.rfcs.outputs.all_changed_files }}" | jq '. | length'`    
+        echo "all_changed=$changed_len" >> $GITHUB_OUTPUT
         added_len=`echo "${{ steps.rfcs.outputs.added_files }}" | jq '. | length'`
-        echo "::set-output name=added::$added_len"
+        echo "added=$added_len" >> $GITHUB_OUTPUT
 
     - name: Find modified or added RFC info
       id: modified-rfc
       shell: bash
-      run: |        
+      run: |
         changed_file=`echo "${{ steps.rfcs.outputs.all_changed_files }}" | jq '.[0]'`
-        echo "::set-output name=path::$changed_file" 
+        echo "path=$changed_file" >> $GITHUB_OUTPUT

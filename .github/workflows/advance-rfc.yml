@@ -32,6 +32,9 @@ jobs:
       - name: Fail if more than 1 RFC is added or modified
         if: steps.rfcs.outputs.modified-rfcs-count > 1
         run: |
+          echo "## More than one RFC added or modified" >> $GITHUB_STEP_SUMMARY
+          echo "This workflow is unable to determine if the stage of any of the added or modified RFCs have changed" >> $GITHUB_STEP_SUMMARY
+          echo "If this DID NOT modify the stage of any RFC, this failure may be ok" >> $GITHUB_STEP_SUMMARY
           echo "::error::More than 1 RFC is added or modified in this PR; unable to automatically open PRs for advancement"
           exit 1
 
@@ -41,21 +44,24 @@ jobs:
           changed_file=${{ steps.rfcs.outputs.modified-rfc }}
           rfc_number="${changed_file//[!0-9]/}"
           echo "RFC Number: $rfc_number"
-          echo "::set-output name=rfc-number::$rfc_number"
+          echo "rfc-number=$rfc_number" >> $GITHUB_OUTPUT
 
       - name: Determine if stage has changed
         id: has-stage-changed
         continue-on-error: true
         run: |
           if [[ ${{ steps.rfcs.outputs.added-rfcs-count }} == 1 ]]; then
+            echo "## Yes, added a new RFC" >> $GITHUB_STEP_SUMMARY
             echo "A new RFC was added"        
-            echo "::set-output name=value::true"
+            echo "value=true" >> $GITHUB_OUTPUT
           else
             node rfcs-tooling/has-stage-changed.js ${{ github.event.before }} ${{ steps.rfcs.outputs.modified-rfc }}
             if [[ $? == 0 ]]; then
-              echo "::set-output name=value::true"
+              echo "## Yes, stage has changed" >> $GITHUB_STEP_SUMMARY
+              echo "value=true" >> $GITHUB_OUTPUT
             else
-              echo "::set-output name=value::false"
+              echo "## No, stage unchanged or at final stage" >> $GITHUB_STEP_SUMMARY
+              echo "value=false" >> $GITHUB_OUTPUT
             fi          
           fi     
 
@@ -65,7 +71,7 @@ jobs:
         run: |
           new_stage=`node rfcs-tooling/find-next-stage.js ${{ steps.rfcs.outputs.modified-rfc }}`
           echo "New Stage: $new_stage"
-          echo "::set-output name=value::$new_stage"
+          echo "value=$new_stage" >> $GITHUB_OUTPUT
 
   advance-rfc:
     uses: ./.github/workflows/open-advancement-pr.yml

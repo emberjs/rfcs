@@ -1,13 +1,18 @@
 name: Newly Added RFC
 
+# Runs various checks on pull requests that add new RFCs
+
 on:
   pull_request:
-    types: [opened, labeled, unlabeled, synchronize, reopened]
+    types: [opened, labeled, unlabeled, synchronize, reopened, ready_for_review]
     paths:
       - 'text/*.md'
 
 concurrency:
-  group: newly-added-rfc-${{ github.head_ref || github.ref }}
+  # Events within 5 minutes are not guaranteed to run in order, and so when removing S-Proposed and adding S-Exploring
+  # we can't guarantee that the run of the workflow will be the one where S-Exploring is added. Adding `github.event_name`
+  # to the concurrency allows both workflows to complete and the PR to eventually have successful checks.
+  group: newly-added-rfc-${{ github.head_ref || github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
@@ -20,6 +25,8 @@ jobs:
       modified-rfc: ${{ steps.rfcs.outputs.modified-rfc }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: RFCs Added or Changed
         id: rfcs
@@ -30,6 +37,11 @@ jobs:
           echo "RFC Added count: ${{ steps.rfcs.outputs.added-rfcs-count }}"
           echo "RFC Changed count: ${{ steps.rfcs.outputs.modified-rfcs-count }}"
           echo "RFC: ${{ steps.rfcs.outputs.modified-rfc }}"
+          if [[ ${{ steps.rfcs.outputs.added-rfcs-count }} == 1 ]]; then 
+            echo "## RFC Added in this PR!!!" >> $GITHUB_STEP_SUMMARY
+          elif [[ ${{steps.rfcs.outputs.added-rfcs-count}} == 0 ]]; then
+            echo "## No RFCs added in this PR" >> $GITHUB_STEP_SUMMARY        
+          fi
 
   check-in-exploring:
     name: Stage must be 'Exploring' (via label) for new RFC before merging

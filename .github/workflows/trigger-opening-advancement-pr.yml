@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       new-stage: ${{ steps.new-stage.outputs.value }}
-      rfc-number: ${{ steps.modified-rfc.outputs.rfc-number }}
+      rfc-number: ${{ steps.rfc.outputs.rfc-number }}
 
     steps:
       - uses: actions/checkout@v3
@@ -22,20 +22,20 @@ jobs:
       - name: Setup RFCs tooling
         uses: ./.github/actions/setup-rfcs-tooling
 
-      - name: Find modified RFC Number
-        id: modified-rfc
+      - name: Find RFC Number
+        id: rfc
         run: |
-          changed_file=${{ inputs.rfc-path }}
-          rfc_number="${changed_file//[!0-9]/}"
+          rfc=${{ inputs.rfc-path }}
+          rfc_number="${rfc//[!0-9]/}"
           echo "RFC Number: $rfc_number"
-          echo "::set-output name=rfc-number::$rfc_number"
+          echo "rfc-number=$rfc_number" >> $GITHUB_OUTPUT
 
       - name: Find new stage
         id: new-stage
         run: |
           new_stage=`node rfcs-tooling/find-next-stage.js ${{ inputs.rfc-path }}`
           echo "New Stage: $new_stage"
-          echo "::set-output name=value::$new_stage"
+          echo "value=$new_stage" >> $GITHUB_OUTPUT
 
 
   advance-rfc:
