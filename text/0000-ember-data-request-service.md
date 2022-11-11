@@ -40,10 +40,10 @@ fulfillment from a source.
 
 ## Detailed design
 
-#### RequestManager
+### RequestManager
 
 A `RequestManager` provides a request/response flow in which
-configured middlewares are successively given the opportunity
+configured handlers are successively given the opportunity
 to handle, modify, or pass-along a request.
 
 ```ts
@@ -71,7 +71,7 @@ pending and fulfills with the final state when the request completes.
 
 A `Future` is cancellable via `abort`.
 
-Middlewares may optionally expose a ReadableStream to the `Future`
+Handlers may optionally expose a ReadableStream to the `Future`
 for streaming data; however, when doing so the future should not
 resolve until the response stream is fully read.
 
@@ -104,7 +104,77 @@ interface StructuredDocument<T> {
 }
 ```
 
-**Registering Middlewares**
+**Request Handlers**
+
+Requests are fulfilled by handlers. A handler receives the request context
+as well as a `next` function with which to pass along a request to the next
+handler if they so choose.
+
+```ts
+
+type NextFn<P> = (req: RequestInfo) => Future<P>;
+
+interface Handler<T> {
+  async request(context: RequestContext, next: NextFn<P>): T;
+}
+```
+
+`RequestContext` contains information about the request as well as a few methods
+ for building up the `StructuredDocument` and `Future` that will be part of the
+ response.
+
+ Note: `setStream` MUST be called synchronously before awaiting any async within
+ the method in order for `getStream` to work appropriately.
+
+
+```ts
+interface RequestContext<T> {
+  readonly request: RequestInfo;
+
+  setStream(stream: ReadableStream): void;
+  setResponse(response: Response): void;
+}
+
+interface RequestInfo {
+  url: string;
+  cache?: { key?: string, reload?: boolean, backgroundReload?: boolean };
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  data?: Record<string, unknown>;
+  options?: Record<string, unknown>;
+  headers: Record<string, string>;
+  signal: AbortSignal;
+}
+```
+
+A basic `fetch` handler with support for streaming content updates while
+the download is still underway might look like the following, where we use
+[`response.clone()`](https://developer.mozilla.org/en-US/docs/Web/API/Response/clone) to `tee` the `ReadableStream` into two streams.
+
+A more efficient handler might read from the response stream, building up the 
+response data before passing along the chunk downstream.
+
+```ts
+const FetchHandler = {
+  async request(context) {
+    const response = await fetch(context.request);
+    context.setResponse(reponse);
+    context.setStream(response.clone().body);
+
+    return response.json();
+  }
+}
+```
+
+Request handlers are registered by configuring the manager via `use`
+
+```ts
+manager.use([Handler1, Handler2])
+```
+
+Handlers will be invoked in the order they are registered ("fifo", first-in 
+first-out), and may only be registered up until the first request is made. It
+is recommended but not required to register all handlers at one time in order
+to ensure explicitly visible handler ordering.
 
 **The Middleware API**
 
@@ -157,7 +227,13 @@ export default class extends Store {
 }
 ```
 
+### Using `store.request(<req>)`
 
+### Cache Lifetimes
+
+### Migrating Away From Legacy Finders
+
+### Legacy Adapter/Serializer Support
 
 We would introduce new url-building and request building utility functions in a new package
 `@ember-data/request-utils`.
