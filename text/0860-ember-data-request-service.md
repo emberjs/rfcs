@@ -36,7 +36,7 @@ flows. Provides associated utilities to assist in migrating to this new abstract
 - `Serializer` lacks the context necessary to serialize/normalize data on a per-request basis
 - `Adapter` is inflexible and difficult to grow as an interface for managing data 
 fulfillment from a source.
-- Applications have need of a low-level primitive solution for managed fetch to ensuring proper headers, authentication, error handling, SSR support, test-waiter support, and request de-duping/caching.
+- Applications have need of a low-level primitive solution for managed fetch to ensure proper headers, authentication, error handling, SSR support, test-waiter support, and request de-duping/caching.
 
 ## Detailed design
 
@@ -119,6 +119,9 @@ Requests are fulfilled by handlers. A handler receives the request context
 as well as a `next` function with which to pass along a request to the next
 handler if they so choose.
 
+If a handler calls `next`, it receives a `Future` which resolves to a `StructuredDocument`
+that it can then compose how it sees fit with its own response.
+
 ```ts
 
 type NextFn<P> = (req: RequestInfo) => Future<P>;
@@ -136,7 +139,7 @@ interface Handler<T> {
 interface RequestContext<T> {
   readonly request: RequestInfo;
 
-  setStream(stream: ReadableStream): void;
+  setStream(stream: ReadableStream | Promise<ReadableStream>): void;
   setResponse(response: Response): void;
 }
 
@@ -180,7 +183,76 @@ first-out), and may only be registered up until the first request is made. It
 is recommended but not required to register all handlers at one time in order
 to ensure explicitly visible handler ordering.
 
-**The Middleware API**
+**Stream Currying**
+
+`RequestManager.request` differs from `fetch` in one **extremely crucial detail**
+and we feel the need to deeply describe how and why.
+
+For context, it helps to understand a few of the use-cases that RequestManager
+is intended to allow.
+
+- Historically EmberData could not be used to manage and return streaming content (such as
+ video files). With this change, it can be. (The Identifiers RFC and Cache 2.1 RFCs also 
+ make this ability pervasive throughout all layers of EmberData)
+- It might be the case that a handler "tees" or "forks" a request, fulfilling it by either
+  making multiple parallel `fetch` requests, or by calling `next` multiple times, or by
+  fulfilling part of the request from one source (one API, in-memory, localStorage, IndexedDB
+   etc.) and the rest from another source (a different API, a WebWorker, etc.)
+- Handlers may only be amending the request and passing it along, for instance an Auth handler
+ may simply be ensuring the correct tokens or headers or cookies are attached.
+
+`await fetch(<req>)` behaves differently than some realize. The fetch promise resolves not
+once the entirety of the request has been received but rather at the moment headers are 
+received. This allows for the body of the request to be processed as a stream by application
+code *while chunks are still being received by the browser*. When for an app chooses to
+`await response.json()` what actually occurs is the browser reads the stream to completion
+and then returns the result. Additionally, this stream may only be read **once**.
+
+In designing the `RequestManager`, we do not want to eliminate this ability to subscribe to
+and utilize the stream. We believe it crucial that the full power and flexibility of native 
+APIs remains in developers hands, and do not want to create a restriction such that developers
+feel the need to create complicated workarounds for what would feel like an unnecessary 
+restriction to gain access to built-in APIs.
+
+However, because there is potentially a chain of handlers involved, and because there are 
+potentially multiple streams involved, and because we require that `await manager.request(<req>)`
+ resolves with fully realized content, we find ourselves in a design conundrum.
+
+We have considered several variations on how to support streams: from a two-tiered promise structure
+ similar to `fetch` (which quickly fails due to the chained nature of handlers), to enforcing that 
+handlers synchronously call `setStream` either with a ReadableStream or a promise resolving to one.
+
+Each variation has had drawbacks, some were critical and some simply had poor ergonomics. What we
+have arrived at is this:
+
+Each handler may call `setStream` only once, but may do so *at any time* until the promise that it 
+returns has resolved. The associated promise returned by calling `future.getStream` will resolve
+with the stream set by `setStream` if that method is called, or `null` if that method has not been
+called by the time that the handler's request method has resolved.
+
+Handlers that do not create a stream of their own, but which call `next`, may defensively
+pipe the stream forward; however, this is not required (see automatic currying below).
+
+```ts
+context.setStream(future.getStream());
+```
+
+Handlers that either call `next` multiple times or otherwise have reason to create multiple 
+fetch requests should either choose to return no stream, meaningfully combine the streams,
+or select a single prioritized stream.
+
+Of course, any handler may choose to read and handle the stream, and return either no stream or
+a different stream in the process.
+
+**Automatic Currying of Stream and Response**
+
+In order to simplify what we believe will be a common case for handlers which are merely decorating
+a request, if `next` is called only a single time and `setResponse` was never called by the handler
+the response set by the next handler in the chain will applied to that handler's outcome. For 
+instance, this makes the following pattern work `return (await next(<req>)).data;`.
+
+Similarly, if `next` is called only a single time and neither `setStream` nor `getStream` was
+ called, we automatically curry the stream from the future returned by `next` onto the future returned by the handler.
 
 **Using as a Service**
 
@@ -261,7 +333,7 @@ class Store {
 }
 ```
 
-There are two significant differences when calling `store.request` instead of `requestManager.request`.
+There are three significant differences when calling `store.request` instead of `requestManager.request`.
 
 1) the Store will be added to `RequestInfo`, and an additional `cacheOptions` property is available
 
@@ -276,6 +348,38 @@ interface StoreRequestInfo extends RequestInfo {
  `data` member is altered to either a single record or array of records resulting
   from instantiating the entities contained in the `ResourceDocument` returned by
   `cache.put`.
+
+3) Both an operation (`op`) and and array of identifiers (`records`) may be provided
+  as part of the request. While this information could also be included in `options`,
+  we are giving it top-level precedence since handlers which perform data normalization
+  will almost always require this information.
+
+  `op` may be any `string` that your handlers will recognize, though EmberData will provide
+   an `op` matching one of the current Adapter request types when it is used to build the
+   RequestInfo object.
+
+   `records` should be all records expected to be saved or fetched during the course of
+   the request. Similarly, EmberData will populate this for you when using the request-builders
+   or when the request is generated by the Store. This list will be used to update the status
+   of the `RequestStateService` detailed in [RFC #466](https://rfcs.emberjs.com/id/0466-request-state-service)
+
+```ts
+interface StoreRequestInfo extends RequestInfo {
+  cacheOptions?: { key?: string, reload?: boolean, backgroundReload?: boolean };
+  store: Store;
+
+  op?: 'findRecord' | 'updateRecord' | 'query' | 'queryRecord' | 'findBelongsTo' | 'findHasMany' | 'createRecord' | 'deleteRecord';
+  records?: StableRecordIdentifier[];
+}
+```
+
+### RequestStateService
+
+We do not intend to make any adjustments to the RequestStateService at this time, though
+this new paradigm enables us to easily manage a list of requests key'd by URL that could
+be useful for both application code and the Ember Inspector. If you are interested in adding
+such support, we would accept an RFC. With the greatly improved flow this RFC brings we
+expect that the overall design of the RequestStateService ought to be revisited.
 
 ### Cache Lifetimes
 
@@ -323,43 +427,122 @@ however, it should no longer be assumed that an application has an adapter or se
 
 ### Migrating Away From Legacy Finders
 
-We would introduce new url-building and request building utility functions in a new package
-`@ember-data/request-utils`.
+In order to support transitioning to this new paradigm, we would introduce new url-building
+and request-building utility functions in a new package (`@ember-data/request-utils`) that
+closely mirror what occurs by using the corresponding store and Adapter methods today.
+
+Note: the lack of `findAll` in this list is intentional, we do not intend to implement this
+separately from `query`.
+
+```ts
+import { findRecord, queryRecord, query, updateRecord, createRecord, deleteRecord, saveRecord } from '@ember-data/request-utils';
+
+const { data: user } = await store.request(findRecord('user', '1'));
+const { data: user } = await store.request(queryRecord('user', { username: 'runspired' }));
+const { data: users } = await store.request(query('user', {}));
+
+await store.request(updateRecord(user));
+await store.request(createRecord(user));
+await store.request(deleteRecord(user));
+await store.request(saveRecord(user));
+```
+
+Each of these request-builders returns an object satisfying the `RequestInfo` interface, which
+could also be manually constructed.
+
+Additionally, a url-builder similar in behavior to the `BuildURLMixin` is provided.
+Notable differences include that is also serializes query params into the URL, and
+assumes the first argument is the "path for type".
+
+The following config properties will be supply-able via the app's `ember-cli-build`
+
+```ts
+interface Config {
+  '@embroider/macros': {
+    setConfig: {
+      '@ember-data/request-utils': {
+        {
+          apiNamespace: string;
+          apiHost: string;
+        }
+      }
+    }
+  }
+}
+```
+
+
+```ts
+import { buildUrl } from '@ember-data/request-utils';
+
+// findRecord with include
+const url = buildUrl('user', '1', { include: 'friends' });
+
+// query page 3 of users
+const url = buildUrl('users', null, { limit: 25, offset: 50 });
+
+// query for a single user
+const url = buildUrl('user', null, { username: 'runspired' });
+
+// query the first page of comments for post 1
+const url = buildUrl('post/1/comments/list', null, { limit: 10, offset: 0 });
+```
 
 ### Deprecating Legacy Finders
 
-We would not deprecate methods on the Store for requesting data until at least 5.x; however,
- applications should begin migrating all requests to this new paradigm and expect that the
- following methods will be deprecated at some point during the 5.x cycle
+We would not immediately deprecate methods on the Store for requesting data until at
+least 5.0; however, applications should begin migrating all requests to this new
+paradigm and expect that the following methods will be deprecated at some point during
+the 5.x cycle
 
   - `store.findRecord`
   - `store.findAll`
   - `store.query`
   - `store.queryRecord`
   - `store.saveRecord`
+
+### Migrating Away from Serializers
+
+We do not intend to provide an alternative to Serializers in any form. Instead,
+given the current power and flexibility of the Cache, we recommend aligning the
+Cache implementation with your API implementation.
+
+If data normalization is still needed, we recommend writing a few helper functions
+that a handler can use to quickly transform the data as necessary.
+
+We expect some addons may be created that offer helper functions for common transformations.
+Since Serializers will not be officially deprecated until some point after 6.0, we feel
+that this is more than ample time for applications and addons to explore this space and
+either become comfortable with the realization that such data transformation is largely
+ unecessary and wasteful or can be done via much simpler and surgical mechanisms.
+
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
+- EmberData should create new documentation and guides to cover using the RequestManager.
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
+- Existing documentation and guides should be re-written to either reference these new
+patterns or to be clear that they discuss a legacy pattern that is no longer recommended.
 
-> How should this feature be introduced and taught to existing Ember
-users?
+- The learning story for EmberData should be reworked to one that incrementally grows from
+  a simple abstraction over fetch, to fetch with a cache, to fetch with a cache and resource
+  graph and presentational concerns.
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+Historically, Adapters have hidden away construction of requests from app-developers kept
+ application code focused only on working with data that was magically fetched and processed
+ in the background. When this worked, it worked very well, and many users have loved this
+ magic deeply. However, this abstraction came at the great cost of making EmberData difficult
+ to fit into many common scenarios, difficult to reason about and debug when data-fetching 
+ failed, and difficult to extend when even very trivial changes to request construction were
+ required. We do not feel the occassional magic of it all working outweights the drawbacks of
+ keeping the system as is, and so we have chosen a slightly more verbose approach that grants
+ developers flexibity, power, and ease-of-use.
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
+We considered building this over the existing Adapter interface, deprecating Serializers and
+instead encouraging data-transformation to be done within the Adapter. In fact, this pattern
+is fully possible today, we could just better document it and do nothing more. However, this
+approach does not solve the need for more general request management, nor does it interact
+well with common development paradigms such as GraphQL query building.
