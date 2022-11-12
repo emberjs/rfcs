@@ -47,6 +47,15 @@ configured handlers are successively given the opportunity
 to handle, modify, or pass-along a request.
 
 ```ts
+interface RequestManager {
+  async request<T>(req: RequestInfo): Future<T>;
+}
+```
+
+
+For example:
+
+```ts
 import RequestManager, { Fetch } from '@ember-data/request';
 import Auth from 'ember-simple-auth/ember-data-middleware';
 import Config from './config';
@@ -123,10 +132,6 @@ interface Handler<T> {
  for building up the `StructuredDocument` and `Future` that will be part of the
  response.
 
- Note: `setStream` MUST be called synchronously before awaiting any async within
- the method in order for `getStream` to work appropriately.
-
-
 ```ts
 interface RequestContext<T> {
   readonly request: RequestInfo;
@@ -137,7 +142,6 @@ interface RequestContext<T> {
 
 interface RequestInfo {
   url: string;
-  cache?: { key?: string, reload?: boolean, backgroundReload?: boolean };
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   data?: Record<string, unknown>;
   options?: Record<string, unknown>;
@@ -229,7 +233,56 @@ export default class extends Store {
 
 ### Using `store.request(<req>)`
 
+The `Store` will add support for using the `RequestManager` via `store.request(<req>)`.
+
+```ts
+class Store {
+  async request<T>(req: RequestInfo): Future<Reified<T>>;
+}
+```
+
+There are two significant differences when calling `store.request` instead of `requestManager.request`.
+
+1) the Store will be added to `RequestInfo`, and an additional `cacheOptions` property is available
+
+```ts
+interface StoreRequestInfo extends RequestInfo {
+  cacheOptions?: { key?: string, reload?: boolean, backgroundReload?: boolean };
+  store: Store;
+}
+```
+
+2) The `StructuredDocument` is supplied to `cache.put(doc)` and the return value's
+ `data` member is altered to either a single record or array of records resulting
+  from instantiating the entities contained in the `ResourceDocument` returned by
+  `cache.put`.
+
 ### Cache Lifetimes
+
+In the past, cache lifetimes for single resources were controlled by either 
+supplying the `reload` and `backgroundReload` options or by the Adapter's hooks
+for `shouldReloadRecord`, `shouldReloadAll`, `shouldBackgroundReloadRecord` and 
+`shouldBackgroundReloadAll`.
+
+This behavior will now be controlled by the combination of either supplying `cacheOptions`
+on the associated `RequestInfo` or by supplying a `lifetimes` service to the `Store`.
+
+```ts
+class Store {
+  lifetimes: LifetimesService;
+}
+
+interface LifetimesService {
+  isExpired(url: string, method: HTTPMethod) {}
+}
+```
+
+**Legacy Compatibility**
+
+In order to support the legacy adapter-driven lifetime behaviors of `findRecord`
+and similar store methods, these methods will still consult the adapter prior to
+consulting the lifetimes service. Requests that originate through `store.request`
+will not consult the Adapter methods.
 
 ### Migrating Away From Legacy Finders
 
