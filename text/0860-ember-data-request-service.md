@@ -88,7 +88,7 @@ resolve until the response stream is fully read.
 interface Future<T> extends Promise<StructuredDocument<T>> {
   abort(): void;
 
-  async stream(): ReadableStream | null;
+  async getStream(): ReadableStream | null;
 }
 ```
 
@@ -231,6 +231,26 @@ export default class extends Store {
 }
 ```
 
+If using the package `ember-data`, the following configuration will automatically be done in order
+to preserve the legacy Adapter and Serializer behavior. Additional handlers or a service injection
+like the above would need to be done by the consuming application in order to make broader use of
+`RequestManager`.
+
+```ts
+import Store from '@ember-data/store';
+import RequestManager from '@ember-data/request';
+import LegacyHandler from '@ember-data/legacy-network-handler';
+
+export default class extends Store {
+  requestManager = new RequestManager();
+
+  constructor(args) {
+    super(args);
+    this.requestManager.use([LegacyHandler]);
+  }
+}
+```
+
 ### Using `store.request(<req>)`
 
 The `Store` will add support for using the `RequestManager` via `store.request(<req>)`.
@@ -284,18 +304,39 @@ and similar store methods, these methods will still consult the adapter prior to
 consulting the lifetimes service. Requests that originate through `store.request`
 will not consult the Adapter methods.
 
-### Migrating Away From Legacy Finders
-
 ### Legacy Adapter/Serializer Support
+
+In order to provide migration support for Adapter and Serializer, a `LegacyNetworkHandler` would be
+provided. This handler would take a request and convert it into the older form, calling the appropriate
+Adapter and Serializer methods. If no adapter exists for the type (including no application adapter), this
+handler would call `next`. In this manner an app can incrementally migrate request-handling to this
+new paradigm on a per-type basis as desired.
+
+The package `ember-data` would automatically configure this handler. If not using `ember-data`
+this configuration would need to be done explicitly.
+
+We intend to support this handler through at least the 5.x series, not deprecating it's usage
+before 6.0.
+
+Similarly, the methods `adapterFor` and `serializerFor` will not be deprecated until at least 6.0;
+however, it should no longer be assumed that an application has an adapter or serializer at all.
+
+### Migrating Away From Legacy Finders
 
 We would introduce new url-building and request building utility functions in a new package
 `@ember-data/request-utils`.
 
-We would introduce a new middleware in it's own package `@ember-data/legacy-network-middleware`
-to encapsulate legacy behaviors of adapters, and serializers.
+### Deprecating Legacy Finders
 
-We would introduce a new lifetimes behavior to the `Store` to replace the reload APIs on `Adapter`.
+We would not deprecate methods on the Store for requesting data until at least 5.x; however,
+ applications should begin migrating all requests to this new paradigm and expect that the
+ following methods will be deprecated at some point during the 5.x cycle
 
+  - `store.findRecord`
+  - `store.findAll`
+  - `store.query`
+  - `store.queryRecord`
+  - `store.saveRecord`
 ## How we teach this
 
 > What names and terminology work best for these concepts and why? How is this
@@ -322,8 +363,3 @@ on the impact of the API churn on existing apps, etc.
 > What other designs have been considered? What is the impact of not doing this?
 
 > This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
-
-## Unresolved questions
-
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
