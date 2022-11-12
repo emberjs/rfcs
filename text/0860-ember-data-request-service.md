@@ -230,8 +230,9 @@ returns has resolved. The associated promise returned by calling `future.getStre
 with the stream set by `setStream` if that method is called, or `null` if that method has not been
 called by the time that the handler's request method has resolved.
 
-Handlers that do not create a stream of their own, but which call `next`, may defensively
-pipe the stream forward; however, this is not required (see automatic currying below).
+Handlers that do not create a stream of their own, but which call `next`, should defensively
+pipe the stream forward. While this is not required (see automatic currying below) it is better
+to do so in most cases.
 
 ```ts
 context.setStream(future.getStream());
@@ -253,6 +254,12 @@ instance, this makes the following pattern work `return (await next(<req>)).data
 
 Similarly, if `next` is called only a single time and neither `setStream` nor `getStream` was
  called, we automatically curry the stream from the future returned by `next` onto the future returned by the handler.
+
+Finally, if the return value of a handler is a `Future`, we curry the entire thing. This makes the
+ following possible and ensures even `data` is curried when doing so: `return next(<req>)`.
+
+In the case of the `Future` being returned, `Stream` proxying is automatic and immediate and does
+not wait for the `Future` to resolve.
 
 **Using as a Service**
 
