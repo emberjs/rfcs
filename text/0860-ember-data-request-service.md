@@ -57,7 +57,7 @@ For example:
 
 ```ts
 import RequestManager, { Fetch } from '@ember-data/request';
-import Auth from 'ember-simple-auth/ember-data-middleware';
+import Auth from 'ember-simple-auth/ember-data-handler';
 import Config from './config';
 
 const { apiUrl } = Config;
@@ -270,7 +270,7 @@ applications by exporting the manager as an Ember service.
 *services/request.ts*
 ```ts
 import RequestManager, { Fetch } from '@ember-data/request';
-import Auth from 'ember-simple-auth/ember-data-middleware';
+import Auth from 'ember-simple-auth/ember-data-handler';
 
 export default class extends RequestManager {
   constructor(createArgs) {
