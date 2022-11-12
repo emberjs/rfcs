@@ -6,7 +6,7 @@ release-versions:
 teams:
   - data
 prs:
-  accepted: # update this to the PR that you propose your RFC in
+  accepted: https://github.com/emberjs/rfcs/pull/860
 project-link:
 ---
 
