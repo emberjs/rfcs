@@ -34,9 +34,16 @@ flows. Provides associated utilities to assist in migrating to this new abstract
 ## Motivation
 
 - `Serializer` lacks the context necessary to serialize/normalize data on a per-request basis
+  - This is especially true when performing "actions", RPC style requests, "partial" save
+    requests, and "transactional" saves
+  - Often users end up needing to pre-normalize in the adapter in order to supply information
+    contained in either `headers` or to convert into `JSON` from other forms (such as `jsonb`, `json5` `protocol buffers` or similar)
 - `Adapter` is inflexible and difficult to grow as an interface for managing data 
 fulfillment from a source.
 - Applications have need of a low-level primitive solution for managed fetch to ensure proper headers, authentication, error handling, SSR support, test-waiter support, and request de-duping/caching.
+- The `Adapter` pattern stands in the way of pagination-by-default and query caching
+- The `Adapter` pattern does not fit with many common data-fetching paradigms today
+- The `Adapter` pattern does not fit with transactional saves
 
 ## Detailed design
 
@@ -117,7 +124,7 @@ interface StructuredDocument<T> {
 
 Requests are fulfilled by handlers. A handler receives the request context
 as well as a `next` function with which to pass along a request to the next
-handler if they so choose.
+handler if it so chooses.
 
 If a handler calls `next`, it receives a `Future` which resolves to a `StructuredDocument`
 that it can then compose how it sees fit with its own response.
@@ -202,17 +209,17 @@ is intended to allow.
  may simply be ensuring the correct tokens or headers or cookies are attached.
 
 `await fetch(<req>)` behaves differently than some realize. The fetch promise resolves not
-once the entirety of the request has been received but rather at the moment headers are 
+once the entirety of the request has been received, but rather at the moment headers are 
 received. This allows for the body of the request to be processed as a stream by application
-code *while chunks are still being received by the browser*. When for an app chooses to
+code *while chunks are still being received by the browser*. When an app chooses to
 `await response.json()` what actually occurs is the browser reads the stream to completion
 and then returns the result. Additionally, this stream may only be read **once**.
 
 In designing the `RequestManager`, we do not want to eliminate this ability to subscribe to
-and utilize the stream. We believe it crucial that the full power and flexibility of native 
-APIs remains in developers hands, and do not want to create a restriction such that developers
-feel the need to create complicated workarounds for what would feel like an unnecessary 
-restriction to gain access to built-in APIs.
+and utilize the stream by either the application or the handler. We believe it crucial that
+the full power and flexibility of native APIs remains in developers hands, and do not want
+to create a restriction such that developers feel the need to create complicated workarounds
+for what would feel like an unnecessary restriction to gain access to built-in APIs.
 
 However, because there is potentially a chain of handlers involved, and because there are 
 potentially multiple streams involved, and because we require that `await manager.request(<req>)`
@@ -225,14 +232,15 @@ handlers synchronously call `setStream` either with a ReadableStream or a promis
 Each variation has had drawbacks, some were critical and some simply had poor ergonomics. What we
 have arrived at is this:
 
-Each handler may call `setStream` only once, but may do so *at any time* until the promise that it 
-returns has resolved. The associated promise returned by calling `future.getStream` will resolve
-with the stream set by `setStream` if that method is called, or `null` if that method has not been
-called by the time that the handler's request method has resolved.
+Each handler may call `setStream` only once, but may do so *at any time* until the promise that
+the handler returns has resolved. The associated promise returned by calling `future.getStream`
+will resolve with the stream set by `setStream` if that method is called, or `null` if that method
+has not been called by the time that the handler's request method has resolved.
 
 Handlers that do not create a stream of their own, but which call `next`, should defensively
 pipe the stream forward. While this is not required (see automatic currying below) it is better
-to do so in most cases.
+to do so in most cases as otherwise the stream may not become available to downstream handlers
+or the application until the upstream handler has fully read it.
 
 ```ts
 context.setStream(future.getStream());
@@ -249,7 +257,7 @@ a different stream in the process.
 
 In order to simplify what we believe will be a common case for handlers which are merely decorating
 a request, if `next` is called only a single time and `setResponse` was never called by the handler
-the response set by the next handler in the chain will applied to that handler's outcome. For 
+the response set by the next handler in the chain will be applied to that handler's outcome. For 
 instance, this makes the following pattern work `return (await next(<req>)).data;`.
 
 Similarly, if `next` is called only a single time and neither `setStream` nor `getStream` was
@@ -498,9 +506,9 @@ const url = buildUrl('post/1/comments/list', null, { limit: 10, offset: 0 });
 ### Deprecating Legacy Finders
 
 We would not immediately deprecate methods on the Store for requesting data until at
-least 5.0; however, applications should begin migrating all requests to this new
+least 6.0; however, applications should begin migrating all requests to this new
 paradigm and expect that the following methods will be deprecated at some point during
-the 5.x cycle
+the 6.x cycle
 
   - `store.findRecord`
   - `store.findAll`
@@ -508,20 +516,38 @@ the 5.x cycle
   - `store.queryRecord`
   - `store.saveRecord`
 
+Users that want to maintain these finder methods for longer would be able to add them back
+ within their own application or library if desired; however, because these methods cannot
+ easily utilize the full feature set of the cache, pagination, or request-manager we expect
+ that their utility will diminish quickly.
+
 ### Migrating Away from Serializers
 
-We do not intend to provide an alternative to Serializers in any form. Instead,
+We do not intend to provide a direct replacement of Serializers in any form. Instead,
 given the current power and flexibility of the Cache, we recommend aligning the
 Cache implementation with your API implementation.
 
 If data normalization is still needed, we recommend writing a few helper functions
-that a handler can use to quickly transform the data as necessary.
-
+that a handler can use to quickly transform the data as necessary. Due to having better
+context of the request, and due to the much smaller surface area to reason about, writing
+a function to transform data between formats should prove to be simple, quick and effective.
 We expect some addons may be created that offer helper functions for common transformations.
+
 Since Serializers will not be officially deprecated until some point after 6.0, we feel
 that this is more than ample time for applications and addons to explore this space and
 either become comfortable with the realization that such data transformation is largely
  unecessary and wasteful or can be done via much simpler and surgical mechanisms.
+
+Of course, users can always choose to continue using Serializers (and Adapters) forever.
+Their deprecation within EmberData will be scoped to (1) EmberData itself no longer being
+aware of the concept and (2) the `adapter` and `serializer` packages being deprecated.
+
+If desired, other libraries could take on support of these packages, and make use of
+public APIs to restore these behaviors, utilizing the same public APIs EmberData will
+use to support them until deprecated. We suspect, however, the insane improvement in ergonomics
+and feature-set that this shift brings will –over the course of the few years prior to full
+removal– prove to users that the Adapter and Serializer world is no longer the best paradigm
+for their applications.
 
 ## How we teach this
 
@@ -536,15 +562,18 @@ patterns or to be clear that they discuss a legacy pattern that is no longer rec
 
 ## Drawbacks
 
-Historically, Adapters have hidden away construction of requests from app-developers kept
- application code focused only on working with data that was magically fetched and processed
- in the background. When this worked, it worked very well, and many users have loved this
- magic deeply. However, this abstraction came at the great cost of making EmberData difficult
- to fit into many common scenarios, difficult to reason about and debug when data-fetching 
- failed, and difficult to extend when even very trivial changes to request construction were
- required. We do not feel the occassional magic of it all working outweights the drawbacks of
- keeping the system as is, and so we have chosen a slightly more verbose approach that grants
- developers flexibity, power, and ease-of-use.
+Historically, Adapters hid away construction of requests from app-developers which kept 
+application code focused only on working with data that was magically fetched and processed
+in the background.
+ 
+When this worked, it worked very well, and many users have loved this magic deeply. However,
+this abstraction came at the great cost of making EmberData difficult to fit into many common
+scenarios, difficult to reason about and debug when data-fetching failed, and difficult to
+extend when even very trivial changes to request construction were required.
+ 
+We do not feel the occassional magic of it all working outweighs the drawbacks of
+keeping the system as is, and so we have chosen a slightly more verbose approach that grants
+developers flexibity, power, and ease-of-use.
 
 ## Alternatives
 
@@ -552,4 +581,5 @@ We considered building this over the existing Adapter interface, deprecating Ser
 instead encouraging data-transformation to be done within the Adapter. In fact, this pattern
 is fully possible today, we could just better document it and do nothing more. However, this
 approach does not solve the need for more general request management, nor does it interact
-well with common development paradigms such as GraphQL query building.
+well with common development paradigms such as GraphQL query building, nor does it allow us
+to introduce pagination-by-default.
