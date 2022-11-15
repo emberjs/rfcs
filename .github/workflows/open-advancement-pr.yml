@@ -79,3 +79,14 @@ jobs:
           git commit -m "Update RFC ${{ inputs.rfc-number }} ${{ inputs.new-stage }} PR URL"
           git push origin advance-rfc-${{ inputs.rfc-number }}
           echo "## Opened PR ${{ steps.create-pr.outputs.pull-request-url }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Add PR to artifact
+        run: |
+          echo '{ "file": "${{ inputs.rfc-path }}", "number": "${{ inputs.rfc-number }}", "pr": "${{ steps.create-pr.outputs.pull-request-url }}", "advancementStage": "${{ inputs.new-stage }}" }' > advance-rfc-${{ inputs.rfc-number }}.json
+
+      - name: Upload artifact of open RFC PRs
+        uses: actions/upload-artifact@v3
+        with:
+          name: advancement-prs
+          path: advance-rfc-${{ inputs.rfc-number }}.json
+          if-no-files-found: error
