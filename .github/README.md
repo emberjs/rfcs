@@ -86,6 +86,15 @@ This workflow is used by the advance-rfc.yml workflow to open a pull request to
 advance to the next stage. It is also used by the trigger-opening-advancement-pr.yml
 workflow.
 
+This also generates an artifact named `advancement-prs` with files named `advance-rfc-XYX.json`.
+There should be at most one file per RFC. The file contains the latest PR to
+advance that RFC, along with other metadata.
+
+## generate-rfc-frontmatter-json.yml
+
+This workflow runs on pushes to the primary branch. It generates a JSON file with
+all RFC frontmatter and is uploaded to an artifact named `rfc-data`.
+
 ## Actions
 
 ### find-added-or-modified-rfcs
