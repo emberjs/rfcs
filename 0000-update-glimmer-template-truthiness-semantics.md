@@ -30,7 +30,7 @@ project-link: Leave as is
 
 ## Summary
 
-Update truthiness semantics from handlebar's version to javascript's version to allow for typescript to work as users would expect it to
+Provide a path for Glimmer templates to switch away from classic Handlebars truthiness to JavaScript’s truthiness. This will align our templating language with users' expectations and make teaching easier. It will also allow TypeScript features like type narrowing to work as users would expect it to with keywords like `{{and}}` or `{{or}}`.
 
 ## Motivation
 
