@@ -39,7 +39,7 @@ By aligning HTMLBars version of truthiness semantics with the wider javascript c
 
 To give an example of why this is an issue we can use the `{{and}}` operator. Right now we have a choice without changing the implementation of truthiness semantics in our templates.
 1) `{{and}}` compiles to `&&` which will allow TS to lie to us about what is safe and what isn't (and will cause compile time errors) but WILL allow for type guards and narrowing to work
-2) `{{and}}` compiles to `and()` which will allow truthy and falsy values to respect handlebars version of truthy and falsy, but wont allow for the types to be correct
+2) `{{and}}` compiles to `and()` which will allow truthy and falsy values to respect handlebars version of truthy and falsy, but wont allow for type guards and narrowing
 
 ## Detailed design
 
