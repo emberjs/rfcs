@@ -35,7 +35,7 @@ Provide a path for Glimmer templates to switch away from classic Handlebars trut
 ## Motivation
 
 Due to handlebars supporting a different truthiness semantics than javascript, typescript cant function like users would expect it to. 
-By aligning HTMLBars version of truthiness semantics with the wider javascript community, type checking will function as users expect. 
+By aligning Glimmer's version of truthiness semantics with the wider javascript community, type checking will function as users expect. 
 
 To give an example of why this is an issue we can use the `{{and}}` operator. Under the current Glimmer semantics, we can handle TypeScript in one of two ways:
 1) `{{and}}` compiles to `&&` which will allow TS to lie to us about what is safe and what isn't (and will cause compile time errors) but WILL allow for type guards and narrowing to work
