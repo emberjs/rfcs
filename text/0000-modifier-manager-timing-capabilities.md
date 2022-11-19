@@ -96,7 +96,7 @@ The existing `updateModifier` hook stay as is. There is no need for different ti
 
 Modifier managers are a low-level primitive. We don't expect application developers to use them directly. The API is meant to be used by libraries such as [ember-modifiers](https://github.com/ember-modifier/ember-modifier), which provides APIs with great developer experience for them. Modifier managers are not covered on the guides for that reason.
 
-`ModifierManager` should be covered in API documentation. But it is currently not. When missing API documentation is added, it must reflect the changes to the public API introduced by this RFC.
+`ModifierManager` should be covered in API documentation. But it is [currently not](https://github.com/emberjs/ember.js/issues/20273). When missing API documentation is added, it must reflect the changes to the public API introduced by this RFC.
 
 ## Drawbacks
 
