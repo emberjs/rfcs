@@ -33,7 +33,7 @@ Any criteria for "Recommended" for this proposal that were established in the Re
 An FCP is required to enter this stage. Multiple RFCs may be moved as a batch into "Recommended" with the same PR.
 </details>
 
-## Actions
+## Checklist to move to Recommended
 
 - [ ] Any criteria for "Recommended" for this proposal that were established in the Ready For Release stage have been met
 - [ ] If appropriate, the feature is integrated into the tutorial and the guides prose. API documentation is polished and updates are carried through to other areas of API docs that may not directly pertain to the feature.
@@ -41,6 +41,7 @@ An FCP is required to enter this stage. Multiple RFCs may be moved as a batch in
 - [ ] If the proposal updates or replaces an existing feature, high-quality codemods are available
 - [ ] If needed, Ember debugging tools as well as popular IDE support have been updated to support the feature.
 - [ ] If the feature is part of a suite of features that were designed to work together for best ergonomics, the other features are also ready to be "Recommended".
+- [ ] This PR has been converted from a draft to a regular PR and the `Final Comment Period` label has been added to start the FCP
 
 ## Criteria for moving to Recommended (required)
 
