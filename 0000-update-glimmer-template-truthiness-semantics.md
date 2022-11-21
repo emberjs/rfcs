@@ -50,7 +50,7 @@ By changing support of these helpers from handlebars truthiness semantics to jav
 Our definition of falsy would then become `type Falsy = false | 0 | '' | null | undefined;` as compared to handlebars version of `Falsy = false | 0 | '' | null | undefined | [];`
 
 ### {{and}}
-Takes at least two positional arguments. Raises an error if invoked with less than two arguments. It evaluates arguments left to right, returning the first one that is not truthy (by javascript's definition of truthiness) or the right-most arguments if all evaluate to truthy. This is equivalent to the {{and}} helper from ember-truth-helpers. Doing this would allow `{{and}}` to compile down to `&&` and give us the correct type safety and narrowing that users would expect.
+Takes at least two positional arguments. Raises an error if invoked with less than two arguments. It evaluates arguments left to right, returning the first one that is not truthy (by javascript's definition of truthiness) or the right-most argument if all evaluate to truthy. This is equivalent to the {{and}} helper from ember-truth-helpers. Doing this would allow `{{and}}` to compile down to `&&` and give us the correct type safety and narrowing that users would expect.
 
 ### {{or}}
 Takes at least two positional arguments. Raises an error if invoked with less than two arguments. It evaluates arguments left to right, returning the first one that is truthy (by javascript's definition of truthiness) or the right-most argument if all evaluate to falsy. This is equivalent to the {{or}} helper from ember-truth-helpers. Doing this would allow `{{or}}` to compile down to `||` and give us the correct type safety and narrowing that users would expect.
