@@ -95,7 +95,7 @@ Clearly draw attention to the differences between Handlebars truthiness and Java
 
 ## Drawbacks
 
-We further separate ourselves from Handlebars by not supporting `[]` as a falsy value. This makes the learning curve for `HTMLBars` (our version) just a little steeper when coming from Handlebars.
+We further separate ourselves from Handlebars by not supporting `[]` as a falsy value. This makes the learning curve for Glimmer just a little steeper when coming from Handlebars.
 
 ## Alternatives
 
