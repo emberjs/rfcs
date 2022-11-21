@@ -84,7 +84,7 @@ Binary operation. Throws an error if not called with exactly two arguments. Equi
 
 ### Migration Plan
 1. Ship comparison helpers `and`, `or`, `not` with existing equality and truthiness semantics (they currently match `if` and `unless` truthiness semantics)
-2. Ship types which match that and document why they work they way they do. Acknowledge that this wont work for TS users in they way they would expect and why.
+2. Ship types which match that and document why they work the way they do. Acknowledge that this wont work for TS users in the way they would expect and why.
 3. Ship ability to opt into new behavior for `and`, `or`, `not`, `if` and `unless` (Following JS truthiness semantics)
 4. Ship types that match this new behavior and document why you would have to opt into new behavior
 5. As soon as the opt-in ability is shipped and we have had an LTS release - deprecate the old semantics and plan to remove them in the next major version.
