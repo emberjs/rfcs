@@ -6,7 +6,6 @@ release-versions:
 teams: # delete teams that aren't relevant
   - framework
   - learning
-  - steering
   - typescript
 prs:
   accepted: # update this to the PR that you propose your RFC in
