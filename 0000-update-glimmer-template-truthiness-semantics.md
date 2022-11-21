@@ -1,7 +1,7 @@
 ---
 stage: accepted
 start-date: 11/16/2022
-release-date: 
+release-date:
 release-versions:
 teams: # delete teams that aren't relevant
   - framework
@@ -12,8 +12,8 @@ prs:
 project-link:
 ---
 
-<!--- 
-Directions for above: 
+<!---
+Directions for above:
 
 stage: Leave as is
 start-date: Fill in with today's date, 2032-12-01T00:00:00.000Z
@@ -33,8 +33,8 @@ Provide a path for Glimmer templates to switch away from classic Handlebars trut
 
 ## Motivation
 
-Due to Handlebars supporting a different truthiness semantics than JavaScript, TypeScript can't function like users would expect it to. 
-By aligning Glimmer's version of truthiness semantics with the wider javascript community, type checking will function as users expect. 
+Due to Handlebars supporting a different truthiness semantics than JavaScript, TypeScript can't function like users would expect it to.
+By aligning Glimmer's version of truthiness semantics with the wider javascript community, type checking will function as users expect.
 
 To give an example of why this is an issue we can use the `{{and}}` operator. Under the current Glimmer semantics, we can handle TypeScript in one of two ways:
 1) `{{and}}` compiles to `&&` which will allow TS to lie to us about what is safe and what isn't (and will cause compile time errors) but WILL allow for type guards and narrowing to work
@@ -91,7 +91,7 @@ Binary operation. Throws an error if not called with exactly two arguments. Equi
 
 ## How we teach this
 
-Clearly draw attention to the differences between handlebars truthiness and javascript's in the docs. Explain why we made such a choice and what benefits it gives the end user. 
+Clearly draw attention to the differences between handlebars truthiness and javascript's in the docs. Explain why we made such a choice and what benefits it gives the end user.
 
 ## Drawbacks
 
