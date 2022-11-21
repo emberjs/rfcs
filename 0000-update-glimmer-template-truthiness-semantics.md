@@ -56,7 +56,7 @@ Takes at least two positional arguments. Raises an error if invoked with less th
 Takes at least two positional arguments. Raises an error if invoked with less than two arguments. It evaluates arguments left to right, returning the first one that is truthy (by javascript's definition of truthiness) or the right-most argument if all evaluate to falsy. This is equivalent to the {{or}} helper from ember-truth-helpers. Doing this would allow `{{or}}` to compile down to `||` and give us the correct type safety and narrowing that users would expect.
 
 ### {{not}}
-Unary operator. Raises an error if invoked with more than one positional argument. If the given value evaluates to a truthy value (by javscript's definition of truthiness), the false is returned. If the given value evaluates to a falsy value (by javascript's definition of truthiness) then it returns true. This is equivalent to the {{not}} helper from ember-truth-helpers. Doing this would allow `{{not}}` to compile down to `!` and give us the correct type safety and narrowing that users would expect.
+Unary operator. Raises an error if invoked with more than one positional argument. If the given value evaluates to a truthy value (by javscript's definition of truthiness), then false is returned. If the given value evaluates to a falsy value (by javascript's definition of truthiness) then it returns true. This is equivalent to the {{not}} helper from ember-truth-helpers. Doing this would allow `{{not}}` to compile down to `!` and give us the correct type safety and narrowing that users would expect.
 
 ### {{if}}
 Same implementation as current `if`. The only difference is when doing the check for truthiness it would follow javascript's truthiness semantics.
