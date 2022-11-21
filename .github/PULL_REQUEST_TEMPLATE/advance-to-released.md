@@ -7,6 +7,8 @@ This pull request is advancing the RFC to the [Released Stage](https://github.co
 - PR to Accepted Stage: #__RFC_NUMBER__
 - [PR to Ready For Release Stage](__READY_FOR_RELEASE_PR__)
 
+Upon merging this PR, automation will open a draft PR for this RFC to move to the [Recommended Stage](https://github.com/emberjs/rfcs#recommended).
+
 <details>
 <summary>Released Stage Summary</summary>
 
@@ -19,8 +21,8 @@ Ember's RFC process can be used for process and work plans that are not about co
 An RFC is moved into "Released" when the above is verified by consensus of the relevant team(s) via a PR to update the stage.
 </details>
 
-## Actions
+## Checklist to move to Released
 
 - [ ] The work is published in stable versions of the relevant package(s)
-- [ ] Deviations from the original RFC are noted at the top of the RFC
+- [ ] Deviations from the original RFC are noted in the RFC
 - [ ] Release packages and dates are updated in the RFC frontmatter

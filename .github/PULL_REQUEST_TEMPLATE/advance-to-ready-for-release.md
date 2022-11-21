@@ -8,6 +8,7 @@ This pull request is advancing the RFC to the [Ready For Release Stage](https://
 
 **An FCP is required before merging this PR to advance.**
 
+Upon merging this PR, automation will open a draft PR for this RFC to move to the [Released Stage](https://github.com/emberjs/rfcs#released).
 
 <details>
   <summary>Ready for Release Stage Description</summary>
@@ -23,13 +24,14 @@ An FCP is required to move into this stage.
 Each Ember core team will be requested as a reviewer on the PR to move into this stage. A representative of each team adds a review. If a team does not respond to the request, and after the conclusion of the FCP, it is assumed that the release may proceed.
 </details>
 
-## Actions
+## Checklist to move to Ready for Release
 
-- [ ] Implementation is complete according to plan outlined in the RFC
+- [ ] Implementation is complete according to plan outlined in the RFC, with any adjustments noted in the RFC
 - [ ] Any necessary learning materials have been updated
 - [ ] The Ember team is ready to commit to the stability of any interfaces exposed by the current implementation of the feature 
-- [ ] Criteria for moving to Recommended Stage has been filled out
-- [ ] Each [team](https://github.com/emberjs/rfcs#relevant-teams) has been added as a reviewer to the PR and approved.
+- [ ] Criteria for moving to the Recommended Stage has been filled out
+- [ ] This PR has been converted from a draft to a regular PR and the `Final Comment Period` label has been added to start the FCP
+- [ ] Each [team](https://github.com/emberjs/rfcs#relevant-teams) has been added as a reviewer to the PR at the start of the FCP
   * [ ] Framework @emberjs/framework
   * [ ] Data @emberjs/ember-data-core
   * [ ] CLI @emberjs/cli
