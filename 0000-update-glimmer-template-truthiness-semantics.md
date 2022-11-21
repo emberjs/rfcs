@@ -34,7 +34,7 @@ Provide a path for Glimmer templates to switch away from classic Handlebars trut
 
 ## Motivation
 
-Due to handlebars supporting a different truthiness semantics than javascript, typescript cant function like users would expect it to. 
+Due to Handlebars supporting a different truthiness semantics than JavaScript, TypeScript can't function like users would expect it to. 
 By aligning Glimmer's version of truthiness semantics with the wider javascript community, type checking will function as users expect. 
 
 To give an example of why this is an issue we can use the `{{and}}` operator. Under the current Glimmer semantics, we can handle TypeScript in one of two ways:
