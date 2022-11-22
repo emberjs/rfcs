@@ -1,7 +1,7 @@
 ---
 stage: accepted
-start-date: 
-release-date: 
+start-date: # In format YYYY-MM-DDT00:00:00.000Z
+release-date: # In format YYYY-MM-DDT00:00:00.000Z
 release-versions:
 teams: # delete teams that aren't relevant
   - cli
@@ -11,8 +11,9 @@ teams: # delete teams that aren't relevant
   - steering
   - typescript
 prs:
-  accepted: # update this to the PR that you propose your RFC in
+  accepted: # Fill this in with the URL for the Proposal RFC PR
 project-link:
+suite: 
 ---
 
 <!--- 
@@ -26,6 +27,7 @@ teams: Include only the [team(s)](README.md#relevant-teams) for which this RFC a
 prs:
   accepted: Fill this in with the URL for the Proposal RFC PR
 project-link: Leave as is
+suite: Leave as is
 -->
 
 # <RFC title>
