@@ -17,7 +17,7 @@ project-link:
 
 ## Summary
 
-Remove `Ember.A()` as the functionality it provides is no longer needed in the post octane reactivity system and with the removal of array prototype extensions in #848.
+Remove `Ember.A()` as the functionality it provides is no longer needed in the post Octane reactivity system and with the removal of array prototype extensions in #848.
 
 ## Motivation
 
