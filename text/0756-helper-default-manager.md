@@ -1,15 +1,14 @@
 ---
-stage: released # FIXME: This may be recommended
+stage: recommended
 start-date: 2021-05-17T00:00:00.000Z
 release-date: 2022-05-13T00:00:00.000Z
 release-versions:
   ember-source: v4.5.0
-
 teams:
   - framework
   - learning
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/756
+  accepted: 'https://github.com/emberjs/rfcs/pull/756'
 project-link:
 ---
 
@@ -156,7 +155,7 @@ setHelperManager(() => DEFAULT_HELPER_MANAGER, Function.prototype);
  - when the "helper" is created, the function is not invoked
  - when `getValue` is invoked,
    - the function is invoked with the named arguments all grouped into the last arg
-   - if no named arguments are given, an empty object is used instead to allow less nullish checking in userland
+   - if no named arguments are given, an empty object is used instead to allow lessish checking in userland
  - to register this helper manager, it should occur during app boot so developers do not need to import anything to
    trigger the `setHelperManager` call
 
