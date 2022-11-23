@@ -521,6 +521,11 @@ champion at any time.
 - [ ] Prepare for advancing the RFC to the next stage if applicable (e.g.
   opening a placeholder PR)
 
+For RFCs opened before the implementation of
+[Staged RFCs](https://github.com/emberjs/rfcs/blob/master/text/0617-rfc-stages.md)
+did not get advancement PRs to their next stage. See the
+[automations docs](https://github.com/emberjs/rfcs/blob/master/.github/READTHIS.md#trigger-opening-advancement-pryml) for instructions on how to trigger the advancement workflow.
+
 #### Move to FCP to Close
 - [ ] Achieve consensus to move to "FCP to Close" from relevant core teams
 - [ ] Comment in the RFC to explain the decision
