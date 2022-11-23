@@ -14,7 +14,7 @@ The process is intended to provide a consistent and controlled path for new
 features and changes to enter the framework. RFCs can be created by any member
 of the community.
 
---- 
+---
 ## Quick links for Pull Requests for proposed and advancing RFCs
 [Quick links for Pull Requests for proposed and advancing RFCs]: #quick-links-for-pull-requests-for-proposed-and-advancing-rfcs
 
@@ -82,7 +82,7 @@ If that period is successful, with no new unaddressed concerns raised, the RFC
 is merged and is now in the [Accepted] stage.
 
 An RFC that does not achieve consensus to be accepted may enter a
-[Final Comment Period](#final-comment-periods-fcp) to move the RFC to the 
+[Final Comment Period](#final-comment-periods-fcp) to move the RFC to the
 [Closed] stage.
 
 ### Merged Proposals
@@ -276,30 +276,30 @@ Ember.
 Following the RFC repository is the best way to keep up with the proposed
 changes to Ember and with the implementation of accepted changes.
 
-Watching the repository will alert you to any newly created RFCs. Setting up 
-notifications on a particular pull request will help you follow the progress of 
+Watching the repository will alert you to any newly created RFCs. Setting up
+notifications on a particular pull request will help you follow the progress of
 that RFC.
 
 RFCs in [Final Comment Periods](#final-comment-periods-fcp) are labeled with
 [Final Comment Period](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc+label%3A%22Final+Comment+Period%22)
 and are announced on the [Ember twitter account](https://twitter.com/emberjs).
 
-[Quick links](#quick-links-for-pull-requests-for-proposed-and-advancing-rfcs) 
+[Quick links](#quick-links-for-pull-requests-for-proposed-and-advancing-rfcs)
 are provided at the top of the README to help you review what you are interested in.
 
 
 ## Commenting on an RFC
 [Commenting on an RFC]: #commenting-on-an-rfc
 
-Comments are the very heart of the RFC process. Comments are the primary way community 
-members and core team members can provide feedback and collaborate on the design 
-of a feature. 
+Comments are the very heart of the RFC process. Comments are the primary way community
+members and core team members can provide feedback and collaborate on the design
+of a feature.
 
-Comments should also be used to ensure the author has completed the RFC template 
-and addressed implications of the feature across the Ember project, including 
-documentation, addons, and tooling. 
+Comments should also be used to ensure the author has completed the RFC template
+and addressed implications of the feature across the Ember project, including
+documentation, addons, and tooling.
 
-Comments should be constructive and respectful, following our 
+Comments should be constructive and respectful, following our
 [Community Guidelines](http://emberjs.com/guidelines/).
 
 ## Creating an RFC
@@ -398,7 +398,7 @@ shepherding its progress. [Read more about the Champion's job](#champion-respons
 ## Implementing an RFC
 [Implementing an RFC]: #implementing-an-rfc
 
-Coordination and tracking of implementation of an RFC is done primarily on the 
+Coordination and tracking of implementation of an RFC is done primarily on the
 pull request to advance the RFC to the [Ready for Release] stage.
 
 The author of an RFC is not obligated to implement it. Of course, the
@@ -406,7 +406,7 @@ RFC author (like any other developer) is welcome to work on the implementation.
 
 If you are interested in working on the implementation for an [Accepted]
 RFC, but cannot determine if someone else is already working on it,
-please ask (e.g. by leaving a comment on the pull request to advance the RFC to 
+please ask (e.g. by leaving a comment on the pull request to advance the RFC to
 the [Ready for Release] stage).
 
 ### Editing merged RFCs
@@ -423,7 +423,7 @@ about this feature." This note is not intended to be updated across time.
 - Updating any part of the RFC prose, in order to keep a written record of the
 changes and rationale.
 
-Major changes should have a new RFC. The old RFC is moved to the [Discontinued] 
+Major changes should have a new RFC. The old RFC is moved to the [Discontinued]
 stage when the replacement is merged.
 
 ## Reference
