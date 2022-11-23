@@ -55,7 +55,7 @@ to handle, modify, or pass-along a request.
 
 ```ts
 interface RequestManager {
-  async request<T>(req: RequestInfo): Future<T>;
+  request<T>(req: RequestInfo): Future<T>;
 }
 ```
 
@@ -63,7 +63,8 @@ interface RequestManager {
 For example:
 
 ```ts
-import RequestManager, { Fetch } from '@ember-data/request';
+import { RequestManager } from '@ember-data/request';
+import { Fetch } from '@ember/data/request/fetch';
 import Auth from 'ember-simple-auth/ember-data-handler';
 import Config from './config';
 
@@ -99,26 +100,85 @@ interface Future<T> extends Promise<StructuredDocument<T>> {
 }
 ```
 
-The `StructuredDocument` interface is the same as is proposed in RFC 854 and copied below:
+The `StructuredDocument` interface is the same as is proposed in emberjs/rfcs#854 but is shown here in richer detail.
 
 ```ts
-interface StructuredDocument<T> {
-  request: {
-    url: string;
-    cache?: { key?: string, reload?: boolean, backgroundReload?: boolean };
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-    data?: Record<string, unknown>;
-    options?: Record<string, unknown>;
-    headers: Record<string, string>;
-  }
-  response: {
-    status: HTTPStatusCode;
-    headers: Record<string, string>;
-  }
-  data: T;
-  error?: Error;
+interface RequestInfo {
+  /**
+   * data that a handler should convert into
+   * the query (GET) or body (POST)
+   */
+  data?: Record<string, unknown>;
+  /**
+   * options specifically intended for handlers
+   * to utilize to process the request
+   */
+  options?: Record<string, unknown>;
+  /**
+   * Allows supplying a custom AbortController for
+   * the request, if none is supplied one is generated
+   * for the request. When calling `next` if none is
+   * provided the primary controller for the request
+   * is used.
+   * 
+   * controller will not be passed through onto the immutable
+   * request on the context supplied to handlers.
+   */
+  controller?: AbortController;
+  
+  // the below options perfectly mirror the
+  // native Request interface
+  cache?: RequestCache;
+  credentials?: RequestCredentials;
+  destination?: RequestDestination;
+  /**
+   * Once a request has been made it becomes immutable, this
+   * includes Headers. To modify headers you may copy existing
+   * headers using `new Headers([...headers.entries()])`.
+   * 
+   * Immutable headers instances have an additional method `clone`
+   * to allow this to be done swiftly.
+   */
+  headers?: Headers;
+  integrity?: string;
+  keepalive?: boolean;
+  method?: string;
+  mode?: RequestMode;
+  redirect?: RequestRedirect;
+  referrer?: string;
+  referrerPolicy?: ReferrerPolicy;
+  /**
+   * Typically you should not set this, though you may choose to curry
+   * a received signal if calling next. signal will automatically be set
+   * to the associated controller's signal if none is supplied.
+   */
+  signal?: AbortSignal;
+  url?: string;
 }
+interface ResponseInfo {
+  headers: Headers;
+  ok: boolean;
+  redirected: boolean;
+  status: number;
+  statusText: string;
+  type: string;
+  url: string;
+}
+
+interface StructuredDataDocument<T> {
+  request: RequestInfo;
+  response: ResponseInfo;
+  data: T;
+}
+interface StructuredErrorDocument extends Error {
+  request: RequestInfo;
+  response: ResponseInfo;
+  error: string | object;
+}
+type StructuredDocument<T> = StructuredDataDocument<T> | StructuredErrorDocument;
 ```
+
+A `Future` resolves with a StructuredDataDocument or rejects with a StructuredErrorDocument.
 
 **Request Handlers**
 
@@ -126,15 +186,14 @@ Requests are fulfilled by handlers. A handler receives the request context
 as well as a `next` function with which to pass along a request to the next
 handler if it so chooses.
 
-If a handler calls `next`, it receives a `Future` which resolves to a `StructuredDocument`
+If a handler calls `next`, it receives a `Future` which fuulfills to a `StructuredDocument`
 that it can then compose how it sees fit with its own response.
 
 ```ts
+type NextFn = <P>(req: RequestInfo) => Future<P>;
 
-type NextFn<P> = (req: RequestInfo) => Future<P>;
-
-interface Handler<T> {
-  async request(context: RequestContext, next: NextFn<P>): T;
+interface Handler {
+  request<T>(context: RequestContext, next: NextFn): T;
 }
 ```
 
@@ -146,17 +205,8 @@ interface Handler<T> {
 interface RequestContext<T> {
   readonly request: RequestInfo;
 
-  setStream(stream: ReadableStream | Promise<ReadableStream>): void;
-  setResponse(response: Response): void;
-}
-
-interface RequestInfo {
-  url: string;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-  data?: Record<string, unknown>;
-  options?: Record<string, unknown>;
-  headers: Record<string, string>;
-  signal: AbortSignal;
+  setStream(stream: ReadableStream | Promise<ReadableStream | null>): void;
+  setResponse(response: ResponseInfo | Response | null): void;
 }
 ```
 
@@ -264,10 +314,9 @@ Similarly, if `next` is called only a single time and neither `setStream` nor `g
  called, we automatically curry the stream from the future returned by `next` onto the future returned by the handler.
 
 Finally, if the return value of a handler is a `Future`, we curry the entire thing. This makes the
- following possible and ensures even `data` is curried when doing so: `return next(<req>)`.
+ following possible and ensures even `data` and `error` is curried when doing so: `return next(<req>)`.
 
-In the case of the `Future` being returned, `Stream` proxying is automatic and immediate and does
-not wait for the `Future` to resolve.
+In the case of the `Future` being returned from a handler not using `async/await`, `Stream` proxying is automatic and immediate and does not wait for the `Future` to resolve. If the handler uses `async/await` we have no ability to detect the Future until the handler has fully resolved. This means that if using `async/await` in your handler you should always pro-actively pipe the stream.
 
 **Using as a Service**
 
@@ -277,7 +326,8 @@ applications by exporting the manager as an Ember service.
 
 *services/request.ts*
 ```ts
-import RequestManager, { Fetch } from '@ember-data/request';
+import { RequestManager } from '@ember-data/request';
+import { Fetch } from '@ember/data/request/fetch';
 import Auth from 'ember-simple-auth/ember-data-handler';
 
 export default class extends RequestManager {
@@ -306,7 +356,8 @@ Alternatively to have a request service unique to the store:
 
 ```ts
 import Store from '@ember-data/store';
-import RequestManager, { Fetch } from '@ember-data/request';
+import { RequestManager } from '@ember-data/request';
+import { Fetch } from '@ember/data/request/fetch';
 
 export default class extends Store {
   requestManager = new RequestManager();
@@ -325,8 +376,8 @@ like the above would need to be done by the consuming application in order to ma
 
 ```ts
 import Store from '@ember-data/store';
-import RequestManager from '@ember-data/request';
-import LegacyHandler from '@ember-data/legacy-network-handler';
+import { RequestManager } from '@ember-data/request';
+import { LegacyHandler } from '@ember-data/legacy-network-handler';
 
 export default class extends Store {
   requestManager = new RequestManager();
@@ -344,7 +395,7 @@ The `Store` will add support for using the `RequestManager` via `store.request(<
 
 ```ts
 class Store {
-  async request<T>(req: RequestInfo): Future<Reified<T>>;
+  request<T>(req: RequestInfo): Future<Reified<T>>;
 }
 ```
 
@@ -387,6 +438,13 @@ interface StoreRequestInfo extends RequestInfo {
   records?: StableRecordIdentifier[];
 }
 ```
+
+**Background Reload Error Handling**
+
+When an error occurs during a background request we will update the cache with the StructuredErrorDocument but will swallowed the Error at that point.
+
+This prevents consuming applications from being required to catch the error unless
+they wish to via a handler.
 
 ### RequestStateService
 
@@ -548,6 +606,15 @@ use to support them until deprecated. We suspect, however, the insane improvemen
 and feature-set that this shift brings will –over the course of the few years prior to full
 removal– prove to users that the Adapter and Serializer world is no longer the best paradigm
 for their applications.
+
+### Typescript Support
+
+Although EmberData has not more broadly shipped support for Typescript, experimental types
+will be shipped specifically for the RequestManager package. We can do this because the lack
+of entanglement with the other packages affords us the ability to more safely ship this subset
+of types while the others are still incomplete.
+
+Types for other packages will eventually be provided but we will not rush them at this time.
 
 ## How we teach this
 
