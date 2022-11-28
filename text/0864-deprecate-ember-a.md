@@ -23,7 +23,7 @@ Remove `Ember.A()` as the functionality it provides is no longer needed in the p
 
 `Ember.A()` provides a way for addon authors or application owners who disable array prototype extensions to add reactivity to arrays (through `pushObject()`, `removeObject()`) and to access prototype extension convenience methods such as `filterBy()` on an any array-like object. Both of these paradigms have been deprecated in Ember and `Ember.A()` should follow suit as it can break things in unexpected ways and interferes with progress in [Ember](https://github.com/emberjs/ember.js/blob/4339725976299b24c69fb9dfbf13d18bf9917130/packages/@ember/-internals/utils/lib/ember-array.ts) and [Ember Data](https://github.com/emberjs/data/blob/47a71ca1538ba9e2d7dfa01bf048a2db897bdf5f/packages/store/addon/-private/record-arrays/identifier-array.ts#L381-L401) where special care must be taken to prevent or compensate for usage.
 
-Along with it's usefulness `Ember.A()` has a significant API gotcha in that it doesn't return a new instance of the array-like object it is passed, it modifies that object and returns is such that `A(array) === array` this can create the dreaded spooky-action-at-a-distance effect where suddenly an object which was `Array` can become an `Ember.NativeArray`. An example of this is using `{{includes "Zoey" this.mascots}}` from [ember-composable-helpers](https://github.com/DockYard/ember-composable-helpers#includes) will modify `this.mascots` and add `lastObject` to the API. Re-ordering the template code at a later date will result in a mysterious failure that can be extremely frustrating to understand.
+Along with its usefulness `Ember.A()` has a significant API gotcha in that it doesn't return a new instance of the array-like object it is passed, it modifies that object and returns it such that `A(array) === array`, this can create the dreaded spooky-action-at-a-distance effect where suddenly an object which was `Array` can become an `Ember.NativeArray`. An example of this is using `{{includes "Zoey" this.mascots}}` from [ember-composable-helpers](https://github.com/DockYard/ember-composable-helpers#includes), which will modify `this.mascots` and add `lastObject` to the API. Re-ordering the template code at a later date will result in a mysterious failure that can be extremely frustrating to understand.
 
 ```js
 export default class WeirdArray extends Component {
@@ -54,7 +54,7 @@ As discussed in #848 better alternatives exist for the APIs provided by `Ember.A
 
 > For convenient methods like `filterBy`, `compact`, `sortBy` etc., the replacement functionalities already exist either through native array methods or utility libraries like [lodash](https://lodash.com), [Ramda](https://ramdajs.com), etc.
 
->For mutation methods (like `pushObject`, `removeObject`) or observable properties (like `firstObject`, `lastObject`) participating in the Ember classic reactivity system, the replacement functionalities also already exist in the form of immutable update style with tracked properties like `@tracked someArray = []`, or through utilizing `TrackedArray` from `tracked-built-ins`.
+> For mutation methods (like `pushObject`, `removeObject`) or observable properties (like `firstObject`, `lastObject`) participating in the Ember classic reactivity system, the replacement functionalities also already exist in the form of immutable update style with tracked properties like `@tracked someArray = []`, or through utilizing `TrackedArray` from [tracked-built-ins](https://github.com/tracked-tools/tracked-built-ins).
 
 ### Clearly Define Idiomatic Path
 
@@ -83,7 +83,7 @@ For reactivity addon authors will need to rely forcing tracking as `this.mascots
 
 ## Drawbacks
 
-`Ember.A()` has been a huge part of building Ember Addons for a long time and it is present in many popular addons. Removing this feature will cause a significant amount of churn in otherwise stable addons and require a significant community effort to replace.
+`Ember.A()` has been a huge part of building Ember addons for a long time and it is present in many popular addons. Removing this feature will cause a significant amount of churn in otherwise stable addons and require a significant community effort to replace.
 
 ## Alternatives
 
