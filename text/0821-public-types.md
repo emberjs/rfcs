@@ -1,5 +1,5 @@
 ---
-stage: accepted
+stage: ready-for-release
 start-date: 2022-05-23T00:00:00.000Z
 release-date:
 release-versions:
@@ -8,7 +8,7 @@ teams:
   - typescript
   - learning
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/821
+  accepted: 'https://github.com/emberjs/rfcs/pull/821'
 project-link:
 ---
 
@@ -283,7 +283,7 @@ class _Transition<T = unknown>
   implements Pick<Promise<T>, 'then' | 'catch' | 'finally'> {
 
   data: Record<string, unknown>;
-  readonly from: RouteInfoWithAttributes<T> | null;
+  readonly from: RouteInfoWithAttributes<T> |;
   readonly promise: Promise<T>;
   readonly to: RouteInfo | RouteInfoWithAttributes<T>;
   abort(): Transition<T>;
@@ -332,12 +332,12 @@ function takesTransition(theTransition) {
 
 ```ts
 export default interface RouteInfo {
-  readonly child: RouteInfo | null;
+  readonly child: RouteInfo |;
   readonly localName: string;
   readonly name: string;
   readonly paramNames: string[];
   readonly params: Record<string, string | undefined>;
-  readonly parent: RouteInfo | null;
+  readonly parent: RouteInfo |;
   readonly queryParams: Record<string, string | undefined>;
   readonly metadata: unknown;
   find(
