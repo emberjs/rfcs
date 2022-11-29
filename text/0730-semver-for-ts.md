@@ -10,6 +10,7 @@ teams:
   - cli
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/730'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/875'
 project-link:
 ---
 
