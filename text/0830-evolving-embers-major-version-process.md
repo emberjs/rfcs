@@ -9,6 +9,7 @@ teams:
   - learning
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/830'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/878'
 ---
 
 # Evolving Ember's Major Version Process
