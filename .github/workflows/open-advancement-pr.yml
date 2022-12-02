@@ -1,0 +1,92 @@
+name: Reusable workflow to open advancement PRs
+
+on:
+  workflow_call:
+    inputs:
+      new-stage:
+        required: true
+        type: string
+      rfc-path:
+        required: true
+        type: string
+      rfc-number:
+        required: true
+        type: string
+    secrets:
+      personal-access-token:
+        required: true
+
+jobs:
+  advance-rfc:
+    name: Open PR to advance RFC to the next stage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup RFCs tooling
+        uses: ./.github/actions/setup-rfcs-tooling
+
+      - name: Update frontmatter
+        run: |
+          node rfcs-tooling/update-rfc-stage.js ${{ inputs.new-stage }} ${{ inputs.rfc-path }}
+
+      - name: Set variables for use in PR
+        id: pr-variables
+        run: |
+          frontmatter=`node rfcs-tooling/rfc-frontmatter.js ${{ inputs.rfc-path }}`
+          ready_for_release_pr=`echo $frontmatter | jq '.prs."ready-for-release"'`
+          ready_for_release_pr=${ready_for_release_pr//\"/}
+          released_pr=`echo $frontmatter | jq '.prs.released'`
+          released_pr=${released_pr//\"/}
+          if [[ ${{ inputs.new-stage }} == "ready-for-release" ]]; then
+            pretty_stage="Ready for Release"
+            template=`sed -e 's/__RFC_NUMBER__/${{ inputs.rfc-number }}/g' .github/PULL_REQUEST_TEMPLATE/advance-to-ready-for-release.md`  
+          elif [[ ${{ inputs.new-stage }} == "released" ]]; then
+            pretty_stage="Released"
+            template=`sed -e 's/__RFC_NUMBER__/${{ inputs.rfc-number }}/g' -e "s>__READY_FOR_RELEASE_PR__>$ready_for_release_pr>g" .github/PULL_REQUEST_TEMPLATE/advance-to-released.md`
+          elif [[ ${{ inputs.new-stage }} == "recommended" ]]; then
+            pretty_stage="Recommended"
+            template=`sed -e 's/__RFC_NUMBER__/${{ inputs.rfc-number }}/g' -e "s>__READY_FOR_RELEASE_PR__>$ready_for_release_pr>g" -e "s>__RELEASED_PR__>$released_pr>g" .github/PULL_REQUEST_TEMPLATE/advance-to-recommended.md`
+          fi
+          echo 'body<<EOF' >> $GITHUB_OUTPUT
+          echo "$template" >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT     
+          echo "Pretty Stage: $pretty_stage"
+          echo "pretty-stage=$pretty_stage" >> $GITHUB_OUTPUT
+
+      - name: Open PR
+        id: create-pr
+        uses: peter-evans/create-pull-request@v4.2.0
+        with:
+          token: ${{ secrets.personal-access-token }}
+          commit-message: "Advance RFC to Stage ${{ inputs.new-stage }}"
+          add-paths: 'text'
+          branch: "advance-rfc-${{ inputs.rfc-number }}"
+          title: "Advance RFC #${{ inputs.rfc-number}} to Stage ${{ steps.pr-variables.outputs.pretty-stage }}"
+          body: "${{ steps.pr-variables.outputs.body }}"
+          labels: "RFC Advancement,S-${{ steps.pr-variables.outputs.pretty-stage}}"
+          draft: true
+
+      - name: Add new PR link to RFC frontmatter
+        run: |
+          node rfcs-tooling/update-advancement-pr.js ${{ inputs.rfc-path }} ${{ inputs.new-stage}} ${{ steps.create-pr.outputs.pull-request-url }}
+
+      - name: Update PR
+        run: |
+          git config --local user.email 'ember-rfcs@example.com'
+          git config --local user.name 'Ember.js RFCS CI'
+          git add ${{ inputs.rfc-path }}
+          git commit -m "Update RFC ${{ inputs.rfc-number }} ${{ inputs.new-stage }} PR URL"
+          git push origin advance-rfc-${{ inputs.rfc-number }}
+          echo "## Opened PR ${{ steps.create-pr.outputs.pull-request-url }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Add PR to artifact
+        run: |
+          echo '{ "file": "${{ inputs.rfc-path }}", "number": "${{ inputs.rfc-number }}", "pr": "${{ steps.create-pr.outputs.pull-request-url }}", "advancementStage": "${{ inputs.new-stage }}" }' > advance-rfc-${{ inputs.rfc-number }}.json
+
+      - name: Upload artifact of open RFC PRs
+        uses: actions/upload-artifact@v3
+        with:
+          name: advancement-prs
+          path: advance-rfc-${{ inputs.rfc-number }}.json
+          if-no-files-found: error

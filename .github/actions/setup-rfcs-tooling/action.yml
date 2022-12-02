@@ -1,0 +1,20 @@
+name: Setup RFCs Tooling
+description: 'Setup RFCs Tooling'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout tools repo
+      uses: actions/checkout@v3
+      with:
+        repository: emberjs/rfcs-tooling
+        path: rfcs-tooling
+        ref: 'v2.1.1'
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+
+    - run: yarn install
+      shell: bash
+      working-directory: rfcs-tooling

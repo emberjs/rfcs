@@ -1,0 +1,26 @@
+name: Label newly opened RFC PRs
+
+on:
+  pull_request_target: # This workflow has permissions on the repo, do NOT run code from PRs in this workflow. See https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+    types: [opened]
+    paths:
+      - 'text/*.md'
+
+jobs:
+  label-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: RFCs Added or Changed
+        id: rfcs
+        uses: ./.github/actions/find-added-or-modified-rfcs
+
+      - uses: actions-ecosystem/action-add-labels@v1
+        if: steps.rfcs.outputs.added-rfcs-count > 0
+        with:
+          labels: S-Proposed
