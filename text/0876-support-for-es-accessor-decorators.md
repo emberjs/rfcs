@@ -122,7 +122,7 @@ export default class Example extends Component {
 }
 ```
 
-The spec changed both the syntax and the semantics of these kinds of decorators. The semantics are easy enough for us to change but **do** require a new implementation (discussed below). The syntax is also a straightforward change, simply requiring the additoin of the new `accessor` keyword:
+The spec changed both the syntax and the semantics of these kinds of decorators. The semantics are easy enough for us to change but **do** require a new implementation (discussed below). The syntax is also a straightforward change, simply requiring the addition of the new `accessor` keyword:
 
 ```js
 export default class Example extends Component {
@@ -262,7 +262,7 @@ In all these cases, users should update to using Octane idioms instead *first*, 
 
 ### Migration path
 
-💡 **Big bicture:** Legacy decorators support continues to exist in both Babel and TypeScript. However, decorator compilation is a *package-level* concern, which means it cannot be done at any level more granular than that.
+💡 **Big picture:** Legacy decorators support continues to exist in both Babel and TypeScript. However, decorator compilation is a *package-level* concern, which means it cannot be done at any level more granular than that.
 
 The overall migration path will work like this:
 
