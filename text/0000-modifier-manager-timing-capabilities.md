@@ -28,11 +28,11 @@ project-link: Leave as is
 
 ## Summary
 
-Element modifiers enable developers to customize a HTML element. Currently modifiers are always installed _after_ the browser painted the screen. This could lead to a flash of unstyled content and negatively impact performance due to double paint. This RFC proposes adding a second timing option allowing modifiers to run _before_ the browser painted the screen.
+Element modifiers enable developers to customize a HTML element. Currently modifiers are always installed _after_ the browser painted the element. This could lead to a flash of unstyled content and negatively impact performance due to double paint. This RFC proposes adding a second timing option allowing modifiers to run _before_ the browser painted the element.
 
 ## Motivation
 
-Delaying modifier install hook execution until browser painted the screen, prevents modifiers from blocking rendering. Adding work into critical rendering path of the browser needs to be done carefully. If the browser is not able to execute all work within one rendering frame, the browser starts dropping frame, which could cause stuttering animations and slow feedback to user interactions. Delaying modifier Installation is an important performance optimization for most modifiers. But it may cause issues for modifiers, which either affect the layout of an element or add interactivity to it.
+Delaying modifier install hook execution until browser painted the element, prevents modifiers from blocking rendering. Adding work into critical rendering path needs to be done carefully. If the browser is not able to execute all work within one rendering frame, the browser starts dropping frames, which could cause stuttering animations and slow feedback to user interactions. Delaying modifier Installation is an important performance optimization for most modifiers. But it may cause issues for modifiers, which either affect the layout of an element or add interactivity to it.
 
 A modifier may be used to style an element. Painting the element _before_ the modifier is installed causes a flash of unstyled content. If this could be noticed by the user depends on many factors - including the performance of the device and other work executed in the same rendering frame.
 
