@@ -28,15 +28,15 @@ project-link: Leave as is
 
 ## Summary
 
-Element modifiers enable developers to customize a HTML element. Sometimes it is important _when_ a customization is applied to an element for performance reasons.
-
-Element modifiers only support one timing so far. They always run _after_ the browser has finished pending work, including rendering the element on the screen. This RFC proposes adding a second timing option allowing modifiers to execute work _before_ browser rendered the element.
+Element modifiers enable developers to customize a HTML element. Currently modifiers are always installed _after_ the browser painted the screen. This could lead to a flash of unstyled content and negatively impact performance due to double paint. This RFC proposes adding a second timing option allowing modifiers to run _before_ the browser painted the screen.
 
 ## Motivation
 
-Delaying modifier install hook execution until browser finished the work, prevents modifiers from blocking rendering, which may cause stuttering animations and slow feedback to user interactions otherwise. This is an important performance optimization for modifiers, which do _not_ affect the layout of an element.
+Delaying modifier install hook execution until browser painted the screen, prevents modifiers from blocking rendering. Adding work into critical rendering path of the browser needs to be done carefully. If the browser is not able to execute all work within one rendering frame, the browser starts dropping frame, which could cause stuttering animations and slow feedback to user interactions. Delaying modifier Installation is an important performance optimization for most modifiers. But it may cause issues for modifiers, which either affect the layout of an element or add interactivity to it.
 
-But it may cause performance issues for modifiers, which affect the layout of an element. As the browser rendered the element _before_ the modifier is installed, modifying layout of an element in a modifier causes the element to be rendered twice.
+A modifier may be used to style an element. Painting the element _before_ the modifier is installed causes a flash of unstyled content. If this could be noticed by the user depends on many factors - including the performance of the device and other work executed in the same rendering frame.
+
+Additionally, it causes a double paint issue. The browser needs to paint the same element twice: Once before and once after the modifier is installed. This contradicts the performance considerations, which leads to the timing decision on the first place.
 
 Modifiers, which affect the layout of an element, are common. Example use cases, which have been published as open source, includes:
 
@@ -44,7 +44,7 @@ Modifiers, which affect the layout of an element, are common. Example use cases,
 - The [ember-autoresize-modifier](https://emberobserver.com/addons/ember-autoresize-modifier), which resizes a textarea to fit its content.
 - ...
 
-They all suffer from an unnecessary double paint, which negatively impacts application performance. The browser paints the element the first time _before_ installing the modifier. If the modifier changes element layout, e.g. by setting CSS styles, the browser needs to paint the element a second time _after_ the modifier has been installed.
+Installing a modifier after browser painted the element also causes issues for modifiers, which adds interactivity to an element. The `{{on}}` modifier provided by Ember itself is an example of such a modifier. It registers event listeners on an element. If an user interact with an element _before_ the event listeners are registered may lead to a broken user experience.
 
 This RFC aims to overcome this limitation by allowing modifiers to request execution _before_ browser painted the element. This timing will be called _on layout_ going forward. The existing timing will be called _on idle_.
 
