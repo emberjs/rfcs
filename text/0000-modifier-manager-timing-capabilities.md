@@ -65,7 +65,7 @@ The `installModifierOnLayout` has the following timing:
 
 **Always**
 
-- called after all children modifier managers `installModifer` hook are called
+- called after all children modifier managers `installModifer` hooks are called
 - called after DOM insertion
 - called in the same tick as DOM insertion 
 
@@ -79,7 +79,7 @@ The `installModifierOnIdle` has the following timing:
 
 **Always**
 
-- called after all childrens modifier managers `installModifierOnLayout` hook are called
+- called after all childrens modifier managers `installModifierOnLayout` hooks are called
 
 **May or May Not**
 
@@ -90,13 +90,15 @@ This is de facto the same timing as the existing `installModifier` hook has. Exi
 
 ### `updateModifier`
 
-The existing `updateModifier` hook stay as is. There is no need for different timing for updates. The element is already rendered. A double paint issue cannot occur.
+The existing `updateModifier` hook stays as is. There is no need for different timing for updates. The element is already rendered. A flash of unstyled content or a double paint issue cannot occur.
 
 ## How we teach this
 
-Modifier managers are a low-level primitive. We don't expect application developers to use them directly. The API is meant to be used by libraries such as [ember-modifiers](https://github.com/ember-modifier/ember-modifier), which provides APIs with great developer experience for them. Modifier managers are not covered on the guides for that reason.
+Modifier managers are a low-level primitive. We don't expect application developers to use them directly. The API is meant to be used by libraries such as [ember-modifier](https://github.com/ember-modifier/ember-modifier), which provides high-level APIs focused on developer experience. Modifier managers are not covered on the guides for that reason.
 
 `ModifierManager` should be covered in API documentation. But it is [currently not](https://github.com/emberjs/ember.js/issues/20273). When missing API documentation is added, it must reflect the changes to the public API introduced by this RFC.
+
+The API guides should provide guidance to the developer which timing to choose based on the use case.
 
 ## Drawbacks
 
@@ -104,14 +106,14 @@ Modifier managers are a low-level primitive. We don't expect application develop
 
 The need of two additional timing capabilities were raised in [preparation of this RFC](https://github.com/emberjs/rfcs/issues/652#issuecomment-1195772115):
 
-1. Running modifiers _before_ the element is insert into the DOM. Reliable setting properties on custom elements ("web components") was raised as an use case for such a timing.  Custom elements have [`connectedCallback` lifecycle hook](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements#using_the_lifecycle_callbacks), which is executed when the element is insert into the DOM. A custom element developed by a third-party may rely on a property being set when that lifecycle hook is executed.
+1. Running modifiers _before_ the element is insert into the DOM. Reliable setting properties on custom elements ("web components") was raised as an use case for such a timing. Custom elements have a [`connectedCallback` lifecycle hook](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements#using_the_lifecycle_callbacks) hook, which is executed when the element is insert into the DOM. A custom element developed by a third-party may rely on a property being set when that lifecycle hook is executed.
 2. Running modifiers in order of template invocation. Grabbing a reference to an element to be used with [`{{in-element}}`](https://api.emberjs.com/ember/release/classes/Ember.Templates.helpers/methods/each?anchor=in-element) helper or another modifier was raised as the main use case.
 
-These RFC does not propose adding those timings. In opposite to the _on layout_ timing, running modifiers _before_ the element is insert into the DOM or even in order of template may introduce performance issues. Additionally it is not clear yet if server-side rendering should be supported for those and how such a support could look like. We may want to address these use cases with different concepts. Addressing those use cases is left for follow-up RFCs.
+This RFC does not propose adding those timings. In opposite to the _on layout_ timing, running modifiers _before_ the element is insert into the DOM or even in order of template may introduce performance issues. Additionally it is not clear yet if server-side rendering should be supported for those and how such a support could look like. We may want to address these use cases with different concepts. Exploring solutions for those use cases is left for follow-up RFCs.
 
 ### Others
 
-Adding two new hooks and removing one requires application and addons to migrate code. This is limited as applications typically do not implement modifier managers themselves. Instead most addons and application implement modifiers using high-level APIs provided by [ember-modifier](https://github.com/ember-modifier/ember-modifier). This encapsulates most of the upgrade costs at one single library.
+Adding two new hooks and removing one requires applications and addons to migrate code. This is limited as applications typically do not implement modifier managers themselves. Instead most addons and application implement modifiers using high-level APIs provided by [ember-modifier](https://github.com/ember-modifier/ember-modifier). This encapsulates most of the upgrade costs at one single library.
 
 Most of the existing modifiers are implemented using `ember-modifier`. Modifiers would either need to be refactored to implement modifier manager directly or would need to wait until `ember-modifier` supports them.
 
@@ -119,8 +121,8 @@ Introducing two different timing for modifiers, on layout and on idle, requires 
 
 ## Alternatives
 
-1. We could continue accepting the unnecessary double paint and it's potential negative impact on performance.
-2. We could change the timing of the existing `installModifier` hook to run on layout always. Doing so would resolve the double paint issue. But we would accept that some modifiers are executed in critical rendering path even if not needed.
+1. We could continue accepting the (potential) flash of unstyled content, the double paint and it's potential negative impact on performance.
+2. We could change the timing of the existing `installModifier` hook to always run on layout. Doing so would resolve the flash of unstyled content and the double paint issue. But we would accept that some modifiers are executed in critical rendering path even if not needed, which could lead to other performance issues.
 
 ## Unresolved questions
 
