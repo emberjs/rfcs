@@ -1,12 +1,15 @@
 ---
-Stage: 
-Start Date: 
-Release Date: Unreleased
-Release Versions:
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
-Relevant Team(s): Learning team, CLI
-RFC PR: https://github.com/emberjs/rfcs/pull/831
+stage: accepted
+start-date:
+release-date: Unreleased
+release-versions:
+teams: # delete teams that aren't relevant
+  - cli
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/831
+project-link: https://github.com/ember-learn/cli-guides/issues/272
+suite: 
 ---
 
 <!--- 
