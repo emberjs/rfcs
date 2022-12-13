@@ -1,0 +1,142 @@
+name: Newly Added RFC
+
+# Runs various checks on pull requests that add new RFCs
+
+on:
+  pull_request:
+    types: [opened, labeled, unlabeled, synchronize, reopened, ready_for_review]
+    paths:
+      - 'text/*.md'
+
+concurrency:
+  # Events within 5 minutes are not guaranteed to run in order, and so when removing S-Proposed and adding S-Exploring
+  # we can't guarantee that the run of the workflow will be the one where S-Exploring is added. Adding `github.event_name`
+  # to the concurrency allows both workflows to complete and the PR to eventually have successful checks.
+  group: newly-added-rfc-${{ github.head_ref || github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  check-rfcs:
+    name: Does PR add RFCs?
+    runs-on: ubuntu-latest
+    outputs:
+      rfcs-added: ${{ steps.rfcs.outputs.added-rfcs-count > 0 }}
+      rfcs-changed: ${{ steps.rfcs.outputs.modified-rfcs-count }}
+      modified-rfc: ${{ steps.rfcs.outputs.modified-rfc }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: RFCs Added or Changed
+        id: rfcs
+        uses: ./.github/actions/find-added-or-modified-rfcs
+
+      - name: Debug output
+        run: |
+          echo "RFC Added count: ${{ steps.rfcs.outputs.added-rfcs-count }}"
+          echo "RFC Changed count: ${{ steps.rfcs.outputs.modified-rfcs-count }}"
+          echo "RFC: ${{ steps.rfcs.outputs.modified-rfc }}"
+          if [[ ${{ steps.rfcs.outputs.added-rfcs-count }} == 1 ]]; then 
+            echo "## RFC Added in this PR!!!" >> $GITHUB_STEP_SUMMARY
+          elif [[ ${{steps.rfcs.outputs.added-rfcs-count}} == 0 ]]; then
+            echo "## No RFCs added in this PR" >> $GITHUB_STEP_SUMMARY        
+          fi
+
+  check-in-exploring:
+    name: Stage must be 'Exploring' (via label) for new RFC before merging
+    if: needs.check-rfcs.outputs.rfcs-added == 'true'
+    runs-on: ubuntu-latest
+    needs: [check-rfcs]
+    steps:
+      - name: Ensure the RFC is in the Exploring Stage before merge is allowed
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'S-Exploring') }}
+        run: |
+          echo "::error::Newly added RFCs must advance to the Exploring Stage (via label) before merging to Accepted is allowed"
+          exit 1
+
+  verify-only-in-one-stage:
+    name: RFC must be in only one stage before merging (labels)
+    runs-on: ubuntu-latest
+    needs: [check-rfcs]
+    if: needs.check-rfcs.outputs.rfcs-added == 'true'
+    steps:
+      - name: Ensure the RFC only has one stage
+        if: contains(github.event.pull_request.labels.*.name, 'S-Exploring') && contains(github.event.pull_request.labels.*.name, 'S-Proposed')
+        run: |
+          echo "::error::Newly added RFC must only have one stage label"
+          exit 1
+
+  only-one-rfc-added:
+    name: Only one RFC can be added in a PR
+    runs-on: ubuntu-latest
+    needs: [ check-rfcs ]
+    if: needs.check-rfcs.outputs.rfcs-added == 'true'
+    steps:
+      - name: Fail if more than 1 RFC is added or modified
+        if: ${{ needs.check-rfcs.outputs.rfcs-changed > 1}}
+        run: |
+          echo "::error::More than 1 RFC is added in this PR; will be unable to automatically open PRs for advancement"
+          exit 1
+
+  frontmatter-stage-is-accepted:
+    name: Frontmatter stage must be 'accepted' before merging
+    runs-on: ubuntu-latest
+    needs: [ check-rfcs ]
+    if: needs.check-rfcs.outputs.rfcs-added == 'true'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup RFCs tooling
+        uses: ./.github/actions/setup-rfcs-tooling
+
+      - name: Verify stage of newly added RFC is `accepted` in frontmatter
+        run: |
+          frontmatter=`node rfcs-tooling/rfc-frontmatter.js ${{ needs.check-rfcs.outputs.modified-rfc }}`
+          stage=`echo $frontmatter | jq '.stage'`
+          if [[ $stage != '"accepted"' ]]; then
+              echo "::error::Newly added RFCs must have the stage 'accepted' in the frontmatter"
+              exit 1
+          fi
+
+  check-filename:
+    name: Filename matches RFC number
+    runs-on: ubuntu-latest
+    needs: [ check-rfcs ]
+    if: needs.check-rfcs.outputs.rfcs-added == 'true'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup RFCs tooling
+        uses: ./.github/actions/setup-rfcs-tooling
+
+      - name: Test RFC Filename matches PR Number that adds it
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: node check-filename-matches-pr.js $PR_NUMBER ${{ needs.check-rfcs.outputs.modified-rfc }}
+        working-directory: rfcs-tooling
+
+  check-accepted-pr-url:
+    name: Verify Accepted PR URL is correct
+    runs-on: ubuntu-latest
+    needs: [ check-rfcs ]
+    if: needs.check-rfcs.outputs.rfcs-added == 'true'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup RFCs tooling
+        uses: ./.github/actions/setup-rfcs-tooling
+
+      - name: Verify Accepted PR URL is correct
+        run: |
+          frontmatter=`node rfcs-tooling/rfc-frontmatter.js ${{ needs.check-rfcs.outputs.modified-rfc }}`
+          accepted_pr=`echo $frontmatter | jq '.prs.accepted'`
+          accepted_pr=${accepted_pr//\"/}
+          expected_pr="${{ github.event.pull_request.html_url }}"
+          expected_pr=${expected_pr//\"/}
+          if [[ $accepted_pr != $expected_pr ]]; then
+            echo "Accepted PR in frontmatter: $accepted_pr"
+            echo "Expected PR in frontmatter: $expected_pr"
+            echo "::error::Accepted PR URL is incorrect, please update the frontmatter prs.accepted to \"${{ github.event.pull_request.html_url }}\""
+            exit 1
+          fi

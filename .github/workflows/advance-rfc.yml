@@ -1,0 +1,85 @@
+name: Open PR to advance an RFC to the next stage
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'text/*.md'
+
+jobs:
+  check-rfcs:
+    name: 'Did push advance the stage of an RFC?'
+    runs-on: ubuntu-latest
+    outputs:
+      new-stage: ${{ steps.new-stage.outputs.value }}
+      rfc-number: ${{ steps.modified-rfc.outputs.rfc-number }}
+      modified-rfc: ${{ steps.rfcs.outputs.modified-rfc }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup RFCs tooling
+        uses: ./.github/actions/setup-rfcs-tooling
+
+      - name: RFCs Added or Changed
+        id: rfcs
+        uses: ./.github/actions/find-added-or-modified-rfcs
+        with:
+          base-sha: ${{ github.event.before }}
+
+      - name: Fail if more than 1 RFC is added or modified
+        if: steps.rfcs.outputs.modified-rfcs-count > 1
+        run: |
+          echo "## More than one RFC added or modified" >> $GITHUB_STEP_SUMMARY
+          echo "This workflow is unable to determine if the stage of any of the added or modified RFCs have changed" >> $GITHUB_STEP_SUMMARY
+          echo "If this DID NOT modify the stage of any RFC, this failure may be ok" >> $GITHUB_STEP_SUMMARY
+          echo "::error::More than 1 RFC is added or modified in this PR; unable to automatically open PRs for advancement"
+          exit 1
+
+      - name: Find modified RFC Number
+        id: modified-rfc
+        run: |
+          changed_file=${{ steps.rfcs.outputs.modified-rfc }}
+          rfc_number="${changed_file//[!0-9]/}"
+          echo "RFC Number: $rfc_number"
+          echo "rfc-number=$rfc_number" >> $GITHUB_OUTPUT
+
+      - name: Determine if stage has changed
+        id: has-stage-changed
+        continue-on-error: true
+        run: |
+          if [[ ${{ steps.rfcs.outputs.added-rfcs-count }} == 1 ]]; then
+            echo "## Yes, added a new RFC" >> $GITHUB_STEP_SUMMARY
+            echo "A new RFC was added"        
+            echo "value=true" >> $GITHUB_OUTPUT
+          else
+            node rfcs-tooling/has-stage-changed.js ${{ github.event.before }} ${{ steps.rfcs.outputs.modified-rfc }}
+            if [[ $? == 0 ]]; then
+              echo "## Yes, stage has changed" >> $GITHUB_STEP_SUMMARY
+              echo "value=true" >> $GITHUB_OUTPUT
+            else
+              echo "## No, stage unchanged or at final stage" >> $GITHUB_STEP_SUMMARY
+              echo "value=false" >> $GITHUB_OUTPUT
+            fi          
+          fi     
+
+      - name: Find new stage
+        if: steps.has-stage-changed.outputs.value == 'true'
+        id: new-stage
+        run: |
+          new_stage=`node rfcs-tooling/find-next-stage.js ${{ steps.rfcs.outputs.modified-rfc }}`
+          echo "New Stage: $new_stage"
+          echo "value=$new_stage" >> $GITHUB_OUTPUT
+
+  advance-rfc:
+    uses: ./.github/workflows/open-advancement-pr.yml
+    needs: [ check-rfcs ]
+    if: needs.check-rfcs.outputs.new-stage
+    with:
+      rfc-path: ${{ needs.check-rfcs.outputs.modified-rfc }}
+      rfc-number: ${{ needs.check-rfcs.outputs.rfc-number }}
+      new-stage: ${{ needs.check-rfcs.outputs.new-stage }}
+    secrets:
+      personal-access-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
