@@ -16,13 +16,13 @@ project-link:
 
 ## Summary
 
-This RFC proposes a low-level primitive for defining element modifiers. It is a parent to the [Modifiers RFC](https://github.com/emberjs/rfcs/pull/353).
+This RFC proposes a low-level primitive for defining element modifiers. It is a parent to the [Element Modifiers RFC](https://github.com/emberjs/rfcs/pull/811).
 
 ## Motivation
 
 Ever since Ember 1.0 we have had the concept of element modifiers, however Ember only exposes one modifier; `{{action}}`. We also do not provide a mechanism for defining your own modifiers and managing their life cycles.
 
-As [pointed out](https://github.com/emberjs/rfcs/pull/353#issuecomment-417769349) in the [Element Modifiers RFC](https://github.com/emberjs/rfcs/pull/353) we should expose the underlying infrastructure that makes element modifiers possible. Based on our experience, we believe it would be beneficial to open up these new primitives to the wider community. The largest benefit is that it allows the community to experiment with and iterate on APIs outside of the core framework.
+As [pointed out](https://github.com/emberjs/rfcs/pull/353#issuecomment-417769349) in the original [Modifiers RFC](https://github.com/emberjs/rfcs/pull/353) we should expose the underlying infrastructure that makes element modifiers possible. Based on our experience, we believe it would be beneficial to open up these new primitives to the wider community. The largest benefit is that it allows the community to experiment with and iterate on APIs outside of the core framework.
 
 This RFC is in the same spirit as the [custom components RFC](https://github.com/emberjs/rfcs/blob/master/text/0213-custom-components.md).
 
@@ -458,7 +458,8 @@ What is proposed in this RFC is a low-level primitive. We do not expect most use
 In the long term, there is a risk of fragmentating the Ember ecosystem with many competing modifier APIs. However, given the Ember community's strong desire for conventions, this seems unlikely. We expect this to play out similar to the data-persistence story – there will be a primary way to do things (Ember Data), but there are also plenty of other alternatives catering to niche use cases that are underserved by Ember Data.
 
 ## Alternatives
-Instead of focusing on exposing enough low-level primitives we can just ship the high level API as described in [RFC#353](https://github.com/emberjs/rfcs/pull/353).
+Instead of focusing on exposing enough low-level primitives we can just ship the high level API as described in [RFC#811](https://github.com/emberjs/rfcs/pull/811).
+
 ## Unresolved questions
 
 TBD?
