@@ -1,12 +1,12 @@
 ---
-stage: accepted
-start-date: 2022-01-29
+stage: ready-for-release
+start-date: 2022-01-29T00:00:00.000Z
 release-date: Unreleased
 release_versions:
 teams:
   - data
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/790
+  accepted: 'https://github.com/emberjs/rfcs/pull/790'
 project-link:
 suite:
 ---
