@@ -9,6 +9,7 @@ teams:
   - cli
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/637'
+  recommended: 'https://github.com/emberjs/rfcs/pull/888'
 project-link:
 ---
 
