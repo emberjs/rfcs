@@ -7,7 +7,7 @@ teams: # delete teams that aren't relevant
   - framework
   - typescript
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/889
+  accepted: # update this to the PR that you propose your RFC in
 project-link:
 ---
 
