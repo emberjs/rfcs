@@ -12,7 +12,8 @@ This has various checks to ensure new the RFC has correct metadata, filename, et
 This should be tested when updating actions/find-added-or-modified-rfcs or any of
 the actions used within that action. See [testing](#testing).
 
-Test the following:
+#### Testing Steps
+
 - [ ] Adding a new RFC. A new pull request should be opened with a new RFC, the
   first job should correctly determine that an RFC has been added and the other
   jobs should run.
@@ -34,7 +35,8 @@ whether the pull request adds a new RFC. If it does, it labels the pull request 
 This should be tested when updating actions/find-added-or-modified-rfcs or any of
 the actions used within that action. See [testing](#testing).
 
-Test the following:
+#### Testing Steps
+
 - [ ] Adding a new RFC. A new pull request should be opened with a new RFC, the
   first job should correctly determine that an RFC has been added and the other
   jobs should run. The label `S-Proposed` should be added.
@@ -57,7 +59,8 @@ If an RFC stage was modified, this triggers the open-advancement-pr.yml workflow
 This should be tested when updating actions/find-added-or-modified-rfcs or any of
 the actions used within that action. See [testing](#testing).
 
-Test the following:
+#### Testing Steps
+
 - [ ] Adding a new RFC. Merging a pull request that adds an RFC should open a
   pull request to advance to the next stage using the correct template.
 - [ ] Updating an RFC stage. Merging a pull request that modifies an existing RFC's
@@ -74,7 +77,15 @@ This workflow runs on workflow_dispatch and can be triggered from the GitHub UI.
 It takes a path to an RFC and will open a PR to advance it to the next stage, if
 applicable.
 
-Test the following:
+RFCs that already existed before the implementation of
+[Staged RFCs](https://github.com/emberjs/rfcs/blob/master/text/0617-rfc-stages.md)
+did not get advancement PRs to their next stage. To create an advancement PR you
+can manually run the workflow from the Github UI.
+
+![Screenshot of the Github UI for manually triggering a workflow](./doc-assets/advance-rfc.png)
+
+#### Testing Steps
+
 - [ ] In the UI, on this workflow, trigger with a path of an existing RFC. A pull
   request should be opened to advance the RFC to the next stage.
 - [ ] In the UI, on this workflow, trigger with a path of an existing RFC at the
