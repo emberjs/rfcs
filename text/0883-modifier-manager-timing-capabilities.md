@@ -7,7 +7,7 @@ teams: # delete teams that aren't relevant
   - framework
   - learning
 prs:
-  accepted: # update this to the PR that you propose your RFC in
+  accepted: https://github.com/emberjs/rfcs/pull/883
 project-link:
 ---
 
