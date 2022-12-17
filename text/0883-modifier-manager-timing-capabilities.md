@@ -52,16 +52,18 @@ This RFC aims to overcome this limitation by allowing modifiers to request execu
 
 This RFC proposes adding a new modifier capability. The new capability adds two new hooks to modifier managers:
 
-1. `installModifierOnLayout` 
-2. `installModifierOnIdle`
+1. `setupModifierOnLayout`
+2. `setupModifierOnIdle`
 
 Both hooks receive the same arguments as the existing `installModifier` hook. They only differ in their timing.
 
+A modifier manager can implement both hooks.
+
 The existing `installModifier` does not exist anymore in that new capability.
 
-### `installModifierOnLayout`
+### `setupModifierOnLayout`
 
-The `installModifierOnLayout` has the following timing:
+The `setupModifierOnLayout` has the following timing:
 
 **Always**
 
@@ -73,20 +75,20 @@ The `installModifierOnLayout` has the following timing:
 
 - have the sibling nodes fully initialized in DOM
  
-### `installModifierOnIdle`
+### `setupModifierOnIdle`
 
-The `installModifierOnIdle` has the following timing:
+The `setupModifierOnIdle` has the following timing:
 
 **Always**
 
-- called after all childrens modifier managers `installModifierOnLayout` hooks are called
+- called after all childrens modifier managers `setupModifierOnLayout` hooks are called
 
 **May or May Not**
 
 - be called in the same tick as DOM insertion
 - have the sibling nodes fully initialized in DOM
 
-This is de facto the same timing as the existing `installModifier` hook has. Existing modifiers can upgrade to `installModifierOnIdle` without seeing any change in their functionality.
+This is de facto the same timing as the existing `installModifier` hook has. Existing modifiers can upgrade to `setupModifierOnIdle` without seeing any change in their functionality.
 
 ### `updateModifier`
 
