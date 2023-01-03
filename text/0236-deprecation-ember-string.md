@@ -11,7 +11,8 @@ prs:
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/892'
 project-link:
 meta:
-  tracking: 'https://github.com/emberjs/rfc-tracking/issues/26'
+  tracking: 'https://github.com/emberjs/ember.js/issues/20340'
+  legacy-tracking: 'https://github.com/emberjs/rfc-tracking/issues/26'
 ---
 
 # Summary
