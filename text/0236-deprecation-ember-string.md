@@ -1,5 +1,5 @@
 ---
-stage: accepted
+stage: ready-for-release
 start-date: 2017-07-14T00:00:00.000Z
 release-date: 2020-12-28T00:00:00.000Z
 release-versions:
@@ -7,10 +7,10 @@ teams:
   - framework
   - typescript
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/236
+  accepted: 'https://github.com/emberjs/rfcs/pull/236'
 project-link:
 meta:
-  tracking: https://github.com/emberjs/rfc-tracking/issues/26
+  tracking: 'https://github.com/emberjs/rfc-tracking/issues/26'
 ---
 
 # Summary
