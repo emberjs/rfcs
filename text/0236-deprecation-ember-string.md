@@ -1,5 +1,5 @@
 ---
-stage: ready-for-release
+stage: released
 start-date: 2017-07-14T00:00:00.000Z
 release-date: 2020-12-28T00:00:00.000Z
 release-versions:
