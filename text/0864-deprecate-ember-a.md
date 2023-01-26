@@ -77,7 +77,7 @@ Currently if array prototype extensions is enabled `Ember.A()` is a `noop` and r
 
 `Ember.A()` is not covered in the guides, but it is present in [many](https://emberobserver.com/code-search?codeQuery=import%20%7B%20A%20%7D%20from%20%27%40ember%2Farray%27%3B) [many](https://emberobserver.com/code-search?codeQuery=Ember.A) addons. 
 
-Usage of convenience APIs can be easily replaced using the [no-array-prototype-extensions](https://github.com/ember-cli/eslint-plugin-ember/blob/4820f0fb286e40872a77d687618be56999f23704/docs/rules/no-array-prototype-extensions.md) codemod.
+Usage of convenience APIs can be linted against and largely autofixed/codemodded to native JavaScript by the [ember/no-array-prototype-extensions](https://github.com/ember-cli/eslint-plugin-ember/blob/0d8a4711ec461208562a9a1dc6b45fe65885f53a/docs/rules/no-array-prototype-extensions.md) lint rule.
 
 For reactivity addon authors will need to rely forcing tracking as `this.mascots = [...this.mascots, 'Rock & Roll']` or through utilizing `TrackedArray` from [tracked-built-ins](https://github.com/tracked-tools/tracked-built-ins).
 
