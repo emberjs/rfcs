@@ -1,7 +1,7 @@
 ---
-stage: accepted
+stage: released
 start-date: 2020-04-22T00:00:00.000Z
-release-date:
+release-date: 2022-11-22T00:00:00.000Z
 release-versions:
 teams:
   - framework
@@ -11,7 +11,9 @@ teams:
   - typescript
   - steering
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/617
+  accepted: 'https://github.com/emberjs/rfcs/pull/617'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/836'
+  released: 'https://github.com/emberjs/rfcs/pull/862'
 project-link:
 ---
 

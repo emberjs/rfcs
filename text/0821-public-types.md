@@ -1,14 +1,17 @@
 ---
-stage: accepted
+stage: released
 start-date: 2022-05-23T00:00:00.000Z
-release-date:
+release-date: 2022-12-13T23:20:00.000Z
 release-versions:
+  ember-source: v4.8.3
 teams:
   - framework
   - typescript
   - learning
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/821
+  accepted: 'https://github.com/emberjs/rfcs/pull/821'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/874'
+  released: 'https://github.com/emberjs/rfcs/pull/884'
 project-link:
 ---
 
@@ -33,10 +36,11 @@ Introduce public import locations for type-only imports which have previously ha
     - [`Factory`](#factory)
     - [`FactoryManager`](#factorymanager)
     - [`FullName`](#fullname)
-  - [`Transition`](#transition)
     - [`getOwner` and `setOwner`](#getowner-and-setowner)
+  - [`Transition`](#transition)
   - [`RouteInfo`](#routeinfo)
     - [`RouteInfoWithAttributes`](#routeinfowithattributes)
+  - [`Resolver`](#resolver)
 - [How we teach this](#how-we-teach-this)
   - [`Owner`](#owner-1)
   - [`Transition`, `RouteInfo`, and `RouteInfoWithAttributes`](#transition-routeinfo-and-routeinfowithattributes)
@@ -254,6 +258,20 @@ function useFullName(fullName) {
 ```
 
 
+#### `getOwner` and `setOwner`
+
+Both of the existing `getOwner` and `setOwner` functions now make *much* more sense as named exports from `@ember/owner`. They will also now take `owner` as the type of their argument explicitly:
+
+```ts
+export function getOwner(object): Owner | undefined;
+export function setOwner(object: unknown, owner: Owner): void;
+```
+
+The existing exports from `@ember/application` will become re-exports of these functions. The existing exports will also be deprecated, with the deprecation becoming "Available" no earlier than the first minor *after* an LTS containing the updated import location. For example, if `getOwner` and `setOwner` are available to import from `@ember/owner` in Ember v4.7, the deprecation for the imports from `@ember/application` would not be deprecated until at least Ember v4.9, after Ember v4.8 LTS.[^timeline]
+
+[^timeline]: This is in line with our normal approach to deprecation: it allows the addon ecosystem to absorb the change via LTS support releases, so that consuming apps are not flooded with deprecations without recourse.
+
+
 ### `Transition`
 
 `Transition` is a non-user-constructible, non-user-subclassable class. It is identical to the *existing* public API, with two new features:
@@ -310,20 +328,6 @@ function takesTransition(theTransition) {
   // ...
 }
 ```
-
-#### `getOwner` and `setOwner`
-
-Both of the existing `getOwner` and `setOwner` functions now make *much* more sense as named exports from `@ember/owner`. They will also now take `owner` as the type of their argument explicitly:
-
-```ts
-export function getOwner(object): Owner | undefined;
-export function setOwner(object: unknown, owner: Owner): void;
-```
-
-The existing exports from `@ember/application` will become re-exports of these functions. The existing exports will also be deprecated, with the deprecation becoming "Available" no earlier than the first minor *after* an LTS containing the updated import location. For example, if `getOwner` and `setOwner` are available to import from `@ember/owner` in Ember v4.7, the deprecation for the imports from `@ember/application` would not be deprecated until at least Ember v4.9, after Ember v4.8 LTS.[^timeline]
-
-[^timeline]: This is in line with our normal approach to deprecation: it allows the addon ecosystem to absorb the change via LTS support releases, so that consuming apps are not flooded with deprecations without recourse.
-
 
 ### `RouteInfo`
 
@@ -389,6 +393,33 @@ JS users can refer to it in JSDoc comments using `import()` syntax:
 function takesRouteInfoWithAttributes(routeInfoWithAttributes) {
   // ...
 }
+```
+
+
+### `Resolver`
+
+The resolver is a contract implemented by libraries outside Ember itself, such as `ember-resolver`, `ember-strict-resolver`, and any number of custom resolvers which exist in apps across the ecosystem. It has never had public documentation, but is fully public API. It is a user-constructible interface with the following definition (using the `Factory` and `FullName` types exported from the new `@ember/owner` module):
+
+```ts
+export type KnownForTypeResult<Name extends string> = {
+  [fullName in `${Name}:${string}`]: boolean | undefined;
+};
+
+export interface Resolver {
+  knownForType?: <Name extends string>(type: Name) => KnownForTypeResult<Name>;
+  lookupDescription?: (fullName: FullName) => string;
+  makeToString?: (factory: Factory<object>, fullName: FullName) => string;
+  normalize?: (fullName: FullName) => string;
+  resolve(name: string): Factory<object> | object | undefined;
+}
+```
+
+The `KnownForTypeResult` utility type associated with it is also available as a named export. Unfortunately, due to currently limitations with TypeScript, you will generally have to *cast* to it, but it provides some type safety to callers, because it will *only* allow types corresponding to the passed string if users pass a string literal.
+
+Both are available as named, type-only, user-constructible interfaces from `@ember/owner`:
+
+```ts
+import { Resolver, KnownForTypeResult } from '@ember/owner';
 ```
 
 
