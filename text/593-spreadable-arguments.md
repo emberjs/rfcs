@@ -1,6 +1,6 @@
 - Start Date: 2019-06-05
 - Relevant Team(s): Ember.js
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
+- RFC PR: https://github.com/emberjs/rfcs/pull/593
 - Tracking: (leave this empty)
 
 # Forwarding Component Arguments with Spreadable Arguments
