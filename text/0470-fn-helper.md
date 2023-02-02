@@ -1,7 +1,19 @@
-- Start Date: 2019-03-20
-- Relevant Team(s): Ember.js, Learning
-- RFC PR: https://github.com/emberjs/rfcs/pull/470
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/33
+---
+stage: recommended
+start-date: 2019-03-20T00:00:00.000Z
+release-date: 2019-06-24T00:00:00.000Z
+release-versions:
+  ember-source: v3.11.0
+
+teams:
+  - framework
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/470
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/33
+---
 
 # `{{fn}}` Helper
 

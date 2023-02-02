@@ -1,7 +1,18 @@
-- Start Date: 2019-02-06
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/440
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/41
+---
+stage: recommended
+start-date: 2019-02-06T00:00:00.000Z
+release-date: 2019-05-13T00:00:00.000Z
+release-versions:
+  ember-source: v3.10.0
+
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/440
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/41
+---
 
 # Decorator Support
 
@@ -160,7 +171,7 @@ Stage 1 decorators will be considered a first class Ember API. They will be
 supported until:
 
 1. A new RFC has been made to introduce a new decorator API as a parallel API to
-   the stage 1 decoraters.
+   the stage 1 decorators.
 2. A deprecation RFC has been created for Stage 1 decorators.
 
 They will follow the same deprecation flow, and same SemVer requirements, as any

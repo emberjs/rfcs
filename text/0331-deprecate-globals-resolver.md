@@ -1,7 +1,18 @@
-- Start Date: 2018-05-08
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/331
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/20
+---
+stage: released
+start-date: 2018-05-08T00:00:00.000Z
+release-date: 2020-01-20T00:00:00.000Z
+release-versions:
+  ember-source: v3.16.0
+
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/331
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/20
+---
 
 # Summary
 

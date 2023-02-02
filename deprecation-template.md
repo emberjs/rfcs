@@ -1,7 +1,32 @@
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
-- Relevant Team(s): (fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies)
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
-- Tracking: (leave this empty)
+---
+stage: accepted
+start-date:
+release-date:
+release-versions:
+teams: # delete teams that aren't relevant
+  - cli
+  - data
+  - framework
+  - learning
+  - steering
+  - typescript
+prs:
+  accepted: # update this to the PR that you propose your RFC in
+project-link:
+---
+
+<!---
+Directions for above:
+
+stage: Leave as is
+start-date: Fill in with today's date, 2032-12-01T00:00:00.000Z
+release-date: Leave as is
+release-versions: Leave as is
+teams: Include only the [team(s)](README.md#relevant-teams) for which this RFC applies
+prs:
+  accepted: Fill this in with the URL for the Proposal RFC PR
+project-link: Leave as is
+-->
 
 # <RFC title>
 
@@ -29,7 +54,7 @@ re-organized or altered? Does it change how Ember is taught to new users
 at any level?
 Does it mean we need to put effort into highlighting the replacement
 functionality more? What should we do about documentation, in the guides
-related to this feature?  
+related to this feature?
 How should this deprecation be introduced and explained to existing Ember
 users?
 

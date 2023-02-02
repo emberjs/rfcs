@@ -1,12 +1,18 @@
-- Start Date: 2015-08-18
-- Relevant Team(s): Ember CLI
-- RFC PR: [#23](https://github.com/ember-cli/rfcs/pull/23)
+---
+stage: accepted
+start-date: 2015-08-18T00:00:00.000Z
+release-date:
+release-versions:
+teams:
+  - cli
+prs:
+  accepted: https://github.com/ember-cli/rfcs/pull/23
+project-link:
+---
 
 # Summary
 
 Adds command line completion *(tab completion)* to ember-cli that fills in partially typed commands by the user and suggests available sub commands or options. *(from now on i will refer to "strings in the command line" as "cli-commands" and "generate" and "new" as unprefixed "commands")*
-
-![](http://zippy.gfycat.com/PrestigiousLoneHalicore.gif)
 
 # Motivation
 

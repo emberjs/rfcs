@@ -1,6 +1,14 @@
-- Start Date: 2016-04-06
-- Relevant Team(s): Ember CLI
-- RFC PR: [#50](https://github.com/ember-cli/rfcs/pull/50)
+---
+stage: recommended
+start-date: 2016-04-06T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - cli
+prs:
+  accepted: https://github.com/ember-cli/rfcs/pull/50
+project-link:
+---
 
 # Summary
 

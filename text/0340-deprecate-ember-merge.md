@@ -1,6 +1,16 @@
-- Start Date: 2018-06-19
-- RFC PR: https://github.com/emberjs/rfcs/pull/340
-- Ember Issue: (leave this empty)
+---
+stage: recommended
+start-date: 2018-06-19T00:00:00.000Z
+release-date: 2018-12-06T00:00:00.000Z
+release-versions:
+  ember-source: v3.6.0
+
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/340
+project-link:
+---
 
 # Deprecate Ember.merge in favor of Ember.assign
 
@@ -27,7 +37,7 @@ available to you.
 
 ## How we teach this
 
-This should be a simple 1 to 1 conversion, and the deprecation message should be clear enough for all to 
+This should be a simple 1 to 1 conversion, and the deprecation message should be clear enough for all to
 understand what they need to do, and convert all usages of `Ember.merge` to `Ember.assign`.
 
 ### Deprecation Guide
@@ -65,13 +75,13 @@ A codemod will be provided to allow automatic conversion of `Ember.merge` to `Em
 
 ## Drawbacks
 
-The only drawback, that I can think of, is people would need to convert `Ember.merge` to 
+The only drawback, that I can think of, is people would need to convert `Ember.merge` to
 `Ember.assign`, but this would be a very easy change and could easily be done via codemod.
 
 ## Alternatives
 
 The impact of not doing this, is we continue to have two functions that do basically the same thing,
-which we need to maintain. 
+which we need to maintain.
 
 Another alternative, could be to remove both `Ember.merge` and `Ember.assign`, in favor of `Object.assign`
 or something similar.

@@ -1,7 +1,16 @@
-- Start Date: 2018-10-14
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/389
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/42
+---
+stage: recommended
+start-date: 2018-10-14T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/389
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/42
+---
 
 # Dynamic tag names in glimmer templates.
 
@@ -43,14 +52,29 @@ With the `element` helper proposed in this RFC, this can be accomplished with so
 
 ## Detailed design
 
-We propose to add a new `element` helper that takes a tag name and generates a contextual component that, when invoked, renders the selected element.
+We propose to add a new `element` helper that takes a single positional argument.
+
+* When passed a non-empty string it generates a contextual component that, when invoked, renders an element with the same tag name as the passed string, along with the passed attributes (if any), modifiers (if any) and yields to given block (if any).
+* When passed an empty string, it generates a contextual compoment that, when invoked, yields to the given block without wrapping it an element and ignores any passed modifiers and attributes.
+* When passed `null` or `undefined`, it will return `null`.
+* When passed any other values (e.g. a boolean or a number), it will result in a development mode assertion.
 
 Example:
 
 ```hbs
 {{#let (element @htmlTag) as |Tag|}}
-  <Tag>...</Tag>
+  <Tag class="my-element" {{on "click" this.tagClicked}}>Hello</Tag>
 {{/let}}
+
+{{!-- when @htmlTag="button" --}}
+<button class="my-element" {{on "click" this.tagClicked}}>Hello</button>
+
+{{!-- when @htmlTag="" --}}
+Hello
+
+{{!-- when @htmlTag=null or @htmlTag=undefined, it renders nothing --}}
+
+{{!-- when @htmlTag=true or @htmlTag=1, it throws in development mode --}}
 ```
 
 Unlike ids, classes or other attributes, the tag name of DOM element cannot be changed in runtime.

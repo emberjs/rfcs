@@ -1,6 +1,16 @@
-- Start Date: 2016-04-16
-- RFC PR: https://github.com/emberjs/rfcs/pull/136
-- Ember Issue: https://github.com/emberjs/ember.js/pull/13553
+---
+stage: recommended # FIXME: Should this be discontinued?
+start-date: 2016-04-16T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/136
+project-link:
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/pull/13553
+---
 
 # Summary
 
