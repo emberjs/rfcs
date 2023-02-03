@@ -1,12 +1,12 @@
 ---
-stage: accepted
-start-date: 2021-11-14
-release-date: 
+stage: ready-for-release
+start-date: 2021-11-14T00:00:00.000Z
+release-date:
 release-versions:
-teams: # delete teams that aren't relevant
+teams:
   - framework
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/774 
+  accepted: 'https://github.com/emberjs/rfcs/pull/774'
 ---
 
 # Deprecate Implicit Record Loading in Routes
