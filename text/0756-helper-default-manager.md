@@ -156,7 +156,7 @@ setHelperManager(() => DEFAULT_HELPER_MANAGER, Function.prototype);
  - when the "helper" is created, the function is not invoked
  - when `getValue` is invoked,
    - the function is invoked with the named arguments all grouped into the last arg
-   - if no named arguments are given, an empty object is used instead to allow lessish checking in userland
+   - if no named arguments are given, an empty object is used instead to allow less nullish checking in userland
  - to register this helper manager, it should occur during app boot so developers do not need to import anything to
    trigger the `setHelperManager` call
 
