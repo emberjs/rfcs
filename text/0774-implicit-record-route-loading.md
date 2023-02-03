@@ -7,6 +7,7 @@ teams:
   - framework
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/774'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/900'
 ---
 
 # Deprecate Implicit Record Loading in Routes
