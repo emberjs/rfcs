@@ -9,7 +9,7 @@ runs:
       with:
         repository: emberjs/rfcs-tooling
         path: rfcs-tooling
-        ref: 'v2.1.0'
+        ref: 'v2.1.1'
 
     - uses: actions/setup-node@v3
       with:

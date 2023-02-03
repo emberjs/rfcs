@@ -123,7 +123,7 @@ them, and the mental/teaching model behind how it all works.
 - Angle-bracket syntax does not support passing positional params
 
 Implementation-wise, these varying semantics will be defined/implemented via
-[Component Managers](https://github.com/emberjs/rfcs/blob/custom-components/text/0000-custom-components.md#componentmanager).
+[Component Managers](https://github.com/emberjs/rfcs/blob/master/text/0213-custom-components.md#registering-component-managers).
 
 ## Multi-block Syntax
 
