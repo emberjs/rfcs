@@ -46,7 +46,7 @@ We will issue a deprecation to [`findModel`](https://github.com/emberjs/ember.js
 
 In addition, we will include an [optional feature](https://github.com/emberjs/ember-optional-features) to disable this feature and clear the deprecation.
 
-In v5.0.0, we will remove `findModel` and logic to determine arguments for this method.  This will not remove returning the `transition` context when no `model` hook is defined.
+In v6.0.0, we will remove `findModel` and logic to determine arguments for this method.  This will not remove returning the `transition` context when no `model` hook is defined.
 
 ## How we teach this
 
