@@ -566,6 +566,9 @@ We will introduce a new `--typescript` (`-ts`) flag for the `ember new` and `emb
         - Include `plugin:@typescript-eslint/recommended` in the `extends` key.
     - Install the `@typescript-eslint` dependencies instead of,  or in addition to (as appropriate), the Babel ESLint dependencies in `package.json`.
 - Configure [Glint][glint] for type checking and, for addons, emitting type declarations during build.
+    - Create `tsconfig.json` files and generate their `compilerOptions.paths`.
+    - Configure `ember-cli-babel` to include the TypeScript transform. (This may just be an “out of the box” setting so it always works and does not require configuration!)
+    - Set up packages with scripts to do type checking and, in the case of v1 addons, emitting type declarations using `glint`.
 
 [rfc-0776]: https://emberjs.github.io/rfcs/0776-typescript-blueprints.html
 
