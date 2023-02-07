@@ -828,4 +828,4 @@ This would be a reasonable approach—and was in fact what the other Typed Ember
 
 ## Unresolved questions
 
-- Is specifying Ember Data’s registries a blocker for adopting this RFC?
+None!
