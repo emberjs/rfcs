@@ -55,7 +55,7 @@ jobs:
             echo "A new RFC was added"        
             echo "value=true" >> $GITHUB_OUTPUT
           else
-            node rfcs-tooling/has-stage-changed.js ${{ github.event.before }} ${{ steps.rfcs.outputs.modified-rfc }}
+            node rfcs-tooling/scripts/has-stage-changed.mjs ${{ github.event.before }} ${{ steps.rfcs.outputs.modified-rfc }}
             if [[ $? == 0 ]]; then
               echo "## Yes, stage has changed" >> $GITHUB_STEP_SUMMARY
               echo "value=true" >> $GITHUB_OUTPUT
@@ -69,7 +69,7 @@ jobs:
         if: steps.has-stage-changed.outputs.value == 'true'
         id: new-stage
         run: |
-          new_stage=`node rfcs-tooling/find-next-stage.js ${{ steps.rfcs.outputs.modified-rfc }}`
+          new_stage=`node rfcs-tooling/scripts/find-next-stage.mjs ${{ steps.rfcs.outputs.modified-rfc }}`
           echo "New Stage: $new_stage"
           echo "value=$new_stage" >> $GITHUB_OUTPUT
 
