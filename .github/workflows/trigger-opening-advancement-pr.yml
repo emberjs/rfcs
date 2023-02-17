@@ -33,7 +33,7 @@ jobs:
       - name: Find new stage
         id: new-stage
         run: |
-          new_stage=`node rfcs-tooling/find-next-stage.js ${{ inputs.rfc-path }}`
+          new_stage=`node rfcs-tooling/scripts/find-next-stage.mjs ${{ inputs.rfc-path }}`
           echo "New Stage: $new_stage"
           echo "value=$new_stage" >> $GITHUB_OUTPUT
 
