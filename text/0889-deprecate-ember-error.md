@@ -1,13 +1,15 @@
 ---
-stage: accepted
-start-date: 2022-12-15
-release-date:
+stage: released
+start-date: 2022-12-15T00:00:00.000Z
+release-date: 2023-01-12T00:00:00.000Z
 release-versions:
-teams: # delete teams that aren't relevant
+  ember-source: v4.10.0
+teams:
   - framework
   - typescript
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/889
+  accepted: 'https://github.com/emberjs/rfcs/pull/889'
+  released: 'https://github.com/emberjs/rfcs/pull/895'
 project-link:
 ---
 
