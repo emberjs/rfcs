@@ -1,8 +1,10 @@
 ---
 stage: released
 start-date: 2021-11-11T00:00:00.000Z
-release-date:
+release-date: 2022-12-08T00:00:00.000Z
 release-versions:
+  ember-cli: v4.9.0
+  ember-source: v4.9.0
 teams:
   - cli
   - framework
