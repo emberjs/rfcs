@@ -1,12 +1,12 @@
 ---
-stage: accepted # FIXME: This may be a further stage
+stage: ready-for-release
 start-date: 2021-04-23T00:00:00.000Z
 release-date:
 release-versions:
 teams:
   - data
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/739
+  accepted: 'https://github.com/emberjs/rfcs/pull/739'
 project-link:
 ---
 
