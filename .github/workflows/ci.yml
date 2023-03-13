@@ -15,4 +15,4 @@ jobs:
         uses: ./.github/actions/setup-rfcs-tooling
 
       - name: Lint the frontmatter of all RFCs
-        run: node ./rfcs-tooling/lint-rfc-frontmatter.js text/*.md
+        run: node ./rfcs-tooling/scripts/lint-rfc-frontmatter.mjs text/*.md

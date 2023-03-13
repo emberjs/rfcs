@@ -92,7 +92,7 @@ jobs:
 
       - name: Verify stage of newly added RFC is `accepted` in frontmatter
         run: |
-          frontmatter=`node rfcs-tooling/rfc-frontmatter.js ${{ needs.check-rfcs.outputs.modified-rfc }}`
+          frontmatter=`node rfcs-tooling/scripts/rfc-frontmatter.mjs ${{ needs.check-rfcs.outputs.modified-rfc }}`
           stage=`echo $frontmatter | jq '.stage'`
           if [[ $stage != '"accepted"' ]]; then
               echo "::error::Newly added RFCs must have the stage 'accepted' in the frontmatter"
@@ -113,8 +113,7 @@ jobs:
       - name: Test RFC Filename matches PR Number that adds it
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: node check-filename-matches-pr.js $PR_NUMBER ${{ needs.check-rfcs.outputs.modified-rfc }}
-        working-directory: rfcs-tooling
+        run: node rfcs-tooling/scripts/check-filename-matches-pr.mjs $PR_NUMBER ${{ needs.check-rfcs.outputs.modified-rfc }}
 
   check-accepted-pr-url:
     name: Verify Accepted PR URL is correct
@@ -129,7 +128,7 @@ jobs:
 
       - name: Verify Accepted PR URL is correct
         run: |
-          frontmatter=`node rfcs-tooling/rfc-frontmatter.js ${{ needs.check-rfcs.outputs.modified-rfc }}`
+          frontmatter=`node rfcs-tooling/scripts/rfc-frontmatter.mjs ${{ needs.check-rfcs.outputs.modified-rfc }}`
           accepted_pr=`echo $frontmatter | jq '.prs.accepted'`
           accepted_pr=${accepted_pr//\"/}
           expected_pr="${{ github.event.pull_request.html_url }}"
