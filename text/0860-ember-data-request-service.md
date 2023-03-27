@@ -547,6 +547,11 @@ Adapter and Serializer methods. If no adapter exists for the type (including no 
 handler would call `next`. In this manner an app can incrementally migrate request-handling to this
 new paradigm on a per-type basis as desired.
 
+The legacy handler would only attempt to handle requests with an `op` and no `url`. Requests with a `url`
+would be forwarded on via `next`. In this way, individual requests can be migrated away from legacy by
+either directly invoking `store.request` with the correct args or by utilizing a request builder which
+assigns the url to the request object.
+
 The package `ember-data` would automatically configure this handler. If not using `ember-data`
 this configuration would need to be done explicitly.
 
