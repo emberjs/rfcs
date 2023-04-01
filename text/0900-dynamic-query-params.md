@@ -1,5 +1,5 @@
 ---
-stage: # FIXME
+stage: Proposed
 start-date: 2023-03-31T00:00:00.000Z
 release-date: # FIXME
 release-versions: # FIXME
