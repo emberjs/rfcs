@@ -122,7 +122,7 @@ interface Future<T> extends Promise<StructuredDocument<T>> {
    * @method onFinalize
    * @param cb the callback to run
    * @public
-   * @returns void
+   * @returns {void}
    */
   onFinalize(cb: () => void): void;
 }
