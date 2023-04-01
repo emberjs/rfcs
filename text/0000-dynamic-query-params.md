@@ -14,7 +14,7 @@ meta: # FIXME
 
 ## Summary
 
-The current way developers bind query params to the Ember app is by defining the `queryParams` property on the Controller with hard coded values. It will be useful for developers who leverage a server-driven UI to dynamically bind query params to the Ember app.
+The current way developers bind query params to the Ember app is by defining the `queryParams` property on the Controller with hard coded values. See Ember docs on [Specifying Query Parameters](https://guides.emberjs.com/release/routing/query-params/#toc_specifying-query-parameters) section. It will be useful for developers who leverage a server-driven UI to dynamically bind query params to the Ember app.
 
 ## Motivation
 
