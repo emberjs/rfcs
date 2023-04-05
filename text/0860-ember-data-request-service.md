@@ -527,8 +527,8 @@ class Store {
 }
 
 interface LifetimesService {
-  isHardExpired(key: string, url: string, method: HTTPMethod): boolean;
-  isSoftExpired(key: string, url: string, method: HTTPMethod): boolean;
+  isHardExpired(identifier: StableDocumentIdentifier): boolean;
+  isSoftExpired(identifier: StableDocumentIdentifier): boolean;
 }
 ```
 
