@@ -64,8 +64,8 @@ interface RequestManager {
 For example:
 
 ```ts
-import { RequestManager } from '@ember-data/request';
-import { Fetch } from '@ember/data/request/fetch';
+import RequestManager from '@ember-data/request';
+import Fetch from '@ember/data/request/fetch';
 import Auth from 'ember-simple-auth/ember-data-handler';
 import Config from './config';
 
@@ -94,27 +94,57 @@ for streaming data; however, when doing so the future should not
 resolve until the response stream is fully read.
 
 ```ts
+/**
+ * @class Future
+ * @public
+ */
 interface Future<T> extends Promise<StructuredDocument<T>> {
+  /**
+   * Cancel this request by firing the AbortController's signal.
+   *
+   * @method abort
+   * @public
+   * @returns {void}
+   */
   abort(): void;
 
-  async getStream(): ReadableStream | null;
+  /**
+   * Get the response stream, if any, once made available.
+   *
+   * @method getStream
+   * @public
+   * @returns {Promise<ReadableStream | null>}
+   */
+  getStream(): Promise<ReadableStream | null>;
+
+  /**
+   *  Run a callback when this request completes. Use sparingly.
+   * 
+   * @method onFinalize
+   * @param cb the callback to run
+   * @public
+   * @returns {void}
+   */
+  onFinalize(cb: () => void): void;
 }
 ```
 
 The `StructuredDocument` interface is the same as is proposed in emberjs/rfcs#854 but is shown here in richer detail.
 
 ```ts
-interface RequestInfo {
-  /**
+interface RequestInfo extends Request {
+  disableTestWaiter?: boolean;
+  /*
    * data that a handler should convert into
    * the query (GET) or body (POST)
    */
   data?: Record<string, unknown>;
-  /**
+  /*
    * options specifically intended for handlers
    * to utilize to process the request
    */
   options?: Record<string, unknown>;
+
   /**
    * Allows supplying a custom AbortController for
    * the request, if none is supplied one is generated
@@ -126,12 +156,7 @@ interface RequestInfo {
    * request on the context supplied to handlers.
    */
   controller?: AbortController;
-  
-  // the below options perfectly mirror the
-  // native Request interface
-  cache?: RequestCache;
-  credentials?: RequestCredentials;
-  destination?: RequestDestination;
+
   /**
    * Once a request has been made it becomes immutable, this
    * includes Headers. To modify headers you may copy existing
@@ -141,21 +166,15 @@ interface RequestInfo {
    * to allow this to be done swiftly.
    */
   headers?: Headers;
-  integrity?: string;
-  keepalive?: boolean;
-  method?: string;
-  mode?: RequestMode;
-  redirect?: RequestRedirect;
-  referrer?: string;
-  referrerPolicy?: ReferrerPolicy;
+
   /**
    * Typically you should not set this, though you may choose to curry
    * a received signal if calling next. signal will automatically be set
    * to the associated controller's signal if none is supplied.
    */
   signal?: AbortSignal;
-  url?: string;
 }
+
 interface ResponseInfo {
   headers: Headers;
   ok: boolean;
@@ -168,13 +187,14 @@ interface ResponseInfo {
 
 interface StructuredDataDocument<T> {
   request: RequestInfo;
-  response: ResponseInfo;
-  data: T;
+  response: Response | ResponseInfo | null;
+  content: T;
 }
 interface StructuredErrorDocument extends Error {
   request: RequestInfo;
-  response: ResponseInfo;
-  error: string | object;
+  response: Response | ResponseInfo | null;
+  error: Error;
+  content?: unknown;
 }
 type StructuredDocument<T> = StructuredDataDocument<T> | StructuredErrorDocument;
 ```
@@ -194,7 +214,7 @@ that it can then compose how it sees fit with its own response.
 type NextFn = <P>(req: RequestInfo) => Future<P>;
 
 interface Handler {
-  request<T>(context: RequestContext, next: NextFn): T;
+  request<T = unknown>(context: RequestContext, next: NextFn<T>): Promise<T> | Future<T>;
 }
 ```
 
@@ -327,8 +347,8 @@ applications by exporting the manager as an Ember service.
 
 *services/request.ts*
 ```ts
-import { RequestManager } from '@ember-data/request';
-import { Fetch } from '@ember/data/request/fetch';
+import RequestManager from '@ember-data/request';
+import Fetch from '@ember/data/request/fetch';
 import Auth from 'ember-simple-auth/ember-data-handler';
 
 export default class extends RequestManager {
@@ -357,8 +377,8 @@ Alternatively to have a request service unique to the store:
 
 ```ts
 import Store from '@ember-data/store';
-import { RequestManager } from '@ember-data/request';
-import { Fetch } from '@ember/data/request/fetch';
+import RequestManager from '@ember-data/request';
+import Fetch from '@ember/data/request/fetch';
 
 export default class extends Store {
   requestManager = new RequestManager();
@@ -377,8 +397,8 @@ like the above would need to be done by the consuming application in order to ma
 
 ```ts
 import Store from '@ember-data/store';
-import { RequestManager } from '@ember-data/request';
-import { LegacyHandler } from '@ember-data/legacy-network-handler';
+import RequestManager from '@ember-data/request';
+import { LegacyNetworkHandler } from '@ember-data/legacy-compat';
 
 export default class extends Store {
   requestManager = new RequestManager();
@@ -455,6 +475,41 @@ be useful for both application code and the Ember Inspector. If you are interest
 such support, we would accept an RFC. With the greatly improved flow this RFC brings we
 expect that the overall design of the RequestStateService ought to be revisited.
 
+### Registering a CacheHandler
+
+While any handler could make use of a cache, there is a handler granted specialized
+status which effectively functions as the very first handler in the handler chain
+(some additional special priviledges may be afforded around timing).
+
+Only one such handler may exist, and an error will be thrown if more than one
+is attempted to be registered.
+
+This method should only be used by a consuming application when the RequestManager
+instance is not the same instance used by the `Store`. If using `@ember-data/store`,
+`@ember-data/store` configures a `CacheHandler` which utilizes the `Cache`, the `LifetimesService`
+and `cacheOptions` to gate whether the request continues down the handler chain.
+
+This same handler is what is responsible for updating the `Cache` via `Cache.put` once
+the request completes.
+
+```ts
+class RequestManager {
+  /**
+   * Register a handler to use for primary cache intercept.
+   *
+   * Only one such handler may exist. If using the same
+   * RequestManager as the Store instance the Store
+   * registers itself as a Cache handler.
+   *
+   * @method useCache
+   * @public
+   * @param {Handler[]} cacheHandler
+   * @returns {void}
+   */
+  useCache(cacheHandler: Handler): void;
+}
+```
+
 ### Cache Lifetimes
 
 In the past, cache lifetimes for single resources were controlled by either 
@@ -465,13 +520,16 @@ for `shouldReloadRecord`, `shouldReloadAll`, `shouldBackgroundReloadRecord` and
 This behavior will now be controlled by the combination of either supplying `cacheOptions`
 on the associated `RequestInfo` or by supplying a `lifetimes` service to the `Store`.
 
+Explicit `cacheOptions` will always take precedence over the `lifetimes` service.
+
 ```ts
 class Store {
   lifetimes: LifetimesService;
 }
 
 interface LifetimesService {
-  isExpired(url: string, method: HTTPMethod) {}
+  isHardExpired(identifier: StableDocumentIdentifier): boolean;
+  isSoftExpired(identifier: StableDocumentIdentifier): boolean;
 }
 ```
 
@@ -489,6 +547,11 @@ provided. This handler would take a request and convert it into the older form, 
 Adapter and Serializer methods. If no adapter exists for the type (including no application adapter), this
 handler would call `next`. In this manner an app can incrementally migrate request-handling to this
 new paradigm on a per-type basis as desired.
+
+The legacy handler would only attempt to handle requests with an `op` and no `url`. Requests with a `url`
+would be forwarded on via `next`. In this way, individual requests can be migrated away from legacy by
+either directly invoking `store.request` with the correct args or by utilizing a request builder which
+assigns the url to the request object.
 
 The package `ember-data` would automatically configure this handler. If not using `ember-data`
 this configuration would need to be done explicitly.
@@ -650,4 +713,5 @@ instead encouraging data-transformation to be done within the Adapter. In fact, 
 is fully possible today, we could just better document it and do nothing more. However, this
 approach does not solve the need for more general request management, nor does it interact
 well with common development paradigms such as GraphQL query building, nor does it allow us
-to introduce pagination-by-default.
+to introduce pagination-by-default, and finally it does very little to advance the goal of being
+a document centric cache.

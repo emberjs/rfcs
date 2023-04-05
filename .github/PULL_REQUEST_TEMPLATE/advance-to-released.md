@@ -23,6 +23,6 @@ An RFC is moved into "Released" when the above is verified by consensus of the r
 
 ## Checklist to move to Released
 
-- [ ] The work is published in stable versions of the relevant package(s)
+- [ ] The work is published in stable versions of the relevant package(s), with any feature flags toggled on.
 - [ ] Deviations from the original RFC are noted in the RFC
 - [ ] Release packages and dates are updated in the RFC frontmatter
