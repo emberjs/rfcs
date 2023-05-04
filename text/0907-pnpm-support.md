@@ -109,11 +109,25 @@ At the time of writing this RFC, `ember-try` already supports `pnpm`, but it is 
 Documentation will need to be added to the README, 
 as well as the relevant `ember-cli` blueprints will need to correctly configure `usePnpm: true` in the `ember-try.js` config file when the `pnpm` flag is present.
 
+
 ### generated C.I. configs
 
 At the time of writing this RFC, `ember-cli` supports two C.I. environments: Travis and GitHub Actions. 
 
 Both the `.travis.yml` and `.github/workflows/ci.yml` config files for relevant blueprints will need to support the `pnpm` option such that C.I. passes on new projects using `pnpm`.
+
+### for addons
+
+Addons should be stricter than  defaults, so that they are good stewards of the ecosystem and don't leak accidental uncertainty to their consumers.
+
+In addon projects, the `.npmrc` will need the following defaults:
+```
+# all peer dependencies must be declared or forwarded to the consumer
+auto-install-peers=false
+
+# we want true isolation in addons -- if a dependency is not declared, we want an error
+reslove-peers-from-workspace-root=false
+```
 
 ### Documentation
 
