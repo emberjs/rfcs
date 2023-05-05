@@ -1,5 +1,5 @@
 ---
-stage: released # FIXME: This may be a further stage
+stage: recommended
 start-date: 2020-04-28T00:00:00.000Z
 release-date: 2020-11-16T00:00:00.000Z
 release-versions:
