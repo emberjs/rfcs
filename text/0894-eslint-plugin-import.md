@@ -87,9 +87,7 @@ Note that these configurations enable only a handful of key rules from the plugi
 
 ### Resolver
 
-There are a few issues to fix with the [import/no-unresolved](https://github.com/import-js/eslint-plugin-import/blob/HEAD/docs/rules/no-unresolved.md) rule.
-
-**TODO:** These issues, described in more detail below, still need to be addressed, and I'm interested to hear feedback on solving them. Worst case, we can disable the rule for now, and enable it once the issues are resolved:
+We will disable the [import/no-unresolved](https://github.com/import-js/eslint-plugin-import/blob/HEAD/docs/rules/no-unresolved.md) rule due to the potential infeasibility of reliably resolving imports in current Ember apps.
 
 ```js
 // .eslintrc.js
@@ -100,9 +98,7 @@ There are a few issues to fix with the [import/no-unresolved](https://github.com
 }
 ```
 
-#### Ember package imports
-
-First, there are some false positives with Ember packages, such as:
+The difficulties involved are described in [this](https://github.com/emberjs/rfcs/pull/894#issuecomment-1450702826) comment, and also demonstrated by various false positives from the rule that can be seen below with imports from Ember packages, as well as import paths prefixed with the current Ember app name, such as:
 
 ```js
 import { service } from '@ember/service';
@@ -110,43 +106,13 @@ import { service } from '@ember/service';
 
 import Ember from 'ember';
 // Triggers violation: Unable to resolve path to module 'ember'
-```
 
-It's possible we can ignore these using the recommendation from [eslint-import-resolver-ember](https://github.com/gabrielcsapo/eslint-import-resolver-ember#usage):
-
-```js
-// .eslintrc.js
-{
-  rules: {
-    'import/no-unresolved': ['error', { ignore: ['^\@ember'] }],
-  },
-}
-```
-
-But ideally, the resolver we use will correctly resolve these packages without needing to ignore them.
-
-#### App-name prefix imports
-
-Second, there are false positives with import paths prefixed with the current Ember app name, such as this one:
-
-```js
 // app/app.js
 import config from 'my-app-name/config/environment';
 // Triggers violation: Unable to resolve path to module 'my-app-name/config/environment'
 ```
 
-There's a resolver [eslint-import-resolver-ember](https://github.com/gabrielcsapo/eslint-import-resolver-ember) that is supposed to address this:
-
-```js
-// .eslintrc.js
-{
-  settings: {
-    'import/resolver': 'eslint-import-resolver-ember',
-  },
-}
-```
-
-Based on some initial testing, this configuration isn't working for me in a new Ember app. I'm not sure if it's a bug in the resolver, which hasn't been updated since 2018, or if there's some other setup needed. Either way, this resolver will likely require some modernization, and testing to ensure it works with TypeScript and different app/addon/engine structures. We may want to begin maintaining it by moving it to the [ember-cli](https://github.com/ember-cli) organization, assuming it's a good starting point and owner is interested.
+There's an old resolver [eslint-import-resolver-ember](https://github.com/gabrielcsapo/eslint-import-resolver-ember) which did not appear to help during my testing and may have only been helpful in limited scenarios. Any future resolver would require significant modernization and testing to ensure it works with TypeScript, different module types, different app/addon/engine structures, different Ember versions, etc. If such a resolver becomes practical in the future, it could be published from the [ember-cli](https://github.com/ember-cli) organization.
 
 ## How we teach this
 
@@ -164,11 +130,12 @@ Users not interested in linting imports can safely disable or remove eslint-plug
 
 ## Alternatives
 
-The implementation, aside from the [resolver](#resolver) issues, is fairly straightforward.
+The implementation is straightforward.
 
 The main alternative is to do nothing, and leave it up to users to add eslint-plugin-import on their own. But if we are able to install and correctly setup this plugin for users, it will enable many more users to take advantage of this additional type of linting.
 
 ## Unresolved questions
 
-* The [resolver](#resolver) issues are still outstanding.
-* This needs further testing with TypeScript and various app/addon/engine/monorepo/package structures.
+* We will bypass the [resolver](#resolver) issues by disabling the rule.
+* Ensure this is tested with TypeScript, different module types, different app/addon/engine structures, different Ember versions, etc.
+
