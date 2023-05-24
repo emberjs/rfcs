@@ -176,8 +176,10 @@ class extends Component {
 
       "<Section @title={{this.title}} @subhead={{this.#secret}} />", 
       {
-        scope: () => ({ Section }),
-        private: (instance) => ({ secret: instance.#secret }),
+        scope: (instance) => ({ 
+          Section, 
+          "#secret": instance.#secret
+        }),
       },
       this
     )
@@ -385,11 +387,11 @@ This is a fully-working example that can run in a browser. It uses a toy renderi
       return params.eval(path);
     } else {
       if (path.startsWith("this.#")) {
-        return params.private(instance)[path.slice(6)];
+        return params.scope(instance)[path.slice(5)];
       } else if (path.startsWith("this.")) {
         return instance[path.slice(5)];
       } else {
-        return params.scope()[path];
+        return params.scope(instance)[path];
       }
     }
   }
@@ -422,8 +424,10 @@ This is a fully-working example that can run in a browser. It uses a toy renderi
         publicField={{this.publicField}}, privateField={{this.#privateField}}, local={{local}}
         `,
         {
-          scope: () => ({ local }),
-          private: (instance) => ({ privateField: instance.#privateField }),
+          scope: (instance) => ({
+            local,
+            "#privateField": instance.#privateField,
+          }),
         },
         this
       );
