@@ -319,24 +319,13 @@ If provided, `params.eval` must be:
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-> idea best presented? As a continuation of existing Ember patterns, or as a
-> wholly new one?
+Mentioning these APIs is appropriate when introducing the template tag feature in the guides. We can explain template tag as a convenience over these lower-level APIs and show side-by-side how a given template tag "really means" a call to `template()`. These examples should probably use the Explicit Form.
 
-> Would the acceptance of this proposal mean the Ember guides must be
-> re-organized or altered? Does it change how Ember is taught to new users
-> at any level?
-
-> How should this feature be introduced and taught to existing Ember
-> users?
+We can also mention that fully runtime template compilation is possible using `@ember/template-compiler/runtime` and show this example in Implicit Form.
 
 ## Drawbacks
 
-> Why should we _not_ do this? Please consider the impact on teaching Ember,
-> on the integration of this feature with other existing and planned features,
-> on the impact of the API churn on existing apps, etc.
 
-> There are tradeoffs to choosing any path, please attempt to identify them here.
 
 ## Alternatives
 
