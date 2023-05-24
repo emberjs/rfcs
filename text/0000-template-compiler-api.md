@@ -187,7 +187,7 @@ class extends Component {
 }
 ```
 
-> This RFC is focused on making sure the scope accessors can do everything javascript can do, which is why we're including private fields. However, additional work beyond this RFC is required to make the template compiler parse expressions like `{{this.#secret}}` correctly. 
+> This RFC is focused on making sure the scope accessors can do everything javascript can do, which is why we're including private fields. However, additional work beyond this RFC is required to make the template compiler correctly parse expressions like `{{this.#secret}}`. 
 
 #### Implicit Form
 
