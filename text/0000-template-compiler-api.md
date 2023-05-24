@@ -317,6 +317,12 @@ If provided, `params.eval` must be:
  - where the return value must be exactly `eval(arguments[0])`.
 
 
+### Older things that are intentionally dropped
+
+`precompileTemplate` and its predecessors like `import { hbs } from 'ember-cli-htmlbars'` accepted some additional params that we are choosing not to keep.
+
+ - `insertRuntimeErrors`: instead you should use `@ember/template-compiler/runtime` and catch the exception thrown by `template()`.
+
 ## How we teach this
 
 Mentioning these APIs is appropriate when introducing the template tag feature in the guides. We can explain template tag as a convenience over these lower-level APIs and show side-by-side how a given template tag "really means" a call to `template()`. These examples should probably use the Explicit Form.
