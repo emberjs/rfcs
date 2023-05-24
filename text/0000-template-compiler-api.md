@@ -38,12 +38,13 @@ Formalize a Javascript-spec-compliant representation of template tag.
 
 ## Motivation
 
-The goal of this RFC is to simplify the plain-Javascript representation of the Template Tag (aka "first-class component templates") feature in order to:
+The goal of this RFC is to improve the plain-Javascript representation of the Template Tag (aka "first-class component templates") feature in order to:
 
 - reduce the number and complexity of API calls required to represent a component
 - efficiently coordinate between different layers of build-time and static-analysis tooling that need to use preprocessing to understand our GJS syntax extensions.
 - avoid exposing a "bare template" as a user-visible value
 - provide a declarative way to opt-in to run-time (as opposed to build-time) template compilation.
+- enable support for class private fields in components
 
 As an illustrative example, currently this template tag expression:
 
@@ -118,6 +119,7 @@ class Example extends Component {
 ## Detailed design
 
 This RFC introduces two new importable APIs:
+
 ```js
 // The ahead-of-time template compiler:
 import { template } from "@ember/template-compiler";
@@ -126,41 +128,143 @@ import { template } from "@ember/template-compiler";
 import { template } from "@ember/template-compiler/runtime";
 ```
 
-They are intended to be drop-in replacements for each other *except* for the differences summarized in this table:
+They are intended to be drop-in replacements for each other _except_ for the differences summarized in this table:
 
-
-|  | Template Contents | Scope Param | Syntax Errors | Payload |
-| --- | --- | -- | -- | -- |
-| Ahead-of-Time| Restricted to literals | Restricted to a few explicitly-allowed forms | Stops your build | Smaller & Faster
-| Runtime | Unrestricted | Unrestricted | Can by caught at runtime | Larger & Slower
-
+|               | Template Contents      | Scope Param                                  | Syntax Errors            | Payload          |
+| ------------- | ---------------------- | -------------------------------------------- | ------------------------ | ---------------- |
+| Ahead-of-Time | Restricted to literals | Restricted to a few explicitly-allowed forms | Stops your build         | Smaller & Faster |
+| Runtime       | Unrestricted           | Unrestricted                                 | Can by caught at runtime | Larger & Slower  |
 
 By putting these two implementations in different importable modules, the problem of "how do you opt-in to including the template compiler in your app?" goes away. If you import it, you will have it, if you don't, you won't.
 
 The remainder of this design only uses examples with the ahead-of-time template compiler, because everything about the runtime template compiler's API is the same.
 
+### Scope Access
+
+To give templates access to the relevant Javascript scope, we offer **two different forms** for two different use cases. A critical feature of this design is that *both forms* have valid Javascript syntax **and** semantics. That means they can actually run when you want them to, with no further processing. And they are fully understandable by all spec-compliant Javascript tools. This is in contrast with intermediate forms like `[__GLIMMER_TEMPLATE("<HelloWorld />")]` in the current ember-template-imports implementation or the proposed:
+
+```js
+template`<HelloWorld />`
+```
+
+from [RFC 813](https://github.com/emberjs/rfcs/pull/813), which both lack any mechanism to access the surrounding scope, and therefore need "magic" beyond Javascript to make them run.
+
+#### Explicit Form
+
+The "Explicit Form" makes all data flow statically visible. It's the appropriate form to publish to NPM. To produce Explicit Form, build tools need to do a full parse of the template and a full lexical analysis of Javascript and Handlebars scopes.
+
+Examples of Explicit Form:
+
+```js
+import { template } from '@ember/template-compiler';
+
+// when the template compiler finds nothing is needed from scope, no scope params are needed:
+const Headline = template("<h1>{{yield}}</h1>");
+
+// when the template compiler identifies a local variable that's needed it emits the scope accessor for it:
+const Section = template(
+  "<Headline>{{@title}}</Headline>", 
+  { 
+    scope: () => ({ Headline}) 
+  }
+);
+
+// in class member position, we can also detect the need for a private field accessor:
+class extends Component {
+  static {
+    template(
+
+      "<Section @title={{this.title}} @subhead={{this.#secret}} />", 
+      {
+        scope: () => ({ Section }),
+        private: (instance) => ({ secret: instance.#secret }),
+      },
+      this
+    )
+  }
+}
+```
+
+> This RFC is focused on making sure the scope accessors can do everything javascript can do, which is why we're including private fields. However, additional work beyond this RFC is required to make the template compiler parse expressions like `{{this.#secret}}` correctly. 
+
+#### Implicit Form
+
+The "Implicit Form" is cheaper and easier to produce because it doesn't need to do any lexical analysis and doesn't need to parse the handlebars at all.
+
+The downside is that data flow is not all statically visible, because it relies on `eval`.
+
+Implicit Form has two key use cases:
+ - as an intermediate format between a preprocessor stage (which can eliminate all GJS special syntax and semantics) and the rest of a standard Javascript toolchain.
+ - as the implementation format in sandbox-like environments where dynamic code execution is the whole point.
+
+Examples of Implicit Form:
+
+```js
+import { template } from '@ember/template-compiler';
+
+// Notice that all of these have the exact same `params` argument. It's always the same. That's why it's easy to produce.
+
+const Headline = template(
+  "<h1>{{yield}}</h1>",
+  {
+    eval() { return eval(arguments[0]); }
+  }
+);
+
+const Section = template(
+  "<Headline>{{@title}}</Headline>", 
+  { 
+    eval() { return eval(arguments[0]); }
+  }
+);
+
+class extends Component {
+  static {
+    template(
+      "<Section @title={{this.title}} @subhead={{this.#secret}} />", 
+      {
+        // this handles private fields just fine,
+        // see Appendix A.
+        eval() { return eval(arguments[0]); }
+      },
+      this
+    )
+  }
+}
+```
+
+> _eval seems bad, what about Content Security Policy?_<br>
+> Typical apps never needs to actually _run_ the eval. This is a communication format between layers of build tooling. You _can_ run it, if you're making something like an interactive development sandbox. But that is a case that already requires `eval` anyway.
+
+> _Why `arguments[0]` instead of an explicit argument?_<br>
+> If we picked a local name to use for the argument, we would shadow that name in the surrounding scope. Whereas `arguments` is already a keyword that exists for this purpose, and can never collide with other local bindings.
+
+
 ### Type Signature
 
 ```ts
 function template(
-  templateContent: string, 
-  params?: Params, 
+  templateContent: string,
+  params?: ExplicitParams | ImplicitParams,
   backingClass?: object
 ): TheComponent;
 
 // This is the actual invokable component. Needs discussion with typescript team to formalize the correct type here and make sure the important inferrence cases work.
 type TheComponent = TODO;
 
-interface Params {
+interface BaseParams {
   strict?: boolean;
-  scope?: Scope
   moduleName?: string;
 }
 
-type Scope =
-  | (() => Record<string, unknown>)
-  | ((local: string, instance: any) => any);
+interface ExplicitParams extends BaseParams {
+  scope?: () => Record<string, unknown>;
+  private?: (instance) => Record<string, unknown>;
+}
 
+interface ImplicitParams extends BaseParams {
+  eval: () => any;
+}
 ```
 
 ### Strict defaults to true
@@ -177,60 +281,45 @@ Bare templates are a historical concept that we'd like to move away from, in ord
 
 When the optional `backingClass` argument is passed, the return value is that backing class, with the template associated, just like `setComponentTemplate`. When the `backingClass` argument is not provided, it creates and returns a new template-only component.
 
-> *Aren't route templates "bare templates"? What about them?<br>*
+> _Aren't route templates "bare templates"? What about them?<br>_
 > Yes, this RFC deliberately doesn't say anything about route templates. We expect a future routing RFC to use components to express what today's route templates express. This RFC also doesn't deprecate `precompileTemplate` yet -- although that will clearly be a good goal _after_ a new routing design addresses route templates.
-
-### Scope Parameter
-
-The scope parameter exists for the same reason as is exists in `precompileTemplate`: it gives the template access to things from the surrounding Javascript scope.
-
-We accept two different forms, distinguished by function arity:
-
-1. `() => Record<string, unknown>` is exactly like the existing `scope` in precompileTemplate. The values in the returned object are the lexically scoped local variables available to the template. 
-2. `(local: string, instance: any) => any` is an alternative form that does per-local-name lookup.
-
-The first form is the preferred choice for addons to publish to NPM and any other long-term stable source code. It makes the data flow statically apparent to all Javascript-aware tooling. To produce this form, build tooling needs to do a full parse of the template to discover exactly what upvars are discovered in the `<template></template>` tag, and intersect them with the set of bindings in Javascript scope.
-
-The second form is the preferred format to pass from a GJS preprocessor to other Javascript toolchains that don't understand GJS (like Babel or SWC). The typical usage would look like:
-
-```js
-template("Hello {{message}}", { scope(c8bb1dc1e509aa6b, fca6cbb3e151d53f) => eval(c8bb1dc1e509aa6b) }});
-```
-
-> *Why the weird local variable names*?<br>
-> In order to let the `eval` access anything in scope, we need to avoid shadowing any existing names. Since this is supposed to be the cheap transformation that doesn't require lexical analysis, we'd rather avoid the collision by picking well-known randomized identifiers.
-
-
-This is cheap to produce from `<template>` tag because you don't need to do any parsing of the template contents. It's the minimal transformation that gets you from GJS to valid Javascript. This would serve the same role that `[__GLIMMER_TEMPLATE(...)]` currently serves in the implementation of ember-template-imports, but unlike that syntax it can actually have a working runtime implementation, because the eval can grab local variables from scope as needed.
-
-> *Javascript Semantics what now?*<br>
-> If we only convert the contents of a template tag to a Javascript string literal, we're hiding an importing fact: the template may actually be consuming some bindings from the surrounding scope. `eval()` is *also* allowed to consume bindings from the surrounding scope, so its presence means that a runtime implementation can actually work.
-
->*eval seems bad, what about Content Security Policy?*<br>
-> Nobody needs to actually *run* the eval. This is a communication format between layers of build tooling. You *can* run it, if you're making something like an interactive development sandbox. But that is not the typical case.
-
 
 ### Syntactic Restrictions
 
 The runtime template compiler has no syntactic restrictions.
 
-The ahead-of-time template compiler has syntactic restrictions on `templateContents` and `params.scope`. 
+The ahead-of-time template compiler has syntactic restrictions on `templateContents`, `params.scope`, `params.private`, and `params.eval`.
 
 `templateContents` must be one of:
- - a string literal
- - a template literal with no expressions
 
- If provided, `params.scope` must be one of the following:
-  - an arrow function expression or function expression
-    - with body containing either
+- a string literal
+- a template literal with no expressions
+
+If provided, `params.scope` must be:
+
+- an arrow function expression or function expression
+  - with body containing either
+    - an expression
+    - or a block statement that contains exactly one return statement
+  - where the return value is an object literal
+    - whose properties are all non-computed
+    - whose values are all identifiers
+
+If provided, `params.private` must be:
+
+ - an arrow function expression or function expression
+   - that accepts one argument
+   - with body containing either
       - an expression
       - or a block statement that contains exactly one return statement
-    - where the return value is an object literal
+   - where the return value is an object literal
       - whose properties are all non-computed
-      - whose values are all identifiers
-  - the exact object method `scope(c8bb1dc1e509aa6b, fca6cbb3e151d53f){ return eval(c8bb1dc1e509aa6b) }`
-  - the exact object property `scope: function(c8bb1dc1e509aa6b, fca6cbb3e151d53f) { return eval(c8bb1dc1e509aa6b) }`
-  - the exact object property `scope: (c8bb1dc1e509aa6b, fca6cbb3e151d53f) => eval(c8bb1dc1e509aa6b)`. 
+      - whose values are all member expressions for private fields on the argument identifier
+  
+If provided, `params.eval` must be:
+ - an object method
+ - whose body contains exactly one return statment.
+ - where the return value must be exactly `eval(arguments[0])`.
 
 
 ## How we teach this
@@ -256,7 +345,7 @@ The ahead-of-time template compiler has syntactic restrictions on `templateConte
 
 ## Alternatives
 
-This RFC builds off the proposal in 
+This RFC builds off the proposal in
 https://github.com/emberjs/rfcs/pull/813.
 
 The main difference is that RFC 813 offered a form:
@@ -264,18 +353,93 @@ The main difference is that RFC 813 offered a form:
 ```
 template`<Foo />`
 ```
-that converts `<template>` into valid JS syntax *without* working JS semantics. 
+
+that converts `<template>` into valid JS syntax _without_ working JS semantics.
 
 ## Unresolved questions
 
 > Optional, but suggested for first drafts. What parts of the design are still
 > TBD?
 
- - What TS type to use for the component
+- What TS type to use for the component
 
- - Is `@ember/template-compiler` the right import path?
+- Is `@ember/template-compiler` the right import path?
 
- - TODO: audit the other existing arguments we pass through both precompileTemplate and the underlying lower-level template compiler and decide which to keep.
+- TODO: audit the other existing arguments we pass through both precompileTemplate and the underlying lower-level template compiler and decide which to keep.
 
+# Appendix A: Field Access Patterns
 
+This is a fully-working example that can run in a browser. It uses a toy rendering engine just to illustrate how scope access is working.
 
+```html
+<script type="module">
+  let templates = new WeakMap();
+
+  function template(content, params, klass) {
+    templates.set(klass, { content, params });
+  }
+
+  function render(instance) {
+    let { content, params } = templates.get(instance.constructor);
+    return content.replace(/\{\{([^}]*)\}\}/g, (m, g) =>
+      get(instance, params, g)
+    );
+  }
+
+  function get(instance, params, path) {
+    if (params.eval) {
+      if (path.startsWith("this.")) {
+        return params.eval("arguments[1]." + path.slice(5), instance);
+      }
+      return params.eval(path);
+    } else {
+      if (path.startsWith("this.#")) {
+        return params.private(instance)[path.slice(6)];
+      } else if (path.startsWith("this.")) {
+        return instance[path.slice(5)];
+      } else {
+        return params.scope()[path];
+      }
+    }
+  }
+
+  let local = "I'm a local variable";
+  class ImplicitExample {
+    publicField = "I'm a public field";
+    #privateField = "I'm a private field";
+    static {
+      template(
+        `DymamicExample
+        publicField={{this.publicField}}, privateField={{this.#privateField}}, local={{local}}
+        `,
+        {
+          eval() {
+            return eval(arguments[0]);
+          },
+        },
+        this
+      );
+    }
+  }
+
+  class ExplicitExample {
+    publicField = "I'm a public field";
+    #privateField = "I'm a private field";
+    static {
+      template(
+        `StaticExample:
+        publicField={{this.publicField}}, privateField={{this.#privateField}}, local={{local}}
+        `,
+        {
+          scope: () => ({ local }),
+          private: (instance) => ({ privateField: instance.#privateField }),
+        },
+        this
+      );
+    }
+  }
+
+  console.log(render(new ImplicitExample()));
+  console.log(render(new ExplicitExample()));
+</script>
+```
