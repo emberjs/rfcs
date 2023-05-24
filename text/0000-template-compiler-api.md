@@ -158,10 +158,10 @@ Examples of Explicit Form:
 ```js
 import { template } from '@ember/template-compiler';
 
-// when the template compiler finds nothing is needed from scope, no scope params are needed:
+// when nothing is needed from scope, no scope params are required:
 const Headline = template("<h1>{{yield}}</h1>");
 
-// when the template compiler identifies a local variable that's needed it emits the scope accessor for it:
+// local variable access works the same as in current precompileTemplate
 const Section = template(
   "<Headline>{{@title}}</Headline>", 
   { 
@@ -169,7 +169,7 @@ const Section = template(
   }
 );
 
-// in class member position, we can also detect the need for a private field accessor:
+// in class member position, we can also put private fields in scope
 class extends Component {
   static {
     template(
@@ -258,8 +258,7 @@ interface BaseParams {
 }
 
 interface ExplicitParams extends BaseParams {
-  scope?: () => Record<string, unknown>;
-  private?: (instance) => Record<string, unknown>;
+  scope?: (instance: object) => Record<string, unknown>;
 }
 
 interface ImplicitParams extends BaseParams {
@@ -288,7 +287,7 @@ When the optional `backingClass` argument is passed, the return value is that ba
 
 The runtime template compiler has no syntactic restrictions.
 
-The ahead-of-time template compiler has syntactic restrictions on `templateContents`, `params.scope`, `params.private`, and `params.eval`.
+The ahead-of-time template compiler has syntactic restrictions on `templateContents`, `params.scope`, and `params.eval`.
 
 `templateContents` must be one of:
 
@@ -298,24 +297,16 @@ The ahead-of-time template compiler has syntactic restrictions on `templateConte
 If provided, `params.scope` must be:
 
 - an arrow function expression or function expression
+  - that accepts zero or one arguments
   - with body containing either
     - an expression
     - or a block statement that contains exactly one return statement
   - where the return value is an object literal
     - whose properties are all non-computed
-    - whose values are all identifiers
+    - whose values are all either
+      - identifiers
+      - or private field member expressions on our argument identifier
 
-If provided, `params.private` must be:
-
- - an arrow function expression or function expression
-   - that accepts one argument
-   - with body containing either
-      - an expression
-      - or a block statement that contains exactly one return statement
-   - where the return value is an object literal
-      - whose properties are all non-computed
-      - whose values are all member expressions for private fields on the argument identifier
-  
 If provided, `params.eval` must be:
  - an object method
  - whose body contains exactly one return statment.
