@@ -204,7 +204,9 @@ Examples of Implicit Form:
 ```js
 import { template } from '@ember/template-compiler';
 
-// Notice that all of these have the exact same `params` argument. It's always the same. That's why it's easy to produce.
+// Notice that all of these have the exact same
+// `params` argument. It's always the same. 
+// That's why it's easy to produce.
 
 const Headline = template(
   "<h1>{{yield}}</h1>",
