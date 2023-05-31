@@ -247,14 +247,17 @@ class extends Component {
 ### Type Signature
 
 ```ts
-function template(
+import { ComponentLike } from '@glimmer/template';
+
+function template<S>(
   templateContent: string,
   params?: ExplicitParams | ImplicitParams,
-  backingClass?: object
-): TheComponent;
-
-// This is the actual invokable component. Needs discussion with typescript team to formalize the correct type here and make sure the important inferrence cases work.
-type TheComponent = TODO;
+): ComponentLike<S>;
+function template<C extends ComponentLike<any>>(
+  templateContent: string,
+  params?: ExplicitParams | ImplicitParams,
+  backingClass: C;
+): C;
 
 interface BaseParams {
   strict?: boolean;
@@ -347,15 +350,6 @@ template`<Foo />`
 that converts `<template>` into valid JS syntax _without_ working JS semantics.
 
 ## Unresolved questions
-
-> Optional, but suggested for first drafts. What parts of the design are still
-> TBD?
-
-- What TS type to use for the component
-
-- Is `@ember/template-compiler` the right import path?
-
-- TODO: audit the other existing arguments we pass through both precompileTemplate and the underlying lower-level template compiler and decide which to keep.
 
 # Appendix A: Field Access Patterns
 
