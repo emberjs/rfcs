@@ -247,7 +247,7 @@ class extends Component {
 ### Type Signature
 
 ```ts
-import { ComponentLike } from '@glimmer/template';
+import { ComponentLike } from '@glint/template';
 
 function template<S>(
   templateContent: string,
@@ -255,7 +255,7 @@ function template<S>(
 ): ComponentLike<S>;
 function template<C extends ComponentLike<any>>(
   templateContent: string,
-  params?: ExplicitParams | ImplicitParams,
+  params: ExplicitParams | ImplicitParams,
   backingClass: C;
 ): C;
 
