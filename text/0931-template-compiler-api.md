@@ -108,9 +108,9 @@ class Example extends Component {
     template(
       "Hello {{message}}",
       {
+        component: this,
         scope: () => ({ message }),
       },
-      this
     );
   }
 }
@@ -173,15 +173,14 @@ const Section = template(
 class extends Component {
   static {
     template(
-
       "<Section @title={{this.title}} @subhead={{this.#secret}} />", 
       {
+        component: this,
         scope: (instance) => ({ 
           Section, 
           "#secret": instance.#secret
         }),
       },
-      this
     )
   }
 }
@@ -227,11 +226,11 @@ class extends Component {
     template(
       "<Section @title={{this.title}} @subhead={{this.#secret}} />", 
       {
+        component: this,
         // this handles private fields just fine,
         // see Appendix A.
         eval() { return eval(arguments[0]); }
       },
-      this
     )
   }
 }
@@ -249,28 +248,28 @@ class extends Component {
 ```ts
 import { ComponentLike } from '@glint/template';
 
-function template<S>(
+declare function template<S>(
   templateContent: string,
-  params?: ExplicitParams | ImplicitParams,
+  params?: Params<never>
 ): ComponentLike<S>;
-function template<C extends ComponentLike<any>>(
+
+declare function template<C extends ComponentLike<any>>(
   templateContent: string,
-  params: ExplicitParams | ImplicitParams,
-  backingClass: C;
+  params: Params<C>
 ): C;
 
-interface BaseParams {
+interface Params<ComponentClass> {
+  component?: ComponentClass;
   strict?: boolean;
   moduleName?: string;
+  eval?: () => Record<string, unknown>;
+  scope?: (
+    instance: ComponentClass extends ComponentLike<any>
+      ? InstanceType<ComponentClass>
+      : never
+  ) => Record<string, unknown>;
 }
 
-interface ExplicitParams extends BaseParams {
-  scope?: (instance: object) => Record<string, unknown>;
-}
-
-interface ImplicitParams extends BaseParams {
-  eval: () => any;
-}
 ```
 
 ### Strict defaults to true
@@ -285,7 +284,7 @@ A key difference between `precompileTemplate` and our new `template` is that its
 
 Bare templates are a historical concept that we'd like to move away from, in order to have fewer things to teach.
 
-When the optional `backingClass` argument is passed, the return value is that backing class, with the template associated, just like `setComponentTemplate`. When the `backingClass` argument is not provided, it creates and returns a new template-only component.
+When the `component` argument is passed, the return value is that backing class, with the template associated, just like `setComponentTemplate`. When the `component` argument is not provided, it creates and returns a new template-only component.
 
 > _Aren't route templates "bare templates"? What about them?<br>_
 > Yes, this RFC deliberately doesn't say anything about route templates. We expect a future routing RFC to use components to express what today's route templates express. This RFC also doesn't deprecate `precompileTemplate` yet -- although that will clearly be a good goal _after_ a new routing design addresses route templates.
@@ -330,7 +329,7 @@ If provided, `params.eval` must be:
 
 Mentioning these APIs is appropriate when introducing the template tag feature in the guides. We can explain template tag as a convenience over these lower-level APIs and show side-by-side how a given template tag "really means" a call to `template()`. These examples should probably use the Explicit Form.
 
-We can also mention that fully runtime template compilation is possible using `@ember/template-compiler/runtime` and show this example in Implicit Form.
+We can also mention that fully runtime template compilation is possible using `@ember/template-compiler/runtime` and show this example in Implicit Form, since that pairs well with a dynamic, REPL-like environment.
 
 ## Drawbacks
 
@@ -349,6 +348,12 @@ template`<Foo />`
 
 that converts `<template>` into valid JS syntax _without_ working JS semantics.
 
+### Type Strictness Alternative
+
+The typescript types as written above don't prevent you from using `scope` and
+`eval` simultaneously. We could use more complicated types to enforce that. See [example](https://www.typescriptlang.org/play?#code/PTAEFpM0GUEsDmA7AhgFwK4CcCmoAmOAZnEnGnAPZIRTiggBQjcAtgA6VZqgDkAAggA2pNMBxIAbnCzVWEtOBysARjizghlSgGccvANwsOXHgG9QAYUomkCgDJwA1ngC+oIrNZ9BIpGLRldiF0fSM2Tm4rG047fw8vH2E2eSxgAGMY6gVDZkJ0kNwPDCR0impQQI4QwIAeGAA+AApGUEqgmpxrfwUALlAdNCxSBAAaVtB2FCwUVh0Afn6YIbgygFUyalqAUQAPYNXyAAVp2Z0AMS4AFQ7QgHkkIQBPUAAfUABJasO0E5m5hqMACU-Wstgczhw9QaRnyhTwRBKZSoNCqwVCtUsoBwu0CSHwOmi4P8jhctRQSCeDWaEzRnW6eLQ-UGwyQYwmKhQ6ScI0sIR0OlB4zaU3+CyWK3WmyQO32InSx1Oc0uWD5KAFACEuS58JiGm9Pt8Fb8lTpASCrEYWD0sEQuXgtXo-mdQGYJizVmhFqAVNohDgKUY2qxKPgMP6AHKzHDej1soyuZiidR29J4PYHY3O5XXW6BB7PbG4iQE0COnDZwluto6TLsGP9JpA0AAXn1ACUcJksLq42NQCUnEhKAB3JAwxiJ62BW320AZ+WKsUqtWa7U4XVYnF40tg2IQskUqmAtrbkuE8uV13uusN0BNUiDClp-ofJBP0o4K5Pet65tt0BO27XsVjZUYByQIdR3HBMkxtVM8C+TMlxdM98QvdUK1Na9T0kFAhEbf99UHYcx1gxg0B-PANhRABpHAnh0Worn1FtQCuIsd0JDj5lAFwnkoIh2NAfo7EkdQjEo+tYElNAaOoAAJHAhHrLBmPAq4AEEhCEVjhLQ0sjwmXiOIAMlAP4KHw2ogK4XU9gKDBCFqeSkHoxjmO03TwP4wT2IacCSkIEg7HwakJlEnBxKwSSqJk4YpRRZi9OWBK5OlJSVPUdT-KtEBaCgeddlmYIcEJOh6CYRhMnfHgtHSfDWz4EcuCEfBckYRFSnKGgcQKFA2CaQUBlAhBm2rUBcEwLAaAAAwAdQAC0oFAAEJQAAEjMHRXFm8j8sAGXJGHy-g0B0JR9i7RR1FkLBaFAEc8AapBhx4KYBR9Sg0EWgZb1ACl8GxPChAAOjBii8xwJpZtqdgGkyrRwLMMx6vw1xXFW2pgDh2akYmKL8KbHC2kmnBpt64GmmmBAMHkfwdAAbQABgAXSBINQFcYVfsoetCNbfUmgsVGhE5oFxlcdnmHywBQcgh6pQmh2H4eUxHXRRygGqEdHMexhpceJ2teZwfmAKF0ARbFiWpeOsA5bpRWYbhhHKCRjWtZ1rGcbx3DCfGiY2im7AKcJ6naYURnWaltoucnG3Zeq-lCT2Er-QARk488iX3fxagsTSsAQYaLFQeRmVGgx-oQE3QCQWm1Du9xXH1Cbq54ABiQhaybcvWQQYnA7J4PQFmrbvrgHQQepyfS5wdwJ82sxx8n6ep+r9wngDLBCUoNqQb2iYpxrNB0FWAf2gVwIlbh5G+pCNhKkWieQc7sr0nRr39fA5efZJmtb0bI+E+n4iL3gmn-U8ux+psG5hAvgr9ay8H6EA58OAX5d3SLAkmkssGSw5omKcCd+ofRTtUHAAAmTO6Fs7ZFzvnQuxda7Rl7iMSuKBq6iXruoTmnMW4TDbqABB6Qe4jT7ufIOM0R5jyfivBhINZ7z0JNI5+q92Fz1AJvaYO894HxjswY+p90jnwdlfJ2DRb5QPvt4Ze6C34fz1gbH+59fZCCJuAiBEiQ6uLDnTM6zM2Ycz-rHIJ0dOaTmlmAA6909B4FengCos0CZCFmj6ZSo5E7qmTsVMhABmKhu4shxDQHnUABci79BLsw0RrCq41zrqobhTc+FtAEUIkRfZxFD0kaPJeMip5yIUaABeyjZFFzXuozR29QC73wPvfB+iRqGOMZDa+5izB3wGtYvpQj7He0fhPX+f8jZ83vCgkBAswEBwgRsmBVy-68CEUgoZtVUG2NrFgmO4s7kMDAKdc6OJ6xlCUFgW691HqgGeq9SYmTPrfR5tJAGQN8JgxBt8pJbjvmD3Jki7xhdw7038aEoJuDQkEMYEAA) courtesy of @chriskrycho. I didn't go with that in the RFC because it's harder to read and explain, and I don't think this low-level API present much practical risk that people will be accidentally including both together. 
+
+
 ## Unresolved questions
 
 # Appendix A: Field Access Patterns
@@ -359,8 +364,8 @@ This is a fully-working example that can run in a browser. It uses a toy renderi
 <script type="module">
   let templates = new WeakMap();
 
-  function template(content, params, klass) {
-    templates.set(klass, { content, params });
+  function template(content, params) {
+    templates.set(params.component, { content, params });
   }
 
   function render(instance) {
@@ -397,11 +402,11 @@ This is a fully-working example that can run in a browser. It uses a toy renderi
         publicField={{this.publicField}}, privateField={{this.#privateField}}, local={{local}}
         `,
         {
+          component: this,
           eval() {
             return eval(arguments[0]);
           },
-        },
-        this
+        }
       );
     }
   }
@@ -415,12 +420,12 @@ This is a fully-working example that can run in a browser. It uses a toy renderi
         publicField={{this.publicField}}, privateField={{this.#privateField}}, local={{local}}
         `,
         {
+          component: this,
           scope: (instance) => ({
             local,
             "#privateField": instance.#privateField,
           }),
-        },
-        this
+        }
       );
     }
   }
