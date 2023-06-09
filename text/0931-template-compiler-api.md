@@ -356,7 +356,7 @@ The typescript types as written above don't prevent you from using `scope` and
 
 ## Unresolved questions
 
-# Appendix A: Field Access Patterns
+### Appendix A: Field Access Patterns
 
 This is a fully-working example that can run in a browser. It uses a toy rendering engine just to illustrate how scope access is working.
 
