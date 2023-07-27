@@ -8,7 +8,7 @@ teams: # delete teams that aren't relevant
   - framework
   - learning
 prs:
-  accepted: # update this to the PR that you propose your RFC in
+  accepted: https://github.com/emberjs/rfcs/pull/938
 project-link:
 ---
 
@@ -216,7 +216,7 @@ because it will automatically build into your app all the possible matches, when
 
 - Some usages of `requirejs.entries` are really doing the same thing as `require.has` and the above section applies to them as well.
 
-- For cases where enumerating modules is truly necessary and legitimate, we're offering up a companion RFC to this one introducing `import.meta.glob`. The biggest difference between `import.meta.glob` and `requirejs.entries` is that you can only `import.meta.glob` your own package's files. If an addon wants to enumerate files from the app, you need to ask the app author to pass you the `import.meta.glob()` results. See [the RFC](#fixme) for details.
+- For cases where enumerating modules is truly necessary and legitimate, we're offering up a companion RFC to this one introducing `import.meta.glob`. The biggest difference between `import.meta.glob` and `requirejs.entries` is that you can only `import.meta.glob` your own package's files. If an addon wants to enumerate files from the app, you need to ask the app author to pass you the `import.meta.glob()` results. See [the RFC](https://github.com/emberjs/rfcs/pull/939) for details.
 
 
 ## How We Teach This
