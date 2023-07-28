@@ -1,5 +1,5 @@
 ---
-stage: ready-for-release
+stage: discontinued
 start-date: 2022-01-29T00:00:00.000Z
 release-date: Unreleased
 release_versions:
@@ -7,7 +7,7 @@ teams:
   - data
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/790'
-  ready-for-release: 'https://github.com/emberjs/rfcs/pull/887'
+  discontinued: 'https://github.com/emberjs/rfcs/pull/887'
 project-link:
 suite:
 ---
