@@ -3,6 +3,7 @@ stage: released
 start-date: 2023-11-10T00:00:00.000Z
 release-date:
 release-versions:
+  ember-data: 4.12
 teams:
   - data
 prs:
