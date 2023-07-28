@@ -1,8 +1,9 @@
 ---
-stage: released
+stage: recommended
 start-date: 2022-08-27T00:00:00.000Z
-release-date: Unreleased
+release-date: 2023-04-08T00:00:00.000Z
 release-versions:
+  ember-data: v4.12.0
   ember-source: vX.Y.Z
   ember-data: vX.Y.Z
 teams:
@@ -10,7 +11,7 @@ teams:
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/854'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/923'
-  released: 'https://github.com/emberjs/rfcs/pull/926'
+  recommended 'https://github.com/emberjs/rfcs/pull/926'
 ---
 
 <!--- 
