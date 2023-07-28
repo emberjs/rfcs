@@ -4,8 +4,6 @@ start-date: 2022-08-27T00:00:00.000Z
 release-date: 2023-04-08T00:00:00.000Z
 release-versions:
   ember-data: v4.12.0
-  ember-source: vX.Y.Z
-  ember-data: vX.Y.Z
 teams:
   - data
 prs:
