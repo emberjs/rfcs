@@ -1,6 +1,6 @@
 ---
-stage: accepted
-start-date: 2022-08-27
+stage: ready-for-release
+start-date: 2022-08-27T00:00:00.000Z
 release-date: Unreleased
 release-versions:
   ember-source: vX.Y.Z
@@ -8,8 +8,8 @@ release-versions:
 teams:
   - data
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/854
-
+  accepted: 'https://github.com/emberjs/rfcs/pull/854'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/923'
 ---
 
 <!--- 

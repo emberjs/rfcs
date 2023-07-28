@@ -282,7 +282,8 @@ that RFC.
 
 RFCs in [Final Comment Periods](#final-comment-periods-fcp) are labeled with
 [Final Comment Period](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc+label%3A%22Final+Comment+Period%22)
-and are announced on the [Ember twitter account](https://twitter.com/emberjs).
+and are announced in `#news-and-announcements` on [Ember Discord](https://discord.gg/emberjs) and
+on the [Ember twitter account](https://twitter.com/emberjs).
 
 [Quick links](#quick-links-for-pull-requests-for-proposed-and-advancing-rfcs)
 are provided at the top of the README to help you review what you are interested in.
@@ -450,9 +451,9 @@ further guidance.
 
 For certain stage advancements, a _final comment period_ (FCP) is required. This
 is a period lasting 7 days. The beginning of this period will be signaled with a
-comment and tag on the RFC's pull request. Furthermore,
-[Ember's official Twitter account](https://twitter.com/emberjs) will post a
-tweet about the RFC to attract the community's attention.
+comment and tag on the RFC's pull request. Furthermore, a message will be posted in
+`#news-and-announcements` on [Ember Discord](https://discord.gg/emberjs) and on the
+[official Ember Twitter account](https://twitter.com/emberjs) to attract the community's attention.
 
 An RFC can be modified based upon feedback from the [core teams] and community
 during the final comment period. Significant modifications may trigger a new
