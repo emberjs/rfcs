@@ -2,7 +2,8 @@
 stage: recommended
 start-date: 2021-04-23T00:00:00.000Z
 release-date: 2022-09-06T00:00:00.000Z
-release-versions: 4.7
+release-versions:
+  ember-data: 4.7
 teams:
   - data
 prs:
