@@ -64,7 +64,44 @@ invisible to apps are instead breaking changes, because apps and addons are
 relying on leaked details (including timing) of the AMD implementation.
  - we cannot implement other standard ECMA features like top-level await until these incompatible APIs are gone (consider: how is `require()` supposed to deal with discovering a transitive dependency that contains top-level await?)
 
-## Transition Path
+## Detailed Design
+
+### Architectural Intro
+
+There are four salient layers to consider in Ember's architecture:
+
+ - Container holds state. When Container is asked for something it doesn't have yet, it gets the factory from the Registry.
+ - Registry holds factories. You can manually register factories with the registry. When someone asks for a factory that is not already registered, the Registry delegates to the Resolver.
+ - Resolver maps between requests like "service:translations" and module names like "my-app/services/translations". How it does this mapping can be customized. After mapping the name, it retrieves a module from loader.js.
+ - loader.js holds modules. Modules get added via `define` and retrieved via `require`. In addition to being used by the Resolver, loader.js is used directly whenever a module imports another module.
+
+This RFC replaces loader.js with ES Modules. 
+ - instead of using `define` to get modules into the system, you must create an actual module in your app or addon. Nothing about "how do I create a module" is changed by this RFC. It has long been possible to just create a javascript file and the default build system would `define` it for you. As long as you stick to that normal happy path, none of your code is changing. It will just go through some other mechanism than `define` to get to the browser. (Whether that mechanism is literally browser-native ES modules or some other transpilation target is immaterial -- the point is that if you follow the ES module spec it doesn't matter.)
+
+ - instead of using `require`, modules can only access each other via `import` or `import()` (or `import.meta.glob()`, see [RFC 939](https://github.com/emberjs/rfcs/pull/939)).
+
+This RFC does not immediately propose changing Container or Registry or the Registry-facing Resolver interface. It *does* imply that Resolver's implementation must change, because today Resolver relies on `require` to synchronously retrieve things from loader.js, which will not be possible.
+
+Instead, anything that needs to be synchronously resolvable by the Registry will need to be either:
+ - explicitly preloaded into the Registry (using the existing `register` public API)
+    ```js
+    import Button from './components/button';
+    registry.register('component:button', Button);
+    ```
+ - or passed into a new Resolver implementation that has some access to **preloaded** ES modules:
+    ```diff
+    // app/app.js
+    -import Resolver from 'ember-resolver';
+    +import Resolver from '@ember/resolver';
+    export default class App extends Application {
+    -  Resolver = Resolver;
+    +  // For illustration purposes only! Not real API.
+    +  Resolver = Resolver(import.meta.glob('./**/*.js', { eager: true }))
+    }
+    ```
+    This would continue to support existing custom resolver rules, but people would need to extend their custom resolvers from this new Resolver that serves requests out of preloaded modules, rather than extend from the current Resolver that serves them out of loader.js.
+
+### New Feature: strict-es-modules optional feature
 
 We will introduce a new Ember optional feature:
 
@@ -77,7 +114,6 @@ We will introduce a new Ember optional feature:
 
 And we will emit a deprecation warning in any app that has not enabled this new optional feature.
 
-
 When `strict-es-modules` is set:
  - the global names `require`, `requirejs`, `requireModule`, `define`, and `loader` become undefined.
  - importing anything from `"require"` becomes an early error. This outlaws usage like:
@@ -89,6 +125,80 @@ When `strict-es-modules` is set:
  - Importing (including re-exporting) a non-existent name becomes an early error.
  - Attempting to mutate a module from the outside throws an exception.
  - `importSync` from `'@embroider/macros'` continues to work but it no longer guarantees lazy-evaluation (since lazy-and-synchronous is impossible under strict ES modules). 
+ - the new special forms `import.meta.EMBER_COMPAT_MODULES` and `import.meta.EMBER_COMPAT_TEST_MODULES` become available (see next section).
+
+
+### New Feature: import.meta.EMBER_COMPAT_MODULES
+
+In general, it's difficult and undesirable to make every app try to express (even through pattern matching) the full set of modules that would have traditionally been forced into the bundle and made available to the Resolver. The set encompasses not just the app itself but also the merged app trees of all addons, plus each addon's own module namespace.
+
+Instead, we introduce a special expression `import.meta.EMBER_COMPAT_MODULES` that expands to that eagerly imported set, as an object.
+
+```js
+// this:
+const modules = import.meta.EMBER_COMPAT_MODULES;
+// expands to roughly:
+import * as $0 from "my-app/app.js";
+import * as $1 from "my-app/router.js";
+// ...
+import * as $50 from "some-addon/components/whatever.js";
+// ...
+const modules = {
+  "my-app/app.js": $0,
+  "my-app/router.js": $1,
+  // ...
+  "some-addon/components/whatever.js": $50,
+  // ...
+}
+```
+
+Classic builds have one implementation-defined answer for `EMBER_COMPAT_MODULES`, whereas Embroider adjusts the meaning of `EMBER_COMPAT_MODULES` depending on your settings. For example, `staticComponents:true` removes `app/components/**` from `EMBER_COMPAT_MODULES`.
+
+`import.meta.EMBER_COMPAT_MODULES` is only valid within an app, it has no meaning if you try to use it in an addon.
+
+As a corollary to `import.meta.EMBER_COMPAT_MODULES` we will provide `import.meta.EMBER_COMPAT_TEST_MODULES`. This is the set of modules that would have traditionally been forced into the tests bundle. It includes things like the app's tests plus addon-test-support trees. 
+
+It's named "COMPAT" because we intend it as a backward-compatibility feature, enabling you to continue using pre-Polaris idioms or addons with pre-Polaris idioms. In a fully-Polaris app with only updated addons, you would not need this at all. All template resolutions would be strict, so they would never hit the resolver. Similarly we expect that the Polaris story around service-as-resource and router-composed-out-of-components-and-resources would eliminate the remaining resolver lookups.
+
+By making this feature explicitly visible in the code, we allow early adopters to choose *not* to use it at whatever point they're ready for that, rather than continuing to make this behavior invisible.
+
+
+### New Feature: Static Resolver
+
+We propose this blueprint change, which would be required when using the `strict-es-modules` optional feature:
+
+```diff
+// app/app.js
+-import Resolver from 'ember-resolver';
++import Resolver from '@ember/resolver';
+export default class App extends Application {
+-  Resolver = Resolver;
++  Resolver = Resolver.withModules(import.meta.EMBER_COMPAT_MODULES);
+}
+```
+
+This new `Resolver` is intended to offer the same extensibility API as the current one from `ember-resolver`. The main difference is that instead of looking in loader.js, it looks in its own (private) set of known modules. It offers a static method that extends itself to include more modules:
+
+```ts
+class Resolver {
+  static withModules(modules: Record<string, unknown>): this;
+}
+```
+
+This is a static method because `Application` expects `Resolver` to be a factory, not an instance, and we don't need to change that.
+
+We will also take this opportunity to make this new Resolver:
+ - not extend from `Ember.Object`
+ - not include any deprecated APIs from the previous Resolver
+ - drop any API we discover during implementation that is only relevant on unsupported Ember versions. (For example, I can see `ember-resolver` is still looking for stuff in `Ember.TEMPLATES`. That is definitely not a thing anymore!)
+
+Along with this change, the existing `ember-resolver` package should be marked deprecated.
+
+
+
+
+## Transition Path
+
 
 ### Implication: No touching Ember from script context
 
@@ -219,29 +329,76 @@ because it will automatically build into your app all the possible matches, when
 - For cases where enumerating modules is truly necessary and legitimate, we're offering up a companion RFC to this one introducing `import.meta.glob`. The biggest difference between `import.meta.glob` and `requirejs.entries` is that you can only `import.meta.glob` your own package's files. If an addon wants to enumerate files from the app, you need to ask the app author to pass you the `import.meta.glob()` results. See [the RFC](https://github.com/emberjs/rfcs/pull/939) for details.
 
 
+## Recommendations: Replacement APIs for `define`
+
+ - If you're using `define()` so that your users can import from a name other than your package name: Nope, sorry, never do that. You're rudely stomping on a piece of the package namespace that doesn't belong to you. Provide a regular ES module and tell users to import from your real package name. Or rename your package to match the public API you really want.
+
+ - If you're using `define()` to provide something that Ember will resolve, instead of defining it as the module level you can still `register` it at a the Registry level:
+
+    ```js
+    getOwner(this).register('service:special', MyService);
+    ```
+
+    I mention this option because it's stable public API. But see the "Alternatives" section below for a discussion on why we think Registry and Container themselves may not be needed once Ember is fully oriented around ES modules (which goes beyond the scope of this one RFC).
+
+ - If you're using `define()` to make a third-party library available for import inside Ember apps, stop doing that in favor of ember-auto-import. 
+
+ - If you're using `define()` because you emit your code in `treeForVendor` rather than `treeForAddon`: move your code to `treeForAddon` and emit regular modules. If you think you need to be in vendor in order to run "early enough", you may need to tell your users to import your module from the beginning of their `app.js`. 
+
+
 ## How We Teach This
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
-Does it mean we need to put effort into highlighting the replacement
-functionality more? What should we do about documentation, in the guides
-related to this feature?
-How should this deprecation be introduced and explained to existing Ember
-users?
+The "recommendation" sections above can be the actual content for the deprecation guides. That is the main teaching component of this RFC.
+
+Ultimately this change results in less to teach, because we can just say "Ember uses ES modules" and lean on existing teaching materials for ES modules.
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-There are tradeoffs to choosing any path, please attempt to identify them here.
+These APIs are widely-used, so this will definitely take work in:
+ - Ember itself
+ - the default set of addons that appear in the official blueprint
+ - popular community addons
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
+### We could change the Registry and Container APIs too
 
-## Unresolved questions
+The Registry and Container have APIs that are not really aligned with ES modules. They expect to lazily-and-synchronously evaluate modules the first time they're needed. If we were starting from scratch with ES-modules plus a good lifetime primitive (like `@ember/destroyable`) plus WeakMap, it's not clear that we would have a Container or Registry *at all*.
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+This RFC does not propose changing Container or Registry's public APIs right now. But that does mean that in the implementation of this RFC we need a build step that emits code to eagerly evaluate and register all the modules up front. That has always been *allowed* by the existing public APIs, and it's approximately what Embroider does internally already to make Ember apps work in strict ES module environments. 
+
+I see three alternatives here:
+
+1. Keep Registry and Container unchanged, accepting that we need to eagerly register everything they might need, no longer using their lazy resolution fallbacks.
+
+2. Change their APIs to be asynchronous, deprecating the synchronous versions. This would snowball into other APIs like service injection too.
+
+3. Eliminate them entirely, replacing all their use cases with pure ES modules.
+
+Option 1 is what this RFC currently proposes, for ease of transition. Option 2 and 3 are probably equally disruptive, and I don't see a reason to keep Registry and Container around at all, so if we're going to make people change we might as well go all the way to Option 3 instead of Option 2.
+
+To get to Option 3 there are several prerequisites:
+
+ - it would require a new injection API, along the lines of:
+    ```diff
+    import { service } from '@ember/service';
+    + import TranslationService from '../services/translation';
+    class extends Component {
+    -  @service translations;
+    +  @service(TranslationService) translations;
+    }
+    ```
+
+    This is something we probably want to do anyway to improve TypeScript support and to improve code splitting and encapsulation. But it would be easier to transition if that change was not a hard requirement of this change.
+
+ - it would require deprecating non-strict templates (so GJS only)
+   - and this requires deprecating the current router (which uses "bare templates", which cannot be gjs) in favor of a Polaris-generation router that is not yet designed.
+  
+ - it probably requires changes (or elimination) of initializers and instance-initializers
+
+For all those reasons I don't think Option 3 is immediately viable. However, I do think we should ensure that all the changes we're asking the community to adopt are durable changes that prepare them for that world. The changes in this RFC are all things we can be confident are necessary.
+
+
+## Unresolved Questions
+
+Should we tackle FastBoot.require?
