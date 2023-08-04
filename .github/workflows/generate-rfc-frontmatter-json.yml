@@ -18,7 +18,7 @@ jobs:
 
       - name: Generate frontmatter data file
         run: |
-          node rfcs-tooling/list-frontmatter.js text/*.md > rfc-data.json
+          node rfcs-tooling/scripts/list-frontmatter.mjs text/*.md > rfc-data.json
 
       - uses: actions/upload-artifact@v3
         with:

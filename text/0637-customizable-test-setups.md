@@ -4,6 +4,7 @@ start-date: 2020-06-01T00:00:00.000Z
 release-date: 2020-05-02T00:00:00.000Z
 release-versions:
   ember-source: v4.4.0
+  ember-cli: v4.3.0
 teams:
   - framework
   - cli
@@ -49,7 +50,7 @@ For example:
 
 ```js
   import { module, test } from 'qunit';
-  import setupTest from 'ember-qunit';
+  import { setupTest } from 'ember-qunit';
 
   module('Unit | Service | tomster', function(hooks) {
     setupTest(hooks);
@@ -63,7 +64,7 @@ manually be changed to:
 
 ```js
     import { module, test } from 'qunit';
-    import setupTest from 'my-app/tests/helpers';
+    import { setupTest } from 'my-app/tests/helpers';
 
     module('Unit | Service | tomster', function(hooks) {
       setupTest(hooks);
@@ -76,8 +77,8 @@ or where the setup functions are to be composed, this must be added:
 
 ```js
     import { module, test } from 'qunit';
-    import setupTest from 'ember-qunit';
-    import setupMyTest from 'my-app/tests/helpers';
+    import { setupTest } from 'ember-qunit';
+    import { setupMyTest } from 'my-app/tests/helpers';
 
     module('Unit | Service | tomster', function(hooks) {
       setupTest(hooks);
