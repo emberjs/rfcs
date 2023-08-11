@@ -1,5 +1,5 @@
 ---
-stage: ready-for-release
+stage: released
 start-date: 2023-03-06T14:09:00.000Z
 release-date:
 release-versions:
