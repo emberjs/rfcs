@@ -7,6 +7,7 @@ teams:
   - data
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/743'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/947'
 ---
 
 # EmberData | Deprecate Legacy Imports
