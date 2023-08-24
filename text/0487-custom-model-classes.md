@@ -1,9 +1,9 @@
 ---
 stage: released # FIXME: This may be recommended
 start-date: 2019-05-09T00:00:00.000Z
-release-date: 2019-09-19T00:00:00.000Z
+release-date: 2021-08-20T00:00:00.000Z
 release-versions:
-  ember-source: v3.13.0
+  ember-data: v3.28.0
 
 teams:
   - data
