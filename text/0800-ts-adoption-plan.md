@@ -1,5 +1,5 @@
 ---
-stage: accepted
+stage: released
 start-date: 2022-02-24T00:00:00.000Z
 release-date:
 release-versions:
@@ -9,7 +9,9 @@ teams:
   - cli
   - learning
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/800
+  accepted: 'https://github.com/emberjs/rfcs/pull/800'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/868'
+  released: 'https://github.com/emberjs/rfcs/pull/950'
 project-link:
 ---
 
@@ -316,7 +318,7 @@ Like browsers and Node, TypeScript regularly introduces new features which are a
 - `const` assertions and higher-order inference for functions, which was key to enabling Glint (3.4)
 - assertion functions, allowing more useful typing of `assert` (3.7)
 - the `declare` modifier, allowing safe declaration of injections and CPs (3.7)
-- spec compatibility for class fields, optional chaining,. and nullish coalescing (3.7)
+- spec compatibility for class fields, optional chaining,. andish coalescing (3.7)
 - spec compatibility for top-level `await` (3.8)
 - variadic tuple types and labeled tuple elements (4.0, improved in 4.2)
 - template literal types (4.1)
