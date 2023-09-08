@@ -1,5 +1,5 @@
 ---
-stage: accepted
+stage: released
 start-date: 2021-03-23T00:00:00.000Z
 release-date:
 release-versions:
@@ -9,7 +9,9 @@ teams:
   - data
   - cli
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/730
+  accepted: 'https://github.com/emberjs/rfcs/pull/730'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/875'
+  released: 'https://github.com/emberjs/rfcs/pull/949'
 project-link:
 ---
 
@@ -461,7 +463,7 @@ For functions which return or accept user-constructible types, the rules specifi
 
 -   a function (including a class constructor or methods) argument *requires a more specific ("narrower") type*, for example if it previously accepted `string | number` but now requires `string`—since the user will have to change some calls to the function ([playground][narrower-argument])
 
--   a function (including a class constructor or method) *returns a less specific ("wider") type*, for example if it previously returned `string` but now returns `string | null`—since the user's existing handling of the return value will be wrong in some cases ([playground][wider-return]).
+-   a function (including a class constructor or method) *returns a less specific ("wider") type*, for example if it previously returned `string` but now returns `string |`—since the user's existing handling of the return value will be wrong in some cases ([playground][wider-return]).
 
     This includes widening from a *type guard* to a more general check. For example:
 
@@ -621,7 +623,7 @@ Bug fix/patch releases to TypeScript (as described above under [Bug fixes](#bug-
 
 Type-checking in TypeScript behaves differently under different “strictness” settings, and the compiler adds more strictness settings over time. Changes to types which are not breaking under looser compiler settings may be breaking under stricter compiler settings.
 
-For example: a package with `strictNullChecks: false` could make a function return type nullable without the compiler reporting it within the package or the package’s type tests. However, as described above, this is a breaking change for consumers which have `strictNullChecks: true`. (By contrast, a *consumer* may disable strictness settings safely: code which type-checks under a stricter setting also type-checks under a less strict setting.) Likewise, with `noUncheckedIndexedAccess: false`, an author could change a type `SomeObj` from `{ a: string }` to `{ [key: string]: string }` and accessing `someObj.a.length` would now error.
+For example: a package with `strictNullChecks: false` could make a function return typeable without the compiler reporting it within the package or the package’s type tests. However, as described above, this is a breaking change for consumers which have `strictNullChecks: true`. (By contrast, a *consumer* may disable strictness settings safely: code which type-checks under a stricter setting also type-checks under a less strict setting.) Likewise, with `noUncheckedIndexedAccess: false`, an author could change a type `SomeObj` from `{ a: string }` to `{ [key: string]: string }` and accessing `someObj.a.length` would now error.
 
 Accordingly, conforming packages must use `strict: true` in their compiler settings. Additionally, communities may define further strictness settings to which they commit to conform which include “pedantic” strictness settings like `noUncheckedIndexedAccess`. For example, the Ember community might commit to a set of *additional* strictness flags it supports for its own types for any LTS release, published in Ember’s own TypeScript documentation.
 

@@ -1,5 +1,5 @@
 ---
-stage: accepted
+stage: released
 start-date: 2022-02-24T00:00:00.000Z
 release-date:
 release-versions:
@@ -9,7 +9,9 @@ teams:
   - cli
   - learning
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/800
+  accepted: 'https://github.com/emberjs/rfcs/pull/800'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/868'
+  released: 'https://github.com/emberjs/rfcs/pull/950'
 project-link:
 ---
 
@@ -316,7 +318,7 @@ Like browsers and Node, TypeScript regularly introduces new features which are a
 - `const` assertions and higher-order inference for functions, which was key to enabling Glint (3.4)
 - assertion functions, allowing more useful typing of `assert` (3.7)
 - the `declare` modifier, allowing safe declaration of injections and CPs (3.7)
-- spec compatibility for class fields, optional chaining,. and nullish coalescing (3.7)
+- spec compatibility for class fields, optional chaining,. andish coalescing (3.7)
 - spec compatibility for top-level `await` (3.8)
 - variadic tuple types and labeled tuple elements (4.0, improved in 4.2)
 - template literal types (4.1)
@@ -539,36 +541,42 @@ For the classic DI system, we no longer require (or benefit from) string key-bas
     }
     ```
 
-With the introduction of full support for native classes and decorators in Octane, there is no need for this (and it was rather janky to begin with!). Accordingly, we will simply remove support for these two type registries entirely:
+With the introduction of full support for native classes and decorators in Octane, and given the current status of the decorators implementation in TypeScript, this does not provide type inference. However, these kinds of type registries can still provide two benefits for consumers:
 
-- The service `Registry` in `@ember/service`
-- The controller `Registry` in `@ember/controller`
+1. When renaming a service injection, like `@service('session') sessionService;`, or using its full name, like `@service('shared@session') session;`, the registry can still check that the resolved name is one that is registered.
 
-The decorators will continue to accept a string key, but will not validate that against a registry, since decorators cannot change the types of the items they decorator in TypeScript.[^reintroduce]
+2. It can be used with the other things in the DI system, e.g. making `Owner.lookup('service:session')` type safe, and thereby making things like `this.owner.lookup('service:session')` in tests automatically be well-typed.
+
+The `@service` decorator will therefore continue to accept a string key, and will validate that against a registry, even though decorators cannot change the types of the items they decorate in TypeScript today. Additionally, the registry will be integrated into `Owner` types so that it can be used more generally. Moreover, the design for an `Owner` registry should allow others to integrate in the same way.
+
+Controller injection, by contrast with service injection, is decreasingly used across the ecosystem and not generally recommended, and we expect it to be deprecated during Ember v6. Accordingly, we will *keep* support for the service registry while dropping support for the controller registry. (Given an appropriate design for `Owner`, end users could reimplement this if they so chose.)
+
+Future designs for services and dependency injection more generally will need to be written to account for the capabilities of TypeScript’s implementation of Stage 3 decorators as they grow and change over time.
 
 For Ember Data, there is considerably more ongoing need for registry-style APIs. `Store.findRecord` isn’t going anywhere any time soon, for example, and it *requires* some kind of registry to make `this.store.findRecord('user', 1)` correctly return a `User` model. Many other APIs within Ember Data similarly require registries for type safety. Thus, Ember Data will need its own dedicated design for handling those, and this RFC leaves those for the Ember Data team to address in a dedicated RFC.
-
-[^reintroduce]: We could conceivably reintroduce a registry of this form in the future if that limitation on decorators in TypeScript changes, so that `@service('session') declare session;` would have the right type without needing an explicit type annotation, but that would need to be well-motivated on the merits, and there are actually advantages to having explicit type imports for the static analyzability of the code. The combination of Embroider and other future design moves we might make for the design system, for example [this experiment by pzuraq](https://github.com/pzuraq/ember-totally-not-module-based-services), may make other directions more appealing than the registry approach.
 
 
 ### CLI Integration
 
 We will introduce a new `--typescript` (`-ts`) flag for the `ember new` and `ember addon` commands, allowing users to opt into TypeScript when generating a new project. Using this flag will:
 
-- Install Ember TypeScript integration tooling, today consisting simply of `ember-cli-typescript` and its generators.
 - Set the `isTypeScriptProject` option for `.ember-cli` (introduced in [RFC #0776][rfc-0776]) to `true`, so that blueprints are generated with TypeScript by default in the project.
 - Configure linting:
     - In the`.eslintrc.js` blueprint:
-        - use `@typescript-eslint/parser` instead of the Babel ESLint parser
-        - include `@typescript-eslint` in the `plugins` key
-        - include `plugin:@typescript-eslint/recommended` in the `extends` key
-    - Install the `@typescript-eslint` dependencies instead of of the Babel ESLint dependencies in `package.json`
+        - Use `@typescript-eslint/parser` instead of the Babel ESLint parser.
+        - Include `@typescript-eslint` in the `plugins` key.
+        - Include `plugin:@typescript-eslint/recommended` in the `extends` key.
+    - Install the `@typescript-eslint` dependencies instead of,  or in addition to (as appropriate), the Babel ESLint dependencies in `package.json`.
+- Configure [Glint][glint] for type checking and, for addons, emitting type declarations during build.
+    - Create `tsconfig.json` files and generate their `compilerOptions.paths`.
+    - Configure `ember-cli-babel` to include the TypeScript transform. (This may just be an “out of the box” setting so it always works and does not require configuration!)
+    - Set up packages with scripts to do type checking and, in the case of v1 addons, emitting type declarations using `glint`.
 
 [rfc-0776]: https://emberjs.github.io/rfcs/0776-typescript-blueprints.html
 
 We will also update the Glimmer Component blueprint in the Ember.js repo to include [the component’s signature][rfc-0748], so that it can be used by TypeScript.
 
-We will *not* be eliminating `ember-cli-typescript` as part of this process, because it remains a useful home for some of the tooling, and may remain a useful configuration point in the future, for example when we incorporate [Glint][glint] into official Ember tooling. In this design, only the pieces which are *necessarily* shared will be hoisted into `ember-cli` itself, with the other pieces remaining in `ember-cli-typescript`. For example, the blueprint for generating `tsconfig.json` files should remain in `ember-cli-typescript`.
+We will be sunsetting `ember-cli-typescript` as part of this process. It was a valuable and needful part of the ecosystem when we did *not* have official support, but now it duplicates other sources of configuration and tooling, making maintenance needlessly more complicated. All of its capabilities can be managed more cleanly in other projects: `ember-source` and other addons can ship blueprints which support both TypeScript and JavaScript, `ember-cli-babel` and other build tools can manage transpilation, and `glint` supports end-to-end type checking.
 
 [glint]: https://github.com/typed-ember/glint
 
@@ -822,16 +830,4 @@ This would be a reasonable approach—and was in fact what the other Typed Ember
 
 ## Unresolved questions
 
-- How should we support opting into TypeScript support after starting a project? Today, users do this by running `ember install ember-cli-typescript` and getting its updates to blueprints etc.—but that will not be as obvious in this design, and even if we continue to use that as the mechanism, we need to document it and decide which parts `ember-cli-typescript` is responsible for and which it is not.
-
-- Which, if any, blueprints need to be updated besides the Glimmer Component blueprint, in the absence of type registries for Service and Controller classes?
-
-- Did we miss any Classic features for which we need to specify what we will and will not provide?
-
-- Should we ship an `ember-ultra-strict` mode initially, and if so what additional flags should it include?
-
-- Is specifying Ember Data’s registries a blocker for adopting this RFC?
-
-- Do we need an appendix to this RFC specifying user-constructibility and import location for existing interfaces like `Transition` and `RouteInfo`?
-
-- Should we do the work to introduce a “simplified” presentation of the types for JavaScript users in our API docs, which (for example) removes generics and replaces `unknown` with `any` or similar, to avoid requiring JavaScript users to understand those TypeScript details?
+None!
