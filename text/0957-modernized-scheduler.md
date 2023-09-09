@@ -9,7 +9,7 @@ teams: # delete teams that aren't relevant
   - framework
   - learning
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/957
 project-link:
 suite: 
 ---
@@ -119,6 +119,8 @@ due to Ember's current zealous flushing it is taking place post-render.
 - Deprecate (no replacement) `run` `join` and `bind` from `@ember/runloop`
 - Replace `schedule` and `next` with a new Scheduler interface
 - Provide a default implementation of the new scheduler interface
+- Remove `@types/ember__runloop`, `@types/rsvp`, `rsvp`, and `ember-fetch` from anywhere they still live in the default blueprint
+  or as a dependency in a core package
 
 Strategy:
 
