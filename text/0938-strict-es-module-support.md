@@ -395,12 +395,16 @@ Ultimately this change results in less to teach, because we can just say "Ember 
 
 ## Drawbacks
 
-These APIs are widely-used, so this will definitely take work in:
+The deprecated APIs are widely-used, so this will definitely take work in:
  - Ember itself
  - the default set of addons that appear in the official blueprint
  - popular community addons
 
 ## Alternatives
+
+### We could avoid introducing import.meta.EMBER_COMPAT_MODULES
+
+Instead of creating this new public API, we could continue to make the implied set of modules "magic" like it is right now, on the expectation that we plan to whittle that set down to zero eventually anyway. 
 
 ### We could change the Registry and Container APIs too
 
@@ -447,6 +451,5 @@ For all those reasons I don't think Option 3 is immediately viable for many apps
 - Need to write about ember-auto-import 
    - it can probably give you an explicit set of modules to put into Resolver. I would rather do that than let it use some secret handshake to sneak things into EMBER_COMPAT_MODULES.
    - we should clarify where the CJS interoperability happens. Today we can be sloppy because ember-auto-import only needs to output AMD. But we want it to output modules, so it needs to do CJS-to-ESM conversion when needed. (This would resolve the long-standing issue that it's surprising that ember-auto-import gets the CJS versions of libraries that also offer an ESM version, since what the user *writes* is ESM, when what runs is really CJS+AMD compatibility.)
-
 
 
