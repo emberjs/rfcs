@@ -112,6 +112,8 @@ due to Ember's current zealous flushing it is taking place post-render.
 
 ## Detailed design
 
+### Work To Be Done
+
 - Remove configuration logic for RSVP from Ember, allow it to use its own polyfill without the runloop
 - Deprecate RSVP in favor of a smaller util library for just things like `hash`
 - Move "timers" (`throttle`, `debounce` and `later`) out of `@ember/runloop` into their own standalone
@@ -122,7 +124,70 @@ due to Ember's current zealous flushing it is taking place post-render.
 - Remove `@types/ember__runloop`, `@types/rsvp`, `rsvp`, and `ember-fetch` from anywhere they still live in the default blueprint
   or as a dependency in a core package
 
-Strategy:
+### Scheduler Interface
+
+The scheduler interface defines several "phases" of when work should be done
+that align to concepts in the browser's render cycle. The primary goal is
+to reduce the number of times Ember needs to alter the DOM per frame to 0 or 1
+as often as possible.
+
+We also want to help applications coordinate work in a way that avoids the pitfalls
+of DOM read/write interleaving. This means we need to provide both a mechanism for
+applications to schedule work that occurs *after* the render but before the browser
+has painted, and a mechanism by which to schedule work *after* that work but also
+before the browser has painted.
+
+#### Frames
+
+The scheduler interface conceptualizes work as belonging to a "Frame", where a Frame
+constitutes the time between when states of the DOM are observable to a user.
+
+![Frame Overview](../images/0957-frame-overview.svg)
+
+
+
+```ts
+interface Scheduler {
+  
+}
+```
+
+### Default Implementation
+
+```ts
+import scheduler from '@ember/scheduler';
+```
+
+### Providing a Scheduler
+
+```ts
+import { registerScheduler } from '@ember/application';
+```
+
+The scheduler should be provided to the framework by registering it
+when defining the Application.
+
+```ts
+import Application, { registerScheduler } from '@ember/application';
+import Resolver from 'ember-resolver';
+import loadInitializers from 'ember-load-initializers';
+import config from 'test-embroider/config/environment';
+
+// the default scheduler implementation
+import scheduler from '@ember/scheduler';
+
+export default class App extends Application {
+  modulePrefix = config.modulePrefix;
+  podModulePrefix = config.podModulePrefix;
+  Resolver = Resolver;
+}
+
+registerScheduler(scheduler);
+loadInitializers(App, config.modulePrefix);
+
+```
+
+### Strategy
 
 - RSVP configuration would be gated behind an optional feature flag `use-native-rsvp-flush`, with a deprecation
     to set it to the new behavior
