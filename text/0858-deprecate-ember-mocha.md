@@ -1,8 +1,9 @@
 ---
 stage: released
 start-date: 2022-11-08T00:00:00.000Z
-release-date:
-release-versions:
+release-date: 2023-05-15T00:00:00.000Z
+release-versions: 
+  ember-source: 5.0.0
 teams:
   - data
   - framework
