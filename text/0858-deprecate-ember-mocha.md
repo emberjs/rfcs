@@ -1,8 +1,8 @@
 ---
-stage: released
+stage: recommended
 start-date: 2022-11-08T00:00:00.000Z
 release-date: 2023-05-15T00:00:00.000Z
-release-versions: 
+release-versions:
   ember-source: 5.0.0
 teams:
   - data
