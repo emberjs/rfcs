@@ -1,6 +1,6 @@
 ---
 stage: accepted
-start-date: 2022-07-22
+start-date: 2022-07-22T00:00:00.000Z
 release-date: Unreleased
 release-versions:
 teams: # delete teams that aren't relevant
