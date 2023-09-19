@@ -201,16 +201,8 @@ Additionally, we deprecate store methods for data munging:
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
-
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
-
-> How should this feature be introduced and taught to existing Ember
-users?
+- API Docs, guides, and the tutorial should remove usage examples of older patterns, replacing them with
+  newer patterns.
 
 ## Drawbacks
 
