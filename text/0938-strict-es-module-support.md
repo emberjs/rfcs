@@ -173,9 +173,10 @@ We propose this blueprint change, which would be required when using the `strict
 // app/app.js
 -import Resolver from 'ember-resolver';
 +import Resolver from '@ember/resolver';
+import M from '#embroider_compat_modules';
 export default class App extends Application {
 -  Resolver = Resolver;
-+  Resolver = Resolver.withModules(import.meta.EMBER_COMPAT_MODULES);
++  Resolver = Resolver.withModules(M);
 }
 ```
 
@@ -453,4 +454,6 @@ For all those reasons I don't think Option 3 is immediately viable for many apps
    - it can probably give you an explicit set of modules to put into Resolver. I would rather do that than let it use some secret handshake to sneak things into EMBER_COMPAT_MODULES.
    - we should clarify where the CJS interoperability happens. Today we can be sloppy because ember-auto-import only needs to output AMD. But we want it to output modules, so it needs to do CJS-to-ESM conversion when needed. (This would resolve the long-standing issue that it's surprising that ember-auto-import gets the CJS versions of libraries that also offer an ESM version, since what the user *writes* is ESM, when what runs is really CJS+AMD compatibility.)
 - Neeed to show how engines get their own preloaded ES modules into the resolver.
+
+ - Probably should use a special import path instead of import.meta because of how vite does prebuild dep optimization. (Resolving runs but loading does not.)
 
