@@ -127,6 +127,7 @@ When `strict-es-modules` is set:
  - Attempting to mutate a module from the outside throws an exception.
  - `importSync` from `'@embroider/macros'` continues to work but it no longer guarantees lazy-evaluation (since lazy-and-synchronous is impossible under strict ES modules). 
  - the new special forms `import.meta.EMBER_COMPAT_MODULES` and `import.meta.EMBER_COMPAT_TEST_MODULES` become available (see below).
+ - loading component templates via `<script type="text/x-handlebars">` in your HTML is no longer allowed. (**Oh yes, that is still a thing**.)
 
 ### New Feature: import.meta.EMBER_COMPAT_MODULES
 
@@ -162,7 +163,7 @@ This feature includes the name "COMPAT" because we intend it as a backward-compa
 
 By making this feature explicitly visible in the code, we allow early adopters to choose *not* to use it at whatever point they're ready for that, rather than continuing to make this behavior invisible.
 
-This feature is explicitly not designed to be a well-rationalized primitive. Instead, it's a way to segregate all *existing* behavior behind an abstraction barrier. The meaning of `EMBER_COMPAT_MODULES` is "whatever set of ES modules the old implementation provided". For example, the module names in the output are a lossy transformation of the true NPM package structure, because the classic build forces all packages into one flat namespace. If we were trying to design a shiny new feature, we would not keep that mistake. But this is not a shiny new feature, it's a box to put the old behavior inside, so that existing code has a migration path.
+This feature is explicitly not designed to be a well-rationalized primitive. Instead, it's a way to segregate all *existing* behavior behind an abstraction barrier. The meaning of `EMBER_COMPAT_MODULES` is "whatever set of ES modules the old implementation provided". For example, the module names in the output are a lossy transformation of the true NPM package structure, because the classic build forces all packages into one flat namespace. If we were trying to design a shiny new feature, we would not keep that design choice. But this is not a shiny new feature, it's a box to put the old behavior inside, so that existing code has a migration path.
 
 ### New Feature: Static Resolver
 
@@ -200,7 +201,7 @@ The new Resolver also implements one special behavior: it resolves the name `res
 ```js
 import { getOwner } from '@ember/application';
 // ...
-getOwner(this).lookup('resolver:main').addModules(...);
+getOwner(this).lookup('resolver:current').addModules(...);
 ```
 
 We will also take this opportunity to make this new Resolver:
@@ -368,7 +369,7 @@ Most addons will not have this problem, because they apply the default ember-cli
 
  - If you're using `define()` so that your users can import from a name other than your package name: Nope, sorry, never do that. You're rudely stomping on a piece of the package namespace that doesn't belong to you. Provide a regular ES module and tell users to import from your real package name. Or rename your package to match the public API you really want.
 
- - If you're using `define()` to provide something that Ember will resolve, instead of defining it as the module level you can still `register` it at a the Registry level:
+ - If you're using `define()` to provide something that Ember will resolve, instead of defining it as the module level you can still `register` it at the Registry level:
 
     ```js
     getOwner(this).register('service:special', MyService);
@@ -451,5 +452,5 @@ For all those reasons I don't think Option 3 is immediately viable for many apps
 - Need to write about ember-auto-import 
    - it can probably give you an explicit set of modules to put into Resolver. I would rather do that than let it use some secret handshake to sneak things into EMBER_COMPAT_MODULES.
    - we should clarify where the CJS interoperability happens. Today we can be sloppy because ember-auto-import only needs to output AMD. But we want it to output modules, so it needs to do CJS-to-ESM conversion when needed. (This would resolve the long-standing issue that it's surprising that ember-auto-import gets the CJS versions of libraries that also offer an ESM version, since what the user *writes* is ESM, when what runs is really CJS+AMD compatibility.)
-
+- Neeed to show how engines get their own preloaded ES modules into the resolver.
 
