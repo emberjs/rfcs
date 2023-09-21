@@ -33,7 +33,7 @@ suite: Leave as is
 
 ## Summary
 
-Leading up to the Octane Edition, we laid out a plan to get rid of `<object>.get` and `<object>.set' in favor of `@tracked` class properties, which paved the way for writing reactive code in a way that is _the most_ "just javascript" out of our framework peers at the time,
+Leading up to the Octane Edition, we laid out a plan to get rid of `<object>.get` and `<object>.set` in favor of `@tracked` class properties, which paved the way for writing reactive code in a way that is _the most_ "just javascript" out of our framework peers at the time,
 
 Additionally, this was taken as an opportunity to move from push-based reactivity to pull-based reactivity, and lead to a long exploration of patterns, trial-and-error, and developing new patterns to achieve easier testing, debugging and maintenance.  But most of this happened long after the official documentation for Octane had landed -- and even at the time of writing this RFC, the most important concepts about reactivity would fall well under the ["In-depth topics"](https://guides.emberjs.com/release/in-depth-topics/autotracking-in-depth/) section of the documentation. 
 
