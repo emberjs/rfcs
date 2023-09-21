@@ -378,6 +378,11 @@ Note: performance issues, incomplete implementation as ecma advances
 
 ### Invocation Collapsing
 
+### Integration of Starbeam
+
+### Keep the ecosystem working
+
+- ember-resources, ember-modifiers, and tracked-built-ins are all built on public APIs. They should continue to work.
 
 ## How we teach this
 
