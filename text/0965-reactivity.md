@@ -39,7 +39,7 @@ Additionally, this was taken as an opportunity to move from push-based reactivit
 
 This RFC aims for two things:
 - focus on teaching reactivity concepts, so that folks can be better equipped for what would be "advanced concepts" today.
-- defining and brining cohesion to our reactive primitives so that the above is much easier to archive. 
+- defining and bringing cohesion to our reactive primitives so that the above is much easier to achieve. 
   - This may necessitate additional sub-RFCs. 
 
 ## Motivation
