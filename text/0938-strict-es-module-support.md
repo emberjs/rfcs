@@ -173,10 +173,10 @@ We propose this blueprint change, which would be required when using the `strict
 // app/app.js
 -import Resolver from 'ember-resolver';
 +import Resolver from '@ember/resolver';
-import M from '#embroider_compat_modules';
+import modules from '#ember-compat-modules';
 export default class App extends Application {
 -  Resolver = Resolver;
-+  Resolver = Resolver.withModules(M);
++  Resolver = Resolver.withModules(modules);
 }
 ```
 
