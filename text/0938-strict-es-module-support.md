@@ -126,18 +126,18 @@ When `strict-es-modules` is set:
  - Importing (including re-exporting) a non-existent name becomes an early error.
  - Attempting to mutate a module from the outside throws an exception.
  - `importSync` from `'@embroider/macros'` continues to work but it no longer guarantees lazy-evaluation (since lazy-and-synchronous is impossible under strict ES modules). 
- - the new special forms `import.meta.EMBER_COMPAT_MODULES` and `import.meta.EMBER_COMPAT_TEST_MODULES` become available (see below).
+ - the new special imports `#ember-compat-modules` and `#ember-compat-test-modules` become available (see below).
  - loading component templates via `<script type="text/x-handlebars">` in your HTML is no longer allowed. (**Oh yes, that is still a thing**.)
 
-### New Feature: import.meta.EMBER_COMPAT_MODULES
+### New Feature: #ember-compat-modules
 
 In general, it's difficult and undesirable to make every app try to express (even through pattern matching) the full set of modules that would have traditionally been forced into the bundle and made available to the Resolver. The set encompasses not just the app itself but also the merged app trees of all addons, plus each addon's own module namespace.
 
-Instead, we introduce a special expression `import.meta.EMBER_COMPAT_MODULES` that expands to that eagerly imported set, as an object.
+Instead, we introduce a special import specifier `#ember-compat-modules` that returns a default export containing that eagerly imported set, as an object.
 
 ```js
 // this:
-const modules = import.meta.EMBER_COMPAT_MODULES;
+import modules from "#ember-compat-modules";
 // expands to roughly:
 import * as $0 from "my-app/app.js";
 import * as $1 from "my-app/router.js";
@@ -153,17 +153,17 @@ const modules = {
 }
 ```
 
-Classic builds have one implementation-defined answer for `EMBER_COMPAT_MODULES`, whereas Embroider adjusts the meaning of `EMBER_COMPAT_MODULES` depending on your settings. For example, `staticComponents:true` removes `app/components/**` from `EMBER_COMPAT_MODULES`.
+Classic builds have one implementation-defined answer for `#ember-compat-modules`, whereas Embroider adjusts the meaning of `#ember-compat-modules` depending on your settings. For example, `staticComponents:true` removes `app/components/**` from `#ember-compat-modules`.
 
-`import.meta.EMBER_COMPAT_MODULES` is only valid within an app, it has no meaning if you try to use it in an addon.
+`#ember-compat-modules` is only valid within an app, it has no meaning if you try to use it in an addon.
 
-As a corollary to `import.meta.EMBER_COMPAT_MODULES` we will provide `import.meta.EMBER_COMPAT_TEST_MODULES`. This is the set of modules that would have traditionally been forced into the tests bundle. It includes things like the app's tests plus addon-test-support trees. 
+As a corollary to `#ember-compat-modules` we will provide `#ember-compat-test-modules`. This is the set of modules that would have traditionally been forced into the tests bundle. It includes things like the app's tests plus addon-test-support trees. 
 
-This feature includes the name "COMPAT" because we intend it as a backward-compatibility feature, enabling you to continue using pre-Polaris idioms (or use addons that use pre-Polaris idioms). In a fully-Polaris app with only updated addons, you would not need this at all. All template resolutions would be strict, so they would never hit the resolver. Similarly we expect that the Polaris story around service-as-resource and router-composed-out-of-components-and-resources would eliminate the remaining resolver lookups.
+This feature includes the name "compat" because we intend it as a backward-compatibility feature, enabling you to continue using pre-Polaris idioms (or use addons that use pre-Polaris idioms). In a fully-Polaris app with only updated addons, you would not need this at all. All template resolutions would be strict, so they would never hit the resolver. Similarly we expect that the Polaris story around service-as-resource and router-composed-out-of-components-and-resources would eliminate the remaining resolver lookups.
 
 By making this feature explicitly visible in the code, we allow early adopters to choose *not* to use it at whatever point they're ready for that, rather than continuing to make this behavior invisible.
 
-This feature is explicitly not designed to be a well-rationalized primitive. Instead, it's a way to segregate all *existing* behavior behind an abstraction barrier. The meaning of `EMBER_COMPAT_MODULES` is "whatever set of ES modules the old implementation provided". For example, the module names in the output are a lossy transformation of the true NPM package structure, because the classic build forces all packages into one flat namespace. If we were trying to design a shiny new feature, we would not keep that design choice. But this is not a shiny new feature, it's a box to put the old behavior inside, so that existing code has a migration path.
+This feature is explicitly not designed to be a well-rationalized primitive. Instead, it's a way to segregate all *existing* behavior behind an abstraction barrier. The meaning of `#ember-compat-modules` is "whatever set of ES modules the old implementation provided". For example, the module names in the output are a lossy transformation of the true NPM package structure, because the classic build forces all packages into one flat namespace. If we were trying to design a shiny new feature, we would not keep that design choice. But this is not a shiny new feature, it's a box to put the old behavior inside, so that existing code has a migration path.
 
 ### New Feature: Static Resolver
 
@@ -387,11 +387,11 @@ Most addons will not have this problem, because they apply the default ember-cli
 
 The "recommendation" sections above can be the actual content for the deprecation guides. That is the main teaching component of this RFC.
 
-As described in [the sibling RFC](https://github.com/emberjs/rfcs/pull/939), we should expand the documentation on ES Modules, and at the place where we explain our non-standard extensions (like `import.meta.glob` from that RFC) we would also explain `import.meta.EMBER_COMPAT_MODULES` like:
+As described in [the sibling RFC](https://github.com/emberjs/rfcs/pull/939), we should expand the documentation on ES Modules, and at the place where we explain our non-standard extensions (like `import.meta.glob` from that RFC) we would also explain `#ember-compat-modules` like:
 
-> import.meta.EMBER_COMPAT_MODULES is a compatibility feature that allows apps and addons that were written for earlier Ember editions to continue working cleanly under ES Modules. It means "the set of ES Modules that older Ember code expects to be present, based on my app and addons".
+> #ember-compat-modules is a compatibility feature that allows apps and addons that were written for earlier Ember editions to continue working cleanly under ES Modules. It means "the set of ES Modules that older Ember code expects to be present, based on my app and addons".
 >
-> import.meta.EMBER_COMPAT_TEST_MODULES is analogous to import.meta.EMBER_COMPAT_MODULES. The only difference is that it means "the set of ES Modules that older Ember code expects to be present *within my app's test suite*, based on my app and addons.
+> #ember-compat-test-modules is analogous to #ember-compat-modules. The only difference is that it means "the set of ES Modules that older Ember code expects to be present *within my app's test suite*, based on my app and addons.
 
 Ultimately this change results in less to teach, because we can just say "Ember uses ES modules" and lean on existing teaching materials for ES modules.
 
@@ -404,7 +404,7 @@ The deprecated APIs are widely-used, so this will definitely take work in:
 
 ## Alternatives
 
-### We could avoid introducing import.meta.EMBER_COMPAT_MODULES
+### We could avoid introducing #ember-compat-modules
 
 Instead of creating this new public API, we could continue to make the implied set of modules "magic" like it is right now, on the expectation that we plan to whittle that set down to zero eventually anyway. 
 
@@ -455,5 +455,5 @@ For all those reasons I don't think Option 3 is immediately viable for many apps
    - we should clarify where the CJS interoperability happens. Today we can be sloppy because ember-auto-import only needs to output AMD. But we want it to output modules, so it needs to do CJS-to-ESM conversion when needed. (This would resolve the long-standing issue that it's surprising that ember-auto-import gets the CJS versions of libraries that also offer an ESM version, since what the user *writes* is ESM, when what runs is really CJS+AMD compatibility.)
 - Neeed to show how engines get their own preloaded ES modules into the resolver.
 
- - Probably should use a special import path instead of import.meta because of how vite does prebuild dep optimization. (Resolving runs but loading does not.)
+
 
