@@ -260,8 +260,11 @@ Additionally, we deprecate store methods for data munging:
 
 ## How we teach this
 
-- API Docs, guides, and the tutorial should remove usage examples of older patterns, replacing them with
+- API Docs should remove usage examples of older patterns, replacing them with
+  newer patterns. Ensure consistency before deprecating.
+- Guides, and the Tutorial should remove usage examples of older patterns, replacing them with
   newer patterns.
+- We do not activate this deprecation until at least the tutorial has been updated to new patterns
 
 ## Drawbacks
 
