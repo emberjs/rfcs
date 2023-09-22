@@ -6,8 +6,8 @@ release-versions:
 teams: # delete teams that aren't relevant
   - cli
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
-project-link: https://github.com/emberjs/rfcs/pull/966
+  accepted: https://github.com/emberjs/rfcs/pull/966
+project-link: 
 suite: 
 ---
 
