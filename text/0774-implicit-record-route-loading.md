@@ -9,6 +9,7 @@ prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/774'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/900'
   released: 'https://github.com/emberjs/rfcs/pull/955'
+  recommended: 'https://github.com/emberjs/rfcs/pull/970'
 ---
 
 # Deprecate Implicit Record Loading in Routes
