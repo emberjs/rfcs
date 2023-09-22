@@ -34,6 +34,8 @@ methods are no longer recommended in the face of the greater utility of `store.r
 
 Deprecates methods on store associated to older request paradigms / the inflexibility of older paradigms.
 
+These deprecations would target 6.0.
+
 ## Motivation
 
 This RFC is a debt collection. The newer RequestManager paradigm offers a pipeline approach to requests and preserves the context of the request throughout its lifecycle. This newer paradigm solves the issues
@@ -127,6 +129,9 @@ const users = store.peekAll('user');
 
 - `store.query`
 
+For requests that are expected to send a "body" to the API see notes
+in the saveRecord section below.
+
 ```ts
 import { query } from '@ember-data/json-api/request';
 
@@ -146,22 +151,76 @@ const user = result.content.data[0] ?? null;
 - `store.saveRecord`
 - `model.save`
 
+For requests that are expected to send a "body" to the API applications
+may choose to either serialize the body at the point of the request or
+to implement a Handler for the RequestManager to do so.
+
+EmberData does not provide a default handler which serializes because this
+is a unique concern for every app. However, EmberData does provide utilities
+on both the Cache and for some of the builders to make this easy.
+
+For JSON:API we show the "at point of request" approach using the utils
+provided by the `@ember-data/json-api` package here.
+
 **for create**
 
 ```ts
-import { createRecord } from '@ember-data/json-api/request';
+import { recordIdentifierFor } from '@ember-data/store';
+import { createRecord, serializeResources } from '@ember-data/json-api/request';
 
 const record = store.createRecord('user', {});
-await store.request(createRecord(record));
+const request = createRecord(record);
+request.body = JSON.stringify(
+  serializeResources(
+    store.cache,
+    recordIdentifierFor(record)
+  )
+);
+
+await store.request(request);
 ```
 
 **For update**
 
 ```ts
-import { updateRecord } from '@ember-data/json-api/request';
+import { recordIdentifierFor } from '@ember-data/store';
+import { updateRecord, serializePatch } from '@ember-data/json-api/request';
 
 user.name = 'Chris';
-await store.request(updateRecord(user));
+
+const request = updateRecord(user);
+request.body = JSON.stringify(
+  serializePatch(
+    store.cache,
+    recordIdentifierFor(user)
+  )
+);
+
+await store.request(request);
+```
+
+Note if you only wanted to save the single mutation you just made, you could.
+
+```ts
+import { updateRecord, serializePatch } from '@ember-data/json-api/request';
+
+// local mutation (reflected on model immediately)
+user.name = 'Chris';
+
+const request = updateRecord(user);
+request.body = JSON.stringify(
+  {
+    data: {
+      type: 'user',
+      id: user.id,
+      attributes: {
+        name: user.name
+      }
+    }
+  }
+);
+
+await store.request(request);
 ```
 
 **for delete**
