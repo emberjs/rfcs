@@ -17,31 +17,20 @@ outputs:
     value: ${{ steps.modified-rfc.outputs.path }}
   modified-rfcs-count:
     description: "The count of how many RFCs were added or modified"
-    value: ${{ steps.counts.outputs.all_changed }}
+    value: ${{ steps.rfcs.outputs.all_changed_files_count }}
   added-rfcs-count:
     description: "The count of how many RFCs that were added"
-    value: ${{ steps.counts.outputs.added }}
+    value: ${{ steps.rfcs.outputs.added_files_count }}
 
 runs:
   using: "composite"
   steps:
     - name: Find added or modified RFCs
       id: rfcs
-      uses: tj-actions/changed-files@v31
+      uses: tj-actions/changed-files@v39
       with:
-        path: 'text'
-        json: 'true'
-        sha: ${{ inputs.sha }}
-        base_sha: ${{ inputs.base-sha }}
-
-    - name: Get counts of changed and added RFCs
-      id: counts
-      shell: bash
-      run: |
-        changed_len=`echo "${{ steps.rfcs.outputs.all_changed_files }}" | jq '. | length'`    
-        echo "all_changed=$changed_len" >> $GITHUB_OUTPUT
-        added_len=`echo "${{ steps.rfcs.outputs.added_files }}" | jq '. | length'`
-        echo "added=$added_len" >> $GITHUB_OUTPUT
+        files: text
+        json: true
 
     - name: Find modified or added RFC info
       id: modified-rfc

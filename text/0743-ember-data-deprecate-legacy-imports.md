@@ -1,13 +1,13 @@
 ---
-stage: accepted
-start-date: 2021-04-23
+stage: ready-for-release
+start-date: 2021-04-23T00:00:00.000Z
 release-date:
 release-versions:
 teams:
   - data
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/743
-
+  accepted: 'https://github.com/emberjs/rfcs/pull/743'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/947'
 ---
 
 # EmberData | Deprecate Legacy Imports

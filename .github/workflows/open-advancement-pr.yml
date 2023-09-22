@@ -61,7 +61,7 @@ jobs:
         uses: peter-evans/create-pull-request@v4.2.0
         with:
           token: ${{ secrets.personal-access-token }}
-          commit-message: "Advance RFC {{ inputs.rfc-number }} to Stage ${{ inputs.new-stage }}"
+          commit-message: "Advance RFC ${{ inputs.rfc-number }} to Stage ${{ inputs.new-stage }}"
           add-paths: 'text'
           branch: "advance-rfc-${{ inputs.rfc-number }}"
           title: "Advance RFC #${{ inputs.rfc-number}} `${{ steps.pr-variables.outputs.title }}` to Stage ${{ steps.pr-variables.outputs.pretty-stage }}"
