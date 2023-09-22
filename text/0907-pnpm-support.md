@@ -1,8 +1,9 @@
 ---
 stage: released
 start-date: 2023-03-06T14:09:00.000Z
-release-date:
+release-date: 2023-09-21T00:00:00.000Z
 release-versions:
+  ember-cli: v5.3.0
 teams:
   - cli
   - learning
