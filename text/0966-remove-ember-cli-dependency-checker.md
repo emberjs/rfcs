@@ -46,6 +46,39 @@ Additionally, fewer dependencies and fewer addons:
 
 Remove the dependency from the blueprint.
 
+### Consequences
+
+#### Peers are wrong
+
+Embroider will aggressively warn against incorrect peers.
+Strict only.
+Example: https://github.com/embroider-build/embroider/issues/1602
+
+Additionally, the modern package managers provide hints about incorrect setups
+```
+pnpm i # or with --resolution-only
+
+ WARN  Issues with peer dependencies found
+apps/repl
+├─┬ @ember/test-helpers 3.2.0
+│ └── ✕ missing peer ember-source@"*"
+```
+
+#### Forget to install dependencies
+
+```
+❯ pnpm ember s
+Volta error: Could not locate executable `ember` in your project.
+
+Please ensure that all project dependencies are installed with `npm install` or `yarn install`
+```
+
+#### Resolution/Overrides collision
+
+This situation occurs when you link to or use `overrides` / `resolutions` to set a version of a dependency that is outside the range of what is specified in the package.json.
+
+There would be nothing to warn of this situation, afaik.
+
 ## How we teach this
 
 None of our documentation mentions this dependency, so there is no reason to update any docs.
