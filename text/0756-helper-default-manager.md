@@ -67,13 +67,15 @@ of the three constructs: Helpers, Modifiers, and Components._
 The desired usage of a plain function in a template should be:
  - convenient
  - reduce boilerplate
- - be easily portable to JS for developers' mental model of how template and JS interact.
+ - be easily portable to JS for developers' mental model of how template and JS interact
+ - support normal JavaScript idioms and existing JavaScript functions (from lodash, etc).
 
 Which results in:
  - default to positional parameters
  - all named arguments are grouped into an "options object" as the last parameter.
    this happens to align with the _syntax_ of helper invocation where named arguments may not appear
    before the last positional argument.
+ - if no named arguments are passed in the template, no "options object" is passed to the JS call.
 
 #### Example with mixed params
 
@@ -112,6 +114,26 @@ class A {
 }
 ```
 
+#### Example with consuming tracked data defined outside of the helper
+
+This works with the `helper` and `Helper` from `@ember/component/helper`, as well as plain functions.
+
+```hbs
+<output>{{this.multiply 4}}</output>
+
+<button {{on 'click' this.increment}}>Increment</button>
+```
+```js
+class A {
+  @tracked multiplicand = 5;
+
+  multiply = (passed) => passed * this.multiplicand;
+
+  increment = () => this.multiplicand++;
+}
+```
+When the button is clicked, the text in `<output>` will update, even though the `multiplicand` is not passed to the helper.
+
 #### Example Default Helper Implementation
 
 The implementation for the this function-handling helper-manager could look like this:
@@ -136,8 +158,6 @@ class FunctionHelperManager {
 
     if (Object.keys(args.named).length > 0) {
       argsForFn.push(args.named);
-    } else {
-      argsForFn.push({});
     }
 
     return fn(...argsForFn);
@@ -153,12 +173,61 @@ const DEFAULT_HELPER_MANAGER = new FunctionHelperManager();
 // side-effect -- this file needs to be imported for the helper manager to be installed
 setHelperManager(() => DEFAULT_HELPER_MANAGER, Function.prototype);
 ```
- - when the "helper" is created, the function is not invoked
- - when `getValue` is invoked,
-   - the function is invoked with the named arguments all grouped into the last arg
-   - if no named arguments are given, an empty object is used instead to allow less nullish checking in userland
- - to register this helper manager, it should occur during app boot so developers do not need to import anything to
-   trigger the `setHelperManager` call
+
+- when the "helper" is created, the function is not invoked
+- when `getValue` is invoked,
+  - the function is invoked with the named arguments all grouped into an object in the last arg ("options object")
+  - ~~if no named arguments are given, an empty object is used instead to allow less nullish checking in userland~~ (see notes below)
+  - if no named are passed, the "options object" argument is omitted
+- to register this helper manager, it should occur during app boot so developers do not need to import anything to
+  trigger the `setHelperManager` call
+
+##### Notes regarding the "options object" argument
+
+An earlier version of this RFC initially proposed an "options object" with always be passed
+as the argument, even when no-named arguments are passed. During [implementation](https://github.com/glimmerjs/glimmer-vm/pull/1348)
+this was observed to be problematic.
+
+For instance, given the following JavaScript function:
+
+```js
+function sum(...values) {
+  let total = 0;
+
+  for (let value of values) {
+    total += value;
+  }
+
+  return total;
+}
+```
+
+In the original proposal, an invocation like `{{sum 1 2 3}}` would result in the JS call
+`sum(1, 2, 3, {})`, which would yield surprising and incorrect result.
+
+Another case where this matters is with default arguments:
+
+```js
+function formatDate(date, formatString = "DD MM YYYY hh:mm:ss") {
+  return ...;
+}
+```
+
+In the original proposal, an invocation like `{{formatDate this.now}}` would result in the
+JS call `formatDate(this.now, {})`, which has the effect of overriding the default argument
+`formatString` with an empty object, also leading to surprising and incorrect behavior.
+
+Given the goal of the RFC is to support normal JavaScript idioms and the ability to use a
+large variety of existing JavaScript functions (from packages like lodash) directly in the
+template, the proposal is updated to only pass the "options object" when necessary.
+
+This has the drawback of an arguably less consistent signature. However, in practice, this
+did not appear to be a issue. Base on the semantics and idioms of JavaScript, it is quite
+rare for functions to mix-and-match variable positional arguments or defaulting of positional
+arguments together with "named arguments" ("option object") in a way that would conflict with
+what the updated proposal. Notably, JavaScript does not support `myFunc(...args, options)` in
+the syntax, and functions with these kind of signatures already needs to manually introspect
+the arguments carefully, in ways that should be compatible with the current proposal.
 
 ### Updating highlevel manager choosing algorithm
 

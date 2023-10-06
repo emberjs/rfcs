@@ -1,12 +1,15 @@
 ---
-stage: accepted # FIXME: This may be a further stage
+stage: recommended
 start-date: 2021-04-23T00:00:00.000Z
-release-date:
+release-date: 2022-09-06T00:00:00.000Z
 release-versions:
+  ember-data: v4.7.0
 teams:
   - data
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/739
+  accepted: 'https://github.com/emberjs/rfcs/pull/739'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/909'
+  released: 'https://github.com/emberjs/rfcs/pull/924'
 project-link:
 ---
 
