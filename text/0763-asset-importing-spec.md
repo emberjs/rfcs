@@ -86,7 +86,7 @@ HTML | Other | `<img src="./thing.png" />` | W3C
 
 
 1. Importing a file with an explicit `.css` extension guarantees that the given CSS will be loaded into the DOM before your module executes. We do not define any exported values, this is purely for side-effect. This rule is not part of the present RFC, it was already in [RFC 507](https://github.com/emberjs/rfcs/blob/master/text/0507-embroider-v2-package-format.md).
-2. "Other Asset" means this rule applies to any JS import of a path that ends in an explicit file extension that is not `.js` or `.css`, meaning:
+2. "Other Asset" means this rule applies to any `import.meta.resolve` with a path that ends in an explicit file extension that is not `.js` or `.css`, meaning:
     ```js
     function isOther(theImportedPath) {
       let extension = /\.([^.\/]+)$/.exec(theImportedPath)?.[1]?.toLowerCase();
@@ -120,7 +120,7 @@ Calling `import.meta.resolve` with an asset that does not exist will cause a bui
 
 #### Isn't it risky to "take over" a browser API?
 
-Yes and no. This [original proposal for this feature to WHATWG](https://github.com/whatwg/html/issues/3871#issue-346547968) envisioned build tools rewriting the expressions to provide asset optimizations.
+No. This [original proposal for this feature to WHATWG](https://github.com/whatwg/html/issues/3871#issue-346547968) envisioned build tools rewriting the expressions to provide asset optimizations. As describe above, it is only taken over for "Other Assets" (any path that ends in an explicit file extension that is not `.js` or `.css`). 
 
 The built-in function can only resolve modules relative to the active script; by using Ember's build tools developers have no guarantee of where modules build to and the feature effectively cannot be used without those build tools understanding `import.meta.resolve`.
 
