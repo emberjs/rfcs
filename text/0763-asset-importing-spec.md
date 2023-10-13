@@ -77,7 +77,7 @@ From Type | To Type | Example Syntax | Semantics
 --------------------|-----------------------|--------|---
 JS | JS | `import { stuff } from 'thing';`| ECMA with NodeJS resolving rules
 JS | CSS | `import 'thing/style.css';` | [Embroider Spec CSS Rule](https://github.com/emberjs/rfcs/blob/master/text/0507-embroider-v2-package-format.md#css) (1)
-JS| Other Asset (2) | `import.meta.resolve('thing/icon.png');`| **Proposed** URL Rule (3)
+JS| Any Asset | `import.meta.resolve('thing/icon.png');`| **Proposed** URL Rule (2)
 CSS | CSS | `@import("thing/style.css")` | [W3C](https://drafts.csswg.org/css-cascade/#at-import) plus NodeJS resolving rules
 CSS | Other | `url("thing/icon.png");` | W3C plus NodeJS resolving rules
 HTML | JS | `<script src="./thing.js"></script>` | W3C
@@ -86,15 +86,8 @@ HTML | Other | `<img src="./thing.png" />` | W3C
 
 
 1. Importing a file with an explicit `.css` extension guarantees that the given CSS will be loaded into the DOM before your module executes. We do not define any exported values, this is purely for side-effect. This rule is not part of the present RFC, it was already in [RFC 507](https://github.com/emberjs/rfcs/blob/master/text/0507-embroider-v2-package-format.md).
-2. "Other Asset" means this rule applies to any `import.meta.resolve` with a path that ends in an explicit file extension that is not `.js` or `.css`, meaning:
-    ```js
-    function isOther(theImportedPath) {
-      let extension = /\.([^.\/]+)$/.exec(theImportedPath)?.[1]?.toLowerCase();
-      return extension && !['js', 'css'].includes(extension);
-    }
-    ```
 
-3. Calling `import.meta.resolve` with any "Other Asset" file gives you back a string containing a valid URL for that file.
+2. Calling `import.meta.resolve` with the path to any file gives you back a string containing a valid URL for that file.
 
 ### `import.meta.resolve(moduleName)`
 
@@ -120,7 +113,7 @@ Calling `import.meta.resolve` with an asset that does not exist will cause a bui
 
 #### Isn't it risky to "take over" a browser API?
 
-No. This [original proposal for this feature to WHATWG](https://github.com/whatwg/html/issues/3871#issue-346547968) envisioned build tools rewriting the expressions to provide asset optimizations. As describe above, it is only taken over for "Other Assets" (any path that ends in an explicit file extension that is not `.js` or `.css`). 
+No. This [original proposal for this feature to WHATWG](https://github.com/whatwg/html/issues/3871#issue-346547968) envisioned build tools rewriting the expressions to provide asset optimizations. 
 
 The built-in function can only resolve modules relative to the active script; by using Ember's build tools developers have no guarantee of where modules build to and the feature effectively cannot be used without those build tools understanding `import.meta.resolve`.
 
