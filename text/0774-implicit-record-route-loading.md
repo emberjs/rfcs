@@ -1,5 +1,5 @@
 ---
-stage: ready-for-release
+stage: released
 start-date: 2021-11-14T00:00:00.000Z
 release-date:
 release-versions:
@@ -8,6 +8,7 @@ teams:
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/774'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/900'
+  released: 'https://github.com/emberjs/rfcs/pull/955'
 ---
 
 # Deprecate Implicit Record Loading in Routes
