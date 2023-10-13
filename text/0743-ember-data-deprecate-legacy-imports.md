@@ -10,6 +10,7 @@ prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/743'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/947'
   released: 'https://github.com/emberjs/rfcs/pull/969'
+  recommended: 'https://github.com/emberjs/rfcs/pull/979'
 ---
 
 # EmberData | Deprecate Legacy Imports
