@@ -1,8 +1,9 @@
 ---
 stage: released
 start-date: 2021-04-23T00:00:00.000Z
-release-date:
+release-date: 2023-09-18T00:00:00.000Z
 release-versions:
+  ember-data: v5.3.0
 teams:
   - data
 prs:
