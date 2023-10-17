@@ -448,6 +448,8 @@ For all those reasons I don't think Option 3 is immediately viable for many apps
 
 ## Unresolved Questions
 
+- Make sure we address ember-load-initializers (it should be able to use our new APIs here)
+
 - Should we tackle FastBoot.require?
 
 - Need to write about ember-auto-import 
