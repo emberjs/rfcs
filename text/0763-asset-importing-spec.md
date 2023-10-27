@@ -9,6 +9,7 @@ teams:
   - learning
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/763'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/983'
 project-link:
 suite:
 ---
