@@ -56,7 +56,7 @@ const widgets = {
 This design builds off [Vite's Glob Import Feature](https://vitejs.dev/guide/features.html#glob-import), but since that feature is non-standard and offers a rather wide API surface area, we're picking a well-defined subset that we're committed to supporting, not just under Vite but under all build tooling that we support, including today's classic builds.
 
 `import.meta.glob()` is a special function that:
- - can only be used with a string-literal argument
+ - can only be used with a string-literal first argument
  - can only be invoked directly as `import.meta.glob()`. You cannot pass it as a value, nor can you pass `import.meta` as a value and then try to call `.glob()` on that.
 
 The string argument **must** start with `./` or `../`. Only relative imports are supported.
@@ -93,15 +93,34 @@ No automatic file extension resolution is performed -- to match `.js`, your patt
 
 `{.js,.gjs}`: bash-style brace expansion
 
-### Lazy Loading
+### Lazy Mode
 
-`import.meta.glob()` is designed to work nicely in systems that lazily load code. However, it does not promise to *introduce* laziness where laziness does not already exist. 
-
-When building with the classic build pipeline, all your own app code is always included in the bundle regardless of whether anyone imports it or not, and that remains true regardless of whether you use `import.meta.glob()` to access some modules. 
+By default, `import.meta.glob` gives you asynchronous access to the modules. This is designed to work nicely in systems that lazily load code. However, it does not promise to *introduce* laziness where laziness does not already exist. When building with the classic build pipeline, all your own app code is always included in the bundle regardless of whether anyone imports it or not, and that remains true regardless of whether you use `import.meta.glob()` to access some modules. 
 
 When building with Embroider, you can achieve lazy loading by using `import.meta.glob()` in combination with other features like `staticAppPaths` or `staticComponents`.
 
 The return value from `import.meta.glob()` is the same either way -- you always get functions that return `Promise<Module>`. 
+
+### Eager Mode
+
+`import.meta.glob` supports an optional second argument. The only supported value at this time is the literal `{ eager: true }`.
+
+When eager is true, you get synchronous access to all the modules. These modules cannot be lazily loaded evaluated  -- they will load and evaluate eagerly.
+
+For example:
+
+```js
+// If you type this in your app:
+const widgets = import.meta.glob('./widgets/*.js', { eager: true })
+
+// It gets automatically converted into something like this:
+import _w0 from './widgets/first.js';
+import _w1 from './widgets/second.js';
+const widgets = {
+  './widgets/first.js': _w0,
+  './widgets/second.js': _w1,
+}
+```
 
 ### Replacing cross-package usages
 
@@ -134,7 +153,8 @@ This greatly reduces future compatibility concerns, and it doesn't cost us anyth
 `import.meta.glob` has this signature:
 
 ```ts
-(pattern: string): Record<string, Promise<unknown>>
+(pattern: string): Record<string, () => Promise<unknown>>
+(pattern: string, { eager: true }): Record<string, unknown>
 ```
 
 When you know that the things you're importing have a shared interface, it will behoove you to cast to it:
@@ -148,7 +168,7 @@ type Button = ComponentLike<{
   Blocks: { default: [] } 
 }>;
 
-const buttons: Record<string, Promise<{ default: Button }>> = import.meta.glob('./buttons/*.js');
+const buttons: Record<string, () => Promise<{ default: Button }>> = import.meta.glob('./buttons/*.js');
 ```
 
 
@@ -186,7 +206,6 @@ We could attempt to allow more globally-powerful `import.meta.glob`. For example
 Features from Vite's implementation that I didn't incorporate because I don't want to sign us up to reimplement them in every build system:
 
  - absolute imports, starting with `/`. This is not a well-defined concept in today's Ember apps because they do not have a single directory representing the app's web root.
- - eager mode, so that you gain synchronous access to the matching modules
  - `as: 'raw'` which gives you the raw source code of matching files
  - `as: 'url'` which gives you URLs to the matching files
  - named imports mode, which allows you to ask for specific names instead of whole modules
