@@ -8,13 +8,6 @@ on:
     paths:
       - 'text/*.md'
 
-concurrency:
-  # Events within 5 minutes are not guaranteed to run in order, and so when removing S-Proposed and adding S-Exploring
-  # we can't guarantee that the run of the workflow will be the one where S-Exploring is added. Adding `github.event_name`
-  # to the concurrency allows both workflows to complete and the PR to eventually have successful checks.
-  group: newly-added-rfc-${{ github.head_ref || github.ref }}-${{ github.event_name }}
-  cancel-in-progress: true
-
 jobs:
   check-rfcs:
     name: Does PR add RFCs?
@@ -76,7 +69,7 @@ jobs:
       - name: Fail if more than 1 RFC is added or modified
         if: ${{ needs.check-rfcs.outputs.rfcs-changed > 1}}
         run: |
-          echo "::error::More than 1 RFC is added in this PR; will be unable to automatically open PRs for advancement"
+          echo "::error::More than 1 RFC is added or modified in this PR; will be unable to automatically open PRs for advancement"
           exit 1
 
   frontmatter-stage-is-accepted:
