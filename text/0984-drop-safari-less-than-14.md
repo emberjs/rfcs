@@ -51,6 +51,9 @@ Private class field transpilation has a big impact on the kind of code emitted. 
 
 ## Detailed design
 
+Ember v6 Will not support Safari < v14.1
+
+
 > This is the bulk of the RFC.
 
 > Explain the design in enough detail for somebody
