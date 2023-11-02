@@ -1,6 +1,6 @@
 ---
 stage: accepted
-start-date: # In format YYYY-MM-DDT00:00:00.000Z
+start-date: 2023-11-02T16:05:11.000Z 
 release-date: # In format YYYY-MM-DDT00:00:00.000Z
 release-versions:
 teams: # delete teams that aren't relevant
@@ -11,7 +11,7 @@ teams: # delete teams that aren't relevant
   - steering
   - typescript
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/985
 project-link:
 suite: 
 ---
