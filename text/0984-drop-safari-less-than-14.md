@@ -43,15 +43,15 @@ Other features in the ecosystem,
 class static initialization blocks:
 - Safari 16.4: https://caniuse.com/mdn-javascript_classes_static_initialization_blocks
 
-This RFC is not concernd with static initialization blocks, as those can easily by transpiled without adding a a lot of code.
+This RFC is not concerned with static initialization blocks, as those can easily be transpiled without adding a a lot of code.
 
 ## Motivation
 
-Private class field transpilation has a big impact on the kind of code emitted. We want to transpile as little as possible -- ideally nothing, and let app users decide if they need to transpile further.
+Private class fields transpilation has a big impact on the kind of code emitted. We want to transpile as little as possible -- ideally nothing, and let app users decide if they need to transpile further.
 
 ## Detailed design
 
-Ember v6 Will not support Safari < v14.1
+Ember v6 will not support Safari < v14.1
 
 
 > This is the bulk of the RFC.
