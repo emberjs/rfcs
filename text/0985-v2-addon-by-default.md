@@ -39,7 +39,7 @@ suite: Leave as is
 
 ## Motivation
 
-We want to encourage folks use v2 addons instead of the classic addon blueprint.
+We want to encourage folks to use v2 addons instead of the classic addon blueprint.
 
 V1 addons are built by apps on every boot, every build.
 V2 addons are built at publish time, so the app can build faster.
