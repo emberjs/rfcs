@@ -71,7 +71,7 @@ How much of this should be "the path/migration to" as opposed to "this is the en
 
 1. start with embroider-strictest
 2. all blueprint addons must be either in the v2 format, or non-addons entirely (such as qunit-dom's recent change to real `type=module` package) 
-3. use Vite w/ embroider
+3. use Vite with Embroider
 4. remove unneeded dependencies
     - ember-auto-import
         - replaced by _the packager's_ own way of processing dependencies
