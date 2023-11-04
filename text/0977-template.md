@@ -70,7 +70,7 @@ Lastly, the v2 app format positions Ember to take advantage of ongoing and futur
 How much of this should be "the path/migration to" as opposed to "this is the end state, details can be part of implementation"?
 
 1. start with embroider-strictest
-2. all blueprint addons must be either in the v2 format, or non-addons entirely (such as qunit-dom's recent change to real type=module package) 
+2. all blueprint addons must be either in the v2 format, or non-addons entirely (such as qunit-dom's recent change to real `type=module` package) 
 3. use Vite w/ embroider
 4. remove unneeded dependencies
     - ember-auto-import
