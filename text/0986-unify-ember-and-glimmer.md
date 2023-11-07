@@ -64,10 +64,30 @@ The `main` branch of this repo is v2-beta, which isn't what ember is using. We'l
 Repo: github.com/emberjs/ember.js/
 
 
-
 ### Where we want to go
 
-A single repo
+A single repo.
+```
+github.com/emberjs/ember.js/
+    .github/
+    package.json
+    packages/
+        @glimmer/
+            ...
+        @ember/
+            ...
+        ember-source/
+            ...
+    tests/
+        high level/
+        integration tests/
+    dev/
+        packages/
+            configs/
+            test-infra/
+            etc
+            
+```
 
 ### How we get there
 
@@ -82,33 +102,15 @@ defined here.
 ## How we teach this
 
 
-This RFC is for internal restructuring of our code, and nothing needs to be changed in the guides or learning materials. However, there will be some education needed for folks working within these repos -- in particular, around 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
-
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
-
-> How should this feature be introduced and taught to existing Ember
-users?
+This RFC is for internal restructuring of our code, and nothing needs to be changed in the guides or learning materials. However, there will be some education needed for folks working within these repos -- in particular, around monorepo management, dependent builds, etc.
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+Monorepos do require some in-repo infra, but all our repos already have a bunch of custom infra already.
+The goal would be to use the least amount of custom stuff as possible.
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
