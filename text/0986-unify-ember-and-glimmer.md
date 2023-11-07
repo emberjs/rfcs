@@ -44,6 +44,33 @@ Iterating on Ember and Glimmer today is too hard. It shouldn't be. Today, we hav
 
 ## Detailed design
 
+### The current state
+
+#### GlimmerVM
+
+Repo: https://github.com/glimmerjs/glimmer-vm
+
+The family of projects in this repo are all released under the same version. Since all packages here a private to ember consumers, we probably don't need to maintain this. Compatibility with package managers would improve if we also get out of the pre-v1 SemVer "weird zone" as well.
+
+
+#### Glimmer.JS
+
+Repo: https://github.com/glimmerjs/glimmer.js
+
+The `main` branch of this repo is v2-beta, which isn't what ember is using. We'll need to fix this. Since this project defines `@glimmer/component` and `@glimmer/tracking` and these packages are consumer-facing, we'll need to be mindful of how we manage releases with these packages, and assure semver is properly communicated.
+
+#### `ember-source`
+
+Repo: github.com/emberjs/ember.js/
+
+
+
+### Where we want to go
+
+A single repo
+
+### How we get there
+
 > This is the bulk of the RFC.
 
 > Explain the design in enough detail for somebody
@@ -54,6 +81,8 @@ defined here.
 
 ## How we teach this
 
+
+This RFC is for internal restructuring of our code, and nothing needs to be changed in the guides or learning materials. However, there will be some education needed for folks working within these repos -- in particular, around 
 > What names and terminology work best for these concepts and why? How is this
 idea best presented? As a continuation of existing Ember patterns, or as a
 wholly new one?
