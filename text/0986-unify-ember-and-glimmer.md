@@ -11,7 +11,7 @@ teams: # delete teams that aren't relevant
   - steering
   - typescript
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/986
 project-link:
 suite: 
 ---
