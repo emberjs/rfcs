@@ -78,9 +78,9 @@ users?
 
 ### Terminology
 
-********************registry:******************** In traditional templates with .hbs files (i.e. not template tag), all lookups are done via strings. Since we can’t rely on import statements to discover types, we instead use a type-registry. The type-registry serves to map strings to their corresponding type definitions.
+********************registry:******************** In traditional templates with `.hbs` files (i.e. not template tag), all lookups are done via strings. Since we can’t rely on import statements to discover types, we instead use a type-registry which serves to map strings to their corresponding type definitions.
 
-```tsx
+```ts
 declare module '@glint/environment-ember-loose/registry' {
 	export default interface Registry {
 		'MyComponent': typeof MyComponent;
@@ -92,9 +92,9 @@ declare module '@glint/environment-ember-loose/registry' {
 
 **Initial Announcement:** Make an official announcement on the Ember.js blog and mailing list to inform the community about the plan to adopt Glint as a default/recommended tool.
 
-**Documentation Updates:** Update the Ember.js Gudies to include information about Glint, its benefits, and how to use it effectively.
+**Documentation Updates:** Update the Ember.js Guides to include information about Glint, its benefits, and how to use it effectively.
 
-Provide examples and best practices for leveraging Glint effectively. The current [TypeScript Guides](https://github.com/ember-learn/guides-source/pull/1960) have many places where we can reference Glint (e.g. in areas where we currently say that templates are *not* type-checked). We can also reference the [existing Glint documentation](https://typed-ember.gitbook.io/glint/) and merge its relevant content with the TypeScript guides. Additionally we should document the existence of any plugins/extensions as mentioned above in “Plugin Ecosystem.”
+Provide examples and best practices for leveraging Glint effectively. The current [TypeScript Guides](https://github.com/ember-learn/guides-source/pull/1960) have many places where we can reference Glint (e.g. in areas where we currently say that templates are *not* type-checked). We can also reference the [existing Glint documentation](https://typed-ember.gitbook.io/glint/) and merge its relevant content with the TypeScript Guides. Additionally we should document the existence of any plugins/extensions as mentioned above in “Plugin Ecosystem.”
 
 **Integration Work:** Collaborate with the Glint project (which is maintained by Ember’s TypeScript and Tooling Core Teams) to ensure smooth integration into Ember.js, addressing any compatibility issues that may arise.
 
