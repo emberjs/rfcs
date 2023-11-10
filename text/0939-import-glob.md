@@ -10,6 +10,7 @@ teams:
   - typescript
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/939'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/988'
 project-link:
 suite:
 ---
