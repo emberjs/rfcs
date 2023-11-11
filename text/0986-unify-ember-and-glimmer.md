@@ -61,7 +61,7 @@ The `main` branch of this repo is v2-beta, which isn't what ember is using. We'l
 
 #### `ember-source`
 
-Repo: github.com/emberjs/ember.js/
+Repo: https://github.com/emberjs/ember.js
 
 
 ### Where we want to go
