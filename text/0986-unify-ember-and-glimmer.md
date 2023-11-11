@@ -50,7 +50,7 @@ Iterating on Ember and Glimmer today is too hard. It shouldn't be. Today, we hav
 
 Repo: https://github.com/glimmerjs/glimmer-vm
 
-The family of projects in this repo are all released under the same version. Since all packages here a private to ember consumers, we probably don't need to maintain this. Compatibility with package managers would improve if we also get out of the pre-v1 SemVer "weird zone" as well.
+The family of projects in this repo are all released under the same version. Since all packages here are private to ember consumers, we probably don't need to maintain this. Compatibility with package managers would improve if we also get out of the pre-v1 SemVer "weird zone" as well.
 
 
 #### Glimmer.JS
