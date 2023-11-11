@@ -57,7 +57,7 @@ The family of projects in this repo are all released under the same version. Sin
 
 Repo: https://github.com/glimmerjs/glimmer.js
 
-The `main` branch of this repo is v2-beta, which isn't what ember is using. We'll need to fix this. Since this project defines `@glimmer/component` and `@glimmer/tracking` and these packages are consumer-facing, we'll need to be mindful of how we manage releases with these packages, and assure semver is properly communicated.
+The `main` branch of this repo is v2-beta, which isn't what ember is using. We'll need to fix this. Since this project defines `@glimmer/component` and `@glimmer/tracking` and these packages are consumer-facing, we'll need to be mindful of how we manage releases with these packages, and assure SemVer is properly communicated.
 
 #### `ember-source`
 
