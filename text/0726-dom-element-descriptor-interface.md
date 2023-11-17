@@ -1,4 +1,20 @@
 ---
+stage: accepted
+start-date: 2021-03-13T00:42:02.085Z
+release-date: # In format YYYY-MM-DDT00:00:00.000Z
+release-versions:
+teams: # delete teams that aren't relevant
+  - cli
+  - framework
+  - learning
+  - typescript
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/939
+project-link:
+suite: 
+---
+
+---
 Stage: Accepted
 Start Date: 2021-03-13
 Release Date: Unreleased
@@ -12,12 +28,15 @@ RFC PR: https://github.com/emberjs/rfcs/pull/726
 <!--- 
 Directions for above: 
 
-Stage: Leave as is
-Start Date: Fill in with today's date, YYYY-MM-DD
-Release Date: Leave as is
-Release Versions: Leave as is
-Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies
-RFC PR: Fill this in with the URL for the Proposal RFC PR
+stage: Leave as is
+start-date: Fill in with today's date, 2032-12-01T00:00:00.000Z
+release-date: Leave as is
+release-versions: Leave as is
+teams: Include only the [team(s)](README.md#relevant-teams) for which this RFC applies
+prs:
+  accepted: Fill this in with the URL for the Proposal RFC PR
+project-link: Leave as is
+suite: Leave as is
 -->
 
 # DOM Element descriptor interface for test helpers
@@ -186,7 +205,9 @@ function for returning the descriptor's `description` or deriving some kind of r
 
 This is primarily taught through the API documentation of the various libraries that implement compliant DOM helpers, such as `@ember/test-helpers` and `qunit-dom`, and libraries that produce DOM element descriptors, such as `fractal-page-object`. In addition the new library proposed in this RFC would have documentation explaining the infrastructure and how to use it.
 
-The Ember guides would not need to be updated, as the default Ember testing methodology would be unaffected -- this would be added functionality for users using page object libraries, or implementing ad-hoc element descriptors in their tests.
+The Ember guides would not need to be updated, as the default Ember testing methodology would be unaffected -- this would be added functionality for users using page object libraries, or implementing ad-hoc element descriptors in their tests. However, if Ember's guides were ever extended to include page object testing methodologies, we would need to include a discussion of DOM element descriptors.
+
+Also, if we were to discover any new and valuable testing methods/patterns that are unlocked by DOM element descriptors, we might want to discuss them, along with DOM element descriptors themselves, in Ember's educational materials.
 
 ## Drawbacks
 
