@@ -8,6 +8,7 @@ teams:
   - framework
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/785'
+  recommended: 'https://github.com/emberjs/rfcs/pull/991'
 project-link:
 ---
 
