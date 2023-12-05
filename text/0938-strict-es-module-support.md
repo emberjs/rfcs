@@ -220,6 +220,8 @@ Along with this change, the existing `ember-resolver` package should be marked d
 - ember-cli
 - embroider
 - ember-auto-import
+- ember-resolver
+- ember-load-initializers
 
   to make the strict-es-modules optional feature available.
 
