@@ -178,7 +178,9 @@ on the impact of the API churn on existing apps, etc.
 
 > ✂ There are tradeoffs to choosing any path, please attempt to identify them here.
 
-❓
+An "Ember app" mentioned throughout this RFC means a v1 app, as v2 apps (Embroider-first apps) do not exist yet. v2 apps will not be driven by Ember CLI, and, given the alternative described below, this work will become redundant.
+
+❓ Something else?
 
 ## Alternatives
 
