@@ -135,6 +135,8 @@ An "Ember app" mentioned throughout this RFC means a v1 app, as v2 apps (Embroid
 
 ## Alternatives
 
+### Use the in-repo addon workaround
+
 The fact that some important Ember CLI hooks are only available to addons and not the app — is a known problem in the Ember community. A de-facto solution is to add an in-repo addon to the app. Such addon can define a middleware hook that provides both inline middleware and forwards middleware from v2 addons.
 
 Pros:
@@ -147,6 +149,24 @@ Cons:
 * This pattern is not eagerly documented and only known to seasoned Ember developers.
 * This pattern is a workaround for an Ember CLI shortcoming, not a real solution.
 * Relying on Testem's own config file is the v2 path forward, and using an in-repo addon delays it.
+
+### Have Ember CLI merge middleware from addons with middleware from testem.js
+
+Pros:
+
+* Likely a one-liner that can be categorized as a bugfix.
+
+Cons:
+
+* It solves only two goals out of three:
+
+    ✅ Define its own middleware.  
+    ✅ Pass on middleware provided by v2 addons.  
+    ❌ Opt in or out of Ember CLI including middelware provided by v1 addons.
+
+    Must admit that opting out of addon-provided Testem middleware is a rare requirement.
+
+* It does not push app and addon maintainers to adopt the Embroider-friendly path.
 
 ## Unresolved questions
 
