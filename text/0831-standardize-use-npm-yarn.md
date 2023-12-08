@@ -24,7 +24,8 @@ Relevant Team(s): Fill this in with the [team(s)](README.md#relevant-teams) to w
 RFC PR: Fill this in with the URL for the Proposal RFC PR
 -->
 
-# Standardize the use of yarn and npm scripts in the Ember experience
+# Standardize use of scripts in package.json for common tasks
+
 
 ## Summary
 
