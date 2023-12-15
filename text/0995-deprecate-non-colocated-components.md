@@ -121,7 +121,7 @@ Or using `component-structure=nested`
 - Some super old addons may break
 - Some super old apps may break    
 
-In either case, it's been years, and the deprecation will will give folks actionable information for how to move forward.
+In either case, it's been ~5 years since co-located components were introduced, and the deprecation will will give folks actionable information for how to move forward (ideally with a link to the deprecation site which can then link to tools folks can try).
 
 ## Alternatives
 
