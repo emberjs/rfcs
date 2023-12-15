@@ -47,7 +47,7 @@ These older component layouts force build tooling to keep a lot of resolution ru
 ## Transition Path
 
 There are two types of paths to migrate off the old layouts 
-- use a currently supported multi-file layout (keeping separate `js`, `ts`, and hbs files)
+- use a currently supported multi-file layout (keeping separate `js`, `ts`, and `hbs` files)
 - migrate the component entirely to the latest component format, `gjs`, `gts`, (aka `<template>`)
 
 There are some tools to help with this:
