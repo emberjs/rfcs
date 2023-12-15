@@ -1,14 +1,16 @@
 ---
-stage: ready-for-release
+stage: released
 start-date: 2023-03-25T00:00:00.000Z
-release-date:
+release-date: 2023-12-11T00:00:00.000Z
 release-versions:
+  ember-cli: 5.5.0
 teams:
   - cli
   - learning
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/918'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/954'
+  released: 'https://github.com/emberjs/rfcs/pull/978'
 project-link:
 ---
 
