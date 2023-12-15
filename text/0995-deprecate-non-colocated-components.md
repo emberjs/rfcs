@@ -159,7 +159,7 @@ Specifically, we'll remove:
 
 ## How We Teach This
 
-Guides and docs already dont mention the above old layouts.
+Guides and docs already don't mention the above old layouts.
 
 ## Drawbacks
 
