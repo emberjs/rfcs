@@ -118,6 +118,7 @@ Or using `component-structure=nested`
 
 ## Drawbacks
 
+If upgrading to ember v6 without any changes,
 - Some super old addons may break
 - Some super old apps may break    
 
