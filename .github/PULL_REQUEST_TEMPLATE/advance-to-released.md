@@ -1,5 +1,7 @@
 # Advance #__RFC_NUMBER__ to the [Released Stage](https://github.com/emberjs/rfcs#released)
 
+## [Rendered](__RFC_RENDERED_URL__)
+
 ## Summary
 
 This pull request is advancing the RFC to the [Released Stage](https://github.com/emberjs/rfcs#released).
