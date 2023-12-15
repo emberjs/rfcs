@@ -113,8 +113,53 @@ Or using `component-structure=nested`
         index.hbs
 ```
 
+### `ember-source`
+
+The blueprint for components will need to remove the `classic` option:
+
+Here is the output at the time of authoring this RFC:
+```bash 
+❯ pnpm ember g component --help
+Requested ember-cli commands:
+
+ember generate <blueprint> <options...>
+  Generates new code from blueprints.
+  aliases: g
+  --dry-run (Boolean) (Default: false)
+    aliases: -d
+  --verbose (Boolean) (Default: false)
+    aliases: -v
+  --pod (Boolean) (Default: false)
+    aliases: -p, -pods
+  --classic (Boolean) (Default: false)
+    aliases: -c
+  --dummy (Boolean) (Default: false)
+    aliases: -dum, -id
+  --in-repo-addon (String) (Default: null)
+    aliases: --in-repo <value>, -ir <value>
+  --lint-fix (Boolean) (Default: true)
+  --in (String) (Default: null) Runs a blueprint against an in repo addon. A path is expected, relative to the root of the project.
+  --typescript (Boolean) Generates a version of the blueprint written in TypeScript (if available).
+    aliases: -ts
+
+      component <name> <options...>
+        Generates a component.
+        --path (String) (Default: components)
+          aliases: --no-path (--path="")
+        --component-class (@ember/component, @glimmer/component, @ember/component/template-only, "") (Default: --no-component-class)
+          aliases: -cc (--component-class=@ember/component), -gc (--component-class=@glimmer/component), -tc (--component-class=@ember/component/template-only), -nc (--component-class=""), --no-component-class (--component-class=""), --with-component-class (--component-class=@glimmer/component)
+        --component-structure (flat, nested, classic) (Default: flat)
+          aliases: -fs (--component-structure=flat), -ns (--component-structure=nested), -cs (--component-structure=classic)
+
+```
+
+Specifically, we'll remove:
+- `--component-structure=classic` and its alias
+
 
 ## How We Teach This
+
+Guides and docs already dont mention the above old layouts.
 
 ## Drawbacks
 
