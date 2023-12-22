@@ -48,6 +48,8 @@ This change would affect strict-mode only. This is so that today's existing code
 
 The behavior of `array` would be the same as it is today, but defined by default in the `glimmer-vm`.
 
+Being built in can give folks confidence that each element in the array is individually reactive.
+
 ## How we teach this
 
 Once implemented, the guides, if they say anything about gjs/gts/`<template>` and `array` by the time this would be implemented, would only remove the import.
