@@ -1,17 +1,14 @@
 ---
 stage: accepted
-start-date: # In format YYYY-MM-DDT00:00:00.000Z
+start-date: 2023-12-22T00:00:00.000Z
 release-date: # In format YYYY-MM-DDT00:00:00.000Z
 release-versions:
 teams: # delete teams that aren't relevant
-  - cli
-  - data
   - framework
   - learning
-  - steering
   - typescript
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/998
 project-link:
 suite: 
 ---
@@ -30,55 +27,74 @@ project-link: Leave as is
 suite: Leave as is
 -->
 
-# <RFC title>
+# Make `(fn)` a built in helper 
 
 ## Summary
 
-> One paragraph explanation of the feature.
+Today, when using gjs/gts/`<template>`, in order to bind event listeners, folks _must import_ the `(fn)` modifier.
+Because event listening is so commonplace, this is a grating annoyance for developers.
+
+This RFC proposes that `(fn)` be built in to `glimmer-vm` and not require importing.
 
 ## Motivation
 
-> Why are we doing this? What use cases does it support? What is the expected
-outcome?
+There is precedence for `fn` being built in, as all the other partialy-application utilities are already built in.
+
+- `(helper)`
+- `(modifier)`
+- `(component)`
+
+It's historically been the stance that, 
+
+"If it can be built in userspace, it should be, leaving the framework-y things to be only what can't exist in userspace"
+
+But to achieve the ergonomics that our users want, we should provide a more cohesive experience, rather than require folks import from all of (in the same file):
+- `@glimmer/component`
+- `@glimmer/tracking`
+- `@ember/modifier`
+- `@ember/helper`
+- `ember-modifier`
+- `ember-resources`
+- `tracked-built-ins`
+
+Some of the above may unify in a separate RFC, but for the template-utilities, since the modules that provide them are already so small, it makes sense to inherently provide them by default. Especially as we can target strict-mode only, so that we don't run in to the same implementation struggles that built-in [Logical Operators](https://github.com/emberjs/rfcs/pull/562), [Numeric Comparison Operators](https://github.com/emberjs/rfcs/pull/561), and [Equality Operators](https://github.com/emberjs/rfcs/pull/560) have faced.
+
+<details><summary>some context on those RFCs</summary>
+
+The main problem with adding default utilities without strict-mode is that it becomes very hard to implement a way for an app to incrementally, and possibly per-addon, or per-file, to adopt the default thing due to how resolution works. Every usage of the built in utility would also require a global resolution lookup (the default behavior in loose mode templates) to see if an addon is overriding the built ins -- and then, how do you opt in to the built ins, and _not_ let addons override what you want to use?
+
+With gjs/gts/`<template>`, this is much simpler, as in strict-mode, you can check if the scope object defines the helpers, and if not, use the built in ones.
+
+This strategy of always allowing local scope to override default-provided utilities will be a recurring theme.
+
+</details>
+
+---------------
+
+_Making `fn` a built-in will help make writing components feel more cohesive and well supported, as folks will not need to cobble together many imported values_
+
+----------------
+
 
 ## Detailed design
 
-> This is the bulk of the RFC.
+This change would affect strict-mode only. This is so that today's existing code that imports `fn` from `@ember/helper` will still work due to how values define locally in scope override globals.
 
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here.
+The behavior of `fn` would be the same as it is today, but defined by default in the `glimmer-vm`.
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
-
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
-
-> How should this feature be introduced and taught to existing Ember
-users?
+Once implemented, the guides, if they say anything about gjs/gts/`<template>` and `fn` by the time this would be implemented, would only remove the import.
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+People may not know where `fn` is defined.
+- counterpoint: do they need to?
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
+n/a
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+n/a
