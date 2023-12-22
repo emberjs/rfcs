@@ -96,45 +96,31 @@ This strategy of always allowing local scope to override default-provided utilit
 
 </details>
 
+---------------
+
+_Making `on` a built-in will help make writing components feel more cohesive and well supported, as folks will not need to cobble together many imported values_
+
+----------------
 
 ## Detailed design
 
-> This is the bulk of the RFC.
+This change would affect strict-mode only. This is so that today's existing code that imports `on` from `@ember/modifier` will still work due to how values define locally in scope override globals.
 
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here.
+The behavior of `on` would be the same as it is today, but defined by default in the `glimmer-vm`.
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
-
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
-
-> How should this feature be introduced and taught to existing Ember
-users?
+Once implemented, the guides, if they say anything about gjs/gts/`<template>` and `on` by the time this would be implemented, would only remove the import.
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+People may not know where `on` is defined.
+- counterpoint: do they need to?
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
+n/a
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+n/a
