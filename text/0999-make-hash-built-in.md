@@ -1,17 +1,14 @@
 ---
 stage: accepted
-start-date: # In format YYYY-MM-DDT00:00:00.000Z
+start-date: 2023-12-22T00:00:00.000Z
 release-date: # In format YYYY-MM-DDT00:00:00.000Z
 release-versions:
 teams: # delete teams that aren't relevant
-  - cli
-  - data
   - framework
   - learning
-  - steering
   - typescript
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/0999
 project-link:
 suite: 
 ---
@@ -30,55 +27,42 @@ project-link: Leave as is
 suite: Leave as is
 -->
 
-# <RFC title>
+# Make `(hash)` a built in helper 
 
 ## Summary
 
-> One paragraph explanation of the feature.
+Today, when using gjs/gts/`<template>`, in order to bind event listeners, folks _must import_ the `(hash)` helper.
+Because creating arrays is fairly commonplace, this is a grating annoyance for developers.
+
+This RFC proposes that `(hash)` be built in to `glimmer-vm` and not require importing.
 
 ## Motivation
 
-> Why are we doing this? What use cases does it support? What is the expected
-outcome?
+Arrays and Objects are not only very common to create, they are essential tools when yielding data out of components.
+
+There is alternate motivation to implement _literals_ for arrays and objects, but that is a bigger can of worms for another time.
 
 ## Detailed design
 
-> This is the bulk of the RFC.
+This change would affect strict-mode only. This is so that today's existing code that imports `hash` from `@ember/helper` will still work due to how values define locally in scope override globals.
 
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here.
+The behavior of `hash` would be the same as it is today, but defined by default in the `glimmer-vm`.
+
+Being built in can give folks confidence that each property in the hash is individually reactive.
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
-
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
-
-> How should this feature be introduced and taught to existing Ember
-users?
+Once implemented, the guides, if they say anything about gjs/gts/`<template>` and `hash` by the time this would be implemented, would only remove the import.
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+People may not know where `hash` is defined.
+- counterpoint: do they need to?
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
+n/a
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+n/a
