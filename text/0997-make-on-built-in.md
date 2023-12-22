@@ -31,12 +31,71 @@ suite: Leave as is
 
 ## Summary
 
-> One paragraph explanation of the feature.
+Today, when using gjs/gts/`<template>`, in order to bind event listeners, folks _must import_ the `{{on}}` modifier.
+Because event listening is so commonplace, this is a grating annoyance for developers.
+
+This RFC proposes that `{{on}}` be built in to `glimmer-vm` and not require importing.
 
 ## Motivation
 
-> Why are we doing this? What use cases does it support? What is the expected
-outcome?
+Given how common it is to use the `{{on}}` modifier:
+
+```gjs
+import { on } from '@ember/modifier';
+
+<template>
+    <button {{on 'click' @doSomething}}>
+        click me
+    </button>
+
+    <form {{on 'submit' @localSubmit}}>
+        <label
+            {{on 'keydown' @a}}
+            {{on 'keyup' @a}}
+            {{on 'focus' @a}}
+            {{on 'blur' @a}}
+        >
+        </label>
+
+        <button>
+            submit
+        </button>
+    </form>
+</template>
+```
+
+It should be built in to the templating engine, Glimmer, so that folks don't need to import it.
+
+There is precedence for this already as the following are already commonplace and built in:
+- `(helper)`
+- `(modifier)`
+- `(component)`
+
+It's historically been the stance that, 
+
+"If it can be built in userspace, it should be, leaving the framework-y things to be only what can't exist in userspace"
+
+But to achieve the ergonomics that our users want, we should provide a more cohesive experience, rather than require folks import from all of (in the same file):
+- `@glimmer/component`
+- `@glimmer/tracking`
+- `@ember/modifier`
+- `@ember/helper`
+- `ember-modifier`
+- `ember-resources`
+- `tracked-built-ins`
+
+Some of the above may unify in a separate RFC, but for the template-utilities, since the modules that provide them are already so small, it makes sense to inherently provide them by default. Especially as we can target strict-mode only, so that we don't run in to the same implementation struggles that built-in [Logical Operators](https://github.com/emberjs/rfcs/pull/562), [Numeric Comparison Operators](https://github.com/emberjs/rfcs/pull/561), and [Equality Operators](https://github.com/emberjs/rfcs/pull/560) have faced.
+
+<details><summary>some context on those RFCs</summary>
+
+The main problem with adding default utilities without strict-mode is that it becomes very hard to implement a way for an app to incrementally, and possibly per-addon, or per-file, to adopt the default thing due to how resolution works. Every usage of the built in utility would also require a global resolution lookup (the default behavior in loose mode templates) to see if an addon is overriding the built ins -- and then, how do you opt in to the built ins, and _not_ let addons override what you want to use?
+
+With gjs/gts/`<template>`, this is much simpler, as in strict-mode, you can check if the scope object defines the helpers, and if not, use the built in ones.
+
+This strategy of always allowing local scope to override default-provided utilities will be a recurring theme.
+
+</details>
+
 
 ## Detailed design
 
