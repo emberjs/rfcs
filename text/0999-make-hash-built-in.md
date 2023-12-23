@@ -44,7 +44,7 @@ There is alternate motivation to implement _literals_ for arrays and objects, bu
 
 ## Detailed design
 
-This change would affect strict-mode only. This is so that today's existing code that imports `hash` from `@ember/helper` will still work due to how values define locally in scope override globals.
+This change would affect strict-mode only. This is so that today's existing code that imports `hash` from `@ember/helper` will still work due to how values defined locally in scope override globals.
 
 The behavior of `hash` would be the same as it is today, but defined by default in the `glimmer-vm`.
 
