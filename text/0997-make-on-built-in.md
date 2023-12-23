@@ -104,7 +104,7 @@ _Making `on` a built-in will help make writing components feel more cohesive and
 
 ## Detailed design
 
-This change would affect strict-mode only. This is so that today's existing code that imports `on` from `@ember/modifier` will still work due to how values define locally in scope override globals.
+This change would affect strict-mode only. This is so that today's existing code that imports `on` from `@ember/modifier` will still work due to how values defined locally in scope override globals.
 
 The behavior of `on` would be the same as it is today, but defined by default in the `glimmer-vm`.
 
