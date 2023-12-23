@@ -31,8 +31,8 @@ suite: Leave as is
 
 ## Summary
 
-Today, when using gjs/gts/`<template>`, in order to bind event listeners, folks _must import_ the `(array)` helper.
-Because creating arrays is fairly commonplace, this is a grating annoyance for developers.
+Today, when using gjs/gts/`<template>`, in order make arrays in templates, folks _must import_ the `(array)` helper.
+Because creating arrays is fairly commonplace, this is an annoyance for developers, in part, due to how almost every other language has array literal syntax.
 
 This RFC proposes that `(array)` be built in to `glimmer-vm` and not require importing.
 
