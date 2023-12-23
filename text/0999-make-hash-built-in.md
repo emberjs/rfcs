@@ -32,7 +32,7 @@ suite: Leave as is
 ## Summary
 
 Today, when using gjs/gts/`<template>`, in order to bind event listeners, folks _must import_ the `(hash)` helper.
-Because creating arrays is fairly commonplace, this is a grating annoyance for developers.
+Because creating objects is fairly commonplace, this is a grating annoyance for developers.
 
 This RFC proposes that `(hash)` be built in to `glimmer-vm` and not require importing.
 
