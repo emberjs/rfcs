@@ -31,7 +31,7 @@ suite: Leave as is
 
 ## Summary
 
-Today, when using gjs/gts/`<template>`, in order to bind event listeners, folks _must import_ the `(fn)` modifier.
+Today, when using gjs/gts/`<template>`, in order to bind event listeners, folks _must import_ the `(fn)` helper.
 Because partial application is so commonplace, this is a grating annoyance for developers.
 
 This RFC proposes that `(fn)` be built in to `glimmer-vm` and not require importing.
