@@ -28,7 +28,7 @@ project-link: Leave as is
 
 ## Summary
 
-As of `ember-source@4.1` (and [RFC#752](https://github.com/emberjs/rfcs/pull/752)),  `inject` is an old alias that's no longer needed
+As of [`ember-source@4.1`](https://blog.emberjs.com/ember-4-1-released) (and [RFC#752](https://github.com/emberjs/rfcs/pull/752)),  `inject` is an old alias that's no longer needed
 
 ## Motivation
 
