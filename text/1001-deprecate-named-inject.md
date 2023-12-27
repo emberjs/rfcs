@@ -24,7 +24,7 @@ prs:
 project-link: Leave as is
 -->
 
-# Deprecate named inject 
+# Deprecate named `inject` export from `@ember/service`
 
 ## Summary
 
