@@ -26,8 +26,6 @@ jobs:
       - name: RFCs Added or Changed
         id: rfcs
         uses: ./.github/actions/find-added-or-modified-rfcs
-        with:
-          base-sha: ${{ github.event.before }}
 
       - name: Fail if more than 1 RFC is added or modified
         if: steps.rfcs.outputs.modified-rfcs-count > 1
