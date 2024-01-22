@@ -33,7 +33,7 @@ project-link: Leave as is
 
 ## Summary
 
-> One paragraph explanation of the deprecation.
+This RFC proprosing deprecating all APIs that have module-based replacements, as described in [RFC #176](https://rfcs.emberjs.com/id/0176-javascript-module-api) as well as other `Ember.*` apis that are no longer needed.
 
 ## Motivation
 
