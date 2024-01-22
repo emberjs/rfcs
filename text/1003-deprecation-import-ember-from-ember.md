@@ -116,6 +116,10 @@ users?
 
 > Keep in mind the variety of learning materials: API docs, guides, blog posts, tutorials, etc.
 
+Available Codemods
+
+- https://github.com/ember-codemods/ember-modules-codemod (from the work of RFC 176)
+
 ## Drawbacks
 
 > Why should we *not* do this? Please consider the impact on teaching Ember,
