@@ -42,6 +42,57 @@ What is the replacement functionality?
 
 ## Transition Path
 
+
+### `Ember.testing`
+
+Instead, use
+
+```js
+import { macroCondition, isTesting } from '@embroider/macros';
+
+// ...
+
+if (macroCondition(isTesting()) {
+  // test only code here
+}
+```
+
+ENV/EmberENV ... equivalent shape thing from config/environment
+
+Ember.lookup (what is this?)
+
+Ember.onError (needs replacement)
+
+Ember.BOOTED (what is this?)
+
+Ember.TEMPLATES (must die)
+
+Ember.onload (has replacement) ... what is runloadHooks?
+
+Ember.HTMLBars / Ember.Handlebars (must go)
+
+Ember.Test/Ember.setupForTesting (should be replaced by @ember/test-helpers??)
+
+Container
+
+Registry
+
+_setComponentManager (has replacement on @ember/component)
+
+_modifierManagerCapabilities (has replacement on @ember/modifier)
+
+_componentManagerCapabilities
+
+meta (tagged private but exported on 'ember')
+
+RSVP
+
+libraries (may need public replacement)
+
+ActionHandler (no public API)
+
+Comparable (used by import compare from @ember/utils)
+
 > This is the bulk of the RFC. Explain the use-cases that deprecated functionality
 covers, and for each use-case, describe the transition path.
 Describe it in enough detail for someone who uses the deprecated functionality
