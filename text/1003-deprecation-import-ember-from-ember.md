@@ -1,6 +1,6 @@
 ---
 stage: accepted
-start-date:
+start-date: 2024-01-22T00:00:00.000Z
 release-date:
 release-versions:
 teams: # delete teams that aren't relevant
@@ -11,7 +11,7 @@ teams: # delete teams that aren't relevant
   - steering
   - typescript
 prs:
-  accepted: # update this to the PR that you propose your RFC in
+  accepted: https://github.com/emberjs/rfcs/pull/1003 
 project-link:
 ---
 
