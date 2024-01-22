@@ -81,6 +81,10 @@ No replacement.
 
 ### Ember.HTMLBars / Ember.Handlebars (must go)
 
+#### `Ember.Handlebars.Utils.escapeExpression`
+
+Removed in [ember.js PR#20360](https://github.com/emberjs/ember.js/pull/20360) as it is not public API.
+
 ### Ember.Test/Ember.setupForTesting (should be replaced by @ember/test-helpers??)
 
 ### Container
