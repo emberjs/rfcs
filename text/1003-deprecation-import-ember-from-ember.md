@@ -61,56 +61,47 @@ ENV/EmberENV ... equivalent shape thing from config/environment
 
 Ember.lookup (what is this?)
 
-Ember.onError (needs replacement)
+### `Ember.onError`
 
-Ember.BOOTED (what is this?)
+```js
+window.addEventListener('error', /* ... event handler ... */);
+```
 
-Ember.TEMPLATES (must die)
+### `Ember.BOOTED`
 
-Ember.onload (has replacement) ... what is runloadHooks?
+No replacement. Unused.
 
-Ember.HTMLBars / Ember.Handlebars (must go)
+### `Ember.TEMPLATES`
 
-Ember.Test/Ember.setupForTesting (should be replaced by @ember/test-helpers??)
+This is the template registry. It does not need to be public API. 
 
-Container
+No replacement.
 
-Registry
+### Ember.onload (has replacement) ... what is runloadHooks?
 
-_setComponentManager (has replacement on @ember/component)
+### Ember.HTMLBars / Ember.Handlebars (must go)
 
-_modifierManagerCapabilities (has replacement on @ember/modifier)
+### Ember.Test/Ember.setupForTesting (should be replaced by @ember/test-helpers??)
 
-_componentManagerCapabilities
+### Container
 
-meta (tagged private but exported on 'ember')
+### Registry
 
-RSVP
+### _setComponentManager (has replacement on @ember/component)
 
-libraries (may need public replacement)
+### _modifierManagerCapabilities (has replacement on @ember/modifier)
 
-ActionHandler (no public API)
+### _componentManagerCapabilities
 
-Comparable (used by import compare from @ember/utils)
+### meta (tagged private but exported on 'ember')
 
-> This is the bulk of the RFC. Explain the use-cases that deprecated functionality
-covers, and for each use-case, describe the transition path.
-Describe it in enough detail for someone who uses the deprecated functionality
-to understand, for someone to write the deprecation guide, and for someone
-familiar with the implementation to implement.
+### RSVP
 
-> It can be helpful to write the deprecation guide as part of this section. Published deprecation
-> guides can be found at https://deprecations.emberjs.com/.
+### libraries (may need public replacement)
 
-> Please keep in mind any implications within the Ember ecosystem, such as:
-> - Lint rules (ember-template-lint, eslint-plugin-ember) that should be added, modified or removed
-> - Features that are replaced or made obsolete by this feature and should eventually be deprecated
-> - Ember Inspector and debuggability
-> - Server-side Rendering
-> - Ember Engines
-> - The Addon Ecosystem
-> - IDE Support
-> - Blueprints that should be added or modified
+### ActionHandler (no public API)
+
+### Comparable (used by import compare from @ember/utils)
 
 ## How We Teach This
 
