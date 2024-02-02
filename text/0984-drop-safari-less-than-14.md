@@ -31,19 +31,11 @@ project-link: Leave as is
 suite: Leave as is
 -->
 
-# Drop support for Safari < v14.1 
+# Treat Safari as an Evergreen Browser
 
 ## Summary
 
-Until v14.1, Safari doesn't support:
-- private class fields: https://caniuse.com/mdn-javascript_classes_private_class_fields
-
-Other features in the ecosystem,
-
-class static initialization blocks:
-- Safari 16.4: https://caniuse.com/mdn-javascript_classes_static_initialization_blocks
-
-This RFC is not concerned with static initialization blocks, as those can easily be transpiled without adding a a lot of code.
+Safari's release cadence has increased as well as relevant-device compatibilty. This RFC proposes an amendment to the [browser support](https://emberjs.com/browser-support/) policy to treat Safari the same as Chrome and FireFox for Desktop and Mobile devices.
 
 ## Motivation
 
@@ -54,42 +46,273 @@ Private class fields transpilation has a big impact on the kind of code emitted.
 Ember v6 will not support Safari < v14.1
 
 
-> This is the bulk of the RFC.
-
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here.
-
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
+### A new browser support policy
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
+Diff:
+- remove non-evergreen section
+- place Safari under Evergreen Desktop and Evergreen Mobile
+- actual numbers subject to change as time passes, this is an example
 
-> How should this feature be introduced and taught to existing Ember
-users?
+```diff
+{{page-title "Browser Support"}}
+<div class="container layout">
+  <section aria-labelledby="section-browser-support-policy">
+    <h1 id="section-browser-support-policy">Ember.js Browser Support Policy</h1>
+
+
++    <h2>Ember 6.0.0</h2>
++
++    <p>
++      In Ember 6.0.0, the framework supports the following major browsers:
++    </p>
++
++    <ul class="list-unstyled layout my-3">
++      <EsCard class="lg:col-2">
++        <div class="text-center text-md">Desktop</div>
++        <ul>
++          <li>Google Chrome >= 103</li>
++          <li>Mozilla Firefox >= 102</li>
++          <li>Microsoft Edge >= 110</li>
++          <li>Safari >= 16.4</li>
++        </ul>
++      </EsCard>
++      <EsCard class="lg:col-2">
++        <div class="text-center text-md">Mobile</div>
++        <ul>
++          <li>Google Chrome >= 112</li>
++          <li>Mozilla Firefox >= 110</li>
++          <li>Safari >= 16.4</li>
++        </ul>
++      </EsCard>
++      <EsCard class="lg:col-2">
++        <div class="text-center text-md">Testing</div>
++        <ul>
++          <li>Google Chrome</li>
++          <li>Mozilla Firefox</li>
++        </ul>
++      </EsCard>
++    </ul>
+
+    <h2>Ember 5.0.0</h2>
+
+    <p>
+      In Ember 5.0.0, the framework supports the following major browsers:
+    </p>
+
+    <ul class="list-unstyled layout my-3">
+      <EsCard class="lg:col-2">
+        <div class="text-center text-md">Desktop</div>
+        <ul>
+          <li>Google Chrome >= 103</li>
+          <li>Mozilla Firefox >= 102</li>
+          <li>Microsoft Edge >= 110</li>
+          <li>Safari >= 12</li>
+        </ul>
+      </EsCard>
+      <EsCard class="lg:col-2">
+        <div class="text-center text-md">Mobile</div>
+        <ul>
+          <li>Google Chrome >= 112</li>
+          <li>Mozilla Firefox >= 110</li>
+          <li>Safari >= 12</li>
+        </ul>
+      </EsCard>
+      <EsCard class="lg:col-2">
+        <div class="text-center text-md">Testing</div>
+        <ul>
+          <li>Google Chrome</li>
+          <li>Mozilla Firefox</li>
+        </ul>
+      </EsCard>
+    </ul>
+
+    <h2>Ember 4.0.0</h2>
+
+    <p>
+      In Ember 4.0.0, the framework supports the following major browsers:
+    </p>
+
+    <ul class="list-unstyled layout my-3">
+      <EsCard class="lg:col-2">
+        <div class="text-center text-md">Desktop</div>
+        <ul>
+          <li>Google Chrome >= 92</li>
+          <li>Mozilla Firefox >= 91</li>
+          <li>Microsoft Edge >= 93</li>
+          <li>Safari >= 12</li>
+        </ul>
+      </EsCard>
+      <EsCard class="lg:col-2">
+        <div class="text-center text-md">Mobile</div>
+        <ul>
+          <li>Chrome Android >= 96</li>
+          <li>Firefox Android >= 94</li>
+          <li>Safari >= 12</li>
+        </ul>
+      </EsCard>
+      <EsCard class="lg:col-2">
+        <div class="text-center text-md">Testing</div>
+        <ul>
+          <li>Google Chrome</li>
+          <li>Mozilla Firefox</li>
+        </ul>
+      </EsCard>
+    </ul>
+
+    <h2>Ember 3.0.0</h2>
+
+    <p>
+      Ember currently targets Internet Explorer 11 as a baseline for support. This means that generally all modern and relatively recent browsers will work with Ember, since browsers are backwards compatible by design. Ember runs tests against the latest desktop versions of the following browsers:
+    </p>
+
+    <div class="layout my-3">
+      <div class="card lg:col-2 lg:start-3">
+        <div class="card__content">
+          <ul>
+            <li>Google Chrome</li>
+            <li>Mozilla Firefox</li>
+            <li>Microsoft Edge</li>
+            <li>Internet Explorer 11</li>
+            <li>Safari</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      Other browsers may work with Ember.js, but are not explicitly supported. If you
+      would like to add support for a new browser, please <a href="https://github.com/emberjs/rfcs">submit an RFC or RFC issue for discussion</a>!
+    </p>
+
+
+    <p>
+      We determine support on a browser-by-browser basis. Browsers are categorized as
+      either <em>evergreen</em> or <em>non-evergreen</em>. The categorization is as follows:
+    </p>
+
+    <h3 class="text-center">Evergreen</h3>
+
+    <ul class="list-unstyled layout my-3">
+      <EsCard class="lg:col-2">
+        <div class="text-center text-md">Desktop</div>
+        <ul>
+          <li>Google Chrome</li>
+          <li>Mozilla Firefox</li>
+          <li>Microsoft Edge</li>
++         <li>Safari</li>
+        </ul>
+      </EsCard>
+      <EsCard class="lg:col-2">
+        <div class="text-center text-md">Mobile</div>
+        <ul>
+          <li>Google Chrome</li>
+          <li>Mozilla Firefox</li>
++         <li>Safari</li>
+        </ul>
+      </EsCard>
+      <EsCard class="lg:col-2">
+        <div class="text-center text-md">Testing</div>
+        <ul>
+          <li>Google Chrome</li>
+          <li>Mozilla Firefox</li>
+        </ul>
+      </EsCard>
+    </ul>
+
+-    <h3 class="text-center">Non-evergreen</h3>
+-
+-    <div class="layout">
+-      <ul class="list-unstyled layout lg:col-4 lg:start-2 my-3">
+-        <EsCard class="lg:col-3">
+-          <div class="text-center text-md">Desktop</div>
+-          <ul>
+-            <li>Safari</li>
+-          </ul>
+-        </EsCard>
+-        <EsCard class="lg:col-3">
+-          <div class="text-center text-md">Mobile</div>
+-          <ul>
+-            <li>Safari</li>
+-          </ul>
+-        </EsCard>
+-      </ul>
+-    </div>
+
+    <p>
+      For evergreen browsers, the minimum version of the browser that we support is
+      determined at the time of every minor release, following this formula:
+    </p>
+
+    <div class="layout my-3">
+      <div class="card">
+        <div class="card__content">
+          <p>Whichever browser version is greater/more recent out of:</p>
+
+          <ol>
+            <li>
+              The lowest/least recent version that fulfills any one of these properties:
+              <ul>
+                <li>It is the latest version of the browser.</li>
+                <li>It is the latest LTS/extended support version of the browser (such as Firefox ESR).</li>
+                <li>It has at least <em>0.25%</em> of global marketshare usage across mobile and
+              desktop, based on <a href="https://gs.statcounter.com/">statcounter</a>.</li>
+              </ul>
+            </li>
+            <li>
+              The minimum version supported in the previous release
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      To simplify, the supported version either moves forward or stays the same for
+      each release based on overall usage and LTS/current release versions.
+    </p>
+
+    <p>
+      For non-evergreen browsers, support is locked at a specific major version, and
+      we support all major versions above that version.
++     However, all supported browsers are considered ever green.
+    </p>
+
+-    <div class="layout">
+-      <ul class="list-unstyled layout lg:col-4 lg:start-2 my-3">
+-        <EsCard class="lg:col-3">
+-          <div class="text-center text-md">Desktop</div>
+-          <ul>
+-            <li>Safari: 12</li>
+-          </ul>
+-        </EsCard>
+-        <EsCard class="lg:col-3">
+-          <div class="text-center text-md">Mobile</div>
+-          <ul>
+-            <li>Safari: 12</li>
+-          </ul>
+-        </EsCard>
+-      </ul>
+-    </div>
+
+    Within a version of a browser, we only support the most recent patch release.
+  </section>
+</div>
+```
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
+More calculations for us to do when determining browser support for a particular version of ember.
+(based on the algorithm described in 
 
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+> Whichever browser version is greater/more recent out of:
+
+)
+
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
