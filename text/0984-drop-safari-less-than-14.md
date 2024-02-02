@@ -241,14 +241,19 @@ Diff:
 -    </div>
 
     <p>
-      For evergreen browsers, the minimum version of the browser that we support is
+-     For evergreen browsers, the minimum version of the browser that we support is
++     For evergreen browsers, the minimum version of the browser that we support can be
       determined at the time of every minor release, following this formula:
     </p>
 
     <div class="layout my-3">
       <div class="card">
         <div class="card__content">
-          <p>Whichever browser version is greater/more recent out of:</p>
+-          <p>Whichever browser version is greater/more recent out of:</p>
++          <p>
++            Whichever browser version is greater/more recent out of the following,
++            given that the owning entity (e.g.: Apple, Google, Mozilla) still supports the version
++          </p>
 
           <ol>
             <li>
