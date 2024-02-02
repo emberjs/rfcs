@@ -35,7 +35,7 @@ suite: Leave as is
 
 ## Summary
 
-Safari's release cadence has increased as well as relevant-device compatibilty. This RFC proposes an amendment to the [browser support](https://emberjs.com/browser-support/) policy to treat Safari the same as Chrome and FireFox for Desktop and Mobile devices.
+Safari's release cadence has increased as well as relevant-device compatibilty. This RFC proposes an amendment to the [browser support](https://emberjs.com/browser-support/) policy (introduced in [RFC#685](https://rfcs.emberjs.com/id/0685-new-browser-support-policy)) to treat Safari the same as Chrome and FireFox for Desktop and Mobile devices.
 
 ## Motivation
 
