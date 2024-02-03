@@ -42,6 +42,19 @@ What is the replacement functionality?
 
 ## Transition Path
 
+### `Ember.isNamespace`
+
+No replacement, not needed.
+
+### `Ember.toString`
+
+No replacement, not needed.
+e
+### `Ember.Container`
+
+Both value and type are not needed.
+
+### `Ember.Registry` 
 
 ### `Ember.testing`
 
@@ -133,7 +146,10 @@ There are tradeoffs to choosing any path, please attempt to identify them here.
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
+As a migration path for folks, we could add a package.json#exports entry to [`ember`](https://www.npmjs.com/package/ember)
+that re-exports the still-available APIs.
+
+Some APIs we don't want or need to keep at all though.
 
 ## Unresolved questions
 
