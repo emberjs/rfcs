@@ -43,7 +43,7 @@ Private class fields transpilation has a big impact on the kind of code emitted.
 
 ## Detailed design
 
-Ember v6 will not support Safari < v14.1
+Ember v6 will support Safari based on usage statistics, the same as other browsers we support.
 
 
 ## How we teach this
