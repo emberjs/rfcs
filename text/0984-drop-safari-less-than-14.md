@@ -39,7 +39,7 @@ Safari's release cadence has increased as well as relevant-device compatibilty. 
 
 ## Motivation
 
-Private class fields transpilation has a big impact on the kind of code emitted. We want to transpile as little as possible -- ideally nothing, and let app users decide if they need to transpile further.
+Treating Safari differently from other browsers is no longer necessary due to changes in release cadence. Only being able to adjust Safari support with an RFC and at major versions is unnecessary overhead.
 
 ## Detailed design
 
