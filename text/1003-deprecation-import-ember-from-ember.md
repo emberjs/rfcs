@@ -45,6 +45,8 @@ Many of these APIs already have alternatives, and those will be called out expli
 
 ## Transition Path
 
+This list is semi-exhaustive, in that it covers _every_ export from 'ember', but may not exhaustivily provide alternatives.
+
 ### `Ember.isNamespace`
 
 No replacement, not needed.
@@ -55,9 +57,12 @@ No replacement, not needed.
 e
 ### `Ember.Container`
 
-Both value and type are not needed.
+No replacement. Both value and type are not needed.
 
 ### `Ember.Registry` 
+
+No replacement. Both value and type are not needed.
+Every property/method on this value is private.
 
 ### `Ember.testing`
 
@@ -75,94 +80,424 @@ if (macroCondition(isTesting()) {
 
 ### `Ember._setComponentManager`
 
-Use 
+Instead, use 
 ```js
 import { setComponentManager } from '@ember/component';
 ```
 
 ### `Ember._componentManagerCapabilities`
 
-Use
+Instead, use 
 ```js
 import { capabilities } from '@ember/component';
 ```
 
 ### `Ember._modifierManagerCapabilities`
 
-Use
+Instead, use 
 ```js
 import { capabilities } from '@ember/modifier';
 ```
 
 ### `Ember.meta`
 
-No replacement, not public API
+No replacement, not public API.
+But meta may be used for the ember-inspector, but there are discussions starting around the time of this RFC to rework how ember-source and the inspector communicate with each other.
 
 ### `Ember._createCache`
 
+Instead, use
+
+```js
+import { createCache } from '@glimmer/tracking/primitives/cache';
+```
+
+Implemented from [RFC#615](https://rfcs.emberjs.com/id/0615-autotracking-memoization)
+
 ### `Ember._cacheGetValue`
+
+Instead, use 
+```js
+import { getValue } from '@glimmer/tracking/primitives/cache';
+```
+
+Implemented from [RFC#615](https://rfcs.emberjs.com/id/0615-autotracking-memoization)
+
 ### `Ember._cacheIsConst`
+
+Instead, use 
+```js
+import { isConst } from '@glimmer/tracking/primitives/cache';
+```
+
+Implemented from [RFC#615](https://rfcs.emberjs.com/id/0615-autotracking-memoization)
+
 ### `Ember._descriptor`
+
+No replacement. Internal utility for helping author decorators. 
+
 ### `Ember._getPath`
+
+No replacement. Used for deep getting a property on an object unless it's destroyed.
+
 ### `Ember._setClassicDecorator`
+
+No replacement. Internal utility for helping author decorators. 
+
 ### `Ember._tracked`
+
+Instead, use
+
+```js
+import { tracked } from '@glimmer/tracking';
+```
+
 ### `Ember.beginPropertyChanges`
+
+No replacement.
+
 ### `Ember.changeProperties`
+
+No replacement.
+
 ### `Ember.endPropertyChanges`
+
+No replacement.
+
 ### `Ember.hasListeners`
+
+No replacement.
+
 ### `Ember.libraries`
-### `Ember._ContainerProxyMixin`
+
+No replacement. 
+
+App authors could choose to use any webpack or other build plugin that collections this information, such as [webpack-node-modules-list](https://github.com/ubilabs/webpack-node-modules-list). This additionally means that V1 libraries that pushed themselves into `Ember.libraries` no longer need to worry about interacting with this or any similar API. 
+
+
+### `Ember._ContainerProxyMixin
+
+No replacement. Mixins have been recommended against since Octane's release. 
+
 ### `Ember._ProxyMixin`
+
+No replacement. Mixins have been recommended against since Octane's release. 
+
 ### `Ember._RegistryProxyMixin`
+
+No replacement. Mixins have been recommended against since Octane's release. 
+
 ### `Ember.ActionHandler`
+
+No replacement.
+
 ### `Ember.Comparable`
+
+No replacement. Mixins have been recommended against since Octane's release. 
+
 ### `Ember.RSVP`
+
+Instead use
+```js
+import RSVP from 'rsvp';
+```
+
 ### `Ember._Cache`
+
+No replacement. A general `Map`-based Cache that tracks the misses and hits.
+
 ### `Ember.GUID_KEY`
+
+No replacement. Private.
+
 ### `Ember.canInvoke`
+
+Instead use [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining):
+```js
+this.foo?.method?.();
+```
 ### `Ember.generateGuid`
+
+No replacement. Private.
+
 ### `Ember.guidFor`
+
+Instead use
+```js
+import { guidFor } from '@ember/object/internals';
+```
+
 ### `Ember.uuid`
+
+No replacement. 
+
 ### `Ember.wrap`
+
+No replacement. Private.
+
 ### `Ember.getOwner`
+
+Instead, use 
+```js
+import { getOwner } from '@ember/owner';
+```
+
 ### `Ember.onLoad`
+
+Instead, use 
+```js
+import { onLoad } from '@ember/application';
+```
+
 ### `Ember.runLoadHooks`
+
+Instead, use 
+```js
+import { runLoadHooks } from '@ember/application';
+```
+
 ### `Ember.setOwner`
+
+Instead, use 
+```js
+import { setOwner } from '@ember/owner';
+```
+
 ### `Ember.Application`
+
+Instead, use 
+```js
+import Application from '@ember/application';
+```
+
 ### `Ember.ApplicationInstance`
+
+Instead, use 
+```js
+import ApplicationInstance from '@ember/application/instance';
+```
+
 ### `Ember.Namespace`
+
+Instead, use
+```js
+import Namespace from '@ember/application/namespace';
+```
+
 ### `Ember.A`
+
+Instead, use
+```js
+import { A } from '@ember/array';
+```
+
 ### `Ember.Array`
+
+Instead, use
+```js
+import EmberArray from '@ember/array';
+```
+
 ### `Ember.NativeArray`
+
+Instead, use
+```js
+import { NativeArray } from '@ember/array';
+```
+
 ### `Ember.isArray`
+
+Instead, use
+```js
+import { isArray } from '@ember/array';
+```
+
 ### `Ember.makeArray`
+
+Instead, use
+```js
+import { makeArray } from '@ember/array';
+```
+
 ### `Ember.MutableArray`
+
+Instead, use
+```js
+import MutableArray from '@ember/array/mutable';
+```
+
 ### `Ember.ArrayProxy`
+
+Instead, use
+```js
+import ArrayProxy from '@ember/array/proxy';
+```
+
 ### `Ember.FEATURES`
+
+No replacement.
+But this is useful when working with feature flags.
+This information could live on a specially named `globalThis` property, the enabled features could be emitted as a virtual module to import.
+
 ### `Ember._Input`
+
+Instead, use
+```js
+import { Input } from '@ember/component';
+```
+
 ### `Ember.Component`
+
+Instead, use
+```js
+import Component from '@ember/component';
+```
+
 ### `Ember.Helper`
+
+Instead, use
+```js
+import Helper from '@ember/component/helper';
+```
+
 ### `Ember.Controller`
+
+Instead, use
+```js
+import Controller from '@ember/controller';
+```
+
 ### `Ember.ControllerMixin`
+
+No replacement.
+
 ### `Ember._captureRenderTree`
+
+No replacement. But used by ember-inspector.
+
 ### `Ember.assert`
-### `Ember.warn`
+
+Instead, use
+```js
+import { assert } from '@ember/debug';
+```
+
+### `Ember.warn
+
+Instead, use
+```js
+import { warn } from '@ember/debug';
+```
+
 ### `Ember.debug`
+
+Instead, use
+```js
+import { debug } from '@ember/debug';
+```
 ### `Ember.deprecate`
+
+Instead, use
+```js
+import { deprecate } from '@ember/debug';
+```
+
 ### `Ember.deprecateFunc`
+
+No replacement. Private.
+
 ### `Ember.runInDebug`
+
+Instead, use
+```js
+import { runInDebug } from '@ember/debug';
+```
+
 ### `Ember.inspect`
+
+No replacement. Private.
+
 ### `Ember.Debug`
+
+No replacement.
+
+#### `Ember.Debug.registerDeprecationHandler`
+
+Instead, use
+```js
+import { registerDeprecationHandler } from '@ember/debug';
+```
+
 ### `Ember.ContainerDebugAdapter`
+
+Instead, use
+```js
+import ContainerDebugAdapter from '@ember/debug/container-debug-adapter';
+```
+
 ### `Ember.DataAdapter`
+
+Instead, use
+```js
+import DataAdapter from '@ember/debug/data-adapter';
+```
+
 ### `Ember._assertDestroyablesDestroyed`
+
+Instead, use
+```js
+import { assertDestroyablesDestroyed } from '@ember/destroyable';
+```
+
 ### `Ember._associateDestroyableChild`
+
+Instead, use
+```js
+import { associateDestroyableChild } from '@ember/destroyable';
+```
+
 ### `Ember._enableDestroyableTracking`
+
+Instead, use
+```js
+import { enableDestroyableTracking } from '@ember/destroyable';
+```
+
 ### `Ember._isDestroying`
+
+Instead, use
+```js
+import { isDestroying } from '@ember/destroyable';
+```
+
 ### `Ember._isDestroyed`
+
+Instead, use
+```js
+import { isDestroyed } from '@ember/destroyable';
+```
+
 ### `Ember._registerDestructor`
+
+Instead, use
+```js
+import { registerDestructor } from '@ember/destroyable';
+```
+
 ### `Ember._unregisterDestructor`
+
+Instead, use
+```js
+import { unregisterDestructor } from '@ember/destroyable';
+```
+
 ### `Ember.destroy`
+
+Instead, use
+```js
+import { destroy } from '@ember/destroyable';
+```
+
 ### `Ember.Engine`
 ### `Ember.EngineInstance`
 ### `Ember.Enumerable`
