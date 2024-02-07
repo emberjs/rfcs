@@ -70,55 +70,207 @@ if (macroCondition(isTesting()) {
 }
 ```
 
-ENV/EmberENV ... equivalent shape thing from config/environment
+### `Ember._setComponentManager`
 
-Ember.lookup (what is this?)
+Use 
+```js
+import { setComponentManager } from '@ember/component';
+```
 
-### `Ember.onError`
+### `Ember._componentManagerCapabilities`
 
+Use
+```js
+import { capabilities } from '@ember/component';
+```
+
+### `Ember._modifierManagerCapabilities`
+
+Use
+```js
+import { capabilities } from '@ember/modifier';
+```
+
+### `Ember.meta`
+
+No replacement, not public API
+
+### `Ember._createCache`
+
+### `Ember._cacheGetValue`
+### `Ember._cacheIsConst`
+### `Ember._descriptor`
+### `Ember._getPath`
+### `Ember._setClassicDecorator`
+### `Ember._tracked`
+### `Ember.beginPropertyChanges`
+### `Ember.changeProperties`
+### `Ember.endPropertyChanges`
+### `Ember.hasListeners`
+### `Ember.libraries`
+### `Ember._ContainerProxyMixin`
+### `Ember._ProxyMixin`
+### `Ember._RegistryProxyMixin`
+### `Ember.ActionHandler`
+### `Ember.Comparable`
+### `Ember.RSVP`
+### `Ember._Cache`
+### `Ember.GUID_KEY`
+### `Ember.canInvoke`
+### `Ember.generateGuid`
+### `Ember.guidFor`
+### `Ember.uuid`
+### `Ember.wrap`
+### `Ember.getOwner`
+### `Ember.onLoad`
+### `Ember.runLoadHooks`
+### `Ember.setOwner`
+### `Ember.Application`
+### `Ember.ApplicationInstance`
+### `Ember.Namespace`
+### `Ember.A`
+### `Ember.Array`
+### `Ember.NativeArray`
+### `Ember.isArray`
+### `Ember.makeArray`
+### `Ember.MutableArray`
+### `Ember.ArrayProxy`
+### `Ember.FEATURES`
+### `Ember._Input`
+### `Ember.Component`
+### `Ember.Helper`
+### `Ember.Controller`
+### `Ember.ControllerMixin`
+### `Ember._captureRenderTree`
+### `Ember.assert`
+### `Ember.warn`
+### `Ember.debug`
+### `Ember.deprecate`
+### `Ember.deprecateFunc`
+### `Ember.runInDebug`
+### `Ember.inspect`
+### `Ember.Debug`
+### `Ember.ContainerDebugAdapter`
+### `Ember.DataAdapter`
+### `Ember._assertDestroyablesDestroyed`
+### `Ember._associateDestroyableChild`
+### `Ember._enableDestroyableTracking`
+### `Ember._isDestroying`
+### `Ember._isDestroyed`
+### `Ember._registerDestructor`
+### `Ember._unregisterDestructor`
+### `Ember.destroy`
+### `Ember.Engine`
+### `Ember.EngineInstance`
+### `Ember.Enumerable`
+### `Ember.MutableEnumerable`
+### `Ember.instrument`
+### `Ember.subscribe`
+### `Ember.Instrumentation`
+### `Ember.Object`
+### `Ember._action`
+### `Ember.computed`
+### `Ember.defineProperty`
+### `Ember.get`
+### `Ember.getProperties`
+### `Ember.notifyPropertyChange`
+### `Ember.observer`
+### `Ember.set`
+### `Ember.trySet`
+### `Ember.setProperties`
+### `Ember.cacheFor`
+### `Ember._dependentKeyCompat`
+### `Ember.ComputedProperty`
+### `Ember.expandProperties`
+### `Ember.CoreObject`
+### `Ember.Evented`
+### `Ember.on`
+### `Ember.addListener`
+### `Ember.removeListener`
+### `Ember.sendEvent`
+### `Ember.Mixin`
+### `Ember.mixin`
+### `Ember.Observable`
+### `Ember.addObserver`
+### `Ember.removeObserver`
+### `Ember.PromiseProxyMixin`
+### `Ember.ObjectProxy`
+### `Ember.RouterDSL`
+### `Ember.controllerFor`
+### `Ember.generateController`
+### `Ember.generateControllerFactory`
+### `Ember.generateControllerFactory`
+### `Ember.HashLocation`
+### `Ember.HistoryLocation`
+### `Ember.NonLocation`
+### `Ember.Route`
+### `Ember.Router`
+### `Ember.run`
+### `Ember.Service`
+### `Ember.compare`
+### `Ember.isBlank`
+### `Ember.isEmpty`
+### `Ember.isEqual`
+### `Ember.isPresent`
+### `Ember.typeOf`
+### `Ember.VERSION`
+### `Ember.ViewUtils`
+### `Ember._getComponentTemplate`
+### `Ember._helperManagerCapabilities`
+### `Ember._setComponentTemplate`
+### `Ember._setHelperManager`
+### `Ember._setModifierManager`
+### `Ember._templateOnlyComponent`
+### `Ember._invokeHelper`
+### `Ember._hash`
+### `Ember._array`
+### `Ember._concat`
+### `Ember._get`
+### `Ember._on`
+### `Ember._fn`
+### `Ember._Backburner`
+### `Ember.inject`
+### `Ember.__loader`
+### `Ember.ENV`
+
+Use
+```
+import MyEnv from '<my-app>/config/environment';
+```
+
+### `Ember.lookup`
+
+### `Ember.onerror`
+
+Use
 ```js
 window.addEventListener('error', /* ... event handler ... */);
 ```
 
+### `Ember.testing`
 ### `Ember.BOOTED`
-
 No replacement. Unused.
-
 ### `Ember.TEMPLATES`
 
 This is the template registry. It does not need to be public API. 
 
 No replacement.
 
-### Ember.onload (has replacement) ... what is runloadHooks?
+### `Ember.HTMLBars`
 
-### Ember.HTMLBars / Ember.Handlebars (must go)
+No replacement.
+
+### `Ember.Handlebars`
+
+No replacement.
 
 #### `Ember.Handlebars.Utils.escapeExpression`
 
 Removed in [ember.js PR#20360](https://github.com/emberjs/ember.js/pull/20360) as it is not public API.
 
-### Ember.Test/Ember.setupForTesting (should be replaced by @ember/test-helpers??)
 
-### Container
-
-### Registry
-
-### _setComponentManager (has replacement on @ember/component)
-
-### _modifierManagerCapabilities (has replacement on @ember/modifier)
-
-### _componentManagerCapabilities
-
-### meta (tagged private but exported on 'ember')
-
-### RSVP
-
-### libraries (may need public replacement)
-
-### ActionHandler (no public API)
-
-### Comparable (used by import compare from @ember/utils)
+### `Ember.Test`
+### `Ember.setupForTesting`
 
 ## How We Teach This
 
