@@ -47,16 +47,6 @@ Many of these APIs already have alternatives, and those will be called out expli
 
 This list is semi-exhaustive, in that it covers _every_ export from 'ember', but may not exhaustivily provide alternatives.
 
-The deprecations kind of fall in to 3 categories
-- has a modern equivelent (
-- private and needs no replacements
-- not private, but there is no plan for providing a built-in alternative
-
-
-### Behavior Alternatives
-
-
-
 ### New Module Needed
 
 APIs for wiring up a test framework (e.g. QUnit, _etc_)
@@ -67,6 +57,42 @@ APIs for wiring up a test framework (e.g. QUnit, _etc_)
 
 These will need to be moved to a module such as `@ember/testing`.
 
+### A way to communicate with the ember-inspector
+
+The inspector will be hit especially hard by the removal of these APIs.
+
+- `Ember.meta`
+- `Ember.VERSION`
+- `Ember._captureRenderTree` 
+- `Ember.instrument`
+- `Ember.subscribe`
+- `Ember.Instrumentation.instrument`
+- `Ember.Instrumentation.subscribe`
+- `Ember.Instrumentation.unsubscribe`
+- `Ember.Instrumentation.reset`
+- `Ember.ViewUtils`
+- `Ember.ViewUtils.getChildViews`
+- `Ember.ViewUtils.getElementView`
+- `Ember.ViewUtils.getRootViews`
+- `Ember.ViewUtils.getViewBounds`
+- `Ember.ViewUtils.getViewBoundingClientRect`
+- `Ember.ViewUtils.getViewClientRects`
+- `Ember.ViewUtils.getViewElement`
+- `Ember.ViewUtils.isSimpleClick`
+- `Ember.ViewUtils.isSerializationFirstNode`
+
+
+Perhaps we can have folks add this to their apps:
+```js
+import { macroCondition, isDevelopingApp, importSync } from '@embroider/macros';
+
+if (macroCondition(isDevelopingApp())) {
+  // maybe this is side-effecting and installs 
+  // some functions on `globalThis` that the inspector could call
+  importSync('@ember/inspector-support');
+}
+```
+
 ### No replacements.
 
 Applies to both the value and type exports (if applicable).
@@ -76,9 +102,6 @@ Applies to both the value and type exports (if applicable).
 - `Ember.toString`
 - `Ember.Container`
 - `Ember.Registry`
-- `Ember.meta`
-  meta may be used for the ember-inspector, but there are discussions starting around the time of this RFC to rework how ember-source and the inspector communicate with each other.
-
 
 Internal decorator utils
 - `Ember._descriptor`
@@ -134,17 +157,10 @@ Utility
     But this is useful when working with feature flags.
     This information could live on a specially named `globalThis` property, the enabled features could be emitted as a virtual module to import.
 - `Ember.ControllerMixin`
-- `Ember._captureRenderTree` 
-    used by ember-inspector.
 - `Ember.deprecateFunc`
 - `Ember.inspect`
 - `Ember.Debug`
-- `Ember.instrument`
-- `Ember.subscribe`
-- `Ember.Instrumentation.instrument`
-- `Ember.Instrumentation.subscribe`
-- `Ember.Instrumentation.unsubscribe`
-- `Ember.Instrumentation.reset`
+  Replaced by some of `@ember/debug` exports.
 - `Ember.cacheFor`
 - `Ember.ComputedProperty`
 - `Ember.RouterDSL`
@@ -153,16 +169,6 @@ Utility
 - `Ember.generateControllerFactory`
 - `Ember.VERSION`  
     This has the ember version in it, but it could be converted to a virtual module to import from somewhere.
-- `Ember.ViewUtils`
-- `Ember.ViewUtils.getChildViews`
-- `Ember.ViewUtils.getElementView`
-- `Ember.ViewUtils.getRootViews`
-- `Ember.ViewUtils.getViewBounds`
-- `Ember.ViewUtils.getViewBoundingClientRect`
-- `Ember.ViewUtils.getViewClientRects`
-- `Ember.ViewUtils.getViewElement`
-- `Ember.ViewUtils.isSimpleClick`
-- `Ember.ViewUtils.isSerializationFirstNode`
 - `Ember._Backburner`
 - `Ember.inject`
 - `Ember.__loader`
@@ -171,7 +177,6 @@ Utility
 - `Ember.__loader.registry`
 - `Ember.BOOTED`
 - `Ember.TEMPLATES`
-
 
 Replaced by [RFC #931][RFC-931]
 - `Ember.HTMLBars`
@@ -305,6 +310,9 @@ Most of this is covered in [RFC #176](https://rfcs.emberjs.com/id/0176-javascrip
 The guides already use the modern imports where available.
 
 There is a place that needs updating, around advanced debugging, where folks configure Backburner to be in debug mode.
+- https://guides.emberjs.com/release/applications/run-loop/#toc_where-can-i-find-more-information
+- https://guides.emberjs.com/release/configuring-ember/debugging/#toc_errors-within-emberrunlater-backburner
+  - Access to backburner here isn't relevant though because it's accessed from the `run` import from `@ember/runloop`
 
 When using embroider and `staticEmberSource: true`, the benefits of not having this file can be realized in apps (as long as the app and all consumed addons do not import from 'ember')
 
