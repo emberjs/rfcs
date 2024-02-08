@@ -61,25 +61,29 @@ These will need to be moved to a module such as `@ember/testing`.
 
 The inspector will be hit especially hard by the removal of these APIs.
 
-- `Ember.meta`
-- `Ember.VERSION`
-- `Ember._captureRenderTree` 
-- `Ember.instrument`
-- `Ember.subscribe`
-- `Ember.Instrumentation.instrument`
-- `Ember.Instrumentation.subscribe`
-- `Ember.Instrumentation.unsubscribe`
-- `Ember.Instrumentation.reset`
-- `Ember.ViewUtils`
-- `Ember.ViewUtils.getChildViews`
-- `Ember.ViewUtils.getElementView`
-- `Ember.ViewUtils.getRootViews`
-- `Ember.ViewUtils.getViewBounds`
-- `Ember.ViewUtils.getViewBoundingClientRect`
-- `Ember.ViewUtils.getViewClientRects`
-- `Ember.ViewUtils.getViewElement`
-- `Ember.ViewUtils.isSimpleClick`
-- `Ember.ViewUtils.isSerializationFirstNode`
+A good few already have available imports though.
+
+| API | import |
+| --- | ------ |
+| `Ember.meta` | `import { meta } from '@ember/-internals/meta';`[^internals] |
+| `Ember.VERSION` | none |
+| `Ember._captureRenderTree` | `import { captureRenderTree } from '@ember/debug';` |
+| `Ember.instrument` | `import { instrument } from '@ember/instrumentation';`[^internals] |
+| `Ember.subscribe` | `import { subscribe } from '@ember/instrumentation';`[^internals] |
+| `Ember.Instrumentation.*` | `import { * } from '@ember/instrumentation';`[^internals]  |
+| `Ember.ViewUtils` | `import * as viewUtils from '@ember/-internals/views';`[^view-utils] [^internals] |
+| `Ember.ViewUtils.getChildViews` | `import { getChildViews } from '@ember/-internals/views';`[^internals] |
+| `Ember.ViewUtils.getElementView` | `import { getElementView } from '@ember/-internals/views';`[^internals] |
+| `Ember.ViewUtils.getRootViews` | `import { getRootViews } from '@ember/-internals/views';`[^internals] |
+| `Ember.ViewUtils.getViewBounds` | `import { getViewBounds } from '@ember/-internals/views';`[^internals] |
+| `Ember.ViewUtils.getViewBoundingClientRect` | `import { getViewBoundingClientRect } from '@ember/-internals/views';`[^internals] |
+| `Ember.ViewUtils.getViewClientRects` | `import { getViewClientRects } from '@ember/-internals/views';`[^internals] |
+| `Ember.ViewUtils.getViewElement`  | `import { getViewElement } from '@ember/-internals/views';`[^internals] |
+| `Ember.ViewUtils.isSimpleClick` | `import { isSimpleClick } from '@ember/-internals/views';`[^internals] |
+| `Ember.ViewUtils.isSerializationFirstNode` | `import { isSerializationFirstNode } from '@ember/-internals/glimmer';`[^internals] |
+
+[^view-utils]: Not all of these exports are used for `ViewUtils`.
+[^internals]: We may not want to expose "internals" as a package, but we may have to if it's the cleanest way to retain these APIs for _our own_ tooling. Are these covered under SemVer?
 
 
 Perhaps we can have folks add this to their apps:
@@ -331,3 +335,5 @@ n/a
 ## Unresolved questions
 
 n/a
+
+Do our instrumentation and internals sub-packages have any SemVer guarantees? Or are we allowed to "do what we need to" and not care about _public-facing_ SemVer?
