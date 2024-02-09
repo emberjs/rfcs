@@ -47,6 +47,12 @@ Many of these APIs already have alternatives, and those will be called out expli
 
 This list is semi-exhaustive, in that it covers _every_ export from 'ember', but may not exhaustivily provide alternatives.
 
+Throughout the rest of this RFC, the following key will be used:
+- 🌐 to mean "this is public API"
+- 🔒 to mean "this is private API"
+- 🧷 to mean "this is protected API"
+- 🫣 to mean "no declared access"
+
 ### New Module Needed
 
 APIs for wiring up a test framework (e.g. QUnit, _etc_)
@@ -63,27 +69,26 @@ The inspector will be hit especially hard by the removal of these APIs.
 
 A good few already have available imports though.
 
-| API | import |
-| --- | ------ |
-| `Ember.meta` | `import { meta } from '@ember/-internals/meta';`[^internals] |
-| `Ember.VERSION` | none |
-| `Ember._captureRenderTree` | `import { captureRenderTree } from '@ember/debug';` |
-| `Ember.instrument` | `import { instrument } from '@ember/instrumentation';`[^internals] |
-| `Ember.subscribe` | `import { subscribe } from '@ember/instrumentation';`[^internals] |
-| `Ember.Instrumentation.*` | `import { * } from '@ember/instrumentation';`[^internals]  |
-| `Ember.ViewUtils` | `import * as viewUtils from '@ember/-internals/views';`[^view-utils] [^internals] |
-| `Ember.ViewUtils.getChildViews` | `import { getChildViews } from '@ember/-internals/views';`[^internals] |
-| `Ember.ViewUtils.getElementView` | `import { getElementView } from '@ember/-internals/views';`[^internals] |
-| `Ember.ViewUtils.getRootViews` | `import { getRootViews } from '@ember/-internals/views';`[^internals] |
-| `Ember.ViewUtils.getViewBounds` | `import { getViewBounds } from '@ember/-internals/views';`[^internals] |
-| `Ember.ViewUtils.getViewBoundingClientRect` | `import { getViewBoundingClientRect } from '@ember/-internals/views';`[^internals] |
-| `Ember.ViewUtils.getViewClientRects` | `import { getViewClientRects } from '@ember/-internals/views';`[^internals] |
-| `Ember.ViewUtils.getViewElement`  | `import { getViewElement } from '@ember/-internals/views';`[^internals] |
-| `Ember.ViewUtils.isSimpleClick` | `import { isSimpleClick } from '@ember/-internals/views';`[^internals] |
-| `Ember.ViewUtils.isSerializationFirstNode` | `import { isSerializationFirstNode } from '@ember/-internals/glimmer';`[^internals] |
+|   | API | import |
+| - | --- | ------ |
+|🔒| `Ember.meta` | `import { meta } from '@ember/-internals/meta';` |
+|🌐| `Ember.VERSION` | none |
+|🔒| `Ember._captureRenderTree` | `import { captureRenderTree } from '@ember/debug';` |
+|🔒| `Ember.instrument` | `import { instrument } from '@ember/instrumentation';` |
+|🔒| `Ember.subscribe` | `import { subscribe } from '@ember/instrumentation';` |
+|🔒| `Ember.Instrumentation.*` | `import { * } from '@ember/instrumentation';`  |
+|🫣| `Ember.ViewUtils` | `import * as viewUtils from '@ember/-internals/views';`[^view-utils]  |
+|🔒| `Ember.ViewUtils.getChildViews` | `import { getChildViews } from '@ember/-internals/views';` |
+|🫣| `Ember.ViewUtils.getElementView` | `import { getElementView } from '@ember/-internals/views';` |
+|🔒| `Ember.ViewUtils.getRootViews` | `import { getRootViews } from '@ember/-internals/views';` |
+|🔒| `Ember.ViewUtils.getViewBounds` | `import { getViewBounds } from '@ember/-internals/views';` |
+|🔒| `Ember.ViewUtils.getViewBoundingClientRect` | `import { getViewBoundingClientRect } from '@ember/-internals/views';` |
+|🔒| `Ember.ViewUtils.getViewClientRects` | `import { getViewClientRects } from '@ember/-internals/views';` |
+|🔒| `Ember.ViewUtils.getViewElement`  | `import { getViewElement } from '@ember/-internals/views';` |
+|🫣| `Ember.ViewUtils.isSimpleClick` | `import { isSimpleClick } from '@ember/-internals/views';` |
+|🫣| `Ember.ViewUtils.isSerializationFirstNode` | `import { isSerializationFirstNode } from '@ember/-internals/glimmer';` |
 
 [^view-utils]: Not all of these exports are used for `ViewUtils`.
-[^internals]: We may not want to expose "internals" as a package, but we may have to if it's the cleanest way to retain these APIs for _our own_ tooling. Are these covered under SemVer?
 
 
 Perhaps we can have folks add this to their apps:
@@ -101,43 +106,43 @@ if (macroCondition(isDevelopingApp())) {
 
 Applies to both the value and type exports (if applicable).
 
-- `Ember._getPath`
-- `Ember.isNamespace`
-- `Ember.toString`
-- `Ember.Container`
-- `Ember.Registry`
+- 🫣 `Ember._getPath`
+- 🫣 `Ember.isNamespace`
+- 🫣 `Ember.toString`
+- 🔒 `Ember.Container`
+- 🔒 `Ember.Registry`
 
 Internal decorator utils
-- `Ember._descriptor`
-- `Ember._setClassicDecorator`
+- 🫣 `Ember._descriptor`
+- 🔒 `Ember._setClassicDecorator`
 
 Reactivity
-- `Ember.beginPropertyChanges`
-- `Ember.changeProperties`
-- `Ember.endPropertyChanges`
+- 🔒 `Ember.beginPropertyChanges`
+- 🔒 `Ember.changeProperties`
+- 🔒 `Ember.endPropertyChanges`
 
 Observable 
-- `Ember.hasListeners`
+- 🌐 `Ember.hasListeners`
 
 Mixins
-- `Ember._ContainerProxyMixin`
-- `Ember._ProxyMixin`
-- `Ember._RegistryProxyMixin`
-- `Ember.ActionHandler`
-- `Ember.Comparable`
+- 🔒 `Ember._ContainerProxyMixin`
+- 🔒 `Ember._ProxyMixin`
+- 🔒 `Ember._RegistryProxyMixin`
+- 🔒 `Ember.ActionHandler`
+- 🔒 `Ember.Comparable`
 
 Utility
-- `Ember.lookup`
-- `Ember.libraries` - 
+- 🫣 `Ember.lookup`
+- 🌐 `Ember.libraries` - 
    App authors could choose to use any webpack or other build plugin that collections this information, such as [webpack-node-modules-list](https://github.com/ubilabs/webpack-node-modules-list). This additionally means that V1 libraries that pushed themselves into `Ember.libraries` no longer need to worry about interacting with this or any similar API. 
-- `Ember._Cache`
-- `Ember.GUID_KEY`
-- `Ember.canInvoke`  
+- 🫣 `Ember._Cache`
+- 🔒 `Ember.GUID_KEY`
+- 🔒 `Ember.canInvoke`  
     Instead use [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining):
     ```js
     this.foo?.method?.();
     ```
-- `Ember.testing`  
+- 🫣 `Ember.testing`  
   Instead, use
 
   ```js
@@ -150,50 +155,46 @@ Utility
   }
   ```
 
-- `Ember.onerror`
+- 🌐 `Ember.onerror`
   Instead use an event listener for the `error` event on window.
   ```js
   window.addEventListener('error', /* ... event handler ... */);
   ```
-- `Ember.generateGuid`
-- `Ember.uuid`
-- `Ember.wrap`
-- `Ember.FEATURES`  
-    But this is useful when working with feature flags.
-    This information could live on a specially named `globalThis` property, the enabled features could be emitted as a virtual module to import.
-- `Ember.ControllerMixin`
-- `Ember.deprecateFunc`
-- `Ember.inspect`
-- `Ember.Debug`
+- 🔒 `Ember.generateGuid`
+- 🌐 `Ember.uuid`
+- 🔒 `Ember.wrap`
+- 🫣 `Ember.deprecateFunc`
+- 🔒 `Ember.inspect`
+- 🫣 `Ember.Debug`
   Replaced by some of `@ember/debug` exports.
-- `Ember.cacheFor`
-- `Ember.ComputedProperty`
-- `Ember.RouterDSL`
-- `Ember.controllerFor`
-- `Ember.generateController`
-- `Ember.generateControllerFactory`
-- `Ember.VERSION`  
+- 🫣 `Ember.cacheFor`
+- 🌐 `Ember.ComputedProperty`
+- 🫣 `Ember.RouterDSL`
+- 🔒 `Ember.controllerFor`
+- 🔒 `Ember.generateController`
+- 🔒 `Ember.generateControllerFactory`
+- 🌐 `Ember.VERSION`  
     This has the ember version in it, but it could be converted to a virtual module to import from somewhere.
-- `Ember._Backburner`
-- `Ember.inject`
-- `Ember.__loader`
-- `Ember.__loader.require`
-- `Ember.__loader.define`
-- `Ember.__loader.registry`
-- `Ember.BOOTED`
-- `Ember.TEMPLATES`
+- 🔒 `Ember._Backburner`
+- 🌐 `Ember.inject`
+- 🫣 `Ember.__loader`
+- 🫣 `Ember.__loader.require`
+- 🫣 `Ember.__loader.define`
+- 🫣 `Ember.__loader.registry`
+- 🔒 `Ember.BOOTED`
+- 🔒 `Ember.TEMPLATES`
 
 Replaced by [RFC #931][RFC-931]
-- `Ember.HTMLBars`
-- `Ember.HTMLBars.template`
-- `Ember.HTMLBars.compile`
-- `Ember.HTMLBars.precomple`
-- `Ember.Handlebars`
-- `Ember.Handlebars.template`
-- `Ember.Handlebars.Utils.escapeExpression`
+- 🫣 `Ember.HTMLBars`
+- 🫣 `Ember.HTMLBars.template`
+- 🫣 `Ember.HTMLBars.compile`
+- 🫣 `Ember.HTMLBars.precomple`
+- 🫣 `Ember.Handlebars`
+- 🫣 `Ember.Handlebars.template`
+- 🫣 `Ember.Handlebars.Utils.escapeExpression`
     Removed in [ember.js PR#20360](https://github.com/emberjs/ember.js/pull/20360) as it is not public API.
-- `Ember.Handlebars.compile`
-- `Ember.Handlebars.precomple`
+- 🫣 `Ember.Handlebars.compile`
+- 🫣 `Ember.Handlebars.precomple`
 
 
 
@@ -206,108 +207,109 @@ Replaced by [RFC #931][RFC-931]
 
 Most of this is covered in [RFC #176](https://rfcs.emberjs.com/id/0176-javascript-module-api)
 
-| `Ember.` API | Use this instead |
-| ---------- | ---------------- |
-| `Ember.FEATURES` | `import { isEnabled, FEATURES } from '@ember/canary-features';` |
-| `Ember._setComponentManager` | `import { setComponentManager } from '@ember/component';` |
-| `Ember._componentManagerCapabilities` | `import { capabilities } from '@ember/component';` |
-| `Ember._modifierManagerCapabilities` | `import { capabilities } from '@ember/modifier';` |
-| `Ember._createCache` | `import { createCache } from '@glimmer/tracking/primitives/cache';` [RFC #615][RFC-615] |
-| `Ember._cacheGetValue` | `import { getValue } from '@glimmer/tracking/primitives/cache';` [RFC #615][RFC-615] |
-| `Ember._cacheIsConst` | `import { isConst } from '@glimmer/tracking/primitives/cache';` [RFC #615][RFC-615] |
-| `Ember._tracked` | `import { tracked } from '@glimmer/tracking';` |
-| `Ember.RSVP` | `import RSVP from 'rsvp';` |
-| `Ember.guidFor` | `import { guidFor } from '@ember/object/internals';` |
-| `Ember.getOwner` | `import { getOwner } from '@ember/owner';` |
-| `Ember.setOwner` | `import { setOwner } from '@ember/owner';` |
-| `Ember.onLoad` | `import { onLoad } from '@ember/application';` |
-| `Ember.runLoadHooks` | `import { runLoadHooks } from '@ember/application';` |
-| `Ember.Application` | `import Application from '@ember/application';` |
-| `Ember.ApplicationInstance` | `import ApplicationInstance from '@ember/application/instance';` |
-| `Ember.Namespace` | `import Namespace from '@ember/application/namespace';` |
-| `Ember.A` | `import { A }  from '@ember/array';` |
-| `Ember.Array` | `import Array  from '@ember/array';` |
-| `Ember.NativeArray` | `import { NativeArray }  from '@ember/array';` |
-| `Ember.isArray` | `import { isArray }  from '@ember/array';` |
-| `Ember.makeArray` | `import { makeArray }  from '@ember/array';` |
-| `Ember.MutableArray` | `import MutableArray  from '@ember/array/mutable';` |
-| `Ember.ArrayProxy` | `import ArrayProxy  from '@ember/array/proxy';` |
-| `Ember._Input` | `import { Input }  from '@ember/component';` |
-| `Ember.Component` | `import Component  from '@ember/component';` |
-| `Ember.Helper` | `import Helper  from '@ember/component/helper';` |
-| `Ember.Controller` | `import Controller  from '@ember/controller';` |
-| `Ember.assert` | `import { assert } from '@ember/debug';` |
-| `Ember.warn` | `import { warn } from '@ember/debug';` |
-| `Ember.debug` | `import { debug } from '@ember/debug';` |
-| `Ember.deprecate` | `import { deprecate } from '@ember/debug';` |
-| `Ember.runInDebug` | `import { runInDebug } from '@ember/debug';` |
-| `Ember.Debug.registerDeprecationHandler` | `import { registerDeprecationHandler } from '@ember/debug';` |
-| `Ember.ContainerDebugAdapter` | `import ContainerDebugAdapter from '@ember/debug/container-debug-adapter';` |
-| `Ember.DataAdapter` | `import DataAdapter from '@ember/debug/data-adapter';` |
-| `Ember._assertDestroyablesDestroyed` | `import { assertDestroyablesDestroyed } from '@ember/destroyable';` | 
-| `Ember._associateDestroyableChild` | `import { associateDestroyableChild } from '@ember/destroyable';` | 
-| `Ember._enableDestroyableTracking` | `import { enableDestroyableTracking } from '@ember/destroyable';` |
-| `Ember._isDestroying` | `import { isDestroying } from '@ember/destroyable';` | 
-| `Ember._isDestroyed` | `import { isDestroyed } from '@ember/destroyable';` |
-| `Ember._registerDestructor` | `import { registerDestructor } from '@ember/destroyable';` |
-| `Ember._unregisterDestructor` | `import { unregisterDestructor } from '@ember/destroyable';` |
-| `Ember.destroy` | `import { destroy } from '@ember/destroyable';` |
-| `Ember.Engine` | `import Engine from '@ember/engine';` |
-| `Ember.EngineInstance` | `import Engine from '@ember/engine/instance';` |
-| `Ember.Enumerable` | `import Enumerable from '@ember/enumerable';` |
-| `Ember.MutableEnumerable` | `import MutableEnumerable from '@ember/enumerable/mutable';` |
-| `Ember.Object` | `import Object from '@ember/object';` |
-| `Ember._action` | `import { action } from '@ember/object';` |
-| `Ember.computed` | `import { computed } from '@ember/object';` |
-| `Ember.defineProperty` | `import { defineProperty } from '@ember/object';` |
-| `Ember.get` | `import { get } from '@ember/object';` |
-| `Ember.getProperties` | `import { getProperties } from '@ember/object';` |
-| `Ember.notifyPropertyChange` | `import { notifyPropertyChange } from '@ember/object';` |
-| `Ember.observer` | `import { observer } from '@ember/object';` |
-| `Ember.set` | `import { set } from '@ember/object';` |
-| `Ember.trySet` | `import { trySet } from '@ember/object';` |
-| `Ember.setProperties` | `import { setProperties } from '@ember/object';` |
-| `Ember._dependentKeyCompat` | `import { dependentKeyCompat } from '@ember/object/compat';` |
-| `Ember.expandProperties` | `import { expandProperties } from '@ember/object/computed';` |
-| `Ember.CoreObject` | `import EmberObject from '@ember/object';` |
-| `Ember.Evented` | `import Evented from '@ember/object/evented';` |
-| `Ember.on` | `import { on } from '@ember/object/evented';` |
-| `Ember.addListener` | `import { addListener } from '@ember/object/events';` |
-| `Ember.removeListener` | `import { removeListener } from '@ember/object/events';` |
-| `Ember.sendEvent` | `import { sendEvent } from '@ember/object/events';` |
-| `Ember.Mixin` | `import Mixin from '@ember/object/mixin';` |
-| `Ember.mixin` | `import { mixin } from '@ember/object/mixin';` |
-| `Ember.Observable` | `import Observable from '@ember/object/observable';` |
-| `Ember.addObserver` | `import { addObserver } from '@ember/object/observers';` |
-| `Ember.removeObserver` | `import { removeObserver } from '@ember/object/observers';` |
-| `Ember.PromiseProxyMixin` | `import EmberPromiseProxyMixin from '@ember/object/promise-proxy-mixin';` |
-| `Ember.ObjectProxy` | `import ObjectProxy from '@ember/object/proxy';` |
-| `Ember.HistoryLocation` | `import HistoryLocation from '@ember/routing/history-location';` |
-| `Ember.HashLocation` | `import HashLocation from '@ember/routing/hash-location';` |
-| `Ember.NoneLocation` | `import NoneLocation from '@ember/routing/none-location';` |
-| `Ember.Route` | `import Route from '@ember/routing/route';` |
-| `Ember.run` | `import { run } from '@ember/runloop';` |
-| `Ember.Service` | `import Service from '@ember/service';` |
-| `Ember.compare` | `import { compare } from '@ember/utils';` |
-| `Ember.isBlank` | `import { isBlank } from '@ember/utils';` |
-| `Ember.isEmpty` | `import { isEmpty } from '@ember/utils';` |
-| `Ember.isEqual` | `import { isEqual } from '@ember/utils';` |
-| `Ember.isPresent` | `import { isPresent } from '@ember/utils';` |
-| `Ember.typeOf` | `import { typeOf } from '@ember/utils';` |
-| `Ember._getComponentTemplate` | `import { getComponentTemplate } from '@ember/component';` | 
-| `Ember._setComponentTemplate` | `import { setComponentTemplate } from '@ember/component';` | 
-| `Ember._helperManagerCapabilities` | `import { capabilities } from '@ember/helper';` | 
-| `Ember._setHelperManager` | `import { setHelperManager } from '@ember/helper';` | 
-| `Ember._setModifierManager` | `import { setModifierManager } from '@ember/modifier';` | 
-| `Ember._templateOnlyComponent` | `import templateOnly from '@ember/component/template-only';` | 
-| `Ember._invokeHelper` | `import { invokeHelper } from '@ember/helper';` | 
-| `Ember._hash` | `import { hash } from '@ember/helper';` | 
-| `Ember._array` | `import { array } from '@ember/helper';` | 
-| `Ember._concat` | `import { concat } from '@ember/helper';` | 
-| `Ember._get` | `import { get } from '@ember/helper';` | 
-| `Ember._on` | `import { on } from '@ember/modifier';` | 
-| `Ember._fn` | `import { fn } from '@ember/helper';` | 
-| `Ember.ENV` | `import MyEnv from '<my-app>/config/environment';` |
+|   | `Ember.` API | Use this instead |
+| - | ---------- | ---------------- |
+|🌐 | `Ember.FEATURES` | `import { isEnabled, FEATURES } from '@ember/canary-features';` |
+|🌐 | `Ember._setComponentManager` | `import { setComponentManager } from '@ember/component';` |
+|🌐 | `Ember._componentManagerCapabilities` | `import { capabilities } from '@ember/component';` |
+|🌐 | `Ember._modifierManagerCapabilities` | `import { capabilities } from '@ember/modifier';` |
+|🌐 | `Ember._createCache` | `import { createCache } from '@glimmer/tracking/primitives/cache';` [RFC #615][RFC-615] |
+|🌐 | `Ember._cacheGetValue` | `import { getValue } from '@glimmer/tracking/primitives/cache';` [RFC #615][RFC-615] |
+|🌐 | `Ember._cacheIsConst` | `import { isConst } from '@glimmer/tracking/primitives/cache';` [RFC #615][RFC-615] |
+|🌐 | `Ember._tracked` | `import { tracked } from '@glimmer/tracking';` |
+|🌐 | `Ember.RSVP` | `import RSVP from 'rsvp';` |
+|🌐 | `Ember.guidFor` | `import { guidFor } from '@ember/object/internals';` |
+|🌐 | `Ember.getOwner` | `import { getOwner } from '@ember/owner';` |
+|🌐 | `Ember.setOwner` | `import { setOwner } from '@ember/owner';` |
+|🌐 | `Ember.onLoad` | `import { onLoad } from '@ember/application';` |
+|🌐 | `Ember.runLoadHooks` | `import { runLoadHooks } from '@ember/application';` |
+|🌐 | `Ember.Application` | `import Application from '@ember/application';` |
+|🌐 | `Ember.ApplicationInstance` | `import ApplicationInstance from '@ember/application/instance';` |
+|🌐 | `Ember.Namespace` | `import Namespace from '@ember/application/namespace';` |
+|🌐 | `Ember.A` | `import { A }  from '@ember/array';` |
+|🌐 | `Ember.Array` | `import Array  from '@ember/array';` |
+|🌐 | `Ember.NativeArray` | `import { NativeArray }  from '@ember/array';` |
+|🌐 | `Ember.isArray` | `import { isArray }  from '@ember/array';` |
+|🔒 | `Ember.makeArray` | `import { makeArray }  from '@ember/array';` |
+|🌐 | `Ember.MutableArray` | `import MutableArray  from '@ember/array/mutable';` |
+|🌐 | `Ember.ArrayProxy` | `import ArrayProxy  from '@ember/array/proxy';` |
+|🌐 | `Ember._Input` | `import { Input }  from '@ember/component';` |
+|🌐 | `Ember.Component` | `import Component  from '@ember/component';` |
+|🌐 | `Ember.Helper` | `import Helper  from '@ember/component/helper';` |
+|🌐 | `Ember.Controller` | `import Controller  from '@ember/controller';` |
+|🔒 | `Ember.ControllerMixin` | `import { ControllerMixin } from '@ember/controller';` |
+|🌐 | `Ember.assert` | `import { assert } from '@ember/debug';` |
+|🌐 | `Ember.warn` | `import { warn } from '@ember/debug';` |
+|🌐 | `Ember.debug` | `import { debug } from '@ember/debug';` |
+|🌐 | `Ember.deprecate` | `import { deprecate } from '@ember/debug';` |
+|🌐 | `Ember.runInDebug` | `import { runInDebug } from '@ember/debug';` |
+|🌐 | `Ember.Debug.registerDeprecationHandler` | `import { registerDeprecationHandler } from '@ember/debug';` |
+|🌐 | `Ember.ContainerDebugAdapter` | `import ContainerDebugAdapter from '@ember/debug/container-debug-adapter';` |
+|🌐 | `Ember.DataAdapter` | `import DataAdapter from '@ember/debug/data-adapter';` |
+|🌐 | `Ember._assertDestroyablesDestroyed` | `import { assertDestroyablesDestroyed } from '@ember/destroyable';` | 
+|🌐 | `Ember._associateDestroyableChild` | `import { associateDestroyableChild } from '@ember/destroyable';` | 
+|🌐 | `Ember._enableDestroyableTracking` | `import { enableDestroyableTracking } from '@ember/destroyable';` |
+|🌐 | `Ember._isDestroying` | `import { isDestroying } from '@ember/destroyable';` | 
+|🌐 | `Ember._isDestroyed` | `import { isDestroyed } from '@ember/destroyable';` |
+|🌐 | `Ember._registerDestructor` | `import { registerDestructor } from '@ember/destroyable';` |
+|🌐 | `Ember._unregisterDestructor` | `import { unregisterDestructor } from '@ember/destroyable';` |
+|🌐 | `Ember.destroy` | `import { destroy } from '@ember/destroyable';` |
+|🌐 | `Ember.Engine` | `import Engine from '@ember/engine';` |
+|🌐 | `Ember.EngineInstance` | `import Engine from '@ember/engine/instance';` |
+|🔒 | `Ember.Enumerable` | `import Enumerable from '@ember/enumerable';` |
+|🔒 | `Ember.MutableEnumerable` | `import MutableEnumerable from '@ember/enumerable/mutable';` |
+|🌐 | `Ember.Object` | `import Object from '@ember/object';` |
+|🌐 | `Ember._action` | `import { action } from '@ember/object';` |
+|🌐 | `Ember.computed` | `import { computed } from '@ember/object';` |
+|🌐 | `Ember.defineProperty` | `import { defineProperty } from '@ember/object';` |
+|🌐 | `Ember.get` | `import { get } from '@ember/object';` |
+|🌐 | `Ember.getProperties` | `import { getProperties } from '@ember/object';` |
+|🌐 | `Ember.notifyPropertyChange` | `import { notifyPropertyChange } from '@ember/object';` |
+|🌐 | `Ember.observer` | `import { observer } from '@ember/object';` |
+|🌐 | `Ember.set` | `import { set } from '@ember/object';` |
+|🌐 | `Ember.trySet` | `import { trySet } from '@ember/object';` |
+|🌐 | `Ember.setProperties` | `import { setProperties } from '@ember/object';` |
+|🌐 | `Ember._dependentKeyCompat` | `import { dependentKeyCompat } from '@ember/object/compat';` |
+|🌐 | `Ember.expandProperties` | `import { expandProperties } from '@ember/object/computed';` |
+|🌐 | `Ember.CoreObject` | `import EmberObject from '@ember/object';` |
+|🌐 | `Ember.Evented` | `import Evented from '@ember/object/evented';` |
+|🌐 | `Ember.on` | `import { on } from '@ember/object/evented';` |
+|🌐 | `Ember.addListener` | `import { addListener } from '@ember/object/events';` |
+|🌐 | `Ember.removeListener` | `import { removeListener } from '@ember/object/events';` |
+|🌐 | `Ember.sendEvent` | `import { sendEvent } from '@ember/object/events';` |
+|🌐 | `Ember.Mixin` | `import Mixin from '@ember/object/mixin';` |
+|🔒 | `Ember.mixin` | `import { mixin } from '@ember/object/mixin';` |
+|🌐 | `Ember.Observable` | `import Observable from '@ember/object/observable';` |
+|🌐 |`Ember.addObserver` | `import { addObserver } from '@ember/object/observers';` |
+|🌐 | `Ember.removeObserver` | `import { removeObserver } from '@ember/object/observers';` |
+|🌐 | `Ember.PromiseProxyMixin` | `import EmberPromiseProxyMixin from '@ember/object/promise-proxy-mixin';` |
+|🌐 | `Ember.ObjectProxy` | `import ObjectProxy from '@ember/object/proxy';` |
+|🧷 | `Ember.HistoryLocation` | `import HistoryLocation from '@ember/routing/history-location';` |
+|🧷 | `Ember.HashLocation` | `import HashLocation from '@ember/routing/hash-location';` |
+|🧷 | `Ember.NoneLocation` | `import NoneLocation from '@ember/routing/none-location';` |
+|🌐 | `Ember.Route` | `import Route from '@ember/routing/route';` |
+|🌐 | `Ember.run` | `import { run } from '@ember/runloop';` |
+|🌐 | `Ember.Service` | `import Service from '@ember/service';` |
+|🌐 | `Ember.compare` | `import { compare } from '@ember/utils';` |
+|🌐 | `Ember.isBlank` | `import { isBlank } from '@ember/utils';` |
+|🌐 | `Ember.isEmpty` | `import { isEmpty } from '@ember/utils';` |
+|🌐 | `Ember.isEqual` | `import { isEqual } from '@ember/utils';` |
+|🌐 | `Ember.isPresent` | `import { isPresent } from '@ember/utils';` |
+|🌐 | `Ember.typeOf` | `import { typeOf } from '@ember/utils';` |
+|🌐 | `Ember._getComponentTemplate` | `import { getComponentTemplate } from '@ember/component';` | 
+|🌐 | `Ember._setComponentTemplate` | `import { setComponentTemplate } from '@ember/component';` | 
+|🌐 | `Ember._helperManagerCapabilities` | `import { capabilities } from '@ember/helper';` | 
+|🌐 | `Ember._setHelperManager` | `import { setHelperManager } from '@ember/helper';` | 
+|🌐 | `Ember._setModifierManager` | `import { setModifierManager } from '@ember/modifier';` | 
+|🌐 | `Ember._templateOnlyComponent` | `import templateOnly from '@ember/component/template-only';` | 
+|🌐 | `Ember._invokeHelper` | `import { invokeHelper } from '@ember/helper';` | 
+|🌐 | `Ember._hash` | `import { hash } from '@ember/helper';` | 
+|🌐 | `Ember._array` | `import { array } from '@ember/helper';` | 
+|🌐 | `Ember._concat` | `import { concat } from '@ember/helper';` | 
+|🌐 | `Ember._get` | `import { get } from '@ember/helper';` | 
+|🌐 | `Ember._on` | `import { on } from '@ember/modifier';` | 
+|🌐 | `Ember._fn` | `import { fn } from '@ember/helper';` | 
+|🌐 | `Ember.ENV` | `import MyEnv from '<my-app>/config/environment';` |
 
 
 [RFC-615]: https://rfcs.emberjs.com/id/0615-autotracking-memoization
