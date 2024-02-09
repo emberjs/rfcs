@@ -127,6 +127,7 @@ Mixins
 - `Ember.Comparable`
 
 Utility
+- `Ember.lookup`
 - `Ember.libraries` - 
    App authors could choose to use any webpack or other build plugin that collections this information, such as [webpack-node-modules-list](https://github.com/ubilabs/webpack-node-modules-list). This additionally means that V1 libraries that pushed themselves into `Ember.libraries` no longer need to worry about interacting with this or any similar API. 
 - `Ember._Cache`
@@ -195,10 +196,11 @@ Replaced by [RFC #931][RFC-931]
 - `Ember.Handlebars.precomple`
 
 
+
+
 [RFC-931]: https://github.com/emberjs/rfcs/pull/931
 
 
-### `Ember.lookup`
 
 #### Imports Available
 
@@ -206,6 +208,7 @@ Most of this is covered in [RFC #176](https://rfcs.emberjs.com/id/0176-javascrip
 
 | `Ember.` API | Use this instead |
 | ---------- | ---------------- |
+| `Ember.FEATURES` | `import { isEnabled, FEATURES } from '@ember/canary-features';` |
 | `Ember._setComponentManager` | `import { setComponentManager } from '@ember/component';` |
 | `Ember._componentManagerCapabilities` | `import { capabilities } from '@ember/component';` |
 | `Ember._modifierManagerCapabilities` | `import { capabilities } from '@ember/modifier';` |
