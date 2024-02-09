@@ -53,15 +53,15 @@ Throughout the rest of this RFC, the following key will be used:
 - 🧷 to mean "this is protected API"
 - 🫣 to mean "no declared access"
 
-### New Module Needed
+### Testing utilities
 
 APIs for wiring up a test framework (e.g. QUnit, _etc_)
-- `Ember.Test`
-- `Ember.Test.Adapter`
-- `Ember.Test.QUnitAdapter`
-- `Ember.setupForTesting`
+- 🌐 `Ember.Test`
+- 🌐 `Ember.Test.Adapter` - currently available at [`@ember/test`](https://api.emberjs.com/ember/5.6/modules/@ember%2Ftest)
+- 🌐 `Ember.Test.QUnitAdapter`
+- 🌐 `Ember.setupForTesting`
 
-These will need to be moved to a module such as `@ember/testing`.
+These will need to be moved to a module such as `@ember/test`.
 
 ### A way to communicate with the ember-inspector
 
