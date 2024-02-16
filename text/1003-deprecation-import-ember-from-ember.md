@@ -150,7 +150,7 @@ Utility
 
   // ...
 
-  if (macroCondition(isTesting()) {
+  if (macroCondition(isTesting())) {
     // test only code here
   }
   ```
