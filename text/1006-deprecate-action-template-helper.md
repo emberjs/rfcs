@@ -28,11 +28,11 @@ prs:
 project-link: Leave as is
 -->
 
-# Deprecate `(action)` template helper 
+# Deprecate `(action)` template helper and `{{action}}` modifier. 
 
 ## Summary
 
-The `(action)` template helper was common pre-Octane. Now that we have native classes and the `{{on}}` modifier, we no longer need to use `(action)` 
+The `(action)` template helper and `{{action}}` modifier was common pre-Octane. Now that we have native classes and the `{{on}}` modifier, we no longer need to use `(action)` or `{{action}}`
 
 ## Motivation
 
@@ -42,7 +42,7 @@ Remove legacy code with confusing semantics.
 
 This was written in the [Octave vs Classic cheatsheet](https://ember-learn.github.io/ember-octane-vs-classic-cheat-sheet/#component-properties__ddau)
 
-That content here:
+<details><summary>that content here</summary>
 
 ### Before (pre-Octane)
 
@@ -110,6 +110,77 @@ Count: {{this.count}}
 
 ```
 
+</details>
+
+But what we could put in the deprecation app:
+
+### Scenario: `action` is passed a string
+
+Before:
+```hbs
+<button type="button" {{action "plusOne"}}>
+  Click Me
+</button>
+```
+
+After
+
+```hbs
+<button type="button" {{on 'click' this.plusOne}}>
+  Click Me
+</button>
+```
+or, if `plusOne` is passed in as an argument 
+```hbs
+<button type="button" {{on 'click' @plusOne}}>
+  Click Me
+</button>
+```
+
+### Scenario: `action` is passed a function reference
+
+Before:
+```hbs
+<SomeComponent @update={{action this.plusOne}} />
+```
+
+After
+
+```hbs
+<SomeComponent @update={{this.plusOne}} />
+```
+
+### Scenario: `action` is passed parameters
+
+Before:
+```hbs
+<SomeComponent @update={{action this.plus 1}} />
+```
+
+After:
+```hbs
+<SomeComponent @update={{fn this.plus 1}} />
+```
+
+### Scenario: `action` is used with `mut` 
+
+Before:
+```hbs
+<SomeComponent @update={{action (mut @value.property}} />
+```
+After:
+```js
+// parent.js
+export default class SomeComponent extends Component {
+    handleUpdate = (value) => this.args.property = value; 
+}
+```
+```hbs
+{{! parent.hbs }}
+<SomeComponent @update={{this.handleUpdate}} />
+```
+
+
 ## How We Teach This
 
 The guides already cover how to invoke functions in the modern way.
@@ -122,5 +193,11 @@ Older code will stop working once the deprecated code is removed.
 
 ## Alternatives
 
+- adding an import so folks can keep using action in gjs.
+  I don't think we should do this because we want to clean up antiquated patterns, rather than encourage their continued existence.
+
 ## Unresolved questions
+
+- Could there be a codemod?
+  _Potentially_ for action usage that references `this.properties`. For string actions, it's impossible.
 
