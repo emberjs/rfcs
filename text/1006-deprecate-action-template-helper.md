@@ -38,6 +38,8 @@ The `(action)` template helper and `{{action}}` modifier was common pre-Octane. 
 
 Remove legacy code with confusing semantics.
 
+This is a part of _[Deprecating Ember Classic (pre-Octane)](https://github.com/emberjs/rfcs/issues/832)_.
+
 ## Transition Path
 
 This was written in the [Octave vs Classic cheatsheet](https://ember-learn.github.io/ember-octane-vs-classic-cheat-sheet/#component-properties__ddau)
