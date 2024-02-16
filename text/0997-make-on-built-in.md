@@ -108,6 +108,10 @@ This change would affect strict-mode only. This is so that today's existing code
 
 The behavior of `on` would be the same as it is today, but defined by default in the `glimmer-vm`.
 
+
+`on` will be a keyword, and for backwards compatibility, this will require that keywords, in strict mode, be overrideable by the strict-mode scope bag.
+
+
 ## How we teach this
 
 Once implemented, the guides, if they say anything about gjs/gts/`<template>` and `on` by the time this would be implemented, would only remove the import.
@@ -115,12 +119,15 @@ Once implemented, the guides, if they say anything about gjs/gts/`<template>` an
 ## Drawbacks
 
 People may not know where `on` is defined.
-- counterpoint: do they need to?
+- counterpoint: do they need to?, we are defining a lanugage, trying to make it ergonomic.
 
 ## Alternatives
 
-n/a
+- Use a prelude
+    - preludes were mentioned during the initial exploration of strict-mode templates, and were decided against, because addons would not be able to assume a prelude exists, as apps could define their own, and this sort of re-introduces the app-tree-merging behavior that we've been trying to get away from. 
+
 
 ## Unresolved questions
 
-n/a
+- What happens if we want to remove a keyword? (like `mut`)
+  - same as today, we only need to commit to a major to remove the keyword in and then do it - providing ample deprecation time, ending with the final removal.
