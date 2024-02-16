@@ -126,6 +126,9 @@ People may not know where `on` is defined.
 - Use a prelude
     - preludes were mentioned during the initial exploration of strict-mode templates, and were decided against, because addons would not be able to assume a prelude exists, as apps could define their own, and this sort of re-introduces the app-tree-merging behavior that we've been trying to get away from. 
 
+- Use an alternate syntax: `on:click={{handler}}` or `on:{eventname}={{value}}`
+    - This would be even more ergonomic, and I think we should do this syntax anyway, but may take longer to implement. -- thought would not require glimmer allow the scope bag to overrid keywords.
+        
 
 ## Unresolved questions
 
