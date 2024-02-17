@@ -130,7 +130,7 @@ import { on } from '@ember/modifier';
 </template>
 ```
 
-</td></tr>></table>
+</td></tr></table>
 
 
 The syntax can be interpreted as:
@@ -208,7 +208,7 @@ export default class Demo extends Component {
 }
 ```
 
-</td></tr>></table>
+</td></tr></table>
 
 The full list of Event Modifiers:
 
