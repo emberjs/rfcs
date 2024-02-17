@@ -229,8 +229,14 @@ Before:
 After:
 ```js
 // parent.js
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+
 export default class SomeComponent extends Component {
-    handleUpdate = (value) => this.args.property = value; 
+    @action
+    handleUpdate(value) {
+        this.args.property = value; 
+    }
 }
 ```
 ```hbs
