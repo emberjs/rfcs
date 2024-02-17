@@ -244,6 +244,11 @@ export default class SomeComponent extends Component {
 <SomeComponent @update={{this.handleUpdate}} />
 ```
 
+Related, [Combining function arguments with action functions](https://guides.emberjs.com/release/components/component-state-and-actions/#toc_combining-arguments-and-actions)
+
+### Related: `send`
+
+When removing `(action)` or `{{action}}` with a _string_ name, you'll also need to verify that there are no [`send`](https://api.emberjs.com/ember/5.6/classes/Component/methods/send?anchor=send) calls with that same string.
 
 ## How We Teach This
 
