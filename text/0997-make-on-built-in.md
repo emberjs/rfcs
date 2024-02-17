@@ -121,6 +121,8 @@ Once implemented, the guides, if they say anything about gjs/gts/`<template>` an
 People may not know where `on` is defined.
 - counterpoint: do they need to?, we are defining a lanugage, trying to make it ergonomic.
 
+We need to allow keywords to be overridable in Glimmer -- this is a behavior most languages do not allow.
+
 ## Alternatives
 
 - Use a prelude
