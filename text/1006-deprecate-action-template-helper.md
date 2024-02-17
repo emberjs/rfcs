@@ -139,6 +139,62 @@ or, if `plusOne` is passed in as an argument
 </button>
 ```
 
+If the `plusOne` action is in an actions object, it needs to move out:
+
+Before:
+```js
+import Component from '@glimmer/component';
+
+export default class Demo extends Component {
+    actions = {
+        plusOne() {
+           /* ... */ 
+        }
+    }
+}
+```
+or
+```js
+import Component from '@ember/component';
+
+export default class Demo extends Component {
+    actions = {
+        plusOne() {
+           /* ... */ 
+        }
+    }
+}
+```
+or
+```js
+import Component from '@ember/component';
+
+export default Component.extend({
+    actions: {
+        plusOne() {
+           /* ... */ 
+        }
+    }
+})
+```
+
+After:
+```js
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+
+export default class Demo extends Component {
+    @action
+    plusOne() {
+       /* ... */ 
+    }
+}
+```
+
+Note that `@action` is completely different from `(action)` or `{{action}}` (and is partly a motivator for deprecating `(action)` and `{{action}}`, to reduce ambiguity).
+
+`@action` is binds the `this` on the method to the instance of the class. 
+
 ### Scenario: `action` is passed a function reference
 
 Before:
