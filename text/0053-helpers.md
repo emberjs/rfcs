@@ -16,7 +16,7 @@ meta:
 
 # Summary
 
-Ember.js 1.13 will introduce a new API for helpers. Helpers will come in two
+Ember.js 1.13 will introduce a new API for the helpers. Helpers will come in two
 flavors:
 
 **Helpers** are a class-based way to define HTMLBars subexpressions. Helpers:
