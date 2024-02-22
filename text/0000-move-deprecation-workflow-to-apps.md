@@ -114,7 +114,10 @@ However, folks can get a basic deprecation-handling workflow going in their apps
 
 This simple implementation of deprrecation workflow may work for libraries' test-apps, but it is not as robust as what `ember-cli-deprecation-workflow` offers, per the above-listed set of features that folks are used to.
 
-To get all of that, taken from the [Modernization PR on ember-cli-deprecation-workflow](https://github.com/mixonic/ember-cli-deprecation-workflow/pull/159), this is what the deprecation-workflow file could look like:
+To get all of those features from `ember-cli-deprecation-workflow`, we could define a function, `setupDeprecationWorkflow`, taken from the [Modernization PR on ember-cli-deprecation-workflow](https://github.com/mixonic/ember-cli-deprecation-workflow/pull/159), this is what the deprecation-workflow file could look like:
+
+<details><summary>ember-cli-deprecation-workflow/index.js</summary>
+
 ```js
 import { registerDeprecationHandler } from '@ember/debug';
 
@@ -231,6 +234,8 @@ export function deprecationCollector(message, options, next) {
   next(message, options);
 }
 ```
+
+</details>
 
 and at this point, we may as well build in in to `ember` and not use an additional library at all, **and this is what the primary proposal of this RFC is proposing: built the deprecation workflow setup function in to ember**, so re-running thorugh the setup steps:
 
