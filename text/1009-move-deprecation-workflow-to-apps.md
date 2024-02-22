@@ -319,7 +319,7 @@ Have `ember-cli-deprecation-workflow` installed by default, (and) transferring `
     import setupDeprecationWorkflow from 'ember-cli-deprecation-workflow';
 
     setupDeprecationWorkflow({
-      htrowOnUnhandled: true,
+      throwOnUnhandled: true,
       handlers: [
         /* ... handlers ... */
       ]
