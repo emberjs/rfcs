@@ -266,7 +266,7 @@ and at this point, we may as well build it into `ember` and not use an additiona
     import { setupDeprecationWorkflow } from '@ember/debug';
 
     setupDeprecationWorkflow({
-      htrowOnUnhandled: true,
+      throwOnUnhandled: true,
       handlers: [
         /* ... handlers ... */
       ]
