@@ -111,7 +111,7 @@ However, folks can get a basic deprecation-handling workflow going in their apps
     ```
 
 
-This simple implementation of deprrecation workflow may work for libraries' test-apps, but it is not as robust as what `ember-cli-deprecation-workflow` offers, per the above-listed set of features that folks are used to.
+This simple implementation of deprecation workflow may work for libraries' test-apps, but it is not as robust as what `ember-cli-deprecation-workflow` offers, per the above-listed set of features that folks are used to.
 
 To get all of those features from `ember-cli-deprecation-workflow`, we could define a function, `setupDeprecationWorkflow`, taken from the [Modernization PR on ember-cli-deprecation-workflow](https://github.com/mixonic/ember-cli-deprecation-workflow/pull/159), this is what the deprecation-workflow file could look like:
 
