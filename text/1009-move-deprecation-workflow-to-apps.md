@@ -326,7 +326,7 @@ Have `ember-cli-deprecation-workflow` installed by default, (and) transferring `
     });
     ```
 
-Why _not_ just do this tiny change to the blueprint? The whole implementation is _very small_, and it's something the framework ultimately has to support anyway, so building it in to `@ember/debug` provides a convinient way to for folks to get started. We also have a bit of a too-many-imports problem at the moment. 
+Why _not_ just do this tiny change to the blueprint? The whole implementation is _very small_, and it's something the framework ultimately has to support anyway, so building it in to `@ember/debug` provides a convenient way for folks to get started. We also have a bit of a too-many-imports problem at the moment. 
 
 ## Unresolved questions
 
