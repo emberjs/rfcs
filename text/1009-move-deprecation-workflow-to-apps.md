@@ -11,7 +11,7 @@ teams: # delete teams that aren't relevant
   - steering
   - typescript
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/1009 
 project-link:
 suite: 
 ---
@@ -30,7 +30,6 @@ project-link: Leave as is
 suite: Leave as is
 -->
 
-<-- Replace "RFC title" with the title of your RFC -->
 # Move the deprecation workflow to apps by default 
 
 ## Summary
