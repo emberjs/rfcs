@@ -84,7 +84,7 @@ However, folks can get a basic deprecation-handling workflow going in their apps
     ```
     this conditional import is now easily customizable for folks in their apps, so they could opt to _not_ strip deprecation messages in production, and see where deprecated code is being hit by users (reported via Sentry, BugSnag, or some other reporting tool) -- which may be handy for folks who have a less-than-perfect test suite (tests being the only current way to automatically detect where deprecated code lives).
 3. the `app/deprecation-workflow.js` would use the already public API, [`registerDeprecationHandler`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fdebug/registerDeprecationHandler)
-    ```js
+    ```ts
     import { registerDeprecationHandler } from '@ember/debug';
 
     import config from '<app-moduleName>/config/environment';
