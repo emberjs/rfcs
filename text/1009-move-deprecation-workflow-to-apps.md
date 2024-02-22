@@ -236,7 +236,7 @@ export function deprecationCollector(message, options, next) {
 
 </details>
 
-and at this point, we may as well build in in to `ember` and not use an additional library at all, **and this is what the primary proposal of this RFC is proposing: built the deprecation workflow setup function in to ember**, so re-running thorugh the setup steps:
+and at this point, we may as well build it into `ember` and not use an additional library at all, **and this is what the primary proposal of this RFC: build the deprecation workflow setup function in to ember**, so re-running through the setup steps:
 
 1. applications must have `@embroider/macros` installed by default.
 2. the app.js or app.ts can conditionally import a file which sets up the deprecation workflow 
