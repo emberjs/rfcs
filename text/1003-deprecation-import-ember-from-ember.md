@@ -39,6 +39,8 @@ This RFC proprosing deprecating all APIs that have module-based replacements, as
 
 The `import Ember from 'ember';` set of APIs is implementn as a barrel file, and properly optimizing barrel files [is a lot of work, requiring integration with build time tools](https://vercel.com/blog/how-we-optimized-package-imports-in-next-js).
 
+**If anyone one dependency in an app's dependency tree does `import ... from 'ember'`, every feature of the framework is shipped to your users, without any ability for you to optimize.**
+
 By removing this set of exports, we have an opportunity to shrink some apps (as some APIs are not used), improving the load performance of ember apps -- and we removing all of these gives us a chance to have a better grasp of what we can get rid of permananently.
 
 Many of these APIs already have alternatives, and those will be called out explicitly in the _Transition Path_ below.
