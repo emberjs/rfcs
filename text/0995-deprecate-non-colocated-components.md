@@ -113,6 +113,9 @@ Or using `component-structure=nested`
         index.hbs
 ```
 
+Note, however, that classi components _importing_ the `layout` and setting it on an `@ember/component` will still work.
+The key thing being deprecated is the runtime resolution of templates, so if there is an import involved, there is no runtime resolution.
+
 ### `ember-source`
 
 The blueprint for components will need to remove the `classic` option:
@@ -160,6 +163,72 @@ Specifically, we'll remove:
 ## How We Teach This
 
 Guides and docs already don't mention the above old layouts.
+
+### How to migrate off old layouts 
+
+#### component templates in `templates/components`
+
+**Before**
+```
+{app,addon}
+  components/
+    demo.js
+  templates/
+    components/
+      demo.hbs
+```
+
+**After**
+```
+{app,addon}
+  components/
+    demo.js
+    demo.hbs
+```
+
+**After (gjs)**
+```
+{app,addon}
+  components/
+    demo.gjs
+```
+
+#### Pods
+
+
+**Before**
+```
+{app,addon}
+  components/
+    demo/
+      component.js
+      template.hbs
+```
+
+**After**
+```
+{app,addon}
+  components/
+    demo/
+      index.js
+      index.hbs
+```
+
+**After (non-nested)**
+```
+{app,addon}
+  components/
+    demo.js
+    demo.hbs
+```
+
+**After (gjs)**
+```
+{app,addon}
+  components/
+    demo.gjs
+```
+
 
 ## Drawbacks
 
