@@ -74,7 +74,7 @@ A good few already have available imports though.
 |   | API | import |
 | - | --- | ------ |
 |🔒| `Ember.meta` | `import { meta } from '@ember/-internals/meta';` |
-|🌐| `Ember.VERSION` | none |
+|🌐| `Ember.VERSION` | none, we should add one, `@ember/version` |
 |🔒| `Ember._captureRenderTree` | `import { captureRenderTree } from '@ember/debug';` |
 |🔒| `Ember.instrument` | `import { instrument } from '@ember/instrumentation';` |
 |🔒| `Ember.subscribe` | `import { subscribe } from '@ember/instrumentation';` |
@@ -100,19 +100,25 @@ import { macroCondition, isDevelopingApp, importSync } from '@embroider/macros';
 if (macroCondition(isDevelopingApp())) {
   // maybe this is side-effecting and installs 
   // some functions on `globalThis` that the inspector could call
+  // since the inspector can't import modules from a built app.
   importSync('@ember/inspector-support');
 }
 ```
 
 ### No replacements.
 
-Applies to both the value and type exports (if applicable).
+Applies to both the value and type exports (if applicable). All of these will not be re-exported from other `@ember/*` packages, but the following tables will show addon usage[^why-addon-usage] in the ecosystem and potential paths forward for library authors.
 
-- 🫣 `Ember._getPath`
-- 🫣 `Ember.isNamespace`
-- 🫣 `Ember.toString`
-- 🔒 `Ember.Container`
-- 🔒 `Ember.Registry`
+[^why-addon-usage]: Addons are notorious for doing things they shouldn't, accessing private APIs, doing crazy things so users don't have to, working around ecosystem and broader ecosystem problems etc. It's also expected that addon authors will be able to handle migrations more quickly than app devs.
+
+
+|   | API | Usage | Migration |
+| - | --- | ----- | --------- |
+|🫣 | `Ember._getPath` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember._getPath) | n/a |
+|🫣 | `Ember.isNamespace` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.isNamespace) | n/a |
+|🫣 | `Ember.toString` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.toString) | n/a |
+|🔒 | `Ember.Container` | EmberObserver: [Many, but old or docs](https://emberobserver.com/code-search?codeQuery=Ember.Container) | n/a |
+|🔒 | `Ember.Registry` | EmberObserver: [Many, but old or docs](https://emberobserver.com/code-search?codeQuery=Ember.Registry) | n/a |
 
 Internal decorator utils
 - 🫣 `Ember._descriptor`
@@ -136,7 +142,7 @@ Mixins
 Utility
 - 🫣 `Ember.lookup`
 - 🌐 `Ember.libraries` - 
-   App authors could choose to use any webpack or other build plugin that collections this information, such as [webpack-node-modules-list](https://github.com/ubilabs/webpack-node-modules-list). This additionally means that V1 libraries that pushed themselves into `Ember.libraries` no longer need to worry about interacting with this or any similar API. 
+   App authors could choose to use any webpack or other build plugin that collections this information, such as [webpack-node-modules-list](https://github.com/ubilabs/webpack-node-modules-list) or [unplugin-info](https://github.com/yjl9903/unplugin-info). This additionally means that V1 libraries that pushed themselves into `Ember.libraries` no longer need to worry about interacting with this or any similar API. 
 - 🫣 `Ember._Cache`
 - 🔒 `Ember.GUID_KEY`
 - 🔒 `Ember.canInvoke`  
@@ -165,7 +171,6 @@ Utility
 - 🔒 `Ember.generateGuid`
 - 🌐 `Ember.uuid`
 - 🔒 `Ember.wrap`
-- 🫣 `Ember.deprecateFunc`
 - 🔒 `Ember.inspect`
 - 🫣 `Ember.Debug`
   Replaced by some of `@ember/debug` exports.
@@ -244,6 +249,7 @@ Most of this is covered in [RFC #176](https://rfcs.emberjs.com/id/0176-javascrip
 |🌐 | `Ember.warn` | `import { warn } from '@ember/debug';` |
 |🌐 | `Ember.debug` | `import { debug } from '@ember/debug';` |
 |🌐 | `Ember.deprecate` | `import { deprecate } from '@ember/debug';` |
+|🫣 | `Ember.deprecateFunc` | `import { deprecateFunc } from '@ember/debug';` |
 |🌐 | `Ember.runInDebug` | `import { runInDebug } from '@ember/debug';` |
 |🌐 | `Ember.Debug.registerDeprecationHandler` | `import { registerDeprecationHandler } from '@ember/debug';` |
 |🌐 | `Ember.ContainerDebugAdapter` | `import ContainerDebugAdapter from '@ember/debug/container-debug-adapter';` |
