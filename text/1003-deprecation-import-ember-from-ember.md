@@ -134,7 +134,9 @@ Reactivity
 |🔒 | `Ember.changeProperties` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.changeProperties) | n/a |
 
 Observable 
-- 🌐 `Ember.hasListeners`
+|   | API | Usage | Migration |
+| - | --- | ----- | --------- |
+|🌐 | `Ember.hasListeners` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.hasListeners) | n/a |
 
 Mixins
 - 🔒 `Ember._ContainerProxyMixin`
