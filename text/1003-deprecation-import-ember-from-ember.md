@@ -121,13 +121,17 @@ Applies to both the value and type exports (if applicable). All of these will no
 |🔒 | `Ember.Registry` | EmberObserver: [Many, but old or docs](https://emberobserver.com/code-search?codeQuery=Ember.Registry) | n/a |
 
 Internal decorator utils
-- 🫣 `Ember._descriptor`
-- 🔒 `Ember._setClassicDecorator`
+|   | API | Usage | Migration |
+| - | --- | ----- | --------- |
+|🫣 | `Ember._descriptor` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember._descriptor) | n/a |
+|🔒 | `Ember._setClassicDecorator` | EmberObserver: [ember-concurrency](https://emberobserver.com/code-search?codeQuery=Ember._setClassicDecorator) | n/a |
 
 Reactivity
-- 🔒 `Ember.beginPropertyChanges`
-- 🔒 `Ember.changeProperties`
-- 🔒 `Ember.endPropertyChanges`
+|   | API | Usage | Migration |
+| - | --- | ----- | --------- |
+|🔒 | `Ember.beginPropertyChanges` | EmberObserver: [ember-m3 + old stuff](https://emberobserver.com/code-search?codeQuery=Ember.beginPropertyChanges) | n/a |
+|🔒 | `Ember.endPropertyChanges` | EmberObserver: [ember-m3 + old stuff](https://emberobserver.com/code-search?codeQuery=Ember.endPropertyChanges) | n/a |
+|🔒 | `Ember.changeProperties` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.changeProperties) | n/a |
 
 Observable 
 - 🌐 `Ember.hasListeners`
