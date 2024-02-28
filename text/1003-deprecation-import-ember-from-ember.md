@@ -170,16 +170,19 @@ Utility
 
 |   | API | Usage | Migration |
 | - | --- | ----- | --------- |
-- 🌐 `Ember.VERSION`  
-    This has the ember version in it, but it could be converted to a virtual module to import from somewhere.
-- 🔒 `Ember._Backburner`
-- 🌐 `Ember.inject`
-- 🫣 `Ember.__loader`
-- 🫣 `Ember.__loader.require`
-- 🫣 `Ember.__loader.define`
-- 🫣 `Ember.__loader.registry`
-- 🔒 `Ember.BOOTED`
-- 🔒 `Ember.TEMPLATES`
+|🌐 | `Ember.VERSION` | EmberObserver: [Not many usages](https://emberobserver.com/code-search?codeQuery=Ember.VERSION&sort=updated&sortAscending=false). | This has the ember version in it, but it could be converted to a virtual module to import from somewhere, such as `@ember/version` |
+|🔒 | `Ember._Backburner` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember._Backburner&sort=updated&sortAscending=false) | n/a |
+|🌐 | `Ember.inject` | EmberObserver: [Many, all using classic classes](https://emberobserver.com/code-search?codeQuery=Ember.inject&sort=updated&sortAscending=false). A lot of results are also classic-class docs. | Use [`@service`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fservice/service) |
+
+Any projects using these are already not safe for embroider and won't work with Vite
+|   | API | Usage | Migration |
+| - | --- | ----- | --------- |
+|🫣 | `Ember.__loader` | EmberObserver: [159 addons. Some experimental. Most from `@ascua`](https://emberobserver.com/code-search?codeQuery=Ember.__loader&sort=updated&sortAscending=false) | n/a |
+| 🫣 | `Ember.__loader.require` | EmberObserver: [same as `Ember.__loader`](https://emberobserver.com/code-search?codeQuery=Ember.__loader.require&sort=updated&sortAscending=false) | n/a |
+| 🫣 | `Ember.__loader.define` | EmberObserver: [5 addons, ~2 recent](https://emberobserver.com/code-search?codeQuery=Ember.__loader.define&sort=updated&sortAscending=false). One is `ember-cli-fastboot` (tests, test-support). | n/a |
+|🫣 | `Ember.__loader.registry` | EmberObserver: [13 addons, ~5 recent](https://emberobserver.com/code-search?codeQuery=Ember.__loader.registry&sort=updated&sortAscending=false). One is `ember-cli-fastboot` (tests, test-support). | n/a |
+|🔒 | `Ember.BOOTED` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.BOOTED&sort=updated&sortAscending=false) | n/a |
+|🔒 | `Ember.TEMPLATES` | EmberObserver: [`ember-resolver`](https://emberobserver.com/code-search?codeQuery=Ember.TEMPLATES&sort=updated&sortAscending=false) | n/a |
 
 Replaced by [RFC #931][RFC-931]
 |   | API | Usage | Migration |
