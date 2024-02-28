@@ -149,16 +149,15 @@ Mixins
 
 
 Utility
-- 🫣 `Ember.lookup`
-- 🌐 `Ember.libraries` - 
-   App authors could choose to use any webpack or other build plugin that collections this information, such as [webpack-node-modules-list](https://github.com/ubilabs/webpack-node-modules-list) or [unplugin-info](https://github.com/yjl9903/unplugin-info). This additionally means that V1 libraries that pushed themselves into `Ember.libraries` no longer need to worry about interacting with this or any similar API. 
-- 🫣 `Ember._Cache`
-- 🔒 `Ember.GUID_KEY`
-- 🔒 `Ember.canInvoke`  
-    Instead use [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining):
-    ```js
-    this.foo?.method?.();
-    ```
+|   | API | Usage | Migration |
+| - | --- | ----- | --------- |
+|🫣 | `Ember.lookup` | EmberObserver: [old addons, > 6 years](https://emberobserver.com/code-search?codeQuery=Ember.lookup&sort=updated&sortAscending=false) | Use `getOwner(...).lookup` from `@ember/owner` |
+|🌐 | `Ember.libraries` | EmberObserver: [Many usages, mostly ember-data and related](https://emberobserver.com/code-search?codeQuery=Ember.libraries&sort=updated&sortAscending=false) | This isn't a behavior that Ember needs to provide, nor should it be library authors' responsibilty to register themselves with a library listing system. App authors could choose to use any webpack or other build plugin that collections this information, such as [webpack-node-modules-list](https://github.com/ubilabs/webpack-node-modules-list) or [unplugin-info](https://github.com/yjl9903/unplugin-info). | 
+|🫣 | `Ember._Cache` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember._Cache&sort=updated&sortAscending=false) | n/a |
+|🔒 | `Ember.GUID_KEY` | EmberObserver: [`ember-data-save-relationships`, 6 years ago](https://emberobserver.com/code-search?codeQuery=Ember.GUID_KEY&sort=updated&sortAscending=false) | n/a |
+| 🔒 | `Ember.canInvoke` | EmberObserver: [@summit-electric-supply](https://emberobserver.com/code-search?codeQuery=Ember.canInvoke&sort=updated&sortAscending=false) | use [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining), e.g.: `this.foo?.method?.()` |
+
+
 - 🫣 `Ember.testing`  
   Instead, use
 
