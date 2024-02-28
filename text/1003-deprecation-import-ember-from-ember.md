@@ -129,8 +129,8 @@ Internal decorator utils
 Reactivity
 |   | API | Usage | Migration |
 | - | --- | ----- | --------- |
-|🔒 | `Ember.beginPropertyChanges` | EmberObserver: [ember-m3 + old stuff](https://emberobserver.com/code-search?codeQuery=Ember.beginPropertyChanges) | n/a |
-|🔒 | `Ember.endPropertyChanges` | EmberObserver: [ember-m3 + old stuff](https://emberobserver.com/code-search?codeQuery=Ember.endPropertyChanges) | n/a |
+|🔒 | `Ember.beginPropertyChanges` | EmberObserver: [ember-m3 + old addons](https://emberobserver.com/code-search?codeQuery=Ember.beginPropertyChanges) | n/a |
+|🔒 | `Ember.endPropertyChanges` | EmberObserver: [ember-m3 + old addons](https://emberobserver.com/code-search?codeQuery=Ember.endPropertyChanges) | n/a |
 |🔒 | `Ember.changeProperties` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.changeProperties) | n/a |
 
 Observable 
@@ -139,11 +139,14 @@ Observable
 |🌐 | `Ember.hasListeners` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.hasListeners) | n/a |
 
 Mixins
-- 🔒 `Ember._ContainerProxyMixin`
-- 🔒 `Ember._ProxyMixin`
-- 🔒 `Ember._RegistryProxyMixin`
-- 🔒 `Ember.ActionHandler`
-- 🔒 `Ember.Comparable`
+|   | API | Usage | Migration |
+| - | --- | ----- | --------- |
+|🔒 | `Ember._ContainerProxyMixin` | EmberObserver: [mostly old addons](https://emberobserver.com/code-search?codeQuery=Ember._ContainerProxyMixin&sort=updated&sortAscending=false). Includes `ember-decorators`, `ember-data-has-many-query`, `ember-graphql-adapter`, `ember-cli-fastboot` (in tests / test-support) | n/a |
+|🔒 | `Ember._RegistryProxyMixin` | EmberObserver: [mostly old addons](https://emberobserver.com/code-search?codeQuery=Ember._RegistryProxyMixin&sort=updated&sortAscending=false). Includes `ember-decorators`, `ember-data-has-many-query`, `ember-graphql-adapter`, `ember-cli-fastboot` (in tests / test-support) | n/a |
+|🔒 | `Ember._ProxyMixin` | EmberObserver: [`ember-bootstrap-components`, 8 years ago](https://emberobserver.com/code-search?codeQuery=Ember._ProxyMixin&sort=updated&sortAscending=false) | n/a |
+|🔒 | `Ember.ActionHandler` | EmberObserver: ['ember-error-tracker' + old addons](https://emberobserver.com/code-search?codeQuery=Ember.ActionHandler&sort=updated&sortAscending=false). Many usages include pre-modules Ember usage. | n/a |
+|🔒 | `Ember.Comparable` | EmberObserver: [ember-data-model-fragments](https://emberobserver.com/code-search?codeQuery=Ember.Comparable&sort=updated&sortAscending=false) | n/a |
+
 
 Utility
 - 🫣 `Ember.lookup`
