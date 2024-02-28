@@ -151,11 +151,49 @@ Mixins
 Utility
 |   | API | Usage | Migration |
 | - | --- | ----- | --------- |
-|🫣 | `Ember.lookup` | EmberObserver: [old addons, > 6 years](https://emberobserver.com/code-search?codeQuery=Ember.lookup&sort=updated&sortAscending=false) | Use `getOwner(...).lookup` from `@ember/owner` |
+|🫣 | `Ember.lookup` | EmberObserver: [old addons, > 6 years](https://emberobserver.com/code-search?codeQuery=Ember.lookup&sort=updated&sortAscending=false) | Use `getOwner(...).lookup` from [`@ember/owner`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fowner/getOwner) |
 |🌐 | `Ember.libraries` | EmberObserver: [Many usages, mostly ember-data and related](https://emberobserver.com/code-search?codeQuery=Ember.libraries&sort=updated&sortAscending=false) | This isn't a behavior that Ember needs to provide, nor should it be library authors' responsibilty to register themselves with a library listing system. App authors could choose to use any webpack or other build plugin that collections this information, such as [webpack-node-modules-list](https://github.com/ubilabs/webpack-node-modules-list) or [unplugin-info](https://github.com/yjl9903/unplugin-info). | 
 |🫣 | `Ember._Cache` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember._Cache&sort=updated&sortAscending=false) | n/a |
 |🔒 | `Ember.GUID_KEY` | EmberObserver: [`ember-data-save-relationships`, 6 years ago](https://emberobserver.com/code-search?codeQuery=Ember.GUID_KEY&sort=updated&sortAscending=false) | n/a |
 | 🔒 | `Ember.canInvoke` | EmberObserver: [@summit-electric-supply](https://emberobserver.com/code-search?codeQuery=Ember.canInvoke&sort=updated&sortAscending=false) | use [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining), e.g.: `this.foo?.method?.()` |
+|🔒 | `Ember.generateGuid` | EmberObserver: [`ember-flexberry + old addons](https://emberobserver.com/code-search?codeQuery=Ember.generateGuid&sort=updated&sortAscending=false) | Use [`guidFor`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fobject%2Finternals/guidFor) or [`uuid`](https://www.npmjs.com/package/uuid) |
+|🌐 | `Ember.uuid` | EmberObserver: [3 recent addons](https://emberobserver.com/code-search?codeQuery=Ember.uuid&sort=updated&sortAscending=false) | Use [`guidFor`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fobject%2Finternals/guidFor) or [`uuid`](https://www.npmjs.com/package/uuid) |
+|🔒 | `Ember.wrap` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.wrap&sort=updated&sortAscending=false) | n/a |
+|🔒 | `Ember.inspect` | EmberObserver: [old addons](https://emberobserver.com/code-search?codeQuery=Ember.inspect&sort=updated&sortAscending=false) | n/a | 
+|🫣 | `Ember.Debug` | EmberObserver: [old addons](https://emberobserver.com/code-search?codeQuery=Ember.Debug&sort=updated&sortAscending=false) | use [`@ember/debug`](https://api.emberjs.com/ember/5.6/modules/@ember%2Fdebug) | 
+|🫣 | `Ember.cacheFor` | EmberObserver: [old addons](https://emberobserver.com/code-search?codeQuery=Ember.cacheFor&sort=updated&sortAscending=false) | potentially [`@glimmer/tracking/primitives/cache`](https://api.emberjs.com/ember/5.6/modules/@glimmer%2Ftracking%2Fprimitives%2Fcache) |
+|🌐 | `Ember.ComputedProperty` | EmberObserver: [aside from docs, old addons](https://emberobserver.com/code-search?codeQuery=Ember.ComputedProperty&sort=updated&sortAscending=false). Most recent usage is 3 years ago in `ember-cli-furnance-validation` | n/a |
+|🫣 | `Ember.RouterDSL` | EmberObserver: [old addons](https://emberobserver.com/code-search?codeQuery=Ember.RouterDSL&sort=updated&sortAscending=false) | n/a |
+|🔒 | `Ember.controllerFor` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.controllerFor&sort=updated&sortAscending=false) | n/a |
+|🔒 | `Ember.generateController` | EmberObserver: [bitbird-core-ember-routing, 5 years ago](https://emberobserver.com/code-search?codeQuery=Ember.generateController&sort=updated&sortAscending=false) | n/a |
+|🔒 | `Ember.generateControllerFactory` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.generateControllerFactory&sort=updated&sortAscending=false) | n/a |
+
+|   | API | Usage | Migration |
+| - | --- | ----- | --------- |
+- 🌐 `Ember.VERSION`  
+    This has the ember version in it, but it could be converted to a virtual module to import from somewhere.
+- 🔒 `Ember._Backburner`
+- 🌐 `Ember.inject`
+- 🫣 `Ember.__loader`
+- 🫣 `Ember.__loader.require`
+- 🫣 `Ember.__loader.define`
+- 🫣 `Ember.__loader.registry`
+- 🔒 `Ember.BOOTED`
+- 🔒 `Ember.TEMPLATES`
+
+Replaced by [RFC #931][RFC-931]
+|   | API | Usage | Migration |
+| - | --- | ----- | --------- |
+- 🫣 `Ember.HTMLBars`
+- 🫣 `Ember.HTMLBars.template`
+- 🫣 `Ember.HTMLBars.compile`
+- 🫣 `Ember.HTMLBars.precomple`
+- 🫣 `Ember.Handlebars`
+- 🫣 `Ember.Handlebars.template`
+- 🫣 `Ember.Handlebars.Utils.escapeExpression`
+    Removed in [ember.js PR#20360](https://github.com/emberjs/ember.js/pull/20360) as it is not public API.
+- 🫣 `Ember.Handlebars.compile`
+- 🫣 `Ember.Handlebars.precomple`
 
 
 - 🫣 `Ember.testing`  
@@ -176,42 +214,6 @@ Utility
   ```js
   window.addEventListener('error', /* ... event handler ... */);
   ```
-- 🔒 `Ember.generateGuid`
-- 🌐 `Ember.uuid`
-- 🔒 `Ember.wrap`
-- 🔒 `Ember.inspect`
-- 🫣 `Ember.Debug`
-  Replaced by some of `@ember/debug` exports.
-- 🫣 `Ember.cacheFor`
-- 🌐 `Ember.ComputedProperty`
-- 🫣 `Ember.RouterDSL`
-- 🔒 `Ember.controllerFor`
-- 🔒 `Ember.generateController`
-- 🔒 `Ember.generateControllerFactory`
-- 🌐 `Ember.VERSION`  
-    This has the ember version in it, but it could be converted to a virtual module to import from somewhere.
-- 🔒 `Ember._Backburner`
-- 🌐 `Ember.inject`
-- 🫣 `Ember.__loader`
-- 🫣 `Ember.__loader.require`
-- 🫣 `Ember.__loader.define`
-- 🫣 `Ember.__loader.registry`
-- 🔒 `Ember.BOOTED`
-- 🔒 `Ember.TEMPLATES`
-
-Replaced by [RFC #931][RFC-931]
-- 🫣 `Ember.HTMLBars`
-- 🫣 `Ember.HTMLBars.template`
-- 🫣 `Ember.HTMLBars.compile`
-- 🫣 `Ember.HTMLBars.precomple`
-- 🫣 `Ember.Handlebars`
-- 🫣 `Ember.Handlebars.template`
-- 🫣 `Ember.Handlebars.Utils.escapeExpression`
-    Removed in [ember.js PR#20360](https://github.com/emberjs/ember.js/pull/20360) as it is not public API.
-- 🫣 `Ember.Handlebars.compile`
-- 🫣 `Ember.Handlebars.precomple`
-
-
 
 
 [RFC-931]: https://github.com/emberjs/rfcs/pull/931
