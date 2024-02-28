@@ -58,10 +58,13 @@ Throughout the rest of this RFC, the following key will be used:
 ### Testing utilities
 
 APIs for wiring up a test framework (e.g. QUnit, _etc_)
-- 🌐 `Ember.Test`
-- 🌐 `Ember.Test.Adapter` - currently available at [`@ember/test`](https://api.emberjs.com/ember/5.6/modules/@ember%2Ftest)
-- 🌐 `Ember.Test.QUnitAdapter`
-- 🌐 `Ember.setupForTesting`
+
+|   | API | Usage: EmberObserver | -- | 
+| - | --- | ----- | -- |
+|🌐 | `Ember.Test` | [A good few](https://emberobserver.com/code-search?codeQuery=Ember.Test&sort=updated&sortAscending=false) | |
+|🌐 | `Ember.Test.Adapter` | [`ember-cli-fastboot` and `@ember/test-helpers`](https://emberobserver.com/code-search?codeQuery=Ember.Test.Adapter&sort=updated&sortAscending=false) | currently available at [`@ember/test`](https://api.emberjs.com/ember/5.6/modules/@ember%2Ftest) |
+|🌐 | `Ember.Test.QUnitAdapter` | [`ember-cli-fastboot`](https://emberobserver.com/code-search?codeQuery=Ember.Test.QUnitAdapter&sort=updated&sortAscending=false) | |
+|🌐 | `Ember.setupForTesting` | [`ember-cli-fastboot`](https://emberobserver.com/code-search?codeQuery=Ember.setupForTesting&sort=updated&sortAscending=false) | | 
 
 These will need to be moved to a module such as `@ember/test`.
 
@@ -112,93 +115,94 @@ Applies to both the value and type exports (if applicable). All of these will no
 [^why-addon-usage]: Addons are notorious for doing things they shouldn't, accessing private APIs, doing crazy things so users don't have to, working around ecosystem and broader ecosystem problems etc. It's also expected that addon authors will be able to handle migrations more quickly than app devs.
 
 
-|   | API | Usage | Migration |
+|   | API | Usage: EmberObserver | Migration |
 | - | --- | ----- | --------- |
-|🫣 | `Ember._getPath` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember._getPath) | n/a |
-|🫣 | `Ember.isNamespace` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.isNamespace) | n/a |
-|🫣 | `Ember.toString` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.toString) | n/a |
-|🔒 | `Ember.Container` | EmberObserver: [Many, but old or docs](https://emberobserver.com/code-search?codeQuery=Ember.Container) | n/a |
-|🔒 | `Ember.Registry` | EmberObserver: [Many, but old or docs](https://emberobserver.com/code-search?codeQuery=Ember.Registry) | n/a |
+|🫣 | `Ember._getPath` | [None](https://emberobserver.com/code-search?codeQuery=Ember._getPath) | n/a |
+|🫣 | `Ember.isNamespace` | [None](https://emberobserver.com/code-search?codeQuery=Ember.isNamespace) | n/a |
+|🫣 | `Ember.toString` | [None](https://emberobserver.com/code-search?codeQuery=Ember.toString) | n/a |
+|🔒 | `Ember.Container` | [Many, but old or docs](https://emberobserver.com/code-search?codeQuery=Ember.Container) | n/a |
+|🔒 | `Ember.Registry` | [Many, but old or docs](https://emberobserver.com/code-search?codeQuery=Ember.Registry) | n/a |
 
 Internal decorator utils
-|   | API | Usage | Migration |
+|   | API | Usage: EmberObserver | Migration |
 | - | --- | ----- | --------- |
 |🫣 | `Ember._descriptor` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember._descriptor) | n/a |
 |🔒 | `Ember._setClassicDecorator` | EmberObserver: [ember-concurrency](https://emberobserver.com/code-search?codeQuery=Ember._setClassicDecorator) | n/a |
 
 Reactivity
-|   | API | Usage | Migration |
+|   | API | Usage: EmberObserver | Migration |
 | - | --- | ----- | --------- |
-|🔒 | `Ember.beginPropertyChanges` | EmberObserver: [ember-m3 + old addons](https://emberobserver.com/code-search?codeQuery=Ember.beginPropertyChanges) | n/a |
-|🔒 | `Ember.endPropertyChanges` | EmberObserver: [ember-m3 + old addons](https://emberobserver.com/code-search?codeQuery=Ember.endPropertyChanges) | n/a |
-|🔒 | `Ember.changeProperties` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.changeProperties) | n/a |
+|🔒 | `Ember.beginPropertyChanges` | [ember-m3 + old addons](https://emberobserver.com/code-search?codeQuery=Ember.beginPropertyChanges) | n/a |
+|🔒 | `Ember.endPropertyChanges` | [ember-m3 + old addons](https://emberobserver.com/code-search?codeQuery=Ember.endPropertyChanges) | n/a |
+|🔒 | `Ember.changeProperties` | [None](https://emberobserver.com/code-search?codeQuery=Ember.changeProperties) | n/a |
 
 Observable 
-|   | API | Usage | Migration |
+|   | API | Usage: EmberObserver | Migration |
 | - | --- | ----- | --------- |
-|🌐 | `Ember.hasListeners` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.hasListeners) | n/a |
+|🌐 | `Ember.hasListeners` | [None](https://emberobserver.com/code-search?codeQuery=Ember.hasListeners) | n/a |
 
 Mixins
-|   | API | Usage | Migration |
+|   | API | Usage: EmberObserver | Migration |
 | - | --- | ----- | --------- |
-|🔒 | `Ember._ContainerProxyMixin` | EmberObserver: [mostly old addons](https://emberobserver.com/code-search?codeQuery=Ember._ContainerProxyMixin&sort=updated&sortAscending=false). Includes `ember-decorators`, `ember-data-has-many-query`, `ember-graphql-adapter`, `ember-cli-fastboot` (in tests / test-support) | n/a |
-|🔒 | `Ember._RegistryProxyMixin` | EmberObserver: [mostly old addons](https://emberobserver.com/code-search?codeQuery=Ember._RegistryProxyMixin&sort=updated&sortAscending=false). Includes `ember-decorators`, `ember-data-has-many-query`, `ember-graphql-adapter`, `ember-cli-fastboot` (in tests / test-support) | n/a |
-|🔒 | `Ember._ProxyMixin` | EmberObserver: [`ember-bootstrap-components`, 8 years ago](https://emberobserver.com/code-search?codeQuery=Ember._ProxyMixin&sort=updated&sortAscending=false) | n/a |
-|🔒 | `Ember.ActionHandler` | EmberObserver: ['ember-error-tracker' + old addons](https://emberobserver.com/code-search?codeQuery=Ember.ActionHandler&sort=updated&sortAscending=false). Many usages include pre-modules Ember usage. | n/a |
-|🔒 | `Ember.Comparable` | EmberObserver: [ember-data-model-fragments](https://emberobserver.com/code-search?codeQuery=Ember.Comparable&sort=updated&sortAscending=false) | n/a |
+|🔒 | `Ember._ContainerProxyMixin` | [mostly old addons](https://emberobserver.com/code-search?codeQuery=Ember._ContainerProxyMixin&sort=updated&sortAscending=false). Includes `ember-decorators`, `ember-data-has-many-query`, `ember-graphql-adapter`, `ember-cli-fastboot` (in tests / test-support) | n/a |
+|🔒 | `Ember._RegistryProxyMixin` | [mostly old addons](https://emberobserver.com/code-search?codeQuery=Ember._RegistryProxyMixin&sort=updated&sortAscending=false). Includes `ember-decorators`, `ember-data-has-many-query`, `ember-graphql-adapter`, `ember-cli-fastboot` (in tests / test-support) | n/a |
+|🔒 | `Ember._ProxyMixin` | [`ember-bootstrap-components`, 8 years ago](https://emberobserver.com/code-search?codeQuery=Ember._ProxyMixin&sort=updated&sortAscending=false) | n/a |
+|🔒 | `Ember.ActionHandler` | ['ember-error-tracker' + old addons](https://emberobserver.com/code-search?codeQuery=Ember.ActionHandler&sort=updated&sortAscending=false). Many usages include pre-modules Ember usage. | n/a |
+|🔒 | `Ember.Comparable` | [ember-data-model-fragments](https://emberobserver.com/code-search?codeQuery=Ember.Comparable&sort=updated&sortAscending=false) | n/a |
 
 
 Utility
-|   | API | Usage | Migration |
+|   | API | Usage: EmberObserver | Migration |
 | - | --- | ----- | --------- |
-|🫣 | `Ember.lookup` | EmberObserver: [old addons, > 6 years](https://emberobserver.com/code-search?codeQuery=Ember.lookup&sort=updated&sortAscending=false) | Use `getOwner(...).lookup` from [`@ember/owner`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fowner/getOwner) |
-|🌐 | `Ember.libraries` | EmberObserver: [Many usages, mostly ember-data and related](https://emberobserver.com/code-search?codeQuery=Ember.libraries&sort=updated&sortAscending=false) | This isn't a behavior that Ember needs to provide, nor should it be library authors' responsibilty to register themselves with a library listing system. App authors could choose to use any webpack or other build plugin that collections this information, such as [webpack-node-modules-list](https://github.com/ubilabs/webpack-node-modules-list) or [unplugin-info](https://github.com/yjl9903/unplugin-info). | 
-|🫣 | `Ember._Cache` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember._Cache&sort=updated&sortAscending=false) | n/a |
-|🔒 | `Ember.GUID_KEY` | EmberObserver: [`ember-data-save-relationships`, 6 years ago](https://emberobserver.com/code-search?codeQuery=Ember.GUID_KEY&sort=updated&sortAscending=false) | n/a |
-| 🔒 | `Ember.canInvoke` | EmberObserver: [@summit-electric-supply](https://emberobserver.com/code-search?codeQuery=Ember.canInvoke&sort=updated&sortAscending=false) | use [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining), e.g.: `this.foo?.method?.()` |
-|🔒 | `Ember.generateGuid` | EmberObserver: [`ember-flexberry + old addons](https://emberobserver.com/code-search?codeQuery=Ember.generateGuid&sort=updated&sortAscending=false) | Use [`guidFor`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fobject%2Finternals/guidFor) or [`uuid`](https://www.npmjs.com/package/uuid) |
-|🌐 | `Ember.uuid` | EmberObserver: [3 recent addons](https://emberobserver.com/code-search?codeQuery=Ember.uuid&sort=updated&sortAscending=false) | Use [`guidFor`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fobject%2Finternals/guidFor) or [`uuid`](https://www.npmjs.com/package/uuid) |
-|🔒 | `Ember.wrap` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.wrap&sort=updated&sortAscending=false) | n/a |
-|🔒 | `Ember.inspect` | EmberObserver: [old addons](https://emberobserver.com/code-search?codeQuery=Ember.inspect&sort=updated&sortAscending=false) | n/a | 
-|🫣 | `Ember.Debug` | EmberObserver: [old addons](https://emberobserver.com/code-search?codeQuery=Ember.Debug&sort=updated&sortAscending=false) | use [`@ember/debug`](https://api.emberjs.com/ember/5.6/modules/@ember%2Fdebug) | 
-|🫣 | `Ember.cacheFor` | EmberObserver: [old addons](https://emberobserver.com/code-search?codeQuery=Ember.cacheFor&sort=updated&sortAscending=false) | potentially [`@glimmer/tracking/primitives/cache`](https://api.emberjs.com/ember/5.6/modules/@glimmer%2Ftracking%2Fprimitives%2Fcache) |
-|🌐 | `Ember.ComputedProperty` | EmberObserver: [aside from docs, old addons](https://emberobserver.com/code-search?codeQuery=Ember.ComputedProperty&sort=updated&sortAscending=false). Most recent usage is 3 years ago in `ember-cli-furnance-validation` | n/a |
-|🫣 | `Ember.RouterDSL` | EmberObserver: [old addons](https://emberobserver.com/code-search?codeQuery=Ember.RouterDSL&sort=updated&sortAscending=false) | n/a |
-|🔒 | `Ember.controllerFor` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.controllerFor&sort=updated&sortAscending=false) | n/a |
-|🔒 | `Ember.generateController` | EmberObserver: [bitbird-core-ember-routing, 5 years ago](https://emberobserver.com/code-search?codeQuery=Ember.generateController&sort=updated&sortAscending=false) | n/a |
-|🔒 | `Ember.generateControllerFactory` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.generateControllerFactory&sort=updated&sortAscending=false) | n/a |
+|🫣 | `Ember.lookup` | [old addons, > 6 years](https://emberobserver.com/code-search?codeQuery=Ember.lookup&sort=updated&sortAscending=false) | Use `getOwner(...).lookup` from [`@ember/owner`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fowner/getOwner) |
+|🌐 | `Ember.libraries` | [Many usages, mostly ember-data and related](https://emberobserver.com/code-search?codeQuery=Ember.libraries&sort=updated&sortAscending=false) | This isn't a behavior that Ember needs to provide, nor should it be library authors' responsibilty to register themselves with a library listing system. App authors could choose to use any webpack or other build plugin that collections this information, such as [webpack-node-modules-list](https://github.com/ubilabs/webpack-node-modules-list) or [unplugin-info](https://github.com/yjl9903/unplugin-info). | 
+|🫣 | `Ember._Cache` | [None](https://emberobserver.com/code-search?codeQuery=Ember._Cache&sort=updated&sortAscending=false) | n/a |
+|🔒 | `Ember.GUID_KEY` | [`ember-data-save-relationships`, 6 years ago](https://emberobserver.com/code-search?codeQuery=Ember.GUID_KEY&sort=updated&sortAscending=false) | n/a |
+| 🔒 | `Ember.canInvoke` | [@summit-electric-supply](https://emberobserver.com/code-search?codeQuery=Ember.canInvoke&sort=updated&sortAscending=false) | use [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining), e.g.: `this.foo?.method?.()` |
+|🔒 | `Ember.generateGuid` | [`ember-flexberry + old addons](https://emberobserver.com/code-search?codeQuery=Ember.generateGuid&sort=updated&sortAscending=false) | Use [`guidFor`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fobject%2Finternals/guidFor) or [`uuid`](https://www.npmjs.com/package/uuid) |
+|🌐 | `Ember.uuid` | [3 recent addons](https://emberobserver.com/code-search?codeQuery=Ember.uuid&sort=updated&sortAscending=false) | Use [`guidFor`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fobject%2Finternals/guidFor) or [`uuid`](https://www.npmjs.com/package/uuid) |
+|🔒 | `Ember.wrap` | [None](https://emberobserver.com/code-search?codeQuery=Ember.wrap&sort=updated&sortAscending=false) | n/a |
+|🔒 | `Ember.inspect` | [old addons](https://emberobserver.com/code-search?codeQuery=Ember.inspect&sort=updated&sortAscending=false) | n/a | 
+|🫣 | `Ember.Debug` | [old addons](https://emberobserver.com/code-search?codeQuery=Ember.Debug&sort=updated&sortAscending=false) | use [`@ember/debug`](https://api.emberjs.com/ember/5.6/modules/@ember%2Fdebug) | 
+|🫣 | `Ember.cacheFor` | [old addons](https://emberobserver.com/code-search?codeQuery=Ember.cacheFor&sort=updated&sortAscending=false) | potentially [`@glimmer/tracking/primitives/cache`](https://api.emberjs.com/ember/5.6/modules/@glimmer%2Ftracking%2Fprimitives%2Fcache) |
+|🌐 | `Ember.ComputedProperty` | [aside from docs, old addons](https://emberobserver.com/code-search?codeQuery=Ember.ComputedProperty&sort=updated&sortAscending=false). Most recent usage is 3 years ago in `ember-cli-furnance-validation` | n/a |
+|🫣 | `Ember.RouterDSL` | [old addons](https://emberobserver.com/code-search?codeQuery=Ember.RouterDSL&sort=updated&sortAscending=false) | n/a |
+|🔒 | `Ember.controllerFor` | [None](https://emberobserver.com/code-search?codeQuery=Ember.controllerFor&sort=updated&sortAscending=false) | n/a |
+|🔒 | `Ember.generateController` | [bitbird-core-ember-routing, 5 years ago](https://emberobserver.com/code-search?codeQuery=Ember.generateController&sort=updated&sortAscending=false) | n/a |
+|🔒 | `Ember.generateControllerFactory` | [None](https://emberobserver.com/code-search?codeQuery=Ember.generateControllerFactory&sort=updated&sortAscending=false) | n/a |
 
-|   | API | Usage | Migration |
+|   | API | Usage: EmberObserver | Migration |
 | - | --- | ----- | --------- |
 |🌐 | `Ember.VERSION` | EmberObserver: [Not many usages](https://emberobserver.com/code-search?codeQuery=Ember.VERSION&sort=updated&sortAscending=false). | This has the ember version in it, but it could be converted to a virtual module to import from somewhere, such as `@ember/version` |
 |🔒 | `Ember._Backburner` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember._Backburner&sort=updated&sortAscending=false) | n/a |
 |🌐 | `Ember.inject` | EmberObserver: [Many, all using classic classes](https://emberobserver.com/code-search?codeQuery=Ember.inject&sort=updated&sortAscending=false). A lot of results are also classic-class docs. | Use [`@service`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fservice/service) |
 
 Any projects using these are already not safe for embroider and won't work with Vite
-|   | API | Usage | Migration |
+|   | API | Usage: EmberObserver | Migration |
 | - | --- | ----- | --------- |
-|🫣 | `Ember.__loader` | EmberObserver: [159 addons. Some experimental. Most from `@ascua`](https://emberobserver.com/code-search?codeQuery=Ember.__loader&sort=updated&sortAscending=false) | n/a |
-| 🫣 | `Ember.__loader.require` | EmberObserver: [same as `Ember.__loader`](https://emberobserver.com/code-search?codeQuery=Ember.__loader.require&sort=updated&sortAscending=false) | n/a |
-| 🫣 | `Ember.__loader.define` | EmberObserver: [5 addons, ~2 recent](https://emberobserver.com/code-search?codeQuery=Ember.__loader.define&sort=updated&sortAscending=false). One is `ember-cli-fastboot` (tests, test-support). | n/a |
-|🫣 | `Ember.__loader.registry` | EmberObserver: [13 addons, ~5 recent](https://emberobserver.com/code-search?codeQuery=Ember.__loader.registry&sort=updated&sortAscending=false). One is `ember-cli-fastboot` (tests, test-support). | n/a |
-|🔒 | `Ember.BOOTED` | EmberObserver: [None](https://emberobserver.com/code-search?codeQuery=Ember.BOOTED&sort=updated&sortAscending=false) | n/a |
-|🔒 | `Ember.TEMPLATES` | EmberObserver: [`ember-resolver`](https://emberobserver.com/code-search?codeQuery=Ember.TEMPLATES&sort=updated&sortAscending=false) | n/a |
+|🫣 | `Ember.__loader` | [159 addons. Some experimental. Most from `@ascua`](https://emberobserver.com/code-search?codeQuery=Ember.__loader&sort=updated&sortAscending=false) | n/a |
+| 🫣 | `Ember.__loader.require` | [same as `Ember.__loader`](https://emberobserver.com/code-search?codeQuery=Ember.__loader.require&sort=updated&sortAscending=false) | n/a |
+| 🫣 | `Ember.__loader.define` | [5 addons, ~2 recent](https://emberobserver.com/code-search?codeQuery=Ember.__loader.define&sort=updated&sortAscending=false). One is `ember-cli-fastboot` (tests, test-support). | n/a |
+|🫣 | `Ember.__loader.registry` | [13 addons, ~5 recent](https://emberobserver.com/code-search?codeQuery=Ember.__loader.registry&sort=updated&sortAscending=false). One is `ember-cli-fastboot` (tests, test-support). | n/a |
+|🔒 | `Ember.BOOTED` | [None](https://emberobserver.com/code-search?codeQuery=Ember.BOOTED&sort=updated&sortAscending=false) | n/a |
+|🔒 | `Ember.TEMPLATES` | [`ember-resolver`](https://emberobserver.com/code-search?codeQuery=Ember.TEMPLATES&sort=updated&sortAscending=false) | n/a |
 
 Replaced by [RFC #931][RFC-931]
-|   | API | Usage | Migration |
+|   | API | Usage: EmberObserver | Migration |
 | - | --- | ----- | --------- |
-- 🫣 `Ember.HTMLBars`
-- 🫣 `Ember.HTMLBars.template`
-- 🫣 `Ember.HTMLBars.compile`
-- 🫣 `Ember.HTMLBars.precomple`
-- 🫣 `Ember.Handlebars`
-- 🫣 `Ember.Handlebars.template`
-- 🫣 `Ember.Handlebars.Utils.escapeExpression`
-    Removed in [ember.js PR#20360](https://github.com/emberjs/ember.js/pull/20360) as it is not public API.
-- 🫣 `Ember.Handlebars.compile`
-- 🫣 `Ember.Handlebars.precomple`
+|🫣 | `Ember.HTMLBars` | [Lots of usage (encompasses the below APIs)](https://emberobserver.com/code-search?codeQuery=Ember.HTMLBars&sort=updated&sortAscending=false) | n/a |
+|🫣 | `Ember.HTMLBars.DOMHelper` | [`ember-cli-fastboot`](https://emberobserver.com/code-search?codeQuery=Ember.HTMLBars.DOMHelper&sort=updated&sortAscending=false) uses `protocolForURL`, `parseHTML` | n/a |
+|🫣 | `Ember.HTMLBars.template` | [`ember-cli-fastboot`](https://emberobserver.com/code-search?codeQuery=Ember.HTMLBars.template&sort=updated&sortAscending=false) (and `ember-ast-hot-load`) | n/a |
+|🫣 | `Ember.HTMLBars.compile` | [old addons](https://emberobserver.com/code-search?codeQuery=Ember.HTMLBars.compile&sort=updated&sortAscending=false) | n/a |
+|🫣 | `Ember.HTMLBars.precomple` | [`ember-ast-hot-load`](https://emberobserver.com/code-search?codeQuery=Ember.HTMLBars.precompile&sort=updated&sortAscending=false) | n/a |
+|🫣 | `Ember.Handlebars` | [174 addons, mostly @ascua](https://emberobserver.com/code-search?codeQuery=Ember.Handlebars&sort=updated&sortAscending=false) and also a lot of mentions in docs. | n/a |
+|🫣 | `Ember.Handlebars.template` | [None](https://emberobserver.com/code-search?codeQuery=Ember.Handlebars.template&sort=updated&sortAscending=false) | n/a |
+|🫣 | `Ember.Handlebars.Utils.escapeExpression` | [100 addons, mostly @ascua](https://emberobserver.com/code-search?codeQuery=Ember.Handlebars.Utils.escapeExpression&sort=updated&sortAscending=false) | Removed in [ember.js PR#20360](https://github.com/emberjs/ember.js/pull/20360) as it is not public API. |
+|🫣 | `Ember.Handlebars.compile` | [`ember-cli-fastboot` and `ember-collection`](https://emberobserver.com/code-search?codeQuery=Ember.Handlebars.compile&sort=updated&sortAscending=false) | n/a |
+|🫣 | `Ember.Handlebars.precomple` | [None](https://emberobserver.com/code-search?codeQuery=Ember.Handlebars.precompile&sort=updated&sortAscending=false) | n/a |
 
 
+Other APIs
 - 🫣 `Ember.testing`  
   Instead, use
 
