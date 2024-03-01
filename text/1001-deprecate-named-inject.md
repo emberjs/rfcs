@@ -43,6 +43,129 @@ This allows us to slim down our public API surface area to more of _what's neede
 
 Most folks can do a mass find and replace switch from `inject as service` to just `service`.
 
+An example codemod could look [something like this](https://astexplorer.net/#/gist/119f88339ea024e7cde63c71f52ce216/4d128a1239cbb56e00a69d3f710d67c20ed0e431)
+```js 
+export const parser = 'ts'
+
+export default function transformer(file, api) {
+  const j = api.jscodeshift;
+  
+  const importNames = new Set();
+
+  const root = j(file.source);
+  
+  // find things we want to get rid of
+  root
+    .find(j.ImportSpecifier)
+    .forEach(path => {
+      if (path.node.imported.name === 'inject') {
+      	importNames.add(path.node.local.name);
+      }
+    })
+  
+  // now it's time to replace
+  root.find(j.ClassProperty).forEach(path => {
+    let node = path.node;
+    
+    let hasInject = hasDecorators(node, [...importNames.values()]);
+    
+    if (!hasInject) return;
+    
+    node.decorators = node.decorators.map(decorator => {
+      let { expression } = decorator;
+      
+      if (expression.type === 'Identifier') {
+        if (importNames.has(expression.name)) {
+          decorator.expression = j.identifier('service');
+        }
+      }
+      
+      if (expression.type === 'CallExpression') {
+        decorator.expression.callee = j.identifier('service');
+      }
+      
+      return decorator;
+    });
+  });
+  
+  return root.toSource();
+}
+
+// Copied from: https://github.com/NullVoxPopuli/ember-concurrency-codemods/tree/main
+function firstMatchingDecorator(node, named = []) {
+  if (!node.decorators) return;
+
+  return node.decorators.find((decorator) => {
+    let { expression } = decorator;
+
+    switch (expression.type) {
+      case 'MethodDefinition': {
+      }
+      case 'CallExpression': {
+        let { callee } = expression;
+
+        switch (callee.type) {
+          case 'Identifier':
+            return named.includes(callee.name);
+          case 'MemberExpression': {
+            let { object } = callee;
+
+            return named.includes(object.callee.name);
+          }
+        }
+      }
+      case 'Identifier':
+        return named.includes(expression.name);
+    }
+  });
+}
+
+function hasDecorators(node, named = []) {
+  return Boolean(firstMatchingDecorator(node, named));
+}
+```
+
+<details><summary>The test scenarios</summary>
+
+```ts 
+import { inject } from '@ember/service';
+import { inject as service } from '@ember/service';
+// import Service from '@ember/service';
+import BaseService from '@ember/service';
+import { inject as serviceDecorator } from '@ember/service';
+import { inject as x } from '@ember/service';
+// import { service } from '@ember/service';
+import { service as y } from '@ember/service';
+// import Service, { inject, service } from '@ember/service';
+import Service, { inject as s } from '@ember/service';
+
+
+export default class Demo extends Service {
+  
+}
+
+export default class Demo2 extends BaseService {
+  // simple
+  @inject router;
+  @service router1;
+  @x router2;
+  @y router3;
+  @serviceDecorator router4;
+  @inject('router') router41;
+  
+  // TS-only
+  @inject declare router5: Type;
+  @inject('router') declare router51: Type;
+  @service declare router6: Type;
+  @x declare router7: Type;
+  @y declare router8: Type;
+  @serviceDecorator declare router9: Type;
+}
+```
+
+</detailS>
+
+
 ## How We Teach This
 
 The docs / guides already use the new import path.
