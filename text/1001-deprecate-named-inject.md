@@ -176,7 +176,10 @@ n/a
 
 ## Alternatives
 
-n/a
+do nothing, the cost of an export alias is:
+- a few extra bytes
+- mental gymnastics for teaching
+- "another case to cover" for tooling
 
 ## Unresolved questions
 
