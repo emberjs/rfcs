@@ -231,9 +231,9 @@ Other APIs
 
 Most of this is covered in [RFC #176](https://rfcs.emberjs.com/id/0176-javascript-module-api)
 
-|   | `Ember.` API | Use this instead |
-| - | ---------- | ---------------- |
-|🌐 | `Ember.FEATURES` | `import { isEnabled, FEATURES } from '@ember/canary-features';` |
+|   | `Ember.` API | Use this instead | Usage: EmberObserver |
+| - | ------------ | ---------------- | -------------------- |
+|🌐 | `Ember.FEATURES` | `import { isEnabled, FEATURES } from '@ember/canary-features';` | [@ember-data & @busy-web](https://emberobserver.com/code-search?codeQuery=Ember.FEATURES&sort=updated&sortAscending=false) |
 |🌐 | `Ember._setComponentManager` | `import { setComponentManager } from '@ember/component';` |
 |🌐 | `Ember._componentManagerCapabilities` | `import { capabilities } from '@ember/component';` |
 |🌐 | `Ember._modifierManagerCapabilities` | `import { capabilities } from '@ember/modifier';` |
