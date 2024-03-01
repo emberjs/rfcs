@@ -234,20 +234,20 @@ Most of this is covered in [RFC #176](https://rfcs.emberjs.com/id/0176-javascrip
 |   | `Ember.` API | Use this instead | Usage: EmberObserver |
 | - | ------------ | ---------------- | -------------------- |
 |🌐 | `Ember.FEATURES` | `import { isEnabled, FEATURES } from '@ember/canary-features';` | [@ember-data & @busy-web](https://emberobserver.com/code-search?codeQuery=Ember.FEATURES&sort=updated&sortAscending=false) |
-|🌐 | `Ember._setComponentManager` | `import { setComponentManager } from '@ember/component';` |
-|🌐 | `Ember._componentManagerCapabilities` | `import { capabilities } from '@ember/component';` |
-|🌐 | `Ember._modifierManagerCapabilities` | `import { capabilities } from '@ember/modifier';` |
-|🌐 | `Ember._createCache` | `import { createCache } from '@glimmer/tracking/primitives/cache';` [RFC #615][RFC-615] |
-|🌐 | `Ember._cacheGetValue` | `import { getValue } from '@glimmer/tracking/primitives/cache';` [RFC #615][RFC-615] |
-|🌐 | `Ember._cacheIsConst` | `import { isConst } from '@glimmer/tracking/primitives/cache';` [RFC #615][RFC-615] |
-|🌐 | `Ember._tracked` | `import { tracked } from '@glimmer/tracking';` |
-|🌐 | `Ember.RSVP` | `import RSVP from 'rsvp';` |
-|🌐 | `Ember.guidFor` | `import { guidFor } from '@ember/object/internals';` |
-|🌐 | `Ember.getOwner` | `import { getOwner } from '@ember/owner';` |
-|🌐 | `Ember.setOwner` | `import { setOwner } from '@ember/owner';` |
-|🌐 | `Ember.onLoad` | `import { onLoad } from '@ember/application';` |
-|🌐 | `Ember.runLoadHooks` | `import { runLoadHooks } from '@ember/application';` |
-|🌐 | `Ember.Application` | `import Application from '@ember/application';` |
+|🌐 | `Ember._setComponentManager` | `import { setComponentManager } from '@ember/component';` | [None](https://emberobserver.com/code-search?codeQuery=Ember._setComponentManager&sort=updated&sortAscending=false) |
+|🌐 | `Ember._componentManagerCapabilities` | `import { capabilities } from '@ember/component';` | [None](https://emberobserver.com/code-search?codeQuery=Ember._componentManagerCapabilities&sort=updated&sortAscending=false)
+|🌐 | `Ember._modifierManagerCapabilities` | `import { capabilities } from '@ember/modifier';` | [ember-modifier-manager-polyfill](https://emberobserver.com/code-search?codeQuery=Ember._modifierManagerCapabilities&sort=updated&sortAscending=false)
+|🌐 | `Ember._createCache` | `import { createCache } from '@glimmer/tracking/primitives/cache';` [RFC #615][RFC-615] | [None](https://emberobserver.com/code-search?codeQuery=Ember._createCache&sort=updated&sortAscending=false)
+|🌐 | `Ember._cacheGetValue` | `import { getValue } from '@glimmer/tracking/primitives/cache';` [RFC #615][RFC-615] | [None](https://emberobserver.com/code-search?codeQuery=Ember._cacheGetValue&sort=updated&sortAscending=false)
+|🌐 | `Ember._cacheIsConst` | `import { isConst } from '@glimmer/tracking/primitives/cache';` [RFC #615][RFC-615] | [None](https://emberobserver.com/code-search?codeQuery=Ember._cacheIsConst&sort=updated&sortAscending=false)
+|🌐 | `Ember._tracked` | `import { tracked } from '@glimmer/tracking';` | [ember-custom-elements and ember-custom-elements-patch](https://emberobserver.com/code-search?codeQuery=Ember._tracked&sort=updated&sortAscending=false)
+|🌐 | `Ember.RSVP` | `import RSVP from 'rsvp';` | [290 addons, less than 50 updated in the last 5 years](https://emberobserver.com/code-search?codeQuery=Ember.RSVP&sort=updated&sortAscending=false)
+|🌐 | `Ember.guidFor` | `import { guidFor } from '@ember/object/internals';` | [ember-cli-fastboot, ember-flexberry-gjs](https://emberobserver.com/code-search?codeQuery=Ember.guidFor&sort=updated&sortAscending=false) everything else is older than 5 years. |
+|🌐 | `Ember.getOwner` | `import { getOwner } from '@ember/owner';` | [ember-cli-fastboot, flexberry(-gjs)](https://emberobserver.com/code-search?codeQuery=Ember.getOwner&sort=updated&sortAscending=false). @summit-electric-supply, @eflexsystems, ember-tether, etc.
+|🌐 | `Ember.setOwner` | `import { setOwner } from '@ember/owner';` | [ember-cli-fastboot](https://emberobserver.com/code-search?codeQuery=Ember.setOwner&sort=updated&sortAscending=false), everything else is more than 5 years old.
+|🌐 | `Ember.onLoad` | `import { onLoad } from '@ember/application';` | [None](https://emberobserver.com/code-search?codeQuery=Ember.onLoad&sort=updated&sortAscending=false). Everything is more than 5 years old.
+|🌐 | `Ember.runLoadHooks` | `import { runLoadHooks } from '@ember/application';` | [ember-new-modules-shim (7 years ago)](https://emberobserver.com/code-search?codeQuery=Ember.runLoadHooks&sort=updated&sortAscending=false)
+|🌐 | `Ember.Application` | `import Application from '@ember/application';` | [1756 addons](https://emberobserver.com/code-search?codeQuery=Ember.Application&sort=updated&sortAscending=false), some results are docs, many are test suites, some are types. `ember-cli-fastboot` uses the value to `reopen`.
 |🌐 | `Ember.ApplicationInstance` | `import ApplicationInstance from '@ember/application/instance';` |
 |🌐 | `Ember.Namespace` | `import Namespace from '@ember/application/namespace';` |
 |🌐 | `Ember.A` | `import { A }  from '@ember/array';` |
