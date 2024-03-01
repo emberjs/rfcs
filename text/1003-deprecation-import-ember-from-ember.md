@@ -159,8 +159,9 @@ Utility
 |🫣 | `Ember._Cache` | [None](https://emberobserver.com/code-search?codeQuery=Ember._Cache&sort=updated&sortAscending=false) | n/a |
 |🔒 | `Ember.GUID_KEY` | [`ember-data-save-relationships`, 6 years ago](https://emberobserver.com/code-search?codeQuery=Ember.GUID_KEY&sort=updated&sortAscending=false) | n/a |
 | 🔒 | `Ember.canInvoke` | [@summit-electric-supply](https://emberobserver.com/code-search?codeQuery=Ember.canInvoke&sort=updated&sortAscending=false) | use [optional chaining](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining), e.g.: `this.foo?.method?.()` |
-|🔒 | `Ember.generateGuid` | [`ember-flexberry + old addons](https://emberobserver.com/code-search?codeQuery=Ember.generateGuid&sort=updated&sortAscending=false) | Use [`guidFor`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fobject%2Finternals/guidFor) or [`uuid`](https://www.npmjs.com/package/uuid) |
-|🌐 | `Ember.uuid` | [3 recent addons](https://emberobserver.com/code-search?codeQuery=Ember.uuid&sort=updated&sortAscending=false) | Use [`guidFor`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fobject%2Finternals/guidFor) or [`uuid`](https://www.npmjs.com/package/uuid) |
+|🔒 | `Ember.generateGuid` | [`ember-flexberry + old addons](https://emberobserver.com/code-search?codeQuery=Ember.generateGuid&sort=updated&sortAscending=false) | Use [`guidFor`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fobject%2Finternals/guidFor) or [`uuid`](https://www.npmjs.com/package/uuid) or the browser-native [`crypto.randomUUID()`](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID) |
+
+|🌐 | `Ember.uuid` | [3 recent addons](https://emberobserver.com/code-search?codeQuery=Ember.uuid&sort=updated&sortAscending=false) | Use [`guidFor`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fobject%2Finternals/guidFor) or [`uuid`](https://www.npmjs.com/package/uuid) or the browser-native [`crypto.randomUUID()`](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID) |
 |🔒 | `Ember.wrap` | [None](https://emberobserver.com/code-search?codeQuery=Ember.wrap&sort=updated&sortAscending=false) | n/a |
 |🔒 | `Ember.inspect` | [old addons](https://emberobserver.com/code-search?codeQuery=Ember.inspect&sort=updated&sortAscending=false) | n/a | 
 |🫣 | `Ember.Debug` | [old addons](https://emberobserver.com/code-search?codeQuery=Ember.Debug&sort=updated&sortAscending=false) | use [`@ember/debug`](https://api.emberjs.com/ember/5.6/modules/@ember%2Fdebug) | 
@@ -185,11 +186,13 @@ Any projects using these are already not safe for embroider and won't work with 
 | 🫣 | `Ember.__loader.define` | [5 addons, ~2 recent](https://emberobserver.com/code-search?codeQuery=Ember.__loader.define&sort=updated&sortAscending=false). One is `ember-cli-fastboot` (tests, test-support). | n/a |
 |🫣 | `Ember.__loader.registry` | [13 addons, ~5 recent](https://emberobserver.com/code-search?codeQuery=Ember.__loader.registry&sort=updated&sortAscending=false). One is `ember-cli-fastboot` (tests, test-support). | n/a |
 |🔒 | `Ember.BOOTED` | [None](https://emberobserver.com/code-search?codeQuery=Ember.BOOTED&sort=updated&sortAscending=false) | n/a |
-|🔒 | `Ember.TEMPLATES` | [`ember-resolver`](https://emberobserver.com/code-search?codeQuery=Ember.TEMPLATES&sort=updated&sortAscending=false) | n/a |
 
-Replaced by [RFC #931][RFC-931]
+
+Replaced by [RFC #931][RFC-931].
+For scenarios where folks would like to compile templates at runtime, see [RFC #931][RFC-931] or the code of [ember-repl](https://www.npmjs.com/package/ember-repl).
 |   | API | Usage: EmberObserver | Migration |
 | - | --- | ----- | --------- |
+|🔒 | `Ember.TEMPLATES` | [`ember-resolver`](https://emberobserver.com/code-search?codeQuery=Ember.TEMPLATES&sort=updated&sortAscending=false) | n/a |
 |🫣 | `Ember.HTMLBars` | [Lots of usage (encompasses the below APIs)](https://emberobserver.com/code-search?codeQuery=Ember.HTMLBars&sort=updated&sortAscending=false) | n/a |
 |🫣 | `Ember.HTMLBars.DOMHelper` | [`ember-cli-fastboot`](https://emberobserver.com/code-search?codeQuery=Ember.HTMLBars.DOMHelper&sort=updated&sortAscending=false) uses `protocolForURL`, `parseHTML` | n/a |
 |🫣 | `Ember.HTMLBars.template` | [`ember-cli-fastboot`](https://emberobserver.com/code-search?codeQuery=Ember.HTMLBars.template&sort=updated&sortAscending=false) (and `ember-ast-hot-load`) | n/a |
@@ -339,6 +342,8 @@ Most of this is covered in [RFC #176](https://rfcs.emberjs.com/id/0176-javascrip
 
 [RFC-615]: https://rfcs.emberjs.com/id/0615-autotracking-memoization
 
+## What to do about things that don't have replacements
+
 ## How We Teach This
 
 The guides already use the modern imports where available.
@@ -353,6 +358,11 @@ When using embroider and `staticEmberSource: true`, the benefits of not having t
 Available Codemods
 
 - https://github.com/ember-codemods/ember-modules-codemod (from the work of RFC 176)
+
+## Depracation Guide
+
+- Separate ids for each API so that folks don't have to scroll too far to get to their migration path (if a migration path exists).
+- Mostly using the above tables, but without the `Usage: EmberObserver` column.
 
 ## Drawbacks
 
