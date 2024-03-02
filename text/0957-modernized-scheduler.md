@@ -46,11 +46,11 @@ such as RSVP to support this exploration.
 
 ### The Short Answer: *Better Things Now Exist*
 
-Backburner was written in an era that predates most async primitives including microtasks and requestAnimationFrame.
-It was written to help coordinate work that needed to complete before the browser might render again, in effect
-a microtask polyfill with requestAnimationFrame ideals.
+Backburner (`@ember/runloop`) was written in an era that predates most async primitives including [microtasks](https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide) and [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame).
 
-RSVP similarly was written in an era in which native Promise support was being proposed but did not yet exist. As
+It was written to help coordinate work that needed to complete before the browser might render again: in effect this made backburner a microtask polyfill, albeit one with requestAnimationFrame ideals.
+
+[RSVP](https://github.com/tildeio/rsvp.js) similarly was written in an era in which native Promise support was being proposed but did not yet exist. As
 such, while it provided an attempt at polyfilling microtasks, Ember chose to replace RSVP's microtask polyfill with
 Backburner in order to reduce the overhead of promise flushing and reduce the risk of multiple renders occurring
 within the same frame. In effect, this allowed Backburner to *also* function to [multiplex](https://en.wikipedia.org/wiki/Multiplexing)
@@ -61,6 +61,15 @@ Noteably, the idea of being able to control the last microtask in the queue for 
 work has become [a common need](https://twitter.com/jarredsumner/status/1694351991626166658?s=20), but remains
 a missing primitive.
 
+In short, to summarize the motivations of the *current* system, Ember had need of
+
+- a high priority task queue
+- a guarantee of the ability to do its render work before browser render
+- the ability to let async work complete before flushing render
+- a signal that work was occurring after which it should render
+- the ability to let other work be scheduled to be done relative
+  to its render.
+
 ### The Other Short Answer: *Embrace The Platform*
 
 Polyfilled microtasks typically do not have a meaningful stack trace due to their queued flush,
@@ -68,15 +77,15 @@ resulting in debugging and error tracing being especially difficult to use.
 
 Native microtasks automatically piece together the stack trace across async boundaries, allowing
 in most situations an error stack or a pause in a debugger to allow the developer to work back to
-an originating change more quickly.
+an originating change more quickly. This includes in performance
+tooling such as the chrome profiler, where promises and other async callbacks will draw a line back to the point they were scheduled to help explore how the work evolved.
 
 Thus encouraging use of native microtasks whereever possible automatically improves the debugging
 experience for all developers, espcially for remote traces captured by bugtracking software.
 
-It also significantly simplifies the mental model and clarity for developers. While scheduling
-will still exist, in the vast majority of cases instead of needing to learn and think about
-"what is RSVP" and "what is Backburner" and "what is the Runloop" the solution is "just use a
-promise" or "just use async/await".
+It also significantly simplifies the mental model and clarity for developers. While the concept of scheduling
+will still exist, this RFC would enable developers to remove
+"what is RSVP", "what is Backburner" and "what is the Runloop" from their mental model. Instead of thinking about scheduling, developers in most cases can "just use a promise" or "just use async/await" or "just use concurrency".
 
 ### The Complex Answer: *Making Mutation Safer & Performance*
 
@@ -125,6 +134,7 @@ before the browser has painted.
 
 To understand the phases of work to be done, it helps to understand a bit about
 the mechanics of the browser's render cycle.
+
 ### Frames
 
 The scheduler interface conceptualizes work as belonging to a "Frame", where a Frame
@@ -168,6 +178,7 @@ We divide this work into 6 conceptual phases:
 - `idle` - work that should be deferred until the browser is under less load.
 
 We will discuss these phases in more depth below.
+
 ### Strategies
 
 We refer to an implementation of the scheduler interface as a `Strategy`. The
@@ -590,6 +601,8 @@ await idle();
 - RSVP configuration would be gated behind an optional feature flag `use-native-rsvp-flush`, with a deprecation
     to set it to the new behavior
 - RSVP usage would be deprecated at the import level at build time, using infra similar to ember-cli-babel deprecation
+- ember-concurrency should remove its usage of the runloop and RSVP
+- ember-concurrency should add a test-waiter to tasks
 - Timer move would be handled via a normal deprecation + codemod to shift imports to the new import location
 - an optional feature flag `use-async-scheduler` would move `scheduleOnce`, `schedule`, `next`, `run`, `join` and `bind` to delegating
   into the new scheduler interface.
@@ -598,8 +611,9 @@ await idle();
      interface and executed accordingly.
   - work scheduled into `actions` would run as a microtask right away: `schedule('action', doWork)` becomes `Promise.resolve().then(doWork)`
   - Ember's glimmer integration would shift from assuming that scheduling render in the render phase of every backburner flush and additionally validating that render at the end of every flush is "sync" to being aware that it is async and utilizing the new scheduler interface to schedule its render and its revalidate at the appropriate times. **This is one of the biggest reasons this migration is handled by an app-wide flag** as it carries the potential for apps to encounter bugs due to having become accidentally reliant on existing "sync complete" timing semantics.
-- a deprecation would be printed for usage of any `@ember/runloop` API 
-
+- a deprecation would be printed for usage of any `@ember/runloop` API
+- the default `on` modifier should wrap in a test-waiter any returned promise from a provided handler during tests
+- the ability to use zero-production-cost promise-based test-waiters quickly throughought code should be improved
 
 ## How we teach this
 
