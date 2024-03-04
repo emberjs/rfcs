@@ -342,7 +342,23 @@ Most of this is covered in [RFC #176](https://rfcs.emberjs.com/id/0176-javascrip
 
 [RFC-615]: https://rfcs.emberjs.com/id/0615-autotracking-memoization
 
-## What to do about things that don't have replacements
+## Implementation Plan 
+
+These can happen in any order
+
+- Add deprecations to each `Ember.*` access
+- Add the [Testing utilities](#testing-utilities) to `@ember/test`
+- Add an `@ember/version` package to `ember-source`
+- Update ember-inspector to use imports for the internals and instrumentation APIs
+- Add `@ember/inspector-support` to `ember-source` to manage things like `LIBRARIES`. 
+    ```js
+    import { libraries } from '@ember/inspector-support';
+
+    libraries.add('ember-data', '5.3.1');
+    // and/or
+    libraries.addAll(depInfoFromPlugin);
+    ```
+- Add deprecation guide entries for each API
 
 ## How We Teach This
 
@@ -359,7 +375,7 @@ Available Codemods
 
 - https://github.com/ember-codemods/ember-modules-codemod (from the work of RFC 176)
 
-## Depracation Guide
+## Deprecation Guide
 
 - Separate ids for each API so that folks don't have to scroll too far to get to their migration path (if a migration path exists).
 - Mostly using the above tables, but without the `Usage: EmberObserver` column.
