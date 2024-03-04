@@ -349,6 +349,8 @@ These can happen in any order
 - Add deprecations to each `Ember.*` access
 - Add the [Testing utilities](#testing-utilities) to `@ember/test`
 - Add an `@ember/version` package to `ember-source`
+- Add re-exports of private APIs, `ComputedProperty`, and `_setClassicDecorator` 
+    These will still be deprecated on `Ember.`, and will be deprecated themselves as we progress through deprecating Ember Classic.
 - Update ember-inspector to use imports for the internals and instrumentation APIs
 - Add `@ember/inspector-support` to `ember-source` to manage things like `LIBRARIES`. 
     ```js
