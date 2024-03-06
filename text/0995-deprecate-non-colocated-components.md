@@ -113,7 +113,7 @@ Or using `component-structure=nested`
         index.hbs
 ```
 
-Note, however, that classi components _importing_ the `layout` and setting it on an `@ember/component` will still work.
+Note, however, that classic components _importing_ the `layout` and setting it on an `@ember/component` will still work.
 The key thing being deprecated is the runtime resolution of templates, so if there is an import involved, there is no runtime resolution.
 
 ### `ember-source`
