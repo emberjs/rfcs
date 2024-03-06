@@ -164,7 +164,7 @@ Specifically, we'll remove:
 
 Guides and docs already don't mention the above old layouts.
 
-### How to migrate off old layouts 
+### Deprecation Guide
 
 #### component templates in `templates/components`
 
