@@ -224,7 +224,7 @@ After:
 
 Before:
 ```hbs
-<SomeComponent @update={{action (mut @value.property}} />
+<SomeComponent @update={{action (mut @value.property)}} />
 ```
 After:
 ```js
