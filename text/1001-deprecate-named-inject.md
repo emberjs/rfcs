@@ -172,7 +172,9 @@ The docs / guides already use the new import path.
 
 ## Drawbacks
 
-n/a
+As with any deprecation, we introduce an upgrade cliff for addons that are updated infrequently, and consequently their consuming apps.
+As a mitigation, we could, for v1 addons, add an additional transform to ember-cli-babel to automatically upgrade `inject` from `@ember/service` to `service`.
+This does narrow the range a bit, as `service` was introduced in ember-source@4.1, so libraries could not support from 3.28 to 6 (or whichever major ends up removing the `inject`) without adding `@embroider/macros` to conditionally import `inject` or `service` based on the consumer's ember-source version.
 
 ## Alternatives
 
@@ -180,6 +182,9 @@ do nothing, the cost of an export alias is:
 - a few extra bytes
 - mental gymnastics for teaching
 - "another case to cover" for tooling
+
+add a lint against `inject`
+- all the downsides of the above ("do nothing") may still be present
 
 ## Unresolved questions
 
