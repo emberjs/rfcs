@@ -35,7 +35,7 @@ Deprecates
 - pods component layout
 
 
-After "ember@6", only the following will be allowed:
+Once this deprecation is implemented, only the following will be allowed:
 - co-located components 
 - gjs / gts components
 
