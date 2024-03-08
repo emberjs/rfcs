@@ -234,7 +234,7 @@ Other APIs
 
 Most of this is covered in [RFC #176](https://rfcs.emberjs.com/id/0176-javascript-module-api)
 
-Unless otherwise state, there will not be usage-based decision on these, as they all exist under available imports today.
+Unless otherwise stated, there will not be usage-based decision on these, as they all exist under available imports today.
 
 |   | `Ember.` API | Use this instead | 
 | - | ------------ | ---------------- |
