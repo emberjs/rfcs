@@ -339,7 +339,7 @@ Unless otherwise stated, there will not be usage-based decision on these, as the
 |🌐 | `Ember._get` | `import { get } from '@ember/helper';` | 
 |🌐 | `Ember._on` | `import { on } from '@ember/modifier';` | 
 |🌐 | `Ember._fn` | `import { fn } from '@ember/helper';` | 
-|🌐 | `Ember.ENV` | `import MyEnv from '<my-app>/config/environment';` |
+|🌐 | `Ember.ENV` | `import MyEnv from '<my-app>/config/environment';` (for apps) or `owner.resolveRegistration('config:environment')` for addons|
 
 
 [RFC-615]: https://rfcs.emberjs.com/id/0615-autotracking-memoization
