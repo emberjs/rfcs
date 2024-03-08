@@ -395,4 +395,5 @@ n/a
 
 n/a
 
-Do our instrumentation and internals sub-packages have any SemVer guarantees? Or are we allowed to "do what we need to" and not care about _public-facing_ SemVer?
+Q: Do our instrumentation and internals sub-packages have any SemVer guarantees? Or are we allowed to "do what we need to" and not care about _public-facing_ SemVer?
+A: If something is privately but heavily used, we will try to deprecate before removing the API and make sure the deprecation makes it in to an LTS before that removal.
