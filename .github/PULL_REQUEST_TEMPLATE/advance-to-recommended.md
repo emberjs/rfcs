@@ -37,13 +37,21 @@ An FCP is required to enter this stage. Multiple RFCs may be moved as a batch in
 
 ## Checklist to move to Recommended
 
-- [ ] Any criteria for "Recommended" for this proposal that were established in the Ready For Release stage have been met
-- [ ] If appropriate, the feature is integrated into the tutorial and the guides prose. API documentation is polished and updates are carried through to other areas of API docs that may not directly pertain to the feature.
-- [ ] If the proposal replaces an existing feature, the addon ecosystem has largely updated to work with both old and new features.
-- [ ] If the proposal updates or replaces an existing feature, high-quality codemods are available
-- [ ] If needed, Ember debugging tools as well as popular IDE support have been updated to support the feature.
-- [ ] If the feature is part of a suite of features that were designed to work together for best ergonomics, the other features are also ready to be "Recommended".
-- [ ] This PR has been converted from a draft to a regular PR and the `Final Comment Period` label has been added to start the FCP
+- [ ] **Criteria specific to this feature:** Any additional criteria for "Recommended" for this proposal that were established in the Ready For Release stage have been met.
+- [ ] **Tutorial:** If appropriate, the feature is integrated into the tutorial.
+- [ ] **Guides:** If appropriate, the feature is integrated into the guides prose. 
+- [ ] **API Docs:** API documentation is polished and updates are carried through to other areas of API docs that may not directly pertain to the feature.
+- [ ] **Addon Ecosystem:** If the proposal replaces an existing feature, the addon ecosystem has largely updated to work with both old and new features.
+- [ ] **Codemods:** If the proposal updates or replaces an existing feature, high-quality codemods are available.
+- [ ] **Debugging Tools:** If needed, Ember debugging tools (e.g. Ember Inspector, Deprecation Workflow) have been updated to support the feature.
+- [ ] **IDE Support:** If needed, popular IDE support has been updated to support the feature.
+- [ ] **Engines, SSR:** If needed, ecosystem feature such as Ember Engines, SSR support have been updated to support the feature.
+- [ ] **Blueprints:** Blueprints have been updated to support the feature and to reflect the new best practices implied by this feature.
+- [ ] **Linting:** Lint rules have been updated or added or removed to support the feature and to reflect the new best practices implied by this feature.
+- [ ] **Deprecations:** If this feature implies that other features are no longer best practice, RFCs have been created to deprecate those features.
+- [ ] **Blog Post:** Consider if a blog post should be written to introduce this feature to the community.
+- [ ] **Feature Suite:** If the feature is part of a suite of features that were designed to work together for best ergonomics, the other features are also ready to be "Recommended".
+- [ ] **FCP to Recommended:** This PR has been converted from a draft to a regular PR and the `Final Comment Period` label has been added to start the FCP.
 
 ## Criteria for moving to Recommended (required)
 
