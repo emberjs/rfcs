@@ -66,7 +66,7 @@ APIs for wiring up a test framework (e.g. QUnit, _etc_)
 |🌐 | `Ember.Test.QUnitAdapter` | [`ember-cli-fastboot`](https://emberobserver.com/code-search?codeQuery=Ember.Test.QUnitAdapter&sort=updated&sortAscending=false) | |
 |🌐 | `Ember.setupForTesting` | [`ember-cli-fastboot`](https://emberobserver.com/code-search?codeQuery=Ember.setupForTesting&sort=updated&sortAscending=false) | | 
 
-These will need to be moved to a module such as `@ember/test`.
+If needed, these will need to be moved to a module such as `@ember/test`.
 
 ### A way to communicate with the ember-inspector
 
