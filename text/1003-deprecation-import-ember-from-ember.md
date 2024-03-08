@@ -349,7 +349,7 @@ Unless otherwise stated, there will not be usage-based decision on these, as the
 These can happen in any order
 
 - Add deprecations to each `Ember.*` access
-- Add the [Testing utilities](#testing-utilities) to `@ember/test`
+- Add the [Testing utilities](#testing-utilities) to `@ember/test`, if needed.
 - Add an `@ember/version` package to `ember-source`
 - Add re-exports of private APIs, `ComputedProperty`, and `_setClassicDecorator` 
     These will still be deprecated on `Ember.`, and will be deprecated themselves as we progress through deprecating Ember Classic.
