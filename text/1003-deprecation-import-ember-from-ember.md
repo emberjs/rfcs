@@ -76,7 +76,7 @@ A good few already have available imports though.
 |   | API | import |
 | - | --- | ------ |
 |🔒| `Ember.meta` | `import { meta } from '@ember/-internals/meta';` |
-|🌐| `Ember.VERSION` | none, we should add one, `@ember/version` |
+|🌐| `Ember.VERSION` | `import { VERSION } from '@ember/version';` |
 |🔒| `Ember._captureRenderTree` | `import { captureRenderTree } from '@ember/debug';` |
 |🔒| `Ember.instrument` | `import { instrument } from '@ember/instrumentation';` |
 |🔒| `Ember.subscribe` | `import { subscribe } from '@ember/instrumentation';` |
