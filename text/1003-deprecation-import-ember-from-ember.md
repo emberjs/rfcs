@@ -224,6 +224,12 @@ Other APIs
   window.addEventListener('error', /* ... event handler ... */);
   ```
 
+  If you really need the original behavior:
+  ```js 
+  import { getOnerror, setOnerror } from '@ember/-internals/error-handling';
+  ```
+  But this should not be needed.
+
 
 [RFC-931]: https://github.com/emberjs/rfcs/pull/931
 
