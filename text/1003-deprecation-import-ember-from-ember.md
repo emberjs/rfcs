@@ -224,6 +224,12 @@ Other APIs
   window.addEventListener('error', /* ... event handler ... */);
   ```
 
+  For promise rejections, you'll want to use the `unhandledrejection` event.
+  ```js
+  window.addEventListener('unhandledrejection', /* ... event handler ... */);
+  ```
+
+
   If you really need the original behavior:
   ```js 
   import { getOnerror, setOnerror } from '@ember/-internals/error-handling';
