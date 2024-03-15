@@ -28,7 +28,6 @@ prs:
 project-link: Leave as is
 -->
 
-<-- Replace "RFC title" with the title of your RFC -->
 # Deprecate `import Ember from 'ember'; 
 
 ## Summary
@@ -219,7 +218,7 @@ Other APIs
   ```
 
 - 🌐 `Ember.onerror`
-  Instead use an event listener for the `error` event on window.
+  Instead you may be able to use an event listener for the `error` event on window.
   ```js
   window.addEventListener('error', /* ... event handler ... */);
   ```
@@ -377,6 +376,12 @@ These can happen in any order
 
 ## How We Teach This
 
+While `@ember/-internals` were created to be internal, introducing new names for them would create churn and would make it harder for addon authors to support a wide range of versions. The internals paths all work today on supported releases, so dropping the deprecated usage doesn't reduce your support matrix, whereas using a newly-introduced import path would. 
+
+_All `@ember/-internals(/*)?` APIs (as mentioned above) are now public API, and to remove any of those APIs, they will need to go through the deprecation process._
+
+------------
+
 The guides already use the modern imports where available.
 
 There is a place that needs updating, around advanced debugging, where folks configure Backburner to be in debug mode.
@@ -401,7 +406,7 @@ n/a, to be more module-friendly, we must get rid of the `'ember'` import.
 
 ## Alternatives
 
-n/a
+Don't use `@ember/-internals` and create new public APIs for all of the things currently under `@ember/-internals`. This would create a lot of churn in the ecosystem, when we want to get rid of some of these APIs anyway.
 
 ## Unresolved questions
 
