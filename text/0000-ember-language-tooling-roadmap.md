@@ -67,11 +67,11 @@ In particular:
 
 I was able to get the same Auto-Import functionality working in .gts files as in my [Glint PR](https://github.com/typed-ember/glint/pull/677) without writing any ugly TS service interface code. In fact, all I had to do was properly express `.gts` files as a VirtualCode (a core Volar primitive), and suddenly I got a lot of functionality for free, including auto-complete, but also a number of other commands and common Refactors:
 
-1[](https://machty.s3.amazonaws.com/ember/glint/glint_volar_compare2.png)
+![](https://machty.s3.amazonaws.com/ember/glint/glint_volar_compare2.png)
 
 One of the commands was an Organize Imports command that Glint would need [custom work](https://github.com/typed-ember/glint/pull/669) in order to implement:
 
-1[](https://machty.s3.amazonaws.com/ember/glint/organize_imports.png)
+![](https://machty.s3.amazonaws.com/ember/glint/organize_imports.png)
 
 Lastly, Volar provides a VSCode extension for debugging Volar LSPs called Volar Labs, and just by using proper Volar primitives of expressing `.gts` files as a VirtualCode that embeddeds other VirtualCodes (i.e. `<template>` tags containing Handlebars code), I was able to get Glint .gts files showing up correctly in Volar Labs convenient mapping UI (see screenshot below). This is another thing Volar gives you "for free" that we'd otherwise need Glint-specific tooling to provide (in Glint's case, a similar custom built VSCode command called "Show IR for Debugging" has been implemented with a subset of the functionality Volar Labs provides in the screenshot below):
 
