@@ -222,6 +222,7 @@ Along with this change, the existing `ember-resolver` package should be marked d
 - ember-auto-import
 - ember-resolver
 - ember-load-initializers
+- ember-cli-fastboot (has script-context code in vendor.js that tries to reopen Ember things)
 
   to make the strict-es-modules optional feature available.
 
