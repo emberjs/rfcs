@@ -128,6 +128,7 @@ When `strict-es-modules` is set:
  - `importSync` from `'@embroider/macros'` continues to work but it no longer guarantees lazy-evaluation (since lazy-and-synchronous is impossible under strict ES modules). 
  - the new special imports `#ember-compat-modules` and `#ember-compat-test-modules` become available (see below).
  - loading component templates via `<script type="text/x-handlebars">` in your HTML is no longer allowed. (**Oh yes, that is still a thing**.)
+ - [top-level await](https://github.com/tc39/proposal-top-level-await) becomes available to all app and addon code
 
 ### New Feature: #ember-compat-modules
 
@@ -307,6 +308,8 @@ class Example extends Component {
 ```
 
 because it will automatically build into your app all the possible matches, when you want that.
+
+If you do want to avoid eagerly evaluating both branches, you should consider switching from `importSync` to `await import()`, which becomes easier after enabling `strict-es-modules` because you can use `await` in top-level module scope.
 
 ### Implication: treeForAddon output
 
