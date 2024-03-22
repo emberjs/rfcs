@@ -378,7 +378,7 @@ These can happen in any order
 
 While `@ember/-internals` were created to be internal, introducing new names for them would create churn and would make it harder for addon authors to support a wide range of versions. The internals paths all work today on supported releases, so dropping the deprecated usage doesn't reduce your support matrix, whereas using a newly-introduced import path would. 
 
-_All `@ember/-internals(/*)?` APIs (as mentioned above) are now public API, and to remove any of those APIs, they will need to go through the deprecation process._
+_All `@ember/-internals(/*)?` APIs mentioned above are now public API, and to remove any of those APIs, they will need to go through the deprecation process._
 
 ------------
 
