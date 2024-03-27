@@ -32,7 +32,7 @@ The RFC had intended, and even describes in its transition path to move away fro
 It was a legacy API that existed prior to named arguments being introduced in
 Ember, and has continued to be supported via a template transform for some time.
 
-This RFC proposes that we immediately remove support for `{{this.attrs}}` in favor of named arguments.
+This RFC proposes that we add a deprecation warning to the build-time assertion that forbids `{{attrs}}`, it will also forbid `{{this.attrs}}`. 
 
 ## Motivation
 
