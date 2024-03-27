@@ -8,7 +8,7 @@ release-versions:
 teams:
   - framework
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/690
+  accepted: https://github.com/emberjs/rfcs/pull/1016 
 project-link:
 ---
 
