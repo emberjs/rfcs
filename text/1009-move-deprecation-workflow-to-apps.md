@@ -8,7 +8,6 @@ teams: # delete teams that aren't relevant
   - data
   - framework
   - learning
-  - steering
   - typescript
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/1009 
