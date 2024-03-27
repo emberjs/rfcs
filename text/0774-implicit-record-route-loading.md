@@ -1,14 +1,16 @@
 ---
-stage: released
+stage: recommended
 start-date: 2021-11-14T00:00:00.000Z
-release-date:
+release-date: 2023-09-11T00:00:00.00Z
 release-versions:
+  ember-source: v5.3.0
 teams:
   - framework
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/774'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/900'
   released: 'https://github.com/emberjs/rfcs/pull/955'
+  recommended: 'https://github.com/emberjs/rfcs/pull/970'
 ---
 
 # Deprecate Implicit Record Loading in Routes
