@@ -54,6 +54,8 @@ Being built in can give folks confidence that each property in the hash is indiv
 
 Once implemented, the guides, if they say anything about gjs/gts/`<template>` and `hash` by the time this would be implemented, would only remove the import.
 
+The guides should also detail which functions are built in to the framework and, therefore, do not need to be imported.
+
 ## Drawbacks
 
 People may not know where `hash` is defined.
