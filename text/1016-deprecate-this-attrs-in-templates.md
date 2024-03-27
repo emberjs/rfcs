@@ -1,5 +1,5 @@
 ---
-stage: recommended
+stage: accepted
 start-date: 2020-12-22T00:00:00.000Z
 release-date: 2021-03-22T00:00:00.000Z
 release-versions:
