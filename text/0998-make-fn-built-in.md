@@ -88,6 +88,8 @@ The behavior of `fn` would be the same as it is today, but defined by default in
 
 Once implemented, the guides, if they say anything about gjs/gts/`<template>` and `fn` by the time this would be implemented, would only remove the import.
 
+The guides should also detail which functions are built in to the framework and, therefore, do not need to be imported.
+
 ## Drawbacks
 
 People may not know where `fn` is defined.
