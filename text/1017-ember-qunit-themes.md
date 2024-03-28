@@ -44,8 +44,8 @@ Adding a new theme will make testing feel fresh, and more relaxed.
 ## Detailed design
 
 Finish this PR: https://github.com/emberjs/ember-qunit/pull/1166
-
-This design will also allow the inclusion of multiple themes, for varying experiences, and preferences -- in general more experimentation so that we can later choose a _best_ theme.
+- This design will also allow the inclusion of multiple themes, for varying experiences, and preferences -- in general more experimentation so that we can later choose a _best_ theme.
+- The old (current before this PR) theme will still be chooseable, but won't be default
 
 Release as a major to be safe, in case folks are already customizing the existing qunit styles.
 
