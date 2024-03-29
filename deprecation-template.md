@@ -28,7 +28,8 @@ prs:
 project-link: Leave as is
 -->
 
-# <RFC title>
+<-- Replace "RFC title" with the title of your RFC -->
+# RFC Title 
 
 ## Summary
 
@@ -47,6 +48,19 @@ Describe it in enough detail for someone who uses the deprecated functionality
 to understand, for someone to write the deprecation guide, and for someone
 familiar with the implementation to implement.
 
+> It can be helpful to write the deprecation guide as part of this section. Published deprecation
+> guides can be found at https://deprecations.emberjs.com/.
+
+> Please keep in mind any implications within the Ember ecosystem, such as:
+> - Lint rules (ember-template-lint, eslint-plugin-ember) that should be added, modified or removed
+> - Features that are replaced or made obsolete by this feature and should eventually be deprecated
+> - Ember Inspector and debuggability
+> - Server-side Rendering
+> - Ember Engines
+> - The Addon Ecosystem
+> - IDE Support
+> - Blueprints that should be added or modified
+
 ## How We Teach This
 
 > Would the acceptance of this proposal mean the Ember guides must be
@@ -57,6 +71,8 @@ functionality more? What should we do about documentation, in the guides
 related to this feature?
 How should this deprecation be introduced and explained to existing Ember
 users?
+
+> Keep in mind the variety of learning materials: API docs, guides, blog posts, tutorials, etc.
 
 ## Drawbacks
 
