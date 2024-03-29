@@ -1,9 +1,10 @@
 ---
 stage: recommended
 start-date: 2021-11-14T00:00:00.000Z
-release-date: 2023-09-11T00:00:00.00Z
+release-date: 2024-03-04T00:00:00.00Z
 release-versions:
-  ember-source: v5.3.0
+  ember-source: v5.7.0
+  ember-cli: v5.7.0
 teams:
   - framework
 prs:
