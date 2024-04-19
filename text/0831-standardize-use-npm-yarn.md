@@ -1,7 +1,7 @@
 ---
-stage: ready-for-release
+stage: released
 start-date: 2022-07-22T00:00:00.000Z
-release-date: Unreleased
+release-date: 2024-04-19T00:00:00.000Z
 release-versions:
 teams:
   - cli
@@ -9,6 +9,7 @@ teams:
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/831'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/959'
+  released: 'https://github.com/emberjs/rfcs/pull/1018'
 project-link: 'https://github.com/ember-learn/cli-guides/issues/272'
 suite:
 ---
