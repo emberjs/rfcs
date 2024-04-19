@@ -1,7 +1,7 @@
 ---
 stage: released
 start-date: 2022-07-22T00:00:00.000Z
-release-date: Unreleased
+release-date: 2024-04-19T00:00:00.000Z
 release-versions:
 teams:
   - cli
