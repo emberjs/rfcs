@@ -121,9 +121,153 @@ consumed in any nested components via:
 @consume('my-context-name') contextState;
 ```
 
+### Testing
+Testing utilities should be provided to make it easier to provide context
+in render tests. A helper `provide` function could be used in tests to define
+state for the components being tested.
+
+This helper could be called in the `beforeEach` hook, to set up context on 
+groups of tests, or in a single test to provide context for that test only.
+
+In this example, `ThemedButton` consumes a theme context, and sets a class
+depending on whether dark mode is enabled.
+```js
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
+import { hbs } from 'ember-cli-htmlbars';
+import { provide } from '@ember/context/test-support';
+
+module('component tests', function (hooks) {
+  setupRenderingTest(hooks);
+
+  hooks.beforeEach(function (this) {
+    provide('theme-context', {
+      darkMode: true,
+    });
+  });
+
+  test('it renders', async function (assert) {
+    await render(hbs`
+      <ThemedButton />
+    `);
+
+    assert.dom('button').hasClass('is-dark-mode');
+  });
+
+  test('it renders without dark mode', async function (assert) {
+    provide('theme-context', {
+      darkMode: false,
+    });
+
+    await render(hbs`
+      <ThemedButton />
+    `);
+
+    assert.dom('button').doesNotHaveClass('is-dark-mode');
+  });
+});
+```
+
 
 ## How we teach this
+In the guides, context should be introduced after services and contextual
+components, as it shares similarities with both topics. Understanding use cases
+for context will be easier when developers are already familiar with the currently
+existing state management patterns.
 
+Context can be compared to services, but only being available within the 
+component tree it's provided in, and with its lifecycle tied to the provider
+component. The `@consume` decorator is very similar to `@service`, so Ember
+developers will already be familiar with how to access context values this way.
+
+We can build on concepts introduced in the contextual component docs to show
+how context can be used to share state between components without having to
+explicitly use yielded components.
+
+The guides should provide thoughtful guidance on when to use context over services
+or contextual components, and when it should be avoided.
+For example, global state should still be managed with services. Or, providing
+big context objects could lead to unnecessary rerenders, and some use cases
+are better solved by more targeted args currying in contextual components.
+
+As for teaching with examples, a `Form` component could be shown, providing a 
+form state context.
+Here, an Ember Data model is shared with nested components, which could be extended
+to include form validation, for example.
+```gjs
+import Component from '@glimmer/component';
+import { provide } from '@ember/context';
+
+export default class Form extends Component {
+  @provide('form-context')
+  get formState() {
+    return {
+      model: this.args.model,
+    };
+  }
+
+  <template>
+    <form ...attributes>{{yield}}</form>
+  </template>
+}
+```
+
+A form input component could then consume this context to access the model:
+```gjs
+import Component from '@glimmer/component';
+import { consume } from '@ember/context';
+
+export default class FormInput extends Component {
+  @consume('form-context') formState;
+
+  get value() {
+    return this.formState.model[this.args.name];
+  }
+
+  get errors() {
+    return this.formState.model.errors[this.args.name];
+  }
+
+  <template>
+    <input type="text" name={{@name}} value={{this.value}} class={{if errors "is-invalid"}} ...attributes />
+    {{#each this.errors as |error|}}
+      <div class="error">
+        {{error.message}}
+      </div>
+    {{/each}}
+  </template>
+}
+```
+
+Whenever `FormInput` is rendered inside a `Form`, it would have access to the
+context, without having to curry arguments like we do in contextual components.
+
+The input could be used in another component like:
+```gjs
+import Component from '@glimmer/component';
+import FormInput from './form-input';
+
+export default class FormSection extends Component {
+  <template>
+    {{! Apply any styles or additional content }}
+    <div ...attributes>
+      <FormInput @name={{@name}} />
+    </div>
+  </template>
+}
+```
+
+Which is then composed with the form:
+```hbs
+<Form @model={{this.model}}>
+  <FormSection @name="firstName" />
+  <FormSection @name="lasttName" />
+</Form>
+```
+
+Library authors especially would benefit from this pattern, allowing them to
+build more flexible component APIs.
 
 ## Drawbacks
 
