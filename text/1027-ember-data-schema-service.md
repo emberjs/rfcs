@@ -825,6 +825,19 @@ cache, nor ever persists to the API.
 If we find that there are compelling cases for `@local` to become a public API, we will RFC making it public
 at that time.
 
+## Deprecations
+
+- `store.registerSchema` is deprecated in favor of the `createSchemaService` hook
+- `store.registerSchemaDefinitionService` is deprecated in favor of the `createSchemaService` hook
+- `store.getSchemaDefinitionService` is deprecated in favor of `store.schema` property
+- `SchemaService.doesTypeExist` is deprecated in favor of `SchemaService.hasResource`
+- `SchemaService.attributesDefinitionFor` is deprecated in favor of `SchemaService.fields`
+- `SchemaService.relationshipsDefinitionFor` is deprecated in favor of `SchemaService.fields`
+
+Since these APIs are relatively low-usage (power-user APIs mostly used by EmberData itself) and the migration
+path is relatively simple, we do not foresee much churn occurring. Typical deprecation messages will print
+and target `6.0`, a deprecation guide will be produced.
+
 ## How we teach this
 
 The schema format requires its own documention page as well as a guide for understanding
