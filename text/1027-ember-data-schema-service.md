@@ -756,7 +756,7 @@ type Transformation<T extends Value = string, PT = unknown> = {
 
 ### Derivations
 
-Derivations are functions which injest the record their associated field is defined on,
+Derivations are functions which ingest the record their associated field is defined on,
 the config for that field, and produce a value as a new field.
 
 ```ts
@@ -797,7 +797,7 @@ store.schema.registerDerivation('concat', concat);
 ```
 
 Typically derivations will represent *highly reusable computations* that apply to lots of fields and resources,
-we discourage using derivations for one-off scenarios: its typically best to move those into components or
+we discourage using derivations for one-off scenarios: it's typically best to move those into components or
 other layers of the program.
 
 In most situations, derivations should be a calculation you want to conceptually share between the API and the UI,
@@ -806,7 +806,7 @@ such that a value derived from other state on the resource can be kept fresh in 
 > [!TIP]
 > Derivations should rarely if ever access relationships as part of their calculation.
 > Moreover, if using partial fields, you must be careful to send all fields a derivation
-> needs to the client when its part of the intended request result. This is somewhere
+> needs to the client when it's part of the intended request result. This is somewhere
 > where EmberData's branding strategy for Resource and Request types can be used to your
 > app's benefit. If requesting partial data, only add the derived field to the type supplied
 > to the request when all associated fields are also present.
@@ -840,7 +840,7 @@ and target `6.0`, a deprecation guide will be produced.
 
 ## How we teach this
 
-The schema format requires its own documention page as well as a guide for understanding
+The schema format requires its own documentation page as well as a guide for understanding
 what each field type is and how they can be utilized and composed.
 
 The schema service requires both developer docs and a usage guide with patterns for
@@ -863,7 +863,7 @@ inherently higher than the barrier to getting started with Models.
 
 However, it is not a requirement of this RFC to solve that problem. We're hard
 at work on a tool for authoring schemas in a TypeScript based DSL that compiles
-them into the json format as well as richer types than you'd get with a class or
+them into the JSON format as well as richer types than you'd get with a class or
 a single TS interface alone. We expect *that* tool will be what keeps the barrier
 to entry low.
 
@@ -874,7 +874,7 @@ a seamless integration with it seems like a no-brainer.
 
 ## Alternatives
 
-There are an indefinite number of existing json schema representation formats
+There are an indefinite number of existing JSON schema representation formats
 available, including many specifically for representing API resources.
 
 However, we don't believe these adequately map to the characteristics we want
