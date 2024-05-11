@@ -26,13 +26,13 @@ First, extending EmberObject is vestigial. The Store makes no use of any EmberOb
 not even for use with Ember's container or service injection.
 
 Second, in order to support any Ember version, support any non-Ember framework, and support
-EmberData running in non-browser environments we want to remove unnecessary coupling to Ember the framework.
+EmberData running in non-browser environments we want to remove unnecessary coupling to the Ember framework.
 
 ## Detailed design
 
-Instead of deprecating every EmberObject method, we will feature flag the store extending
+Instead of deprecating every EmberObject method, we will feature flag the Store extending
 EmberObject at the module level. This ensures the deprecation only prints once, and that
-once resolved the store will no longer extend thereby making it feasible to utilize the
+once resolved the Store will no longer extend thereby making it feasible to utilize the
 benefits of not extending EmberObject immediately.
 
 To resolve the deprecation, users will need to confirm they are not using EmberObject APIs
@@ -87,9 +87,9 @@ module.exports = async function (defaults) {
 
 ## How we teach this
 
-Guides would be added for this deprecation to both the deprecation app and the api docs.
+Guides would be added for this deprecation to both the deprecation app and the API docs.
 
-Generally, folks do not tend to treat the store as an EmberObject or utilize legacy EmberObject
+Generally, folks do not tend to treat the Store as an EmberObject or utilize legacy EmberObject
 APIs with it, so both the teaching and the migration overhead are low.
 
 ## Drawbacks
@@ -99,8 +99,8 @@ none
 ## Alternatives
 
 - deprecate every classic method to help folks find usage
-    - not chosen as its rare *and* setting the deprecation flag to false will cause any such locations to be findable via error
-- create a new package `@warp-drive/core` or `@warp-drive/store` and have user's migrate by swapping import
+    - not chosen as it's rare *and* setting the deprecation flag to `false` will cause any such locations to be findable via error
+- create a new package `@warp-drive/core` or `@warp-drive/store` and have users migrate by swapping import
   locations.
     - not chosen as this is too minimal a change
 
