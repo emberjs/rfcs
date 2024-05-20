@@ -45,18 +45,21 @@ information about a resource.
 interface SchemaService {
   // Retrieval APIs
   fields(resource: { type: string } | StableRecordIdentifier): Map<string, FieldSchema>;
+  resource(resource: { type: string } | StableRecordIdentifier): ResourceSchema;
   transformation(name: string): Transformation;
   derivation(name: string): Derivation;
-  resource(name: string): ResourceSchema;
+  hashFn(name: string): HashFn;
 
-  hasTrait(resource: { type: string } | StableRecordIdentifier, trait: string): boolean;
+  hasTrait(name: string): boolean;
+  resourceHasTrait(resource: { type: string } | StableRecordIdentifier, trait: string): boolean;
   hasResource(type: string): boolean;
 
   // Loading APIs
   registerResources(schemas: ResourceSchema[]): void;
   registerResource(schema: ResourceSchema): void;
   registerTransformation(transform: Transformation): void;
-  registerDerivation(name: string, derivation: Derivation): void;
+  registerDerivation(derivation: Derivation): void;
+  registerHashFn(hashFn: HashFn): void;
 }
 ```
 
@@ -64,6 +67,13 @@ To supply a SchemaService, use the `createSchemaService` hook on the store.
 This is analagous to the `createCache` hook on the store and similarly it
 will only be called a single time to create the SchemaService when it is
 first needed.
+
+> [!TIP] 
+> Curious *why* `createCache` and `createSchemaService` are hooks but `lifetimes`
+> and `requestManager` are properties you assign?
+> Apps can have multiple stores. `lifetimes` and `requestManager` are designed to
+> be shared across store instances, whereas caches (and schema) are specific to
+> a store instance.
 
 ```ts
 class extends Store {
@@ -114,7 +124,7 @@ class MySchemaService {
       : this.oldService.fields(resource);
   }
 
-  hasResource(type) {
+  hasResource({ type }) {
     return this.newService.hasResource(type) || this.oldService.hasResource(type);
   }
 }
@@ -152,7 +162,12 @@ To utilize the schema service, the created service can be accessed via the
 
 ```ts
 type ResourceSchema = {
-  '@id': IdentityField | null;
+  /**
+   * For primary resources, this should be an IdentityField
+   * 
+   * for schema-objects, this should be either a HashField or null
+   */
+  identity: IdentityField | HashField | null;
   /**
    * The name of the schema
    *
@@ -167,8 +182,8 @@ type ResourceSchema = {
    * - for resource-specific objects: The pattern `$${ResourceKlassName}:$field:${KlassName}` e.g. `$User:$field:ReusableAddress`
    * - for inline objects: The pattern `$${ResourceKlassName}.${fieldPath}:$field:anonymous` e.g. `$User.shippingAddress:$field:anonymous`
    */
-  '@type': string;
-  traits: string[];
+  type: string;
+  traits?: string[];
   fields: FieldSchema[];
 };
 ```
@@ -178,12 +193,12 @@ type ResourceSchema = {
 The following is the list of valid FieldSchema.
 
 > [!IMPORTANT]  
-> `IdentityField` may only ever appear once (if at all) in a ResourceSchema's FieldSchema[]
+> `IdentityField` and `HashField` may never appear in a ResourceSchema's `fields`
+> these field types are *only* valid for `identity`.
 
 ```ts
 type FieldSchema =
   | GenericField
-  | IdentityField
   | LocalField
   | ObjectField
   | SchemaObjectField
@@ -198,6 +213,76 @@ type FieldSchema =
 ```
 
 ```ts
+/**
+ * Represents a field whose value is the primary
+ * key of the resource.
+ *
+ * This allows any field to serve as the primary
+ * key while still being able to drive identity
+ * needs within the system.
+ *
+ * This is useful for resources that use for instance
+ * 'uuid', 'urn' or 'entityUrn' or 'primaryKey' as their
+ * primary key field instead of 'id'.
+ */
+export type IdentityField = {
+  kind: '@id';
+
+  /**
+   * The name of the field that serves as the
+   * primary key for the resource.
+   */
+  name: string;
+};
+
+
+/**
+ * Represents a specialized field whose computed value
+ * will be used as the primary key of a schema-object
+ * for serializability and comparison purposes.
+ *
+ * This field functions similarly to derived fields in that
+ * it is non-settable, derived state but differs in that
+ * it is only able to compute off of cache state and is given
+ * no access to a record instance.
+ *
+ * This means that if a hashing function wants to compute its value
+ * taking into account transformations and derivations it must
+ * perform those itself.
+ *
+ * A schema-array can declare its "key" value to be `@hash` if
+ * a schema-object has such a field.
+ *
+ * Only one hash field is permittable per schema-object, and
+ * it should be placed in the `ResourceSchema`'s `@id` field
+ * in place of an `IdentityField`.
+ */
+export type HashField = {
+  kind: '@hash';
+
+  /**
+   * The name of the field that serves as the
+   * hash for the resource.
+   *
+   * Only required if access to this value by
+   * the UI is desired, it can be `null` otherwise.
+   */
+  name: string | null;
+
+  /**
+   * The name of a function to run to compute the hash.
+   * The function will only have access to the cached
+   * data for the record.
+   */
+  type: string;
+
+  /**
+   * Any options that should be provided to the hash
+   * function.
+   */
+  options?: ObjectValue;
+};
+
 
 /**
  * A generic "field" that can be used to define
@@ -228,28 +313,6 @@ export type GenericField = {
 };
 
 /**
- * Represents a field whose value is the primary
- * key of the resource.
- *
- * This allows any field to serve as the primary
- * key while still being able to drive identity
- * needs within the system.
- *
- * This is useful for resources that use for instance
- * 'uuid', 'urn' or 'entityUrn' or 'primaryKey' as their
- * primary key field instead of 'id'.
- */
-export type IdentityField = {
-  kind: '@id';
-
-  /**
-   * The name of the field that serves as the
-   * primary key for the resource.
-   */
-  name: string;
-};
-
-/**
  * Represents a field whose value is a local
  * value that is not stored in the cache, nor
  * is it sent to the server.
@@ -264,8 +327,9 @@ export type IdentityField = {
  *
  * For this reason Local fields should be used sparingly.
  *
- * In the future, we may choose to only allow our
- * own SchemaRecord to utilize them.
+ * Currently, while we document this feature here,
+ * only allow our own SchemaRecord should utilize them
+ * and the feature should be considered private.
  *
  * Example use cases that drove the creation of local
  * fields are states like `isDestroying` and `isDestroyed`
@@ -327,15 +391,18 @@ export type SchemaObjectField = {
   name: string;
 
   /**
-   * The name of the schema that describes the
+   * The name of the ResourceSchema that describes the
    * structure of the object.
    *
-   * These schemas
+   * These `identity` for a SchemaObject shoul be either
+   * a `HashField` or `null`. It should never be an IdentityField.
    */
   type: string;
 
-  // FIXME: would we ever need options here?
-  options?: ObjectValue;
+  // Currently, no need for options has been discovered.
+  // should such a need arise later we do not believe a follow
+  // up RFC is required to add it in, and it would be optional.
+  // options?: ObjectValue;
 };
 
 /**
@@ -383,8 +450,34 @@ export type SchemaArrayField = {
    */
   type: string;
 
-  // FIXME: would we ever need options here?
-  options?: ObjectValue;
+  /**
+   * Options for configuring the behavior of the
+   * SchemaArray.
+   */
+  options?: {
+    /**
+     * Configures how the SchemaArray determines whether
+     * an object in the cache is the same as an object
+     * previously used to instantiate one of the schema-objects
+     * it contains.
+     *
+     * The default is `'@identity'`.
+     *
+     * Valid options are:
+     *
+     * - `'@identity'` (default) : the cached object's referential identity will be used.
+     *       This may result in significant instability when resource data is updated from the API
+     * - `'@index'`              : the cached object's index in the array will be used.
+     *       This is only a good choice for arrays that rarely if ever change membership
+     * - `'@hash'`               : will lookup the `@hash` function supplied in the ResourceSchema for
+     *       The contained schema-object and use the computed result to determine and compare identity.
+     * - <field-name> (string)   : the name of a field to use as the key, only GenericFields (kind `field`)
+     *       Are valid field names for this purpose. The cache state without transforms applied will be
+     *       used when comparing values. The field value should be unique enough to guarantee two schema-objects
+     *       of the same type will not collide.
+     */
+    key: '@identity' | '@index' | '@hash' | string;
+  };
 };
 
 /**
@@ -600,8 +693,7 @@ export type LegacyAttributeField = {
  * Represents a field that is a reference to
  * another resource.
  *
- * This is the legacy version of the `ResourceField`
- * type, and is used to represent fields that were
+ * This is the legacy version of the `ResourceField`.
  */
 export type LegacyBelongsToField = {
   kind: 'belongsTo';
@@ -662,6 +754,11 @@ export type LegacyBelongsToField = {
 /**
  * > [!CAUTION]
  * > This Field is LEGACY
+ * 
+ * Represents a field that is a reference to
+ * a collection of other resources.
+ *
+ * This is the legacy version of the `CollectionField`.
  */
 export type LegacyHasManyField = {
   kind: 'hasMany';
@@ -747,10 +844,11 @@ They are also how you can provide a default value for a field when no value is p
 the cache.
 
 ```ts
-type Transformation<T extends Value = string, PT = unknown> = {
-  serialize(value: PT, options: Record<string, unknown> | null, record: OpaqueRecordType): T;
-  hydrate(value: T | undefined, options: Record<string, unknown> | null, record: OpaqueRecordType): PT;
-  defaultValue?(options: Record<string, unknown> | null, identifier: StableRecordIdentifier): T;
+export type Transformation<T extends Value = string, PT = unknown> = {
+  serialize(value: PT, options: ObjectValue | null, record: OpaqueRecordInstance): T;
+  hydrate(value: T | undefined, options: ObjectValue | null, record: OpaqueRecordInstance): PT;
+  defaultValue?(options: ObjectValue | null, identifier: StableRecordIdentifier): T;
+  [Type]: string;
 };
 ```
 
@@ -760,7 +858,11 @@ Derivations are functions which injest the record their associated field is defi
 the config for that field, and produce a value as a new field.
 
 ```ts
-type Derivation<R, T> = (record: R, options: Record<string, unknown> | null, prop: string) => T;
+export type Derivation<R = unknown, T = unknown> = { [Type]: string } & ((
+  record: R,
+  options: ObjectValue | null,
+  prop: string
+) => T);
 ```
 
 For example, a user's `fullName` field is often implemented as a derivation of `firstName` and `lastName`,
@@ -792,8 +894,9 @@ function concat(record, options, prop) {
   if (!options) throw new Error(`options is required`);
   return options.fields.map((field) => record[field]).join(options.separator ?? '');
 }
+concat[Type] = 'concat';
 
-store.schema.registerDerivation('concat', concat);
+store.schema.registerDerivation(concat);
 ```
 
 Typically derivations will represent *highly reusable computations* that apply to lots of fields and resources,
@@ -810,6 +913,35 @@ such that a value derived from other state on the resource can be kept fresh in 
 > where EmberData's branding strategy for Resource and Request types can be used to your
 > app's benefit. If requesting partial data, only add the derived field to the type supplied
 > to the request when all associated fields are also present.
+
+### Hashing Functions
+
+Hashing functions are functions which injest the raw cache data for a `schema-object`
+and produce a string key that represents that object's identity for purposes of serializability
+and comparison. The identity need only be unique-enough that two schema-objects of the same
+type can be adequately distinguished.
+
+```ts
+export type HashFn<T extends object = object> = { [Type]: string } & ((
+  data: T,
+  options: ObjectValue | null,
+  prop: string
+) => string);
+```
+
+For example 
+
+```ts
+import { Type } from '@warp-drive/core-types/symbols';
+
+function addressHash(data) {
+  return data.street + data.unit + data.city + data.state + data.zip
+}
+addressHash[Type] = 'address';
+
+store.schema.registerHashFn(addressHash);
+```
+
 
 ### Locals
 
