@@ -7,7 +7,7 @@ teams: # delete teams that aren't relevant
   - cli
   - learning
 prs:
-  accepted: # update this to the PR that you propose your RFC in
+  accepted: https://github.com/emberjs/rfcs/pull/1029
 project-link:
 ---
 
@@ -24,7 +24,6 @@ prs:
 project-link: Leave as is
 -->
 
-<-- Replace "RFC title" with the title of your RFC -->
 # Deprecate app-prefix, app-suffix, tests-prefix, and tests-suffix
 
 ## Summary
