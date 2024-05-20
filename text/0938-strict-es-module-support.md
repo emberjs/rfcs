@@ -454,6 +454,10 @@ For all those reasons I don't think Option 3 is immediately viable for many apps
 
 ## Unresolved Questions
 
+- addons can emit custom contentFor `app-boot`, which expects to use `require`. This whole feature should get removed by this RFC. 
+
+- addons can emit custom contentFor `config-module`, which isn't actually formatted as a module. This feature is dubious and should probably just get removed by this RFC.
+
 - Make sure we address ember-load-initializers (it should be able to use our new APIs here)
 
 - Should we tackle FastBoot.require?
