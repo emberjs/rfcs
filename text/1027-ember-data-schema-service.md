@@ -31,10 +31,15 @@ associated Schemas to gain confidence in a redesign. This is that redesign.
 ## Detailed design
 
 - [The SchemaService](#the-schemaservice)
-- [Resource Schemas]()
-- [Field Schemas]()
-- [Transformations]()
-- [Derivations]()
+- [Resource Schemas](#resource-schemas)
+- [Field Schemas](#fieldschema)
+- [Transformations](#transformations)
+- [Derivations](#derivations)
+- [Hashing Functions](#hashing-functions)
+- [Locals](#locals)
+- [Schema Defaults](#schema-defaults)
+- [ModelFragments](#modelfragments)
+- [Deprecations](#deprecations)
 
 ### The SchemaService
 
