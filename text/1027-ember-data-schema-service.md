@@ -404,10 +404,26 @@ export type SchemaObjectField = {
    */
   type: string;
 
-  // Currently, no need for options has been discovered.
-  // should such a need arise later we do not believe a follow
-  // up RFC is required to add it in, and it would be optional.
-  // options?: ObjectValue;
+  options?: {
+    /**
+     * Whether this SchemaObject is Polymorphic.
+     *
+     * If the SchemaObject is polymorphic, `options.type` must also be supplied.
+     *
+     * @typedoc
+     */
+    polymorphic?: boolean;
+
+    /**
+     * If the SchemaObject is Polymorphic, the key on the raw cache data to use
+     * as the "resource-type" value for the schema-object.
+     *
+     * Defaults to "type".
+     *
+     * @typedoc
+     */
+    type?: string;
+  };
 };
 
 /**
@@ -707,7 +723,7 @@ export type LegacyAttributeField = {
 };
 
 /**
- *  * > [!CAUTION]
+ * > [!CAUTION]
  * > This Field is LEGACY
  *
  * Represents a field that is a reference to
