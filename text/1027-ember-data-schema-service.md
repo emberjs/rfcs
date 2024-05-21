@@ -957,6 +957,105 @@ cache, nor ever persists to the API.
 If we find that there are compelling cases for `@local` to become a public API, we will RFC making it public
 at that time.
 
+### Schema Defaults
+
+Some packages may wish to provide utilities for enhancing ResourceSchemas with specialized fields and
+derivations. Both the `@warp-drive/schema-record` package and `@ember-data/model` package are examples of this.
+
+Since *every* behavior on a SchemaRecord is driven by schema, for a behavior to exist there needs to be
+a schema field for it as well *and!* default behaviors can be optional (don't want the defaults? don't include them!).
+
+#### For defaults with SchemaRecord:
+
+```ts
+import { withDefaults, registerDerivations } from '@warp-drive/schema-record/schema';
+
+const upgradedResourceSchema = withDefaults(resourceSchema);
+
+//...
+
+// ensure derivations for use with the defaults are registered
+registerDerivations(store.schema);
+```
+
+`withDefaults` adds defaults for the `constructor` property as well as for `$type`
+and ensures the `ResourceSchema.identity` is set to the following IdentityField:
+`{ name: 'id', kind: '@id' }`
+
+`registerDerivations` adds derivations for the `constructor` property as well as an
+`@identity` derivation that can be used to expose any information from the record's
+`Identifier`, the implementation of which is shown below:
+
+```ts
+export function fromIdentity(record: SchemaRecord, options: null, key: string): asserts options;
+export function fromIdentity(record: SchemaRecord, options: { key: 'lid' } | { key: 'type' }, key: string): string;
+export function fromIdentity(record: SchemaRecord, options: { key: 'id' }, key: string): string | null;
+export function fromIdentity(record: SchemaRecord, options: { key: '^' }, key: string): StableRecordIdentifier;
+export function fromIdentity(
+  record: SchemaRecord,
+  options: { key: 'id' | 'lid' | 'type' | '^' } | null,
+  key: string
+): StableRecordIdentifier | string | null {
+  const identifier = record[Identifier];
+  assert(`Cannot compute @identity for a record without an identifier`, identifier);
+  assert(
+    `Expected to receive a key to compute @identity, but got ${String(options)}`,
+    options?.key && ['lid', 'id', 'type', '^'].includes(options.key)
+  );
+
+  return options.key === '^' ? identifier : identifier[options.key];
+}
+fromIdentity[Type] = '@identity';
+```
+
+#### For defaults with Model:
+
+```ts
+import { withDefaults, registerDerivations } from '@ember-data/model/migration-support';
+
+const upgradedResourceSchema = withDefaults(resourceSchema);
+
+//...
+
+// ensure derivations for use with the defaults are registered
+registerDerivations(store.schema);
+```
+
+The defaults are primarily a mechanism to support legacy behaviors of Model while transitioning
+a codebase. Most Model APIs are available via this mechanism (and, if you're curious just how advanced
+derivations can get, most of these are implemented as derivations ... yes, even the functions)
+
+-  id
+-  _createSnapshot
+-  adapterError
+-  belongsTo
+-  changedAttributes
+-  constructor
+-  currentState
+-  deleteRecord
+-  destroyRecord
+-  dirtyType
+-  errors
+-  hasDirtyAttributes
+-  hasMany
+-  isDeleted
+-  isEmpty
+-  isError
+-  isLoaded
+-  isLoading
+-  isNew
+-  isSaving
+-  isValid
+-  reload
+-  rollbackAttributes
+-  save
+-  serialize
+-  unloadRecord
+-  isReloading
+-  isDestroying
+-  isDestroyed
+
+
 ## Deprecations
 
 - `store.registerSchema` is deprecated in favor of the `createSchemaService` hook
