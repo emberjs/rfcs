@@ -476,7 +476,22 @@ export type SchemaArrayField = {
      *       used when comparing values. The field value should be unique enough to guarantee two schema-objects
      *       of the same type will not collide.
      */
-    key: '@identity' | '@index' | '@hash' | string;
+    key?: '@identity' | '@index' | '@hash' | string;
+
+    /**
+      * Whether this SchemaArray is Polymorphic.
+      * 
+      * If the SchemaArray is polymorphic, `options.type` must also be supplied.
+      */ 
+    polymorphic?: boolean;
+
+    /**
+     * If the SchemaArray is Polymorphic, the key on the raw cache data to use
+     * as the "resource-type" value for the schema-object.
+     * 
+     * Defaults to "type".
+     */
+    type?: string; // default '"type"'
   };
 };
 
@@ -1055,6 +1070,19 @@ derivations can get, most of these are implemented as derivations ... yes, even 
 -  isDestroying
 -  isDestroyed
 
+### ModelFragments
+
+For users of ModelFragments, the following FieldSchemas, when used together with SchemaRecord,
+are seen as the direct replacement.
+
+- `FragmentArray` => `ArrayField` or  `SchemaArrayField` (depends on content)
+  - the equivalent "key" strategy for `schema-array` is `@index`, though we believe the other
+      options are likely better suited for this
+  - for polymorphic arrays, the type can be specified by any field on the schema-object, but that
+    field should be specified in the array's config, and should be a string value that matches a
+    known `schema-object` resource-type. Note, the default is `"type"` where ModelFragments
+    defaults to `"$type"`.
+- `Fragment` => `ObjectField` or `SchemaObjectField` (depends on content)
 
 ## Deprecations
 
