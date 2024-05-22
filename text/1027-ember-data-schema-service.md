@@ -51,9 +51,9 @@ interface SchemaService {
   // Retrieval APIs
   fields(resource: { type: string } | StableRecordIdentifier): Map<string, FieldSchema>;
   resource(resource: { type: string } | StableRecordIdentifier): ResourceSchema;
-  transformation(name: string): Transformation;
-  derivation(name: string): Derivation;
-  hashFn(name: string): HashFn;
+  transformation(field: GenericField | ObjectField | ArrayField | { type: string }): Transformation;
+  derivation(field: DerivedField | { type: string }): Derivation;
+  hashFn(field: HashField | { type: string }): HashFn;
 
   hasTrait(name: string): boolean;
   resourceHasTrait(resource: { type: string } | StableRecordIdentifier, trait: string): boolean;
