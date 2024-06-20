@@ -105,8 +105,23 @@ found at https://github.com/customerio/glimmer-vm/tree/provide-consume-context.
 This introduces a new class, which keeps track of "context provider" components,
 and exposes their state to any descendant components.
 
-The final implementation of context in Ember might be by using special
-decorators, like:
+From a developer's perspective, services are currently the closest thing to context that exists in Ember.
+The idea of registering a service on an application,
+and then injecting it into any component to access its state,
+is very similar to the idea of rendering a "context provider",
+and then consuming its state in a descendant component.
+
+In fact, services can be thought of as context keys provided on the application's scope,
+which makes them available throughout the whole application.
+
+Because of those conceptual similarities, and given the fact that Ember developers
+are already familiar with service injections, it makes sense to keep the context API
+identical to the services API.
+
+There would be two new decorators for context:
+
+A `@provide` decorator, which makes the value it decorates available to
+the component's render tree:
 ```ts
 @provide('my-context-name')
 get value() {
@@ -114,12 +129,18 @@ get value() {
 }
 ```
 
-which would register the property to be exposed as context, and which could be
-consumed in any nested components via:
+And a `@consume` decorator, which retrieves the provided state. This is similar
+to the `@service` decorator, and conceptually we may think of the context being
+injected into the component:
 
 ```ts
 @consume('my-context-name') contextState;
 ```
+
+Because the `@service` decorator takes string names for services, the `@provide`
+and `@consume` decorators would do the same. If, in future, the service API
+changes to a different form, the context API should be changed at the same time,
+to keep them identical.
 
 ### Testing
 Testing utilities should be provided to make it easier to provide context
@@ -142,7 +163,7 @@ module('component tests', function (hooks) {
   setupRenderingTest(hooks);
 
   hooks.beforeEach(function (this) {
-    provide('theme-context', {
+    provide(this, 'theme-context', {
       darkMode: true,
     });
   });
