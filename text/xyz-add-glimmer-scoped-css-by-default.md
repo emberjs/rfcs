@@ -6,7 +6,7 @@ release-versions:
 teams:
   - framework
 prs:
-  accepted: https://github.com/bitxplora/emberjs-rfcs/blob/master/text/xyz-add-glimmer-scoped-css-by-default.md
+  accepted: https://github.com/emberjs/rfcs/pull/1037
 project-link:
 suite: 
 ---
