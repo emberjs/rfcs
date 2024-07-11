@@ -4,7 +4,7 @@ start-date: 2021-03-13T00:42:02.085Z
 release-date:
 release-versions:
   dom-element-descriptors: 0.5.1
-  @ember/test-helpers: 3.3.0
+  "@ember/test-helpers": 3.3.0
   qunit-dom: 3.2.0
   fractal-page-object: 1.0.0
 
