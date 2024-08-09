@@ -3,6 +3,7 @@ stage: released
 start-date: 2022-08-21T00:00:00.000Z
 release-date:
 release-versions:
+  ember-source: 5.10.0
 teams:
   - framework
 prs:
