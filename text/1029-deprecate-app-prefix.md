@@ -99,7 +99,7 @@ Returning content from an addon's `contentFor()` hook for `type="vendor-suffix"`
 
 ## Drawbacks
 
-This is a change to the v1 addon API. V2 addons already cannot use contentFor. One could argue against bothering to change the v1 addon API.
+This is a change to the v1 addon API. V2 addons already cannot use the contentFor hooks this RFC aims to deprecate. One could argue against bothering to change the v1 addon API.
 
 ## Alternatives
 
