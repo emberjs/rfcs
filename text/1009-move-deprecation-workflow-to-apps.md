@@ -48,6 +48,66 @@ This RFC proposes how we can ship deprecation workflow handling behavior in apps
 
 ## Detailed design
 
+
+Have `ember-cli-deprecation-workflow` installed by default.
+
+1. applications must have `@embroider/macros` installed by default.
+2. the app.js or app.ts can conditionally import a file which sets up the deprecation workflow 
+    ```diff app/app.js
+      import Application from '@ember/application';
+    + import { importSync, isDevelopingApp, macroCondition } from '@embroider/macros';
+
+      import loadInitializers from 'ember-load-initializers';
+      import Resolver from 'ember-resolver';
+      import config from 'test-app/config/environment';
+
+    + if (macroCondition(isDevelopingApp())) {
+    +   importSync('./deprecation-workflow');
+    + }
+
+      export default class App extends Application {
+        modulePrefix = config.modulePrefix;
+        podModulePrefix = config.podModulePrefix;
+        Resolver = Resolver;
+      }
+
+      loadInitializers(App, config.modulePrefix);
+    ```
+3. then in `app/deprecation-workflow.js` would use the already public API, 
+    ```js
+    import setupDeprecationWorkflow from 'ember-cli-deprecation-workflow';
+
+    setupDeprecationWorkflow({
+    /**
+        false by default, but if a developer / team wants to be more aggressive about being proactive with
+        handling their deprecations, this should be set to "true"
+    */
+      throwOnUnhandled: false,
+      handlers: [
+        /* ... handlers ... */
+      ]
+    });
+    ```
+
+
+This follows the README of [ember-cli-deprecation-workflow](https://github.com/ember-cli/ember-cli-deprecation-workflow?tab=readme-ov-file#getting-started).
+
+    
+
+## How we teach this
+
+We'd want to add a new section in the guides under [`Application Concerns`](https://guides.emberjs.com/release/applications/) that talks about deprecations, how and how to work through those deprecations.
+
+All of this content already exists using a similar strategy as above, here, [under "Configuring Ember"](https://guides.emberjs.com/release/configuring-ember/handling-deprecations/#toc_deprecation-workflow), and also walks through how to use `ember-cli-deprecation-workflow`. 
+
+This README of [ember-cli-deprecation-workflow](https://github.com/ember-cli/ember-cli-deprecation-workflow?tab=readme-ov-file#getting-started) also explains, in detail, how to use this tool / workflow, and that content can be copied in to the guides.
+
+## Drawbacks
+
+For older projects, this could be _a_ migration. But as it is additional blueprint boilerplate, it is optional, and `ember-cli-deprecation-workflow` would continue to be a viable option for those already using it.
+
+## Alternatives
+
 There are only a few features of `ember-cli-deprecation-workflow` that we need to worry about:
 - enabled or not - do we check deprecations at all, or ignore everything (current default)
 - `throwOnUnhandled` - this is the most aggressive way to stay on top of your deprecations, but can be frustrating for folks who may not be willing to fix things in `node_modules` when new deprecations are introduced.
@@ -273,59 +333,6 @@ and at this point, we may as well build it into `ember` and not use an additiona
     ```
 
 
-    
-
-## How we teach this
-
-We'd want to add a new section in the guides under [`Application Concerns`](https://guides.emberjs.com/release/applications/) that talks about deprecations, how and how to work through those deprecations.
-
-All of this content already exists using a similar strategy as above, here, [under "Configuring Ember"](https://guides.emberjs.com/release/configuring-ember/handling-deprecations/#toc_deprecation-workflow), and also walks through how to use `ember-cli-deprecation-workflow`. 
-When adapting the existing content, we'd want to remove so much focus on `ember-cli-deprecation-workflow`, as the behavior would be "built in".
-
-## Drawbacks
-
-For older projects, this could be _a_ migration. But as it is additional blueprint boilerplate, it is optional, and `ember-cli-deprecation-workflow` would continue to be a viable option for those already using it.
-
-## Alternatives
-
-Have `ember-cli-deprecation-workflow` installed by default, (and) transferring `ember-cli-deprecation-workflow` to the emberjs org.
-(note: dependent on [This PR](https://github.com/mixonic/ember-cli-deprecation-workflow/pull/159))
-
-1. applications must have `@embroider/macros` installed by default.
-2. the app.js or app.ts can conditionally import a file which sets up the deprecation workflow 
-    ```diff app/app.js
-      import Application from '@ember/application';
-    + import { importSync, isDevelopingApp, macroCondition } from '@embroider/macros';
-
-      import loadInitializers from 'ember-load-initializers';
-      import Resolver from 'ember-resolver';
-      import config from 'test-app/config/environment';
-
-    + if (macroCondition(isDevelopingApp())) {
-    +   importSync('<app-moduleName>/deprecation-workflow');
-    + }
-
-      export default class App extends Application {
-        modulePrefix = config.modulePrefix;
-        podModulePrefix = config.podModulePrefix;
-        Resolver = Resolver;
-      }
-
-      loadInitializers(App, config.modulePrefix);
-    ```
-3. the `app/deprecation-workflow.js` would use the already public API, [`registerDeprecationHandler`](https://api.emberjs.com/ember/5.6/functions/@ember%2Fdebug/registerDeprecationHandler)
-    ```js
-    import setupDeprecationWorkflow from 'ember-cli-deprecation-workflow';
-
-    setupDeprecationWorkflow({
-      throwOnUnhandled: true,
-      handlers: [
-        /* ... handlers ... */
-      ]
-    });
-    ```
-
-Why _not_ just do this tiny change to the blueprint? The whole implementation is _very small_, and it's something the framework ultimately has to support anyway, so building it in to `@ember/debug` provides a convenient way for folks to get started. We also have a bit of a too-many-imports problem at the moment. 
 
 ## Unresolved questions
 
