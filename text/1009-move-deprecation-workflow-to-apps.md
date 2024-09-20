@@ -29,19 +29,15 @@ project-link: Leave as is
 suite: Leave as is
 -->
 
-# Move the deprecation workflow to apps by default 
+# Move the deprecation workflow library to be installed in apps by default 
 
 ## Summary
 
 Historically, folks have benefitted from [ember-cli-deprecation-workflow](https://github.com/mixonic/ember-cli-deprecation-workflow). This behavior is _so useful_, that it should be built in to folks applications by default.
 
-tl;dr: move `setupDeprecationWorkflow` to `@ember/debug`
-
-> One paragraph explanation of the feature.
-
 ## Motivation
 
-Everyone needs a deprecation-workflow, and yet `ember-cli-deprecation-workflow` is not part of the default blueprint. It probably doesn't need to be as the code it provides (if implemented in an app) is ~ 20 lines (but is slightly more if we want all features).
+Everyone needs a deprecation-workflow, and yet `ember-cli-deprecation-workflow` is not part of the default blueprint. 
 
 This RFC proposes how we can ship deprecation workflow handling behavior in apps by default, which may give us a blessed path for better integrating with build time deprecations as well (though that is not the focus of this RFC).
 
@@ -104,7 +100,7 @@ This README of [ember-cli-deprecation-workflow](https://github.com/ember-cli/emb
 
 ## Drawbacks
 
-For older projects, this could be _a_ migration. But as it is additional blueprint boilerplate, it is optional, and `ember-cli-deprecation-workflow` would continue to be a viable option for those already using it.
+For older projects, this could be _a_ migration. But as it is additional blueprint boilerplate, it is optional.
 
 ## Alternatives
 
@@ -130,7 +126,7 @@ However, folks can get a basic deprecation-handling workflow going in their apps
       import config from 'test-app/config/environment';
 
     + if (macroCondition(isDevelopingApp())) {
-    +   importSync('<app-moduleName>/deprecation-workflow');
+    +   importSync('./deprecation-workflow');
     + }
 
       export default class App extends Application {
