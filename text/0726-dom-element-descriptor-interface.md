@@ -1,8 +1,12 @@
 ---
-stage: ready-for-release
+stage: recommended
 start-date: 2021-03-13T00:42:02.085Z
 release-date:
 release-versions:
+  dom-element-descriptors: 0.5.1
+  '@ember/test-helpers': 3.3.0
+  qunit-dom: 3.2.0
+  fractal-page-object: 1.0.0
 teams:
   - cli
   - framework
@@ -11,6 +15,8 @@ teams:
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/726'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/992'
+  released: 'https://github.com/emberjs/rfcs/pull/1004'
+  recommended: 'https://github.com/emberjs/rfcs/pull/1039'
 project-link:
 suite:
 ---
