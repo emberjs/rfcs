@@ -93,7 +93,7 @@ function doSomething() {
 }
 
 <template>
-  <div {{on "click" this.doSomething }}></div>
+  <div {{on "click" doSomething}}></div>
 </template>
 ```
 
