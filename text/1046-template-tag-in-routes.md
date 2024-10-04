@@ -35,7 +35,7 @@ Allow `app/templates/*.hbs` to convert to `app/temlates/*.gjs`.
 
 ## Motivation
 
-We are rapidly approaching the point where Template Tag is the recommended way to author components. This means using `.gjs` (or `.gts`) files that combine your template and Javascript into one file. But you cannot currently use Template Tag to author the top-level templates invokes by the router (`app/templates/*.hbs`).
+We are rapidly approaching the point where Template Tag is the recommended way to author components. This means using `.gjs` (or `.gts`) files that combine your template and Javascript into one file. But you cannot currently use Template Tag to author the top-level templates invoked by the router (`app/templates/*.hbs`).
 
 This inconsistency is especially apparent when working on teaching materials for new users. Making people learn both `.hbs` with global component resolution and `.gjs` with strict template resolution before they can even make their first component is unreasonable.
 
