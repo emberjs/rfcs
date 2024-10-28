@@ -1,5 +1,5 @@
 ---
-stage: recommended
+stage: accepted
 start-date: 2018-10-14T00:00:00.000Z
 release-date: # FIXME
 release-versions: # FIXME
