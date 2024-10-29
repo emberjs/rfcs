@@ -171,7 +171,7 @@ Stage 1 decorators will be considered a first class Ember API. They will be
 supported until:
 
 1. A new RFC has been made to introduce a new decorator API as a parallel API to
-   the stage 1 decoraters.
+   the stage 1 decorators.
 2. A deprecation RFC has been created for Stage 1 decorators.
 
 They will follow the same deprecation flow, and same SemVer requirements, as any
