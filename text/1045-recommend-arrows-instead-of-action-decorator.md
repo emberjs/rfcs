@@ -103,6 +103,43 @@ With arrow functions, we completely eliminate all of the memory upkeep that the 
 
 1. Update all usages of `@action` to be arrows in the guides, removing all imports of the `@action` decorator.
 2. On the ["Component State and Actions"](https://guides.emberjs.com/release/components/component-state-and-actions/) page (where action is first used), explain the purpose of the arrow function, and why we use it. (this explanation is currently missing for `@action` as well -- however at the bottom of the page, it links to ["Patterns for Actions"](https://guides.emberjs.com/release/in-depth-topics/patterns-for-actions/) -- which _also_ does not mention anything about this-binding. We can link out to MDN ([maybe this one](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this#bound_methods_in_classes) -- or we could write something ourselves for a stable-reference to that content).  We should also explain the advantages of _not_ using an arrow function (shared memory between instances).
+3. Provide guidance on inheritance -- which we should discourage, as misuse of inheritance is often how folks mess up OOP. With components, composition is _very nice_, and with classes, dependency injection is _very nice_ (two common techniques folks have to not rely on inheritance).
+
+    Here is what happens with arrow functions and you try to use "the same patterns" as you would with methods:
+    ```js
+    class A {
+      message = "hi";
+      greet = () => this.message;
+    }
+    
+    
+    class B extends A {
+      greet = () => `:::: ${super.greet()}`;
+    }
+    
+    let b = new B();  
+    
+    console.log({
+      b: b.greet(),
+    });
+    ```
+    
+    gives the error:
+    ```
+    TypeError: (intermediate value).greet is not a function
+        at B.greet (<anonymous>:9:35)
+    ```
+    This happens because instance fields are not present on the prototype at all.
+    You can't do this either:
+    ```js
+    class B extends A {
+      greet = () => `:::: ${A.prototype.greet.call(this)}`;
+    }
+    ```
+    `prototype.greet` is undefined.
+    
+    If folks _want_ to use inheritance, despite warnings, this RFC doesn't deprecate `@action`
+
 
 ## Drawbacks
 
@@ -110,7 +147,9 @@ No compatibility with legacy code (pre Octane)
 
 ## Alternatives
 
-Do nothing.
+- Do nothing
+- Recommend a `@bind` decorator from somewhere else
+- Deprecate everything in the `@action` decorator that isn't bind-behavior 
 
 ## Unresolved questions
 
