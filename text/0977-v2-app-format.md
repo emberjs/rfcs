@@ -33,39 +33,46 @@ suite: Leave as is
 ## Summary
 
 This RFC defines a new app format, 
-building off the prior work in [v2 Addon format](https://github.com/emberjs/rfcs/pull/507),
-that is designed to make Ember apps more compatible with the rest of the JavaScript ecosystem. This RFC will define conventions of the app such that it is _possible_ to confidently build an ember app without ember-cli (e.g.: in jsbin). 
+building off the prior work in [v2 Addon format](https://rfcs.emberjs.com/id/0507-embroider-v2-package-format),
+that is designed to make Ember apps more compatible with the rest of the JavaScript ecosystem. This RFC will define conventions of the app and clearly identify functionality that is considered "compat" and could be considered optional in the near future.
 
 ## Motivation
 
-Ember has a long-standing tradition of pioneering developer-friendly conventions, allowing developers to build powerful web applications with minimal configuration. Over the years, we have embraced the philosophy of "convention over configuration," making it easy for developers to get started and achieve consistency across Ember projects.
+When ember-cli was created there was no existing JS tooling that met the needs of the Ember Framework. Over the years we have added more and more developer-friendly conventions to our build system that many Ember applications and addons depend on. As the JavaScript tooling story has gotten a lot better of the years Ember has fallen behind because our custom-built tools have not been keeping up with the wider community. Efforts have been started to improve the situation with the advent of [Embroider](https://github.com/embroider-build/embroider) but the current stable release of Embroider still runs inside ember-cli and is somewhat bound in performance and capability by the underlying technology [broccolijs](https://github.com/broccolijs/broccoli).
 
-However, as the JavaScript ecosystem evolves, it becomes increasingly important for Ember to adapt and interoperate seamlessly with the broader web development landscape. The introduction of a v2 app format is driven by several key motivations:
+Over the past year the Ember Core Tooling team have been working hard to invert the control between the bundler and ember-cli, which means that instead of ember-cli running the bundler as part of its build system the whole Ember build process will essentially become a plugin to the bundler. This means that we can more effectively make use of bundler innovations, performance improvements, and we are more capable of adapting to whatever next generation of build systems come to the Javascript ecosystemm.
 
-1. Compatibility with the JavaScript Ecosystem
+With the Ember build system as a plugin to bundlers (such as Vite or Webpack) we also have the ability to only intervene on things that are Emberisims (i.e. not-standard) and as we work to make Ember more standard we can eventually turn off these compat plugins.
 
-Ember's success lies not only in its robust features but also in its ability to integrate effortlessly with other JavaScript libraries and tools. With the v2 app format, we aim to make Ember applications more compatible with the rest of the JavaScript ecosystem. This means that developers should feel confident in building Ember applications without the need for specialized tooling like ember-cli. Whether it's experimenting with code in an environment like jsbin or integrating Ember into projects that use native packagers like Vite, Webpack, or Turbopack, the v2 app format should empower developers to work seamlessly with Ember in diverse contexts.
+This RFC is not going to describe a new blueprint where you don't need any compatibility plugins to run an Ember app, this RFC instead is going to propose a new blueprint that has all the compatibility plugins turned on so that it is easiest for most people to upgrade to.
 
+## Key Ideas
 
-2. Improved Insight into App Initialization
+Much like the [v2 Addon format RFC](https://rfcs.emberjs.com/id/0507-embroider-v2-package-format#key-ideas) we want the new app blueprint to rely on ES Modules and not leave anything hidden or automatic. This not noly makes it easier for developers to know where things are coming from, it also makes it easier for bundlers to know what to do with Ember applications.
 
-Ember's boot process lacks clear, documented specifications. This lack of clarity means that developers often struggle to comprehend the precise steps involved in booting an Ember app manually (if they ever attempt to do so).
-
-The v2 app format aims to rectify this by providing comprehensive documentation that outlines the intricacies of an Ember app's initialization process. By shedding light on the sequence of steps necessary to bootstrap an Ember application, developers will gain a deeper understanding of the framework's internal mechanisms. This newfound knowledge will empower developers to confidently control and customize the app initialization process, enabling them to tailor Ember apps to their specific needs.
-
-3. Performance and Optimization
-
-Performance is a critical concern for modern web applications. The v2 app format is designed to deliver tangible benefits to Ember developers and users. Most importantly, all capabilities of a chosen packager (be that Vite, Webpack, turbopack, etc) would become available to Ember (module federation, alternative SSR methods, etc).
-
-4. Interoperability with Native Packagers
-
-Embracing native packagers such as Vite, Webpack, and Turbopack is crucial for staying current with JavaScript ecosystem trends. The v2 app format is designed to accommodate these packagers seamlessly, ensuring that Ember applications can harness the benefits of these tools while maintaining compatibility.
-
-5. Future-Proofing
-
-Lastly, the v2 app format positions Ember to take advantage of ongoing and future developments in the wider JavaScript ecosystem related to code bundling and optimization. By aligning with industry trends, Ember remains a forward-looking framework, ready to embrace new technologies and practices.
+Each of the following sections go into detail of all the changes between the current blueprint and the new proposal which is currently being developed at https://github.com/embroider-build/app-blueprint
 
 ## Detailed design
+
+In this section I'm going to go through each of the changes in the new proposed blueprint, in each section I will do my best to explain the reasoningin for why it needs to be like this but if you have any questions or comments please feel free to comment on the RFC and we will try to update that section.
+
+### Entrypoint -> index.html
+
+### App Entrypoint -> app/app.js
+
+TODO add a comment about eagerness with the compat module import
+
+### Application Config -> app/config/environment.js and config/environment.js
+
+### Test Entrypoint -> tests/index.html and tests/test-helper.js
+
+### Explicit Babel Config -> babel.config.cjs
+
+### Ember Pre-Build Config -> ember-cli-build.js
+
+### Explicit Bundler Config -> vite.config.mjs
+
+
 
 How much of this should be "the path/migration to" as opposed to "this is the end state, details can be part of implementation"?
 
@@ -135,7 +142,10 @@ on the impact of the API churn on existing apps, etc.
 
 > This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
 
+In this section I'll 
+
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+### Application config
+
+In the current design of the new build we are still using the node-generated config that all ember developers are used to. We have considered unifying the `config/environemnt.js` and `app/config/environment.js` files to reduce complexity in the learning story but
