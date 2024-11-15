@@ -110,100 +110,259 @@ If you are using any other custom `{{content-for}}` section then you will need t
 
 ### App Entrypoint -> app/app.js
 
-In a classic build ember-cli would collect all the of the modules in your app into an entrypoint in the build that would go through and define each of the modules in the require.js AMD registry. There is already an RFC that describes the fact that we want to deprecate this AMD registry, but the key thing for this RFC is that we are trying to think of our app as series of real ES Modules we need to provide some way for the built-in discovery of these modules that allows Ember to still resolve those modules by name (for Dependency Injection concerns like services)
+In a classic build ember-cli would collect all the of the modules in your app into an entrypoint in the build that would go through and define each of the modules in the require.js AMD registry. There is already an [RFC that describes the fact that we want to deprecate this AMD registry](https://github.com/emberjs/rfcs/blob/strict-es-module-support/text/0938-strict-es-module-support.md), but the key thing for this RFC is that we are trying to think of our app as series of real ES Modules we need to provide some way for the built-in discovery of these modules that allows Ember to still resolve those modules by name (for Dependency Injection concerns like services)
 
 We are providing this with the virtual module `'@embroider/virtual/compat-modules';`. This means that any bundler plugin that wants to support Ember needs to be able to support virtual module imports. The contents of this file can be obtained by asking the Embroider resolver which collates the list of modules during the Ember prebuild.
 
-We then pass the list of modules to an updated version of the Ember Resolver (that has already been released )
+We then pass the list of modules to an updated version of the Ember Resolver (that has already been released) which means that the Ember Resolver no longer needs to rely on requirejs.entries to find all of the parts of your application. This set of compat modules also needs to be passed into the `loadInitializers()` from `ember-load-initializers` so that doesn't use AMD for initalizer discovery either. Here is an example of the difference in the `app/app.js` file:
 
-TODO add an example and keep describing
+```diff
+ import Application from '@ember/application';
++import compatModules from '@embroider/virtual/compat-modules';
+ import Resolver from 'ember-resolver';
+ import loadInitializers from 'ember-load-initializers';
+ import config from 'current-blueprint/config/environment';
 
-TODO add a comment about eagerness with the compat module import
+ export default class App extends Application {
+   modulePrefix = config.modulePrefix;
+   podModulePrefix = config.podModulePrefix;
+-  Resolver = Resolver;
++  Resolver = Resolver.withModules(compatModules);
+ }
 
-### Application Config -> app/config/environment.js and config/environment.js
+-loadInitializers(App, config.modulePrefix);
++loadInitializers(App, config.modulePrefix, compatModules);
+```
 
-### Test Entrypoint -> tests/index.html and tests/test-helper.js
+One very important thing to note is that because we're moving from AMD to real ESM modules we now have a timing change for any code that is executing in the module scope, this code will now be executed eagerly and will not wait until the module is actually consumed by your app. This change happens because AMD inherently lazily executes module code only when that module is consumed, and ES modules are inherently a static graph of modules.
+
+For the most part this change should not affect many people and most of the problems that we noticed related to this change came from addons that had code that had errors in it but was never cleaned up. It was never noticed before because the code was not being exercised by tests or consumers of the addons so most of the time the fix was to just delete the previously inert code.
+
+### Application Config -> app/config/environment.js and config/environment.js
+
+In a Classic build ember-cli automatically generated a module `app/config/environment.js` in your application build pipeline that is customisable with the config `storeConfigInMeta`. If `storeConfigInMeta` is true (which is the default) then the contents of this module will look for a `<meta>` tag in your html and parse out the your previously serialised config object and return the value as the default export from the module. This is what people recieve when they import from `app-name/config/environment`.
+
+This is another example of an Ember-specific complexity in the build system that can be confusing for other build systems. In the new blueprint we propose making the `app/config/environment.js` file exist in your source, and the contents will clearly be loading the config from meta: 
+
+```js
+import loadConfigFromMeta from '@embroider/config-meta-loader';
+
+export default loadConfigFromMeta('app-name');
+```
+
+The serialising of the config into the index.html is still being handled by `{{content-for 'head'}}` and is not going to change as a result of this RFC.
+
+One restriction in the new blueprint is that we don't have an automatic implementation for when `storeConfigInMeta` is set to `false`. Our reasoning is that if you have set this setting then you are likely doing something custom and you would need to update `app/config/environment.js` to reflect your custom setup. We don't need to provide any customisation here because this is a user-owned module and you can edit it as you please.
+
+### Test Entrypoint -> tests/index.html and tests/test-helper.js
+
+The `tests/index.html` will have the same treatment as the main `index.html` where the test boot code will now be exposed directly in an inline script so that test booting is not hidden deep in the build pipeline.
+
+```html
+<script type="module">
+    import { start } from './test-helper';
+    import.meta.glob("./**/*.{js,gjs,gts}", { eager: true });
+    start();
+</script>
+```
+
+To facilitate this new API the test-helper needs to be changed to essentially "wrap" its contents in a function that can be called rather than it running as a side effect of the import: 
+
+```diff
+ import Application from 'current-blueprint/app';
+ import config from 'current-blueprint/config/environment';
+ import * as QUnit from 'qunit';
+ import { setApplication } from '@ember/test-helpers';
+ import { setup } from 'qunit-dom';
+-import { start } from 'ember-qunit';
++import { start as qunitStart } from 'ember-qunit';
+ 
++export function start() {
+ setApplication(Application.create(config.APP));
+ setup(QUnit.assert);
+ 
+-start();
++qunitStart();
+
++}
+```
+
+This also allows us to load qunit, load all the test files, and then start qunit once all the tests are loaded. The loading of the test files is now also made explicit with the line: 
+
+```js
+import.meta.glob("./**/*.{js,gjs,gts}", { eager: true });
+```
+
+`import.meta.glob` is described in detail in the [Introduce a Wildcard Module Import API RFC](https://rfcs.emberjs.com/id/0939-import-glob). It is natively supported in Vite but it would need to be implemented in any other build system that wants to support building an Ember app.
 
 ### Explicit Babel Config -> babel.config.cjs
 
+In a classic build ember-cli-babel manages all configurations to babel in a way that is entirely hidden to the end-user. This is nice considering that users don't need to manage this file themselves, but it is also problematic because if anyone wants to customise their babel config they need to rely on extension points provided by both ember-cli and ember-cli-babel and in some cases those extension points may not even be available e.g. it is currently impossible for an app to configure an ast-transform for the ember-template-compiler and people workaround this issue by creating an in-repo addon that does this configuration for them.
+
+In the new blueprint we will have an explicit `babel.config.cjs` that will come pre-configured with all the babel-plugins that ember-cli-babel would have configured for you.
+
+Here is the full contents of the proposed babel file: 
+
+```js
+const {
+  babelCompatSupport,
+  templateCompatSupport,
+} = require('@embroider/compat/babel');
+
+module.exports = {
+  plugins: [
+    [
+      'babel-plugin-ember-template-compilation',
+      {
+        compilerPath: 'ember-source/dist/ember-template-compiler.js',
+        enableLegacyModules: [
+          'ember-cli-htmlbars',
+          'ember-cli-htmlbars-inline-precompile',
+          'htmlbars-inline-precompile',
+        ],
+        transforms: [...templateCompatSupport()],
+      },
+    ],
+    [
+      'module:decorator-transforms',
+      {
+        runtime: {
+          import: require.resolve('decorator-transforms/runtime-esm'),
+        },
+      },
+    ],
+    [
+      '@babel/plugin-transform-runtime',
+      {
+        absoluteRuntime: __dirname,
+        useESModules: true,
+        regenerator: false,
+      },
+    ],
+    ...babelCompatSupport(),
+  ],
+
+  generatorOpts: {
+    compact: false,
+  },
+};
+```
+
+You can see that there are two functions being imported from `@embroider/compat/babel`: `babelCompatSupport()` and `templateCompatSupport()`. This collects any extra babel config that is provided by any installed v1 ember-addon and makes sure that it still works with this new config. When an app no longer has any v1 ember-addons these functions can be removed but we will likely be leaving them in the default blueprint for the foreseeable future because they cost nothing if they are not being used.
+
 ### Ember Pre-Build Config -> ember-cli-build.js
+
+To enable the current stable version of embroider you need to update your Ember Application in `ember-cli-build.js` in a `compatBuild()` function. That function took a plugin for your bundler and an optional config that allowed you to turn on each of the "static flags" of embroider one-by-one
+
+The "Inversion of Control" version of the blueprint will not use `compatBuild()` since the bundling is not controlled by ember-cli any more. We have implemented a new `prebuild()` function that only takes your Ember application and an optional config:
+
+```diff
+ 'use strict';
+ 
+ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
++const { prebuild } = require('@embroider/compat');
+ 
+ module.exports = function (defaults) {
+   const app = new EmberApp(defaults, {
+     // Add options here
+   });
+ 
+-  return app.toTree();
++  return prebuild(app);
+ };
+```
+
+Other than not accepting a bundler config as one of the options, the other change in this prebuild function is that **all the static flags are turned on by default**. Also some flags, like `staticEmberSource`, are forced to be on and will throw an error if you try to set them to false.
 
 ### Explicit Bundler Config -> vite.config.mjs
 
+If you are using the current stable relase of Embroider then Embroider is generating a Webpack config for you automaically. It is possible for you to make some changes via config but the majority of the Webpack config file is hidden from you. 
 
+This RFC proposes that we don't hide the bundler config any more, if you are using Webpack then you will have a Webpack config that will need to have an Embroider plugin configured.
 
-How much of this should be "the path/migration to" as opposed to "this is the end state, details can be part of implementation"?
+The blueprint will default to using Vite as a bundler but we will provide the option for Webpack to help people who have customised their Webpack builds by configuring Embroider to transition to the new blueprint format without needing to migrate to Vite.
 
-1. start with embroider-strictest
-2. all blueprint addons must be either in the v2 format, or non-addons entirely (such as qunit-dom's recent change to real `type=module` package) 
-3. use Vite with Embroider
-4. remove unneeded dependencies
-    - ember-auto-import
-        - replaced by _the packager's_ own way of processing dependencies
-            (requires all consumed dependencies to _not_ be v1 addons)
-    - broccoli-asset-rev
-        - replaced by _the packager's_ production build mode
-    - ember-cli-babel
-        - replaced by actual babel 
-    - ember-cli-clean-css
-        - replaced by _the packager's_ production build mode
-    - ember-cli-htmlbars
-        - replaced by [babel-plugin-ember-template-compilation](https://github.com/emberjs/babel-plugin-ember-template-compilation/) and embroider-provided build plugins 
-    - ember-cli-inject-live-reload
-        - replaced by _the packager's_ development mode
-    - ember-cli-sri
-        - replaced by _the packager's_ production build mode
-    - ember-cli-terser
-        - replaced by _the packager's_ production build mode
-    - ember-fetch
-        - requires work in `@ember/test-helpers` and `ember-fetch` to make this smooth.
-    - ember-load-initializers
-        - tbd
-    - ember-resolver
-        - tbd
-    - loader.js
-        - require / AMD has been private for a long time, and folks should not be using it.
-    
+Here is the current version of the proposed vite config: 
 
-> This is the bulk of the RFC.
+```js
+import { defineConfig } from 'vite';
+import {
+  resolver,
+  hbs,
+  scripts,
+  templateTag,
+  optimizeDeps,
+  compatPrebuild,
+  assets,
+  contentFor,
+} from '@embroider/vite';
+import { babel } from '@rollup/plugin-babel';
 
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here.
+const extensions = [
+  '.mjs',
+  '.gjs',
+  '.js',
+  '.mts',
+  '.gts',
+  '.ts',
+  '.hbs',
+  '.json',
+];
+
+export default defineConfig(({ mode }) => {
+  return {
+    resolve: {
+      extensions,
+    },
+    plugins: [
+      hbs(),
+      templateTag(),
+      scripts(),
+      resolver(),
+      compatPrebuild(),
+      assets(),
+      contentFor(),
+
+      babel({
+        babelHelpers: 'runtime',
+        extensions,
+      }),
+    ],
+    optimizeDeps: optimizeDeps(),
+    server: {
+      port: 4200,
+    },
+    build: {
+      outDir: 'dist',
+      rollupOptions: {
+        input: {
+          main: 'index.html',
+          ...(shouldBuildTests(mode)
+            ? { tests: 'tests/index.html' }
+            : undefined),
+        },
+      },
+    },
+  };
+});
+
+function shouldBuildTests(mode) {
+  return mode !== 'production' || process.env.FORCE_BUILD_TESTS;
+}
+```
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
+All of the guides will need to be updated to make sure that we reference the build system correctly. We will also need to make sure that the system we use that automatically builds the tutorial for us can work with the new build system and blueprint.
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
-
-> How should this feature be introduced and taught to existing Ember
-users?
+It will also probably be worthwhile getting Embroider API documentation added to https://api.emberjs.com/ as one of the listed projects on the left-hand side.
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
-
-## Alternatives
-
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
-
-In this section I'll 
+The only drawback I can see is that this is going to be quite a large change.
 
 ## Unresolved questions
 
-### Application config
+### Webpack examples
 
-In the current design of the new build we are still using the node-generated config that all ember developers are used to. We have considered unifying the `config/environemnt.js` and `app/config/environment.js` files to reduce complexity in the learning story but
+While developing the layout of this new blueprint we have been exclusively working with Vite so we don't have any examples of the "Inversion of Control" layout for a Webpack blueprint. We don't see this as a requirement for progressing with this RFC as we are relatively sure that we will be able to achieve the same layout and only have to swap out the Vite config for a Webpack config. 
