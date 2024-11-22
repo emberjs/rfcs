@@ -52,6 +52,14 @@ Much like the [v2 Addon format RFC](https://rfcs.emberjs.com/id/0507-embroider-v
 
 Each of the following sections go into detail of all the changes between the current blueprint and the new proposal which is currently being developed at https://github.com/embroider-build/app-blueprint
 
+### Removal of requirejs support
+
+The default build system that will be used in this new blueprint will be Vite and for the most part Vite requires that your app is described in terms of ES Modules. The default build from `ember-cli` would express all of your modules using AMD and requirejs `define()` statements. There is an open RFC for [Strict ES Module Support](https://github.com/emberjs/rfcs/pull/938) that removes Ember's reliance on AMD to define modules and that RFC would be a requirement for this one i.e. when building with Vite you essentially have no requirejs module support. This means that any addon or application that interacts with requirejs would need to be updated for people to upgrade to this new blueprint.
+
+### Top level await added
+
+Since we are now using ES Modules througout the whole application it now becomes possible to use [top-level-await](https://v8.dev/features/top-level-await) in the module-scope of any of your files. This opens up a lot of possibliites for Ember developers and is a great example of how adopting standards helps to bring improvments from the wider ecosystem to Ember developers.
+
 ## Detailed design
 
 In this section I'm going to go through each of the changes in the new proposed blueprint, in each section I will do my best to explain the reasoning for why it needs to be like this but if you have any questions or comments please feel free to comment on the RFC and we will try to update that section.
@@ -276,7 +284,7 @@ Other than not accepting a bundler config as one of the options, the other chang
 
 ### Explicit Bundler Config -> vite.config.mjs
 
-If you are using the current stable relase of Embroider then Embroider is generating a Webpack config for you automaically. It is possible for you to make some changes via config but the majority of the Webpack config file is hidden from you. 
+If you are using the current stable release of Embroider then Embroider is generating a Webpack config for you automatically. It is possible for you to make some changes via config but the majority of the Webpack config file is hidden from you. 
 
 This RFC proposes that we don't hide the bundler config any more, if you are using Webpack then you will have a Webpack config that will need to have an Embroider plugin configured.
 
@@ -351,11 +359,47 @@ function shouldBuildTests(mode) {
 }
 ```
 
+### Application metadata -> package.json 
+
+In the [v2 Addon format RFC](https://rfcs.emberjs.com/id/0507-embroider-v2-package-format) we introduced the fact that the package.json `ember-addon` MetaData object should be versioned to identify which addons have been upgraded to the new spec. We will be reusing that concept for v2 apps by requiring the following section to be added to the package.json
+
+```json
+{
+    "ember-addon" {
+        "type": "app",
+        "version": 2
+    }
+}
+```
+
+This will opt Embroider into modern resolving rules so that it can interoperate properly with bundlers.
+
+### Exports -> package.json
+
+[Package Exports](https://webpack.js.org/guides/package-exports/) is an addition to the ESM resolving rules that all modern bundlers support. It allows you to configure paths that should be importable from ouside your package, as well as giving you a standard way to "redirect" imports that target your package. 
+
+We already use these semantics in Ember applications when we expect `import SomeComponent from 'app-name/components/some-component'` to actually import the file path `/path/to/app-name/app/components/some-component.js`. In this example you can see that the `/app/` subpath has been added to the location. In ember-cli this semantic is handled in broccoli by actually rewriting paths, but this is one of the main reasons why tooling gets confused by our import paths because it's not using a standard method to define our import paths.
+
+The new blueprint will add the following exports section to the package.json by default: 
+
+```json
+{
+    "./tests/*": "./tests/*",
+    "./*": "./app/*"
+}
+```
+
+This essentially "redirects" all requests to modules in the `app` folder, with the exepction of any path that has `app-name/tests/` at the start. This means that importing your test helpers like `import superHelper from 'app-name/tests/helpers/super-helper'` won't try to import from the path `/path/to/app-name/app/tests/helpers/super-helper.js`
+
 ## How we teach this
 
 All of the guides will need to be updated to make sure that we reference the build system correctly. We will also need to make sure that the system we use that automatically builds the tutorial for us can work with the new build system and blueprint.
 
 It will also probably be worthwhile getting Embroider API documentation added to https://api.emberjs.com/ as one of the listed projects on the left-hand side.
+
+The majority of this RFC is written from the perspective of someone that is running `ember new` for the first time on a brand new app, but we will need to make sure to write both upgrade guides and appropriate codemods for anyone that is wanting to upgrade their apps from the old blueprints to this new default. We also need to put some consideration into the experience of people using [ember-cli-update](https://github.com/ember-cli/ember-cli-update) to upgrade Ember versions when we make this the new default. 
+
+It's also important to note that this RFC does not represent the new bluerpint for a Polaris application. This is just upgrading our build system to use more modern and standard tools. Any communication around this RFC change should be explicit that this is a **part** of what is needed for Polaris but this blueprint update is not giving you all of polaris. This is a single step in that direction.
 
 ## Drawbacks
 
@@ -366,3 +410,7 @@ The only drawback I can see is that this is going to be quite a large change.
 ### Webpack examples
 
 While developing the layout of this new blueprint we have been exclusively working with Vite so we don't have any examples of the "Inversion of Control" layout for a Webpack blueprint. We don't see this as a requirement for progressing with this RFC as we are relatively sure that we will be able to achieve the same layout and only have to swap out the Vite config for a Webpack config. 
+
+### package.json meta key
+
+The way that Embroider is currently implemented the Ember MetaData in package.json is set with the key `ember-addon` even for applications. On the one hand it seems good that the applications and addons use the same key for this, but on the other hand it may be confusing that the key for the metadata has the word `addon` in it. We could move both addons and apps to just use the metadata key `ember` but that could create chrun with very little benefit.
