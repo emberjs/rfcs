@@ -8,13 +8,6 @@ on:
     paths:
       - 'text/*.md'
 
-concurrency:
-  # Events within 5 minutes are not guaranteed to run in order, and so when removing S-Proposed and adding S-Exploring
-  # we can't guarantee that the run of the workflow will be the one where S-Exploring is added. Adding `github.event_name`
-  # to the concurrency allows both workflows to complete and the PR to eventually have successful checks.
-  group: newly-added-rfc-${{ github.head_ref || github.ref }}-${{ github.event_name }}
-  cancel-in-progress: true
-
 jobs:
   check-rfcs:
     name: Does PR add RFCs?
@@ -76,7 +69,7 @@ jobs:
       - name: Fail if more than 1 RFC is added or modified
         if: ${{ needs.check-rfcs.outputs.rfcs-changed > 1}}
         run: |
-          echo "::error::More than 1 RFC is added in this PR; will be unable to automatically open PRs for advancement"
+          echo "::error::More than 1 RFC is added or modified in this PR; will be unable to automatically open PRs for advancement"
           exit 1
 
   frontmatter-stage-is-accepted:
@@ -92,7 +85,7 @@ jobs:
 
       - name: Verify stage of newly added RFC is `accepted` in frontmatter
         run: |
-          frontmatter=`node rfcs-tooling/rfc-frontmatter.js ${{ needs.check-rfcs.outputs.modified-rfc }}`
+          frontmatter=`node rfcs-tooling/scripts/rfc-frontmatter.mjs ${{ needs.check-rfcs.outputs.modified-rfc }}`
           stage=`echo $frontmatter | jq '.stage'`
           if [[ $stage != '"accepted"' ]]; then
               echo "::error::Newly added RFCs must have the stage 'accepted' in the frontmatter"
@@ -113,8 +106,7 @@ jobs:
       - name: Test RFC Filename matches PR Number that adds it
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: node check-filename-matches-pr.js $PR_NUMBER ${{ needs.check-rfcs.outputs.modified-rfc }}
-        working-directory: rfcs-tooling
+        run: node rfcs-tooling/scripts/check-filename-matches-pr.mjs $PR_NUMBER ${{ needs.check-rfcs.outputs.modified-rfc }}
 
   check-accepted-pr-url:
     name: Verify Accepted PR URL is correct
@@ -129,7 +121,7 @@ jobs:
 
       - name: Verify Accepted PR URL is correct
         run: |
-          frontmatter=`node rfcs-tooling/rfc-frontmatter.js ${{ needs.check-rfcs.outputs.modified-rfc }}`
+          frontmatter=`node rfcs-tooling/scripts/rfc-frontmatter.mjs ${{ needs.check-rfcs.outputs.modified-rfc }}`
           accepted_pr=`echo $frontmatter | jq '.prs.accepted'`
           accepted_pr=${accepted_pr//\"/}
           expected_pr="${{ github.event.pull_request.html_url }}"

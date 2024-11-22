@@ -1,14 +1,14 @@
 ---
-stage: released
+stage: recommended
 start-date: 2019-02-14T00:00:00.000Z
 release-date: 2021-05-03T00:00:00.000Z
 release-versions:
   ember-source: v3.27.0
-
 teams:
   - framework
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/496
+  accepted: 'https://github.com/emberjs/rfcs/pull/496'
+  recommended: 'https://github.com/emberjs/rfcs/pull/1024'
 project-link:
 ---
 
@@ -317,7 +317,7 @@ template string and returning a ready-to-be-consumed template object (the
 output of `createTemplateFactory`), instead of the wire format. This is
 mostly used for compiling templates at runtime, which is pretty rare.
 
-We propose to introduce a new `strict` option to the `precompile` and `compile`
+We propose to introduce a new `strictMode` option to the `precompile` and `compile`
 functions to enable strict mode compilation:
 
 ```js
@@ -325,7 +325,7 @@ import { precompileTemplate } from '@ember/template-compilation';
 
 precompileTemplate('Hello, {{name}}!', {
   moduleName: 'hello.hbs',
-  strict: true
+  strictMode: true
 });
 ```
 
@@ -363,12 +363,13 @@ precompileTemplate(`{{#let this.session.currentUser as |user|}}
   <BlogPost @title={{titleize @model.title}} @body={{@model.body}} @author={{user}} />
 {{/let}}`, {
   moduleName: 'index.hbs',
-  strict: true
+  strictMode: true
 }); /* => `{
   "id": "ANJ73B7b",
   "block": "{\"statements\":[\"...\"]}",
   "meta": { "moduleName": "index.hbs" },
-  "scope": () => [BlogPost, titleize]
+  "scope": () => [BlogPost, titleize],
+  "isStrictMode": true
 }` */
 ```
 
@@ -411,7 +412,8 @@ export default createTemplateFactory({
   "id": "ANJ73B7b",
   "block": "{\"statements\":[\"...\"]}",
   "meta": { "moduleName": "index.hbs" },
-  "scope": () => [BlogPost, titleize]
+  "scope": () => [BlogPost, titleize],
+  "isStrictMode": true
 });
 ```
 
@@ -434,7 +436,8 @@ precompileTemplate(`{{#let this.session.currentUser as |user|}}
 {{/let}}`, {
   moduleName: 'index.hbs',
   strict: true,
-  scope: ['BlogPost', 'titleize']
+  scope: ['BlogPost', 'titleize'],
+  isStrictMode: true
 });
 ```
 
@@ -540,7 +543,7 @@ strict mode semantics at this stage. Instead, the guides should be updated to
 feature template imports or single-file components when they become available.
 
 As for the low-level APIs, we should update the API documentation to cover the
-new flags (`strict` and `scope`). The documentation should cover the details of
+new flags (`strictMode` and `scope`). The documentation should cover the details of
 the "ambient scope" feature discussed in this RFC, and emphasize that it is
 intended for linking static values such as helpers and components.
 
@@ -566,7 +569,7 @@ discussed in the contextual helpers RFC.
 
    By adopting these piecemeal, we will also have to define the interaction and
    combined semantics for any possible combinations of these flags, and tooling
-   will be unable to take advantage of the improved static guarentees without
+   will be unable to take advantage of the improved static guarantees without
    doing a lot of work to account for all these possibilities.
 
 2. Instead of proposing a standalone strict mode, we could just bundle these
@@ -578,7 +581,7 @@ discussed in the contextual helpers RFC.
 
 3. Switch to HTML attributes by default in strict mode.
 
-   Today, Glimmer uses a complicated set of huristics to decide if a bound HTML
+   Today, Glimmer uses a complicated set of heuristics to decide if a bound HTML
    "attribute" syntax should indeed be set using `setAttribute` or set as a
    JavaScript property using `element[...] = ...;`. This does not always work
    well in practice, and it causes a lot of confusion and complexity.
