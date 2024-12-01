@@ -3,12 +3,12 @@ stage: accepted
 start-date: 2024-11-30T00:00:00.000Z
 release-date: # In format YYYY-MM-DDT00:00:00.000Z
 release-versions:
-teams: # delete teams that aren't relevant
+teams: 
   - cli
   - framework
   - learning
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/1054
 project-link:
 suite: 
 ---
