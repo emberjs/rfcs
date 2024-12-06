@@ -3,8 +3,8 @@ stage: released
 start-date: 2022-07-12T00:00:00.000Z
 release-date:
 release-versions:
-  ember-source: 6.0
-  ember-cli: 6.0
+  ember-source: 6.0.0
+  ember-cli: 6.0.0
 teams:
   - steering
   - framework
