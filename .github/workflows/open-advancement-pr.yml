@@ -38,16 +38,17 @@ jobs:
           ready_for_release_pr=${ready_for_release_pr//\"/}
           released_pr=`echo $frontmatter | jq '.prs.released'`
           released_pr=${released_pr//\"/}
+          rendered_rfc_url="https://github.com/$GITHUB_REPOSITORY/blob/advance-rfc-${{ inputs.rfc-number }}/${{ inputs.rfc-path }}"
           title=`echo $frontmatter | jq '.title'`
           if [[ ${{ inputs.new-stage }} == "ready-for-release" ]]; then
             pretty_stage="Ready for Release"
-            template=`sed -e 's/__RFC_NUMBER__/${{ inputs.rfc-number }}/g' .github/PULL_REQUEST_TEMPLATE/advance-to-ready-for-release.md`  
+            template=`sed -e 's/__RFC_NUMBER__/${{ inputs.rfc-number }}/g' -e "s>__RFC_RENDERED_URL__>$rendered_rfc_url>g" .github/PULL_REQUEST_TEMPLATE/advance-to-ready-for-release.md`  
           elif [[ ${{ inputs.new-stage }} == "released" ]]; then
             pretty_stage="Released"
-            template=`sed -e 's/__RFC_NUMBER__/${{ inputs.rfc-number }}/g' -e "s>__READY_FOR_RELEASE_PR__>$ready_for_release_pr>g" .github/PULL_REQUEST_TEMPLATE/advance-to-released.md`
+            template=`sed -e 's/__RFC_NUMBER__/${{ inputs.rfc-number }}/g' -e "s>__READY_FOR_RELEASE_PR__>$ready_for_release_pr>g" -e "s>__RFC_RENDERED_URL__>$rendered_rfc_url>g" .github/PULL_REQUEST_TEMPLATE/advance-to-released.md`
           elif [[ ${{ inputs.new-stage }} == "recommended" ]]; then
             pretty_stage="Recommended"
-            template=`sed -e 's/__RFC_NUMBER__/${{ inputs.rfc-number }}/g' -e "s>__READY_FOR_RELEASE_PR__>$ready_for_release_pr>g" -e "s>__RELEASED_PR__>$released_pr>g" .github/PULL_REQUEST_TEMPLATE/advance-to-recommended.md`
+            template=`sed -e 's/__RFC_NUMBER__/${{ inputs.rfc-number }}/g' -e "s>__READY_FOR_RELEASE_PR__>$ready_for_release_pr>g" -e "s>__RELEASED_PR__>$released_pr>g" -e "s>__RFC_RENDERED_URL__>$rendered_rfc_url>g" .github/PULL_REQUEST_TEMPLATE/advance-to-recommended.md`
           fi
           echo 'body<<EOF' >> $GITHUB_OUTPUT
           echo "$template" >> $GITHUB_OUTPUT

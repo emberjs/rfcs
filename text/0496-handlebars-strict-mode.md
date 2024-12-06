@@ -1,14 +1,14 @@
 ---
-stage: released
+stage: recommended
 start-date: 2019-02-14T00:00:00.000Z
 release-date: 2021-05-03T00:00:00.000Z
 release-versions:
   ember-source: v3.27.0
-
 teams:
   - framework
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/496
+  accepted: 'https://github.com/emberjs/rfcs/pull/496'
+  recommended: 'https://github.com/emberjs/rfcs/pull/1024'
 project-link:
 ---
 

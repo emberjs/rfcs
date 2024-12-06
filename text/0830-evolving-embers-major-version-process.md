@@ -1,15 +1,18 @@
 ---
-stage: accepted
+stage: released
 start-date: 2022-07-12T00:00:00.000Z
 release-date:
 release-versions:
+  ember-source: 6.0.0
+  ember-cli: 6.0.0
 teams:
   - steering
   - framework
   - learning
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/830
-
+  accepted: 'https://github.com/emberjs/rfcs/pull/830'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/878'
+  released: 'https://github.com/emberjs/rfcs/pull/1057'
 ---
 
 # Evolving Ember's Major Version Process
