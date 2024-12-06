@@ -1,5 +1,5 @@
 ---
-stage: accepted
+stage: ready-for-release
 start-date: 2022-07-12T00:00:00.000Z
 release-date:
 release-versions:
@@ -8,8 +8,8 @@ teams:
   - framework
   - learning
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/830
-
+  accepted: 'https://github.com/emberjs/rfcs/pull/830'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/878'
 ---
 
 # Evolving Ember's Major Version Process
