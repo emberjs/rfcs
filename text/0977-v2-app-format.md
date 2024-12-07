@@ -40,9 +40,9 @@ and is designed to make Ember apps more compatible with the rest of the JavaScri
 
 When ember-cli was created there was no existing JS tooling that met the needs of the Ember Framework. Over the years we have added more and more developer-friendly conventions to our build system that many Ember applications and addons depend on. As the wider JavaScript tooling story has evolved over the years Ember has fallen behind, this is mainly because our custom-built tools have not been keeping up with the wider community and we haven’t been able to directly use any more advanced tooling in our apps. Efforts have been started to improve the situation with the advent of [Embroider](https://github.com/embroider-build/embroider) but the current stable release of Embroider still runs inside ember-cli and is somewhat bound in terms of performance and capability by the underlying technology [broccolijs](https://github.com/broccolijs/broccoli) and some other architectural decisions.
 
-Over the past year the Ember Core Tooling team have been working hard to invert the control between bundlers and ember-cli, which means that instead of ember-cli running a bundler (such as Webpack) as part of its build system the whole Ember build process will essentially become a plugin to the bundler. This means that we can more effectively make use of bundler innovations, performance improvements, and we are more capable of adapting to whatever next generation of build systems come to the Javascript ecosystem.
+Over the past year the Ember Core Tooling team have been working hard to invert the control between bundlers and ember-cli, which means that instead of ember-cli running a bundler (such as Webpack in the current Embroider stable version) as part of its build system the whole Ember build process will essentially become a plugin to the bundler. This means that we can more effectively make use of bundler innovations, performance improvements, and we are more capable of adapting to whatever next generation of build systems come to the Javascript ecosystem.
 
-With the Ember build system as a plugin to bundlers (such as Vite or Webpack) we also have the ability to only intervene on things that are Emberisims (i.e. not-standard) and as we work to make Ember more standard we can eventually turn off these ”compatibility plugins”. Compatibility plugins will need to be powered by an “ember prebuild” that collects information about your app and addons and output metadata that the bundler plugins will consume. The intention is that this prebuild will be done automatically for you as part of the bundler plugin setup and you should not have to worry about preforming extra steps.
+With the Ember build system as a plugin to bundlers we have the ability to only intervene on things that are Emberisims (i.e. not-standard) and as we work to make Ember more standard we can eventually turn off these ”compatibility plugins”. Compatibility plugins will need to be powered by an “ember prebuild” that collects information about your app and addons and output metadata that the bundler plugins will consume. The intention is that this prebuild will be done automatically for you as part of the bundler plugin setup and you should not have to worry about preforming extra steps.
 
 This RFC is not going to describe a new blueprint where you don't need any compatibility plugins (or an ember prebuild) to run an Ember app, this RFC instead is going to propose a new blueprint that has all the compatibility plugins turned on so that it is easiest for most people to upgrade to. Any discussion about a minimal “compatibility-free” blueprint should happen in a later RFC. 
 
@@ -52,13 +52,21 @@ Much like the [v2 Addon format RFC](https://rfcs.emberjs.com/id/0507-embroider-v
 
 Each of the following sections go into detail of all the changes between the current blueprint and the new proposal which is currently being developed at https://github.com/embroider-build/app-blueprint
 
+### Focus on Vite
+
+The new app blueprint will default to using Vite to power local development and build for production. Vite has been on a meteoric rise in popularity over the past few years, and it represents the state of the art when it comes to Developer Ergonomics.  Standardising on such a popular build system will bring the Ember community a lot of benefits but the key areas of improvement that we expect developers to experience are: 
+
+- significantly improved rebuild speeds during local development
+- the ability to use "standard" vite plugins with your Ember apps
+- significant improvements to debugability of your code in development because Vite serves ES Modules directly to your browser in development
+
 ### Removal of requirejs support
 
 The default build system that will be used in this new blueprint will be Vite and for the most part Vite requires that your app is described in terms of ES Modules. The default build from `ember-cli` would express all of your modules using AMD and requirejs `define()` statements. There is an open RFC for [Strict ES Module Support](https://github.com/emberjs/rfcs/pull/938) that removes Ember's reliance on AMD to define modules and that RFC would be a requirement for this one i.e. when building with Vite you essentially have no requirejs module support. This means that any addon or application that interacts with requirejs would need to be updated for people to upgrade to this new blueprint.
 
 ### Top level await added
 
-Since we are now using ES Modules througout the whole application it now becomes possible to use [top-level-await](https://v8.dev/features/top-level-await) in the module-scope of any of your files. This opens up a lot of possibliites for Ember developers and is a great example of how adopting standards helps to bring improvments from the wider ecosystem to Ember developers.
+Since we are now using ES Modules througout the whole application it now becomes possible to use [top-level-await](https://v8.dev/features/top-level-await) in the module-scope of any of your files. This opens up a lot of possibilities for Ember developers and is a great example of how adopting standards helps to bring improvements from the wider ecosystem to Ember developers.
 
 ## Detailed design
 
@@ -258,6 +266,8 @@ module.exports = {
 
 You can see that there are two functions being imported from `@embroider/compat/babel`: `babelCompatSupport()` and `templateCompatSupport()`. This collects any extra babel config that is provided by any installed v1 ember-addon and makes sure that it still works with this new config. When an app no longer has any v1 ember-addons these functions can be removed but we will likely be leaving them in the default blueprint for the foreseeable future because they cost nothing if they are not being used.
 
+For people who are familiar with Babel config files you may have noticed that we have not included `@babel/preset-env` in this config. While our browser support has classically been handled by babel and `@babel/preset-env`, Vite has a config option [`build.target`](https://vite.dev/config/build-options#build-target) that controls what browsers you would like to down-compile your code for. This `build.target` config is passed to esbuild which is ultimately in charge of making sure your code runs in your stated targets i.e. in your `config/targets` file. While we are still going to read your `config/targets` file and pass that to the `build.target` config, it's worth noting that esbuild does not support the same range of browsers that `@babel/preset-env` does. This isn't a problem for the default blueprint because it supports all browsers that are part of Ember's official support matrix. We also don't see this as a blocker for adoption of this new blueprint because any applications that have a wider browser support matrix than Vite's `build.target` can provide can just manually configure `@babel/preset-env` in their babel config, now that it's significantly easier to edit your babel config.
+
 ### Ember Pre-Build Config -> ember-cli-build.js
 
 To enable the current stable version of embroider you need to update your Ember Application in `ember-cli-build.js` in a `compatBuild()` function. That function took a plugin for your bundler and an optional config that allowed you to turn on each of the "static flags" of embroider one-by-one
@@ -286,78 +296,29 @@ Other than not accepting a bundler config as one of the options, the other chang
 
 If you are using the current stable release of Embroider then Embroider is generating a Webpack config for you automatically. It is possible for you to make some changes via config but the majority of the Webpack config file is hidden from you. 
 
-This RFC proposes that we don't hide the bundler config any more, if you are using Webpack then you will have a Webpack config that will need to have an Embroider plugin configured.
-
-The blueprint will default to using Vite as a bundler but we will provide the option for Webpack to help people who have customised their Webpack builds by configuring Embroider to transition to the new blueprint format without needing to migrate to Vite.
+This RFC proposes that we don't hide the bundler config any more, we will instead have a standard Vite config file that configures the required Embroider plugins. 
 
 Here is the current version of the proposed vite config: 
 
 ```js
 import { defineConfig } from 'vite';
-import {
-  resolver,
-  hbs,
-  scripts,
-  templateTag,
-  optimizeDeps,
-  compatPrebuild,
-  assets,
-  contentFor,
-} from '@embroider/vite';
+import { extensions, classicEmberSupport, ember } from '@embroider/vite';
 import { babel } from '@rollup/plugin-babel';
 
-const extensions = [
-  '.mjs',
-  '.gjs',
-  '.js',
-  '.mts',
-  '.gts',
-  '.ts',
-  '.hbs',
-  '.json',
-];
-
-export default defineConfig(({ mode }) => {
-  return {
-    resolve: {
+export default defineConfig({
+  plugins: [
+    classicEmberSupport(),
+    ember(),
+    // extra plugins here
+    babel({
+      babelHelpers: 'runtime',
       extensions,
-    },
-    plugins: [
-      hbs(),
-      templateTag(),
-      scripts(),
-      resolver(),
-      compatPrebuild(),
-      assets(),
-      contentFor(),
-
-      babel({
-        babelHelpers: 'runtime',
-        extensions,
-      }),
-    ],
-    optimizeDeps: optimizeDeps(),
-    server: {
-      port: 4200,
-    },
-    build: {
-      outDir: 'dist',
-      rollupOptions: {
-        input: {
-          main: 'index.html',
-          ...(shouldBuildTests(mode)
-            ? { tests: 'tests/index.html' }
-            : undefined),
-        },
-      },
-    },
-  };
+    }),
+  ],
 });
-
-function shouldBuildTests(mode) {
-  return mode !== 'production' || process.env.FORCE_BUILD_TESTS;
-}
 ```
+
+This config is defining 2 "compound plugins" that contain all the functionality needed for an Ember app to be built with Vite. We have split them into `classicEmberSupport()` and `ember()` to communicate that some of the plugins could be considered optional if you aren't using classic Ember features e.g. you have converted all your templates to GJS files.
 
 ### Application metadata -> package.json 
 
@@ -403,13 +364,15 @@ It's also important to note that this RFC does not represent the new bluerpint f
 
 ## Drawbacks
 
-The only drawback I can see is that this is going to be quite a large change.
+### Upgradability
+
+If developers are using ember-cli-update to upgrade their apps there might be a case where in an upcoming version of Ember they will be "opted in" to an Embroider build with Vite. We don't expect this process to be automatic but we do think that we can get most applications across this line with the use of tooling and codemods. One way to mitigate this problem is that we could maintain a "classic blueprint" until the next Ember major release that people could switch to while they are figuring out how to upgrade to Embroider and Vite.
+
+### Webpack support
+
+The blueprint will default to using Vite as a bundler, and we plan to document the process to add support for more bundlers as part of the implementation of this RFC. We had originally intended to provide support for Webpack as a bundler to help people who have already upgraded to the current stable Embroider version and customised their Webpack builds but Webpack support is not trivial to implement. The Ember Tooling Team believes that the benefits of having Vite as the default build experience are so great that we should not delay the implementation of this RFC while we try to backport the Inversion of control implementation of Embroider to Webpack. 
 
 ## Unresolved questions
-
-### Webpack examples
-
-While developing the layout of this new blueprint we have been exclusively working with Vite so we don't have any examples of the "Inversion of Control" layout for a Webpack blueprint. We don't see this as a requirement for progressing with this RFC as we are relatively sure that we will be able to achieve the same layout and only have to swap out the Vite config for a Webpack config. 
 
 ### package.json meta key
 
