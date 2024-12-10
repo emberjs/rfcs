@@ -270,27 +270,27 @@ For people who are familiar with Babel config files you may have noticed that we
 
 ### Ember Pre-Build Config -> ember-cli-build.js
 
-To enable the current stable version of embroider you need to update your Ember Application in `ember-cli-build.js` in a `compatBuild()` function. That function took a plugin for your bundler and an optional config that allowed you to turn on each of the "static flags" of embroider one-by-one
+To enable the current stable version of embroider you need to wrap your Ember Application defined in `ember-cli-build.js` in a `compatBuild()` function. The `compatBuild()` function takes a plugin that runs your bundler (i.e. Webpack) as part of the ember-cli pipeline and an optional config that allows you to turn on each of the "static flags" of embroider one-by-one.
 
-The "Inversion of Control" version of the blueprint will not use `compatBuild()` since the bundling is not controlled by ember-cli any more. We have implemented a new `prebuild()` function that only takes your Ember application and an optional config:
+In the "Inversion of Control" version of the blueprint we intend to keep the same `compatBuild()` API but the job of the builder will be very different. Instead of Vite running as part of the ember-cli pipeline we are only running a prebuild that collects information about your application and its addons to make that available to the Embroider Vite plugin. When running directly in Vite the builder argument to `compatBuild()` will be inert and will do nothing.
+
+To continue to support commands like `ember build` or `ember test` we need some way for ember-cli to interact with Vite and allow Vite to build the application and run tests against the built output. Running `ember test` will essentially run Vite once (as a "one shot build" with no watching functionality) using the builder imported from `@embroider/vite` and then run `ember test --path {outdir}` where `{outdir}` will target the build output from Vite. This allows us to continue to support testem and any CI process that people have defined to use `ember build` without needing to update. Here is an example of an updated `ember-cli-build.js` file:
 
 ```diff
- 'use strict';
- 
  const EmberApp = require('ember-cli/lib/broccoli/ember-app');
-+const { prebuild } = require('@embroider/compat');
- 
++const { compatBuild } = require('@embroider/compat');
++const { builder } = require('@embroider/vite');
+
  module.exports = function (defaults) {
-   const app = new EmberApp(defaults, {
-     // Add options here
-   });
- 
+   let app = new EmberApp(defaults, {});
 -  return app.toTree();
-+  return prebuild(app);
++  return compatBuild(app, builder, { /* optional Embroider options */ });
  };
 ```
 
-Other than not accepting a bundler config as one of the options, the other change in this prebuild function is that **all the static flags are turned on by default**. Also some flags, like `staticEmberSource`, are forced to be on and will throw an error if you try to set them to false.
+The other change that will happen in the next Embroider major release (and will be true for the new blueprint) is that the options passed to `compatBuild()` will have **all the static flags turned on by default**. 
+
+Also some flags, like `staticEmberSource`, `staticAddonTrees`, and  `staticAddonTestSuportTrees` are forced to be on and will throw an error if you try to set them to false. This error will give guidance wherever possible and link to relevant documentation.
 
 ### Explicit Bundler Config -> vite.config.mjs
 
