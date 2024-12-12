@@ -32,14 +32,16 @@ This RFC proposes to migrate to a vanilla Prettier setup in the blueprints, inst
 We would add the following scripts to the `package.json` file in the `app` blueprint:
 
 ```diff
++ "format": "prettier . --cache --write",
 + "lint:format": "prettier . --cache --check",
-+ "lint:format:fix": "prettier . --cache --write",
 ```
 
 - `lint:format` would check the formatting of _all_ files Prettier supports
 - `lint:format` would also run when running the `lint` script
-- `lint:format:fix` would format _all_ files Prettier supports
-- `lint:format:fix` would also run when running the `lint:fix` script
+- `format` would format _all_ files Prettier supports
+- `format` would also run when running the `lint:fix` script
+
+> NOTE: We use `format` instead of `lint:format:fix`, because we don't want to run Prettier parallel to ESLint and Stylelint when fixing lint errors. The `lint:fix` script will be updated to always run `format` last.
 
 We would remove the following dependencies from the `package.json` file in the `app` blueprint:
 
