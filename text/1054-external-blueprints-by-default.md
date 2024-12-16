@@ -46,7 +46,7 @@ Since we're wanting to introduce new blueprints, for both the [v2 app][gh-v2-app
 ## Detailed design
 
 **tl;dr, behavior changes**
-1. external blueprints are added to `dependencies` of `ember-cli`. Default behavior uses the resolved path from `depndencies`
+1. external blueprints are added to `dependencies` of `ember-cli`. Default behavior uses the resolved path from `dependencies`
 2. ember-cli will prompt the user if they wish to use the latest version of the blueprint if one is available 
 3. ember-cli always prints which blueprint it is using and from where
 4. ember-cli will not print warnings on custom flags used in blueprints
