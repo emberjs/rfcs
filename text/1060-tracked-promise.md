@@ -68,7 +68,6 @@ import { TrackedPromise, trackPromise } from '@ember/reactive';
 >   values to not block render (or cause a re-render if they don't need to)
 > - no `@dependentKeyCompat`
 > - promise states are all mutually exclusive
-> - the returned value is also promise-like
 
 ### `trackPromise`
 
