@@ -346,6 +346,7 @@ Doing so would allow more separation of loading / error UI, such as portaling lo
 
 #### creating reactive promises
 
+We can use `TrackedPromise` to turn not-async APIs into reactive + async behaviors -- for example, if we want to make a promise out of `setTimeout`, and cause an artificial delay / timer behavior:
 
 ```gjs
 import Component from '@glimmer/component';
@@ -354,37 +355,29 @@ import { TrackedPromise } from '@ember/reactive';
 
 export default class Demo extends Component {
   @cached
-  get state() {
+  get () {
     return new TrackedPromise((resolve => {
-
+       setTimeout(() => {
+        resolve();
+       }, 5_000 /* 5 seconds */);
     }));
-    let id = this.args.personId;
-    let fetchPromise = 
-      fetch(`https://swapi.tech/api/people/${id}`)
-        .then(response => response.json());
-
-    return trackPromise(fetchPromise);
   }
 
-  // Properties can be aliased like any other tracked data
-  get isLoading() {
-    return this.requestState.isPending;
+  get showSubscribeModal() {
+    return this.requestState.isResolved;
   }
 
   <template>
-    {{#if this.isLoading}}
-       ... loading ...
-    {{else if this.requestState.value}}
-       <pre>{{globalThis.JSON.stringify this.requsetState.value null 2}}</pre>
-    {{else if this.requestState.error}}
-       oh no!
-       <br>
-       {{this.requestState.error}}
-    {{/if}}
+     {{#if this.showSubscribeModal}}
+        <dialog open>
+          Subscribe now!
+
+          ...
+        </dialog>
+     {{/if}}
   </template>
 }
 ```
-
 
 ## Drawbacks
 
