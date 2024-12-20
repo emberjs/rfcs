@@ -155,6 +155,9 @@ For example, other future exports from `@ember/reactive` (in future RFCs), may i
 without the static analysis guarantees of `type=module`, every consumer of `@ember/reactive` would always have all of these exports in their build.
 For some utilities, we can place them under sub-path-exports, such as `@ember/reactive/window`, for window-specific reactive properties, but the exact specifics of each of these can be hashed out in their individual RFCs.
 
+
+### Consumption
+
 When a project wants to use `@ember/reactive`, they would then only need to install the package separately / add it to their `package.json`.
 
 The proposed list of compatibilyt here is only meant as an example -- if implementation proves that more can be supported easier, with less work, that should be pursued, and this part is kind of implementation detail.
@@ -169,18 +172,175 @@ But for demonstration:
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
+### API Docs
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
+#### `trackPromise`
 
-> How should this feature be introduced and taught to existing Ember
-users?
+```js
+import { trackPromise } from '@ember/reactive';
+```
 
-> Keep in mind the variety of learning materials: API docs, guides, blog posts, tutorials, etc.
+The returned value is an instance of `TrackedPromise`, and is for instrumenting promise state with reactive properties, so that UI can update as the state of a promise changes over time.
+
+This is a shorthand utility for passing an existing promise to `TrackedPromise`.
+
+Example in a template-only component
+```gjs
+import { trackPromise } from '@ember/reactive';
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+<template>
+  {{#let (trackPromise (wait 500)) as |state|}}
+    isPending:  {{state.isPending}}<br>
+    isResolved: {{state.isResolved}}<br>
+    isRejected: {{state.isRejected}}<br>
+    value:      {{state.value}}<br>
+    error:      {{state.error}}<br>
+  {{/let}}
+</template>
+```
+
+Example in a class component:
+```gjs
+import Component from '@glimmer/component';
+import { cached } from '@glimmer/tracking';
+import { trackPromise } from '@ember/reactive';
+
+export default class Demo extends Component {
+  @cached
+  get state() {
+    // promise resolves after 400ms
+    let promise = new Promise((resolve) => {
+      setTimeout(resolve, 400);
+    });
+
+    return trackPromise(promise);
+  }
+
+  <template>
+    isPending:  {{this.state.isPending}}<br>
+    isResolved: {{this.state.isResolved}}<br>
+    isRejected: {{this.state.isRejected}}<br>
+    value:      {{this.state.value}}<br>
+    error:      {{this.state.error}}<br>
+  </template>
+}
+```
+
+
+#### `TrackedPromise`
+
+```js 
+import { TrackedPromise } from '@ember/reactive';
+```
+
+C
+
+### Guides
+
+#### use with `fetch`
+
+With `@cached`, we can make any getter have stable state and referential integrity, which is essential for having multiple accesses to the getter return the same object -- in this case, the return value from `trackPromise`:
+
+```gjs
+import Component from '@glimmer/component';
+import { cached } from '@glimmer/tracking';
+import { trackPromise } from '@ember/reactive';
+
+export default class Demo extends Component {
+  @cached
+  get requestState() {
+    let id = this.args.personId;
+    let fetchPromise = 
+      fetch(`https://swapi.tech/api/people/${id}`)
+        .then(response => response.json());
+
+    return trackPromise(fetchPromise);
+  }
+
+  // Properties can be aliased like any other tracked data
+  get isLoading() {
+    return this.requestState.isPending;
+  }
+
+  <template>
+    {{#if this.isLoading}}
+       ... loading ...
+    {{else if this.requestState.value}}
+       <pre>{{globalThis.JSON.stringify this.requsetState.value null 2}}</pre>
+    {{else if this.requestState.error}}
+       oh no!
+       <br>
+       {{this.requestState.error}}
+    {{/if}}
+  </template>
+}
+```
+In this example, we only ever show one of the states at a time, loading _or_ the value _or_ the error.
+We can separate each of these, if desired, like this:
+```gjs
+<template>
+  {{#if this.isLoading}}
+      ... loading ...
+  {{/if}}
+  
+  {{#if this.requestState.value}}
+      <pre>{{globalThis.JSON.stringify this.requsetState.value null 2}}</pre>
+  {{/if}}
+
+  {{#if this.requestState.error}}
+      oh no!
+      <br>
+      {{this.requestState.error}}
+  {{/if}}
+</template>
+```
+Doing so would allow more separation of loading / error UI, such as portaling loading / error notifications to somewhere central in your applications.
+
+#### creating reactive promises
+
+
+```gjs
+import Component from '@glimmer/component';
+import { cached } from '@glimmer/tracking';
+import { TrackedPromise } from '@ember/reactive';
+
+export default class Demo extends Component {
+  @cached
+  get state() {
+    return new TrackedPromise((resolve => {
+
+    }));
+    let id = this.args.personId;
+    let fetchPromise = 
+      fetch(`https://swapi.tech/api/people/${id}`)
+        .then(response => response.json());
+
+    return trackPromise(fetchPromise);
+  }
+
+  // Properties can be aliased like any other tracked data
+  get isLoading() {
+    return this.requestState.isPending;
+  }
+
+  <template>
+    {{#if this.isLoading}}
+       ... loading ...
+    {{else if this.requestState.value}}
+       <pre>{{globalThis.JSON.stringify this.requsetState.value null 2}}</pre>
+    {{else if this.requestState.error}}
+       oh no!
+       <br>
+       {{this.requestState.error}}
+    {{/if}}
+  </template>
+}
+```
+
 
 ## Drawbacks
 
@@ -191,6 +351,9 @@ I think not doing this has more drawbacks than doing it. A common problem we hav
 - reclaim the `ember` package and export under `ember/reactive`, add `ember` to the package.json.
   - doing this _would_ require a polyfill, as `ember` is already available in all versions of projects, but it does not have sub-path-exports that folks use.
 - use `/reactivity` instead of `/reactive`
+- re-use `@glimmer/tracking`
+  - would require that `@glimmer/tracking` move in to the `ember-source` repo
+  - would also require a polyfill, as prior versions of `@glimmer/tracking` would not have the new behaviors
 
 ## Unresolved questions
 
