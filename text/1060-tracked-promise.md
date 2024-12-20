@@ -54,7 +54,7 @@ There are probably more, but the point of this RFC is to provide a common utilit
 
 ## Detailed design
 
-For loadaing UIs' there are concerns that this proposed utility will not be concerned with directly, but also the utility still needs to enable usage of those UIs, so in _How we teach this_, there will be examples of various loading patterns and re-implementations of existing utilities (such as those mentioned in the _Motivation_ section above) using the new tracking utility for promises.
+For loading UIs, there are concerns that this proposed utility will not be concerned with directly, but also the utility still needs to enable usage of those UIs, so in _How we teach this_, there will be examples of various loading patterns and re-implementations of existing utilities (such as those mentioned in the _Motivation_ section above) using the new tracking utility for promises.
 
 
 The import:
