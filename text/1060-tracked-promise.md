@@ -62,6 +62,14 @@ The import:
 import { TrackedPromise, trackPromise } from '@ember/reactive';
 ```
 
+> [!NOTE]
+> Key behaviors:
+> - if the passed promise is resolved, or a non-promise, we do not await, this allows 
+>   values to not block render (or cause a re-render if they don't need to)
+> - no `@dependentKeyCompat`
+> - promise states are all mutually exclusive
+> - the returned value is also promise-like
+
 ### `trackPromise`
 
 This utility wraps and instruments any promise with reactive state, `TrackedPromise`.  
