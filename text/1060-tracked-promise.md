@@ -132,30 +132,40 @@ let trackedPromise
 
 The process of making libraries support wide-ranges of `ember-source` is known. `ember-source` has recently been adapting its release process to use [release-plan][gh-release-plan], so that the [ember.js][gh-emberjs] repo can publish multiple packages seemslessly, rather than always bundle everything under one package.
 
-
-With those new release capabilities within the [ember.js][gh-emberjs] repo, Instead of a polyfill for older versions of ember, `@ember/reactive`, the package (at the time of this RFC, does not exist, but would have the two exported utilities from it), would be pulished as its own package _and_ included with ember-source, as to not add more dependencies to the package.json going forward.
+With those new release capabilities within the [ember.js][gh-emberjs] repo, Instead of a polyfill for older versions of ember, `@ember/reactive`, the package (at the time of this RFC, does not exist, but would have the two exported utilities from it), would be pulished as its own `type=module` package _and_ included with ember-source, as to not add more dependencies to the package.json going forward.
 
 [gh-release-plan]: https://github.com/embroider-build/release-plan
 [gh-emberjs]: https://github.com/emberjs/ember.js/
 
+Why `type=module`?
 
-> This is the bulk of the RFC.
+This is a requirement for some optimization features of packages (webpack / vite), such as _proper_ treeshaking -- without `type=module`, the best optimization we can get is "pay for only what you import". For large projects this isn't so much of a problem, but for small projects (or highly optimized projects), the impact to network transfer/parse/eval is measurable. This RFC is also proposing that `@ember/reactive` be _the_ place for all our ecosystem's reactivity utilities will end up once they've been proven out, tested, and desire for standardation is seen.
 
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here. 
+For example, other future exports from `@ember/reactive` (in future RFCs), may include:
+- TrackedObject
+- TrackedArray
+- TrackedMap
+- TrackedSet
+- TrackedWeakSet
+- TrackedWeakMap
+- localCopy
+- certain [window properties](https://svelte.dev/docs/svelte/svelte-reactivity-window)
+- ...and more
 
-> Please keep in mind any implications within the Ember ecosystem, such as:
-> - Lint rules (ember-template-lint, eslint-plugin-ember) that should be added, modified or removed
-> - Features that are replaced or made obsolete by this feature and should eventually be deprecated
-> - Ember Inspector and debuggability
-> - Server-side Rendering
-> - Ember Engines
-> - The Addon Ecosystem
-> - IDE Support
-> - Blueprints that should be added or modified
+without the static analysis guarantees of `type=module`, every consumer of `@ember/reactive` would always have all of these exports in their build.
+For some utilities, we can place them under sub-path-exports, such as `@ember/reactive/window`, for window-specific reactive properties, but the exact specifics of each of these can be hashed out in their individual RFCs.
+
+When a project wants to use `@ember/reactive`, they would then only need to install the package separately / add it to their `package.json`.
+
+The proposed list of compatibilyt here is only meant as an example -- if implementation proves that more can be supported easier, with less work, that should be pursued, and this part is kind of implementation detail.
+
+But for demonstration:
+- apps pre [version available], would add `@ember/reactive` to their `devDependencies` or `dependencies`
+  - importing `@ember/reactive` would be handled by ember-auto-import/embroider (as is the case with all v2 addons)
+- v1 addons would not be supported
+- v2 addons, for maximum compatibility, would need to add `@ember/reactive` to their `dependencies`
+  - in consuming apps post [version available], this would be optimized away if the version declared in dependencies satisfies the range provided by the consuming app (an optimization that packagers already do, and nothing we need to worry about)
+- apps post [version available], would not need to add `@ember/reactive` to their `devDependencies` or `dependencies`, as we can rely on the `ember-addon#renamed-modules` config in ember-source's `package.json`.
 
 ## How we teach this
 
@@ -174,17 +184,14 @@ users?
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+I think not doing this has more drawbacks than doing it. A common problem we have is that we have too many packages and too many ways to do things. Our users long for "the ember way" to do things, and a comprehensive reactive library full of vibrant, shared utilities is one such way to bring back some of what folks are longing for.
 
 ## Alternatives
 
-- reclaim the `ember` package and export undedr `ember/reactive`, add `ember` to the package.json.
+- reclaim the `ember` package and export under `ember/reactive`, add `ember` to the package.json.
+  - doing this _would_ require a polyfill, as `ember` is already available in all versions of projects, but it does not have sub-path-exports that folks use.
+- use `/reactivity` instead of `/reactive`
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+none (yet)
