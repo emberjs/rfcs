@@ -69,7 +69,9 @@ This utility wraps and instruments any promise with reactive state, `TrackedProm
 
 Sample type declaration
 ```ts
-export function trackPromise<Value>(existingPromise: Promise<Value>): TrackedPromise<Value> {
+export function trackPromise<Value>(
+    existingPromise: Promise<Value> | Value
+): TrackedPromise<Value> {
     /* ... */
 }
 ```
@@ -182,7 +184,10 @@ import { trackPromise } from '@ember/reactive';
 
 The returned value is an instance of `TrackedPromise`, and is for instrumenting promise state with reactive properties, so that UI can update as the state of a promise changes over time.
 
+When a non-promise is passed, as one may do for a default value, it'll behave as if it were a resolved promise, i.e.: `Promise.resolve(passedValue)`.
+
 This is a shorthand utility for passing an existing promise to `TrackedPromise`.
+
 
 Example in a template-only component
 ```gjs
@@ -238,6 +243,8 @@ import { TrackedPromise } from '@ember/reactive';
 ```
 
 Creates a tracked `Promise`, with `tracked` properties for implementing UI that updates based on the state of a promise.
+
+When a non-promise is passed, as one may do for a default value, it'll behave as if it were a resolved promise, i.e.: `Promise.resolve(passedValue)`.
 
 Creating a tracked promise from a non-async API:
 ```gjs
