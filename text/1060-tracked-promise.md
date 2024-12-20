@@ -344,6 +344,10 @@ We can separate each of these, if desired, like this:
 ```
 Doing so would allow more separation of loading / error UI, such as portaling loading / error notifications to somewhere central in your applications.
 
+NOTE: using `@cached` with promises does not enable cancellation, as there is no _lifetime_ to attach to at the getter/property level of granularity.[^resources] 
+
+[^resources]: This is where _resources_ can help (topic for later) -- otherwise you need to use a full component just for destruction (or `invokeHelper` on a class-based helper, which is very un-ergonomic).
+
 #### creating reactive promises
 
 We can use `TrackedPromise` to turn not-async APIs into reactive + async behaviors -- for example, if we want to make a promise out of `setTimeout`, and cause an artificial delay / timer behavior:
@@ -378,6 +382,12 @@ export default class Demo extends Component {
   </template>
 }
 ```
+
+#### keeping the latest value while new content loads
+
+This pattern is useful for dropdown searches, tables (filtering), and other UIs which could otherwise cause large layout shifts / excessive repaints.
+
+We still want a loading UI on _initial data load_, but want to have a more subtle subsequent loading indicator (yet still prominently visible)
 
 ## Drawbacks
 
