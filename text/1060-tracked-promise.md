@@ -237,7 +237,51 @@ export default class Demo extends Component {
 import { TrackedPromise } from '@ember/reactive';
 ```
 
-C
+Creates a tracked `Promise`, with `tracked` properties for implementing UI that updates based on the state of a promise.
+
+Creating a tracked promise from a non-async API:
+```gjs
+import { TrackedPromise } from '@ember/reactive';
+
+function wait(ms) {
+  return new TrackedPromise((resolve) => setTimeout(resolve, ms));
+}
+
+<template>
+  {{#let (wait 500) as |state|}}
+    isPending:  {{state.isPending}}<br>
+    isResolved: {{state.isResolved}}<br>
+    isRejected: {{state.isRejected}}<br>
+    value:      {{state.value}}<br>
+    error:      {{state.error}}<br>
+  {{/let}}
+</template>
+```
+
+Creating a tracked promise from an existing promise:
+
+```gjs
+import Component from '@glimmer/component';
+import { cached } from '@glimmer/tracking';
+import { TrackedPromise } from '@ember/reactive';
+
+export default class Demo extends Component {
+  @cached
+  get state() {
+    let id = this.args.personId;
+    let fetchPromise = 
+      fetch(`https://swapi.tech/api/people/${id}`)
+        .then(response => response.json());
+
+    return new TrackedPromise(fetchPromise);
+  }
+
+  <template>
+    ... similar usage as above 
+    {{this.state.isPending}}, etc
+  </template>
+}
+```
 
 ### Guides
 
