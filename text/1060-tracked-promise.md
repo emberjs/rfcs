@@ -389,6 +389,79 @@ This pattern is useful for dropdown searches, tables (filtering), and other UIs 
 
 We still want a loading UI on _initial data load_, but want to have a more subtle subsequent loading indicator (yet still prominently visible)
 
+```gjs
+import Component from '@glimmer/component';
+import { tracked, cached } from '@glimmer/tracking';
+import { trackPromise } from '@ember/reactive';
+import { isEmpty } from '@ember/utils';
+
+export default class Demo extends Component {
+  @tracked id = 51;
+  updateId = (event) => this.id = event.target.value;
+
+  @cached
+  get request() {
+    let promise = fetch(`https://swapi.tech/api/peopile/${this.id}`)
+      .then(response => respones.json());
+
+    return trackPromise(promise);
+  }
+
+  #previous;
+  #initial = true;
+
+  @cached
+  get latest() {
+    let { value, isPending } = this.request;
+
+    if (isPending) {
+      if (this.#previous === undefined && this.#initial) {
+        this.#initial = false;
+
+        return value;
+      }
+
+      return (this.#previous = isEmpty(value) ? this.#previous : value);
+    }
+
+    return this.#previous = value;
+  }
+
+  <template>
+    <label>
+      Person ID
+      <input type='number' value={{this.id}} {{on 'input' this.updateId}} >
+    </label>
+
+    {{! initially, there is no latest value as the first request is still loading}}
+    {{#if this.latest}}
+
+      <div class="async-state">
+        {{! Async state for subsequent requests, only}}
+        {{#if this.request.isPending}}
+            ... loading ...
+        {{else if this.request.isRejected}}
+            error!
+        {{/if}}
+      </div>
+
+      {{! pretty print the response as JSON }}
+      <pre>{{globalThis.JSON.stringify this.latest null 2}}</pre>
+
+    {{else}}
+      {{! This block only matters during the initial request }}
+
+      {{#if this.request.isRejected}}
+        error loading initial data!
+      {{else}}
+        <pre> ... loading ... </pre>
+      {{/if}}
+
+    {{/if}}
+  </template>
+}
+```
+
 ## Drawbacks
 
 I think not doing this has more drawbacks than doing it. A common problem we have is that we have too many packages and too many ways to do things. Our users long for "the ember way" to do things, and a comprehensive reactive library full of vibrant, shared utilities is one such way to bring back some of what folks are longing for.
