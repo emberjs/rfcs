@@ -532,6 +532,7 @@ I think not doing this has more drawbacks than doing it. A common problem we hav
 - re-use `@glimmer/tracking`
   - would require that `@glimmer/tracking` move in to the `ember-source` repo
   - would also require a polyfill, as prior versions of `@glimmer/tracking` would not have the new behaviors
+  - whole-sale pull in parts of `@warp-drive/ember` (though, much of this RFC is already heavily influenced by their `getPromiseState`, which is backed by a promise cache -- all of which is sort of an implementation detail as far this RFC is concerned)
 
 ## Unresolved questions
 
