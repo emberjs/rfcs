@@ -137,6 +137,50 @@ let trackedPromise
 
 [mdn-Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
 
+
+#### Subtle Notes
+
+If a promise is passed to `trackPromise` or `TrackedPromise` multiple times, we don't want to _re-do_ any computations.
+
+Examples:
+
+```gjs
+let a = Promise.resolve(2); // <state> "fulfilled"
+
+<template>
+  {{#let (trackPromise a) as |state|}}
+    {{state.value}}
+  {{/let}}
+
+  {{#let (trackPromise a) as |state|}}
+    {{state.value}}
+  {{/let}}
+</template>
+```
+
+This component renders only once, and _both_ occurances of of `trackPromise` immediately resolve and _never_ enter the pending states.
+
+
+
+```gjs
+let a = Promise.resolve(2); // <state> "fulfilled"
+let b = Promise.resolve(2); // <state> "fulfilled"
+
+<template>
+  {{#let (trackPromise a) as |state|}}
+    {{state.value}}
+  {{/let}}
+
+  {{#let (trackPromise b) as |state|}}
+    {{state.value}}
+  {{/let}}
+</template>
+```
+
+In this component, it _also_ only renders once as both promises are resolved, and we can adapt the initial state returned by `trackPromise` to reflect that.
+
+
+
 ### `@ember/reactive`
 
 The process of making libraries support wide-ranges of `ember-source` is known. `ember-source` has recently been adapting its release process to use [release-plan][gh-release-plan], so that the [ember.js][gh-emberjs] repo can publish multiple packages seemslessly, rather than always bundle everything under one package.
