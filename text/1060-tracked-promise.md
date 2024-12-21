@@ -59,7 +59,7 @@ For loading UIs, there are concerns that this proposed utility will not be conce
 
 The import:
 ```js
-import { TrackedPromise, trackPromise } from '@ember/reactive';
+import { TrackedAsyncState, trackedPromise } from '@ember/reactive';
 ```
 
 > [!NOTE]
@@ -69,28 +69,28 @@ import { TrackedPromise, trackPromise } from '@ember/reactive';
 > - no `@dependentKeyCompat`
 > - promise states are all mutually exclusive
 
-### `trackPromise`
+### `trackedPromise`
 
-This utility wraps and instruments any promise with reactive state, `TrackedPromise`.  
+This utility wraps and instruments any promise with reactive state, `TrackedAsyncState`.  
 
 
 Sample type declaration
 ```ts
-export function trackPromise<Value>(
+export function trackedPromise<Value>(
     existingPromise: Promise<Value> | Value
-): TrackedPromise<Value> {
+): TrackedAsyncState<Value> {
     /* ... */
 }
 ```
 
-### `TrackedPromise`
+### `TrackedAsyncState`
 
 This utility is analgous to `new Promise((resolve) => /* ... */)`, but includes the tracking of the underlying promise.
-Additionally `TrackedPromise` must be able to receive an existing promise via `new TrackedPromise(existingPromise);`.
+Additionally `TrackedAsyncState` must be able to receive an existing promise via `new TrackedAsyncState(existingPromise);`.
 
 Sample type declaration
 ```ts
-export class TrackedPromise<Value = unknown> implements PromiseLike<Value> {
+export class TrackedAsyncState<Value = unknown> implements PromiseLike<Value> {
     constructor(existingPromise: Promise<Value>);
     constructor(callback: ConstructorParameters<typeof Promise<Value>>[0]);
     constructor(promiseOrCallback: /* ... */) { /* ... */ }
@@ -116,7 +116,7 @@ export class TrackedPromise<Value = unknown> implements PromiseLike<Value> {
     isResolved: boolean;
     isRejected: boolean;
 
-    // allows TrackedPromises to be awaited
+    // allows TrackedAsyncStates to be awaited
     then(/* ... */): PromiseLike</* ... */>
 }
 ```
@@ -128,11 +128,11 @@ For simplicity, these new utilities will not be using `@dependentKeyCompat` to s
 An extra feature that none of the previously mentioned implementations have is the ability to `await` directly. This is made easy by only implementing a `then` method -- and allows a good ergonomic bridge between reactive and non-reactive usages.
 
 
-The implementation of `TrackedPromise` is intentionally limited, as we want to encourage reliance on [_The Platform_][mdn-Promise] whenever it makes sense, and is ergonomic to do so. For example, using `race` would still be done native, and can be wrapped for reactivity:
+The implementation of `TrackedAsyncState` is intentionally limited, as we want to encourage reliance on [_The Platform_][mdn-Promise] whenever it makes sense, and is ergonomic to do so. For example, using `race` would still be done native, and can be wrapped for reactivity:
 ```js
-/** @type {TrackedPromise} */
+/** @type {TrackedAsyncState} */
 let trackedPromise 
-    = trackPromise(Promise.race([promise1, promise2]));
+    = trackedPromise(Promise.race([promise1, promise2]));
 ```
 
 [mdn-Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
@@ -140,7 +140,7 @@ let trackedPromise
 
 #### Subtle Notes
 
-If a promise is passed to `trackPromise` or `TrackedPromise` multiple times, we don't want to _re-do_ any computations.
+If a promise is passed to `trackedPromise` or `TrackedAsyncState` multiple times, we don't want to _re-do_ any computations.
 
 Examples:
 
@@ -148,17 +148,17 @@ Examples:
 let a = Promise.resolve(2); // <state> "fulfilled"
 
 <template>
-  {{#let (trackPromise a) as |state|}}
+  {{#let (trackedPromise a) as |state|}}
     {{state.value}}
   {{/let}}
 
-  {{#let (trackPromise a) as |state|}}
+  {{#let (trackedPromise a) as |state|}}
     {{state.value}}
   {{/let}}
 </template>
 ```
 
-This component renders only once, and _both_ occurances of of `trackPromise` immediately resolve and _never_ enter the pending states.
+This component renders only once, and _both_ occurances of of `trackedPromise` immediately resolve and _never_ enter the pending states.
 
 
 
@@ -167,17 +167,17 @@ let a = Promise.resolve(2); // <state> "fulfilled"
 let b = Promise.resolve(2); // <state> "fulfilled"
 
 <template>
-  {{#let (trackPromise a) as |state|}}
+  {{#let (trackedPromise a) as |state|}}
     {{state.value}}
   {{/let}}
 
-  {{#let (trackPromise b) as |state|}}
+  {{#let (trackedPromise b) as |state|}}
     {{state.value}}
   {{/let}}
 </template>
 ```
 
-In this component, it _also_ only renders once as both promises are resolved, and we can adapt the initial state returned by `trackPromise` to reflect that.
+In this component, it _also_ only renders once as both promises are resolved, and we can adapt the initial state returned by `trackedPromise` to reflect that.
 
 
 
@@ -227,29 +227,29 @@ But for demonstration:
 
 ### API Docs
 
-#### `trackPromise`
+#### `trackedPromise`
 
 ```js
-import { trackPromise } from '@ember/reactive';
+import { trackedPromise } from '@ember/reactive';
 ```
 
-The returned value is an instance of `TrackedPromise`, and is for instrumenting promise state with reactive properties, so that UI can update as the state of a promise changes over time.
+The returned value is an instance of `TrackedAsyncState`, and is for instrumenting promise state with reactive properties, so that UI can update as the state of a promise changes over time.
 
 When a non-promise is passed, as one may do for a default value, it'll behave as if it were a resolved promise, i.e.: `Promise.resolve(passedValue)`.
 
-This is a shorthand utility for passing an existing promise to `TrackedPromise`.
+This is a shorthand utility for passing an existing promise to `TrackedAsyncState`.
 
 
 Example in a template-only component
 ```gjs
-import { trackPromise } from '@ember/reactive';
+import { trackedPromise } from '@ember/reactive';
 
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 <template>
-  {{#let (trackPromise (wait 500)) as |state|}}
+  {{#let (trackedPromise (wait 500)) as |state|}}
     isPending:  {{state.isPending}}<br>
     isResolved: {{state.isResolved}}<br>
     isRejected: {{state.isRejected}}<br>
@@ -263,7 +263,7 @@ Example in a class component:
 ```gjs
 import Component from '@glimmer/component';
 import { cached } from '@glimmer/tracking';
-import { trackPromise } from '@ember/reactive';
+import { trackedPromise } from '@ember/reactive';
 
 export default class Demo extends Component {
   @cached
@@ -273,7 +273,7 @@ export default class Demo extends Component {
       setTimeout(resolve, 400);
     });
 
-    return trackPromise(promise);
+    return trackedPromise(promise);
   }
 
   <template>
@@ -287,10 +287,10 @@ export default class Demo extends Component {
 ```
 
 
-#### `TrackedPromise`
+#### `TrackedAsyncState`
 
 ```js 
-import { TrackedPromise } from '@ember/reactive';
+import { TrackedAsyncState } from '@ember/reactive';
 ```
 
 Creates a tracked `Promise`, with `tracked` properties for implementing UI that updates based on the state of a promise.
@@ -299,10 +299,10 @@ When a non-promise is passed, as one may do for a default value, it'll behave as
 
 Creating a tracked promise from a non-async API:
 ```gjs
-import { TrackedPromise } from '@ember/reactive';
+import { TrackedAsyncState } from '@ember/reactive';
 
 function wait(ms) {
-  return new TrackedPromise((resolve) => setTimeout(resolve, ms));
+  return new TrackedAsyncState((resolve) => setTimeout(resolve, ms));
 }
 
 <template>
@@ -321,7 +321,7 @@ Creating a tracked promise from an existing promise:
 ```gjs
 import Component from '@glimmer/component';
 import { cached } from '@glimmer/tracking';
-import { TrackedPromise } from '@ember/reactive';
+import { TrackedAsyncState } from '@ember/reactive';
 
 export default class Demo extends Component {
   @cached
@@ -331,7 +331,7 @@ export default class Demo extends Component {
       fetch(`https://swapi.tech/api/people/${id}`)
         .then(response => response.json());
 
-    return new TrackedPromise(fetchPromise);
+    return new TrackedAsyncState(fetchPromise);
   }
 
   <template>
@@ -345,12 +345,12 @@ export default class Demo extends Component {
 
 #### use with `fetch`
 
-With `@cached`, we can make any getter have stable state and referential integrity, which is essential for having multiple accesses to the getter return the same object -- in this case, the return value from `trackPromise`:
+With `@cached`, we can make any getter have stable state and referential integrity, which is essential for having multiple accesses to the getter return the same object -- in this case, the return value from `trackedPromise`:
 
 ```gjs
 import Component from '@glimmer/component';
 import { cached } from '@glimmer/tracking';
-import { trackPromise } from '@ember/reactive';
+import { trackedPromise } from '@ember/reactive';
 
 export default class Demo extends Component {
   @cached
@@ -360,7 +360,7 @@ export default class Demo extends Component {
       fetch(`https://swapi.tech/api/people/${id}`)
         .then(response => response.json());
 
-    return trackPromise(fetchPromise);
+    return trackedPromise(fetchPromise);
   }
 
   // Properties can be aliased like any other tracked data
@@ -408,17 +408,17 @@ NOTE: using `@cached` with promises does not enable cancellation, as there is no
 
 #### creating reactive promises
 
-We can use `TrackedPromise` to turn not-async APIs into reactive + async behaviors -- for example, if we want to make a promise out of `setTimeout`, and cause an artificial delay / timer behavior:
+We can use `TrackedAsyncState` to turn not-async APIs into reactive + async behaviors -- for example, if we want to make a promise out of `setTimeout`, and cause an artificial delay / timer behavior:
 
 ```gjs
 import Component from '@glimmer/component';
 import { cached } from '@glimmer/tracking';
-import { TrackedPromise } from '@ember/reactive';
+import { TrackedAsyncState } from '@ember/reactive';
 
 export default class Demo extends Component {
   @cached
   get () {
-    return new TrackedPromise((resolve => {
+    return new TrackedAsyncState((resolve => {
        setTimeout(() => {
         resolve();
        }, 5_000 /* 5 seconds */);
@@ -450,7 +450,7 @@ We still want a loading UI on _initial data load_, but want to have a more subtl
 ```gjs
 import Component from '@glimmer/component';
 import { tracked, cached } from '@glimmer/tracking';
-import { trackPromise } from '@ember/reactive';
+import { trackedPromise } from '@ember/reactive';
 import { isEmpty } from '@ember/utils';
 
 export default class Demo extends Component {
@@ -462,7 +462,7 @@ export default class Demo extends Component {
     let promise = fetch(`https://swapi.tech/api/peopile/${this.id}`)
       .then(response => respones.json());
 
-    return trackPromise(promise);
+    return trackedPromise(promise);
   }
 
   #previous;
