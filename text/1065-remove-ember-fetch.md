@@ -26,7 +26,6 @@ prs:
 project-link: Leave as is
 -->
 
-<-- Replace "RFC title" with the title of your RFC -->
 # Deprecate and Remove ember-fetch 
 
 ## Summary
@@ -48,7 +47,7 @@ the package, `ember-fetch`, does a fair bit of deceptive and incorrect behavior 
 _primarily_, it wraps the native `fetch` in `waitForPromise` from `@ember/test-waiters` (aka "settled state integration").
 
 
-secondarily, but not popularly used, are a series of utilities (e.g.: for checking kinds of errors). These could be copied into projects that use them. 
+secondarily, but not popularly used, are a series of utilities (e.g.: for checking kinds of errors). These could be copied into projects that use them and modified to fit each project's needs. 
 
 ### Using native `fetch`
 
@@ -91,6 +90,7 @@ export async function wrappedFetch(...args: Parameters<typeof nativeFetch>) {
 ```
 
 And then throughout your project, you could find and replace all imports of `import fetch from 'ember';` with `import { wrappedFetch } from 'app-name/utils/wrapped-fetch';`
+
 
 
 ### Using a service
