@@ -56,15 +56,15 @@ addItem = (x) => {
 }
 ```
 
-For large sets of data, rendered in a list (often tables), this pattern causes unneded work in the reactivity-system.
+For large sets of data, rendered in a list (often tables), this pattern causes unneeded work in the reactivity-system.
 
 We now know that `tracked-built-ins`' `TrackedArray` would be a good way to only _append_ an item to the array, and thus append DOM to our UI, without the reactive system doing anything to the data that hasn't changed.
 
-Some may argue that it's our renderer's responsibility to detect this situation, and optimize best it can, and while there are opportunities we can find to optimize rendering, we also can't make an assupmtion that _either_ re-assigning or tracked collection usage is going to be the most performant. Developers can measuure in their own app.
+Some may argue that it's our renderer's responsibility to detect this situation, and optimize best it can, and while there are opportunities we can find to optimize rendering, we also can't make an assumption that _either_ re-assigning or tracked collection usage is going to be the most performant. Developers can measure in their own app.
 
 
 This is outside the scope of this RFC, but for some underlying motivation,
-another motivation is along the lines of [reigning in our imports](https://github.com/emberjs/rfcs/pull/1060#issuecomment-2557737145) over time, potentially by eventually reclaiming the `'ember'` package, so that there is a simple package.json that can be _the framework_, which aligns whith real imports (or re-exports) so that we don't _require_ build-system gymnastics in order to build ember apps.
+another motivation is along the lines of [reigning in our imports](https://github.com/emberjs/rfcs/pull/1060#issuecomment-2557737145) over time, potentially by eventually reclaiming the `'ember'` package, so that there is a simple package.json that can be _the framework_, which aligns with real imports (or re-exports) so that we don't _require_ build-system gymnastics in order to build ember apps.
 
 <details><summary>examples</summary>
 
@@ -92,7 +92,7 @@ The details of this are absolutely up for debate -- this is just demonstrating t
 
 while _most of this_ already implemented, here is the behavior we expect when using any tracked wrapper:
 
-- all property accesses should "entagle" with that property 
+- all property accesses should "entangle" with that property 
 - all property sets should "dirty" that property
 - changes to the length, or overall collection, is represented by an invisible-to-users "collection" internal tracked property, so that iteration can be dirtied
 - changes to a collection (add, insert, delete, etc) should cause iteration (each, each-in) to only render what changed 
@@ -104,7 +104,7 @@ while _most of this_ already implemented, here is the behavior we expect when us
 
 How do we handle when the platform adds new APIs?
 
-For example, Set has had new apis added recentnly, and `tracked-built-ins` had to be updated to support those, so if possible, it would be ideal to rely on deferring to the underlying implementation as much as possible, rather than re-implementing a class-wrapper for all known methods -- proxies are particularly good at this -- and while folks have had complaints about proxies in the past, the user-facing API and underlying implementation of all these proxies would be the exact same, so the proxy isn't hiding anything.
+For example, Set has had new APIs added recentlny, and `tracked-built-ins` had to be updated to support those, so if possible, it would be ideal to rely on deferring to the underlying implementation as much as possible, rather than re-implementing a class-wrapper for all known methods -- proxies are particularly good at this -- and while folks have had complaints about proxies in the past, the user-facing API and underlying implementation of all these proxies would be the exact same, so the proxy isn't hiding anything.
 
 
 ### The import
@@ -167,7 +167,7 @@ const addTo = (arr) => arr.push(Math.random());
 > [!NOTE]  
 > Since [RFC#1000: Make Array built-in in strict mode](https://github.com/emberjs/rfcs/pull/1000) is stalled due to the original implementation of `(array)` being underspecified, the new implementation of the built in `(array)` could use this `trackdArray` implementation instead of re-defining the specification of how `(array)` works -- and this new implementation would probably more align with how folks expect `(array)` to work.
 
-With RFC#1000, the above example would be behaviorally equivelent to:
+With RFC#1000, the above example would be behaviorally equivalent to:
 ```gjs
 const nonTrackedArray = [1, 2, 3];
 const addTo = (arr) => arr.push(Math.random());
@@ -206,7 +206,7 @@ const addTo = (obj) => obj[Math.random()] = Math.random();
 > Since [RFC#999: Make hash built-in in strict mode](https://github.com/emberjs/rfcs/pull/999) is stalled due to the original implementation of `(hash)` being underspecified, the new implementation of the built in `(hash)` could use this `trackedObject` implementation instead of re-defining the specification of how `(hash)` works -- and this new implementation would probably more align with how folks expect `(hash)` to work.
 
 
-With RFC#999, the above example would be behaviorally equivelent to:
+With RFC#999, the above example would be behaviorally equivalent to:
 
 ```gjs
 const nonTrackedObject = { a: 1 };
@@ -227,14 +227,14 @@ const addTo = (obj) => obj[Math.random()] = Math.random();
 
 The process of making libraries support wide-ranges of `ember-source` is known. `ember-source` has recently been adapting its release process to use [release-plan][gh-release-plan], so that the [ember.js][gh-emberjs] repo can publish multiple packages seemslessly, rather than always bundle everything under one package.
 
-With those new release capabilities within the [ember.js][gh-emberjs] repo, Instead of a polyfill for older versions of ember, `@ember/reactive`, the package (at the time of this RFC, does not exist, but would have the two exported utilities from it), would be pulished as its own `type=module` package _and_ included with ember-source, as to not add more dependencies to the package.json going forward.
+With those new release capabilities within the [ember.js][gh-emberjs] repo, Instead of a polyfill for older versions of ember, `@ember/reactive`, the package (at the time of this RFC, does not exist, but would have the two exported utilities from it), would be published as its own `type=module` package _and_ included with ember-source, as to not add more dependencies to the package.json going forward.
 
 [gh-release-plan]: https://github.com/embroider-build/release-plan
 [gh-emberjs]: https://github.com/emberjs/ember.js/
 
 Why `type=module`?
 
-This is a requirement for some optimization features of packages (webpack / vite), such as _proper_ treeshaking -- without `type=module`, the best optimization we can get is "pay for only what you import". For large projects this isn't so much of a problem, but for small projects (or highly optimized projects), the impact to network transfer/parse/eval is measurable. This RFC is also proposing that `@ember/reactive` be _the_ place for all our ecosystem's reactivity utilities will end up once they've been proven out, tested, and desire for standardation is seen.
+This is a requirement for some optimization features of packages (webpack / vite), such as _proper_ treeshaking -- without `type=module`, the best optimization we can get is "pay for only what you import". For large projects this isn't so much of a problem, but for small projects (or highly optimized projects), the impact to network transfer/parse/eval is measurable. This RFC is also proposing that `@ember/reactive` be _the_ place for all our ecosystem's reactivity utilities will end up once they've been proven out, tested, and desire for standardization is seen.
 
 For example, other future exports from `@ember/reactive` (in future RFCs), may include:
 - Resource
@@ -316,6 +316,42 @@ const addTo = (obj) => obj[Math.random()] = Math.random();
 
 Existing places that import from `tracked-built-ins` would update to the new imports -- no other changes would be needed.
 
+- [This page](https://guides.emberjs.com/release/configuring-ember/disabling-prototype-extensions/#toc_tracking-of-changes-in-arrays) needs to be updated as `@glimmer/tracking` doesn't have `TrackedArray` today.
+
+Something that could be used today, and definitely should be added is a page on how to handle referential integrity. Most of the "tracked" guides only touch on tracking _references_ (via `@tracked`). For example, each of `TrackedArray`, `TrackedMap`, `TrackedSet`, etc can be used in these ways:
+
+#### Static reference
+
+```js
+class Demo {
+    collection = new TrackedMap();
+}
+```
+
+Changes to `this.collection` can only happen via `Map` methods.
+
+#### Double static reference
+
+```js
+class Demo {
+    @tracked collection = new TrackedMap();
+}
+```
+Changes to `this.collection` can happen via `Map` methods, as well as replacing the entirely collection can occur via re-assigning `this.collection` to a brand new `TrackedMap`. This also has a potential performance hazard, of re-assigning `this.collection` to a clone of the `TrackedMap`.
+
+#### Based on Args
+
+```js
+class Demo extends Component {
+    @cached
+    get collection() {
+        return new TrackedMap(this.args.otherData);
+    }
+}
+```
+Changes to the collection can happen via `Map` methods, as well as changes to `@otherData` will cause the entirety of `this.collection` to be re-created, with the previous instance being garbage collected. Usage of `@cached` is important here, because repeat-accesses to `this.collection` would otherwise create completely unrelated `TrackedMap`s -- i.e.: Updating a `TrackedMap` would have no effect on a `TrackedMap` read elsewhere as they are different instances.  
+
+
 ## Drawbacks
 
 - A migration
@@ -329,6 +365,7 @@ Existing places that import from `tracked-built-ins` would update to the new imp
 - re-use `@glimmer/tracking`
   - would require that `@glimmer/tracking` move in to the `ember-source` repo
   - would also require a polyfill, as prior versions of `@glimmer/tracking` would not have the new behaviors
+  - there is an existing typo in the guides that hints at using this already for `TrackedArray`
 
 ## Unresolved questions
 
