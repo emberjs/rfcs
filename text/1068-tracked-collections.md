@@ -155,7 +155,7 @@ const addTo = (arr) => arr.push(Math.random());
 
 <template>
     {{#let (trackedArray nonTrackedArray) as |arr|}}
-        {{#each (trackedArray nonTrackedArray) as |datum|}}
+        {{#each arr as |datum|}}
             {{datum}}
         {{/each}}
 
@@ -174,7 +174,7 @@ const addTo = (arr) => arr.push(Math.random());
 
 <template>
     {{#let (array nonTrackedArray) as |arr|}}
-        {{#each (trackedArray nonTrackedArray) as |datum|}}
+        {{#each arr as |datum|}}
             {{datum}}
         {{/each}}
 
@@ -193,7 +193,7 @@ const addTo = (obj) => obj[Math.random()] = Math.random();
 
 <template>
     {{#let (trackedObject nonTrackedObject) as |obj|}}
-        {{#each-in (trackedObject notTrackedObject) as |key value|}}
+        {{#each-in obj as |key value|}}
             <pre>{{globalThis.JSON.stringify obj null 3}}</pre>
         {{/each-in}}
 
@@ -214,7 +214,7 @@ const addTo = (obj) => obj[Math.random()] = Math.random();
 
 <template>
     {{#let (hash nonTrackedObject) as |obj|}}
-        {{#each-in (trackedObject notTrackedObject) as |key value|}}
+        {{#each-in obj as |key value|}}
             <pre>{{globalThis.JSON.stringify obj null 3}}</pre>
         {{/each-in}}
 
@@ -282,7 +282,7 @@ const addTo = (arr) => arr.push(Math.random());
 
 <template>
     {{#let (trackedArray nonTrackedArray) as |arr|}}
-        {{#each (trackedArray nonTrackedArray) as |datum|}}
+        {{#each arr as |datum|}}
             {{datum}}
         {{/each}}
 
@@ -303,7 +303,7 @@ const addTo = (obj) => obj[Math.random()] = Math.random();
 
 <template>
     {{#let (trackedObject nonTrackedObject) as |obj|}}
-        {{#each-in (trackedObject notTrackedObject) as |key value|}}
+        {{#each-in obj as |key value|}}
             <pre>{{globalThis.JSON.stringify obj null 3}}</pre>
         {{/each-in}}
 
