@@ -96,7 +96,7 @@ while _most of this_ already implemented, here is the behavior we expect when us
 - all property sets should "dirty" that property
 - changes to the length, or overall collection, is represented by an invisible-to-users "collection" internal tracked property, so that iteration can be dirtied
 - changes to a collection (add, insert, delete, etc) should cause iteration (each, each-in) to only render what changed 
-- changes to a collection mutate the original passed in data, if any (which saves memory thrashing)
+- changes to a collection copy the original passed in data -- keeping inline with the existing `tracked-built-ins` behavior
 - deleting an entry in a collection should relieve memory pressure
 - deleting an entry in a collection should dirty the "collection"
 - prototype and `instanceof` checks should still work, e.g.: a `TrackedArray` should still return true from `Array.isArray`, and an instance of `TrackedSet` should be an `instanceof Set`.
