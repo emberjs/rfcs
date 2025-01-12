@@ -194,7 +194,7 @@ const addTo = (obj) => obj[Math.random()] = Math.random();
 <template>
     {{#let (trackedObject nonTrackedObject) as |obj|}}
         {{#each-in obj as |key value|}}
-            <pre>{{globalThis.JSON.stringify obj null 3}}</pre>
+            {{key}} => {{value}}</br>
         {{/each-in}}
 
         <button {{on 'click' (fn addTo obj)}}>Add Pair</button>
@@ -215,7 +215,7 @@ const addTo = (obj) => obj[Math.random()] = Math.random();
 <template>
     {{#let (hash nonTrackedObject) as |obj|}}
         {{#each-in obj as |key value|}}
-            <pre>{{globalThis.JSON.stringify obj null 3}}</pre>
+            {{key}} => {{value}}</br>
         {{/each-in}}
 
         <button {{on 'click' (fn addTo obj)}}>Add Pair</button>
@@ -272,6 +272,12 @@ We do have new template-oriented helpers tho (not requiring `new`), and it is wo
 
 #### `trackedArray`
 
+A utility for creating tracked arrays, copying the original data so that mutations to the tracked data don't mutate the original untracked data. 
+
+`trackedArray` can be used in templates and in JavaScript via import
+
+See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+
 ```gjs
 import { trackedArray } from '@ember/reactive';
 import { on } from '@ember/modifier';
@@ -293,6 +299,12 @@ const addTo = (arr) => arr.push(Math.random());
 
 #### `trackedObject`
 
+A utility for creating tracked objects, copying the original data so that mutations to the tracked data don't mutate the original untracked data. 
+
+`trackedObject` can be used in templates and in JavaScript via import
+
+See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
+
 ```gjs
 import { trackedObject } from '@ember/reactive';
 import { on } from '@ember/modifier';
@@ -304,10 +316,114 @@ const addTo = (obj) => obj[Math.random()] = Math.random();
 <template>
     {{#let (trackedObject nonTrackedObject) as |obj|}}
         {{#each-in obj as |key value|}}
-            <pre>{{globalThis.JSON.stringify obj null 3}}</pre>
+            {{key}} => {{value}}</br>
         {{/each-in}}
 
         <button {{on 'click' (fn addTo obj)}}>Add Pair</button>
+    {{/let}}
+</template>
+```
+
+#### `trackedMap`
+
+A utility for creating tracked maps, copying the original data so that mutations to the tracked data don't mutate the original untracked data. 
+
+`trackedMap` can be used in templates and in JavaScript via import
+
+See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
+
+```gjs
+import { trackedMap } from '@ember/reactive/collections';
+import { on } from '@ember/modifier';
+import { fn } from '@ember/helper';
+
+const nonTrackedMap = new Map();
+nonTrackedMap.set('a', 1);
+const addTo = (map) => map.set(Math.random(), Math.random());
+
+<template>
+    {{#let (trackedMap nonTrackedMap) as |map|}}
+        {{#each-in map as |key value|}}
+          {{key}} => {{value}}</br>
+        {{/each-in}}
+
+        <button {{on 'click' (fn addTo map)}}>Add Pair</button>
+    {{/let}}
+</template>
+```
+
+#### `trackedWeakMap`
+
+A utility for creating tracked weak maps, copying the original data so that mutations to the tracked data don't mutate the original untracked data. 
+
+`trackedWeakMap` can be used in templates and in JavaScript via import
+
+See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap)
+
+```gjs
+import { trackedWeakMap } from '@ember/reactive/collections';
+import { on } from '@ember/modifier';
+import { fn } from '@ember/helper';
+
+const nonTrackedWeakMap = new WeakMap();
+
+<template>
+    {{#let (trackedWeakMap nonTrackedWeakMap) as |weakMap|}}
+
+        {{log weakMap}}
+
+    {{/let}}
+</template>
+```
+
+#### `trackedSet`
+
+A utility for creating tracked maps, copying the original data so that mutations to the tracked data don't mutate the original untracked data. 
+
+`trackedMap` can be used in templates and in JavaScript via import
+
+See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set)
+
+```gjs
+import { trackedSet } from '@ember/reactive/collections';
+import { on } from '@ember/modifier';
+import { fn } from '@ember/helper';
+
+const nonTrackedSet = new Set();
+nonTrackedSet.add(1);
+const addTo = (set) => set.add(Math.random());
+
+<template>
+    {{#let (trackedMap nonTrackedMap) as |set|}}
+        {{#each set as |value|}}
+          {{value}}</br>
+        {{/each}}
+
+        <button {{on 'click' (fn addTo set)}}>Add</button>
+    {{/let}}
+</template>
+```
+
+#### `trackedWeakSet`
+
+A utility for creating tracked weak sets, copying the original data so that mutations to the tracked data don't mutate the original untracked data. 
+
+`trackedWeakSet` can be used in templates and in JavaScript via import
+
+See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet)
+
+```gjs
+import { trackedWeakSet } from '@ember/reactive/collections';
+import { on } from '@ember/modifier';
+import { fn } from '@ember/helper';
+
+const nonTrackedWeakSet = new WeakSet();
+
+<template>
+    {{#let (trackedWeakSet nonTrackedWeakSet) as |weakSet|}}
+
+        {{log weakSet}}
+
     {{/let}}
 </template>
 ```
