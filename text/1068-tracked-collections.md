@@ -8,7 +8,7 @@ teams: # delete teams that aren't relevant
   - framework
   - learning
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1060 
+  accepted: https://github.com/emberjs/rfcs/pull/1068 
 project-link:
 suite: 
 ---
@@ -27,7 +27,7 @@ project-link: Leave as is
 suite: Leave as is
 -->
 
-# Built in tracking utility for common collections 
+# Built in tracking utilities for common collections 
 
 ## Summary
 
