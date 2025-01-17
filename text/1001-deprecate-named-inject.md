@@ -3,6 +3,7 @@ stage: released
 start-date: 2023-12-26T00:00:00.000Z
 release-date:
 release-versions:
+  ember-source: 6.3.0
 teams:
   - framework
   - typescript
