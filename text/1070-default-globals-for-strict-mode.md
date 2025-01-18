@@ -361,7 +361,7 @@ TC39:
 - [`Array`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-array)
 
 
-    See note about `(array)`, `@ember/helper`, and [RFC#1000](https://github.com/emberjs/rfcs/pull/1000)[^reactive-array-note]
+    See note[^reactive-array-note] about `(array)`, `@ember/helper`, and [RFC#1000](https://github.com/emberjs/rfcs/pull/1000)[^reactive-array-note]
 
     [Example](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wYjHAYwAtUAKAcxgHsAjOGAFSIEsBnAOgEEAnbuAT1QBGVACZUAZgCUqOK1QAfZuAgKAvmrQZt2ZZA1b02APT5iB4MZWwEYFEA&format=gjs)
     
