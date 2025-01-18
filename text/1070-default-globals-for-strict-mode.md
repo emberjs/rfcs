@@ -33,6 +33,8 @@ suite: Leave as is
 
 This RFC aims to introduce platform-native globals as allowed defaults in strict-mode components, allowing for more intuitive usage, and less "know how the compiler works" 
 
+This is an ergonomics-focused RFC. The proposed changes today can be polyfilled via `globalThis['...']` accesses.
+
 ## Motivation
 
 Early on there was a bug in the build tools of strict-mode components that allowed _any_ global to be used components. This was dangerous, as strict-mode allows use of all in-scoped variables to be used in all valid syntax positions in the template, and while this is what folks would expect for languages with a scope-system, it means that if someone defined `window.div`, all `<div>`s in components would use that implementation instead.  This was fixed, but during that time, we realized that it's _very_ convenient to use platform-native globals as utilities, such as `Array`, `Boolean`, `String`, `Infinity`, `JSON`, and many more.
@@ -111,15 +113,76 @@ And
 
 Given the above criteria, the following should be added to default-available strict-mode scope:
 
-### namespaces
+### namespaces / objects
+
+TC39:
 
 - [`globalThis`](https://tc39.es/ecma262/#sec-globalthis)
+
+    Already available. [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOggQipgF8BuAKH4AeKPgC2AB3pJ8APn4xMGbEwBGCegBUaxCADoAUgGUA8gDk90XKWzEAZgE94SBN27CA9KMnTRsoA&format=gjs):
+    ```gjs
+    <template>
+        {{globalThis.JSON.stringify @data}}
+    </template>
+    ```
+
 - [`Atomics`](https://tc39.es/ecma262/#sec-atomics)
+
+    [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBARgVwGZIKYCcYF4ZlQdxgEF10BDATwCFk10AKARgDYBKAbgChRJYEBLMFAAc2XARgBVQSJLkK9RCgwdOAocIDaABgC6YgOxdOAehMwDMetsa3WMABoB5AEowATFe03t9nAFYvRhtWAB44dAA%2BTiIoEABbfmAIADoADxAGdREAGhhtPPdWTk5QqFR4gAcAGzJy6JgYAG8mgHNqkDgyaoAVAAt%2BVNiEpNSOsgATGGzhAF9Z0pNyqtr6oA&format=gjs):
+    ```gjs
+    const buffer = new ArrayBuffer(16);
+    const uint8 = new Uint8Array(buffer);
+    uint8[0] = 7;
+
+    // 7 (0111) XOR 2 (0010) = 5 (0101)<br>
+    Atomics.xor(uint8, 0, 2)
+
+    <template>
+      {{globalThis.Atomics.load uint8}} === 5
+    </template>
+    ```
+
+
 - [`JSON`](https://tc39.es/ecma262/#sec-json)
+
+    [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOggQipgF8BuAKH4AeKPgC2AB3pJ8APn4xMGbEwBGCegBUaxCADoAUgGUA8gDk90XKWzEAZgE94SBN27CA9KMnTRsoA&format=gjs):
+    ```gjs
+    <template>
+        {{JSON.stringify @data}}
+    </template>
+    ```
+
 - [`Math`](https://tc39.es/ecma262/#sec-math)
+
+    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgFklzaoEAPNABjQCY0AWAL6DQAekixEKIA&format=gjs):
+    ```gjs
+    <template>
+      {{Math.max 0 2 4}}
+    </template>
+    ```
+
 - [`Reflect`](https://tc39.es/ecma262/#sec-reflect)
 
+    [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOgqmAXwG4AoXgDxR8AWwAO9JPgB8vGJgzYmAIwT0AKjWIQAdACV8AM3r5gUHdiLwkKKnkIkyVTp0EB6YeMnDpQA&format=gjs):
+    ```gjs
+    const data = { greeting: 'hello there' };
+
+    <template>
+      {{Reflect.get data 'greeting'}}
+    </template>
+    ```
+
+WHATWG:
+
+- [`location`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-location)
+- [`history`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-history)
+- [`navigator`](https://html.spec.whatwg.org/multipage/system-state.html#dom-navigator)
+- [`window`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-window)
+- [`document`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-document-2)
+
 ### functions / utilities
+
+TC39:
 
 - [`isNaN`](https://tc39.es/ecma262/#sec-isnan-number)
 - [`isFinite`](https://tc39.es/ecma262/#sec-isfinite-number)
@@ -130,7 +193,13 @@ Given the above criteria, the following should be added to default-available str
 - [`encodeURI`](https://tc39.es/ecma262/#sec-encodeuri-uri)
 - [`encodeURIComponent`](https://tc39.es/ecma262/#sec-encodeuricomponent-uricomponent)
 
+WHATWG:
+
+- [`postMessage`](https://html.spec.whatwg.org/multipage/web-messaging.html#dom-window-postmessage)
+
 ### new-less constructors (still functions / utilities)
+
+TC39:
 
 - [`Array`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-array)
 - [`BigInt`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-bigint)
@@ -142,12 +211,14 @@ Given the above criteria, the following should be added to default-available str
 
 ### Values
 
+TC39:
+
 - [`Infinity`](https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-infinity)
 - [`NaN`](https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-nan)
 
 
 
-### Matching criteria, but not included
+### Potentially matching criteria, but not included
 
 Existing keywords don't need to be included in the global scope allow-list
 
@@ -170,55 +241,25 @@ Uncommon entries from the "Constructor Properties" list: https://tc39.es/ecma262
 - `${...}Int${...}Array`, e.g.: `BigUint64Array`,
 - anything that requires `new`, e.g.:  `DataView`, `Map`
 
+APIs from WHATWG that are highly likely to collide with user-land code or are already ambiguous (and thus would be confusing to use):
 
-> This is the bulk of the RFC.
+- `stop()`, `close()`, `status()`, `focus()`, `blur()`, `open()`, `parent`, `confirm()`, `self`, etc
 
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here. 
-
-> Please keep in mind any implications within the Ember ecosystem, such as:
-> - Lint rules (ember-template-lint, eslint-plugin-ember) that should be added, modified or removed
-> - Features that are replaced or made obsolete by this feature and should eventually be deprecated
-> - Ember Inspector and debuggability
-> - Server-side Rendering
-> - Ember Engines
-> - The Addon Ecosystem
-> - IDE Support
-> - Blueprints that should be added or modified
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
+Developers should primarily reference exising documentation on the web for the above-mentioned APIs, such as on MDN.
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
-
-> How should this feature be introduced and taught to existing Ember
-users?
-
-> Keep in mind the variety of learning materials: API docs, guides, blog posts, tutorials, etc.
+If we don't already, we should have an extensive guide on Polish Syntax, potentially similar to [https://cheatsheet.glimmer.nullvoxpopuli.com/docs/templates](https://cheatsheet.glimmer.nullvoxpopuli.com/docs/templates)
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+Takes a small amount of work to implement.
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
+Do nothing, but this is worse, as folks intuitively expect these a lot of the above-mentioned APIs to "just work", without needing weird scope-tricks to convince our Scope-tracking tools in the build tools that certain APIs are in scope..
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+none
