@@ -39,7 +39,112 @@ Early on there was a bug in the build tools of strict-mode components that allow
 
 While we don't want to support _everything_ on `globalThis`, we can aim support a good list of utilities fitting some criteria. Committing to this list means that we promise to never create a keyword with the same name + casing as the platform-native API, likewise, having an allow-list of which platform-native APIs to support guides our decisions around what keywords to implement in templates, as the platform-native globals would take precedence over / be used instead of any same-named keywords. 
 
+Without this RFC, all platform-native globals must be accessed via globalThis:
+
+```gjs
+<template>
+  {{globalThis.JSON.stringify @data null 3}}
+</template>
+```
+or
+```gjs
+const { JSON } = globalThis;
+
+<template>
+  {{JSON.stringify @data null 3}}
+</template>
+```
+
+After this RFC is implemented, the following would work:
+```gjs
+<template>
+  {{JSON.stringify @data null 3}}
+</template>
+```
+
 ## Detailed design
+
+Allowing defaults means: when using `JSON` (for example) in a component, the compiled-to-plain-JS output results in the reference to JSON being added to the "scope bag", for example: :
+
+```js
+// Post-RFC 931
+import { template } from '@ember/template-compiler'; 
+
+const data = {};
+
+export default template('{{JSON.stringify data}}', { scope: () => ({ JSON, data }) });
+```
+
+<details><summary>pre-RFC#931</summary>
+
+```js
+// Pre-RFC  931
+import { precompileTemplate } from "@ember/template-compilation";
+import { setComponentTemplate } from "@ember/component";
+import templateOnly from "@ember/component/template-only";
+
+const data = {};
+
+export default setComponentTemplate(
+    precompileTemplate('{{JSON.stringify data}}', { 
+        strictMode: true, 
+        scope: () => ({ JSON, data }) }
+    ), templateOnly()
+);
+```
+
+</details>
+
+Criteria for a platform-native global to be accepted as default:
+
+Any of
+- begins with an uppercase letter 
+- guaranteed to never be added to glimmer as a keyword (e.g.: `globalThis`)
+
+And
+- must not need `new` to invoke
+- must be one one of these lists:
+  - https://tc39.es/ecma262/#sec-global-object
+  - https://tc39.es/ecma262/#sec-function-properties-of-the-global-object
+  - https://html.spec.whatwg.org/multipage/nav-history-apis.html#window
+
+
+Given the above criteria, the following should be added to default-available strict-mode scope:
+
+### namespaces
+
+- `globalThis`
+- `JSON`
+- `Math`
+- `Atomics`
+- `Reflect`
+
+### functions / utilities
+
+- `isNaN`
+- `isFinite`
+- `parseInt`
+- `parseFloat`
+- `decodeURI`
+- `decodeURIComponent`
+- `encodeURI`
+- `encodeURIComponent`
+
+### new-less constructors (still functions / utilities)
+
+- `Number`
+- `Object`
+- `Array`
+- `String`
+- `BigInt`
+- `Date`
+
+### Values
+
+- `Infinity`
+
+
+
 
 
 > This is the bulk of the RFC.
