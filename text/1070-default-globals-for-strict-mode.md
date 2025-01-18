@@ -132,7 +132,7 @@ TC39:
     [Link](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOggQipgF8BuAKH4AeKPgC2AB3pJ8APn4xMGbEwBGCegBUaxCADoAUgGUA8gDk90XKWzEAZgE94SBN27CA9KMnTRsoA&format=gjs)
     ```gjs
     <template>
-        {{globalThis.JSON.stringify @data}}
+        {{JSON.stringify @data}}
     </template>
     ```
 
@@ -152,7 +152,7 @@ TC39:
     Atomics.xor(uint8, 0, 2)
 
     <template>
-      {{globalThis.Atomics.load uint8}} === 5
+      {{Atomics.load uint8}} === 5
     </template>
     ```
 
@@ -427,11 +427,27 @@ WHATWG:
 
     <details><summary>Example</summary>
 
+    [Link](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOgSNQCI4BxANWsNYA4BeJgF9ByYAHpw0eEmRA&format=gjs)
+
+    ```gjs
+    <template>
+        {{atob "aGVsbG8="}}
+    </template>
+    ```
+
     </details>
 
 - [`btoa`](https://html.spec.whatwg.org/multipage/webappapis.html#dom-atob)
 
     <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOkJHzlQCJywYCWBfb5YAPTho8JMiA&format=gjs)
+
+    ```gjs
+    <template>
+        {{btoa "hello"}}
+    </template>
+    ```
 
     </details>
 
@@ -439,11 +455,26 @@ WHATWG:
 
     <details><summary>Example</summary>
 
+    ```gjs
+    <template>
+        <button {{on "click" (postMessage "Hello")>
+            Greet
+        </button>
+    </template>
+    ```
+
     </details>
 
 - [`structuredClone`](https://html.spec.whatwg.org/multipage/structured-data.html#dom-structuredclone)
 
     <details><summary>Example</summary>
+
+    ```gjs
+    <template>
+        <SomeComponent @data={{structuredClone @inputData}} />
+    </template>
+    ```
+
 
     </details>
 
@@ -563,11 +594,44 @@ TC39:
 TC39:
 
 - [`Infinity`](https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-infinity)
+
+    <details><summary>Example</summary>
+
+    ```gjs
+    <template>
+        {{Infinity}}
+    </template>
+    ```
+
+    </details>
+
 - [`NaN`](https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-nan)
+
+    <details><summary>Example</summary>
+
+    ```gjs
+    <template>
+        {{NaN}}
+    </template>
+    ```
+
+    </details>
 
 WHATWG:
 
 - [`isSecureContext`](https://html.spec.whatwg.org/multipage/webappapis.html#dom-issecurecontext)
+
+    <details><summary>Example</summary>
+
+    ```gjs
+    <template>
+        {{#if isSecureContext}}
+            is secure
+        {{/if}}
+    </template>
+    ```
+
+    </details>
 
 
 
