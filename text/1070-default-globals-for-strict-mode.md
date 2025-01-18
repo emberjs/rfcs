@@ -119,7 +119,7 @@ TC39:
 
 - [`globalThis`](https://tc39.es/ecma262/#sec-globalthis)
 
-    Already available. [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOggQipgF8BuAKH4AeKPgC2AB3pJ8APn4xMGbEwBGCegBUaxCADoAUgGUA8gDk90XKWzEAZgE94SBN27CA9KMnTRsoA&format=gjs):
+    Already available. [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOggQipgF8BuAKH4AeKPgC2AB3pJ8APn4xMGbEwBGCegBUaxCADoAUgGUA8gDk90XKWzEAZgE94SBN27CA9KMnTRsoA&format=gjs)
     ```gjs
     <template>
         {{globalThis.JSON.stringify @data}}
@@ -128,7 +128,7 @@ TC39:
 
 - [`Atomics`](https://tc39.es/ecma262/#sec-atomics)
 
-    [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBARgVwGZIKYCcYF4ZlQdxgEF10BDATwCFk10AKARgDYBKAbgChRJYEBLMFAAc2XARgBVQSJLkK9RCgwdOAocIDaABgC6YgOxdOAehMwDMetsa3WMABoB5AEowATFe03t9nAFYvRhtWAB44dAA%2BTiIoEABbfmAIADoADxAGdREAGhhtPPdWTk5QqFR4gAcAGzJy6JgYAG8mgHNqkDgyaoAVAAt%2BVNiEpNSOsgATGGzhAF9Z0pNyqtr6oA&format=gjs):
+    [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBARgVwGZIKYCcYF4ZlQdxgEF10BDATwCFk10AKARgDYBKAbgChRJYEBLMFAAc2XARgBVQSJLkK9RCgwdOAocIDaABgC6YgOxdOAehMwDMetsa3WMABoB5AEowATFe03t9nAFYvRhtWAB44dAA%2BTiIoEABbfmAIADoADxAGdREAGhhtPPdWTk5QqFR4gAcAGzJy6JgYAG8mgHNqkDgyaoAVAAt%2BVNiEpNSOsgATGGzhAF9Z0pNyqtr6oA&format=gjs)
     ```gjs
     const buffer = new ArrayBuffer(16);
     const uint8 = new Uint8Array(buffer);
@@ -145,7 +145,7 @@ TC39:
 
 - [`JSON`](https://tc39.es/ecma262/#sec-json)
 
-    [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOggQipgF8BuAKH4AeKPgC2AB3pJ8APn4xMGbEwBGCegBUaxCADoAUgGUA8gDk90XKWzEAZgE94SBN27CA9KMnTRsoA&format=gjs):
+    [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOggQipgF8BuAKH4AeKPgC2AB3pJ8APn4xMGbEwBGCegBUaxCADoAUgGUA8gDk90XKWzEAZgE94SBN27CA9KMnTRsoA&format=gjs)
     ```gjs
     <template>
         {{JSON.stringify @data}}
@@ -154,7 +154,7 @@ TC39:
 
 - [`Math`](https://tc39.es/ecma262/#sec-math)
 
-    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgFklzaoEAPNABjQCY0AWAL6DQAekixEKIA&format=gjs):
+    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgFklzaoEAPNABjQCY0AWAL6DQAekixEKIA&format=gjs)
     ```gjs
     <template>
       {{Math.max 0 2 4}}
@@ -163,7 +163,7 @@ TC39:
 
 - [`Reflect`](https://tc39.es/ecma262/#sec-reflect)
 
-    [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOgqmAXwG4AoXgDxR8AWwAO9JPgB8vGJgzYmAIwT0AKjWIQAdACV8AM3r5gUHdiLwkKKnkIkyVTp0EB6YeMnDpQA&format=gjs):
+    [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOgqmAXwG4AoXgDxR8AWwAO9JPgB8vGJgzYmAIwT0AKjWIQAdACV8AM3r5gUHdiLwkKKnkIkyVTp0EB6YeMnDpQA&format=gjs)
     ```gjs
     const data = { greeting: 'hello there' };
 
