@@ -126,6 +126,7 @@ Given the above criteria, the following should be added to default-available str
 TC39:
 
 - [`globalThis`](https://tc39.es/ecma262/#sec-globalthis) - Already available. 
+
     <details><summary>Example</summary>
 
     [Link](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOggQipgF8BuAKH4AeKPgC2AB3pJ8APn4xMGbEwBGCegBUaxCADoAUgGUA8gDk90XKWzEAZgE94SBN27CA9KMnTRsoA&format=gjs)
@@ -139,7 +140,9 @@ TC39:
 
 - [`Atomics`](https://tc39.es/ecma262/#sec-atomics)
 
-    [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBARgVwGZIKYCcYF4ZlQdxgEF10BDATwCFk10AKARgDYBKAbgChRJYEBLMFAAc2XARgBVQSJLkK9RCgwdOAocIDaABgC6YgOxdOAehMwDMetsa3WMABoB5AEowATFe03t9nAFYvRhtWAB44dAA%2BTiIoEABbfmAIADoADxAGdREAGhhtPPdWTk5QqFR4gAcAGzJy6JgYAG8mgHNqkDgyaoAVAAt%2BVNiEpNSOsgATGGzhAF9Z0pNyqtr6oA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=MYewdgzgLgBARgVwGZIKYCcYF4ZlQdxgEF10BDATwCFk10AKARgDYBKAbgChRJYEBLMFAAc2XARgBVQSJLkK9RCgwdOAocIDaABgC6YgOxdOAehMwDMetsa3WMABoB5AEowATFe03t9nAFYvRhtWAB44dAA%2BTiIoEABbfmAIADoADxAGdREAGhhtPPdWTk5QqFR4gAcAGzJy6JgYAG8mgHNqkDgyaoAVAAt%2BVNiEpNSOsgATGGzhAF9Z0pNyqtr6oA&format=gjs)
     ```gjs
     const buffer = new ArrayBuffer(16);
     const uint8 = new Uint8Array(buffer);
@@ -153,28 +156,40 @@ TC39:
     </template>
     ```
 
+    </details>
+
 
 - [`JSON`](https://tc39.es/ecma262/#sec-json)
 
-    [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOggQipgF8BuAKH4AeKPgC2AB3pJ8APn4xMGbEwBGCegBUaxCADoAUgGUA8gDk90XKWzEAZgE94SBN27CA9KMnTRsoA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOggQipgF8BuAKH4AeKPgC2AB3pJ8APn4xMGbEwBGCegBUaxCADoAUgGUA8gDk90XKWzEAZgE94SBN27CA9KMnTRsoA&format=gjs)
     ```gjs
     <template>
         {{JSON.stringify @data}}
     </template>
     ```
 
+    </details>
+
 - [`Math`](https://tc39.es/ecma262/#sec-math)
 
-    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgFklzaoEAPNABjQCY0AWAL6DQAekixEKIA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgFklzaoEAPNABjQCY0AWAL6DQAekixEKIA&format=gjs)
     ```gjs
     <template>
       {{Math.max 0 2 4}}
     </template>
     ```
 
+    </details>
+
 - [`Reflect`](https://tc39.es/ecma262/#sec-reflect)
 
-    [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOgqmAXwG4AoXgDxR8AWwAO9JPgB8vGJgzYmAIwT0AKjWIQAdACV8AM3r5gUHdiLwkKKnkIkyVTp0EB6YeMnDpQA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOgqmAXwG4AoXgDxR8AWwAO9JPgB8vGJgzYmAIwT0AKjWIQAdACV8AM3r5gUHdiLwkKKnkIkyVTp0EB6YeMnDpQA&format=gjs)
     ```gjs
     const data = { greeting: 'hello there' };
 
@@ -183,18 +198,26 @@ TC39:
     </template>
     ```
 
+    </details>
+
 WHATWG:
 
 - [`location`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-location)
 
-    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgIGMlL8A7W8gJwgDM0BffqAD0kWIhRA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgIGMlL8A7W8gJwgDM0BffqAD0kWIhRA&format=gjs)
     ```gjs
     <template>
       {{location.href }}
     </template>
     ```
 
+    </details>
+
 - [`history`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-history)
+
+    <details><summary>Example</summary>
 
     Example[^glimmer-call-bug]
     ```gjs
@@ -206,9 +229,13 @@ WHATWG:
     ```
     [^glimmer-call-bug]: demo/example omitted because the glimmer-vm, at the time of the writing of this RFC has not fixed a bug that where this-binding is lost on method calls.
 
+    </details>
+
 - [`navigator`](https://html.spec.whatwg.org/multipage/system-state.html#dom-navigator)
 
-    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgDsEA3SnJfAJ1oFdqIOAgjgj0wAXzGgA9JFiIUQA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgDsEA3SnJfAJ1oFdqIOAgjgj0wAXzGgA9JFiIUQA&format=gjs)
     ```gjs
     <template>
       {{navigator.userAgent}}
@@ -219,11 +246,15 @@ WHATWG:
     </template>
     ```
 
+    </details>
+
 - [`window`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-window)
 
     Most APIs are also available on `window`
 
 - [`document`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-document-2)
+
+    <details><summary>Example</summary>
 
     Example[^glimmer-call-bug]
     ```gjs
@@ -236,8 +267,12 @@ WHATWG:
     </template>
     ```
 
+    </details>
+
 
 - [`localStorage`](https://html.spec.whatwg.org/multipage/webstorage.html#the-localstorage-attribute)
+
+    <details><summary>Example</summary>
 
     Example[^glimmer-call-bug]
     ```gjs
@@ -250,7 +285,11 @@ WHATWG:
     </template>
     ```
 
+    </details>
+
 - [`sessionStorage`](https://html.spec.whatwg.org/multipage/webstorage.html#the-sessionstorage-attribute)
+
+    <details><summary>Example</summary>
 
     Example[^glimmer-call-bug]
     ```gjs
@@ -263,6 +302,8 @@ WHATWG:
     </template>
     ```
 
+    </details>
+
 
 ### functions / utilities
 
@@ -270,7 +311,9 @@ TC39:
 
 - [`isNaN`](https://tc39.es/ecma262/#sec-isnan-number)
 
-    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wYgJYBmaAFAOZwD2ARgnACoAWeAzgHQsByCHaADAJQBfQegxoWaLh1HYIcZhGGiMEgrQUBPGZgD0hJSB2RYiFEA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wYgJYBmaAFAOZwD2ARgnACoAWeAzgHQsByCHaADAJQBfQegxoWaLh1HYIcZhGGiMEgrQUBPGZgD0hJSB2RYiFEA&format=gjs)
     ```gjs
     <template>
       {{#if (isNaN 0)}}
@@ -281,9 +324,13 @@ TC39:
     </template>
     ```
 
+    </details>
+
 - [`isFinite`](https://tc39.es/ecma262/#sec-isfinite-number)
 
-    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wYgJYBmaAFAOZwD2ARgnACoAWeAzgHQsBieAdnpGuWq1GLVgEluBHnwCeASgC%2BC9BjQs0XXpBXYIcZhCUqM6grQMydmAPSEjIa5FiIUQA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wYgJYBmaAFAOZwD2ARgnACoAWeAzgHQsBieAdnpGuWq1GLVgEluBHnwCeASgC%2BC9BjQs0XXpBXYIcZhCUqM6grQMydmAPSEjIa5FiIUQA&format=gjs)
     ```gjs
     <template>
       {{#if (isFinite Infinity)}}
@@ -294,68 +341,112 @@ TC39:
     </template>
     ```
 
+    </details>
+
 - [`parseInt`](https://tc39.es/ecma262/#sec-parseint-string-radix)
 
+    <details><summary>Example</summary>
 
-    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOhgQCdqIBJAOzDQCZaBmAL4DQAekixEKIA&format=gjs)
+    [Link](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOhgQCdqIBJAOzDQCZaBmAL4DQAekixEKIA&format=gjs)
     ```gjs
     <template>
       {{parseInt 2.3}} 
     </template>
     ```
 
+    </details>
+
 - [`parseFloat`](https://tc39.es/ecma262/#sec-parsefloat-string)
 
+    <details><summary>Example</summary>
 
-    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOhgQCdqIAxApNAJloGYBffqAD0kWIhRA&format=gjs)
+    [Link](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOhgQCdqIAxApNAJloGYBffqAD0kWIhRA&format=gjs)
     ```gjs
     <template>
       {{parseFloat 2.3}} 
     </template>
     ```
 
+    </details>
+
 - [`decodeURI`](https://tc39.es/ecma262/#sec-decodeuri-encodeduri)
 
-    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgBMIBjfRgVQCUBJNAIgFIArACEAHkIAivAL7S0oAPSRYiFEA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgBMIBjfRgVQCUBJNAIgFIArACEAHkIAivAL7S0oAPSRYiFEA&format=gjs)
     ```gjs
     <template>
       {{decodeURI "%5Bx%5D"}} 
     </template>
     ```
 
+    </details>
+
 - [`decodeURIComponent`](https://tc39.es/ecma262/#sec-decodeuricomponent-encodeduricomponent)
 
-    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgBMIBjfRgVQCUBJAYX1nwA7CILBoARAFIArACEAHjIAi4gL6q0oAPSRYiFEA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgBMIBjfRgVQCUBJAYX1nwA7CILBoARAFIArACEAHjIAi4gL6q0oAPSRYiFEA&format=gjs)
     ```gjs
     <template>
       {{decodeURIComponent "%5Bx%5D"}} 
     </template>
     ```
 
+    </details>
+
 - [`encodeURI`](https://tc39.es/ecma262/#sec-encodeuri-uri)
 
-    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOggDsBjfAEwgFUAlASTQCIA2gA8AuvwC%2BEtKAD0kWIhRA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOggDsBjfAEwgFUAlASTQCIA2gA8AuvwC%2BEtKAD0kWIhRA&format=gjs)
     ```gjs
     <template>
       {{encodeURI "[x]"}} 
     </template>
     ```
 
+    </details>
+
 - [`encodeURIComponent`](https://tc39.es/ecma262/#sec-encodeuricomponent-uricomponent)
 
-    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOggDsBjfAEwgFUAlASQGF8sfA0Zg0AIgDaADwC64gL4K0oAPSRYiFEA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOggDsBjfAEwgFUAlASQGF8sfA0Zg0AIgDaADwC64gL4K0oAPSRYiFEA&format=gjs)
     ```gjs
     <template>
       {{encodeURIComponent "[x]"}} 
     </template>
     ```
 
+    </details>
+
 WHATWG:
 
 - [`atob`](https://html.spec.whatwg.org/multipage/webappapis.html#dom-btoa)
+
+    <details><summary>Example</summary>
+
+    </details>
+
 - [`btoa`](https://html.spec.whatwg.org/multipage/webappapis.html#dom-atob)
+
+    <details><summary>Example</summary>
+
+    </details>
+
 - [`postMessage`](https://html.spec.whatwg.org/multipage/web-messaging.html#dom-window-postmessage)
+
+    <details><summary>Example</summary>
+
+    </details>
+
 - [`structuredClone`](https://html.spec.whatwg.org/multipage/structured-data.html#dom-structuredclone)
+
+    <details><summary>Example</summary>
+
+    </details>
+
 
 ### new-less constructors (still functions / utilities)
 
@@ -363,10 +454,11 @@ TC39:
 
 - [`Array`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-array)
 
+    <details><summary>Example</summary>
 
     See note[^reactive-array-note] about `(array)`, `@ember/helper`, and [RFC#1000](https://github.com/emberjs/rfcs/pull/1000)[^reactive-array-note]
 
-    [Example](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wYjHAYwAtUAKAcxgHsAjOGAFSIEsBnAOgEEAnbuAT1QBGVACZUAZgCUqOK1QAfZuAgKAvmrQZt2ZZA1b02APT5iB4MZWwEYFEA&format=gjs)
+    [Link](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wYjHAYwAtUAKAcxgHsAjOGAFSIEsBnAOgEEAnbuAT1QBGVACZUAZgCUqOK1QAfZuAgKAvmrQZt2ZZA1b02APT5iB4MZWwEYFEA&format=gjs)
     
     ```gjs
     <template>
@@ -378,20 +470,28 @@ TC39:
 
     [^reactive-array-note]: This is the same behavior as `(array)` in loose mode, and `import { array } from '@ember/helper';`, however, while the creation of the array is reactive (e.g.: if we had said `(Array @foo @bar)`, changes to `@foo` and `@bar` would cause the creation of a new array instance), the proposed _built-in_ `(array)` _keyword_ behavior _may_ have reactive items, as proposed by [RFC#1068](https://github.com/emberjs/rfcs/pull/1068) 
 
+    </details>
+
 
 
 - [`BigInt`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-bigint)
 
-    [Example](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOgCFKcBJAOxFQCIAGADwEYAZsJGiRnAL4TkwAPTho8JMiA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOgCFKcBJAOxFQCIAGADwEYAZsJGiRnAL4TkwAPTho8JMiA&format=gjs)
     ```gjs
     <template>
         {{BigInt "0x1fffffffffffff"}}
     </template>
     ```
 
+    </details>
+
 - [`Boolean`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-boolean)
 
-    [Example](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wYgJYBmqAFAOYwD2ARnDACoAWeAzgHQBCFFMYcAdqgBEggJQBfMWgzoQAJwCuYKemxgYzMBOUYCtDduwB6QluCHw0eEmRA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wYgJYBmqAFAOYwD2ARnDACoAWeAzgHQBCFFMYcAdqgBEggJQBfMWgzoQAJwCuYKemxgYzMBOUYCtDduwB6QluCHw0eEmRA&format=gjs)
     ```gjs
     <template>
         {{#if (Boolean "")}}
@@ -402,43 +502,61 @@ TC39:
     </template>
     ```
 
+    </details>
+
 - [`Date`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-date)
 
-    [Example](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOgBEExUBGAdgGY2AmAFg4AMAgKwBOPgF8JyYAHpw0eEmRA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOgBEExUBGAdgGY2AmAFg4AMAgKwBOPgF8JyYAHpw0eEmRA&format=gjs)
     ```gjs
     <template>
         {{Date 1737243005924}}
     </template>
     ```
 
+    </details>
+
 - [`Number`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-number)
 
-    [Example](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOgDkBXCQsAJ1QCIAmbzgX37JgAenDR4SZEA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOgDkBXCQsAJ1QCIAmbzgX37JgAenDR4SZEA&format=gjs)
     ```gjs
     <template>
         {{Number "22"}}
     </template>
     ```
 
+    </details>
+
 - [`Object`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-object)
 
-    [Example](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wYjHAYwAsBaASwDtUAKAcxgHsAjOGAFSLIGcA6AeSYArMARCo4AXgCMqJhIBMASnFdUAHwDWYAJ6oAbqwCuYNQF9TaDOmxbt5gFxZMBmMfOXrmAPT5i5Cu7AXuDQ8EjIQA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wYjHAYwAsBaASwDtUAKAcxgHsAjOGAFSLIGcA6AeSYArMARCo4AXgCMqJhIBMASnFdUAHwDWYAJ6oAbqwCuYNQF9TaDOmxbt5gFxZMBmMfOXrmAPT5i5Cu7AXuDQ8EjIQA&format=gjs)
     ```gjs
     <template>
-        {{#each-in (globalThis.Object a=1 b=2) as |key value|}}
+        {{#each-in (Object a=1 b=2) as |key value|}}
           {{key}}: {{value}}
         {{/each-in}}
     </template>
     ```
 
+    </details>
+
 - [`String`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-string)
 
-    [Example](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOgGUQAnSgOx1QCZOBfH5YAHpw0eEmRA&format=gjs)
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOgGUQAnSgOx1QCZOBfH5YAHpw0eEmRA&format=gjs)
     ```gjs
     <template>
-        {{globalThis.String 22}}
+        {{String 22}}
     </template>
     ```
+
+    </details>
 
 ### Values
 
