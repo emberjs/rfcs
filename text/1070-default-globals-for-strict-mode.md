@@ -374,8 +374,8 @@ TC39:
 
     .. pull-quote::
 
-    [!NOTE]  
-    This is the same behavior as `(array)` in loose mode, and `import { array } from '@ember/helper';`, however, while the creation of the array is reactive (e.g.: if we had said `(Array @foo @bar)`, changes to `@foo` and `@bar` would cause the creation of a new array instance), the proposed _built-in_ `(array)` _keyword_ behavior _may_ have reactive items, as proposed by [RFC#1068](https://github.com/emberjs/rfcs/pull/1068) 
+    > [!NOTE]  
+    > This is the same behavior as `(array)` in loose mode, and `import { array } from '@ember/helper';`, however, while the creation of the array is reactive (e.g.: if we had said `(Array @foo @bar)`, changes to `@foo` and `@bar` would cause the creation of a new array instance), the proposed _built-in_ `(array)` _keyword_ behavior _may_ have reactive items, as proposed by [RFC#1068](https://github.com/emberjs/rfcs/pull/1068) 
 
 
 
