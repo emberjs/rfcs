@@ -113,38 +113,62 @@ Given the above criteria, the following should be added to default-available str
 
 ### namespaces
 
-- `globalThis`
-- `JSON`
-- `Math`
-- `Atomics`
-- `Reflect`
+- [`globalThis`](https://tc39.es/ecma262/#sec-globalthis)
+- [`Atomics`](https://tc39.es/ecma262/#sec-atomics)
+- [`JSON`](https://tc39.es/ecma262/#sec-json)
+- [`Math`](https://tc39.es/ecma262/#sec-math)
+- [`Reflect`](https://tc39.es/ecma262/#sec-reflect)
 
 ### functions / utilities
 
-- `isNaN`
-- `isFinite`
-- `parseInt`
-- `parseFloat`
-- `decodeURI`
-- `decodeURIComponent`
-- `encodeURI`
-- `encodeURIComponent`
+- [`isNaN`](https://tc39.es/ecma262/#sec-isnan-number)
+- [`isFinite`](https://tc39.es/ecma262/#sec-isfinite-number)
+- [`parseInt`](https://tc39.es/ecma262/#sec-parseint-string-radix)
+- [`parseFloat`](https://tc39.es/ecma262/#sec-parsefloat-string)
+- [`decodeURI`](https://tc39.es/ecma262/#sec-decodeuri-encodeduri)
+- [`decodeURIComponent`](https://tc39.es/ecma262/#sec-decodeuricomponent-encodeduricomponent)
+- [`encodeURI`](https://tc39.es/ecma262/#sec-encodeuri-uri)
+- [`encodeURIComponent`](https://tc39.es/ecma262/#sec-encodeuricomponent-uricomponent)
 
 ### new-less constructors (still functions / utilities)
 
-- `Number`
-- `Object`
-- `Array`
-- `String`
-- `BigInt`
-- `Date`
+- [`Array`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-array)
+- [`BigInt`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-bigint)
+- [`Boolean`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-boolean)
+- [`Date`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-date)
+- [`Number`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-number)
+- [`Object`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-object)
+- [`String`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-string)
 
 ### Values
 
-- `Infinity`
+- [`Infinity`](https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-infinity)
+- [`NaN`](https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-nan)
 
 
 
+### Matching criteria, but not included
+
+Existing keywords don't need to be included in the global scope allow-list
+
+- [`undefined`](https://tc39.es/ecma262/#sec-undefined)
+
+These do not exist in all supported environments:
+
+- [`Encode`](https://tc39.es/ecma262/#sec-encode)
+- [`Decode`](https://tc39.es/ecma262/#sec-decode)
+- [`ParseHexOctet`](https://tc39.es/ecma262/#sec-parsehexoctet)
+
+These are not common and / or may be actively dangerous to make easier to use:
+
+- `eval`
+- `PerformEval`
+- `Function`
+
+Uncommon entries from the "Constructor Properties" list: https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object
+- `${...}Error`, e.g.: `AggregateError`
+- `${...}Int${...}Array`, e.g.: `BigUint64Array`,
+- anything that requires `new`, e.g.:  `DataView`, `Map`
 
 
 > This is the bulk of the RFC.
