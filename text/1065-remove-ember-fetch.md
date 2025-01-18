@@ -62,10 +62,8 @@ To replace `ember-fetch`'s core-functionality using the least amount of effort i
 ```ts
 import { waitForPromise } from '@ember/test-waiters';
 
-const nativeFetch = globalThis.fetch;
-
 export async function wrappedFetch(...args: Parameters<typeof nativeFetch>) {
-    let responsePromise = nativeFetch(...args);
+    let responsePromise = fetch(...args);
 
     waitForPromise(responsePromise);
 
@@ -75,7 +73,7 @@ export async function wrappedFetch(...args: Parameters<typeof nativeFetch>) {
         get(target, prop, receiver) {
             let original = Reflect.get(target, prop, receiver);
 
-            if (['json', 'text'].includes(prop)) {
+            if (['json', 'text', 'arrayBuffer', 'blob', 'formData'].includes(prop)) {
                 return (...args) => {
                     let parsePromise = original(...args);
 
