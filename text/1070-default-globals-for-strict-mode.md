@@ -125,14 +125,17 @@ Given the above criteria, the following should be added to default-available str
 
 TC39:
 
-- [`globalThis`](https://tc39.es/ecma262/#sec-globalthis)
+- [`globalThis`](https://tc39.es/ecma262/#sec-globalthis) - Already available. 
+    <details><summary>Example</summary>
 
-    Already available. [Example](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOggQipgF8BuAKH4AeKPgC2AB3pJ8APn4xMGbEwBGCegBUaxCADoAUgGUA8gDk90XKWzEAZgE94SBN27CA9KMnTRsoA&format=gjs)
+    [Link](https://limber.glimdown.com/edit?c=MYewdgzgLgBAJgQygmBeGBvGBzATgU3ygEsxsAuGAcgAt8AbekGKOggQipgF8BuAKH4AeKPgC2AB3pJ8APn4xMGbEwBGCegBUaxCADoAUgGUA8gDk90XKWzEAZgE94SBN27CA9KMnTRsoA&format=gjs)
     ```gjs
     <template>
         {{globalThis.JSON.stringify @data}}
     </template>
     ```
+
+    </details>
 
 - [`Atomics`](https://tc39.es/ecma262/#sec-atomics)
 
