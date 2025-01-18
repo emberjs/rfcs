@@ -105,10 +105,17 @@ Any of
 
 And
 - must not need `new` to invoke
+- must not require lifetime management (e.g.: `setTimeout`)
 - must be one one of these lists:
   - https://tc39.es/ecma262/#sec-global-object
   - https://tc39.es/ecma262/#sec-function-properties-of-the-global-object
   - https://html.spec.whatwg.org/multipage/nav-history-apis.html#window
+  - https://html.spec.whatwg.org/multipage/indices.html#all-interfaces    
+  - https://html.spec.whatwg.org/multipage/webappapis.html
+
+
+> [!IMPORTANT]  
+> Because all function invocations are reactive by default, every function called from these APIs will be re-called when arguments change. 
 
 
 Given the above criteria, the following should be added to default-available strict-mode scope:
@@ -179,6 +186,8 @@ WHATWG:
 - [`navigator`](https://html.spec.whatwg.org/multipage/system-state.html#dom-navigator)
 - [`window`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-window)
 - [`document`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-document-2)
+- [`localStorage`](https://html.spec.whatwg.org/multipage/webstorage.html#the-localstorage-attribute)
+- [`sessionStorage`](https://html.spec.whatwg.org/multipage/webstorage.html#the-sessionstorage-attribute)
 
 ### functions / utilities
 
@@ -195,7 +204,10 @@ TC39:
 
 WHATWG:
 
+- [`atob`](https://html.spec.whatwg.org/multipage/webappapis.html#dom-btoa)
+- [`btoa`](https://html.spec.whatwg.org/multipage/webappapis.html#dom-atob)
 - [`postMessage`](https://html.spec.whatwg.org/multipage/web-messaging.html#dom-window-postmessage)
+- [`structuredClone`](https://html.spec.whatwg.org/multipage/structured-data.html#dom-structuredclone)
 
 ### new-less constructors (still functions / utilities)
 
@@ -215,6 +227,10 @@ TC39:
 
 - [`Infinity`](https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-infinity)
 - [`NaN`](https://tc39.es/ecma262/#sec-value-properties-of-the-global-object-nan)
+
+WHATWG:
+
+- [`isSecureContext`](https://html.spec.whatwg.org/multipage/webappapis.html#dom-issecurecontext)
 
 
 
