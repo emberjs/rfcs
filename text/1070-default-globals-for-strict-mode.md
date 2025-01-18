@@ -266,13 +266,86 @@ WHATWG:
 TC39:
 
 - [`isNaN`](https://tc39.es/ecma262/#sec-isnan-number)
+
+    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wYgJYBmaAFAOZwD2ARgnACoAWeAzgHQsByCHaADAJQBfQegxoWaLh1HYIcZhGGiMEgrQUBPGZgD0hJSB2RYiFEA&format=gjs)
+    ```gjs
+    <template>
+      {{#if (isNaN 0)}}
+        is NaN
+      {{else}}
+        is falsey
+      {{/if}}
+    </template>
+    ```
+
 - [`isFinite`](https://tc39.es/ecma262/#sec-isfinite-number)
+
+    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wYgJYBmaAFAOZwD2ARgnACoAWeAzgHQsBieAdnpGuWq1GLVgEluBHnwCeASgC%2BC9BjQs0XXpBXYIcZhCUqM6grQMydmAPSEjIa5FiIUQA&format=gjs)
+    ```gjs
+    <template>
+      {{#if (isFinite Infinity)}}
+        is Finite
+      {{else}}
+        is falsey
+      {{/if}}
+    </template>
+    ```
+
 - [`parseInt`](https://tc39.es/ecma262/#sec-parseint-string-radix)
+
+
+    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOhgQCdqIBJAOzDQCZaBmAL4DQAekixEKIA&format=gjs)
+    ```gjs
+    <template>
+      {{parseInt 2.3}} 
+    </template>
+    ```
+
 - [`parseFloat`](https://tc39.es/ecma262/#sec-parsefloat-string)
+
+
+    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOhgQCdqIAxApNAJloGYBffqAD0kWIhRA&format=gjs)
+    ```gjs
+    <template>
+      {{parseFloat 2.3}} 
+    </template>
+    ```
+
 - [`decodeURI`](https://tc39.es/ecma262/#sec-decodeuri-encodeduri)
+
+    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgBMIBjfRgVQCUBJNAIgFIArACEAHkIAivAL7S0oAPSRYiFEA&format=gjs)
+    ```gjs
+    <template>
+      {{decodeURI "%5Bx%5D"}} 
+    </template>
+    ```
+
 - [`decodeURIComponent`](https://tc39.es/ecma262/#sec-decodeuricomponent-encodeduricomponent)
+
+    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgBMIBjfRgVQCUBJAYX1nwA7CILBoARAFIArACEAHjIAi4gL6q0oAPSRYiFEA&format=gjs)
+    ```gjs
+    <template>
+      {{decodeURIComponent "%5Bx%5D"}} 
+    </template>
+    ```
+
 - [`encodeURI`](https://tc39.es/ecma262/#sec-encodeuri-uri)
+
+    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOggDsBjfAEwgFUAlASTQCIA2gA8AuvwC%2BEtKAD0kWIhRA&format=gjs)
+    ```gjs
+    <template>
+      {{encodeURI "[x]"}} 
+    </template>
+    ```
+
 - [`encodeURIComponent`](https://tc39.es/ecma262/#sec-encodeuricomponent-uricomponent)
+
+    [Example](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOggDsBjfAEwgFUAlASQGF8sfA0Zg0AIgDaADwC64gL4K0oAPSRYiFEA&format=gjs)
+    ```gjs
+    <template>
+      {{encodeURIComponent "[x]"}} 
+    </template>
+    ```
 
 WHATWG:
 
