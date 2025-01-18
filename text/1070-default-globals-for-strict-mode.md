@@ -378,11 +378,64 @@ TC39:
 
 
 - [`BigInt`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-bigint)
+
+    [Example](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOgCFKcBJAOxFQCIAGADwEYAZsJGiRnAL4TkwAPTho8JMiA&format=gjs)
+    ```gjs
+    <template>
+        {{BigInt "0x1fffffffffffff"}}
+    </template>
+    ```
+
 - [`Boolean`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-boolean)
+
+    [Example](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wYgJYBmqAFAOYwD2ARnDACoAWeAzgHQBCFFMYcAdqgBEggJQBfMWgzoQAJwCuYKemxgYzMBOUYCtDduwB6QluCHw0eEmRA&format=gjs)
+    ```gjs
+    <template>
+        {{#if (Boolean "")}}
+          true
+        {{else}}
+          false
+        {{/if}}
+    </template>
+    ```
+
 - [`Date`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-date)
+
+    [Example](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOgBEExUBGAdgGY2AmAFg4AMAgKwBOPgF8JyYAHpw0eEmRA&format=gjs)
+    ```gjs
+    <template>
+        {{Date 1737243005924}}
+    </template>
+    ```
+
 - [`Number`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-number)
+
+    [Example](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOgDkBXCQsAJ1QCIAmbzgX37JgAenDR4SZEA&format=gjs)
+    ```gjs
+    <template>
+        {{Number "22"}}
+    </template>
+    ```
+
 - [`Object`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-object)
+
+    [Example](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wYjHAYwAsBaASwDtUAKAcxgHsAjOGAFSLIGcA6AeSYArMARCo4AXgCMqJhIBMASnFdUAHwDWYAJ6oAbqwCuYNQF9TaDOmxbt5gFxZMBmMfOXrmAPT5i5Cu7AXuDQ8EjIQA&format=gjs)
+    ```gjs
+    <template>
+        {{#each-in (globalThis.Object a=1 b=2) as |key value|}}
+          {{key}}: {{value}}
+        {{/each-in}}
+    </template>
+    ```
+
 - [`String`](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-string)
+
+    [Example](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOgGUQAnSgOx1QCZOBfH5YAHpw0eEmRA&format=gjs)
+    ```gjs
+    <template>
+        {{globalThis.String 22}}
+    </template>
+    ```
 
 ### Values
 
