@@ -3,6 +3,7 @@ stage: released
 start-date: 2024-05-20T00:00:00.000Z
 release-date:
 release-versions:
+  ember-cli: 6.3.0
 teams:
   - cli
   - learning
