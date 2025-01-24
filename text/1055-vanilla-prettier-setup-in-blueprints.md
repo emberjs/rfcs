@@ -3,6 +3,7 @@ stage: released
 start-date: 2024-12-03T00:00:00.000Z
 release-date:
 release-versions:
+  ember-cli: 6.3.0
 teams:
   - cli
 prs:
