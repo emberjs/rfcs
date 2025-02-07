@@ -119,26 +119,21 @@ class Example extends Component {
 
 ## Detailed design
 
-This RFC introduces two new importable APIs:
+This RFC introduces a new importable API:
 
 ```js
-// The ahead-of-time template compiler:
 import { template } from "@ember/template-compiler";
-
-// The runtime template compiler:
-import { template } from "@ember/template-compiler/runtime";
 ```
 
-They are intended to be drop-in replacements for each other _except_ for the differences summarized in this table:
+The following sections will detail the semantics of this `template()` function. In typical usages, calls to this `template()` will be pre-processed at build time. By default, the template compiler is not included in the build, and if this function is called at runtime without the template compiler, it will throw an runtime error.
 
-|               | Template Contents      | Scope Param                                  | Syntax Errors            | Payload          |
-| ------------- | ---------------------- | -------------------------------------------- | ------------------------ | ---------------- |
-| Ahead-of-Time | Restricted to literals | Restricted to a few explicitly-allowed forms | Stops your build         | Smaller & Faster |
-| Runtime       | Unrestricted           | Unrestricted                                 | Can by caught at runtime | Larger & Slower  |
+However, there are use cases where runtime template compilation is desirable. For that purpose, we further introduce an importable module as an opt-in to include the template compiler:
 
-By putting these two implementations in different importable modules, the problem of "how do you opt-in to including the template compiler in your app?" goes away. If you import it, you will have it, if you don't, you won't.
+```js
+import "@ember/template-compiler/runtime";
+```
 
-The remainder of this design only uses examples with the ahead-of-time template compiler, because everything about the runtime template compiler's API is the same.
+When this module is imported into the build, it'll make the template compiler available, which allows the `template()` function to be called at runtime with compatible semantics as the build time pre-processing. Note that this is not an opt-in to disable or otherwise influence build-time compilation, it merely provides the necessary components for the `template()` function to be callable at runtime. See the dedicated section for additional details.
 
 ### Scope Access
 
@@ -290,6 +285,31 @@ When the `component` argument is passed, the return value is that backing class,
 > _Aren't route templates "bare templates"? What about them?<br>_
 > Yes, this RFC deliberately doesn't say anything about route templates. We expect a future routing RFC to use components to express what today's route templates express. This RFC also doesn't deprecate `precompileTemplate` yet -- although that will clearly be a good goal _after_ a new routing design addresses route templates.
 
+### Runtime Compilation
+
+Ember always had the ability to compile template at runtime. However, because this incur significant costs and most apps do not benefit from it, this feature is disabled by default and requires an explicit opt-in to include the runtime compiler.
+
+Traditionally, this is done with:
+
+```js
+// ember-cli-build.js
+app.import("node_modules/ember-source/dist/ember-template-compiler.js");
+```
+
+The new `"@ember/template-compiler/runtime"` module is interned to serve as a replacement for this, which better aligns with the direction we are headed. For example, this module can be imported on only the routes that needs it, and in conjunction with route-based code splitting that would reduce the performance hit on the initial load.
+
+Note that, even with the template compilation is available at runtime, the result of the compilations may be subtly different – applications may have custom glimmer/handlebars AST plugins in their build, and these plugins will not be available at runtime.
+
+Other than that, the signature and semantics of the `template()` function is intended to be identical between the build time pre-processing and runtime calls, and the build time pre-processing can be thought of as an optimization. In order to guarantee that the build-time optimization can be performed correctly, the next section details some syntactic restrictions. Sticking to the `"@ember/template-compiler"` import and adhering to the permissible subset of syntax enables authoring/emitting isomorphic code that is agnostic to where the compilation actually happens.
+
+That said, as a convenience, the `runtime` module will also re-export the `template()` function:
+
+```js
+import { template } from "@ember/template-compiler/runtime";
+```
+
+This guarantees that these `template` call will not be touched by any build-time preprocessing, relaxes any static checks for the syntactic restrictions and ensures the runtime compiler is available.
+
 ### Syntactic Restrictions
 
 The runtime template compiler has no syntactic restrictions.
@@ -319,6 +339,12 @@ If provided, `params.eval` must be:
  - whose body contains exactly one return statment.
  - where the return value must be exactly `eval(arguments[0])`.
 
+In summary:
+
+|                        | Template Contents              | Scope Param                                  | Template Syntax Errors   | Payload          |
+| ---------------------- | ------------------------------ | -------------------------------------------- | ------------------------ | ---------------- |
+| Build-time compilation | Restricted to a string literal | Restricted to a few explicitly-allowed forms | Stops your build         | Smaller & Faster |
+| Runtime compilation    | Unrestricted                   | Unrestricted                                 | Can by caught at runtime | Larger & Slower  |
 
 ### Older things that are intentionally dropped
 
@@ -357,7 +383,7 @@ The typescript types as written above don't prevent you from using `scope` and
 
 ## Unresolved questions
 
-# Appendix A: Field Access Patterns
+### Appendix A: Field Access Patterns
 
 This is a fully-working example that can run in a browser. It uses a toy rendering engine just to illustrate how scope access is working.
 
