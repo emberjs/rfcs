@@ -57,17 +57,16 @@ If you only use `ember-fetch` in route model-hooks, then the settled-state integ
 ### Direct replacement
 
 
-To replace `ember-fetch`'s core-functionality using the least amount of effort involves adding a new utility in your apps:
+To replace `ember-fetch`'s core-functionality using the least amount of effort involves adding a new utility in `@ember/test-waiters`, `waitForFetch`:
 
 ```ts
-import { waitForPromise } from '@ember/test-waiters';
+// in @ember/test-waiters
+import { waitForPromise } from './wait-for-promise';
 
-export async function wrappedFetch(...args: Parameters<typeof nativeFetch>) {
-    let responsePromise = fetch(...args);
+export async function waitForFetch<Value>(fetchPromise: Promise<Value>) {
+    waitForPromise(fetchPromise);
 
-    waitForPromise(responsePromise);
-
-    let response = await responsePromise;
+    let response = await fetchPromise;
 
     return new Proxy(response, {
         get(target, prop, receiver) {
@@ -86,6 +85,18 @@ export async function wrappedFetch(...args: Parameters<typeof nativeFetch>) {
     });
 }
 ```
+
+
+To have a single import mirroring the behavior of `ember-fetch`, _in full_, folks can still provide a single export that does:
+
+```ts
+import { waitForFetch } from '@ember/test-waiters';
+
+export function wrappedFetch(...args: Parameters<typeof fetch>) {
+    return wrappedFetch(fetch(...args));
+}
+```
+
 
 And then throughout your project, you could find and replace all imports of `import fetch from 'ember';` with `import { wrappedFetch } from 'app-name/utils/wrapped-fetch';`
 
@@ -133,6 +144,7 @@ Docs available on https://github.com/emberjs/data/
 ## Alternatives
 
 - n/a
+- ask folks to wrap and proxy fetch themselves
 
 ## Unresolved questions
 
