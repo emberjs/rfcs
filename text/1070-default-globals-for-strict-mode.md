@@ -356,34 +356,6 @@ TC39:
 
 WHATWG:
 
-- [`atob`](https://html.spec.whatwg.org/multipage/webappapis.html#dom-btoa)
-
-    <details><summary>Example</summary>
-
-    [Link](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOgSNQCI4BxANWsNYA4BeJgF9ByYAHpw0eEmRA&format=gjs)
-
-    ```gjs
-    <template>
-        {{atob "aGVsbG8="}}
-    </template>
-    ```
-
-    </details>
-
-- [`btoa`](https://html.spec.whatwg.org/multipage/webappapis.html#dom-atob)
-
-    <details><summary>Example</summary>
-
-    [Link](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOkJHzlQCJywYCWBfb5YAPTho8JMiA&format=gjs)
-
-    ```gjs
-    <template>
-        {{btoa "hello"}}
-    </template>
-    ```
-
-    </details>
-
 - [`postMessage`](https://html.spec.whatwg.org/multipage/web-messaging.html#dom-window-postmessage)
 
     <details><summary>Example</summary>
@@ -612,6 +584,36 @@ Takes a small amount of work to implement.
 - Do nothing, but this is worse, as folks intuitively expect these a lot of the above-mentioned APIs to "just work", without needing weird scope-tricks to convince our Scope-tracking tools in the build tools that certain APIs are in scope..
 
 - Add some single-word globals, despite the risk of HTML element being implemented with the same word / casing
+
+WHATWG:
+
+- [`atob`](https://html.spec.whatwg.org/multipage/webappapis.html#dom-btoa)
+
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOgSNQCI4BxANWsNYA4BeJgF9ByYAHpw0eEmRA&format=gjs)
+
+    ```gjs
+    <template>
+        {{atob "aGVsbG8="}}
+    </template>
+    ```
+
+    </details>
+
+- [`btoa`](https://html.spec.whatwg.org/multipage/webappapis.html#dom-atob)
+
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=DwFwpgtgDgNghuAfAKAATtQb0wcxgewCM4YAVACwEsBnAOkJHzlQCJywYCWBfb5YAPTho8JMiA&format=gjs)
+
+    ```gjs
+    <template>
+        {{btoa "hello"}}
+    </template>
+    ```
+
+    </details>
 
 
 - [`location`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-location)
