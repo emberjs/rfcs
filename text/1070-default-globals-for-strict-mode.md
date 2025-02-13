@@ -106,6 +106,7 @@ Any of
 And
 - must not need `new` to invoke
 - must not require lifetime management (e.g.: `setTimeout`)
+- must not be a single-word lower-case API, because of potential collision with future [new HTML elements](https://developer.mozilla.org/en-US/docs/Web/HTML/Element)
 - if the API is a function, the return value should not be a promise
 - must be one one of these lists:
   - https://tc39.es/ecma262/#sec-global-object
@@ -201,74 +202,6 @@ TC39:
     </details>
 
 WHATWG:
-
-- [`location`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-location)
-
-    <details><summary>Example</summary>
-
-    [Link](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgIGMlL8A7W8gJwgDM0BffqAD0kWIhRA&format=gjs)
-    ```gjs
-    <template>
-      {{location.href }}
-    </template>
-    ```
-
-    </details>
-
-- [`history`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-history)
-
-    <details><summary>Example</summary>
-
-    Example[^glimmer-call-bug]
-    ```gjs
-    import { on } from '@ember/modifier';
-
-    <template>
-      <button {{on 'click' history.back}}>Back</button>
-    </template>
-    ```
-    [^glimmer-call-bug]: demo/example omitted because the glimmer-vm, at the time of the writing of this RFC has not fixed a bug that where this-binding is lost on method calls.
-
-    </details>
-
-- [`navigator`](https://html.spec.whatwg.org/multipage/system-state.html#dom-navigator)
-
-    <details><summary>Example</summary>
-
-    [Link](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgDsEA3SnJfAJ1oFdqIOAgjgj0wAXzGgA9JFiIUQA&format=gjs)
-    ```gjs
-    <template>
-      {{navigator.userAgent}}
-
-      <button {{on 'click' (fn navigator.clipboard.write @blob)}}>
-        Copy to clipboard
-      </button>
-    </template>
-    ```
-
-    </details>
-
-- [`window`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-window)
-
-    Most APIs are also available on `window`
-
-- [`document`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-document-2)
-
-    <details><summary>Example</summary>
-
-    Example[^glimmer-call-bug]
-    ```gjs
-    <template>
-      <div id='foo'></div>
-      
-      {{#in-element (document.getElementById 'foo')}}
-          rendered elsewhere
-      {{/in-element}}
-    </template>
-    ```
-
-    </details>
-
 
 - [`localStorage`](https://html.spec.whatwg.org/multipage/webstorage.html#the-localstorage-attribute)
 
@@ -673,9 +606,83 @@ If we don't already, we should have an extensive guide on Polish Syntax, potenti
 
 Takes a small amount of work to implement.
 
+
 ## Alternatives
 
-Do nothing, but this is worse, as folks intuitively expect these a lot of the above-mentioned APIs to "just work", without needing weird scope-tricks to convince our Scope-tracking tools in the build tools that certain APIs are in scope..
+- Do nothing, but this is worse, as folks intuitively expect these a lot of the above-mentioned APIs to "just work", without needing weird scope-tricks to convince our Scope-tracking tools in the build tools that certain APIs are in scope..
+
+- Add some single-word globals, despite the risk of HTML element being implemented with the same word / casing
+
+
+- [`location`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-location)
+
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgIGMlL8A7W8gJwgDM0BffqAD0kWIhRA&format=gjs)
+    ```gjs
+    <template>
+      {{location.href }}
+    </template>
+    ```
+
+    </details>
+
+- [`history`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-history)
+
+    <details><summary>Example</summary>
+
+    Example[^glimmer-call-bug]
+    ```gjs
+    import { on } from '@ember/modifier';
+
+    <template>
+      <button {{on 'click' history.back}}>Back</button>
+    </template>
+    ```
+    [^glimmer-call-bug]: demo/example omitted because the glimmer-vm, at the time of the writing of this RFC has not fixed a bug that where this-binding is lost on method calls.
+
+    </details>
+
+- [`navigator`](https://html.spec.whatwg.org/multipage/system-state.html#dom-navigator)
+
+    <details><summary>Example</summary>
+
+    [Link](https://limber.glimdown.com/edit?c=FAHgLgpgtgDgNgQ0gPmAAjQb0wczgewCME4AVACwEsBnAOgDsEA3SnJfAJ1oFdqIOAgjgj0wAXzGgA9JFiIUQA&format=gjs)
+    ```gjs
+    <template>
+      {{navigator.userAgent}}
+
+      <button {{on 'click' (fn navigator.clipboard.write @blob)}}>
+        Copy to clipboard
+      </button>
+    </template>
+    ```
+
+    </details>
+
+- [`window`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-window)
+
+    Most APIs are also available on `window`
+
+- [`document`](https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-document-2)
+
+    <details><summary>Example</summary>
+
+    Example[^glimmer-call-bug]
+    ```gjs
+    <template>
+      <div id='foo'></div>
+      
+      {{#in-element (document.getElementById 'foo')}}
+          rendered elsewhere
+      {{/in-element}}
+    </template>
+    ```
+
+    </details>
+
+
+
 
 ## Unresolved questions
 
