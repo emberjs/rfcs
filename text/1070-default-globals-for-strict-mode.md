@@ -583,7 +583,7 @@ Takes a small amount of work to implement.
 
 - Do nothing, but this is worse, as folks intuitively expect these a lot of the above-mentioned APIs to "just work", without needing weird scope-tricks to convince our Scope-tracking tools in the build tools that certain APIs are in scope..
 
-- Add some single-word globals, despite the risk of HTML element being implemented with the same word / casing
+- Add some single-word globals, despite the potential future risk of HTML element being implemented with the same word / casing
 
 WHATWG:
 
