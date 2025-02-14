@@ -477,3 +477,25 @@ Lastly: we think we can use this opportunity to re-organize the mental model and
 
 In short, the original motivating factors for splitting into many-packages instead of one-package remain unchanged.
 
+## Unresolved Questions
+
+Are there more import paths that we should shift the locations of?
+
+For instance, these two types will be imported by nearly every store configuration:
+
+```ts
+import type { CacheCapabilitiesManager } from '@warp-drive/core/store/types';
+import type { StableRecordIdentifier } from '@warp-drive/core/types';
+```
+
+Many types in `core/store/types` are specific to the store and are store-specific
+variations of signatures in `core/types`, but there are a few exceptions to this
+and `CacheCapabilitiesManager` is one of them. Maybe it and a few others make the move.
+
+Similarly, the types for `Document/RecordArray/Collection` etc come from the store today
+(and are then repurposed for `HasMany` and similar), but these are types for reactive
+objects, and as such it may be best to move them into `/reactivity`.
+
+Because types support is still canary for WarpDrive, we do not have to answer this question
+via RFC and can answer it through iteration. But if we find other non-type imports that
+make sense to move we should call them out here.
