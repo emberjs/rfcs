@@ -421,9 +421,42 @@ We would remove `ember-data` from the default blueprint and add the file changes
 the place of an automated installer script (which we still want to do). We can replace these changes with
 a script that prompts the user for selections once we have the tooling for doing so.
 
-## Guides
+## Guides & ApiDocs
 
-The guides will need to be updated to reflect the WarpDrive terminology and new import locations. They are already in need of a refresh to align with modern best-practices as we push towards delivering the Polaris experience for WarpDrive, and this can be done all at once.
+The guides will need to be updated to reflect the WarpDrive terminology and
+new import locations. They are already in need of a refresh to align with modern
+best-practices as we push towards delivering the Polaris experience for WarpDrive,
+and this can be done all at once.
+
+We will need a solution for ApiDocs. While the ApiDocs have been able to handle
+multiple packages, we would want to document these APIs via their locations in the
+new packages instead, which means dropping quite a lot of packages from being
+contained in the ApiDocs which has url concerns.
+
+The intent is to have tooling that "re-exports" docs from the original packages at
+from the new home as well to avoid things "Store" being imported from "@warp-drive/core"
+but documented via "@ember-data/store".
+
+We could have that tool produce an artifact that contains information about both
+locations for use by the docs: e.g. something along the lines of:
+
+```ts
+const classDoc = {
+  name: 'Store',
+  export: 'Store',
+  module: '@warp-drive/core',
+  location: 'packages/core/src/index.ts',
+  upstream: {
+    name: 'Store',
+    export: 'default',
+    module: '@ember-data/store',
+    location: 'packages/store/src/index.ts',
+  },
+  tags: [],
+  description: [],
+  // ... etc.
+}
+```
 
 ## Drawbacks
 
