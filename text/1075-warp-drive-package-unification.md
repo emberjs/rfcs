@@ -283,7 +283,7 @@ the recommended experience would look like:
 **/app/services/store.ts**
 ```ts
 import { RequestManager, Store, Fetch } from '@warp-drive/core';
-import { CacheHandler, CachePolicy, SchemaService } from '@warp-drive/core/store';
+import { CacheHandler, DefaultCachePolicy, SchemaService } from '@warp-drive/core/store';
 import { JSONAPICache } from '@warp-drive/json-api';
 import { instantiateRecord, teardownRecord, type SchemaRecord} from '@warp-drive/core/reactivity';
 
@@ -295,7 +295,7 @@ export default class AppStore extends Store {
     .use([Fetch])
     .useCache(CacheHandler);
 
-  cachePolicy = new CachePolicy({
+  cachePolicy = new DefaultCachePolicy({
     apiHardExpires: 5 * 60 * 1000 // 5min
     apiSoftExpires: 1 * 60 * 1000 // 1min
   });
