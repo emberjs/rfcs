@@ -458,6 +458,16 @@ const classDoc = {
 }
 ```
 
+## Lockstep Versioning
+
+We will continue to publish these packages in lockstep with each other. Specifically this means that
+peers and dependencies are pinned to the version(s) published in the same release.
+
+We will also continue to follow the general rule of thumb we've had with WarpDrive/EmberData packages
+to this point: newer packages begin at 0.0.0, progress to 0.X.0 when mostly stable, and then jump to
+match the overall project version once stable. This way even new packages come to have identical
+versions once stability is reached, making version management easier.
+
 ## Drawbacks
 
 As far as I am aware, nearly everyone has expresed a desire to simplify the config in *some* way, though ideas on how have varied.
