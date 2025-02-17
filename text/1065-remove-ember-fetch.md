@@ -74,7 +74,7 @@ export async function waitForFetch<Value>(fetchPromise: Promise<Value>) {
 
             if (['json', 'text', 'arrayBuffer', 'blob', 'formData'].includes(prop)) {
                 return (...args) => {
-                    let parsePromise = original(...args);
+                    let parsePromise = original.call(target, ...args);
 
                     return waitForPromise(parsePromise);
                 }
