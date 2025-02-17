@@ -93,7 +93,7 @@ To have a single import mirroring the behavior of `ember-fetch`, _in full_, folk
 import { waitForFetch } from '@ember/test-waiters';
 
 export function wrappedFetch(...args: Parameters<typeof fetch>) {
-    return wrappedFetch(fetch(...args));
+    return waitForFetch(fetch(...args));
 }
 ```
 
