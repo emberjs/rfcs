@@ -31,9 +31,9 @@ suite: Leave as is
 
 ## Summary
 
-This RFC proposes making the set of collections from `tracked-built-ins` built in to the framework, in a byte-wise opt-in in a brand new package (`@ember/reactive`).
+This RFC proposes making the set of collections from `tracked-built-ins` built in to the framework, in a byte-wise opt-in in a brand new package (`@ember/reactive`) and able to be used without `new`.
 
-Additionally, these APIs can unblock the implementation of [RFC#1000: Make array built-in in strict mode](https://github.com/emberjs/rfcs/pull/1000) and [RFC#999: make hash built in in strict mode](https://github.com/emberjs/rfcs/pull/999)
+Additionally, these APIs can unblock the implementation of [RFC#1000: Make array built-in in strict mode](https://github.com/emberjs/rfcs/pull/1000) and [RFC#999: make hash built in in strict mode](https://github.com/emberjs/rfcs/pull/999) (but this is not the main focus of this RFC and only _could_ be an outcome).
 
 ## Motivation
 
@@ -95,7 +95,7 @@ while _most of this_ already implemented, here is the behavior we expect when us
 - all property accesses should "entangle" with that property 
 - all property sets should "dirty" that property
 - changes to the length, or overall collection, is represented by an invisible-to-users "collection" internal tracked property, so that iteration can be dirtied
-- changes to a collection (add, insert, delete, etc) should cause iteration (each, each-in) to only render what changed 
+- changes to a collection (add, insert, delete, etc) should cause iteration (each, each-in) to only render what changed and not cause unneeded renders 
 - changes to a collection copy the original passed in data -- keeping inline with the existing `tracked-built-ins` behavior
 - deleting an entry in a collection should relieve memory pressure
 - deleting an entry in a collection should dirty the "collection"
@@ -104,7 +104,10 @@ while _most of this_ already implemented, here is the behavior we expect when us
 
 How do we handle when the platform adds new APIs?
 
-For example, Set has had new APIs added recentlny, and `tracked-built-ins` had to be updated to support those, so if possible, it would be ideal to rely on deferring to the underlying implementation as much as possible, rather than re-implementing a class-wrapper for all known methods -- proxies are particularly good at this -- and while folks have had complaints about proxies in the past, the user-facing API and underlying implementation of all these proxies would be the exact same, so the proxy isn't hiding anything.
+For example, Set has had new APIs added recently, and `tracked-built-ins` had to be updated to support those, so if possible, it would be ideal to rely on deferring to the underlying implementation as much as possible, rather than re-implementing a class-wrapper for all known methods -- proxies are particularly good at this -- and while folks have had complaints about proxies in the past, the user-facing API and underlying implementation of all these proxies would be the exact same, so the proxy isn't hiding anything.
+
+
+Additionally, unlike in `tracked-built-ins`, we would not expose the _constructor APIs_; Mirroring the [Cell](https://github.com/emberjs/rfcs/pull/1071) proposal, also allowing customizable equality checking.
 
 
 ### The import
@@ -112,8 +115,6 @@ For example, Set has had new APIs added recentlny, and `tracked-built-ins` had t
 object and array:
 ```js
 import { 
-    // Our existing utilities
-    TrackedObject, TrackedArray,
     // able to be used in templates, no 'new'
     trackedObject, trackedArray, 
 } from '@ember/reactive';
@@ -122,9 +123,6 @@ import {
 maps and sets:
 ```js
 import { 
-    // Our existing utilities
-    TrackedMap, TrackedWeakMap,
-    TrackedSet, TrackedWeakSet
     // able to be used in templates, no 'new'
     trackedMap, trackedWeakMap,
     trackedSet, trackedWeakSet
@@ -137,8 +135,20 @@ import {
 These utilities wrap the call to their respective constructors. For example, for `trackedObject`, the implementation and type declaration may look like this:
 
 ```ts
-export function trackedObject<Value>(data?: Value): NonNullable<Value> {
-    return new TrackedObject(data);
+export function trackedObject<Value>(
+    data?: Value, 
+    options?: { 
+        equals?: (a, b) => boolean;
+        description?: string;
+    }
+): NonNullable<Value> {
+    return new TrackedObject(
+        data, 
+        { 
+            equals: options.equals ?? Object.is,
+            description: options.description,
+        }
+    );
 }
 ```
 
@@ -268,7 +278,7 @@ But for demonstration:
 
 Most of the API docs are already written in `tracked-built-ins`, so we can re-use those. 
 
-We do have new template-oriented helpers tho (not requiring `new`), and it is worth showing how to use those.
+We would need to adapt all examples as well as the new template-oriented helpers to not use the `new`-able APIs, as those would not be exposed. 
 
 #### `trackedArray`
 
@@ -434,13 +444,13 @@ Existing places that import from `tracked-built-ins` would update to the new imp
 
 - [This page](https://guides.emberjs.com/release/configuring-ember/disabling-prototype-extensions/#toc_tracking-of-changes-in-arrays) needs to be updated as `@glimmer/tracking` doesn't have `TrackedArray` today.
 
-Something that could be used today, and definitely should be added is a page on how to handle referential integrity. Most of the "tracked" guides only touch on tracking _references_ (via `@tracked`). For example, each of `TrackedArray`, `TrackedMap`, `TrackedSet`, etc can be used in these ways:
+Something that could be used today, and definitely should be added is a page on how to handle referential integrity. Most of the "tracked" guides only touch on tracking _references_ (via `@tracked`). For example, each of `trackedArray`, `trackedMap`, `trackedSet`, etc can be used in these ways:
 
 #### Static reference
 
 ```js
 class Demo {
-    collection = new TrackedMap();
+    collection = trackedMap();
 }
 ```
 
@@ -450,7 +460,7 @@ Changes to `this.collection` can only happen via `Map` methods.
 
 ```js
 class Demo {
-    @tracked collection = new TrackedMap();
+    @tracked collection = trackedMap();
 }
 ```
 Changes to `this.collection` can happen via `Map` methods, as well as replacing the entirely collection can occur via re-assigning `this.collection` to a brand new `TrackedMap`. This also has a potential performance hazard, of re-assigning `this.collection` to a clone of the `TrackedMap`.
@@ -461,11 +471,11 @@ Changes to `this.collection` can happen via `Map` methods, as well as replacing 
 class Demo extends Component {
     @cached
     get collection() {
-        return new TrackedMap(this.args.otherData);
+        return trackedMap(this.args.otherData);
     }
 }
 ```
-Changes to the collection can happen via `Map` methods, as well as changes to `@otherData` will cause the entirety of `this.collection` to be re-created, with the previous instance being garbage collected. Usage of `@cached` is important here, because repeat-accesses to `this.collection` would otherwise create completely unrelated `TrackedMap`s -- i.e.: Updating a `TrackedMap` would have no effect on a `TrackedMap` read elsewhere as they are different instances.  
+Changes to the collection can happen via `Map` methods, as well as changes to `@otherData` will cause the entirety of `this.collection` to be re-created, with the previous instance being garbage collected. Usage of `@cached` is important here, because repeat-accesses to `this.collection` would otherwise create completely unrelated `trackedMap`s -- i.e.: Updating a `TrackedMap` would have no effect on a `TrackedMap` read elsewhere as they are different instances.  
 
 
 ## Drawbacks
