@@ -225,7 +225,7 @@ We would keep the basic infrastructure, decorators and utils in a new `@warp-dri
 
 We would move the ember-specific configuration code into the `@warp-drive/ember` package, and duplicate it in `@ember-data/tracking` with a deprecation to preserve existing behaviors.
 
-- `@warp-drive/schema-record{/*}` => `@warp-drive/core/reactivity`
+- `@warp-drive/schema-record{/*}` => `@warp-drive/core/reactive`
 
 This package enables applications to use deeply-reactive objects to access the data in the cache based upon a provided schema. It is the long-term replacement for `@ember-data/model`. We believe the SchemaRecord paradigm is flexible and powerful enough that even though we will retain the hook-based configuration for instantiating records we find it unlikely alternative record implementations will be built. By retaining the hook, should we (or someone else) decide to build an alternative, this code will be tree-shaken. That said, we believe this primitive is core to the WarpDrive experience.
 
@@ -285,7 +285,7 @@ the recommended experience would look like:
 import { RequestManager, Store, Fetch } from '@warp-drive/core';
 import { CacheHandler, DefaultCachePolicy, SchemaService } from '@warp-drive/core/store';
 import { JSONAPICache } from '@warp-drive/json-api';
-import { instantiateRecord, teardownRecord, type SchemaRecord} from '@warp-drive/core/reactivity';
+import { instantiateRecord, teardownRecord, type SchemaRecord} from '@warp-drive/core/reactive';
 
 import type { CacheCapabilitiesManager } from '@warp-drive/core/store/types';
 import type { StableRecordIdentifier } from '@warp-drive/core/types';
@@ -550,7 +550,7 @@ and `CacheCapabilitiesManager` is one of them. Maybe it and a few others make th
 
 Similarly, the types for `Document/RecordArray/Collection` etc come from the store today
 (and are then repurposed for `HasMany` and similar), but these are types for reactive
-objects, and as such it may be best to move them into `/reactivity`.
+objects, and as such it may be best to move them into `/reactive`.
 
 Because types support is still canary for WarpDrive, we do not have to answer this question
 via RFC and can answer it through iteration. But if we find other non-type imports that
