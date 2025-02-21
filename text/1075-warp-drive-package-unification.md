@@ -468,6 +468,19 @@ to this point: newer packages begin at 0.0.0, progress to 0.X.0 when mostly stab
 match the overall project version once stable. This way even new packages come to have identical
 versions once stability is reached, making version management easier.
 
+## Future Deprecation cycles
+
+This package configuration provides an avenue for cleaner deprecation cycles in the future for major
+concepts.
+
+When something at the package-level of scope is removed from the core experience, we can do a two-stage
+deprecation.
+
+In stage-1, the imports in `/core` are deprecated and instead users must install and import from `/legacy`.
+In stage-2, the feature in `/legacy` is deprecated. This would spread this sort of "concept removal"
+deprecation across two majors by design, enabling us to keep our preferred path of long-tail deprecation
+support while still signifying in a clear way which patterns are the current happy path.
+
 ## Drawbacks
 
 As far as I am aware, nearly everyone has expresed a desire to simplify the config in *some* way, though ideas on how have varied.
