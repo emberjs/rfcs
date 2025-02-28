@@ -112,23 +112,14 @@ Additionally, unlike in `tracked-built-ins`, we would not expose the _constructo
 
 ### The import
 
-object and array:
 ```js
 import { 
     // able to be used in templates, no 'new'
     trackedObject, trackedArray, 
-} from '@ember/reactive';
-```
-
-maps and sets:
-```js
-import { 
-    // able to be used in templates, no 'new'
     trackedMap, trackedWeakMap,
     trackedSet, trackedWeakSet
-} from '@ember/reactive/collections';
+} from '@ember/reactive';
 ```
-
 
 ### `trackedObject`, `trackedArray`, `trackedMap`, etc
 
@@ -343,7 +334,7 @@ A utility for creating tracked maps, copying the original data so that mutations
 See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
 
 ```gjs
-import { trackedMap } from '@ember/reactive/collections';
+import { trackedMap } from '@ember/reactive';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 
@@ -371,7 +362,7 @@ A utility for creating tracked weak maps, copying the original data so that muta
 See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap)
 
 ```gjs
-import { trackedWeakMap } from '@ember/reactive/collections';
+import { trackedWeakMap } from '@ember/reactive';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 
@@ -395,7 +386,7 @@ A utility for creating tracked maps, copying the original data so that mutations
 See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set)
 
 ```gjs
-import { trackedSet } from '@ember/reactive/collections';
+import { trackedSet } from '@ember/reactive';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 
@@ -423,7 +414,7 @@ A utility for creating tracked weak sets, copying the original data so that muta
 See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet)
 
 ```gjs
-import { trackedWeakSet } from '@ember/reactive/collections';
+import { trackedWeakSet } from '@ember/reactive';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 
@@ -479,7 +470,22 @@ Changes to the collection can happen via `Map` methods, as well as changes to `@
 
 ### Migration
 
-tracked-built-ins could use `@embroider/macros` to choose to re-export the built-in built-ins whenever they ship in ember.
+We should do a codemod to convert the newable constructors from tracked-built-ins to the direct-callable variants proposed in this RFC.
+
+Using Vite or Webpack (Embroider 3+), we can alias `tracked-built-ins` to point at the new modules, using a shim -- for example:
+```js 
+// app/built-ins-shim.js
+import { trackedArray } from '@ember/reactive';
+
+export class TrackedArray {
+    constructor(arr) {
+        return trackedArray(arr);
+    }
+}
+
+// etc
+```
+
 
 ## Drawbacks
 
