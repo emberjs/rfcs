@@ -477,6 +477,9 @@ class Demo extends Component {
 ```
 Changes to the collection can happen via `Map` methods, as well as changes to `@otherData` will cause the entirety of `this.collection` to be re-created, with the previous instance being garbage collected. Usage of `@cached` is important here, because repeat-accesses to `this.collection` would otherwise create completely unrelated `trackedMap`s -- i.e.: Updating a `TrackedMap` would have no effect on a `TrackedMap` read elsewhere as they are different instances.  
 
+### Migration
+
+tracked-built-ins could use `@embroider/macros` to choose to re-export the built-in built-ins whenever they ship in ember.
 
 ## Drawbacks
 
