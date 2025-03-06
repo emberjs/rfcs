@@ -117,7 +117,7 @@ Goals for `reactive`:
 
 ### Proposed API / available usage
 
-[Example Types at tsplay.dev](https://www.typescriptlang.org/play/?#code/JYWwDg9gTgLgBAbzgUwB5mQYxgFQJ4YDyAZnAL5zFQQhwDkaG2AtDAcnQNwBQ3A9HzgALGDDABnAFwCA5sBhCArgCMAdJhp9kIZcigArcXyjFMRsIoA2lvgEYADAHZbfYsEvJx3YADsYe4gBDTGQ4ACVkYJhgADdkAB4ANUDLRWQAPkRuODhMRSgoZD9JOGTU5B4cwsCAEwAKAEoSsrSeMl5ffxNg0IBhZGsklLTMtH8fGvFwyOxYhJaMrJyBOFU17nb+QTBLQN84RXFAmWRuYkUfWYgfOGrZuKHy9LrfCxhm4eQm0s+eFfEYMdQi4AExwGpYaCBGDQM4XK43O7ROJ1QFQE7vOAQZT6LAwAA0cAA1sg8CUAVBfDI4AAfODiPA6CCWQkQ8SYSlgGFQAD8JQuRJ8EAA7j5vgAFagYWB4AAikKg0Ogf0E4iYcEEOF6AGYAJxweUaRXcuGXaLXW4zZHzT7PNEYkq9XbicQAQUwIRd0ENUO5OEC6OQMHiAqFosJC3ShI0fjGjudbo9nnE3oVSqgvWu-lQMG+TsCLvdnpTUB9xugEXEVmDoZFPgjtpVcFAO20RUB5puqPY4Ignh8dHgIGhXUJaCiljwDVNCMtUTmjxGLx8bw+5W+CyWlpg+Ru9jgBYOPkFdYPUwWbV4WwEN9vt62cBwnhg4gAhNe75++N5Y90QnAAGUaGQQgcS3YgIAgEofEUHQ9EqOBlADaDkDiKBLwfbFcWwbhGDxfAiGIOokTmOokAgqC4DBMgGgaVQYQAWWhTAhFA7DcHYeJyMg6DYN0KByGeBomwDRU8Fw9B8PYEhiKtUiAG06AougAF1aPoiAAFEAEdFBSAiQOIeIKSpeSVKEpthzACSmA4wjZPnFEfGQYU4CYsBjJgSkfBkQkTJ8oT1JhHS9MsAySHidzPO83z6S8ql0gsh9hUiIk4CsmypPskinJcuAAHVUqioCQBAnFCWUSCPECHxAro4LdP06SjMKwIiWK4C2IqqrIlqpL-iDTLsHCoicuQOpnNcgCg2ihLGiCrTGrC5r4mm4N-JkRLGibFK2vpQa8OG5qHPucbJoK1K1tWzqcTqjSQqawj4laokrpKsr9C24TeBWCEjXTLxGGgeBMATOAADFIK3FZKoUOdTstYg9CKf8apqeHrTgGJPmyOAAAExtyCALngABeOB7AQgm5LiA84HJ7jKOoqnCeUem4EU5SVJZmnQkwdnzqija-PigLttx6nHNCdHyfOl6OtKrrEJ6mqkpySWEdCWW8quja1fxwnSG11yXrem7PvF3GVkJ7HyixHxJ0JQokcKS5QmAKYAWhYBMFx6lybGup7G+nIhHZwPGZKEEaIQ4Bw95upOcg1SQ7gfR46lia8qF0XYr1+bcbSgOE7lorAg896lcq5lesChDLAz06s6mmb89ohDaGLzPS7as3Fdu+aeCtwRGEsH35AxuZEeRt2DwmSfadttIJcJm4u6b4OealrFG+tMjKB4qiY5X3m4DAXeFKU5O1K3hHtIv3LXJzmKRZiwKT+3gT173nv2vL67+76G6jXVWg8P4IymN-Ui51da5zruAzGZMF5nTyqbGalcB7tw2LwDw8AjZwHOpDCAltDp2UMnUYg6hiZ+HqotUKI14gwTglAJKpCRoUNUIEWhD1lpPQQBRXizDBLizYcdShyhuFLQYRtMyrDJJHXspQzAkj6ErWflSV+CU5G2XYZQmoKjHqGWemXCu5tgHVT6iI+RZCZKUK+PdKRK1YFv20VlchlDiAGN4UYtBwYMGfSSkNGxRFKEyC8Qwph-FXEKPcaoIQ4SVr8MPpEvQwjvqiMUaoYACSnoyPMlYnRYjVD6ByUY9RPlNEBWicEjhRJSkRXlv-fx5ja7VN0aoSw9SjLOK0QUtxtjVAgC6cY3u6DzZfSHhk2JYoHGqKeiklhfSYkDIgMMpJlEFlpJ4FMgZYBhl5LaUU7Swzyl5zgYczJUBhmNNMYAlpqsLmxPEMMnpVSlk1MobmWZhiGmXTGYAiZvAgA)
+[Example Types at tsplay.dev](https://www.typescriptlang.org/play/?experimentalDecorators=true&target=99&jsx=0#code/JYWwDg9gTgLgBAbzgUwB5mQYxgFQJ4YDyAZnAL5zFQQhwDkaG2AtDAcnQNwBQ3A9HzgALGDDABnAFwCA5sBhCArgCMAdJhp9kIZcigArcXyjFMRsIoA2lvgEYADAHZbfYsEvJx3YADsYe4gBDTGQ4ACVkYJhgADdkAB4ANUDLRWQAPkRuODhMRSgoZD9JOGTU5B4cwsCAEwAKAEoSsrSeMl5ffxNg0IBhZGsklLTMtH8fGvFwyOxYhJaMrJyBOFU17nbuNgw4AAUoUHk5uABeOB9FHT04AB84cRgDnxlb86tLV8UJ5DcfZBrXsoIBAPIEfDx+IIwJZAr44IpxIEZMhuMQvrMID44NVZnEhuV0nVfBYYM1hsgmqVyShUONJnsDiAjnE4AB+OD9QYLTJk8o8FYPJGhFwAJjgNSw0ECMGgqPR0Ux2Jm0TidRggSgyNJcAgyn0WBgABo4ABrZB4EoPJ4vO7iPA6EHGiXiTAHMAyqCskpfE0+CAAdx8lLBeH5gnETDgghwvQAzABOOAAEUlUGlsrRPgxWJxKvm5MJ2Tg6s1yG1vRh4nEAEFMCEq9AUxo0x6cBqtfEfX7A8bucaixo-GMShXAlXa-XxI3U+moL1Mf5adxKaPx3XPFOoE2pR6IuIrDBOz5fQGfL2CxCVqBodoiuqFVi1exxRBPD46PAQNKusa0FFLHgDRylmD5KlEcz4iMdRrKo7ZSPCx7dj4ADaAC6lJdqeSxKjA+RYvYcBjghJ6BoRUwLG0vCQgING0bRkJwDgngwOIACE1F0ZxfDeEO3QhHAADKNDIIQerYcQwIlBcVxQJUcDKBqUnIHEskbLwKy6vq2DcIwBr4EQxB1Lmcx1EgEkQCUYpkA0DSqDKACy0qYEIolabg7DxGZklvDJ5CEg0YaEQUgR4Dp6B6ewJBGcqJnIXQ5l0OhtkygAogAjooKT6SJxDxFavgyGh-mBV+YBhUw7kGdF4Gqn8-pwI5YB5Y8BXGvlzz+TZdkQOlmWWNlJDxI1zXWm1LUdcVDH+pEJpwKV5URVVxm1cg9UAOozcNQkgCJerGkCIKRD4nXJT1GVZZFuUbYEJpbcJrn7cCoLHZNAplgt2ADYZy3IHUdWCWWI0FSd3W9RdBnxAJgPtTI6SvYI003fc726Z9l3Vbiv3-ddJpQ4e227foIOped-WXfEON45D916nDjSXoIErNrOXiMNA8CYJWUwAGLAthKxAgoYGY0qxB6EU-FggCP1wDE5JFgAAjLGhfPAZz2HJSsxSygSnIglDeVZmsy8oetxQlqHG9roSYHr-3DTDY3WpNORazVoQAmc2ObYETUEw98lPUdLtwG7IuhF7q0A4eMMh2HeaUHbUeU4D-u0-TvDLIIMty+UOo+ABxqFGLhRZqEwBTIK0SYEWLxnD9dQEUR0m6FAAVFkIesN15FlwCK1lycAXfW3U5vAol7c5Pow-u39UcO+NMhO8DjRATks31yP3s3XdO0Bwdz2dXJHyb7P-1U7Hq9ybQp+Y3P60zVTadE1fmdRoIjCWMAmDyMLCfF+LMuhEJh-2OLnNIisZZYlvnmRuZEfKt0nqHGWEAZ53x7pZAekDrZwDAGg2BY8IATytu7OAaV8EmXtr7IGzxl4dVXtg0hUAKErQfjvahz9HqHTBEfRhIspgwMoVHC+i9eGuxlmrUBrC4Ap3xjTF+NlKLcA8PAUgkd6q8wgBnD6lUcp1GIOoCAqtTpgzJhDFuehJqo10VFAxgQTGky+p5cyUlLitz8hnaxX19GqGUA4vqTiYZFU8eFNGVUDGYH8eDHKQ1qGO3uKIqxoSbGGQMTUKJZiYk413oTLhh8kkVW8QYikoNHHkxEc7Api09EGOIBkpxsjqZ71ppNHRRTVAyHqeTTklh4gWKgHTduXj0YGKEF0iGCAXEIOuGQKpYSamqGAOMmJQTUJzJST4-QyzBoL1GgkypITCkjNUCabZV0fZ+3kXk4O6z2mWDOZDaGiTDnVNsaoEADzGnP0GRCYZ4TVBBlKQE7pAxen9J+W045EAHmTO8v0jxQzkntLAA81ZtzjlpQebs1q+zgbov+W3IF0TBrZI4VcwO3CXovPmW88QDyKl4upRsgxMBPmP1TvIiF3AgA)
 
 <details><summary>example type tests</summary>
 
@@ -134,14 +134,20 @@ interface Cell<Value> extends Reactive<Value> {
   // ...
 }
 
+type Primitive = number | string | null | undefined | boolean;
+
 // plain usage
-function reactive<Value>(input: Value): Value;
-// TC39 Stage 1 or 2 Decorator
-function reactive(target: object, key: string | symbol, descriptor?: unknown): PropertyDecorator;
-// TC39 Stage 3 or 4 Decorator (what is shipping to browsers)
-function reactive<Value>(target: ClassAccessorDecoratorTarget<unknown, Value>, context: ClassAccessorDecoratorContext): ClassAccessorDecoratorResult<unknown, Value>;
+function reactive<Value>(input: Value): Value extends Primitive ? Cell<Value> : Value;
+// stage 1/2 decorator
+function reactive(target: object, key: string | symbol, descriptor?: unknown): any;
+// spec / TC39 Decorator
+function reactive<Value>(
+  target: ClassAccessorDecoratorTarget<unknown, Value>, 
+  context: ClassAccessorDecoratorContext
+): ClassAccessorDecoratorResult<unknown, Value>;
+
 // implementation (type doesn't matter, exactly)
-function reactive<Value>(input: Value): Value {
+function reactive<Value>(...args: unknown[]): unknown {
   return 0 as unknown as Value;
 }
 
@@ -179,7 +185,7 @@ export class Foo {
   @reactive f = new WeakSet<SomeObj>();
 
   // reactive value only, reference is static
-  g = reactive(0);
+  g = reactive(0 as number);
   h = reactive({ foo: 2});
   i = reactive(['foo']);
   j = reactive(new Map<string, string>())
@@ -188,7 +194,7 @@ export class Foo {
   m = reactive(new WeakSet<SomeObj>());
 
   // explicit reactive reference and reactive value
-  @reactive n = reactive(0);
+  @reactive n = reactive(0 as number);
   @reactive o = reactive({ foo: 2});
   @reactive p = reactive(['foo']);
   @reactive q = reactive(new Map<string, string>())
@@ -207,7 +213,7 @@ expectTypeOf(f.d).toEqualTypeOf<WeakMap<SomeObj, boolean>>();
 expectTypeOf(f.e).toEqualTypeOf<Set<string>>();
 expectTypeOf(f.f).toEqualTypeOf<WeakSet<SomeObj>>();
 
-expectTypeOf(f.g).toEqualTypeOf<number>();
+expectTypeOf(f.g).toEqualTypeOf<Cell<number>>();
 expectTypeOf(f.h).toEqualTypeOf<{foo: number }>();
 expectTypeOf(f.i).toEqualTypeOf<string[]>();
 expectTypeOf(f.j).toEqualTypeOf<Map<string, string>>();
@@ -215,7 +221,7 @@ expectTypeOf(f.k).toEqualTypeOf<WeakMap<SomeObj, boolean>>();
 expectTypeOf(f.l).toEqualTypeOf<Set<string>>();
 expectTypeOf(f.m).toEqualTypeOf<WeakSet<SomeObj>>();
 
-expectTypeOf(f.n).toEqualTypeOf<number>();
+expectTypeOf(f.n).toEqualTypeOf<Cell<number>>();
 expectTypeOf(f.o).toEqualTypeOf<{foo: number }>();
 expectTypeOf(f.p).toEqualTypeOf<string[]>();
 expectTypeOf(f.q).toEqualTypeOf<Map<string, string>>();
@@ -228,23 +234,124 @@ expectTypeOf(f.t).toEqualTypeOf<WeakSet<SomeObj>>();
 
 #### With primitive values
 
+Template-only:
+- return a [`Cell`](https://github.com/emberjs/rfcs/pull/1071)
+
 ```gjs
-    
+import { reactive } from '@ember/reactive';
+
+const exclaim = (cell) => cell.current += '!';
+
+<template>
+    {{#let (reactive "hello") as |greeting|}}
+        {{greeting.current}}
+
+        <button {{on "click" (fn exclaim greeting)}}>Exclaim</button>
+    {{/let}}
+</template>
 ```
+
+Class-based:
+- creates a [`Cell`](https://github.com/emberjs/rfcs/pull/1071), since only decorators can intercept read/writes to primitive values
+
+```gjs
+import Component from '@glimmer/component';
+import { reactive } from '@ember/reactive';
+
+export class Demo extends Component {
+    count = reactive(0);
+
+    increment() {
+        this.count.current++;
+    }
+
+    <template>
+        {{this.count.current}}
+        <button {{on "click" this.increment}}>++</button>
+    </template>
+}
+```
+
 
 #### Decorator + primitive value
 
+Class based example, functionally the exact same as using `@tracked` today:
+
+```gjs
+import Component from '@glimmer/component';
+import { reactive } from '@ember/reactive';
+
+export class Demo extends Component {
+    @reactive count = 0;
+
+    increment() {
+        this.count++;
+    }
+
+    <template>
+        {{this.count}}
+        <button {{on "click" this.increment}}>++</button>
+    </template>
+}
+```
+
 #### With the _common collections_[^the-common-collections]
 
+Template-only:
+- return an object matching the API and prototype of the passed in value 
 
+```gjs
+import { reactive } from '@ember/reactive';
+
+const initialData = { greeting: 'hello' };
+const exclaim = (data) => data.greeting += '!';
+
+<template>
+    {{#let (reactive initialData) as |data|}}
+        {{data.greeting}}
+
+        <button {{on "click" (fn exclaim data)}}>Exclaim</button>
+    {{/let}}
+</template>
+```
+
+Class-based:
+- return an object matching the API and prototype of the passed in value 
+
+```gjs
+import Component from '@glimmer/component';
+import { reactive } from '@ember/reactive';
+
+export class Demo extends Component {
+    data = reactive({ greeting: 'hello' });
+
+    exclaim() {
+        this.data.greeting += '!';
+    }
+
+    <template>
+        {{this.data.greeting}}
+        <button {{on "click" this.exclaim}}>Exclaim</button>
+    </template>
+}
+```
 
 ### Behavior
 
 #### What does reading do?
 
+Starting with a `{{ }}` block, we start reading values.
+
+when reading a value created by `reactive`, (property on an object, item in a collection, "the value" (of a primitive, via current or via decorator)):
+- entangle with the `{{ }}` (keep track of which reactive properties were accessed)
+
 #### What does setting do?
 
+- if a `{{ }}` block had previously entangled with a reactive property, the `{{ }}` will re-render.
+
 ### What are the performance concerns?
+
+TODO
 
 <!--
 
