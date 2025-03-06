@@ -107,13 +107,19 @@ The main tradeoff with deep reactivity vs explicit / shallow is the impact to me
 
 This doesn't eliminate or remove any existing APIs, but, being a low-level implementation would  
 
+This RFC could, but is not required to, replace: 
+- [RFC#1068](https://github.com/emberjs/rfcs/pull/1068): tracked-built-ins, built-in
+
 ## Detailed design
 
 Goals for `reactive`:
 - decorator and non-decorator usage (compatible with typescript)
 - handles both primitive values and the _common collections_[^the-common-collections]
+- deeply reactive[^deep-reactivity] by default (and lazily deeply reactive) 
+- Since deep reactivity has a memory cost, we also want a shallow version which doesn't infinitely proxy to any depth 
 
 [^the-common-collections]: The comment collection data structures are: `Array`, `Set`, `WeakSet`, `Object`, `Map`, `WeakMap`
+[^deep-reactivity]: this is to make working with nested data easier, and reduce bugs encountered when updating _parts_ of state. The main known cost is to memory, as we have to make use of proxies around every value so we can continue to be deeply reactive, and lazily reactive.
 
 ### Proposed API / available usage
 
