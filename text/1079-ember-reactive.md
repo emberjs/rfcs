@@ -453,6 +453,13 @@ export class Demo extends Component {
 
 ## Drawbacks
 
+- Without typescript, how do you know what type of reactive object do you have?
+- With deep reactivity, do you use `structuredClone`? do you clone the keys on maps?
+    - if so, you could never lookup values, because the keys would be different, if you iterate
+    - everything is a proxy
+    - Should a reactive deep object `===` the original? sounds hard 
+
+- If we mutate the existing object, that is expensive
 
 <!--
 
@@ -466,6 +473,7 @@ on the impact of the API churn on existing apps, etc.
 
 ## Alternatives
 
+Don't do `deep`
 <!--
 
 > What other designs have been considered? What is the impact of not doing this?
