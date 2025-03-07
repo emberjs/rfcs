@@ -46,6 +46,10 @@ by introducing a brand new package (one additional import: `@ember/reactive`) wi
 - weak sets
 
 
+
+> [!NOTE]  
+> It is also possible we can introduce additional defaults in the future. Such as the [promise, proposed (sort of) in RFC #1060](https://github.com/emberjs/rfcs/pull/1060)
+
 ## Motivation
 
 Example[^example-requires-vm-work]:
@@ -101,7 +105,7 @@ export class Demo extends Component {
 
 [^example-requires-vm-work]: These examples assume that these RFCs are implemented: [#989: `fn` as a keyword](https://github.com/emberjs/rfcs/pull/998), [#997: `on` as a keyword](https://github.com/emberjs/rfcs/pull/997), [#1070: Default globals for strict mode](https://github.com/emberjs/rfcs/pull/1070), and that the long-standing bug in the VM where plain methods don't work in class-based components is fixed.
 
-Feedback on prior RFCs, [The Cell](https://github.com/emberjs/rfcs/pull/1071), and [tracked-built-ins, built-in](https://github.com/emberjs/rfcs/pull/1068), revealed that folks have found that building reactive data structures, by default, is cumbersome. While there utilities would not be removed in anyway, we want to provide a way for folks to make things easily reactive, and _still_ provide a way to get fine-grained reactivity via the existing tools that folks are used to today.
+Feedback on prior RFCs, [Tracking utilities for promises](https://github.com/emberjs/rfcs/pull/1060), [The Cell](https://github.com/emberjs/rfcs/pull/1071), and [tracked-built-ins, built-in](https://github.com/emberjs/rfcs/pull/1068), revealed that folks have found that building reactive data structures, by default, is cumbersome. While there utilities would not be removed in anyway, we want to provide a way for folks to make things easily reactive, and _still_ provide a way to get fine-grained reactivity via the existing tools that folks are used to today.
 
 The main tradeoff with deep reactivity vs explicit / shallow is the impact to memory. This RFC describes those tradeoffs, and provides a way for folks to determine when they may want to consider 
 
