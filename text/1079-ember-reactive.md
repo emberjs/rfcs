@@ -109,8 +109,6 @@ Feedback on prior RFCs, [Tracking utilities for promises](https://github.com/emb
 
 The main tradeoff with deep reactivity vs explicit / shallow is the impact to memory. This RFC describes those tradeoffs, and provides a way for folks to determine when they may want to consider 
 
-This doesn't eliminate or remove any existing APIs, but, being a low-level implementation would  
-
 This RFC could, but is not required to, replace: 
 - [RFC#1068](https://github.com/emberjs/rfcs/pull/1068): tracked-built-ins, built-in
 
