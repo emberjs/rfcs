@@ -242,6 +242,65 @@ expectTypeOf(f.t).toEqualTypeOf<WeakSet<SomeObj>>();
 
 </details>
 
+### Behavior
+
+#### What does reading do?
+
+Starting with a `{{ }}` block, we start reading values.
+
+when reading a value created by `reactive`, (property on an object, item in a collection, "the value" (of a primitive, via current or via decorator)):
+- entangle with the `{{ }}` (keep track of which reactive properties were accessed)
+
+#### What does setting do?
+
+- if a `{{ }}` block had previously entangled with a reactive property, the `{{ }}` will re-render.
+
+### What are the performance concerns?
+
+TODO
+
+<!--
+
+> This is the bulk of the RFC.
+
+> Explain the design in enough detail for somebody
+familiar with the framework to understand, and for somebody familiar with the
+implementation to implement. This should get into specifics and corner-cases,
+and include examples of how the feature is used. Any new terminology should be
+defined here. 
+
+> Please keep in mind any implications within the Ember ecosystem, such as:
+> - Lint rules (ember-template-lint, eslint-plugin-ember) that should be added, modified or removed
+> - Features that are replaced or made obsolete by this feature and should eventually be deprecated
+> - Ember Inspector and debuggability
+> - Server-side Rendering
+> - Ember Engines
+> - The Addon Ecosystem
+> - IDE Support
+> - Blueprints that should be added or modified
+
+-->
+
+## How we teach this
+
+<!--
+
+> What names and terminology work best for these concepts and why? How is this
+idea best presented? As a continuation of existing Ember patterns, or as a
+wholly new one?
+
+> Would the acceptance of this proposal mean the Ember guides must be
+re-organized or altered? Does it change how Ember is taught to new users
+at any level?
+
+> How should this feature be introduced and taught to existing Ember
+users?
+
+> Keep in mind the variety of learning materials: API docs, guides, blog posts, tutorials, etc.
+
+-->
+
+
 #### With primitive values
 
 Template-only:
@@ -346,63 +405,6 @@ export class Demo extends Component {
 }
 ```
 
-### Behavior
-
-#### What does reading do?
-
-Starting with a `{{ }}` block, we start reading values.
-
-when reading a value created by `reactive`, (property on an object, item in a collection, "the value" (of a primitive, via current or via decorator)):
-- entangle with the `{{ }}` (keep track of which reactive properties were accessed)
-
-#### What does setting do?
-
-- if a `{{ }}` block had previously entangled with a reactive property, the `{{ }}` will re-render.
-
-### What are the performance concerns?
-
-TODO
-
-<!--
-
-> This is the bulk of the RFC.
-
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here. 
-
-> Please keep in mind any implications within the Ember ecosystem, such as:
-> - Lint rules (ember-template-lint, eslint-plugin-ember) that should be added, modified or removed
-> - Features that are replaced or made obsolete by this feature and should eventually be deprecated
-> - Ember Inspector and debuggability
-> - Server-side Rendering
-> - Ember Engines
-> - The Addon Ecosystem
-> - IDE Support
-> - Blueprints that should be added or modified
-
--->
-
-## How we teach this
-
-<!--
-
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
-
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
-
-> How should this feature be introduced and taught to existing Ember
-users?
-
-> Keep in mind the variety of learning materials: API docs, guides, blog posts, tutorials, etc.
-
--->
 
 ## Drawbacks
 
