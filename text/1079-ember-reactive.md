@@ -56,14 +56,12 @@ Example[^example-requires-vm-work]:
 ```gjs
 import { reactive } from '@ember/reactive';
 
-const startingData = { greeting: 'hi' };
-const exclaim = (data) => data.greeting += '!'; 
+const data = reactive({ greeting: 'hi' });
+const exclaim = () => data.greeting += '!'; 
 
 export const Demo = <template>
-    {{#let (reactive startingData) as |data|}}
-        {{data.greeting}} === 'hi'
-        <button {{on "click" (fn exclaim data)}}>Exclaim</button>
-    {{/let}}
+    {{data.greeting}} === 'hi'
+    <button {{on "click" (fn exclaim data)}}>Exclaim</button>
 </template>;
 ```
 
