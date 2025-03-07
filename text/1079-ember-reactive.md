@@ -412,6 +412,47 @@ export class Demo extends Component {
 
 This type of tracking reactivity will intrument one level of the common collection[^the-common-collections]
 
+#### With the _common collections_[^the-common-collections]
+
+Template-only:
+- return an object matching the API and prototype of the passed in value 
+
+```gjs
+import { reactive } from '@ember/reactive';
+
+const initialData = { greeting: 'hello' };
+const exclaim = (data) => data.greeting += '!';
+
+<template>
+    {{#let (reactive.shallow initialData) as |data|}}
+        {{data.greeting}}
+
+        <button {{on "click" (fn exclaim data)}}>Exclaim</button>
+    {{/let}}
+</template>
+```
+
+Class-based:
+- return an object matching the API and prototype of the passed in value 
+
+```gjs
+import Component from '@glimmer/component';
+import { reactive } from '@ember/reactive';
+
+export class Demo extends Component {
+    data = reactive.shallow({ greeting: 'hello' });
+
+    exclaim() {
+        this.data.greeting += '!';
+    }
+
+    <template>
+        {{this.data.greeting}}
+        <button {{on "click" this.exclaim}}>Exclaim</button>
+    </template>
+}
+```
+
 ## Drawbacks
 
 
