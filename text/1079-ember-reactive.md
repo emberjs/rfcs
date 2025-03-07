@@ -61,7 +61,7 @@ const exclaim = () => data.greeting += '!';
 
 export const Demo = <template>
     {{data.greeting}} === 'hi'
-    <button {{on "click" (fn exclaim data)}}>Exclaim</button>
+    <button {{on "click" exclaim}}>Exclaim</button>
 </template>;
 ```
 
