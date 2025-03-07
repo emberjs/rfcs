@@ -473,21 +473,6 @@ on the impact of the API churn on existing apps, etc.
 
 ## Alternatives
 
-Don't do `deep`
-<!--
-
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
-
--->
-
-## Unresolved questions
-
-<!--
-
-
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
-
--->
+1. Don't do `deep`
+    - without `deep`, wrapping a pojo could be a troll
+1. Proceed with [tracked-built-ins, built-in](https://github.com/emberjs/rfcs/pull/1068)
