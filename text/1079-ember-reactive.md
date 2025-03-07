@@ -115,8 +115,8 @@ This RFC could, but is not required to, replace:
 Goals for `reactive`:
 - decorator and non-decorator usage (compatible with typescript)
 - handles both primitive values and the _common collections_[^the-common-collections]
-- deeply reactive[^deep-reactivity] by default (and lazily deeply reactive) 
-- Since deep reactivity has a memory cost, we also want a shallow version which doesn't infinitely proxy to any depth 
+- shallow by default (current behavior in existing tools)
+- optional deeply reactive[^deep-reactivity] (and lazily deeply reactive) 
 
 [^the-common-collections]: The comment collection data structures are: `Array`, `Set`, `WeakSet`, `Object`, `Map`, `WeakMap`
 [^deep-reactivity]: this is to make working with nested data easier, and reduce bugs encountered when updating _parts_ of state. The main known cost is to memory, as we have to make use of proxies around every value so we can continue to be deeply reactive, and lazily reactive.
@@ -296,9 +296,51 @@ users?
 
 -->
 
-### Deep tracking
+### Shallow Tracking
 
-This type of tracking reactivity will lazily instrument all nested collections[^the-common-collections]
+This type of tracking reactivity will intrument one level of the common collection[^the-common-collections]
+
+#### With the _common collections_[^the-common-collections]
+
+Template-only:
+- return an object matching the API and prototype of the passed in value 
+
+```gjs
+import { reactive } from '@ember/reactive';
+
+const initialData = { greeting: 'hello' };
+const exclaim = (data) => data.greeting += '!';
+
+<template>
+    {{#let (reactive initialData) as |data|}}
+        {{data.greeting}}
+
+        <button {{on "click" (fn exclaim data)}}>Exclaim</button>
+    {{/let}}
+</template>
+```
+
+Class-based:
+- return an object matching the API and prototype of the passed in value 
+
+```gjs
+import Component from '@glimmer/component';
+import { reactive } from '@ember/reactive';
+
+export class Demo extends Component {
+    data = reactive({ greeting: 'hello' });
+
+    exclaim() {
+        this.data.greeting += '!';
+    }
+
+    <template>
+        {{this.data.greeting}}
+        <button {{on "click" this.exclaim}}>Exclaim</button>
+    </template>
+}
+```
+
 
 #### With primitive values
 
@@ -363,6 +405,11 @@ export class Demo extends Component {
 }
 ```
 
+
+### Deep tracking
+
+This type of tracking reactivity will lazily instrument all nested collections[^the-common-collections]
+
 #### With the _common collections_[^the-common-collections]
 
 Template-only:
@@ -375,7 +422,7 @@ const initialData = { greeting: 'hello' };
 const exclaim = (data) => data.greeting += '!';
 
 <template>
-    {{#let (reactive initialData) as |data|}}
+    {{#let (reactive.deep initialData) as |data|}}
         {{data.greeting}}
 
         <button {{on "click" (fn exclaim data)}}>Exclaim</button>
@@ -391,52 +438,7 @@ import Component from '@glimmer/component';
 import { reactive } from '@ember/reactive';
 
 export class Demo extends Component {
-    data = reactive({ greeting: 'hello' });
-
-    exclaim() {
-        this.data.greeting += '!';
-    }
-
-    <template>
-        {{this.data.greeting}}
-        <button {{on "click" this.exclaim}}>Exclaim</button>
-    </template>
-}
-```
-
-### Shallow Tracking
-
-This type of tracking reactivity will intrument one level of the common collection[^the-common-collections]
-
-#### With the _common collections_[^the-common-collections]
-
-Template-only:
-- return an object matching the API and prototype of the passed in value 
-
-```gjs
-import { reactive } from '@ember/reactive';
-
-const initialData = { greeting: 'hello' };
-const exclaim = (data) => data.greeting += '!';
-
-<template>
-    {{#let (reactive.shallow initialData) as |data|}}
-        {{data.greeting}}
-
-        <button {{on "click" (fn exclaim data)}}>Exclaim</button>
-    {{/let}}
-</template>
-```
-
-Class-based:
-- return an object matching the API and prototype of the passed in value 
-
-```gjs
-import Component from '@glimmer/component';
-import { reactive } from '@ember/reactive';
-
-export class Demo extends Component {
-    data = reactive.shallow({ greeting: 'hello' });
+    data = reactive.deep({ greeting: 'hello' });
 
     exclaim() {
         this.data.greeting += '!';
