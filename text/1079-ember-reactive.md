@@ -418,15 +418,13 @@ Template-only:
 ```gjs
 import { reactive } from '@ember/reactive';
 
-const initialData = { greeting: 'hello' };
-const exclaim = (data) => data.greeting += '!';
+const data = reactive.deep({ stuff: { greeting: 'hello' } });
+const exclaim = () => data.stuff.greeting += '!';
 
 <template>
-    {{#let (reactive.deep initialData) as |data|}}
-        {{data.greeting}}
+    {{data.stuff.greeting}}
 
-        <button {{on "click" (fn exclaim data)}}>Exclaim</button>
-    {{/let}}
+    <button {{on "click" exclaim}}>Exclaim</button>
 </template>
 ```
 
@@ -438,14 +436,14 @@ import Component from '@glimmer/component';
 import { reactive } from '@ember/reactive';
 
 export class Demo extends Component {
-    data = reactive.deep({ greeting: 'hello' });
+    data = reactive.deep({ stuff: { greeting: 'hello' } });
 
     exclaim() {
-        this.data.greeting += '!';
+        this.data.stuff.greeting += '!';
     }
 
     <template>
-        {{this.data.greeting}}
+        {{this.data.stuff.greeting}}
         <button {{on "click" this.exclaim}}>Exclaim</button>
     </template>
 }
