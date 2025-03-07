@@ -254,6 +254,14 @@ when reading a value created by `reactive`, (property on an object, item in a co
 ### What are the performance concerns?
 
 TODO
+- implement RFC in https://github.com/NullVoxPopuli/ember-deep-tracked
+- bench deep vs targeted tracked:
+    - large data with single reactive access
+        - change a few things vs change many
+    - enumerate all properties, deeply 
+        - change a few things vs change many
+    - enumerate only shallowly
+        - change a few things vs change many
 
 <!--
 
