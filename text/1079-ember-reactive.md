@@ -300,6 +300,9 @@ users?
 
 -->
 
+### Deep tracking
+
+This type of tracking reactivity will lazily instrument all nested collections[^the-common-collections]
 
 #### With primitive values
 
@@ -405,6 +408,9 @@ export class Demo extends Component {
 }
 ```
 
+### Shallow Tracking
+
+This type of tracking reactivity will intrument one level of the common collection[^the-common-collections]
 
 ## Drawbacks
 
