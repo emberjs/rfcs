@@ -330,7 +330,7 @@ Doing so would allow more separation of loading / error UI, such as portaling lo
 
 NOTE: using `@cached` with promises does not enable cancellation, as there is no _lifetime_ to attach to at the getter/property level of granularity.[^resources] 
 
-[^resources]: This is where _resources_ can help (topic for later and not relevant to this RFC) -- otherwise you need to use a full component just for destruction (or `invokeHelper` on a class-based helper, which is very un-ergonomic).
+[^resources]: This is where _resources_ can help (topic for later and not relevant to this RFC) -- otherwise you need to use a full component just for destruction (or `invokeHelper` on a class-based helper, which is very un-ergonomic). Note that resources can't model this behavior at all, because this utility has no owner, no lifetime, and using a resource would incur higher memary pressure and more CPU usage to use.
 
 ### multi-step wizard example
 
