@@ -37,12 +37,14 @@ This RFC defines a new utility to add by default to the framework, based on all 
 
 Promises are ubiquitous, yet we don't have a _default_ way to use them _reactively_ in our templates.  
 Meanwhile, we have several _competing and duplicate_ implementations:
+- `getPromiseState` from [@warp-drive/ember][gh-warp-drive-ember]
 - `TrackedAsyncData` from [ember-async-data][gh-tracked-async-data]
 - `PromiseState` from [@warp-drive/ember][gh-ember-data-promise-state]
 - `State` from [reactiveweb's remote-data][gh-reactiveweb-state]
 - `Request` from [ember-data-resources][gh-ember-data-resource-request]
 - `Query` from [ember-await][gh-ember-await-query]
 
+[gh-warp-drive-ember]: https://github.com/emberjs/data/tree/main/packages/ember
 [gh-reactiveweb-state]: https://github.com/universal-ember/reactiveweb/blob/main/reactiveweb/src/remote-data.ts#L13
 [gh-tracked-async-data]: https://github.com/tracked-tools/ember-async-data/blob/main/ember-async-data/src/tracked-async-data.ts
 [gh-ember-data-promise-state]: https://github.com/emberjs/data/blob/main/packages/ember/src/-private/promise-state.ts
@@ -59,7 +61,7 @@ For loading UIs, there are concerns that this proposed utility will not be conce
 
 The import:
 ```js
-import { TrackedAsyncState, trackedPromise } from '@ember/reactive';
+import { trackedPromise } from '@ember/reactive';
 ```
 
 > [!NOTE]
@@ -76,52 +78,35 @@ This utility wraps and instruments any promise with reactive state, `TrackedAsyn
 
 Sample type declaration
 ```ts
-export function trackedPromise<Value>(
+export function trackedPromise<Value, ErrorType = unknown>(
     existingPromise: Promise<Value> | Value
-): TrackedAsyncState<Value> {
+): TrackedAsyncState<Value, ErrorType> {
     /* ... */
 }
 ```
 
-### `TrackedAsyncState`
+#### `TrackedAsyncState`
 
 This utility is analgous to `new Promise((resolve) => /* ... */)`, but includes the tracking of the underlying promise.
 Additionally `TrackedAsyncState` must be able to receive an existing promise via `new TrackedAsyncState(existingPromise);`.
 
 Sample type declaration
 ```ts
-export class TrackedAsyncState<Value = unknown> implements PromiseLike<Value> {
-    constructor(existingPromise: Promise<Value>);
-    constructor(callback: ConstructorParameters<typeof Promise<Value>>[0]);
-    constructor(promiseOrCallback: /* ... */) { /* ... */ }
-
-    // private, tracked, all state is derived from this,
-    // since promises are not allowed to have more than one state. 
-    #state: 
-    | ['PENDING'] 
-    | ['REJECTED', error: unknown] 
-    | ['RESOLVED', value: Value];
-
-    // private, the underlying promise that we're instrumenting
-    #promise: Promise<Value>; 
-
+interface TrackedAsyncState<Value = unknown, ErrorType = unknown> {
     // upon success, Value, otherwise null.
     value: Value | null;
 
     // upon error, unknown, otherwise null.
-    error: unknown;
+    error: ErrorType | null;
 
     // state helpers
     isPending: boolean;
-    isResolved: boolean;
-    isRejected: boolean;
-
-    // allows TrackedAsyncStates to be awaited
-    then(/* ... */): PromiseLike</* ... */>
+    isSuccess: boolean;
+    isError: boolean;
 }
 ```
 
-Unlike [TrackedAsyncData][gh-tracked-async-data], all properties are accessible at throughout the the lifecycle of the promise. This is to reduce the pit-of-frustration and eliminate extraneous errors when working with promise-data. While ember-async-data can argue that it doesn't make sense to _even try_ accessing `value` until a promise is resolved, the constraint completely prevents UI patterns where you want value and loading state to be separate, and not part of a single whollistic if/else-if set of blocks. 
+Unlike [TrackedAsyncData][gh-tracked-async-data], all properties are accessible at throughout the the lifecycle of the promise. This is to reduce the pit-of-frustration and eliminate extraneous errors when working with promise-data. While ember-async-data can argue that it doesn't make sense to _even try_ accessing `value` until a promise is resolved, the constraint completely prevents UI patterns where you want value and loading state to be separate blocks, and not part of a single whollistic if/else-if set of blocks. 
 
 For simplicity, these new utilities will not be using `@dependentKeyCompat` to support the `@computed` era of reactivity.  pre-`@tracked` is before ember-source @ 3.13, which is from over 5 years ago, at the time of writing. For the broadest, most supporting libraries we have, 3.28+ is the supported range, and for speed of implementation, these tracked promise utilities can strive for the similar compatibility.
 
@@ -131,7 +116,7 @@ An extra feature that none of the previously mentioned implementations have is t
 The implementation of `TrackedAsyncState` is intentionally limited, as we want to encourage reliance on [_The Platform_][mdn-Promise] whenever it makes sense, and is ergonomic to do so. For example, using `race` would still be done native, and can be wrapped for reactivity:
 ```js
 /** @type {TrackedAsyncState} */
-let trackedPromise 
+let promiseState 
     = trackedPromise(Promise.race([promise1, promise2]));
 ```
 
@@ -140,7 +125,7 @@ let trackedPromise
 
 #### Subtle Notes
 
-If a promise is passed to `trackedPromise` or `TrackedAsyncState` multiple times, we don't want to _re-do_ any computations.
+If a promise is passed to `trackedPromise` multiple times, we don't want to _re-do_ any computations.
 
 Examples:
 
@@ -160,8 +145,6 @@ let a = Promise.resolve(2); // <state> "fulfilled"
 
 This component renders only once, and _both_ occurances of of `trackedPromise` immediately resolve and _never_ enter the pending states.
 
-
-
 ```gjs
 let a = Promise.resolve(2); // <state> "fulfilled"
 let b = Promise.resolve(2); // <state> "fulfilled"
@@ -178,8 +161,6 @@ let b = Promise.resolve(2); // <state> "fulfilled"
 ```
 
 In this component, it _also_ only renders once as both promises are resolved, and we can adapt the initial state returned by `trackedPromise` to reflect that.
-
-
 
 ### `@ember/reactive`
 
@@ -286,61 +267,6 @@ export default class Demo extends Component {
 }
 ```
 
-
-#### `TrackedAsyncState`
-
-```js 
-import { TrackedAsyncState } from '@ember/reactive';
-```
-
-Creates a tracked `Promise`, with `tracked` properties for implementing UI that updates based on the state of a promise.
-
-When a non-promise is passed, as one may do for a default value, it'll behave as if it were a resolved promise, i.e.: `Promise.resolve(passedValue)`.
-
-Creating a tracked promise from a non-async API:
-```gjs
-import { TrackedAsyncState } from '@ember/reactive';
-
-function wait(ms) {
-  return new TrackedAsyncState((resolve) => setTimeout(resolve, ms));
-}
-
-<template>
-  {{#let (wait 500) as |state|}}
-    isPending:  {{state.isPending}}<br>
-    isResolved: {{state.isResolved}}<br>
-    isRejected: {{state.isRejected}}<br>
-    value:      {{state.value}}<br>
-    error:      {{state.error}}<br>
-  {{/let}}
-</template>
-```
-
-Creating a tracked promise from an existing promise:
-
-```gjs
-import Component from '@glimmer/component';
-import { cached } from '@glimmer/tracking';
-import { TrackedAsyncState } from '@ember/reactive';
-
-export default class Demo extends Component {
-  @cached
-  get state() {
-    let id = this.args.personId;
-    let fetchPromise = 
-      fetch(`https://swapi.tech/api/people/${id}`)
-        .then(response => response.json());
-
-    return new TrackedAsyncState(fetchPromise);
-  }
-
-  <template>
-    ... similar usage as above 
-    {{this.state.isPending}}, etc
-  </template>
-}
-```
-
 ### Guides
 
 #### use with `fetch`
@@ -404,40 +330,56 @@ Doing so would allow more separation of loading / error UI, such as portaling lo
 
 NOTE: using `@cached` with promises does not enable cancellation, as there is no _lifetime_ to attach to at the getter/property level of granularity.[^resources] 
 
-[^resources]: This is where _resources_ can help (topic for later) -- otherwise you need to use a full component just for destruction (or `invokeHelper` on a class-based helper, which is very un-ergonomic).
+[^resources]: This is where _resources_ can help (topic for later and not relevant to this RFC) -- otherwise you need to use a full component just for destruction (or `invokeHelper` on a class-based helper, which is very un-ergonomic).
 
-#### creating reactive promises
+### multi-step wizard example
 
-We can use `TrackedAsyncState` to turn not-async APIs into reactive + async behaviors -- for example, if we want to make a promise out of `setTimeout`, and cause an artificial delay / timer behavior:
+This pattern allows us to simplify UI as we progress through a multi-stap wizard flow, a common UX pattern for breaking up large collections of data (or progression disclosure of information. 
 
-```gjs
-import Component from '@glimmer/component';
-import { cached } from '@glimmer/tracking';
-import { TrackedAsyncState } from '@ember/reactive';
+```js
+class FormSubmit extends Component {
+    @tracked inputs;
+    @tracked promise;
 
-export default class Demo extends Component {
-  @cached
-  get () {
-    return new TrackedAsyncState((resolve => {
-       setTimeout(() => {
-        resolve();
-       }, 5_000 /* 5 seconds */);
-    }));
-  }
+    get state() {
+        return trackedPromise(this.promise);
+    }
 
-  get showSubscribeModal() {
-    return this.requestState.isResolved;
-  }
+    async execute() {
+        this.promise = step1();
+        await this.promise;
 
-  <template>
-     {{#if this.showSubscribeModal}}
-        <dialog open>
-          Subscribe now!
+        this.promise = step2();
+        await this.promise;
 
-          ...
-        </dialog>
-     {{/if}}
-  </template>
+        this.promise = step3();
+        await this.promise;
+    }
+
+    /* ... ✂️ ... */
+
+    #execution;
+
+    @cached
+    get outcome() {
+        if (!this.#execution) {
+            this.#execution = this.execute();
+        }
+
+        const state = trackedPromise(this.#execution);
+
+        if (state.isPending || state.isError) return null;
+            return state.value;
+        }
+    }
+
+    <template>
+        Final result = {{this.outcome}} 
+
+        ... ✂️ ... 
+
+        <button {{on 'click' this.execute}}>Begin</button>
+    </template>
 }
 ```
 
@@ -532,7 +474,12 @@ I think not doing this has more drawbacks than doing it. A common problem we hav
 - re-use `@glimmer/tracking`
   - would require that `@glimmer/tracking` move in to the `ember-source` repo
   - would also require a polyfill, as prior versions of `@glimmer/tracking` would not have the new behaviors
+
+## Former Alternatives
+
 - whole-sale pull in parts of `@warp-drive/ember` (though, much of this RFC is already heavily influenced by their `getPromiseState`, which is backed by a promise cache -- all of which is sort of an implementation detail as far this RFC is concerned)
+
+    Most of this RFC is based on `getPromiseState` from `@warp-drive/ember` as it's more focused than the RFC was originally written. Single utility, with single purpose, very versatile, and doesn't depend on other RFCs.
 
 ## Unresolved questions
 
