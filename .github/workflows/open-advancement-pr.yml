@@ -88,8 +88,9 @@ jobs:
           echo '{ "file": "${{ inputs.rfc-path }}", "number": "${{ inputs.rfc-number }}", "pr": "${{ steps.create-pr.outputs.pull-request-url }}", "advancementStage": "${{ inputs.new-stage }}" }' > advance-rfc-${{ inputs.rfc-number }}.json
 
       - name: Upload artifact of open RFC PRs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: advancement-prs
           path: advance-rfc-${{ inputs.rfc-number }}.json
+          overwrite: true
           if-no-files-found: error
