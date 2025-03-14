@@ -251,17 +251,11 @@ For some utilities, we can place them under sub-path-exports, such as `@ember/re
 
 ### Consumption
 
-When a project wants to use `@ember/reactive`, they would then only need to install the package separately / add it to their `package.json`.
+`@ember/reactive` would be another virtual package built in to ember-source, much like `@ember/service`, etc.
 
-The proposed list of compatibility here is only meant as an example -- if implementation proves that more can be supported easier, with less work, that should be pursued, and this part is kind of implementation detail.
+For polyfilling, a library could be created that uses `ember-addon.renamed-modules` to instruct our build tooling about a virtual package -- the same technique that `ember-source` uses. 
 
-But for demonstration:
-- apps pre [version available], would add `@ember/reactive` to their `devDependencies` or `dependencies`
-  - importing `@ember/reactive` would be handled by ember-auto-import/embroider (as is the case with all v2 addons)
-- v1 addons would not be supported
-- v2 addons, for maximum compatibility, would need to add `@ember/reactive` to their `dependencies`
-  - in consuming apps post [version available], this would be optimized away if the version declared in dependencies satisfies the range provided by the consuming app (an optimization that packagers already do, and nothing we need to worry about)
-- apps post [version available], would not need to add `@ember/reactive` to their `devDependencies` or `dependencies`, as we can rely on the `ember-addon#renamed-modules` config in ember-source's `package.json`.
+Once a project updates to a sufficiently new enough ember-source, the polyfilling library should be deleted.
 
 ## How we teach this
 
