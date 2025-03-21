@@ -34,7 +34,7 @@ suite: Leave as is
 
 ## Summary
 
-Allow `app/templates/*.hbs` to convert to `app/temlates/*.gjs`.
+Allow `app/templates/*.hbs` to convert to `app/templates/*.gjs`.
 
 ## Motivation
 
@@ -163,7 +163,7 @@ No new typescript-specific features are required. If you're authoring route temp
 
 This RFC was directly inspired by a first attempt at updating the Guides for Template Tag. It became immediately apparent that we can write _much_ clearer guides if we can teach all GJS, instead of a mix of GJS and HBS.
 
-Starting at https://guides.emberjs.com/release/components/ when the first `application.hbs` file is introduced, we would use `.gjs` instead. In those opening examples that are empahsizing HTML, the only change to the content would be wrapping `<template></template>` around the HTML.
+Starting at https://guides.emberjs.com/release/components/ when the first `application.hbs` file is introduced, we would use `.gjs` instead. In those opening examples that are emphasizing HTML, the only change to the content would be wrapping `<template></template>` around the HTML.
 
 Progressing to https://guides.emberjs.com/release/components/introducing-components/, learners extract their first component. It now becomes possible to do that within the same file. This allows teaching fewer things in a single step. First, people can learn what a component is. Second, it can be refactored into a separate file. We can avoid teaching anything about "pascal case" and naming rules, because everything just follows javascript naming rules.
 

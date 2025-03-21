@@ -1,14 +1,15 @@
 ---
-stage: accepted
+stage: ready-for-release
 start-date: 2024-12-03T00:00:00.000Z
-release-date: 
+release-date:
 release-versions:
 teams:
   - cli
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1055
+  accepted: 'https://github.com/emberjs/rfcs/pull/1055'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/1063'
 project-link:
-suite: 
+suite:
 ---
 
 # Vanilla Prettier Setup in Blueprints
