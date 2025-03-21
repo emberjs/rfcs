@@ -235,6 +235,10 @@ await store.request(deleteRecord(user));
 store.unloadRecord(user);
 ```
 
+### For Async Relationships / Sync Relationship Reload
+
+Use [LinksMode](https://github.com/emberjs/data/blob/main/guides/relationships/features/links-mode.md) which enables autofetch / explicit fetch of a relationship to utilize the RequestManager pipeline in
+full instead of adapters/serializers via the LegacyNetworkHandler.
 
 ### Deprecating Store Data Munging
 
