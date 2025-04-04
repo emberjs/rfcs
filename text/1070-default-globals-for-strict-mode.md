@@ -1,16 +1,19 @@
 ---
-stage: accepted
+stage: released
 start-date: 2025-01-18T00:00:00.000Z
-release-date: # In format YYYY-MM-DDT00:00:00.000Z
+release-date:
 release-versions:
-teams: # delete teams that aren't relevant
+  babel-plugin-ember-template-compilation: 2.4.0 
+teams:
   - cli
   - framework
   - learning
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1070 
+  accepted: 'https://github.com/emberjs/rfcs/pull/1070'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/1083'
+  released: 'https://github.com/emberjs/rfcs/pull/1095'
 project-link:
-suite: 
+suite:
 ---
 
 <!--- 
