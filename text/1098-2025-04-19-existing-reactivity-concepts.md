@@ -523,26 +523,150 @@ comments that explain how the implementation satisfies the reactivity laws.
 
 1. [Rendering with the VM](): An overview of the current renderer - GlimmerVM. 
 
+> ![NOTE]
+> The renderer is subject to change as we have a lot of room to improve in the [js-framework-benchmark](https://github.com/krausest/js-framework-benchmark) (A benchmark for just raw rendering -- not really reactivity or anything else useful to measure by for real apps)
+
 2. [How to wire up Glimmer](): Using the current implementations in both the GlimmerVM and EmberJS repos, here explains the concept of "environment", and how they're wired up.
 
+```ts
+import { ENV } from '@ember/-internals/environment';
+import { get, set, _getProp, _setProp } from '@ember/-internals/metal';
+import { getDebugName } from '@ember/-internals/utils';
+import { constructStyleDeprecationMessage } from '@ember/-internals/views';
+import { assert, deprecate, warn } from '@ember/debug';
+import { schedule, _backburner } from '@ember/runloop';
+import { DEBUG } from '@glimmer/env';
+import setGlobalContext from '@glimmer/global-context';
+import { debug } from '@glimmer/validator';
+import toIterator from './utils/iterator';
+import { isHTMLSafe } from './utils/string';
+import toBool from './utils/to-bool';
 
-> This is the bulk of the RFC.
+import type { InternalOwner } from '@ember/-internals/owner';
+import type { DeprecationOptions } from '@ember/debug';
+import type { EnvironmentDelegate } from '@glimmer/runtime';
 
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here. 
+setGlobalContext({
+  FEATURES: {
+    DEFAULT_HELPER_MANAGER: true,
+  },
 
-> Please keep in mind any implications within the Ember ecosystem, such as:
-> - Lint rules (ember-template-lint, eslint-plugin-ember) that should be added, modified or removed
-> - Features that are replaced or made obsolete by this feature and should eventually be deprecated
-> - Ember Inspector and debuggability
-> - Server-side Rendering
-> - Ember Engines
-> - The Addon Ecosystem
-> - IDE Support
-> - Blueprints that should be added or modified
+  scheduleRevalidate() {
+    _backburner.ensureInstance();
+  },
+
+  toBool,
+  toIterator,
+
+  getProp: _getProp,
+  setProp: _setProp,
+  getPath: get,
+  setPath: set,
+
+  scheduleDestroy(destroyable, destructor) {
+    schedule('actions', null, destructor, destroyable);
+  },
+
+  scheduleDestroyed(finalizeDestructor) {
+    schedule('destroy', null, finalizeDestructor);
+  },
+
+  warnIfStyleNotTrusted(value: unknown) {
+    warn(
+      constructStyleDeprecationMessage(String(value)),
+      (() => {
+        if (value === null || value === undefined || isHTMLSafe(value)) {
+          return true;
+        }
+        return false;
+      })(),
+      { id: 'ember-htmlbars.style-xss-warning' }
+    );
+  },
+
+  assert(test: unknown, msg: string, options?: { id: string }) {
+    if (DEBUG) {
+      let id = options?.id;
+
+      let override = VM_ASSERTION_OVERRIDES.filter((o) => o.id === id)[0];
+
+      assert(override?.message ?? msg, test);
+    }
+  },
+
+  deprecate(msg: string, test: unknown, options: { id: string }) {
+    if (DEBUG) {
+      let { id } = options;
+
+      if (id === 'argument-less-helper-paren-less-invocation') {
+        throw new Error(
+          `A resolved helper cannot be passed as a named argument as the syntax is ` +
+            `ambiguously a pass-by-reference or invocation. Use the ` +
+            `\`{{helper 'foo-helper}}\` helper to pass by reference or explicitly ` +
+            `invoke the helper with parens: \`{{(fooHelper)}}\`.`
+        );
+      }
+
+      let override = VM_DEPRECATION_OVERRIDES.filter((o) => o.id === id)[0];
+
+      if (!override) throw new Error(`deprecation override for ${id} not found`);
+
+      // allow deprecations to be disabled in the VM_DEPRECATION_OVERRIDES array below
+      if (!override.disabled) {
+        deprecate(override.message ?? msg, Boolean(test), override);
+      }
+    }
+  },
+});
+
+if (DEBUG) {
+  debug?.setTrackingTransactionEnv?.({
+    debugMessage(obj, keyName) {
+      let dirtyString = keyName
+        ? `\`${keyName}\` on \`${getDebugName?.(obj)}\``
+        : `\`${getDebugName?.(obj)}\``;
+
+      return `You attempted to update ${dirtyString}, but it had already been used previously in the same computation.  Attempting to update a value after using it in a computation can cause logical errors, infinite revalidation bugs, and performance issues, and is not supported.`;
+    },
+  });
+}
+
+///////////
+
+// VM Assertion/Deprecation overrides
+
+const VM_DEPRECATION_OVERRIDES: (DeprecationOptions & {
+  disabled?: boolean;
+  message?: string;
+})[] = [
+  {
+    id: 'setting-on-hash',
+    until: '4.4.0',
+    for: 'ember-source',
+    since: {
+      available: '3.28.0',
+      enabled: '3.28.0',
+    },
+  },
+];
+
+const VM_ASSERTION_OVERRIDES: { id: string; message: string }[] = [];
+
+///////////
+
+// Define environment delegate
+
+export class EmberEnvironmentDelegate implements EnvironmentDelegate {
+  public enableDebugTooling: boolean = ENV._DEBUG_RENDER_TREE;
+
+  constructor(
+    public owner: InternalOwner,
+    public isInteractive: boolean
+  ) {}
+
+  onTransactionCommit(): void {}
+}
+```
 
 ## How we teach this
 
