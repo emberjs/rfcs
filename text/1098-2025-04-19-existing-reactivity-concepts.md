@@ -11,7 +11,7 @@ teams: # delete teams that aren't relevant
   - steering
   - typescript
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/1098 
 project-link:
 suite: 
 ---
@@ -32,15 +32,15 @@ suite: Leave as is
 
 <!-- Replace "RFC title" with the title of your RFC -->
 
-# RFC title
+# The Glimmer Reactivity System 
 
-## The Glimmer Reactivity System 
+## Summary 
 
 An explanation of the depths of the reactivity system we've been using and refining since Ember Octane (ember-source 3.13+).
 
 ## Motivation
 
-Unlike other RFCs, this RFC is more about documenting the details and concepts of reactivity at a low level so that we may build other primitive utilities that build on the concepts laid out in this document. This unblocks implementation of [`Cell`](https://github.com/emberjs/rfcs/pull/1071), Resources, and gives us more details to work with when describing reactive behavior.
+Unlike other RFCs, this RFC is more about documenting the details and concepts of reactivity at a low level so that we may build other primitive utilities that build on the concepts laid out in this document. This unblocks implementation of [`Cell`](https://github.com/emberjs/rfcs/pull/1071), Resources (and other primitives), and gives us more details to work with when describing reactive behavior.
 
 ## Detailed design
 
