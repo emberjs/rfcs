@@ -43,15 +43,15 @@ Unlike other RFCs, this RFC is more about documenting the details and concepts o
 
 ### Background
 
-1. [Tag Composition](./tag-composition.md): The formal composition semantics of Glimmer's tag-based
+1. [Tag Composition](#tag-composition): The formal composition semantics of Glimmer's tag-based
    validation system.
-2. [The Fundamental Laws of Reactivity](./laws.md): A definition of Glimmer's reliable and
+2. [The Fundamental Laws of Reactivity](#laws): A definition of Glimmer's reliable and
    consistent reactive programming model, and the rules that reactive abstractions must
    satisfy in order to safely support this model.
-3. [System Phases](./system-phases.md): A description of the phases of the Glimmer execution model:
+3. [System Phases](#system-phases): A description of the phases of the Glimmer execution model:
    _action_, _render_, and _idle_, and how the exeuction model supported batched _UI_ updates while
    maintaining a _coherent_ data model.
-4. [Reactive Abstractions](./reactive-abstractions.md): A description of the implementation of
+4. [Reactive Abstractions](#reactive-abstractions): A description of the implementation of
    a number of reactive abstractions, and how they satisfy the laws of reactivity.
 
 
@@ -308,6 +308,7 @@ It's important to understand that while updates to the _rendered output_ (UI) ar
 
 This automatic batching ensures optimal performance by preventing cascading rerenders while allowing developers to work with reactive values as if they were normal JavaScript values. From the developer's perspective, reactive computations behave just like normal functions, giving them a familiar programming model with the added benefit of automatic UI updates.
 
+#### Reactive Abstractions 
 
 ###### `@tracked`
 
