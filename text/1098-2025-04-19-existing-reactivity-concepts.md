@@ -35,11 +35,25 @@ suite: Leave as is
 
 An explanation of the depths of the reactivity system we've been using and refining since Ember Octane (ember-source 3.13+).
 
+
 ## Motivation
 
 Unlike other RFCs, this RFC is more about documenting the details and concepts of reactivity at a low level so that we may build other primitive utilities that build on the concepts laid out in this document. This unblocks implementation of [`Cell`](https://github.com/emberjs/rfcs/pull/1071), Resources (and other primitives), and gives us more details to work with when describing reactive behavior.
 
+This is just an overview, and much of it is copied from the source-of-truth, the markdown docs code-located with the sourcecode that implements these behaviors.
+
+Details and further updates are not and will not be added to this document.
+
 ## Detailed design
+
+### Terms to Know 
+
+As you read this document, some of the terms may be unfamiliar, here they are:
+
+- **Algebraic Primitive**: An element or concept that generates a larger structure or building block that can't be defined in terms of other lower-level concepts. All user-land primitives are actually higher-level concepts built on these primitives. But may favor performance over ergonomics (which result in the need for user-land "primitives")
+
+- **Monotonic**: for the purposes of our reactivity system -- this is a number that only ever increases. 
+
 
 ### Background
 
@@ -53,8 +67,6 @@ Unlike other RFCs, this RFC is more about documenting the details and concepts o
    maintaining a _coherent_ data model.
 4. [Reactive Abstractions](#reactive-abstractions): A description of the implementation of
    a number of reactive abstractions, and how they satisfy the laws of reactivity.
-
-
 
    
 #### Tag Composition
@@ -142,7 +154,7 @@ if_ these functions re-execute completely whenever any reactive value changes.
 
 ##### The Fundamental Laws of Reactivity
 
-In order to satisfy the _Fundamental Axiom of Reactivity_, all reactive abstractions must adhere to these six laws:
+In order to satisfy the _Fundamental Axiom of Reactivity_, all reactive abstractions must adhere to these five laws:
 
 1. **Dependency Tracking**: A reactive abstraction **must** [invalidate](#invalidate) when any
    reactive values used in its _last computation_ have changed. _The revision of the tag associated
@@ -169,7 +181,7 @@ In order to satisfy the _Fundamental Axiom of Reactivity_, all reactive abstract
 
 All reactive abstractions—including built-in mechanisms like `@tracked` and `createCache`, existing
 libraries such as `tracked-toolbox` and `tracked-builtins`, and new primitives like `cell`—must
-satisfy these six laws to maintain the Fundamental Axiom of Reactivity when these abstractions are
+satisfy these Five laws to maintain the Fundamental Axiom of Reactivity when these abstractions are
 composed together.
 
 > [!TIP]
@@ -489,7 +501,7 @@ export function getCache(cache) {
 
 > [!NOTE]
 >
-> This section will be written next. The crux of the matter is that `LocalCopy` satisfies the
+> This section omitted for brevity. The crux of the matter is that `LocalCopy` satisfies the
 > reactivity laws because:
 >
 > 1. Snapshotting a `LocalCopy` deterministically returns the value that corresponds to the latest
@@ -503,7 +515,7 @@ export function getCache(cache) {
 > 4. By being explicit about reactivity semantics and the reactivity laws, we can see that
 >    `LocalCopy` is a safe abstraction despite having a dependency on the revision of the members.
 
-An implementation of `LocalCopy` exists in [composition.ts](./pseudocode/composition.ts) with
+An implementation of `LocalCopy` exists in composition.ts (in [PR#1690](https://github.com/glimmerjs/glimmer-vm/pull/1690)) with
 comments that explain how the implementation satisfies the reactivity laws.
 
 
@@ -534,34 +546,20 @@ defined here.
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
+This document is meant as an introduction, and further updates will not be in this document, but in the markdown co-located with the code. 
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
+For now, none of this information is anything that normal users of ember need to be concerned with as a primary motivator for creating this document is to unblock [The cell, RFC#1071](https://github.com/emberjs/rfcs/pull/1071#issuecomment-2707389724).
 
-> How should this feature be introduced and taught to existing Ember
-users?
 
-> Keep in mind the variety of learning materials: API docs, guides, blog posts, tutorials, etc.
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+n/a -- this is "current state"
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
-
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
+n/a
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+n/a 
