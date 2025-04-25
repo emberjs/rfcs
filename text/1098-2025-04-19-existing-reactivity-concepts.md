@@ -532,9 +532,17 @@ comments that explain how the implementation satisfies the reactivity laws.
 #### Rendering with the VM
 
 > [!TIP]
-> You can interact with this demo in [JSBin, here](https://jsbin.com/mobupuh/3/edit?html,output) 
+> You can interact with this demo in [JSBin, here](https://jsbin.com/mobupuh/edit?html,output) 
 
- The Global Context provides some core swappable utilities, feature flag configuration, and some hooks for some of the Render Phases.
+
+> [!CAUTION]
+> This is heavy in boilerplate, and mostly private API. This 300 line *minimal* example, should be considered our todo list, as having all this required to render a tiny component is _too much_.
+
+The purpose of showing all this is to demonstrate what we expect to happen when a tag changes, and how you can trace that update.
+No implementation details of the VM itself are defined here, because, over time, we want to change it all up (e.g.: improving rendering performance, parse/load performance, pay-as-you-go opcodes, other features, etc)
+
+
+<details><summary>Annotated Code from JSBin</summary>
 
 ```html
 <!doctype html>
@@ -563,58 +571,13 @@ comments that explain how the implementation satisfies the reactivity laws.
       import { preprocess, getTemplateLocals } from "@glimmer/syntax";
       import setGlobalContext from "@glimmer/global-context";
       import { createConstRef, valueForRef } from "@glimmer/reference";
-      import { EMPTY_ARGS } from "@glimmer/runtime";
-
-      class ArgsProxy {
-        isExtensible() {
-          return false;
-        }
-
-        ownKeys(target) {
-          return Object.keys(target);
-        }
-
-        getOwnPropertyDescriptor(target, p) {
-          let desc;
-          if (typeof p === "string" && p in target) {
-            const value = valueForRef(target[p]);
-            desc = {
-              enumerable: true,
-              configurable: false,
-              writable: false,
-              value,
-            };
-          }
-          return desc;
-        }
-
-        has(target, p) {
-          return typeof p === "string" ? p in target : false;
-        }
-
-        get(target, p) {
-          if (typeof p === "string" && p in target) {
-            return valueForRef(target[p]);
-          }
-
-          return;
-        }
-
-        set() {
-          return false;
-        }
-      }
-
-      function argsProxy(args) {
-        return new Proxy(args.named, new ArgsProxy());
-      }
 
       /**
         This repo has no component managers
       */
       class BasicComponentManager {
         create(_owner, Component, args) {
-          const instance = new Component(argsProxy(args === null ? EMPTY_ARGS : args.capture()));
+          const instance = new Component(args.capture());
           const self = createConstRef(instance, "this");
           return { instance, self };
         }
@@ -680,16 +643,29 @@ comments that explain how the implementation satisfies the reactivity laws.
 
       let revalidateScheduled = false;
 
+      /**
+       * The Global Context provides some core swappable utilities, feature flag configuration, and some hooks for some of the Render Phases.
+       * This is required to be configured, but could be entirely unneeded in modern code.
+       *
+       *
+       * This feels like it could have been designed to try to allow for different reactivity systems over time.
+       * But we don't need those use cases anymore.
+       * Additionally, we can configure the render phases in scheduleRevalidate
+       * it is *required* to do this, else updates to the DOM do not occur
+       */
       setGlobalContext({
         scheduleRevalidate() {
           if (!revalidateScheduled) {
             Promise.resolve()
               .then(() => {
                 const { env } = result;
+                console.log("env.begin");
                 env.begin();
+                console.log("env.rerender");
                 result.rerender();
                 revalidateScheduled = false;
                 env.commit();
+                console.log("env.commit");
               })
               .catch((e) => console.error(e));
           }
@@ -777,14 +753,23 @@ comments that explain how the implementation satisfies the reactivity laws.
         };
       }
 
+      /**
+       * With the component manager we've configured, we don't need a super class
+       * but also, we don't interact with any args (this.args doesn't exist).
+       */
       class Counter {
         _count = 0;
 
+        /**
+         * This is a simplified version of @tracked
+         */
         get count() {
+          console.log("read: count");
           consumeTag(tagFor(this, "_count"));
           return this._count;
         }
         set count(value) {
+          console.log("set: count");
           this._count = value;
           dirtyTagFor(this, "_count");
         }
@@ -798,7 +783,7 @@ comments that explain how the implementation satisfies the reactivity laws.
             createTemplate(
               `<p>You have clicked the button {{this.count}} times.</p>
 
-                    <button {{on "click" this.increment}}>Click</button>`,
+              <button {{on "click" this.increment}}>Click</button>`,
               { on },
             ),
             this,
@@ -829,6 +814,11 @@ comments that explain how the implementation satisfies the reactivity laws.
         return templateFactory(templateBlock);
       }
 
+      /**
+       * Main entrypoint for the demo.
+       * This configures a whole bunch of legacy features that shouldn't be needed, especially in
+       strict mode.
+       */
       function render() {
         const element = document.body;
         const sharedArtifacts = artifacts();
@@ -858,6 +848,7 @@ comments that explain how the implementation satisfies the reactivity laws.
         const cursor = { element, nextSibling: null };
         const treeBuilder = NewTreeBuilder.forInitialRender(env, cursor);
 
+        console.log("renderSync");
         const result = renderSync(env, renderComponent(context, treeBuilder, {}, Counter, {}));
 
         registerResult(result);
@@ -870,8 +861,27 @@ comments that explain how the implementation satisfies the reactivity laws.
 </html>
 ```
 
+</details>
 
 #### What happens when you set a tracked prop?
+
+When the above renders: all that's printed is:
+```
+renderSync
+read: count
+```
+
+When clicking the button, we have
+```
+# increment()
+read: count
+set: count
+# scheduleRevalidate()
+env.begin
+env.rerender
+read: count
+env.commit
+```
 
 
 ## How we teach this
