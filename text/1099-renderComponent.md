@@ -80,10 +80,12 @@ export interface RenderResult {
 }
 ```
 
+When called, updates will be scheduled and fully interactive components will work as folks would intuitively expect.
+The details of _how_ are out of scope for this RFC, and could change as we make improvements to rendering.
+
 ### The Parameters
 
-
-#### `owner`
+#### `owner` (defaults to `{}`)
 
 some object to represent the `Owner` (if not the host-app's `Owner`).
 
