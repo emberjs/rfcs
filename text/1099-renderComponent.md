@@ -55,7 +55,7 @@ export function renderComponent(
     args,
   }: {
     owner: object;
-    env: { document: SimpleDocument | Document; isInteractive: boolean; };
+    env?: { document?: SimpleDocument | Document; isInteractive?: boolean; };
     into: IntoTarget;
     args?: Record<string, unknown>;
   }
@@ -87,11 +87,11 @@ export interface RenderResult {
 
 some object to represent the `Owner` (if not the host-app's `Owner`).
 
-#### `env.document`
+#### `env.document` (default's to globalThis.document)
 
 The browser's `document`, for accessing needed APIs for rendering and managing DOM
 
-#### `env.isInteractive`
+#### `env.isInteractive` (defaults to true)
 
 When isInteractive is false, modifiers don't run, when true, modifiers do run.
 
@@ -109,6 +109,7 @@ via modifier:
 ```gjs
 import { modifier } from 'ember-modifier';
 import { destroy } from '@ember/destroyable';
+import { renderComponent from '@ember/renderer';
 
 const Demo = <template>hi</template>;
 const render = modifier((element) => {
@@ -127,6 +128,31 @@ const render = modifier((element) => {
 </template>
 ```
 
+via `template()`:
+
+```html
+<DOCTYPE html>
+<html>
+    <head>
+        <title>Demos can be simple again</title>
+    </head>
+<body>
+    <div id="my-element"></div
+
+    <script>
+        import { renderComponent } from 'https://esm.sh/@ember/renderer';
+        import { template } from "https://esm.sh/@ember/template-compiler";
+
+
+        renderComponent(template(`Hello World`), {
+            owner: {},
+            into: document.querySelector('#my-element'),
+        }) ;
+    </script>
+</body>
+</html>
+```
+
 ## How we teach this
 
 `renderComponent` is meant as an integration-enabling API and would not be added to the guides, or need any documentation beyond what would live in source on the function itself.
@@ -142,6 +168,9 @@ There is an existing implementation in [PR#20781](https://github.com/emberjs/emb
 Here is where this RFC differs:
 - no hasDOM (we always have a DOM, as we have not done any design on [Swappable Renderers](https://github.com/emberjs/ember.js/issues/20648))
 - proposed return type is much narrower than what is exposed (not the whole `RenderResult` from `@glimmer/interfaces`)
+- isInteractive is optional and defaults to `true`
+- document is optional and defaults to `globalThis.document`
+- env is optional (as all its contents are optional)
 
 ## Unresolved questions
 
