@@ -143,10 +143,9 @@ via `template()`:
         import { renderComponent } from 'https://esm.sh/@ember/renderer';
         import { template } from "https://esm.sh/@ember/template-compiler";
 
-
         renderComponent(template(`Hello World`), {
             into: document.querySelector('#my-element'),
-        }) ;
+        });
     </script>
 </body>
 </html>
