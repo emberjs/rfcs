@@ -54,7 +54,7 @@ export function renderComponent(
     into,
     args,
   }: {
-    owner: object;
+    owner?: object;
     env?: { document?: SimpleDocument | Document; isInteractive?: boolean; };
     into: IntoTarget;
     args?: Record<string, unknown>;
@@ -145,7 +145,6 @@ via `template()`:
 
 
         renderComponent(template(`Hello World`), {
-            owner: {},
             into: document.querySelector('#my-element'),
         }) ;
     </script>
@@ -172,6 +171,7 @@ Here is where this RFC differs:
 - isInteractive is optional and defaults to `true`
 - document is optional and defaults to `globalThis.document`
 - env is optional (as all its contents are optional)
+- owner is optional and defaults to a private empty object (`{}`)
 
 ## Unresolved questions
 
