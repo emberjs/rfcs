@@ -167,6 +167,7 @@ There is an existing implementation in [PR#20781](https://github.com/emberjs/emb
 
 Here is where this RFC differs:
 - no hasDOM (we always have a DOM, as we have not done any design on [Swappable Renderers](https://github.com/emberjs/ember.js/issues/20648))
+  - different `renderComponent` implementations could be what we swap out for whole-sale different renderers (rather than feature-zebra-striping them) 
 - proposed return type is much narrower than what is exposed (not the whole `RenderResult` from `@glimmer/interfaces`)
 - isInteractive is optional and defaults to `true`
 - document is optional and defaults to `globalThis.document`
