@@ -133,32 +133,16 @@ The element to render the compnoent into.
 
 The args to pass to the component
 
+### Behaviors
+
+TODO: 
+- rendering multiple renderComponent on the page
+  - who creates tracking frames / how do they interop? all of them? are they coordinated?
+- shared reactive state between multiple renderComponents
+
 ### Usage
 
-via modifier:
-```gjs
-import { modifier } from 'ember-modifier';
-import { destroy } from '@ember/destroyable';
-import { renderComponent from '@ember/renderer';
-
-const Demo = <template>hi</template>;
-const render = modifier((element) => {
-    let result = renderComponent(Demo, {
-        owner,
-        env: { document: document, isInteractive: true },
-        into: element,
-    });
-
-    return result.destroy();
-});
-
-
-<template>
-    <div {{render}}></div>
-</template>
-```
-
-via `template()`:
+via `template()` in JSBin:
 
 ```html
 <DOCTYPE html>
@@ -180,6 +164,57 @@ via `template()`:
 </body>
 </html>
 ```
+
+rendering ember in React:
+```jsx
+import { renderComponent } from '@ember/renderer';
+import { template } from "@ember/template-compiler";
+import React, { useEffect, useRef } from 'react';
+
+const GreetingComponent = template(`Hello World`);
+
+const RunOnceComponent = () => {
+    const myRef = useRef(null);
+
+    useEffect(() => {
+        if (myRef.current) {
+            renderComponent(GreetingComponent, {
+                into: myRef.current,
+            });
+        } 
+    }, []); 
+
+    return (
+        <div ref={myRef}></div>
+    );
+};
+
+export default RunOnceComponent;
+```
+
+if we wanted to render ember in ember via modifier (silly):
+```gjs
+import { modifier } from 'ember-modifier';
+import { destroy } from '@ember/destroyable';
+import { renderComponent from '@ember/renderer';
+
+const Demo = <template>hi</template>;
+const render = modifier((element) => {
+    let result = renderComponent(Demo, {
+        owner,
+        env: { document: document, isInteractive: true },
+        into: element,
+    });
+
+    return () => result.destroy();
+});
+
+
+<template>
+    <div {{render}}></div>
+</template>
+```
+
 
 ## How we teach this
 
