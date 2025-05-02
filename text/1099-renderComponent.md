@@ -204,6 +204,7 @@ Here is where this RFC differs:
 - returned object from `renderComponent` also has `destroy` on it, for convenience
 - removed `parentElement` from the returned object f rom `renderComponent`
 - removed `alwaysRevalidate` (and the whole options object) from `rerender`) -- as I couldn't find evidence of it being used in the implementation PR -- can always be added later if we need it.
+- removed `rerender` -- we want to encourage reactivity
 
 ## Unresolved questions
 
