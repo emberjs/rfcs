@@ -86,6 +86,8 @@ export function renderComponent(
 
         /**
          * These args get passed to the rendered component
+         *
+         * If your args are reactive, re-rendering will happen automatically.
          */
         args?: Record<string, unknown>;
   }
@@ -107,7 +109,8 @@ export interface RenderResult {
     /**
      * Re-renders the component
      *
-     * Only needed if you change the optional input args
+     * Only needed if you change the optional input args.
+     * If your args are reactive, re-rendering will happen automatically.
      */
     rerender(): void;
 }
