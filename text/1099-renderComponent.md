@@ -178,9 +178,11 @@ const RunOnceComponent = () => {
 
     useEffect(() => {
         if (myRef.current) {
-            renderComponent(GreetingComponent, {
+            let result = renderComponent(GreetingComponent, {
                 into: myRef.current,
             });
+
+            return () => result.destroy(); 
         } 
     }, []); 
 
