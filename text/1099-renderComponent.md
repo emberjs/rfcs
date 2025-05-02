@@ -106,6 +106,8 @@ export interface RenderResult {
 
     /**
      * Re-renders the component
+     *
+     * Only needed if you change the optional input args
      */
     rerender(): void;
 }
@@ -152,7 +154,7 @@ const render = modifier((element) => {
         into: element,
     });
 
-    return () => destroy(result);
+    return result.destroy();
 });
 
 
