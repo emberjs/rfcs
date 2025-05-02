@@ -139,6 +139,7 @@ TODO:
 - rendering multiple renderComponent on the page
   - who creates tracking frames / how do they interop? all of them? are they coordinated?
 - shared reactive state between multiple renderComponents
+- can the ember-in-ember use case extend the owner in subtrees?
 
 ### Usage
 
