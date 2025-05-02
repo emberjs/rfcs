@@ -62,7 +62,7 @@ export function renderComponent(
         /**
          * The element to render the component in to.
          */
-        into: IntoTarget;
+        into: Element;
 
         /**
          * Optional owner. Defaults to `{}`, can be any object, but will need to implement the [Owner](https://api.emberjs.com/ember/release/classes/Owner) API for components within this render tree to access services.
