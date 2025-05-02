@@ -100,11 +100,6 @@ It's shape is:
 ```ts
 export interface RenderResult {
     /**
-     * The element rendered in to 
-     */
-    parentElement(): SimpleElement;
-
-    /**
      * Destroys the render tree and removes all rendered content from the element rendered into.
      */
     destroy(): void
@@ -210,6 +205,7 @@ Here is where this RFC differs:
 - env is optional (as all its contents are optional)
 - owner is optional and defaults to a private empty object (`{}`)
 - returned object from `renderComponent` also has `destroy` on it, for convenience
+- removed `parentElement` from the returned object f rom `renderComponent`
 
 ## Unresolved questions
 
