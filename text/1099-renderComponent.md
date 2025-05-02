@@ -46,18 +46,48 @@ Users would import `renderComponent` from `@ember/renderer` (a pre-existing modu
 
 The interface:
 ```ts
+/**
+ * Renders a component into an element, given a valid component definition.
+ */
 export function renderComponent(
-  component: object,
-  {
-    owner,
-    env,
-    into,
-    args,
-  }: {
-    owner?: object;
-    env?: { document?: SimpleDocument | Document; isInteractive?: boolean; };
-    into: IntoTarget;
-    args?: Record<string, unknown>;
+    /**
+     * The component definition to render.
+     *
+     * Any component that has had its manager registered is valid.
+     * For the component-types that ship with ember, manager registration 
+     * does not need to be worried about. 
+     */
+    component: object,
+    options: {
+        /**
+         * The element to render the component in to.
+         */
+        into: IntoTarget;
+
+        /**
+         * Optional owner. Defaults to `{}`, can be any object, but will need to implement the [Owner](https://api.emberjs.com/ember/release/classes/Owner) API for components within this render tree to access services.
+         */
+        owner?: object;
+
+        /**
+         * Configure the `document` and `isInteractive`
+         */
+        env?: { 
+            /**
+             * Defaults to globalThis.document.
+             */
+            document?: SimpleDocument | Document; 
+
+            /**
+             * When false, modifiers will not run.
+             */
+            isInteractive?: boolean; 
+        };
+
+        /**
+         * These args get passed to the rendered component
+         */
+        args?: Record<string, unknown>;
   }
 ): RenderResult | undefined {
     /* ... implementation details ... */
@@ -70,13 +100,19 @@ It's shape is:
 ```ts
 export interface RenderResult {
     /**
-    * The element rendered in to 
-    */
-  parentElement(): SimpleElement;
+     * The element rendered in to 
+     */
+    parentElement(): SimpleElement;
+
     /**
-    * Re-renders the component
-    */
-  rerender(options?: { alwaysRevalidate: false }): void;
+     * Destroys the render tree and removes all rendered content from the element rendered into.
+     */
+    destroy(): void
+
+    /**
+     * Re-renders the component
+     */
+    rerender(options?: { alwaysRevalidate: false }): void;
 }
 ```
 
@@ -173,6 +209,7 @@ Here is where this RFC differs:
 - document is optional and defaults to `globalThis.document`
 - env is optional (as all its contents are optional)
 - owner is optional and defaults to a private empty object (`{}`)
+- returned object from `renderComponent` also has `destroy` on it, for convenience
 
 ## Unresolved questions
 
