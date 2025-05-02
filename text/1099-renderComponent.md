@@ -35,7 +35,7 @@ Add a new API to for rendering components into any DOM element.
 
 ## Motivation
 
-Building an app from scratch requires a fair amount of boilerplate today, and `renderComponent` abstracts a minimal API that would allow easy integration of components in other enviroments, such as [Astro](https://astro.build/), or [Vitepress](https://vitepress.dev/), or runtime demos such as [JSBin](https://jsbin.com/).
+Building an app from scratch requires a fair amount of boilerplate today, and `renderComponent` abstracts a minimal API that would allow easy integration of components in other enviroments, such as [Astro](https://astro.build/), or [Vitepress](https://vitepress.dev/), or [Storybook](https://storybook.js.org/), or runtime demos such as [JSBin](https://jsbin.com/).
 
 This also pairs well with [RFC#931: JS Representation of Template Tag](https://github.com/emberjs/rfcs/pull/931), in that both features together give folks enough to use Ember without compilation (compilation still recommended for optimizations, however).
 
