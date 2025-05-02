@@ -105,14 +105,6 @@ export interface RenderResult {
      * Destroys the render tree and removes all rendered content from the element rendered into.
      */
     destroy(): void
-
-    /**
-     * Re-renders the component
-     *
-     * Only needed if you change the optional input args.
-     * If your args are reactive, re-rendering will happen automatically.
-     */
-    rerender(): void;
 }
 ```
 
