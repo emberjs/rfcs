@@ -14,7 +14,7 @@ and choosing `View file' from the `...' menu in the right hand corner of the fil
 
 This pull request is proposing a new RFC.
 
-To succeed, it will need to pass into the [Exploring Stage](https://github.com/emberjs/rfcs#exploring)), followed by the [Accepted Stage](https://github.com/emberjs/rfcs#accepted).
+To succeed, it will need to pass into the [Exploring Stage](https://github.com/emberjs/rfcs#exploring), followed by the [Accepted Stage](https://github.com/emberjs/rfcs#accepted).
 
 A Proposed or Exploring RFC may also move to the [Closed Stage](https://github.com/emberjs/rfcs#closed) if it is withdrawn by the author or if it is rejected by the Ember team. This requires an "FCP to Close" period.
 
