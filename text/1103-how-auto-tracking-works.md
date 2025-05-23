@@ -76,7 +76,7 @@ const state = new ModuleState();
 
 <template>
     <output>{{ state.count }}</output>
-    <button {{on "click" state.increment>Increment</button>
+    <button {{on "click" state.increment}}>Increment</button>
 </template>
 ```
 
@@ -123,9 +123,10 @@ There are a few systems at play for autotracking:
                 - this is so that when any `{{ }}` regions of a template "detect" a dirty tag, they can individually re-render
 
 
-    - [beginTrackFrame](https://github.com/glimmerjs/glimmer-vm/blob/d86274816a21c61fbc82059006fe7687ca17dc7e/packages/%40glimmer/validator/lib/tracking.ts#L58)
-        - 
-    - [beginCacheGroup](https://github.com/glimmerjs/glimmer-vm/blob/main/packages/%40glimmer/runtime/lib/vm/append.ts#L335)
+    - [valueForRef](https://github.com/glimmerjs/glimmer-vm/blob/main/packages/%40glimmer/reference/lib/reference.ts#L155)
+        - called by _many_ opcode handlers in the VM, in this case: [this APPEND_OPCODE](https://github.com/glimmerjs/glimmer-vm/blob/main/packages/%40glimmer/runtime/lib/compiled/opcodes/content.ts#L88) 
+        - [track](https://github.com/glimmerjs/glimmer-vm/blob/main/packages/%40glimmer/validator/lib/tracking.ts#L232)
+            - calls [beginTrackFrame](https://github.com/glimmerjs/glimmer-vm/blob/d86274816a21c61fbc82059006fe7687ca17dc7e/packages/%40glimmer/validator/lib/tracking.ts#L58) and the corresponding `endTrackFrame()`
 
 - **render a button with modifier**
     - for demonstration purposes, this phase is skipped in this explanation, as this document is more about auto-tracking, and less so about how elements and event listeners get wired up
@@ -138,7 +139,7 @@ There are a few systems at play for autotracking:
     - **set: count**
         - we dirty the tag [via `@tracked`'s setter](https://github.com/emberjs/ember.js/blob/132b66a768a9cabd461908682ef331f35637d5e9/packages/%40ember/-internals/metal/lib/tracked.ts#L171)
     
-    - `scheduleRevalidate()` is called by `dirtyTag()`, which then defers to ember to call these things:
+    - `scheduleRevalidate()` is called by `dirtyTag()`, which then defers to ember to call these things and interacts with the scheduler:
         - **env.begin**
         - **env.rerender**
         - **read: count**
