@@ -3,6 +3,7 @@ stage: released
 start-date: 2025-01-10T00:00:00.000Z
 release-date:
 release-versions:
+  "@ember/test-waiters": "4.1.0"
 teams:
   - cli
   - data
