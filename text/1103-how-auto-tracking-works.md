@@ -139,7 +139,7 @@ There are a few systems at play for autotracking:
     - **set: count**
         - we dirty the tag [via `@tracked`'s setter](https://github.com/emberjs/ember.js/blob/132b66a768a9cabd461908682ef331f35637d5e9/packages/%40ember/-internals/metal/lib/tracked.ts#L171)
     
-    - `scheduleRevalidate()` is called by `dirtyTag()`, which then defers to ember to call these things and interacts with the scheduler:
+    - `scheduleRevalidate()` is called by `dirtyTag()`, which then defers to ember to call these things and interacts with the scheduler (we go back to step 1):
         - **env.begin**
         - **env.rerender**
         - **read: count**
