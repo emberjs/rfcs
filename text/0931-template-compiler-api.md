@@ -3,6 +3,7 @@ stage: released
 start-date: 2023-05-31T00:00:00.000Z
 release-date:
 release-versions:
+  ember-source: 6.1.0
 teams:
   - cli
   - data
