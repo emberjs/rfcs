@@ -56,6 +56,11 @@ We should consider exposing it as the others. In this case, the transition would
 
 * `obj.has(name)` -> `hasListeners(obj, name)`
 
+## Exploration
+
+To validate this deprecation, I've tried removing the `Evented` Mixin from Ember.js in this PR:
+https://github.com/emberjs/ember.js/pull/20917
+
 ## How We Teach This
 
 In general, I think we should discourage the use of Evented and event handlers as
