@@ -1,15 +1,16 @@
 ---
-stage: accepted
+stage: ready-for-release
 start-date: 2025-01-10T00:00:00.000Z
 release-date:
 release-versions:
-teams: # delete teams that aren't relevant
+teams:
   - cli
   - data
   - framework
   - learning
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1065
+  accepted: 'https://github.com/emberjs/rfcs/pull/1065'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/1081'
 project-link:
 ---
 
@@ -34,20 +35,20 @@ This RFC proposes removing `ember-fetch` from the blueprint for new projects, an
 
 ## Motivation
 
-the package, `ember-fetch`, does a fair bit of deceptive and incorrect behavior that is incompatible with modern JavaScript tooling, such as _being_ `ember-fetch`, yet only importing from `fetch`.
+The package, `ember-fetch`, does a fair bit of deceptive and incorrect behavior that is incompatible with modern JavaScript tooling, such as _being_ `ember-fetch`, yet only importing from `fetch`.
 
 ## Transition Path
 
 - Remove ember-fetch from all blueprints
-- Deprecate the npm package and archieve the github repo.
+- Deprecate the npm package and archive the github repo.
 - Migrate to an alternative for "managed fetch" 
 
 ### What does `ember-fetch` do?
 
-_primarily_, it wraps the native `fetch` in `waitForPromise` from `@ember/test-waiters` (aka "settled state integration").
+_Primarily_, it wraps the native `fetch` in `waitForPromise` from `@ember/test-waiters` (aka "settled state integration").
 
 
-secondarily, but not popularly used, are a series of utilities (e.g.: for checking kinds of errors). These could be copied into projects that use them and modified to fit each project's needs. 
+Secondarily, but not popularly used, are a series of utilities (e.g.: for checking kinds of errors). These could be copied into projects that use them and modified to fit each project's needs. 
 
 ### Using native `fetch`
 
@@ -98,7 +99,7 @@ export function wrappedFetch(...args: Parameters<typeof fetch>) {
 ```
 
 
-And then throughout your project, you could find and replace all imports of `import fetch from 'ember';` with `import { wrappedFetch } from 'app-name/utils/wrapped-fetch';`
+And then throughout your project, you could find and replace all imports of `import fetch from 'fetch';` with `import { wrappedFetch } from 'app-name/utils/wrapped-fetch';`
 
 
 
@@ -135,7 +136,7 @@ Docs available on https://github.com/emberjs/data/
 - Add a deprecation notice to the ember-fetch README
 - Archive the ember-fetch repo
 - Remove ember-fetch from the blueprints
-- Remove ember-fetch  from the guides (only one reference per version)
+- Remove ember-fetch from the guides (only one reference per version)
 
 ## Drawbacks
 
