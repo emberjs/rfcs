@@ -102,7 +102,7 @@ theme = service('theme');
   {{/let}}
   
   {{! Property access }}
-  <div class={{if (service "theme").isDark "dark" "light"}}>
+  <div class={{if (get (service "theme") 'isDark') 'dark' 'light'}}>
     Content here
   </div>
 </template>
