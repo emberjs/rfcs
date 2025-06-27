@@ -6,7 +6,7 @@ release-versions:
 teams: # delete teams that aren't relevant
   - framework
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/1119
 project-link:
 suite: 
 ---
@@ -43,7 +43,7 @@ In Ember 6.7, Vite should become the default experience when generating a new Em
 
 The purpose of the Inspector is to display information about the Ember app running on the page. To do so, it needs to retrieve this information somehow. The architecture involves both the Inspector itself and the inspected Ember app that depends on a version of ember-source:
 
-![A picture of the architecture described in the following paragraph](/images/0000-ember-api-for-inspector.png)
+![A picture of the architecture described in the following paragraph](/images/1119-ember-api-for-inspector.png)
 
 The Inspector (on the right) is composed of two main pieces:
 
