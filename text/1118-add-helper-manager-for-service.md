@@ -75,13 +75,17 @@ export default class extends Component {}
 The `service` export gains helper manager capabilities while preserving existing patterns:
 
 ```js
-// All existing usage unchanged
-@service theme;
-@service('user-preferences') prefs;
-theme = service('theme');
+class {
+  // All existing usage unchanged
+  @service theme;
+  @service('user-preferences') prefs;
+  theme = service('theme');
+}
 ```
 
 ```gjs
+import { service } from '@ember/service';
+
 // New template helper usage
 <template>
   {{! Direct service access with let }}
@@ -111,6 +115,9 @@ theme = service('theme');
 ### Implementation
 
 ```js
+import { service } from '@ember/service';
+
+// roughly:
 class ServiceHelperManager {
   createHelper(state, { positional: [serviceName] }) {
     return { service: getOwner(state).lookup(`service:${serviceName}`) };
@@ -120,6 +127,8 @@ class ServiceHelperManager {
     return service;
   }
 }
+
+setHelperManager(ServiceHelperManager, service);
 ```
 
 ### Template-only Components
@@ -127,6 +136,8 @@ class ServiceHelperManager {
 Perfect for template-only components:
 
 ```gjs
+import { service } from '@ember/service';
+
 <template>
   {{#let (service "cart") as |cart|}}
     <span class="cart-count">{{cart.totalItems}}</span>
@@ -139,6 +150,8 @@ Perfect for template-only components:
 ### Common Patterns
 
 ```gjs
+import { service } from '@ember/service';
+
 <template>
   {{! Service method calls require let }}
   {{#let (service "formatter") as |formatter|}}
@@ -161,6 +174,8 @@ Perfect for template-only components:
 Full type inference:
 
 ```gts
+import { service } from '@ember/service';
+
 <template>
   {{#let (service "theme") as |theme|}}
     {{! TypeScript knows theme is ThemeService }}
