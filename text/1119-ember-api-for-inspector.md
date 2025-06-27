@@ -37,7 +37,7 @@ Define the API Ember should expose to the Ember Inspector (and similar tools) so
 
 The Ember Inspector is a browser extension that extends the capacity of regular debuggers for Ember specifically. It allows developers to inspect their Ember apps and view information like the version of Ember and Ember Data running, the components render tree, the data loaded on the page, the state of the different Ember object instances like services, controllers, routes... It's a practical and popular extension, widely used in the Ember community. Unfortunately, it’s incompatible with modern Ember apps building with Vite.
 
-In Ember 6.7, Vite should become the default experience when generating a new Ember app. To keep the developer experience as qualitative as it is now, it's very important to get the Ember Inspector working. To achieve this, we need to rethink the way `ember.js` exposes the modules used by the Inspector: this is the purpose of this RFC.
+In Ember 6.7, Vite should become the default experience when generating a new Ember app. To keep the developer experience as qualitative as it is now, it's very important to get the Ember Inspector working. To achieve this, we need to rethink how `ember.js` exposes the modules used by the Inspector: this is the purpose of this RFC.
 
 ## Current architecture
 
@@ -60,13 +60,13 @@ In a nutshell, supporting Vite means fixing the bridge between ember-source and 
 
 To fix the interaction between ember-source and ember-inspector, we want to implement changes in both repositories:
 
-- In **ember.js**: we want to implement an API to expose ESM modules from Ember. The exposed moules are those `ember_debug` needs to send relevant information to the Inspector UI. To do so, we want to introduce a new module `@ember/debug/inspector-support.js` that one can include in their Ember app. This module would define a global (e.g. `emberInspectorLoader`) which provides a function that loads the ESM modules.
+- In **ember.js**: we want to implement an API to expose ESM modules from Ember. The exposed modules are those `ember_debug` needs to send relevant information to the Inspector UI. To do so, we want to introduce a new module `@ember/debug/inspector-support.js` that one can include in their Ember app. This module would define a global (e.g. `emberInspectorLoader`) which provides a function that loads the ESM modules.
 
-- In **ember-inspector**: we want to implement the ability for `ember_debug` to import all modules from Ember as ESM modules. This should be done without breaking the previous AMD implementation because the Inspector should keep its current ability to inspect Classic apps built with Ember CLI and Broccoli. To do so, we want to use top-level `await` in a conditional block that would be executed when the AMD modules don't exist. Using top-level `await` implies to emit the `ember_debug` script itself as ESM (This constraint has already been partially answered by a recent refactor of the `ember_debug` build, which now relies on Rollup).
+- In **ember-inspector**: we want to implement the ability for `ember_debug` to import all modules from Ember as ESM modules. This should be done without breaking the previous AMD implementation because the Inspector should keep its current ability to inspect Classic apps built with Ember CLI and Broccoli. To do so, we want to use top-level `await` in a conditional block that would be executed when the AMD modules don't exist. Using top-level `await` implies emitting the `ember_debug` script itself as ESM (This constraint has already been partially answered by a recent refactor of the `ember_debug` build, which now relies on Rollup).
 
 ### Implementation
 
-On the **ember.js** side, a new module would expose a global provinding a `load` function:
+On the **ember.js** side, a new module would expose a global providing a `load` function:
 
 ```js
 globalThis.emberInspectorLoader = {
@@ -79,9 +79,9 @@ globalThis.emberInspectorLoader = {
 }
 ```
 
-Note that having this global variable existing in your app will simply define the `load()` function. Modules loading happen only when the function is executed, and this will happen on the Inspector side (see below). In other words, if it turns out the Inspector requires a few modules that were not yet involed in running the Ember app on the page, they will be loaded only when the developer starts the inspector.
+Note that having this global variable in your app will simply define the `load()` function. Modules will load only when the function is executed, and this will occur on the Inspector side (see below). In other words, if it turns out the Inspector requires a few modules that were not yet involved in running the Ember app on the page, they will be loaded only when the developer starts the inspector.
 
-On the **ember-inspector** side, the file that handles the interactions with ember.js would looks like this:
+On the **ember-inspector** side, the file that handles the interactions with ember.js would look like this:
 
 ```js
 // ember_debug/utils/ember.js
@@ -106,13 +106,13 @@ export {
 ```
 
 - It has a new conditional block to fallback to ESM support.
-- It calls the `globalThis.emberInspectorLoader.load()`, that we made available in the ember.js part.
+- It calls the `globalThis.emberInspectorLoader.load()` that we made available in the ember.js part.
 
 (Note that the approach has been implemented in a proof of concept so we can make sure the Inspector works fine this way. PRs [ember.js#20892](https://github.com/emberjs/ember.js/pull/20892/files) and [ember-inspector#2625](https://github.com/emberjs/ember-inspector/pull/2625/files) allow testing a first iteration of the Vite support when used together.)
 
 ### Detailed API
 
-The detailed API described below reflect what the Ember Inspector uses.
+The detailed API described below reflects what the Ember Inspector uses.
 
 <details>
 
@@ -166,7 +166,7 @@ globalThis.emberInspectorLoader = {
 
 ### Explicit import in the Ember app & polyfill
 
-Using the new `@ember/debug/inspector-support.js` module in a Vite app requires to explicitly import it:
+Using the new `@ember/debug/inspector-support.js` module in a Vite app requires explicitly importing it:
 
 ```js
 // my-ember-app/app/app.[js,ts]
@@ -174,7 +174,7 @@ Using the new `@ember/debug/inspector-support.js` module in a Vite app requires 
 import '@ember/debug/inspector-support';
 ```
 
-This import will become available in the release that includes the implementation presented in the former section. However, Vite support for Ember apps is available back to 3.28. It means that people using Vite from 3.28 to whatever version includes this RFC will have a non-functional inspector. We intend to solve this issue using a polyfil implemented in a dedicated package. If an Ember app relies on a version of ember-source that doesn't include the new API, the import above should be changed to:
+This import will become available in the release that includes the implementation presented in the former section. However, Vite support for Ember apps is available back to 3.28. It means that people using Vite from 3.28 to whatever version includes this RFC will have a non-functional inspector. We intend to solve this issue using a polyfill implemented in a dedicated package. If an Ember app relies on a version of ember-source that doesn't include the new API, the import above should be changed to:
 
 ```js
 // my-ember-app/app/app.[js,ts]
@@ -182,14 +182,14 @@ This import will become available in the release that includes the implementatio
 import '@embroider/inspector-support-polyfill';
 ```
 
-The polyfill will be in charge of providing the script that contains the API. Additionnally:
+The polyfill will be in charge of providing the script that contains the API. Additionally:
 - It will adapt the content to the ember-source version if necessary (e.g We identified a module path which is different in version 4.8 and lower)
-- It will error if the ember-source version includes the new API, and teach developers they should remove the dependency to the polyfill and replace the import with `'@ember/debug/inspector-support`.
+- It will error if the ember-source version includes the new API, and teach developers they should remove the dependency on the polyfill and replace the import with `'@ember/debug/inspector-support`.
 
 ## Related concerns
 
 ### Mixins deprecation
 
-Mixins are currently being deprecated (see #1111 to #1117). However, the detailed API above import mixins. This is because it would be preferable to implement the present RFC before mixins are actually removed. Removing the mixins is a breaking change that would likely be released in Ember 7. On the other hand, Vite could become the default way to build Ember apps from 6.7: having a functional Vite support ready by this time would preserve a good developer experience for people creating new Ember apps.
+Mixins are currently being deprecated (see [#1111 to #1117](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+author%3Awagenet+created%3A%3E2025-06-01+)). However, the detailed API above imports mixins. This is because it would be preferable to implement the present RFC before mixins are actually removed. Removing the mixins is a breaking change that would likely be released in Ember 7. On the other hand, Vite could become the default way to build Ember apps from 6.7: having a functional Vite support ready by this time would preserve a good developer experience for people creating new Ember apps.
 
-Since mixins currently exist, and since the Inspector relies on them to render the correct information, it appears legit to include the mixins in the API. This way, the inspector keeps working correctly in Ember 6 and lower. Therefore, removing the mixins from the API would be part of #1111 to #1117 implementation. With the mixins gone, the Inspector code may require adjustment to display correclty the new without-mixin objects, but this should be ready for the major version that will remove them.
+Since mixins currently exist, and since the Inspector relies on them to render the correct information, it appears legit to include the mixins in the API. This way, the inspector keeps working correctly in Ember 6 and lower. Therefore, removing the mixins from the API would be part of [#1111 to #1117](https://github.com/emberjs/rfcs/pulls?q=is%3Apr+author%3Awagenet+created%3A%3E2025-06-01+) implementation. With the mixins gone, the Inspector code may require adjustments to display correclty the new without-mixin objects, but this should be ready for the major version that will remove them.
