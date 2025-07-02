@@ -90,7 +90,23 @@ The new blueprint makes several key decisions:
 - **Dual Build Systems**: Vite for development (fast rebuilds, HMR) and Rollup for publishing (optimized output, tree-shaking). Each has its own configuration file and Babel setup.
 
 - **Testing**: Integrates with `@ember/test-helpers` and `qunit` for modern testing. Unlike previous blueprints, testing runs entirely through Vite (accessible via the `/tests` URL and CLI), eliminating the need for `ember-auto-import` and webpack for test execution.
-**Defense of Tooling Choices:**
+
+#### Influence on Future V2 App Blueprint
+
+The test architecture in this addon blueprint serves as a prototype for how we envision a future compat-less `@ember/app-blueprint` should work:
+
+- **Vite-First Architecture**: The addon's test setup demonstrates a minimal Ember application running entirely on Vite without any webpack or ember-cli-build.js complexity. This same pattern would be ideal for v2 apps - direct Vite integration with Ember resolver and routing.
+
+- **Minimal Test Application**: The `tests/test-helper.js` creates a bare-bones Ember app using just `EmberApp`, `Resolver`, and `EmberRouter`. This approach eliminates the traditional ember-cli build pipeline and shows how future apps could bootstrap with much less ceremony.
+
+- **Modern Module Resolution**: The test setup uses ES modules and modern imports throughout, avoiding the complex AMD/requirejs patterns of traditional Ember apps. Future v2 apps should follow this same module pattern.
+
+- **Direct Framework Integration**: Rather than going through ember-cli's abstraction layer, the addon tests interact directly with Ember's APIs. This demonstrates the cleaner architectural approach we want for v2 apps - direct framework usage without heavy tooling intermediation.
+
+The success of this addon testing approach validates that Ember applications can run efficiently with modern build tools, paving the way for a simpler, faster app blueprint that matches this architecture.
+
+#### Rationale and Defense of Choices
+
 - **Vite**: Provides the fastest possible development experience with instant rebuilds and hot reloading, significantly improving addon development productivity.
 - **Rollup**: Generates optimized, tree-shakeable output that consuming applications can efficiently bundle.
 - **Dual configs**: Allows development flexibility while ensuring clean, minimal published types.
