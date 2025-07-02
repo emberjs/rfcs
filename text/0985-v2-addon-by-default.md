@@ -17,7 +17,7 @@ suite:
 
 ## Summary
 
-This RFC proposes to make [`ember-addon-blueprint`](https://github.com/emberjs/ember-addon-blueprint) the default blueprint for new Ember addons, replacing the previous v1 and v2 blueprints. The new blueprint is the result of extensive community feedback, real-world usage, and a focus on modern JavaScript, TypeScript, and Ember best practices. It is designed to provide a streamlined, ergonomic, and future-proof starting point for addon authors.
+This RFC proposes to make [`@ember/addon-blueprint`](https://github.com/emberjs/ember-addon-blueprint) the default blueprint for new Ember addons, replacing the previous v1 and v2 blueprints. The new blueprint is the result of extensive community feedback, real-world usage, and a focus on modern JavaScript, TypeScript, and Ember best practices. It is designed to provide a streamlined, ergonomic, and future-proof starting point for addon authors.
 
 ## Motivation
 
@@ -26,7 +26,7 @@ The previous default blueprints (classic v1 and the original v2 via `@embroider/
 - **V1 Addons**: Built by consuming apps on every build, leading to slow builds and complex compatibility issues.
 - **Original V2 Addon Blueprint**: Improved build performance by building at publish time, but required significant manual setup, was monorepo-oriented by default, and lacked ergonomic defaults for modern Ember and TypeScript usage.
 
-The new `ember-addon-blueprint` addresses these issues by:
+The new `@ember/addon-blueprint` addresses these issues by:
 
 - Providing a single-package, non-monorepo structure by default, reducing complexity for most addon authors.
 - Including first-class Glint support with Volar-based tsserver plugins, providing the most TypeScript-like experience possible for Ember templates and components.
@@ -43,7 +43,7 @@ The new blueprint makes several key decisions:
 - **Single-package, non-monorepo by default**: Most addons do not require a monorepo structure. The blueprint generates a single package, but can be extended to monorepo setups if needed.
 - **Glint-enabled**: All source files include Glint configuration by default, leveraging Volar-based tsserver plugins for superior template type checking and IDE integration. This was not available in previous blueprints when opting into TypeScript via `--typescript`.
 - **Modern Ember Patterns**: Uses native classes, decorators, and strict mode. No legacy Ember object model or classic patterns.
-- **Testing**: Integrates with `@ember/test-helpers`, `qunit`, and `ember-auto-import` for modern testing and dependency management.
+- **Testing**: Integrates with `@ember/test-helpers` and `qunit` for modern testing. Unlike previous blueprints, testing runs entirely through Vite (accessible via the `/tests` URL and CLI), eliminating the need for `ember-auto-import` and webpack for test execution.
 - **Linting and Formatting**: Pre-configures `eslint`, `prettier`, and Ember-specific linting rules for code consistency.
 - **Documentation**: Includes a README template and guides for publishing, versioning, and supporting multiple Ember versions.
 - **CI/CD**: Provides a GitHub Actions workflow for testing, linting, and publishing, reducing setup time for new projects.
@@ -51,7 +51,7 @@ The new blueprint makes several key decisions:
 
 #### Rationale and Defense of Choices
 
-- **Non-monorepo default**: Most addons are single packages. Monorepo setups add unnecessary complexity for the majority of users. The blueprint can be extended for monorepos if needed.
+- **Non-monorepo default**: Most addons are single packages. Monorepo setups add unnecessary complexity for the majority of users. However, for those who need monorepo structures (like the old `@embroider/addon-blueprint` pattern), you can simply not use the testing capabilities of the new blueprint and create a separate test application using `@ember/app-blueprint`. This provides the same monorepo benefits while keeping the blueprint focused on the common single-package case.
 - **Glint with Volar**: The Ember ecosystem is moving towards TypeScript, and Glint provides the best template type-checking experience. The Volar-based tsserver plugins deliver a native TypeScript-like IDE experience that was previously unavailable in addon blueprints, enabling superior autocomplete, error detection, and refactoring capabilities in templates.
 - **Modern idioms**: Encourages best practices and prepares addons for future Ember releases.
 - **Pre-configured tooling**: Reduces time spent on setup and avoids common pitfalls, especially for new authors.
@@ -101,17 +101,17 @@ Beyond CI, the blueprint makes several key tooling decisions:
 - Existing addons are not affected.
 - Authors can opt into the new blueprint by running `ember addon <name>` with the latest Ember CLI.
 - The blueprint is versioned and locked to the Ember CLI release, ensuring reproducibility.
+- **Monorepo Migration**: For teams currently using monorepo setups from the old `@embroider/addon-blueprint`, the new pattern involves generating your addon with `@ember/addon-blueprint` (ignoring its test setup) and then using a separate test application via `@ember/app-blueprint` (or other app blueprint). 
 
 ## How we teach this
 
 - The Ember Guides and CLI documentation will be updated to reference the new blueprint.
 - The blueprint README includes detailed instructions for customization, publishing, and supporting multiple Ember versions.
 - Migration guides will be provided for authors of v1 and v2 addons.
-- Key resources:
-  - [ember-addon-blueprint README](https://github.com/emberjs/ember-addon-blueprint#readme)
+- Key resources (so far):
+  - [@ember/addon-blueprint README](https://github.com/emberjs/ember-addon-blueprint#readme)
   - [Addon Author Guide](https://github.com/embroider-build/embroider/blob/main/docs/addon-author-guide.md)
   - [Porting Addons to V2](https://github.com/embroider-build/embroider/blob/main/docs/porting-addons-to-v2.md)
-  - [TypeScript in Ember Addons](https://github.com/emberjs/ember-addon-blueprint/blob/main/docs/typescript.md)
 
 ## Drawbacks
 
