@@ -38,58 +38,58 @@ The new `@ember/addon-blueprint` addresses these issues by:
 
 ### Blueprint Structure and Tooling Choices
 
+The new blueprint generates a well-organized project structure that follows modern Ember and JavaScript conventions:
+
+```
+my-addon/
+├── .github/
+│   └── workflows/
+│       ├── ci.yml                    # Comprehensive CI/CD pipeline
+│       └── push-dist.yml             # Automated dist branch publishing
+├── src/                              # Source code (published)
+│   ├── index.js                      # Main entry point
+│   └── template-registry.ts          # Glint type registry
+├── tests/                            # Test files
+│   ├── index.html                    # Test runner page
+│   └── test-helper.ts                # Test setup and configuration
+├── unpublished-development-types/    # Development-only types
+│   └── index.d.ts                    # Local development type augmentations
+├── dist/                             # Built output (gitignored, published)
+├── declarations/                     # TypeScript declarations (gitignored, published)
+├── package.json                      # Package configuration with modern exports
+├── rollup.config.mjs                 # Production build configuration
+├── vite.config.mjs                   # Development build configuration
+├── tsconfig.json                     # Development TypeScript config
+├── tsconfig.publish.json             # Publishing TypeScript config
+├── babel.config.cjs                  # Development Babel config
+├── babel.publish.config.cjs          # Publishing Babel config
+├── eslint.config.mjs                 # Modern ESLint flat config
+├── .prettierrc.cjs                   # Code formatting configuration
+├── .template-lintrc.cjs              # Template linting rules
+├── testem.cjs                        # Test runner configuration
+├── .try.mjs                          # Ember version compatibility scenarios
+├── .npmrc                            # Package manager configuration
+├── .editorconfig                     # Editor consistency rules
+├── .env.development                  # Development environment variables
+├── README.md                         # Documentation template
+├── CONTRIBUTING.md                   # Contribution guidelines
+├── LICENSE.md                        # MIT license
+└── addon-main.cjs                    # V1 compatibility shim
+```
+
 The new blueprint makes several key decisions:
 
-- **Single-package, non-monorepo by default**: Most addons do not require a monorepo structure. The blueprint generates a single package, but can be extended to monorepo setups if needed.
-- **Glint-enabled**: All source files include Glint configuration by default, leveraging Volar-based tsserver plugins for superior template type checking and IDE integration. This was not available in previous blueprints when opting into TypeScript via `--typescript`.
+- **Single-package, non-monorepo by default**: Most addons do not require a monorepo structure. The blueprint generates a single package with integrated testing, but can be adapted for monorepo setups by ignoring the test infrastructure and creating a separate test application.
+
+- **Source Organization**: The `src/` directory contains all publishable code, while `tests/` contains the test suite. The `unpublished-development-types/` directory provides a space for development-only type augmentations that won't be included in the published package.
+
+- **Glint-enabled**: All source files include Glint configuration by default, leveraging Volar-based tsserver plugins for superior template type checking and IDE integration. The `template-registry.ts` file provides type safety for consuming applications. This was not available in previous blueprints when opting into TypeScript via `--typescript`.
+
 - **Modern Ember Patterns**: Uses native classes, decorators, and strict mode. No legacy Ember object model or classic patterns.
+
+- **Dual Build Systems**: Vite for development (fast rebuilds, HMR) and Rollup for publishing (optimized output, tree-shaking). Each has its own configuration file and Babel setup.
+
 - **Testing**: Integrates with `@ember/test-helpers` and `qunit` for modern testing. Unlike previous blueprints, testing runs entirely through Vite (accessible via the `/tests` URL and CLI), eliminating the need for `ember-auto-import` and webpack for test execution.
-- **Linting and Formatting**: Pre-configures `eslint`, `prettier`, and Ember-specific linting rules for code consistency.
-- **Documentation**: Includes a README template and guides for publishing, versioning, and supporting multiple Ember versions.
-- **CI/CD**: Provides a GitHub Actions workflow for testing, linting, and publishing, reducing setup time for new projects.
-- **Peer Dependencies**: Clearly specifies peer dependencies for Ember and related packages, avoiding version conflicts.
-
-#### Rationale and Defense of Choices
-
-- **Non-monorepo default**: Most addons are single packages. Monorepo setups add unnecessary complexity for the majority of users. However, for those who need monorepo structures (like the old `@embroider/addon-blueprint` pattern), you can simply not use the testing capabilities of the new blueprint and create a separate test application using `@ember/app-blueprint`. This provides the same monorepo benefits while keeping the blueprint focused on the common single-package case.
-- **Glint with Volar**: The Ember ecosystem is moving towards TypeScript, and Glint provides the best template type-checking experience. The Volar-based tsserver plugins deliver a native TypeScript-like IDE experience that was previously unavailable in addon blueprints, enabling superior autocomplete, error detection, and refactoring capabilities in templates.
-- **Modern idioms**: Encourages best practices and prepares addons for future Ember releases.
-- **Pre-configured tooling**: Reduces time spent on setup and avoids common pitfalls, especially for new authors.
-- **CI/CD**: Ensures that all addons start with a robust, modern workflow, improving quality and reliability.
-
-#### CI/CD Workflow Job Analysis and Defense
-
-The blueprint includes a comprehensive GitHub Actions workflow (`.github/workflows/ci.yml`) with several jobs, each serving a specific purpose:
-
-- **Lint Job**: Runs ESLint, Prettier, and template-lint checks to ensure code quality and consistent formatting. This catches style issues early and maintains consistency across contributors. The job uses caching to improve performance and includes both JavaScript/TypeScript and Handlebars template linting.
-
-- **Test Job (Matrix Setup)**: Runs the addon's test suite and generates a matrix of scenarios for compatibility testing. This ensures the addon works correctly and prepares the scenario matrix for broader compatibility testing. The job outputs the matrix for use by the try-scenarios job.
-
-- **Floating Dependencies Job**: Tests the addon against the latest available versions of all dependencies (without lockfile constraints). This catches potential issues with newer dependency versions early and ensures the addon remains compatible as the ecosystem evolves.
-
-- **Try Scenarios Job (Matrix)**: Uses `@embroider/try` to test against multiple Ember versions and dependency combinations defined in `.try.mjs`. This ensures addon compatibility across the supported Ember ecosystem, including LTS versions, latest stable, beta, and alpha releases. Each scenario can include different build modes (like compat builds for older Ember versions).
-
-**Additional CI Features:**
-- **Push Dist Workflow**: Automatically builds and pushes compiled assets to a `dist` branch, enabling easy cross-repository testing and consumption of the addon from Git repositories.
-- **Concurrency Control**: Prevents duplicate CI runs for the same branch/PR, saving resources and providing faster feedback.
-- **Timeout Protection**: Each job has reasonable timeouts to prevent runaway processes from consuming excessive CI resources.
-
-**Rationale**: This comprehensive CI approach ensures addon quality, compatibility, and reliability across the entire Ember ecosystem. The matrix testing strategy catches breaking changes early, while the floating dependencies job helps maintain forward compatibility. The push-dist workflow enables modern development workflows where addons can be consumed directly from Git. This level of CI sophistication was not standard in previous blueprints and often required significant manual setup.
-
-#### Build and Development Tooling Choices
-
-Beyond CI, the blueprint makes several key tooling decisions:
-
-- **Vite for Development**: Uses Vite for fast development builds and testing, providing hot module replacement and modern development experience. The `vite.config.mjs` includes Ember-specific plugins and compat mode support.
-
-- **Rollup for Publishing**: Uses Rollup via `@embroider/addon-dev` for production builds, ensuring optimal bundle sizes and proper ESM output. The `rollup.config.mjs` includes TypeScript declaration generation when TypeScript is enabled.
-
-- **Dual TypeScript Configs**: Separates development (`tsconfig.json`) and publishing (`tsconfig.publish.json`) configurations, allowing different settings for local development versus published types.
-
-- **Modern Test Architecture**: Uses a custom test application setup in `tests/test-helper.js` that provides a minimal Ember app for testing addon functionality without the overhead of a full Ember app structure.
-
-- **Try Scenarios**: The `.try.mjs` file defines comprehensive compatibility testing across multiple Ember versions, including both modern Vite builds and legacy compat builds for older Ember versions.
-
 **Defense of Tooling Choices:**
 - **Vite**: Provides the fastest possible development experience with instant rebuilds and hot reloading, significantly improving addon development productivity.
 - **Rollup**: Generates optimized, tree-shakeable output that consuming applications can efficiently bundle.
