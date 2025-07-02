@@ -882,15 +882,15 @@ Rollup generates optimized, tree-shakeable output that consuming applications ca
 
 ### Migration and Compatibility
 
-Existing addons are not affected by this change. Authors can opt into the new blueprint by running `ember addon <name>` with the latest Ember CLI. The blueprint is versioned and locked to the Ember CLI release, ensuring reproducibility.
+Existing addons are not affected by this change. Authors can opt into the new blueprint already by running `npx ember-cli@latest addon <name> --blueprint @ember/app-blueprint`. The blueprint is versioned and locked to the Ember CLI release, ensuring reproducibility.
 
 **Migration Strategies:**
 
-1. **Greenfield Addons**: New addons can immediately use the new blueprint for optimal development experience
-2. **Existing V1 Addons**: Can migrate incrementally, starting with adopting V2 package format
-3. **Existing V2 Addons**: Can adopt the new tooling setup while maintaining package format compatibility
+**Greenfield Addons**: New addons can immediately use the new blueprint for optimal development experience
 
-The blueprint includes comprehensive documentation and migration guides to support all these scenarios.
+For existing addons there is no need to migrate, however if, after trying the new blueprint, folks like the experience better, they can:
+- For V1 addons, follow the "Porting Addons to V2" guide, or generate a new project and copy relevant files into it.
+- For V2 addons, generate a new project and copy relevant files into it.
 
 
 ## How we teach this
@@ -902,6 +902,8 @@ The blueprint includes comprehensive documentation and migration guides to suppo
   - [@ember/addon-blueprint README](https://github.com/emberjs/ember-addon-blueprint#readme)
   - [Addon Author Guide](https://github.com/embroider-build/embroider/blob/main/docs/addon-author-guide.md)
   - [Porting Addons to V2](https://github.com/embroider-build/embroider/blob/main/docs/porting-addons-to-v2.md)
+
+These will, of course, need to be added to the guides website as well.
 
 ## Drawbacks
 
