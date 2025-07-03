@@ -30,6 +30,9 @@ project-link: Leave as is
 
 This RFC proposes deprecating Ember's application initializers and instance initializers in favor of explicit application lifecycle management. The current initializer system will be replaced with direct access to application and instance objects during the boot process, enabling async/await support and providing more explicit control over application setup.
 
+> [!NOTE] 
+> This RFC assumes usage of the v2 app blueprint, via `@ember/app-blueprint`
+
 ## Motivation
 
 The current initializer system has several limitations that make it difficult to work with in modern JavaScript environments:
@@ -121,6 +124,42 @@ await instance.visit('/');
 console.log(instance);
 ```
 
+### To share initialization with tests
+
+Developers can extract the contents of the script tag to a `boot.ts` or `boot.js`, with the same contents.
+
+> [!DANGER]
+> Since initializers would no longer be tied to the application instance itself, initializers would not normally run during tests.
+
+To have initializers run during tests, a developer would want to edit their in-test-copy of `setupApplicationTest` to run the initializers there, for example:
+
+```ts
+function setupApplicationTest(hooks: NestedHooks, options?: SetupTestOptions) {
+    upstreamSetupApplicationTest(hooks, options);
+
+    hooks.beforeEach(function () {
+        let instance = this.owner;
+        runInstanceInitializer(instance)
+    });
+
+    // Additional setup for application tests can be done here.
+    //
+    // For example, if you need an authenticated session for each
+    // application test, you could do:
+    //
+    // hooks.beforeEach(async function () {
+    //   await authenticateSession(); // ember-simple-auth
+    // });
+    //
+    // This is also a good place to call test setup functions coming
+    // from other addons:
+    //
+    // setupIntl(hooks, 'en-us'); // ember-intl
+    // setupMirage(hooks); // ember-cli-mirage
+}
+```
+
+
 ### Migration Steps for Common Use Cases
 
 #### 1. Service Registration
@@ -204,20 +243,11 @@ await instance.boot();
 await instance.visit('/');
 ```
 
-### Deprecation Timeline
-
-1. **Phase 1**: Emit deprecation warnings when initializers are detected
-2. **Phase 2**: Update Ember CLI blueprints to generate the new pattern
-3. **Phase 3**: Remove support for automatic initializer discovery and execution
-4. **Phase 4**: Remove initializer-related APIs
-
 ### Ecosystem Implications
 
-- **ember-load-initializers**: This addon will be deprecated as initializer discovery will no longer be needed
-- **Lint rules**: eslint-plugin-ember should add rules to detect deprecated initializer patterns
-- **Blueprints**: Ember CLI blueprints should be updated to generate the new explicit pattern
-- **Addon ecosystem**: Addons that provide initializers will need to document the migration path
-- **Testing**: Test helpers that skip initializers can be simplified or removed
+- **ember-load-initializers**: This addon will be README-deprecated as initializer discovery will no longer be needed -- the README will show the new way to run initializers if they are needed.
+- **Blueprints**: Ember CLI blueprints should be updated to remove use of initializers 
+- **Addon ecosystem**: Addons that provide initializers will need to document the migration path -- which is to import the initializer from the addon, and place it in the script tag in the appropriate place.
 
 ## How We Teach This
 
@@ -228,70 +258,22 @@ This change represents a significant shift in how Ember applications are structu
 The "Applications and Instances" section of the guides will need to be rewritten to:
 - Remove documentation for initializers and instance initializers
 - Add comprehensive documentation for explicit application lifecycle management
+  - this is needed anyway because it's not described anywhere
 - Provide migration examples for common initializer patterns
 - Explain the benefits of explicit control and async/await support
 
 ### API Documentation
 
 - Mark initializer-related APIs as deprecated
-- Document the new explicit lifecycle pattern
-- Provide clear examples of the migration path
-
-### Tutorial Updates
-
-New user tutorials should:
-- Show the explicit lifecycle pattern from the beginning
-- Avoid teaching the deprecated initializer concept
-- Emphasize the benefits of explicit control and modern JavaScript patterns
-
-### Blog Posts and Communication
-
-- Publish a detailed blog post explaining the motivation and migration path
-- Create video content showing the migration process
-- Update conference talk materials to reflect the new patterns
 
 ## Drawbacks
 
-### Learning Curve
-
-- Existing Ember developers will need to learn the new explicit pattern
-- The new pattern requires understanding of application lifecycle concepts that were previously hidden
-
-### Migration Effort
-
-- Large applications with many initializers will require significant migration effort
-- Addon authors will need to update their libraries and documentation
-
-### Code Duplication
-
-- Some boilerplate code that was previously hidden in the initializer system will now be explicit in each application
-
-### Ecosystem Fragmentation
-
-- During the transition period, there will be two different patterns in use across the ecosystem
-- Documentation and examples will need to cover both patterns temporarily
+- Large applications with many initializers will require a little migration effort
+- Addon authors will need to update their libraries and documentation -- initializers from addons would no longer run automatically
 
 ## Alternatives
 
-### Option 1: Async Initializer Support
-
-Instead of deprecating initializers, we could add async/await support to the existing system:
-
-```js
-// app/initializers/async-setup.js
-export default {
-  name: 'async-setup',
-  async initialize(application) {
-    let config = await fetchConfigFromServer();
-    application.register('config:remote', config);
-  }
-};
-```
-
-**Pros**: Maintains existing patterns while adding modern async support
-**Cons**: Still maintains the implicit ordering and hidden lifecycle issues
-
-### Option 2: Explicit Initializer Registration
+### Option 1: Explicit Initializer Registration
 
 Keep the initializer concept but require explicit registration:
 
@@ -305,10 +287,10 @@ app.registerInitializer(sessionInitializer);
 app.registerInstanceInitializer(userInitializer);
 ```
 
-**Pros**: Maintains some backwards compatibility while providing explicit control
-**Cons**: Still maintains the complexity of the initializer system
+**Pros**: This is the closest to the existing behavior with the least amount of boilerplate. 
+**Cons**: Still maintains the complexity of the initializer system, and folks that don't use it will still have to pay for its existence. 
 
-### Option 3: Do Nothing
+### Option 2: Do Nothing
 
 Continue with the current initializer system.
 
@@ -317,12 +299,9 @@ Continue with the current initializer system.
 
 ## Unresolved questions
 
-1. **Timing**: What is the exact timeline for each phase of the deprecation?
+n/a
 
-2. **Addon Migration**: How should popular addons that rely heavily on initializers (like ember-simple-auth) handle the migration?
+## References
 
-3. **Development Tools**: Should Ember Inspector be updated to show the explicit lifecycle steps instead of initializer execution?
-
-4. **Testing Patterns**: What testing patterns should be recommended for the new explicit lifecycle approach?
-
-5. **Error Handling**: How should errors in the explicit setup code be handled and reported compared to the current initializer error handling?
+- async initializers were first asked about in [2013](https://discuss.emberjs.com/t/initializers-that-return-promises/2782)  (maybe earlier?)
+- previous RFC was attempted, [RFC#572](https://github.com/emberjs/rfcs/pull/572)
