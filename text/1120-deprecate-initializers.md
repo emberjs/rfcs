@@ -80,7 +80,7 @@ export default {
 
 ### New Explicit Lifecycle Pattern
 
-This would replace the contents of the script tag in the existing `@ember/app-blueprint`:
+This would replace the contents of the script tag in the existing `@ember/app-blueprint`'s index.html:
 ```html
 <script type="module">
   import Application from './app/app';
@@ -95,7 +95,7 @@ However! We will not change the default from the above, as the simple case is th
 > [!IMPORTANT]
 > The above 3 line entrypoint for ember applications will remain the default. This RFC is primarily about updates to documentation showing how we can achieve a new way of "initializers" while also slimming the default experience for new projects.
 
-The new pattern provides explicit control over application lifecycle in the main application entry point:
+The new pattern provides explicit control over application lifecycle in the main application entry point (still within the index.html):
 
 ```js
 import Application from '#app/app.ts';
