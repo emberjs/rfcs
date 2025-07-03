@@ -111,8 +111,7 @@ Resources allow developers to model any stateful process as a reactive value wit
 A **resource** is a reactive function that represents a value with lifecycle and optional cleanup logic. Resources are created using the `resource()` function and automatically manage their lifecycle through Ember's existing destroyable system.
 
 ```js
-import { resource } from '@ember/resources';
-import { cell } from '@glimmer/tracking';
+import { cell, resource } from '@ember/reactive';
 
 const Clock = resource(({ on }) => {
   const time = cell(new Date());
@@ -151,6 +150,8 @@ Resources can be used in several ways:
 
 **1. In Templates (as helpers)**
 ```js
+import { cell, resource } from '@ember/reactive';
+
 const Clock = resource(({ on }) => {
   const time = cell(new Date());
   const timer = setInterval(() => time.set(new Date()), 1000);
@@ -164,7 +165,7 @@ const Clock = resource(({ on }) => {
 
 **2. With the `@use` decorator**
 ```js
-import { use } from '@ember/resources';
+import { use } from '@ember/reactive';
 
 export default class MyComponent extends Component {
   @use clock = Clock;
@@ -172,6 +173,48 @@ export default class MyComponent extends Component {
   <template>Time: {{this.clock}}</template>
 }
 ```
+
+The `@use` decorator is an ergonomic shorthand that automatically invokes any value with a registered helper manager. This means that `Clock` (which has a resource helper manager) gets automatically invoked when accessed, eliminating the need to call it explicitly or access `.current`. This works for resources, but also for any other construct that has registered a helper manager via `setHelperManager` from RFC 625 and RFC 756.
+
+**Convention: Function Wrapping for Clarity**
+
+While `@use clock = Clock` works, assigning a value via `@use` can look unusual since no invocation is apparent. By convention, it's more appropriate to wrap resources in a function so that the invocation site clearly indicates that behavior is happening:
+
+```js
+// Preferred: Clear that invocation/behavior is occurring
+@use clock = Clock()
+
+// Works but less clear: Looks like simple assignment
+@use clock = Clock
+```
+
+This convention makes the code more readable and aligns with the expectation that decorators like `@use` are performing some active behavior rather than passive assignment.
+
+#### Helper Manager Integration and the `@use` Decorator
+
+The `@use` decorator builds upon Ember's existing helper manager infrastructure (RFC 625 and RFC 756) to provide automatic invocation of values with registered helper managers. When a resource is created with `resource()`, it receives a helper manager that makes it invokable in templates and enables the `@use` decorator's automatic behavior.
+
+Here's how it works:
+
+```js
+// A resource has a helper manager registered
+const Clock = resource(({ on }) => {
+  // ... resource implementation
+});
+
+// The @use decorator detects the helper manager and automatically invokes it
+@use clock = Clock; // Equivalent to: clock = Clock()
+
+// Without @use, you need explicit invocation or .current access
+clock = use(this, Clock); // Returns reactive value, need .current
+clock = Clock(); // Direct invocation in template context
+```
+
+The `@use` decorator pattern extends beyond resources to work with any construct that has registered a helper manager. This means that future primitives that integrate with the helper manager system (like certain kinds of computed values, cached functions, or other reactive constructs) will automatically work with `@use` without any changes to the decorator itself.
+
+**Helper Manager vs Direct Invocation:**
+
+When using resources in templates directly (e.g., `{{Clock}}`), the helper manager handles the invocation automatically. The `@use` decorator brings this same ergonomic benefit to class properties, bridging the gap between template usage and class-based usage patterns.
 
 **3. With the `use()` function**
 ```js
@@ -181,6 +224,8 @@ export default class MyComponent extends Component {
   <template>Time: {{this.clock.current}}</template>
 }
 ```
+
+The `use()` function provides manual resource instantiation when you need more control over the lifecycle or want to avoid the automatic invocation behavior of `@use`.
 
 **4. Manual instantiation (for library authors)**
 ```js
@@ -216,9 +261,9 @@ const DataLoader = resource(({ on }) => {
 });
 ```
 
-**`use(resource)`**
+**`use(resource)` - Resource Composition**
 
-Allows composition of resources by consuming other resources with proper lifecycle management:
+The `use()` method within a resource function allows composition of resources by consuming other resources with proper lifecycle management. This is different from the top-level `use()` function and the `@use` decorator:
 
 ```js
 const Now = resource(({ on }) => {
@@ -233,6 +278,56 @@ const FormattedTime = resource(({ use }) => {
   return () => time.current.toLocaleTimeString();
 });
 ```
+
+### Key Differences Between Usage Patterns
+
+**Understanding `@use` as an Ergonomic Shorthand**
+
+The `@use` decorator is fundamentally an ergonomic convenience that builds upon Ember's existing helper manager infrastructure. When you apply `@use` to a property, it doesn't assign the value directly—instead, like `@tracked`, it replaces the property with a getter that provides lazy evaluation and automatic invocation.
+
+```js
+export default class MyComponent extends Component {
+  // This:
+  @use clock = Clock;
+  
+  // Is equivalent to defining a getter that automatically invokes
+  // any value with a registered helper manager:
+  get clock() {
+    // Detect helper manager and invoke automatically
+    if (hasHelperManager(Clock)) {
+      return invokeHelper(this, Clock);
+    }
+    return Clock;
+  }
+}
+```
+
+This getter-based approach enables several key benefits:
+- **Lazy instantiation**: The resource is only created when first accessed
+- **Automatic lifecycle management**: The resource is tied to the component's lifecycle
+- **Transparent integration**: Works seamlessly with any construct that has a helper manager
+
+**`@use` decorator vs resource `use()` vs top-level `use()`:**
+
+1. **`@use` decorator** - An ergonomic shorthand that leverages Ember's helper manager system:
+   - Replaces the property with a getter (like `@tracked`) for lazy access
+   - Automatically invokes values with registered helper managers (RFC 625/756)
+   - Works with resources, but also any construct that has a helper manager
+   - Returns the "unwrapped" value directly (no `.current` needed)
+   - Best for when you want the simplest possible API with automatic lifecycle management
+
+2. **Resource `use()` method** - For resource composition within resource functions:
+   - Available only within the resource function's API object
+   - Manages lifecycle and cleanup of nested resources automatically
+   - Returns a reactive value that can be consumed with `.current`
+   - Essential for building complex resources from simpler ones
+   - Enables hierarchical resource composition with proper cleanup chains
+
+3. **Top-level `use()` function** - For manual control:
+   - Requires explicit owner/context management
+   - Returns a reactive value requiring `.current` access
+   - Useful when you need fine-grained control over instantiation timing
+   - Primarily for library authors or advanced use cases where automatic behavior isn't desired
 
 **`owner`**
 
