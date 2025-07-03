@@ -47,8 +47,6 @@ The current initializer system has several limitations that make it difficult to
 
 4. **Limited access to application state**: Initializers receive only the application or instance object, without access to other important lifecycle information.
 
-5. **Testing complexity**: The automatic execution of initializers during testing requires complex workarounds to avoid side effects.
-
 The replacement functionality provides explicit control over the application lifecycle by allowing developers to write setup code directly in their application entry point, with full access to modern JavaScript async/await patterns.
 
 ## Transition Path
