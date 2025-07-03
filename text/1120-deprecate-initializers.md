@@ -1,13 +1,13 @@
 ---
 stage: accepted
-start-date:
+start-date: 2025-07-02T00:00:00.000Z # In format YYYY-MM-DDT00:00:00.000Z
 release-date:
 release-versions:
 teams: # delete teams that aren't relevant
   - framework
   - learning
 prs:
-  accepted: # update this to the PR that you propose your RFC in
+  accepted: https://github.com/emberjs/rfcs/pull/1120 
 project-link:
 ---
 
@@ -24,7 +24,6 @@ prs:
 project-link: Leave as is
 -->
 
-<-- Replace "RFC title" with the title of your RFC -->
 # Deprecate Application Initializers and Instance Initializers
 
 ## Summary
