@@ -379,6 +379,65 @@ function use<T>(context: object, resource: Resource<T>): ReactiveValue<T>;
 function use<T>(resource: Resource<T>): PropertyDecorator;
 ```
 
+### Relationship to the Cell Primitive
+
+While the `cell` primitive (RFC 1071) is not strictly required for resources to function, resources are significantly more ergonomic and powerful when used together with `cell`. Resources can work with Ember's existing `@tracked` properties, but `cell` provides several advantages:
+
+**Without `cell` (using `@tracked`):**
+```js
+import { resource } from '@ember/reactive';
+import { tracked } from '@glimmer/tracking';
+
+const Clock = resource(({ on }) => {
+  // Must create a separate class to hold tracked state
+  class ClockState {
+    @tracked time = new Date();
+  }
+  
+  const state = new ClockState();
+  
+  const timer = setInterval(() => {
+    state.time = new Date();
+  }, 1000);
+
+  on.cleanup(() => clearInterval(timer));
+
+  return () => state.time;
+});
+
+// Usage requires property access
+<template>Current time: {{Clock}}</template>
+```
+
+**With `cell` (more ergonomic):**
+```js
+import { cell, resource } from '@ember/reactive';
+
+const Clock = resource(({ on }) => {
+  const time = cell(new Date());
+  
+  const timer = setInterval(() => {
+    time.set(new Date());
+  }, 1000);
+
+  on.cleanup(() => clearInterval(timer));
+
+  return time; // Consumer gets the cell directly
+});
+
+// Usage is more direct
+<template>Current time: {{Clock}}</template>
+```
+
+**Key advantages of using `cell` with resources:**
+
+1. **Simpler State Management**: No need to create wrapper classes for tracked properties
+2. **Direct Value Returns**: Resources can return cells directly rather than objects with tracked properties
+3. **Cleaner APIs**: Consumers get more intuitive interfaces without property access
+4. **Better Composition**: Resources that return cells compose more naturally with other resources
+
+While resources provide significant value on their own by solving lifecycle management and cleanup, the combination with `cell` creates a more complete and developer-friendly reactive primitive system.
+
 ### Integration with Existing Systems
 
 **Helper Manager Integration**
@@ -392,6 +451,45 @@ Resources automatically integrate with Ember's destroyable system via `associate
 **Ownership Integration**
 
 Resources receive the owner from their parent context, enabling dependency injection and integration with existing Ember services and systems.
+
+**Relationship to the Cell Primitive**
+
+While this RFC does not strictly depend on the `cell` primitive from RFC 1071, resources become significantly more ergonomic when used together with `cell`. Resources can work with any reactive primitive, including existing `@tracked` properties and `@cached` getters, but `cell` provides several advantages:
+
+1. **Function-based APIs**: Resources are function-based, and `cell` provides a function-based reactive primitive that composes naturally
+2. **Encapsulated state**: Unlike `@tracked` which requires classes, `cell` allows creating reactive state without class overhead
+3. **Immediate updates**: `cell` provides both getter and setter APIs (`cell.current` and `cell.set()`) that work well in resource contexts
+
+Without `cell`, developers would need to either:
+- Use classes with `@tracked` properties (heavier abstraction)
+- Manually manage reactivity with lower-level tracking APIs
+- Return functions from resources that close over mutable state
+
+Example comparison:
+
+```js
+// With cell (ergonomic)
+const Clock = resource(({ on }) => {
+  const time = cell(new Date());
+  const timer = setInterval(() => time.set(new Date()), 1000);
+  on.cleanup(() => clearInterval(timer));
+  return time;
+});
+
+// Without cell (more verbose)
+const Clock = resource(({ on }) => {
+  let currentTime = new Date();
+  const timer = setInterval(() => {
+    currentTime = new Date();
+    // Manual invalidation needed
+  }, 1000);
+  on.cleanup(() => clearInterval(timer));
+  
+  return () => currentTime; // Must return function for reactivity
+});
+```
+
+Therefore, while `cell` is not a hard dependency, implementing both RFCs together would provide the best developer experience.
 
 ### Example Use Cases
 
@@ -462,6 +560,95 @@ The core implementation involves:
 2. Integration with `@glimmer/tracking` for reactivity
 3. Integration with `@ember/destroyable` for cleanup
 4. TypeScript definitions for proper type inference
+
+### Future Rendering Architecture
+
+While not part of this RFC's scope, resources have the potential to serve as a foundation for a future rendering architecture that could eventually replace Glimmer VM. The resource primitive's lifecycle management and reactive cleanup capabilities make it well-suited for managing DOM nodes directly:
+
+```js
+// Hypothetical internal framework implementation
+// (NOT user-facing API - inspired by Starbeam patterns)
+
+const TextNode = resource(({ on }) => {
+  // In practice, text would come from tracked template bindings
+  const textContent = getTrackedContent(); // hypothetical framework API
+  const node = document.createTextNode('');
+  
+  // Update text when reactive content changes
+  textContent.current; // consume for reactivity
+  node.textContent = textContent.current;
+  
+  on.cleanup(() => {
+    if (node.parentNode) {
+      node.parentNode.removeChild(node);
+    }
+  });
+  
+  return {
+    domNode: node,
+    insert: (parent) => parent.appendChild(node)
+  };
+});
+
+const ElementNode = resource(({ on, use }) => {
+  // In practice, element info would come from template compilation
+  const elementSpec = getTrackedElementSpec(); // hypothetical framework API
+  const element = document.createElement(elementSpec.current.tagName);
+  
+  // Handle attributes reactively
+  const attrs = elementSpec.current.attributes;
+  for (const [name, valueCell] of Object.entries(attrs)) {
+    valueCell.current; // consume for reactivity
+    if (valueCell.current !== null) {
+      element.setAttribute(name, String(valueCell.current));
+    } else {
+      element.removeAttribute(name);
+    }
+  }
+  
+  // Compose child resources
+  const childSpecs = elementSpec.current.children;
+  const children = childSpecs.map(childSpec => use(childSpec));
+  children.forEach(child => child.insert(element));
+  
+  on.cleanup(() => {
+    if (element.parentNode) {
+      element.parentNode.removeChild(element);
+    }
+  });
+  
+  return {
+    domNode: element,
+    insert: (parent) => parent.appendChild(element)
+  };
+});
+
+// Template: <div class={{@className}}>{{@message}}</div>
+// Could compile to:
+const CompiledTemplate = resource(({ use }) => {
+  const className = getArgument('className'); // from template compilation
+  const message = getArgument('message');
+  
+  return use(ElementNode.with({
+    tagName: 'div',
+    attributes: { class: className },
+    children: [
+      TextNode.with({ content: message })
+    ]
+  }));
+});
+```
+
+This approach would provide several advantages over traditional virtual DOM or VM-based rendering:
+
+- **Granular Reactivity**: Each DOM node could be individually reactive to its specific tracked dependencies
+- **Automatic Cleanup**: DOM nodes would be automatically removed when their owning resources are destroyed  
+- **Resource Composition**: Complex UI could be built by composing simpler DOM resources using the `use()` method
+- **Memory Efficiency**: No need for a separate virtual DOM layer or intermediate representation
+- **Direct DOM Updates**: Changes could be applied directly to the affected DOM nodes without diffing
+- **Structured Return Values**: Resources can return rich objects (like `{ domNode, insert }`) that provide both the DOM node and methods for composition
+
+This is a long-term architectural possibility that demonstrates the flexibility and power of the resource primitive, though it remains outside the scope of this RFC.
 
 ## How we teach this
 
