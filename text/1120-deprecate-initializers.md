@@ -33,6 +33,8 @@ This RFC proposes deprecating Ember's application initializers and instance init
 > [!NOTE] 
 > This RFC assumes usage of the v2 app blueprint, via `@ember/app-blueprint`
 
+[Here is a demo app](https://github.com/NullVoxPopuli/ember-initializers-demo/commit/f57e30c0cee5e83794fa71961a8d091ededaf292)
+
 ## Motivation
 
 The current initializer system has several limitations that make it difficult to work with in modern JavaScript environments:
