@@ -178,7 +178,7 @@ The `@use` decorator is an ergonomic shorthand that automatically invokes any va
 
 **Convention: Function Wrapping for Clarity**
 
-While `@use clock = Clock` works, assigning a value via `@use` can look unusual since no invocation is apparent. By convention, it's more appropriate to wrap resources in a function so that the invocation site clearly indicates that behavior is happening:
+While `@use clock = Clock` works, assigning a value via `@use` can look unusual since no invocation is apparent. By convention, it's more appropriate to wrap resources in a function so that the invocation site clearly indicates that behavior:
 
 ```js
 // Preferred: Clear that invocation/behavior is occurring
@@ -491,294 +491,641 @@ const Clock = resource(({ on }) => {
 
 Therefore, while `cell` is not a hard dependency, implementing both RFCs together would provide the best developer experience.
 
-### Example Use Cases
+### Advanced Reactive Concepts
 
-**1. Data Fetching**
+Ember's resource primitive embodies several advanced reactivity concepts that position it as a modern, best-in-class reactive abstraction. Understanding these concepts helps developers leverage resources most effectively and appreciate how they fit into the broader reactive ecosystem.
+
+#### Evaluation Models: Lazy by Default, Scheduled When Needed
+
+Resources follow a **lazy evaluation model** by default, meaning they are only created and evaluated when their value is actually consumed. This aligns with the principle that expensive computations should only occur when their results are needed:
+
 ```js
-const RemoteData = resource(({ on }) => {
+const ExpensiveComputation = resource(({ on }) => {
+  console.log('This only runs when accessed'); // Lazy evaluation
+  const result = cell(performExpensiveCalculation());
+  return result;
+});
+
+// Resource not created yet
+@use expensiveData = ExpensiveComputation; 
+
+// Only now is the resource created and evaluated
+<template>{{this.expensiveData}}</template>
+```
+
+However, certain types of resources benefit from **scheduled evaluation**, particularly those that involve side effects or async operations:
+
+```js
+const DataFetcher = resource(({ on }) => {
   const state = cell({ loading: true });
-  const controller = new AbortController();
-
-  on.cleanup(() => controller.abort());
-
-  fetch(this.args.url, { signal: controller.signal })
-    .then(response => response.json())
-    .then(data => state.set({ loading: false, data }))
-    .catch(error => state.set({ loading: false, error }));
-
+  
+  // Side effect happens immediately (scheduled evaluation)
+  // to avoid waterfalls when multiple async resources are composed
+  fetchData().then(data => state.set({ loading: false, data }));
+  
   return state;
 });
 ```
 
-**2. WebSocket Connection**
+This hybrid approach—lazy by default, scheduled when beneficial—provides optimal performance while avoiding common pitfalls like request waterfalls in async scenarios.
+
+#### Reactive Ownership and Automatic Disposal
+
+Resources implement **reactive ownership**, a pattern pioneered by fine-grained reactive systems, which enables automatic memory management without manual disposal:
+
 ```js
-const WebSocketConnection = resource(({ on, owner }) => {
-  const notifications = owner.lookup('service:notifications');
-  const socket = new WebSocket('ws://localhost:8080');
+const ParentResource = resource(({ use, on }) => {
+  // Child resources are automatically owned by parent
+  const child1 = use(SomeChildResource);
+  const child2 = use(AnotherChildResource);
   
-  socket.addEventListener('message', (event) => {
-    notifications.add(JSON.parse(event.data));
+  // When ParentResource is destroyed, all children are automatically cleaned up
+  // This creates a disposal tree similar to component hierarchies
+  
+  return () => ({
+    data1: child1.current,
+    data2: child2.current
   });
-
-  on.cleanup(() => socket.close());
-
-  return () => socket.readyState;
 });
 ```
 
-**3. DOM Event Listeners**
+The ownership model ensures that:
+- **No Memory Leaks**: Child resources are automatically disposed when parents are destroyed
+- **Hierarchical Cleanup**: Disposal propagates down through the resource tree
+- **Automatic Lifecycle**: No manual `willDestroy` or cleanup management needed
+- **Composable Boundaries**: Resources can create isolated ownership scopes
+
+#### Push-Pull Reactivity and Glitch-Free Consistency
+
+Resources participate in Ember's **push-pull reactive system**, which combines the benefits of both push-based (event-driven) and pull-based (demand-driven) reactivity:
+
+```js
+const DerivedValue = resource(({ use }) => {
+  const source1 = use(SourceA);
+  const source2 = use(SourceB);
+  
+  // This derivation is guaranteed to be glitch-free:
+  // When SourceA changes, this won't re-run with stale SourceB data
+  return () => source1.current + source2.current;
+});
+```
+
+**Push Phase**: When tracked data changes, notifications propagate down the dependency graph, marking potentially affected resources as "dirty."
+
+**Pull Phase**: When a value is actually consumed (in templates, effects, etc.), the system pulls fresh values up the dependency chain, ensuring all intermediate values are consistent.
+
+This approach guarantees **glitch-free consistency**—user code never observes intermediate or inconsistent states during reactive updates.
+
+#### Phased Execution and Ember's Rendering Lifecycle
+
+Resources integrate seamlessly with Ember's three-phase execution model:
+
+1. **Pure Phase**: Resource functions run and compute derived values
+2. **Render Phase**: Template rendering consumes resource values
+3. **Post-Render Phase**: Effects and cleanup logic execute
+
+```js
+const UIResource = resource(({ on, use }) => {
+  // PURE PHASE: Calculations and data preparation
+  const data = use(DataSource);
+  const formattedData = () => formatForDisplay(data.current);
+  
+  // RENDER PHASE: Template consumes formattedData
+  
+  // POST-RENDER PHASE: Side effects via cleanup
+  on.cleanup(() => {
+    // Analytics, logging, or other side effects
+    trackResourceUsage('UIResource', data.current);
+  });
+  
+  return formattedData;
+});
+```
+
+This phased approach ensures predictable execution order and enables advanced features like React's concurrent rendering patterns.
+
+#### The Principle: "What Can Be Derived, Should Be Derived"
+
+Resources embody the fundamental reactive principle that **state should be minimized and derived values should be maximized**. This leads to more predictable, testable, and maintainable applications:
+
+```js
+// AVOID: Manual state synchronization
+const BadPattern = resource(({ on }) => {
+  const firstName = cell('John');
+  const lastName = cell('Doe');
+  const fullName = cell(''); // Redundant state!
+  
+  // Manual synchronization - error prone
+  on.cleanup(() => {
+    // Complex logic to keep fullName in sync...
+  });
+  
+  return { firstName, lastName, fullName };
+});
+
+// PREFER: Derived values
+const GoodPattern = resource(() => {
+  const firstName = cell('John');
+  const lastName = cell('Doe');
+  
+  // Derived value - always consistent
+  const fullName = () => `${firstName.current} ${lastName.current}`;
+  
+  return { firstName, lastName, fullName };
+});
+```
+
+Resources make it natural to follow this principle by:
+- **Encouraging functional composition** through the `use()` method
+- **Making derivation explicit** through return values
+- **Automating consistency** through reactive dependencies
+- **Eliminating manual synchronization** through automatic re-evaluation
+
+#### Async Resources and Colorless Async
+
+For async operations, resources support **colorless async**—patterns where async and sync values can be treated uniformly without pervasive `async`/`await` coloring:
+
+```js
+const AsyncData = resource(({ on }) => {
+  const state = cell({ loading: true, data: null, error: null });
+  const controller = new AbortController();
+  
+  on.cleanup(() => controller.abort());
+  
+  fetchData({ signal: controller.signal })
+    .then(data => state.set({ loading: false, data, error: null }))
+    .catch(error => state.set({ loading: false, data: null, error }));
+  
+  return state;
+});
+
+// Usage is the same whether data is sync or async
+const ProcessedData = resource(({ use }) => {
+  const asyncData = use(AsyncData);
+  
+  // No async/await needed - just reactive composition
+  return () => {
+    const { loading, data, error } = asyncData.current;
+    if (loading) return 'Loading...';
+    if (error) return `Error: ${error.message}`;
+    return processData(data);
+  };
+});
+```
+
+This approach avoids the "function coloring problem" where async concerns leak throughout the application, instead containing them within specific resources while maintaining uniform composition patterns.
+
+These advanced concepts work together to make resources not just a convenience feature, but a foundational primitive that enables sophisticated reactive architectures while remaining approachable for everyday use. By implementing these patterns, Ember's resource system positions itself at the forefront of modern reactive programming, providing developers with tools that are both powerful and intuitive.
+
+### .current Collapsing and Function Returns
+
+A key ergonomic feature of resources is **automatic `.current` collapsing** in templates and with the `@use` decorator. When a resource returns a `cell` or reactive value, consumers don't need to manually access `.current`:
+
+```js
+const Time = resource(({ on }) => {
+  const time = cell(new Date());
+  const timer = setInterval(() => time.set(new Date()), 1000);
+  on.cleanup(() => clearInterval(timer));
+  return time; // Returns a cell
+});
+
+// Template usage - .current is automatic
+<template>Current time: {{Time}}</template>
+
+// @use decorator - .current is automatic
+export default class MyComponent extends Component {
+  @use time = Time;
+  
+  <template>Time: {{this.time}}</template> // No .current needed
+}
+
+// Manual usage - .current is explicit
+export default class MyComponent extends Component {
+  time = use(this, Time);
+  
+  <template>Time: {{this.time.current}}</template> // .current needed
+}
+```
+
+**Alternative Pattern: Function Returns**
+
+Resources can also return functions instead of cells, which provides a different composition pattern:
+
+```js
+const FormattedTime = resource(({ use }) => {
+  const time = use(Time);
+  
+  // Return a function that computes the formatted time
+  return () => time.current.toLocaleTimeString();
+});
+
+// Usage is identical regardless of return type
+<template>Formatted: {{FormattedTime}}</template>
+```
+
+Function returns are particularly useful for:
+- **Derived computations** that transform reactive values
+- **Conditional logic** that depends on multiple reactive sources
+- **Complex formatting** or data transformation
+- **Memoization patterns** where you want to control when computation occurs
+
+The choice between returning cells and returning functions depends on whether the resource primarily holds state (use cells) or computes derived values (use functions).
+
+### Example Use Cases
+
+**1. Data Fetching with Modern Async Patterns**
+```js
+const RemoteData = resource(({ on }) => {
+  const state = cell({ loading: true, data: null, error: null });
+  const controller = new AbortController();
+
+  on.cleanup(() => controller.abort());
+
+  // Scheduled evaluation - fetch starts immediately to avoid waterfalls
+  fetch(this.args.url, { signal: controller.signal })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return response.json();
+    })
+    .then(data => state.set({ loading: false, data, error: null }))
+    .catch(error => {
+      // Only update state if the request wasn't aborted
+      if (!controller.signal.aborted) {
+        state.set({ loading: false, data: null, error });
+      }
+    });
+
+  return state;
+});
+
+// Composable data processing - avoids request waterfalls
+const ProcessedData = resource(({ use }) => {
+  const rawData = use(RemoteData);
+  
+  return () => {
+    const { loading, data, error } = rawData.current;
+    
+    if (loading) return { status: 'loading' };
+    if (error) return { status: 'error', message: error.message };
+    
+    return {
+      status: 'success',
+      processedData: data.map(item => ({
+        ...item,
+        timestamp: new Date(item.createdAt).toLocaleDateString()
+      }))
+    };
+  };
+});
+```
+
+**2. WebSocket Connection with Reactive State Management**
+```js
+const WebSocketConnection = resource(({ on, owner }) => {
+  const notifications = owner.lookup('service:notifications');
+  const connectionState = cell({ 
+    status: 'connecting',
+    lastMessage: null,
+    errorCount: 0 
+  });
+  
+  const socket = new WebSocket('ws://localhost:8080');
+  
+  socket.addEventListener('open', () => {
+    connectionState.set({ 
+      status: 'connected', 
+      lastMessage: null, 
+      errorCount: 0 
+    });
+  });
+  
+  socket.addEventListener('message', (event) => {
+    const message = JSON.parse(event.data);
+    connectionState.set({
+      ...connectionState.current,
+      lastMessage: message,
+      status: 'connected'
+    });
+    notifications.add(message);
+  });
+  
+  socket.addEventListener('error', () => {
+    const current = connectionState.current;
+    connectionState.set({
+      ...current,
+      status: 'error',
+      errorCount: current.errorCount + 1
+    });
+  });
+  
+  socket.addEventListener('close', () => {
+    connectionState.set({
+      ...connectionState.current,
+      status: 'disconnected'
+    });
+  });
+
+  on.cleanup(() => {
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.close();
+    }
+  });
+
+  return connectionState;
+});
+```
+
+**3. Reactive DOM Event Handling with Debouncing**
 ```js
 const WindowSize = resource(({ on }) => {
   const size = cell({
     width: window.innerWidth,
-    height: window.innerHeight
+    height: window.innerHeight,
+    aspectRatio: window.innerWidth / window.innerHeight
   });
 
-  const updateSize = () => size.set({
-    width: window.innerWidth,
-    height: window.innerHeight
-  });
+  // Debounced update to avoid excessive re-renders
+  let timeoutId;
+  const updateSize = () => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      size.set({
+        width,
+        height,
+        aspectRatio: width / height
+      });
+    }, 150);
+  };
 
-  window.addEventListener('resize', updateSize);
-  on.cleanup(() => window.removeEventListener('resize', updateSize));
+  window.addEventListener('resize', updateSize, { passive: true });
+  
+  on.cleanup(() => {
+    window.removeEventListener('resize', updateSize);
+    clearTimeout(timeoutId);
+  });
 
   return size;
 });
-```
 
-### Implementation Notes
-
-The implementation will build upon Ember's existing infrastructure:
-
-- **Helper Manager**: Resources use the existing helper manager system for template integration
-- **Destroyable System**: Automatic lifecycle management through existing destroyable primitives
-- **Tracking System**: Resources participate in Glimmer's autotracking system
-- **Owner System**: Resources receive owners for dependency injection
-
-The core implementation involves:
-1. A helper manager that creates and manages resource instances
-2. Integration with `@glimmer/tracking` for reactivity
-3. Integration with `@ember/destroyable` for cleanup
-4. TypeScript definitions for proper type inference
-
-### Future Rendering Architecture
-
-While not part of this RFC's scope, resources have the potential to serve as a foundation for a future rendering architecture that could eventually replace Glimmer VM. The resource primitive's lifecycle management and reactive cleanup capabilities make it well-suited for managing DOM nodes directly:
-
-```js
-// Hypothetical internal framework implementation
-// (NOT user-facing API - inspired by Starbeam patterns)
-
-const TextNode = resource(({ on }) => {
-  // In practice, text would come from tracked template bindings
-  const textContent = getTrackedContent(); // hypothetical framework API
-  const node = document.createTextNode('');
+// Derived breakpoint resource
+const BreakpointInfo = resource(({ use }) => {
+  const windowSize = use(WindowSize);
   
-  // Update text when reactive content changes
-  textContent.current; // consume for reactivity
-  node.textContent = textContent.current;
-  
-  on.cleanup(() => {
-    if (node.parentNode) {
-      node.parentNode.removeChild(node);
-    }
-  });
-  
-  return {
-    domNode: node,
-    insert: (parent) => parent.appendChild(node)
+  return () => {
+    const { width } = windowSize.current;
+    
+    if (width < 768) return { breakpoint: 'mobile', isMobile: true };
+    if (width < 1024) return { breakpoint: 'tablet', isMobile: false };
+    return { breakpoint: 'desktop', isMobile: false };
   };
 });
+```
 
-const ElementNode = resource(({ on, use }) => {
-  // In practice, element info would come from template compilation
-  const elementSpec = getTrackedElementSpec(); // hypothetical framework API
-  const element = document.createElement(elementSpec.current.tagName);
+### Best Practices and Patterns
+
+#### Resource Composition Patterns
+
+**Hierarchical Composition**: Build complex resources from simpler ones using reactive ownership:
+
+```js
+const UserSession = resource(({ use, owner }) => {
+  const auth = owner.lookup('service:auth');
+  const currentUser = use(CurrentUser);
+  const preferences = use(UserPreferences);
   
-  // Handle attributes reactively
-  const attrs = elementSpec.current.attributes;
-  for (const [name, valueCell] of Object.entries(attrs)) {
-    valueCell.current; // consume for reactivity
-    if (valueCell.current !== null) {
-      element.setAttribute(name, String(valueCell.current));
-    } else {
-      element.removeAttribute(name);
-    }
-  }
-  
-  // Compose child resources
-  const childSpecs = elementSpec.current.children;
-  const children = childSpecs.map(childSpec => use(childSpec));
-  children.forEach(child => child.insert(element));
-  
-  on.cleanup(() => {
-    if (element.parentNode) {
-      element.parentNode.removeChild(element);
-    }
+  return () => ({
+    user: currentUser.current,
+    preferences: preferences.current,
+    isAdmin: auth.hasRole('admin', currentUser.current)
   });
-  
-  return {
-    domNode: element,
-    insert: (parent) => parent.appendChild(element)
-  };
 });
 
-// Template: <div class={{@className}}>{{@message}}</div>
-// Could compile to:
-const CompiledTemplate = resource(({ use }) => {
-  const className = getArgument('className'); // from template compilation
-  const message = getArgument('message');
+const CurrentUser = resource(({ on, owner }) => {
+  const session = owner.lookup('service:session');
+  const userData = cell(session.currentUser);
   
-  return use(ElementNode.with({
-    tagName: 'div',
-    attributes: { class: className },
-    children: [
-      TextNode.with({ content: message })
-    ]
-  }));
+  const handleUserChange = () => userData.set(session.currentUser);
+  session.on('userChanged', handleUserChange);
+  on.cleanup(() => session.off('userChanged', handleUserChange));
+  
+  return userData;
 });
 ```
 
-This approach would provide several advantages over traditional virtual DOM or VM-based rendering:
-
-- **Granular Reactivity**: Each DOM node could be individually reactive to its specific tracked dependencies
-- **Automatic Cleanup**: DOM nodes would be automatically removed when their owning resources are destroyed  
-- **Resource Composition**: Complex UI could be built by composing simpler DOM resources using the `use()` method
-- **Memory Efficiency**: No need for a separate virtual DOM layer or intermediate representation
-- **Direct DOM Updates**: Changes could be applied directly to the affected DOM nodes without diffing
-- **Structured Return Values**: Resources can return rich objects (like `{ domNode, insert }`) that provide both the DOM node and methods for composition
-
-This is a long-term architectural possibility that demonstrates the flexibility and power of the resource primitive, though it remains outside the scope of this RFC.
-
-## How we teach this
-
-### Terminology and Naming
-
-The term **"resource"** was chosen because:
-
-1. It accurately describes something that requires management (like memory, network connections, timers)
-2. It's already familiar to developers from other contexts (system resources, web resources)
-3. It emphasizes the lifecycle aspect - resources are acquired and must be cleaned up
-4. It unifies existing concepts without deprecating them
-
-**Key terms:**
-- **Resource**: A reactive function that manages a stateful process with cleanup
-- **Resource Function**: The function passed to `resource()` that defines the behavior
-- **Resource Instance**: The instantiated resource tied to a specific owner
-- **Resource API**: The object passed to resource functions containing `on`, `use`, and `owner`
-
-### Teaching Strategy
-
-**1. Progressive Enhancement of Existing Patterns**
-
-Introduce resources as a natural evolution of patterns developers already know:
+**Parallel Data Loading**: Avoid waterfalls by composing resources that fetch independently:
 
 ```js
-// Familiar pattern
-export default class extends Component {
-  @tracked time = new Date();
-  
-  constructor() {
-    super(...arguments);
-    this.timer = setInterval(() => {
-      this.time = new Date();
-    }, 1000);
-  }
-  
-  willDestroy() {
-    clearInterval(this.timer);
-  }
-}
-
-// Resource pattern
-const Clock = resource(({ on }) => {
-  const time = cell(new Date());
-  const timer = setInterval(() => time.set(new Date()), 1000);
-  on.cleanup(() => clearInterval(timer));
-  return time;
-});
-```
-
-**2. Emphasize Problem-Solution Fit**
-
-Lead with the problems resources solve:
-- "Have you ever forgotten to clean up a timer?"
-- "Want to reuse this data loading logic across components?"
-- "Need to test stateful logic without rendering components?"
-
-**3. Start with Simple Examples**
-
-Begin with straightforward use cases before introducing composition:
-
-```js
-// Start here: Simple timer
-const Timer = resource(({ on }) => {
-  let count = cell(0);
-  let timer = setInterval(() => count.set(count.current + 1), 1000);
-  on.cleanup(() => clearInterval(timer));
-  return count;
-});
-
-// Then: Data fetching
-const UserData = resource(({ on }) => {
-  // ... fetch logic
-});
-
-// Finally: Composition
-const Dashboard = resource(({ use }) => {
-  const timer = use(Timer);
+const DashboardData = resource(({ use }) => {
+  // All three resources start fetching in parallel
   const userData = use(UserData);
-  return () => ({ time: timer.current, user: userData.current });
+  const analytics = use(AnalyticsData);
+  const notifications = use(NotificationData);
+  
+  return () => ({
+    user: userData.current,
+    analytics: analytics.current,
+    notifications: notifications.current,
+    // Derived state based on all three
+    hasUnreadNotifications: notifications.current.unreadCount > 0
+  });
 });
 ```
 
-### Documentation Strategy
+#### Error Handling and Resilience
 
-**Ember Guides Updates**
+**Graceful Degradation**: Design resources to handle errors gracefully:
 
-1. **New Section**: "Working with Resources"
-   - When to use resources vs components/services/helpers
-   - Basic patterns and examples
-   - Composition and testing
+```js
+const ResilientDataLoader = resource(({ on }) => {
+  const state = cell({ 
+    status: 'loading',
+    data: null,
+    error: null,
+    retryCount: 0 
+  });
+  
+  const maxRetries = 3;
+  const backoffDelay = (attempt) => Math.min(1000 * Math.pow(2, attempt), 10000);
+  
+  const fetchWithRetry = async (attempt = 0) => {
+    try {
+      const response = await fetch('/api/critical-data');
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      
+      const data = await response.json();
+      state.set({ status: 'success', data, error: null, retryCount: attempt });
+    } catch (error) {
+      if (attempt < maxRetries) {
+        const delay = backoffDelay(attempt);
+        setTimeout(() => fetchWithRetry(attempt + 1), delay);
+        state.set({ 
+          status: 'retrying', 
+          data: null, 
+          error, 
+          retryCount: attempt + 1 
+        });
+      } else {
+        state.set({ status: 'failed', data: null, error, retryCount: attempt });
+      }
+    }
+  };
+  
+  fetchWithRetry();
+  
+  return state;
+});
+```
 
-2. **Enhanced Sections**: 
-   - Update "Managing Application State" to include resources
-   - Add resource examples to "Handling User Interaction"
-   - Include resource patterns in "Working with Data"
+#### Performance Optimization
 
-**API Documentation**
+**Lazy Evaluation for Expensive Operations**:
 
-- Complete API reference for `resource()`, `use()`, and ResourceAPI
-- TypeScript definitions with comprehensive JSDoc comments
-- Interactive examples for each major use case
+```js
+const ExpensiveComputation = resource(({ use }) => {
+  const sourceData = use(SourceData);
+  
+  // Use function return to defer computation until needed
+  return () => {
+    const data = sourceData.current;
+    
+    // Only compute when actually accessed
+    if (data.status !== 'success') {
+      return { status: data.status };
+    }
+    
+    return {
+      status: 'computed',
+      result: performExpensiveAnalysis(data.data)
+    };
+  };
+});
+```
 
-**Migration Guides**
+**Memoization for Stable Results**:
 
-- How to convert class-based helpers to resources
-- Converting component lifecycle patterns to resources
-- When to use resources vs existing patterns
+```js
+const MemoizedProcessor = resource(({ use }) => {
+  const input = use(InputData);
+  let lastInput = null;
+  let cachedResult = null;
+  
+  return () => {
+    const currentInput = input.current;
+    
+    // Memoize based on input identity/equality
+    if (currentInput !== lastInput) {
+      lastInput = currentInput;
+      cachedResult = expensiveProcessing(currentInput);
+    }
+    
+    return cachedResult;
+  };
+});
+```
 
-### Learning Materials
+#### Testing Patterns
 
-**Blog Posts and Tutorials**
-- "Introducing Resources: A New Reactive Primitive"
-- "Converting from Class Helpers to Resources"
-- "Building Reusable Data Loading with Resources"
-- "Testing Resources in Isolation"
+**Resource Testing in Isolation**:
 
-**Interactive Tutorials**
-- Ember Tutorial additions demonstrating resource usage
-- Playground examples for common patterns
-- Step-by-step conversion guides
+```js
+import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
+import { cell } from '@ember/reactive';
 
-### Integration with Existing Learning
+module('Unit | Resource | timer', function(hooks) {
+  setupTest(hooks);
 
-Resources complement existing Ember concepts rather than replacing them:
+  test('timer updates every second', async function(assert) {
+    const TestTimer = resource(({ on }) => {
+      const time = cell(new Date('2023-01-01T00:00:00'));
+      let interval = 0;
+      
+      const timer = setInterval(() => {
+        interval += 1000;
+        time.set(new Date('2023-01-01T00:00:00').getTime() + interval);
+      }, 100); // Faster for testing
+      
+      on.cleanup(() => clearInterval(timer));
+      return time;
+    });
 
-- **Components**: Still the primary UI abstraction, now with better tools for managing stateful logic
-- **Services**: Still used for app-wide shared state, resources handle localized stateful processes
-- **Helpers**: Resources can serve as stateful helpers, while pure functions remain as regular helpers
-- **Modifiers**: Resources can encapsulate modifier-like behavior with better composition
+    const instance = TestTimer.create();
+    instance.link(this.owner);
+    
+    const initialTime = instance.current.current;
+    
+    await new Promise(resolve => setTimeout(resolve, 250));
+    
+    const laterTime = instance.current.current;
+    assert.ok(laterTime > initialTime, 'Timer advances');
+    
+    instance.destroy();
+  });
+});
+```
+
+#### Integration Patterns
+
+**Service Integration**:
+
+```js
+const ServiceAwareResource = resource(({ owner }) => {
+  const session = owner.lookup('service:session');
+  const router = owner.lookup('service:router');
+  const store = owner.lookup('service:store');
+  
+  // Resource can depend on and coordinate multiple services
+  return () => ({
+    currentUser: session.currentUser,
+    currentRoute: router.currentRouteName,
+    // Reactive query based on current context
+    relevantData: store.query('item', {
+      userId: session.currentUser?.id,
+      route: router.currentRouteName
+    })
+  });
+});
+```
+
+**Cross-Resource Communication**:
+
+```js
+const NotificationBus = resource(({ on }) => {
+  const subscribers = cell(new Map());
+  const messages = cell([]);
+  
+  const subscribe = (id, callback) => {
+    const current = subscribers.current;
+    const newMap = new Map(current);
+    newMap.set(id, callback);
+    subscribers.set(newMap);
+  };
+  
+  const publish = (message) => {
+    messages.set([...messages.current, message]);
+    
+    // Notify all subscribers
+    subscribers.current.forEach(callback => {
+      callback(message);
+    });
+  };
+  
+  const unsubscribe = (id) => {
+    const current = subscribers.current;
+    const newMap = new Map(current);
+    newMap.delete(id);
+    subscribers.set(newMap);
+  };
+  
+  return { subscribe, publish, unsubscribe, messages };
+});
+```
+
+These patterns demonstrate how resources can be composed to build sophisticated reactive architectures while maintaining clarity, testability, and performance.
 
 ## Drawbacks
 
@@ -786,7 +1133,11 @@ Resources complement existing Ember concepts rather than replacing them:
 
 **Additional Abstraction**: Resources introduce a new primitive that developers must learn. While they simplify many patterns, they add to the initial cognitive load for new Ember developers.
 
+**Advanced Reactive Concepts**: Resources embody sophisticated reactivity concepts (push-pull evaluation, reactive ownership, lazy vs scheduled evaluation) that may be overwhelming for developers new to reactive programming.
+
 **Multiple Ways to Do Things**: Resources provide another way to manage state and side effects, potentially creating confusion about when to use components vs. services vs. resources.
+
+**Mental Model Shifts**: Developers must learn to think in terms of "what can be derived, should be derived" and understand concepts like glitch-free consistency and automatic ownership disposal.
 
 ### Performance Considerations
 
@@ -905,11 +1256,200 @@ Continue with current patterns and encourage better use of existing primitives.
 **Pros**: No additional complexity or learning curve
 **Cons**: Doesn't solve the identified problems, perpetuates scattered lifecycle management
 
+## How we teach this
+
+### Terminology and Naming
+
+The term **"resource"** was chosen because:
+
+1. It accurately describes something that requires management (like memory, network connections, timers)
+2. It's already familiar to developers from other contexts (system resources, web resources)
+3. It emphasizes the lifecycle aspect - resources are acquired and must be cleaned up
+4. It unifies existing concepts without deprecating them
+
+**Key terms:**
+- **Resource**: A reactive function that manages a stateful process with cleanup
+- **Resource Function**: The function passed to `resource()` that defines the behavior
+- **Resource Instance**: The instantiated resource tied to a specific owner
+- **Resource API**: The object passed to resource functions containing `on`, `use`, and `owner`
+
+### Teaching Strategy
+
+**1. Progressive Enhancement of Existing Patterns**
+
+Introduce resources as a natural evolution of patterns developers already know:
+
+```js
+// Familiar pattern - manual lifecycle management
+export default class extends Component {
+  @tracked time = new Date();
+  
+  constructor() {
+    super(...arguments);
+    this.timer = setInterval(() => {
+      this.time = new Date();
+    }, 1000);
+  }
+  
+  willDestroy() {
+    clearInterval(this.timer);
+  }
+}
+
+// Resource pattern - automatic lifecycle management
+const Clock = resource(({ on }) => {
+  const time = cell(new Date());
+  const timer = setInterval(() => time.set(new Date()), 1000);
+  on.cleanup(() => clearInterval(timer));
+  return time;
+});
+```
+
+**2. Emphasize Modern Reactive Principles**
+
+Lead with the foundational principles that make resources powerful:
+
+- **"What can be derived, should be derived"**: Minimize state, maximize derivation
+- **Automatic cleanup**: No more manual lifecycle management
+- **Glitch-free consistency**: Never observe inconsistent intermediate states
+- **Lazy by default**: Expensive operations only run when needed
+- **Composable ownership**: Resources clean up their children automatically
+
+**3. Start with Simple Examples, Build to Advanced Patterns**
+
+```js
+// Level 1: Basic resource with cleanup
+const SimpleTimer = resource(({ on }) => {
+  let count = cell(0);
+  let timer = setInterval(() => count.set(count.current + 1), 1000);
+  on.cleanup(() => clearInterval(timer));
+  return count;
+});
+
+// Level 2: Async data fetching
+const UserData = resource(({ on }) => {
+  const state = cell({ loading: true });
+  const controller = new AbortController();
+  
+  fetch('/api/user', { signal: controller.signal })
+    .then(r => r.json())
+    .then(data => state.set({ loading: false, data }));
+    
+  on.cleanup(() => controller.abort());
+  return state;
+});
+
+// Level 3: Resource composition and derivation
+const Dashboard = resource(({ use }) => {
+  const timer = use(SimpleTimer);
+  const userData = use(UserData);
+  
+  // Derived state - always consistent, no manual synchronization
+  return () => ({
+    uptime: timer.current,
+    user: userData.current,
+    // This derivation is glitch-free
+    greeting: userData.current.loading 
+      ? 'Loading...' 
+      : `Welcome back, ${userData.current.data.name}!`
+  });
+});
+```
+
+**4. Address Common Mental Models**
+
+Help developers understand how resources differ from familiar patterns:
+
+| Pattern | Manual Management | Resource Approach |
+|---------|------------------|-------------------|
+| Component lifecycle | Split setup/cleanup across hooks | Co-located in single function |
+| Data synchronization | Manual effects and state updates | Automatic derivation |
+| Error boundaries | Try/catch in multiple places | Centralized error handling |
+| Memory management | Manual cleanup tracking | Automatic ownership disposal |
+| Testing | Complex component setup | Isolated resource testing |
+
+### Documentation Strategy
+
+**Ember Guides Updates**
+
+1. **New Section**: "Working with Resources"
+   - When to use resources vs components/services/helpers
+   - Reactive principles and best practices
+   - Composition patterns and testing
+
+2. **Enhanced Sections**: 
+   - Update "Managing Application State" to include resource patterns
+   - Add resource examples to "Handling User Interaction"
+   - Include advanced reactive concepts in "Data Flow and Reactivity"
+
+**API Documentation**
+
+- Complete API reference for `resource()`, `use()`, and ResourceAPI
+- TypeScript definitions with comprehensive JSDoc comments
+- Interactive examples for each major use case
+- Performance guidelines and best practices
+
+**Migration Guides**
+
+- How to convert class-based helpers to resources
+- Converting component lifecycle patterns to resources
+- When to use resources vs existing patterns
+- Advanced patterns: async resources, error handling, composition
+
+### Learning Materials
+
+**Blog Posts and Tutorials**
+- "Introducing Resources: Modern Reactive Architecture for Ember"
+- "From Manual Cleanup to Automatic Ownership: Resource Lifecycle Management"
+- "Building Robust Async Resources: Error Handling and Resilience Patterns"
+- "Resource Composition: Building Complex Logic from Simple Parts"
+- "Testing Resources: Isolation, Mocking, and Integration Patterns"
+
+**Interactive Tutorials**
+- Ember Tutorial additions demonstrating resource usage
+- Playground examples for common reactive patterns
+- Step-by-step migration guides with working examples
+- Advanced composition and async pattern workshops
+
+### Integration with Existing Learning
+
+Resources complement and enhance existing Ember concepts:
+
+- **Components**: Still the primary UI abstraction, now with better tools for managing stateful logic
+- **Services**: Still used for app-wide shared state, resources handle localized stateful processes
+- **Helpers**: Resources can serve as stateful helpers, while pure functions remain as regular helpers
+- **Modifiers**: Resources can encapsulate modifier-like behavior with better composition
+- **Tracked Properties**: Resources work with `@tracked`, but `cell` provides more ergonomic patterns
+
+### Advanced Concepts Introduction
+
+Once developers are comfortable with basic resource usage, introduce advanced reactive concepts:
+
+1. **Push-Pull Reactivity**: How resources participate in Ember's reactive system
+2. **Lazy vs Scheduled Evaluation**: When and why resources evaluate
+3. **Glitch-Free Consistency**: Why derived state is always coherent
+4. **Ownership and Disposal**: How automatic cleanup prevents memory leaks
+5. **Async Patterns**: Colorless async and avoiding request waterfalls
+
+These concepts position Ember's resource system as a modern, best-in-class reactive architecture while remaining approachable for everyday development.
+
 ## Unresolved questions
 
 ### Future Synchronization API
 
 While this RFC focuses on the core resource primitive, a future `on.sync` API (similar to what Starbeam provides) could enable even more powerful reactive patterns. However, this is explicitly out of scope for this RFC to keep the initial implementation focused and stable.
+
+### Async Resource Patterns
+
+Should resources support first-class async primitives (like `createAsync` from the dev.to articles) that throw promises for unresolved values? This could enable "colorless async" patterns where async and sync resources compose uniformly, but it would require significant integration with Ember's rendering system.
+
+### Scheduling and Evaluation Strategies
+
+Should resources provide explicit control over evaluation timing (immediate vs lazy vs scheduled)? While the current design uses lazy evaluation by default, certain patterns (like data fetching) might benefit from immediate or scheduled evaluation modes.
+
+### Error Boundaries and Resource Hierarchies
+
+How should errors in parent resources affect child resources? Should there be automatic error boundary mechanisms, or should error handling remain explicit through resource return values?
 
 ### Integration with Strict Mode and Template Imports
 
