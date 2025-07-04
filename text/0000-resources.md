@@ -21,13 +21,13 @@ Resources are a reactive primitive that enables managing stateful processes with
 
 ## Motivation
 
-Ember's current Octane programming model provides excellent primitives for reactive state (`@tracked`), declarative rendering (templates), and component lifecycle, but it lacks a unified primitive for managing stateful processes that need cleanup. This gap leads to several problems:
+Ember's current Octane programming model provides excellent primitives for reactive state (`@tracked`), declarative rendering (templates), and component lifecycle, but it lacks a unified primitive for managing stateful processes that need cleanup. This fragmentation has created a complex ecosystem where different concepts each require their own approach to lifecycle management, leading to scattered patterns and cognitive overhead.
 
-### Current Pain Points
+### The Fragmented Landscape of Lifecycle Management
 
-**1. Scattered Lifecycle Management**
-Today, managing stateful processes requires spreading setup and cleanup across component lifecycle hooks:
+Today, Ember developers must navigate multiple, disconnected systems for managing setup and teardown:
 
+**Components** use lifecycle hooks like `willDestroy()`:
 ```js
 export default class TimerComponent extends Component {
   @tracked time = new Date();
@@ -35,74 +35,339 @@ export default class TimerComponent extends Component {
 
   constructor() {
     super(...arguments);
-    this.timer = setInterval(() => {
-      this.time = new Date();
-    }, 1000);
+    this.timer = setInterval(() => this.time = new Date(), 1000);
   }
 
   willDestroy() {
-    if (this.timer) {
-      clearInterval(this.timer);
-    }
+    if (this.timer) clearInterval(this.timer); // Easy to forget!
   }
 }
 ```
 
-This pattern has several issues:
-- Setup and cleanup logic are separated across the component lifecycle
-- It's easy to forget cleanup, leading to memory leaks
-- The logic is tied to component granularity
-- Testing requires instantiating entire components
+**Modifiers** require implementing `destroyModifier()` in their manager:
+```js
+class OnModifier extends Modifier {
+  constructor() {
+    super(...arguments);
+    registerDestructor(this, cleanup); // Different pattern entirely
+  }
+  
+  modify(element, [event, handler]) {
+    this.addEventListener(element, event, handler);
+  }
+}
+```
 
-**2. Reactive Cleanup Complexity**
-When tracked data changes, manually managing cleanup of dependent processes is error-prone:
+**Helpers** split between class-based and function-based approaches with no built-in cleanup:
+```js
+export default class DataHelper extends Helper {
+  willDestroy() {
+    this.abortController?.abort(); // Another lifecycle hook
+  }
+}
 
+// Function helpers have no cleanup mechanism at all
+export default helper(() => {
+  // No way to clean up side effects!
+});
+```
+
+**Services** rely on manual `willDestroy()` but have singleton lifecycle issues:
+```js
+export default class WebSocketService extends Service {
+  willDestroy() {
+    this.socket?.close(); // Only called on app teardown
+  }
+}
+```
+
+**Library authors** must patch `willDestroy()` methods, leading to complex instrumentation:
+```js
+// From ember-concurrency's approach
+function patchWillDestroy(obj) {
+  let oldWillDestroy = obj.willDestroy;
+  obj.willDestroy = function() {
+    if (oldWillDestroy) oldWillDestroy.call(this);
+    teardownTasks(this);
+  };
+}
+```
+
+### The Destructor API: A Step Forward, But Not Enough
+
+The `registerDestructor()` API (RFC 580) improved this situation by providing a unified way to register cleanup functions:
+
+```js
+class MyComponent extends Component {
+  constructor() {
+    let timeoutId = setTimeout(() => console.log('hello'), 1000);
+    registerDestructor(this, () => clearTimeout(timeoutId));
+  }
+}
+```
+
+However, this still requires:
+- Manual destructor registration scattered throughout constructors
+- Separate setup and cleanup logic
+- Understanding when and how to use `associateDestroyableChild()`
+- Different patterns for different types of objects
+
+### Current Pain Points
+
+**1. Fragmented Setup/Teardown Patterns**
+Every Ember construct handles lifecycle differently:
+- Components: `constructor()` + `willDestroy()`
+- Modifiers: `installModifier()` + `destroyModifier()` 
+- Helpers: No standard lifecycle pattern
+- Services: Singleton-only `willDestroy()`
+- Custom classes: Manual `registerDestructor()` calls
+
+**2. Scattered Lifecycle Logic**
+Setup and cleanup are separated across different methods and files:
 ```js
 export default class DataLoader extends Component {
   @tracked url;
   controller = null;
 
-  @cached
+  constructor() {
+    super(...arguments);
+    // Setup happens here
+    registerDestructor(this, () => this.controller?.abort());
+  }
+
+  @cached 
   get request() {
-    // Need to manually handle cleanup when URL changes
+    // More setup happens here
     this.controller?.abort();
     this.controller = new AbortController();
-    
     return fetch(this.url, { signal: this.controller.signal });
   }
 
   willDestroy() {
+    // Manual cleanup here too
     this.controller?.abort();
   }
 }
 ```
 
-**3. Code Organization and Reusability**
-Business logic becomes tightly coupled to components, making it hard to:
-- Extract and reuse patterns across components
-- Test logic in isolation
-- Compose smaller pieces into larger functionality
+**3. No Standard Container for Stateful Logic**
+Developers lack a consistent way to encapsulate stateful processes with cleanup. This leads to:
+- Logic scattered across multiple lifecycle hooks
+- Difficulty extracting and reusing patterns
+- Testing challenges that require instantiating entire components
+- Memory leaks from forgotten cleanup
 
-**4. Lack of Unified Abstraction**
-Ember has several overlapping concepts that solve similar problems:
-- Custom helpers for derived values
-- Modifiers for DOM lifecycle management  
-- Services for shared state
-- Component lifecycle hooks for cleanup
+**4. Cognitive Overhead from Multiple Patterns**
+Developers must learn and remember:
+- When to use `willDestroy()` vs `registerDestructor()`
+- How helper managers differ from modifier managers
+- Which constructs support lifecycle and which don't
+- How to properly associate children with `associateDestroyableChild()`
 
-Each uses different APIs and patterns, creating cognitive overhead and preventing a unified mental model.
+### Resources: A Unified Solution
 
-### What Resources Solve
+Resources solve these problems by providing a **single, consistent container for setup and teardown logic** that works across all contexts. Instead of learning multiple lifecycle patterns, developers work with one unified primitive:
 
-Resources provide a unified primitive that:
+```js
+const Clock = resource(({ on }) => {
+  const time = cell(new Date());
+  
+  // Setup and cleanup co-located
+  const timer = setInterval(() => time.set(new Date()), 1000);
+  on.cleanup(() => clearInterval(timer));
+  
+  return time;
+});
+```
 
-1. **Co-locates setup and cleanup logic** in a single function
-2. **Automatically handles reactive cleanup** when dependencies change
-3. **Enables fine-grained composition** independent of component boundaries
-4. **Provides a consistent abstraction** for all stateful processes with cleanup
-5. **Improves testability** by separating concerns from component lifecycle
+**Resources unify all existing concepts** by providing:
 
-Resources allow developers to model any stateful process as a reactive value with an optional cleanup lifecycle, unifying concepts across the framework while maintaining Ember's declarative, reactive programming model.
+1. **A Standard Container**: One primitive that works for components, helpers, modifiers, services, and custom logic
+2. **Co-located Setup/Teardown**: No more spreading logic across constructors, lifecycle hooks, and destructor registrations  
+3. **Automatic Cleanup Management**: No need to manually call `registerDestructor()` or remember `willDestroy()`
+4. **Consistent Patterns**: Same API whether you're building a helper, managing component state, or creating reusable logic
+5. **Hierarchical Cleanup**: Automatic resource disposal and child management without manual `associateDestroyableChild()`
+
+**Before (fragmented patterns):**
+- Component lifecycle hooks (`willDestroy`)
+- Manual destructor registration (`registerDestructor`) 
+- Manager-specific cleanup (`destroyModifier`, helper teardown)
+- Scattered setup/teardown logic
+- Different APIs for every construct
+
+**After (unified with resources):**
+- Single `resource()` function for all stateful logic
+- Co-located setup and cleanup via `on.cleanup()`
+- Automatic lifecycle management
+- Consistent patterns across all use cases
+- No more manual lifecycle management
+
+Resources don't replace existing patterns—they **unify them under a single, powerful abstraction** that eliminates the need to choose between different lifecycle approaches or remember multiple APIs. Whether you're building a component helper, managing WebSocket connections, or creating reusable business logic, resources provide the same elegant pattern for setup and teardown.
+
+### Conceptual Unification Examples
+
+To illustrate how resources unify existing concepts, here are small examples showing how traditional Ember constructs could be reimagined using resources. Note that **classes are user-defined** while **resources are framework-internal** - this separation allows resources to wrap and manage existing class-based patterns.
+
+**Services → Resources**
+```js
+// User-defined Service class (unchanged)
+class SessionService extends Service {
+  @tracked currentUser = null;
+  
+  willDestroy() {
+    this.logout(); // Manual cleanup
+  }
+  
+  login(credentials) {
+    return authenticate(credentials).then(user => this.currentUser = user);
+  }
+  
+  logout() {
+    this.currentUser = null;
+  }
+}
+
+// Framework-internal resource wrapper
+const SessionServiceResource = resource(({ on, owner }) => {
+  const service = new SessionService();
+  
+  // Framework manages lifecycle via resource pattern
+  on.cleanup(() => service.willDestroy());
+  
+  return service;
+});
+```
+
+**Helpers → Resources**
+```js
+// User-defined Helper class (unchanged)
+class FormatDateHelper extends Helper {
+  willDestroy() {
+    this.intl?.off('localeChanged', this.recompute);
+  }
+  
+  compute([date]) {
+    return new Intl.DateTimeFormat().format(date);
+  }
+}
+
+// Framework-internal resource wrapper
+const FormatDateResource = resource(({ on, owner }) => {
+  const helper = new FormatDateHelper();
+  const intl = owner.lookup('service:intl');
+  helper.intl = intl;
+  
+  // Framework manages lifecycle via resource pattern
+  on.cleanup(() => helper.willDestroy());
+  
+  return (date) => helper.compute([date]);
+});
+```
+
+**Modifiers → Resources**
+```js
+// User-defined Modifier class (unchanged)
+class OnModifier extends Modifier {
+  modify(element, [event, handler]) {
+    this.element = element;
+    this.event = event;
+    this.handler = handler;
+    element.addEventListener(event, handler);
+  }
+  
+  willDestroy() {
+    this.element?.removeEventListener(this.event, this.handler);
+  }
+}
+
+// Framework-internal resource wrapper
+const OnModifierResource = resource(({ on }) => {
+  return (element, [event, handler]) => {
+    const modifier = new OnModifier();
+    modifier.modify(element, [event, handler]);
+    
+    // Framework manages lifecycle via resource pattern
+    on.cleanup(() => modifier.willDestroy());
+  };
+});
+```
+
+**Components → Resources**
+```js
+// User-defined Timer logic class (unchanged)
+class TimerLogic {
+  constructor() {
+    this.seconds = 0;
+    this.interval = setInterval(() => this.seconds++, 1000);
+  }
+  
+  willDestroy() {
+    clearInterval(this.interval);
+  }
+}
+
+// Framework-internal resource wrapper
+const TimerResource = resource(({ on }) => {
+  const timer = new TimerLogic();
+  const seconds = cell(timer.seconds);
+  
+  // Sync timer.seconds to cell on each tick
+  const syncInterval = setInterval(() => seconds.set(timer.seconds), 1000);
+  
+  // Framework manages lifecycle via resource pattern
+  on.cleanup(() => {
+    clearInterval(syncInterval);
+    timer.willDestroy();
+  });
+  
+  return { seconds };
+});
+
+// Component uses resource
+export default class TimerComponent extends Component {
+  @use timer = TimerResource;
+  
+  <template>{{this.timer.seconds}} seconds</template>
+}
+```
+
+**Routes → Resources**
+```js
+// User-defined Route class (unchanged)
+class PostRoute extends Route {
+  model(params) {
+    return this.store.findRecord('post', params.id);
+  }
+  
+  willDestroy() {
+    this.controller?.abort();
+  }
+}
+
+// Framework-internal resource wrapper
+const PostRouteResource = resource(({ on, owner }) => {
+  const route = new PostRoute();
+  route.store = owner.lookup('service:store');
+  
+  // Framework manages lifecycle via resource pattern
+  on.cleanup(() => route.willDestroy());
+  
+  return route;
+});
+```
+
+**The Power of Unified Patterns**
+
+These examples demonstrate several key points:
+
+1. **Clear Separation of Concerns**: User-defined classes contain domain logic, while framework-internal resources handle lifecycle management
+2. **Migration Path**: Existing classes can be wrapped with resources without modification
+3. **Consistent Setup/Teardown**: Always use `on.cleanup()` instead of different lifecycle hooks
+4. **Automatic Memory Management**: No need to remember different cleanup patterns across constructs
+5. **Composable Logic**: Resources can be easily combined and tested in isolation
+6. **Uniform Mental Model**: Same patterns whether wrapping helpers, modifiers, services, or routes
+
+This unification eliminates the cognitive overhead of learning multiple lifecycle APIs while preserving existing class-based patterns. Resources become the framework's internal mechanism for managing lifecycle, while users continue working with familiar class structures.
 
 ## Detailed design
 
@@ -283,7 +548,7 @@ const FormattedTime = resource(({ use }) => {
 
 **Understanding `@use` as an Ergonomic Shorthand**
 
-The `@use` decorator is fundamentally an ergonomic convenience that builds upon Ember's existing helper manager infrastructure. When you apply `@use` to a property, it doesn't assign the value directly—instead, like `@tracked`, it replaces the property with a getter that provides lazy evaluation and automatic invocation.
+The `@use` decorator is fundamentally an ergonomic convenience that builds upon Ember's helper manager infrastructure. When you apply `@use` to a property, it doesn't assign the value directly—instead, like `@tracked`, it replaces the property with a getter that provides lazy evaluation and automatic invocation.
 
 ```js
 export default class MyComponent extends Component {
@@ -523,6 +788,10 @@ const DataFetcher = resource(({ on }) => {
   // to avoid waterfalls when multiple async resources are composed
   fetchData().then(data => state.set({ loading: false, data }));
   
+  on.cleanup(() => {
+    // Cleanup logic
+  });
+
   return state;
 });
 ```
@@ -663,7 +932,6 @@ const AsyncData = resource(({ on }) => {
 const ProcessedData = resource(({ use }) => {
   const asyncData = use(AsyncData);
   
-  // No async/await needed - just reactive composition
   return () => {
     const { loading, data, error } = asyncData.current;
     if (loading) return 'Loading...';
