@@ -291,22 +291,32 @@ See also: [RFC: #502 | Explicit Service Injection](https://github.com/emberjs/rf
 
 </details>
 
-**Helpers → Resources**
+<details><summary>Helpers</summary>
+
+Resources _are_ helpers, so while this is not needed exactly (as we have the helper manager), we could look at helpers like this:
+
 ```js
 // User-defined Helper class (unchanged)
 class FormatDateHelper extends Helper {
+  @service intl;
+
   willDestroy() {
     this.intl?.off('localeChanged', this.recompute);
   }
   
   compute([date]) {
-    return new Intl.DateTimeFormat().format(date);
+    if (!this.isSetup) {
+      this.intl.on('localeChanged', this.recompute);
+      this.isSetup = true;
+    }
+    
+    return this.intl.formatDate(date);
   }
 }
 
 // Framework-internal resource wrapper
 const FormatDateResource = resource(({ on, owner }) => {
-  const helper = new FormatDateHelper();
+  const helper = new FormatDateHelper(owner);
   const intl = owner.lookup('service:intl');
   helper.intl = intl;
   
@@ -316,6 +326,8 @@ const FormatDateResource = resource(({ on, owner }) => {
   return (date) => helper.compute([date]);
 });
 ```
+
+</details>
 
 **Modifiers → Resources**
 ```js
