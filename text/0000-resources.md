@@ -13,11 +13,11 @@ project-link:
 suite: 
 ---
 
-# Add Resources as a Reactive Primitive
+# Add Resources as a low-level Reactive Primitive
 
 ## Summary
 
-Resources are a reactive primitive that enables managing stateful processes with cleanup logic as reactive values. They unify concepts like custom helpers, modifiers, and services by providing a consistent pattern for expressing values that have lifecycles and may require cleanup when their owner is destroyed.
+Resources are a reactive primitive that enables managing stateful processes with cleanup logic as reactive values. They unify concepts like custom helpers, modifiers, components, and services by providing a consistent pattern for expressing values that have lifecycles and may require cleanup when their owner is destroyed.
 
 ## Motivation
 
@@ -27,7 +27,9 @@ Ember's current Octane programming model provides excellent primitives for react
 
 Today, Ember developers must navigate multiple, disconnected systems for managing setup and teardown:
 
-**Components** use lifecycle hooks like `willDestroy()`:
+<details><summary>Components</summary>
+
+have lifecycle hook: `willDestroy()`:
 ```js
 export default class TimerComponent extends Component {
   @tracked time = new Date();
@@ -44,21 +46,62 @@ export default class TimerComponent extends Component {
 }
 ```
 
-**Modifiers** require implementing `destroyModifier()` in their manager:
+</details>
+
+<details><summary>Modifiers</summary>
+
+two different approaches from `ember-modifier` for class-based and function based modifiers.
+
+class-based:
 ```js
-class OnModifier extends Modifier {
+import Modifier from 'ember-modifier';
+
+class foo extends Modifier {
   constructor() {
     super(...arguments);
-    registerDestructor(this, cleanup); // Different pattern entirely
-  }
-  
-  modify(element, [event, handler]) {
-    this.addEventListener(element, event, handler);
+    registerDestructor(this, cleanup); 
   }
 }
 ```
 
-**Helpers** split between class-based and function-based approaches with no built-in cleanup:
+function-based:
+```js
+import { modifier } from 'ember-modifier';
+
+const foo = modifier((element) => {
+
+  return () => {
+    /* this is the destructor */
+  }
+})
+```
+
+the function-based modifier here is _almost_ like a resource.
+
+There is a another modifier implementation availabel from a community library, [reactiveweb](https://github.com/universal-ember/reactiveweb), 
+which looks like this:
+
+```js
+import { resource } from 'ember-resources';
+import { modifier } from 'reactiveweb/resource/modifier';
+
+const wiggle = modifier((element, arg1, arg2, namedArgs) => {
+    return resource(({ on }) => {
+        let animation = element.animate(/* ... */);
+
+        on.cleanup(() => animation.cancel());
+    });
+});
+```
+
+The downside to this approach is, of course, 2 imports, and it doesn't solve the problem of function based modifiers not supporting generics.
+
+If resources were formally supported by the framework, the wrapper function would not be needed, and we could gain generics support (more on that later)
+
+</details>
+
+<details><summary>Helpers</summary>
+
 ```js
 export default class DataHelper extends Helper {
   willDestroy() {
@@ -72,101 +115,64 @@ export default helper(() => {
 });
 ```
 
-**Services** rely on manual `willDestroy()` but have singleton lifecycle issues:
+</details>
+
+
+<details><summary>Services</summary>
+
+Services have `willDestroy`, but because they are only able to be classes, `registerDestructor` may also be used. This gives us two ways to do things, which can add to decision fatigue like all the other multi-option scenarios above.
+
 ```js
 export default class WebSocketService extends Service {
+  constructor(...args) {
+    super(...args);
+
+    registerDestructor(this, () => this.otherSocket?.close());
+  }
+
   willDestroy() {
-    this.socket?.close(); // Only called on app teardown
+    this.socket?.close(); 
   }
 }
 ```
 
-**Library authors** must patch `willDestroy()` methods, leading to complex instrumentation:
-```js
-// From ember-concurrency's approach
-function patchWillDestroy(obj) {
-  let oldWillDestroy = obj.willDestroy;
-  obj.willDestroy = function() {
-    if (oldWillDestroy) oldWillDestroy.call(this);
-    teardownTasks(this);
-  };
-}
-```
+</details>
 
-### The Destructor API: A Step Forward, But Not Enough
+### The Destructor API
 
-The `registerDestructor()` API (RFC 580) improved this situation by providing a unified way to register cleanup functions:
+The `registerDestructor()` API ([RFC #580](https://github.com/emberjs/rfcs/pull/580)) improved destruction in general by providing a unified way to register cleanup functions:
 
 ```js
+import { registerDestructor } from '@ember/destroyable'; // Additional import required
+
 class MyComponent extends Component {
   constructor() {
+    // Setup happens here
     let timeoutId = setTimeout(() => console.log('hello'), 1000);
+    
+    // Cleanup requires manual registration
     registerDestructor(this, () => clearTimeout(timeoutId));
   }
 }
 ```
 
-However, this still requires:
-- Manual destructor registration scattered throughout constructors
-- Separate setup and cleanup logic
-- Understanding when and how to use `associateDestroyableChild()`
-- Different patterns for different types of objects
+While this remains useful as a low-level tool, and essential for adding destruction in custom classes today, it's not the most ergonomic for the common use case:
 
-### Current Pain Points
+- `registerDestructor()` requires an additional import, adding friction to every file that needs cleanup logic.
+- Understanding when and how to use `associateDestroyableChild()` (see the [link RFC #1067](https://github.com/emberjs/rfcs/pull/1067))
+- Different patterns for different types of objects / classes / lifecycles
 
-**1. Fragmented Setup/Teardown Patterns**
-Every Ember construct handles lifecycle differently:
-- Components: `constructor()` + `willDestroy()`
-- Modifiers: `installModifier()` + `destroyModifier()` 
-- Helpers: No standard lifecycle pattern
-- Services: Singleton-only `willDestroy()`
-- Custom classes: Manual `registerDestructor()` calls
+### Outside of cleanup
 
-**2. Scattered Lifecycle Logic**
-Setup and cleanup are separated across different methods and files:
-```js
-export default class DataLoader extends Component {
-  @tracked url;
-  controller = null;
-
-  constructor() {
-    super(...arguments);
-    // Setup happens here
-    registerDestructor(this, () => this.controller?.abort());
-  }
-
-  @cached 
-  get request() {
-    // More setup happens here
-    this.controller?.abort();
-    this.controller = new AbortController();
-    return fetch(this.url, { signal: this.controller.signal });
-  }
-
-  willDestroy() {
-    // Manual cleanup here too
-    this.controller?.abort();
-  }
-}
-```
-
-**3. No Standard Container for Stateful Logic**
-Developers lack a consistent way to encapsulate stateful processes with cleanup. This leads to:
+There isn't a cohesive / consistent way to encapsulate state with cleanup. This leads to:
 - Logic scattered across multiple lifecycle hooks
 - Difficulty extracting and reusing patterns
-- Testing challenges that require instantiating entire components
+- Not knowing how to properly associate children with `associateDestroyableChild()`
 - Memory leaks from forgotten cleanup
-
-**4. Cognitive Overhead from Multiple Patterns**
-Developers must learn and remember:
-- When to use `willDestroy()` vs `registerDestructor()`
-- How helper managers differ from modifier managers
-- Which constructs support lifecycle and which don't
-- How to properly associate children with `associateDestroyableChild()`
 
 ### Resources: A Unified Solution
 
-Resources solve these problems by providing a **single, consistent container for setup and teardown logic** that works across all contexts. Instead of learning multiple lifecycle patterns, developers work with one unified primitive:
+Resources solve these problems by providing a **single, consistent container for setup and teardown logic** that works across all contexts. Instead of learning multiple[^14-competing-standards] lifecycle patterns, developers work with one unified primitive:
 
 ```js
 const Clock = resource(({ on }) => {
@@ -180,27 +186,14 @@ const Clock = resource(({ on }) => {
 });
 ```
 
+[^14-competing-standards]: This is "yet another competing standard", but over time we can unify on this concept -- but the plan for doing so is out of scope for this RFC. This RFC is focused on unifying low-level concepts, and end-users of the framework may choose to continue not using resources directly. See also [XKCD 927](https://xkcd.com/927/).
+
 **Resources unify all existing concepts** by providing:
 
-1. **A Standard Container**: One primitive that works for components, helpers, modifiers, services, and custom logic
+1. **A Standard Container**: One primitive that works for components, helpers, modifiers, services, and custom logic (more on this later)
 2. **Co-located Setup/Teardown**: No more spreading logic across constructors, lifecycle hooks, and destructor registrations  
 3. **Automatic Cleanup Management**: No need to manually call `registerDestructor()` or remember `willDestroy()`
-4. **Consistent Patterns**: Same API whether you're building a helper, managing component state, or creating reusable logic
-5. **Hierarchical Cleanup**: Automatic resource disposal and child management without manual `associateDestroyableChild()`
-
-**Before (fragmented patterns):**
-- Component lifecycle hooks (`willDestroy`)
-- Manual destructor registration (`registerDestructor`) 
-- Manager-specific cleanup (`destroyModifier`, helper teardown)
-- Scattered setup/teardown logic
-- Different APIs for every construct
-
-**After (unified with resources):**
-- Single `resource()` function for all stateful logic
-- Co-located setup and cleanup via `on.cleanup()`
-- Automatic lifecycle management
-- Consistent patterns across all use cases
-- No more manual lifecycle management
+5. **Hierarchical Cleanup**: Automatic owership linkage and disposal and child management without manual `associateDestroyableChild()` + `registerDestructor` (also with a way to manually link, similar to [RFC #1067](https://github.com/emberjs/rfcs/pull/1067))
 
 Resources don't replace existing patterns—they **unify them under a single, powerful abstraction** that eliminates the need to choose between different lifecycle approaches or remember multiple APIs. Whether you're building a component helper, managing WebSocket connections, or creating reusable business logic, resources provide the same elegant pattern for setup and teardown.
 
@@ -1742,3 +1735,11 @@ Should there be automated codemods to help migrate from existing patterns (class
 ### Bundle Size Impact
 
 What is the impact on bundle size for applications that don't use resources? Can the implementation be designed to be tree-shakeable?
+
+## References
+
+- Other low-level primitives
+  - [RFC #1071: cell](https://github.com/emberjs/rfcs/pull/1071)
+  - [RFC #1067: link](https://github.com/emberjs/rfcs/pull/1067) 
+- Related(ish) / would be influenced by resources
+  - [RFC #502: Explicit Service Injection](https://github.com/emberjs/rfcs/pull/502)
