@@ -299,102 +299,53 @@ Resources _are_ helpers, so while this is not needed exactly (as we have the hel
 // User-defined Helper class (unchanged)
 class FormatDateHelper extends Helper {
   @service intl;
-
-  willDestroy() {
-    this.intl?.off('localeChanged', this.recompute);
-  }
   
   compute([date]) {
-    if (!this.isSetup) {
-      this.intl.on('localeChanged', this.recompute);
-      this.isSetup = true;
-    }
-    
     return this.intl.formatDate(date);
   }
 }
+```
 
-// Framework-internal resource wrapper
-const FormatDateResource = resource(({ on, owner }) => {
-  const helper = new FormatDateHelper(owner);
-  const intl = owner.lookup('service:intl');
-  helper.intl = intl;
-  
-  // Framework manages lifecycle via resource pattern
-  on.cleanup(() => helper.willDestroy());
-  
-  return (date) => helper.compute([date]);
-});
+an equiv resource-based helper would look like this:
+```js
+function formatDate(date) {
+  return resource(({ on, owner }) => {
+    let intl = owner.lookup('service:intl');
+
+    return () => 
+      // entangles with the intl's locale
+      intl.formatdate(date);
+  });
+}
 ```
 
 </details>
 
-**Modifiers → Resources**
-```js
-// User-defined Modifier class (unchanged)
-class OnModifier extends Modifier {
-  modify(element, [event, handler]) {
-    this.element = element;
-    this.event = event;
-    this.handler = handler;
-    element.addEventListener(event, handler);
-  }
-  
-  willDestroy() {
-    this.element?.removeEventListener(this.event, this.handler);
-  }
+
+<details><summary>Components</summary>
+
+```gjs
+class Demo extends Component {
+  <template>hello</template>
 }
 
 // Framework-internal resource wrapper
-const OnModifierResource = resource(({ on }) => {
-  return (element, [event, handler]) => {
-    const modifier = new OnModifier();
-    modifier.modify(element, [event, handler]);
+function InternalInvoker(Component, argsProxy) {
+  return resource(({ on, owner, link }) => {
+    const instance = new Component(owner, argsProxy);
+
+    link(instance);
     
-    // Framework manages lifecycle via resource pattern
-    on.cleanup(() => modifier.willDestroy());
-  };
-});
-```
-
-**Components → Resources**
-```js
-// User-defined Timer logic class (unchanged)
-class TimerLogic {
-  constructor() {
-    this.seconds = 0;
-    this.interval = setInterval(() => this.seconds++, 1000);
-  }
-  
-  willDestroy() {
-    clearInterval(this.interval);
-  }
-}
-
-// Framework-internal resource wrapper
-const TimerResource = resource(({ on }) => {
-  const timer = new TimerLogic();
-  const seconds = cell(timer.seconds);
-  
-  // Sync timer.seconds to cell on each tick
-  const syncInterval = setInterval(() => seconds.set(timer.seconds), 1000);
-  
-  // Framework manages lifecycle via resource pattern
-  on.cleanup(() => {
-    clearInterval(syncInterval);
-    timer.willDestroy();
+    if ('willDestroy' in instance) {
+      on.cleanup(() => instance.willDestroy());
+    }
+    
+    return instance;
   });
-  
-  return { seconds };
-});
-
-// Component uses resource
-export default class TimerComponent extends Component {
-  @use timer = TimerResource;
-  
-  <template>{{this.timer.seconds}} seconds</template>
 }
 ```
+
+</details>
 
 **Routes → Resources**
 ```js
@@ -410,15 +361,19 @@ class PostRoute extends Route {
 }
 
 // Framework-internal resource wrapper
-const PostRouteResource = resource(({ on, owner }) => {
-  const route = new PostRoute();
-  route.store = owner.lookup('service:store');
-  
-  // Framework manages lifecycle via resource pattern
-  on.cleanup(() => route.willDestroy());
-  
-  return route;
-});
+function InternalInvoker(Route) {
+  return resource(({ on, owner, link }) => {
+    const instance = new Route(owner);
+
+    link(instance);
+    
+    if ('willDestroy' in instance) {
+      on.cleanup(() => instance.willDestroy());
+    }
+    
+    return instance;
+  });
+}
 ```
 
 **The Power of Unified Patterns**
@@ -466,6 +421,7 @@ interface ResourceAPI {
     cleanup: (destructor: () => void) => void;
   };
   use: <T>(resource: T) => ReactiveValue<T>;
+  link: (obj: unknown, parent?: obj: unknown) => void;
   owner: Owner;
 }
 
@@ -536,8 +492,7 @@ const Clock = resource(({ on }) => {
 @use clock = Clock; // Equivalent to: clock = Clock()
 
 // Without @use, you need explicit invocation or .current access
-clock = use(this, Clock); // Returns reactive value, need .current
-clock = Clock(); // Direct invocation in template context
+clock = use(this, Clock); // Returns object with tracked property: clock.current
 ```
 
 The `@use` decorator pattern extends beyond resources to work with any construct that has registered a helper manager. This means that future primitives that integrate with the helper manager system (like certain kinds of computed values, cached functions, or other reactive constructs) will automatically work with `@use` without any changes to the decorator itself.
@@ -711,19 +666,19 @@ function use<T>(resource: Resource<T>): PropertyDecorator;
 
 ### Relationship to the Cell Primitive
 
-While the `cell` primitive (RFC 1071) is not strictly required for resources to function, resources are significantly more ergonomic and powerful when used together with `cell`. Resources can work with Ember's existing `@tracked` properties, but `cell` provides several advantages:
+While the `cell` primitive ([RFC #1071](https://github.com/emberjs/rfcs/pull/1071)) is not strictly required for resources to function, resources are significantly more ergonomic and powerful when used together with `cell`. Resources can work with Ember's existing `@tracked` properties, but `cell` provides several advantages:
 
 **Without `cell` (using `@tracked`):**
 ```js
 import { resource } from '@ember/reactive';
 import { tracked } from '@glimmer/tracking';
 
+// Must create a separate class to hold tracked state
+class ClockState {
+  @tracked time = new Date();
+}
+
 const Clock = resource(({ on }) => {
-  // Must create a separate class to hold tracked state
-  class ClockState {
-    @tracked time = new Date();
-  }
-  
   const state = new ClockState();
   
   const timer = setInterval(() => {
