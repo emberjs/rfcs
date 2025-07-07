@@ -192,8 +192,7 @@ const Clock = resource(({ on }) => {
 
 1. **A Standard Container**: One primitive that works for components, helpers, modifiers, services, and custom logic (more on this later)
 2. **Co-located Setup/Teardown**: No more spreading logic across constructors, lifecycle hooks, and destructor registrations  
-3. **Automatic Cleanup Management**: No need to manually call `registerDestructor()` or remember `willDestroy()`
-5. **Hierarchical Cleanup**: Automatic owership linkage and disposal and child management without manual `associateDestroyableChild()` + `registerDestructor` (also with a way to manually link, similar to [RFC #1067](https://github.com/emberjs/rfcs/pull/1067))
+3. **Hierarchical Cleanup**: Automatic owership linkage and disposal and child management without manual `associateDestroyableChild()` + `registerDestructor` (also with a way to manually link, similar to [RFC #1067](https://github.com/emberjs/rfcs/pull/1067))
 
 Resources don't replace existing patterns—they **unify them under a single, powerful abstraction** that eliminates the need to choose between different lifecycle approaches or remember multiple APIs. Whether you're building a component helper, managing WebSocket connections, or creating reusable business logic, resources provide the same elegant pattern for setup and teardown.
 
@@ -201,7 +200,10 @@ Resources don't replace existing patterns—they **unify them under a single, po
 
 To illustrate how resources unify existing concepts, here are small examples showing how traditional Ember constructs could be reimagined using resources. Note that **classes are user-defined** while **resources are framework-internal** - this separation allows resources to wrap and manage existing class-based patterns.
 
-**Services → Resources**
+<details><summary>Services</summary>
+
+Using existing services, keeping the same behavior:
+
 ```js
 // User-defined Service class (unchanged)
 class SessionService extends Service {
@@ -222,7 +224,7 @@ class SessionService extends Service {
 
 // Framework-internal resource wrapper
 const SessionServiceResource = resource(({ on, owner }) => {
-  const service = new SessionService();
+  const service = new SessionService(owner);
   
   // Framework manages lifecycle via resource pattern
   on.cleanup(() => service.willDestroy());
@@ -230,6 +232,64 @@ const SessionServiceResource = resource(({ on, owner }) => {
   return service;
 });
 ```
+
+A hypothetical new way to use services without the string registry (exact details and implementation is outside the scope of this RFC)
+
+```js
+class Storage {
+  foo = 2;
+}
+
+// Usage
+class MyComponent extends Component {
+  storage = service(this, Storage);
+
+  get data() {
+    // no proxy
+    return this.storage.current.foo;
+    // with proxy
+    return this.storage.foo;
+  }
+}
+
+// where service is
+function service(context, klass) {
+  const manager = resource(({ on, link, owner }) => {
+    let instance = new klass(owner);
+    // sets up destroyable linking to the owner
+    // without passing owner, the instance would be linked to the lifetime of the context (the component in this example)
+    link(instance, owner);
+    // not needed due to `link`. Any registerDestructor setup in the passed klass will just work
+    on.cleanup(() => /* call wilLDestroy? */)
+
+    return instance;
+  });
+
+  return use(context, manager);
+}
+```
+however, without using a proxy to kick off all the instantiation of the service (since we still want service instantiation to be lazy), it may be better to support something like this:
+
+
+```js
+class MyComponent extends Component {
+  // the use decorator turns the property in to a cached getter that is lazily evaluated upon access -- the only requirement
+  // is that the right-hand side has a registered helper manager
+  // 
+  // in addition, @use also has access to the instance / this. So passing to `service` is not needed. 
+  //
+  // NOTE: TypeScript still does not allow decorators (even the decorators that are landing in browsers) to alter the type on the right-hand side of the equals
+  @use accessor storage = service(Storage);
+
+  get data() {
+    return this.storage.foo;
+  }
+}
+```
+
+See also: [RFC: #502 | Explicit Service Injection](https://github.com/emberjs/rfcs/pull/502)
+
+</details>
 
 **Helpers → Resources**
 ```js
