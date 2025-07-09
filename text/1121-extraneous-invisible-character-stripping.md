@@ -71,6 +71,42 @@ The minification will be automatically disabled for elements where invisible cha
    - `<textarea>` - User input areas where formatting matters
    - `<script>` and `<style>` - Code content
 
+### Examples
+
+This list is non-comprehensive, as we want to adhere to _goals_ rather than place a test suite for this behavior in the RFC
+
+<table>
+    <thead>
+<th>Input<th>
+<th>Output (today)</th>
+<th>Output (desired)</th>
+</thead>
+<tbody>
+<tr><td>
+
+
+```gjs
+<template>
+  <span>x</span>
+</template>
+```
+
+</td><td>
+
+```html
+\n  <span>x</span>\n
+```
+
+</td><td>
+
+```html
+<span>x</span>
+```
+
+</td></tr>
+</tbody>
+</table>
+
 ### Configuration
 
 There will be no configuration, as this can be enabled with 0 breaking changes to existing behavior.
