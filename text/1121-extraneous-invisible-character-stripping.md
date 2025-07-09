@@ -206,13 +206,6 @@ There will be no configuration, as this can be enabled with 0 breaking changes t
 - Existing applications using ember-hbs-minifier can gradually migrate by removing the addon
 - The default configuration will match ember-hbs-minifier's behavior
 
-### Performance Considerations
-
-- The transform runs during build time, not runtime, so there's no runtime performance impact
-- Build time increase is minimal as the transform only processes text nodes and element structure
-- Bundle size reduction typically outweighs the small build time cost
-- The transform can be cached based on template content
-
 ## How we teach this
 
 This feature requires minimal teaching as it operates transparently. 
