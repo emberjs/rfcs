@@ -52,6 +52,12 @@ The template compiler will include a new AST transform that runs after all user-
 
 ### Core Minification Rules
 
+The governing documentation on these rules are official standards documents:
+- [from MDN](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace)
+- [from CSS WG: White Space Processing & Control Characters](https://drafts.csswg.org/css-text-3/#white-space-processing)
+- [from CSS WG: Collapsible White Space](https://drafts.csswg.org/css-text-3/#collapsible-white-space)
+
+
 0. The leading and trailing invisible characters for opening `<template>` and closing `</template>` in gjs/gts files should be stripped.
 
 1. Replace leading and trailing invisible character in text nodes with a single space character, unless the text node is entirely invisible character and can be safely removed.
@@ -185,13 +191,21 @@ This feature requires minimal teaching as it operates transparently.
 
 ## Drawbacks
 
-n/a
+we lose the ability to `white-space: pre` on any content.
 
 ## Alternatives
 
 Keep ember-hbs-minifier as an optional addon
    - Pros: No breaking changes, opt-in behavior
    - Cons: Many applications miss this optimization, ecosystem fragmentation, we want ember to be a cohesive out-of-the-box framework
+
+Support opt-in: 
+```gjs
+<template minifiy>
+    <span>x</span>
+</template>
+```
+Which could alleviate the edge case where folks are using `white-space: pre` on arbitrary contents.
 
 ## Unresolved Questions
 
