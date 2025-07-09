@@ -205,8 +205,6 @@ There will be no configuration, as this can be enabled with 0 breaking changes t
 
 - Existing applications using ember-hbs-minifier can gradually migrate by removing the addon
 - The default configuration will match ember-hbs-minifier's behavior
-- Applications can disable the feature entirely if needed
-- Custom skip configurations from ember-hbs-minifier can be migrated to the new configuration format
 
 ### Performance Considerations
 
