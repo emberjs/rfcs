@@ -114,8 +114,49 @@ export default template(
 ```
 
 </td></tr>
+<tr><td>
+
+```gjs
+const MyTemplate = <template>
+  <span>x</span>
+</template>
+
+<template>
+  <MyTemplate />
+</template>
+```
+
+</td><td>
+
+```js
+const MyTemplate = template(
+    ''
+);
+
+export default template(
+    '',
+    { scope: () => ({ MyTemplate })}
+)
+```
+
+</td><td>
+
+```js
+const MyTemplate = template(
+    '\n  <span>x</span>\n'
+);
+
+export default template(
+    '\n  <MyTemplate>\n',
+    { scope: () => ({ MyTemplate })}
+)
+```
+
+</td></tr>            
 </tbody>
 </table>
+
+The problem with extraneous `\n` and ` ` characters compounds the more components you have.
 
 ### Configuration
 
