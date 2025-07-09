@@ -19,6 +19,37 @@ suite:
 
 Resources are a reactive primitive that enables managing stateful processes with cleanup logic as reactive values. They unify concepts like custom helpers, modifiers, components, and services by providing a consistent pattern for expressing values that have lifecycles and may require cleanup when their owner is destroyed.
 
+
+> [!NOTE]
+> This RFC has some dependencies / relation with other RFCs
+
+```mermaid
+graph LR;
+    use["@use"];
+    cell["cell from RFC #1071"]
+    resource["resource"]
+    import["import { ... } from '@ember/reactive';"];
+    rfc-1038["RFC #1068 (already accepted)"];
+
+    use -- makes using resources easier --> resource
+    cell --> import
+    cell -- convenience for one-off state in --> resource
+
+    subgraph built-ins["Tracked built-ins built in"]
+      import --> rfc-1038
+    end
+
+    subgraph introduced-here["Introduced in this RFC"]
+      use --> import
+      resource --> import
+    end
+    
+
+    click rfc-1038 "https://github.com/emberjs/rfcs/pull/1068" "RFC for tracked-built-ins being bulit-in"
+    click Cell "https://github.com/emberjs/rfcs/pull/1071" "RFC for new low-level primitive for state"
+    click Resource "https://github.com/emberjs/rfcs/pull/todo-not-yet-submitted" "This RFC"
+```
+
 ## Motivation
 
 Ember's current Octane programming model provides excellent primitives for reactive state (`@tracked`), declarative rendering (templates), and component lifecycle, but it lacks a unified primitive for managing stateful processes that need cleanup. This fragmentation has created a complex ecosystem where different concepts each require their own approach to lifecycle management, leading to scattered patterns and cognitive overhead.
