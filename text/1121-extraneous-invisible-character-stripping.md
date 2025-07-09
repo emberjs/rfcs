@@ -77,7 +77,7 @@ This list is non-comprehensive, as we want to adhere to _goals_ rather than plac
 
 <table>
     <thead>
-<th>Input<th>
+<th>Input</th>
 <th>Output (today)</th>
 <th>Output (desired)</th>
 </thead>
