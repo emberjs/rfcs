@@ -28,7 +28,7 @@ HTML templates in Ember applications often contain significant amounts of invisi
 
 Currently, developers must manually install and configure the ember-hbs-minifier addon to achieve optimal template output, and the instructions for doing so in v2 addons and vite apps are not yet available on that repo[^hbs-minifier-maintain]. However, invisible character minification is a widely applicable optimization that benefits virtually all applications and has well-understood safety rules.
 
-[^hbs-minifier-maintain]: ember-hbs-minifier _is_ a third party library, so it can only be as maintained as the maintainers have time for
+[^hbs-minifier-maintain]: ember-hbs-minifier _is_ a third party library, so it can only be as maintained as the maintainers have time for. Here is an issue on their repo for how to [use with a babel config](https://github.com/mainmatter/ember-hbs-minifier/issues/744) (for reference).
 
 The HTML specification clearly defines how browsers handle invisible character:
 - Multiple consecutive invisible character characters are collapsed to a single space
@@ -162,6 +162,36 @@ export default template(
 ```
 
 </td></tr>            
+<tr><td>
+
+
+```gjs
+<template>
+  Hello
+  <span>there</span>.
+  <p>
+    <span>how are you</span>
+  </p>
+</template>
+```
+
+</td><td>
+
+```js
+export default template(
+    '\n  Hello\n  <span>there</span>.\n  <p>\n    <span>how are you</span>\n  </p>\n'
+);
+```
+
+</td><td>
+
+```js
+export default template(
+    'Hello <span>there</span>. <p><span>how are you</span></p>'
+)
+```
+
+</td></tr>
 </tbody>
 </table>
 
@@ -195,17 +225,19 @@ we lose the ability to `white-space: pre` on any content.
 
 ## Alternatives
 
-Keep ember-hbs-minifier as an optional addon
+- Keep ember-hbs-minifier as an optional addon
    - Pros: No breaking changes, opt-in behavior
    - Cons: Many applications miss this optimization, ecosystem fragmentation, we want ember to be a cohesive out-of-the-box framework
 
-Support opt-in: 
-```gjs
-<template minifiy>
-    <span>x</span>
-</template>
-```
-Which could alleviate the edge case where folks are using `white-space: pre` on arbitrary contents.
+- Support opt-in: 
+    ```gjs
+    <template minifiy>
+        <span>x</span>
+    </template>
+    ```
+    Which could alleviate the edge case where folks are using `white-space: pre` on arbitrary contents.
+
+- _Only_ strip leading/trailing invisible characters (and indentation) that was introduced by the move to gjs / gts. This would be the same behavior as `stripIndent` from [common-tags](https://www.npmjs.com/package/common-tags)
 
 ## Unresolved Questions
 
