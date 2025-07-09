@@ -52,17 +52,20 @@ The template compiler will include a new AST transform that runs after all user-
 
 ### Core Minification Rules
 
-1. **Text Node Normalization**: Replace leading and trailing invisible character in text nodes with a single space character, unless the text node is entirely invisible character and can be safely removed.
+0. The leading and trailing invisible characters for opening `<template>` and closing `</template>` in gjs/gts files should be stripped.
 
-2. **invisible character-Only Node Removal**: Remove text nodes that contain only invisible character characters when they appear:
+1. Replace leading and trailing invisible character in text nodes with a single space character, unless the text node is entirely invisible character and can be safely removed.
+
+2. Remove text nodes that contain only invisible character characters when they appear:
    - At the beginning or end of element children
    - At the beginning or end of template/block bodies
    - Between block-level elements where they serve no visual purpose
 
-3. **Class Attribute Optimization**: Specifically optimize `class` attributes by:
+3. Specifically optimize `class` attributes by:
    - Removing leading and trailing invisible character
    - Collapsing multiple consecutive invisible character characters to single spaces
    - Preserving the optimization across concatenated expressions
+   (this also helps tailwind users)
 
 ### Skip Conditions
 
@@ -130,11 +133,11 @@ const MyTemplate = <template>
 
 ```js
 const MyTemplate = template(
-    ''
+    '\n  <span>x</span>\n'
 );
 
 export default template(
-    '',
+    '\n  <MyTemplate>\n',
     { scope: () => ({ MyTemplate })}
 )
 ```
@@ -143,11 +146,11 @@ export default template(
 
 ```js
 const MyTemplate = template(
-    '\n  <span>x</span>\n'
+    '<span>x</span>'
 );
 
 export default template(
-    '\n  <MyTemplate>\n',
+    '<MyTemplate>',
     { scope: () => ({ MyTemplate })}
 )
 ```
