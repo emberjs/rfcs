@@ -196,7 +196,7 @@ const Clock = resource(({ on }) => {
 
 Resources don't replace existing patterns—they **unify them under a single, powerful abstraction** that eliminates the need to choose between different lifecycle approaches or remember multiple APIs. Whether you're building a component helper, managing WebSocket connections, or creating reusable business logic, resources provide the same elegant pattern for setup and teardown.
 
-### Conceptual Unification Examples
+### Examples
 
 To illustrate how resources unify existing concepts, here are small examples showing how traditional Ember constructs could be reimagined using resources. Note that **classes are user-defined** while **resources are framework-internal** - this separation allows resources to wrap and manage existing class-based patterns.
 
@@ -291,38 +291,7 @@ See also: [RFC: #502 | Explicit Service Injection](https://github.com/emberjs/rf
 
 </details>
 
-<details><summary>Helpers</summary>
-
-Resources _are_ helpers, so while this is not needed exactly (as we have the helper manager), we could look at helpers like this:
-
-```js
-// User-defined Helper class (unchanged)
-class FormatDateHelper extends Helper {
-  @service intl;
-  
-  compute([date]) {
-    return this.intl.formatDate(date);
-  }
-}
-```
-
-an equiv resource-based helper would look like this:
-```js
-function formatDate(date) {
-  return resource(({ on, owner }) => {
-    let intl = owner.lookup('service:intl');
-
-    return () => 
-      // entangles with the intl's locale
-      intl.formatdate(date);
-  });
-}
-```
-
-</details>
-
-
-<details><summary>Components</summary>
+<details><summary>Components, Routes, Services, (anything with willDestroy)</summary>
 
 ```gjs
 class Demo extends Component {
@@ -347,53 +316,108 @@ function InternalInvoker(Component, argsProxy) {
 
 </details>
 
-**Routes → Resources**
+
+<details><summary>Helpers</summary>
+
+Resources _are_ helpers, so while this is not needed exactly (as we have the helper manager), we could look at helpers like this:
+
 ```js
-// User-defined Route class (unchanged)
-class PostRoute extends Route {
-  model(params) {
-    return this.store.findRecord('post', params.id);
-  }
+// User-defined Helper class (unchanged)
+class FormatDateHelper extends Helper {
+  @service intl;
   
-  willDestroy() {
-    this.controller?.abort();
+  compute([date]) {
+    return this.intl.formatDate(date);
   }
 }
+```
 
-// Framework-internal resource wrapper
-function InternalInvoker(Route) {
-  return resource(({ on, owner, link }) => {
-    const instance = new Route(owner);
+an equiv resource-based helper would look like this:
+```js
+function formatDate(date) {
+  return resource(({ on, owner }) => {
+    let intl = owner.lookup('service:intl');
 
-    link(instance);
-    
-    if ('willDestroy' in instance) {
-      on.cleanup(() => instance.willDestroy());
-    }
-    
-    return instance;
+    return () => 
+      intl.formatdate(date);
   });
 }
 ```
 
-**The Power of Unified Patterns**
+</details>
 
-These examples demonstrate several key points:
+<details><summary>DOM Rendering</summary>
 
-1. **Clear Separation of Concerns**: User-defined classes contain domain logic, while framework-internal resources handle lifecycle management
-2. **Migration Path**: Existing classes can be wrapped with resources without modification
-3. **Consistent Setup/Teardown**: Always use `on.cleanup()` instead of different lifecycle hooks
-4. **Automatic Memory Management**: No need to remember different cleanup patterns across constructs
-5. **Composable Logic**: Resources can be easily combined and tested in isolation
-6. **Uniform Mental Model**: Same patterns whether wrapping helpers, modifiers, services, or routes
 
-This unification eliminates the cognitive overhead of learning multiple lifecycle APIs while preserving existing class-based patterns. Resources become the framework's internal mechanism for managing lifecycle, while users continue working with familiar class structures.
+Instead of the VM, we could use resources to manage the insertion and removal of known dynamic nodes in the DOM:
+
+```gjs
+// Let's pretend we are rendering a simple counter:
+const count = cell(0);
+const increment = () => count.current++;
+
+<template>
+    {{count.current}}
+    <button onclick={{increment}}>++</button>
+    {{#if (isEven count.current)}}EVEN!{{/if}}
+</template>
+
+// render could be responsible for directly managing the create/destroy 
+// / invocation/cleanup
+// each node in this array will be wrapped in a resource if cleanup is possibly needed, such as the case of if blocks    
+export default component([
+    () => count.current,
+    [createElement, 'button' { 
+        // the arrow function is for the chance that the value might by reactive
+        onclick: () => increment,
+    }, ["++"]],
+    [condition, () => isEven(count.current), ['EVEN!']],
+]);
+
+// a hypothetical component()
+function component(instructions) {
+    return resource(({ on, use }) => {
+        let fragment = document.createDocumentFragment();
+
+        on.cleanup() => fragment.remove();
+
+        // iterate over instructions,
+        // if any instructions are resoures, they'll be `use`d.
+        // each `use`d thing has its own cache / begin/end tracking frame pair.
+
+        // caller of component() will append fragment
+        return fragment;
+    })
+}
+
+// a hypothetical if evaluator
+function condition(evaluate, whenTrue, whenFalse) {
+    return resource(({ on, use }) => {
+        let fragment = document.createDocumentFragment();
+
+        on.cleanup() => fragment.remove();
+
+        return () => {
+            let contents = evalute() ? whenTrue() : whenFalse();
+            fragment.append(contents);
+            return fragment;
+        }
+    });
+}
+```
+
+> [!NOTE] these examples are are hypothetical and non-functional today. They are strictly for illustration.
+
+</details>
+
+
+This unification hopefully will lead to simplification of the implmentation of all our concepts. 
 
 ## Detailed design
 
 ### Overview
 
-A **resource** is a reactive function that represents a value with lifecycle and optional cleanup logic. Resources are created using the `resource()` function and automatically manage their lifecycle through Ember's existing destroyable system.
+A **resource** is a reactive function that represents a value with lifecycle and optional cleanup logic. Resources are created using the `resource()` function and automatically manage their lifecycle through Ember's existing destroyable system, though the exact implementation could change at any time (to be simpler) as we work at simplifying the internals.
 
 ```js
 import { cell, resource } from '@ember/reactive';
