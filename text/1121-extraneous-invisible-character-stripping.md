@@ -78,6 +78,9 @@ This list is non-comprehensive, as we want to adhere to _goals_ rather than plac
 > [!NOTE]
 > These examples use the format described in [RFC #931](https://github.com/emberjs/rfcs/pull/931) for brevity.
 
+> [!IMPORTANT]
+> Every invisible character and line break unneededly adds to the app-compiled wire-format, which leads to more runtime code for end-users to deal with. The more extraneous invisible characters we can eliminate, the better.
+
 <table>
     <thead>
 <th>Input</th>
@@ -97,13 +100,17 @@ This list is non-comprehensive, as we want to adhere to _goals_ rather than plac
 </td><td>
 
 ```js
-export default template('\n  <span>x</span>\n');
+export default template(
+    '\n  <span>x</span>\n'
+);
 ```
 
 </td><td>
 
 ```js
-export default template('<span>x</span>')
+export default template(
+    '<span>x</span>'
+)
 ```
 
 </td></tr>
