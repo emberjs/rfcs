@@ -75,6 +75,9 @@ The minification will be automatically disabled for elements where invisible cha
 
 This list is non-comprehensive, as we want to adhere to _goals_ rather than place a test suite for this behavior in the RFC
 
+> [!NOTE]
+> These examples use the format described in [RFC #931](https://github.com/emberjs/rfcs/pull/931) for brevity.
+
 <table>
     <thead>
 <th>Input</th>
@@ -93,14 +96,14 @@ This list is non-comprehensive, as we want to adhere to _goals_ rather than plac
 
 </td><td>
 
-```html
-\n  <span>x</span>\n
+```js
+export default template('\n  <span>x</span>\n');
 ```
 
 </td><td>
 
-```html
-<span>x</span>
+```js
+export default template('<span>x</span>')
 ```
 
 </td></tr>
