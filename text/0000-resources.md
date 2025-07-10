@@ -513,6 +513,18 @@ type ResourceFunction<T> = (api: ResourceAPI) => T;
 function resource<T>(fn: ResourceFunction<T>): Resource<T>
 ```
 
+#### `on.cleanup`
+
+
+#### `use`
+
+#### `link`
+
+
+#### `owner`
+
+
+
 ### Resource Creation and Usage
 
 Resources can be used in several ways:
