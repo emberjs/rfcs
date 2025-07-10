@@ -448,9 +448,9 @@ This unification hopefully will lead to simplification of the implmentation of a
 
 ### Overview
 
-A **resource** is a reactive function that represents a value with lifecycle and optional cleanup logic. Resources are created using the `resource()` function and automatically manage their lifecycle through Ember's existing destroyable system, though the exact implementation could change at any time (to be simpler) as we work at simplifying the internals.
+A **resource** is a reactive function that represents a value with lifecycle and optional cleanup logic. Resources are created using the `resource()` function and automatically manage their lifecycle through Ember's existing destroyable system, though the exact implementation could change at any time (to be simpler) as we work at simplifying a bunch of internals.
 
-```js
+```gjs
 import { cell, resource } from '@ember/reactive';
 
 const Clock = resource(({ on }) => {
@@ -464,7 +464,35 @@ const Clock = resource(({ on }) => {
 
   return time;
 });
+
+<tmelptae>
+  {{Clock}}
+</template>
 ```
+
+<details><summary>Ignoring the Value, using for the lifecycle management -- synchronizing external state</summary>
+
+```gjs
+import { cell, resource } from '@ember/reactive';
+
+function addScript(url) {
+  return resource(({ on }) => {
+    let el = document.createElement('script');
+
+    on.cleanup(() => el.remove());
+
+    Object.assign(el, { src: url });
+  });
+}
+
+<template>
+  {{#if @useBootStrap}}
+    {{addScript "https://some.cdn.com/bootstrap/v5/bootstrap.js"}}
+  {{/if}}
+</template>
+```
+
+</details>
 
 ### Core API
 
