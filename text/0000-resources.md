@@ -54,9 +54,9 @@ graph LR;
 
 Ember's current Octane programming model provides excellent primitives for reactive state (`@tracked`), declarative rendering (templates), and component lifecycle, but it lacks a unified primitive for managing stateful processes that need cleanup. This fragmentation has created a complex ecosystem where different concepts each require their own approach to lifecycle management, leading to scattered patterns and cognitive overhead.
 
-### The Fragmented Landscape of Lifecycle Management
+### Lifecycle Management
 
-Today, Ember developers must navigate multiple, disconnected systems for managing setup and teardown:
+Today, Ember developers must be aware of multiple systems for managing setup and teardown:
 
 <details><summary>Components</summary>
 
@@ -201,7 +201,7 @@ There isn't a cohesive / consistent way to encapsulate state with cleanup. This 
 - Not knowing how to properly associate children with `associateDestroyableChild()`
 - Memory leaks from forgotten cleanup
 
-### Resources: A Unified Solution
+### A unified approach to lifecycle management in one package (function)
 
 Resources solve these problems by providing a **single, consistent container for setup and teardown logic** that works across all contexts. Instead of learning multiple[^14-competing-standards] lifecycle patterns, developers work with one unified primitive:
 
@@ -225,7 +225,7 @@ const Clock = resource(({ on }) => {
 2. **Co-located Setup/Teardown**: No more spreading logic across constructors, lifecycle hooks, and destructor registrations  
 3. **Hierarchical Cleanup**: Automatic owership linkage and disposal and child management without manual `associateDestroyableChild()` + `registerDestructor` (also with a way to manually link, similar to [RFC #1067](https://github.com/emberjs/rfcs/pull/1067))
 
-Resources don't replace existing patterns—they **unify them under a single, powerful abstraction** that eliminates the need to choose between different lifecycle approaches or remember multiple APIs. Whether you're building a component helper, managing WebSocket connections, or creating reusable business logic, resources provide the same elegant pattern for setup and teardown.
+Resources don't replace existing patterns. Resources unify those patterns under a single abstraction that eliminates the need to choose between different lifecycle approaches or remember multiple APIs.
 
 ### Examples
 
