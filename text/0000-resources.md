@@ -1268,9 +1268,7 @@ const BreakpointInfo = resource(({ use }) => {
 });
 ```
 
-### Best Practices and Patterns
-
-#### Resource Composition Patterns
+### Patterns and Examples
 
 **Hierarchical Composition**: Build complex resources from simpler ones using reactive ownership:
 
@@ -1295,11 +1293,16 @@ const CurrentUser = resource(({ on, owner }) => {
   session.on('userChanged', handleUserChange);
   on.cleanup(() => session.off('userChanged', handleUserChange));
   
+  // ".current" is special and is automatically collapsed when rendered.
+  // otherwise you could return () => userDate.current;
   return userData;
 });
 ```
 
-**Parallel Data Loading**: Avoid waterfalls by composing resources that fetch independently:
+**Parallel Data Loading**: Avoid waterfalls by composing resources that run async independently:
+
+> [!NOTE] 
+> WarpDrive has utilities for this problem as well
 
 ```js
 const DashboardData = resource(({ use }) => {
@@ -1312,13 +1315,12 @@ const DashboardData = resource(({ use }) => {
     user: userData.current,
     analytics: analytics.current,
     notifications: notifications.current,
-    // Derived state based on all three
-    hasUnreadNotifications: notifications.current.unreadCount > 0
+    get hasUnreadNotifications() {
+      return notifications.current.unreadCount > 0;
+    }
   });
 });
 ```
-
-#### Error Handling and Resilience
 
 **Graceful Degradation**: Design resources to handle errors gracefully:
 
@@ -1333,10 +1335,13 @@ const ResilientDataLoader = resource(({ on }) => {
   
   const maxRetries = 3;
   const backoffDelay = (attempt) => Math.min(1000 * Math.pow(2, attempt), 10000);
+  const controller = new AbortController();
+
+  on.cleanup(() => controller.abort());
   
   const fetchWithRetry = async (attempt = 0) => {
     try {
-      const response = await fetch('/api/critical-data');
+      const response = await fetch('/api/critical-data', { signal: controller.signal });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       
       const data = await response.json();
@@ -1363,8 +1368,6 @@ const ResilientDataLoader = resource(({ on }) => {
 });
 ```
 
-#### Performance Optimization
-
 **Lazy Evaluation for Expensive Operations**:
 
 ```js
@@ -1382,7 +1385,9 @@ const ExpensiveComputation = resource(({ use }) => {
     
     return {
       status: 'computed',
-      result: performExpensiveAnalysis(data.data)
+      get result() {
+        return performExpensiveAnalysis(data.result);
+      }
     };
   };
 });
@@ -1396,10 +1401,11 @@ const MemoizedProcessor = resource(({ use }) => {
   let lastInput = null;
   let cachedResult = null;
   
+  // This function here is intepreted as a `createCache`
   return () => {
     const currentInput = input.current;
     
-    // Memoize based on input identity/equality
+    // Memoize based on input value equality
     if (currentInput !== lastInput) {
       lastInput = currentInput;
       cachedResult = expensiveProcessing(currentInput);
@@ -1410,9 +1416,7 @@ const MemoizedProcessor = resource(({ use }) => {
 });
 ```
 
-#### Testing Patterns
-
-**Resource Testing in Isolation**:
+**Unit testing with Resources**:
 
 ```js
 import { module, test } from 'qunit';
@@ -1439,11 +1443,11 @@ module('Unit | Resource | timer', function(hooks) {
     const instance = TestTimer.create();
     instance.link(this.owner);
     
-    const initialTime = instance.current.current;
+    const initialTime = instance.current;
     
     await new Promise(resolve => setTimeout(resolve, 250));
     
-    const laterTime = instance.current.current;
+    const laterTime = instance.current;
     assert.ok(laterTime > initialTime, 'Timer advances');
     
     instance.destroy();
@@ -1451,60 +1455,18 @@ module('Unit | Resource | timer', function(hooks) {
 });
 ```
 
-#### Integration Patterns
-
 **Service Integration**:
 
 ```js
 const ServiceAwareResource = resource(({ owner }) => {
   const session = owner.lookup('service:session');
   const router = owner.lookup('service:router');
-  const store = owner.lookup('service:store');
   
   // Resource can depend on and coordinate multiple services
   return () => ({
     currentUser: session.currentUser,
     currentRoute: router.currentRouteName,
-    // Reactive query based on current context
-    relevantData: store.query('item', {
-      userId: session.currentUser?.id,
-      route: router.currentRouteName
-    })
   });
-});
-```
-
-**Cross-Resource Communication**:
-
-```js
-const NotificationBus = resource(({ on }) => {
-  const subscribers = cell(new Map());
-  const messages = cell([]);
-  
-  const subscribe = (id, callback) => {
-    const current = subscribers.current;
-    const newMap = new Map(current);
-    newMap.set(id, callback);
-    subscribers.set(newMap);
-  };
-  
-  const publish = (message) => {
-    messages.set([...messages.current, message]);
-    
-    // Notify all subscribers
-    subscribers.current.forEach(callback => {
-      callback(message);
-    });
-  };
-  
-  const unsubscribe = (id) => {
-    const current = subscribers.current;
-    const newMap = new Map(current);
-    newMap.delete(id);
-    subscribers.set(newMap);
-  };
-  
-  return { subscribe, publish, unsubscribe, messages };
 });
 ```
 
@@ -1716,7 +1678,7 @@ This is reactive because the construction of `State` does not require the value 
   }
   ```  
   Note that when `one` changes, the whole function passed in to `State` will be considered invalidated -- whet `state.one` is changed, so also will `state.two` be changed. This is simpler, but can be expensive for complex derivations.
-- Fine-grained object
+- [Fine-grained object](https://limber.glimdown.com/edit?c=JYWwDg9gTgLgBAYQuCA7Apq%2BAzKy4DkAAgOYA2oI6UA9AMbKQZYEDcAUKJLHAN5wwoAQzoBrdABM4AXzi58xcpWo1BI0cFQk2nFD35oZcvCEJF0IAEYqQECcGzBqO9nTJCAzh7gBlGEJh0PnY4OABiCDAYYDQPADFUVjgQuAZUD0EAVzoYaAAKSOjYhIBKPgEAC2APADoIqJj0hLgAXjhCxvjUGXYUknR4eqL0vLLeFNCoAcyobpgq2qHOhNGOUOle0JoaOAAVCvQPIKEpuE17ADdgCUyhMjIATzgpkWiL9D6B9oxR4NDJ6azSrVOodWI1TQYKAAeQwax6n3gMAA7hBfuN-s9AXMFqCGuDIdRdqj4RtEalkJZNJJ0RMsTAZjiQUtwQwrNSJKT2GT0AAPbjwCTobBCTJkeBuTzeAAiFggcD5gVQEm8SBQzHgGLgRDUYkk3yCbQADPCdcI9VIUfLjRwUhkAoa4Bhkb5-IE8r8WgA%2BP7-MhfMAnTDwNrzaq2zFTBlA-h0rY7AhhjwEM7dIRwfowQJQVNwITdCCWABW6ByWOw1G8uUqQULJZyABonRAkQc4IGplgKVhFTU4xmvoSYT8xv2AdHuh3gzU0Oh4ZjpA3%2B5nU1DiWjR5jI9j20GsDUrfP-ovl182VSMBJaVv-lHGcDakPYUEAFQPiGoNck-sbBekkoRqmdBTFQWAAIytHAno%2BkmM4YAA1PB8KaMBFjBgATJB0HvlaiGAQAPIE4DuIEXp0rwvCwfagRweg0iyAAPnwlG4tR6AHqi9FwExFFUW67Hnhy9F0vhliZFmhgUYYBBuMAYgprBKEgcGYH0V6SloV2s74TQYkSagZGYqJ4m5N0UndDJFDye%2BGmgTA6FqbZwYCKiOl6aZhlwDpRFgCR6BkRsQA&format=gjs)
   ```js
   class Demo extends Component {
     @tracked one = 0;
@@ -1728,21 +1690,22 @@ This is reactive because the construction of `State` does not require the value 
       return { 
         // 'this' in a getter in an object refers to the object, not the parent context.
         get innerOne() {
-          return this.one;
+          return parent.one;
         },
         get innerTwo() {
-          return this.two;
+          return parent.two;
         },
         get combined() {
           return this.innerOne * this.innerTwo;
         }
+      };
     });
 
     <template>{{this.state.one}}</template>
   }
 
   class State {
-    constructor(optionsFn) { this.#options = optionsFn }
+    constructor(optionsFn) { this.#optionsFn = optionsFn }
 
     get #options() {
       return this.#options();
@@ -1750,11 +1713,11 @@ This is reactive because the construction of `State` does not require the value 
 
     // These are individually reactive
     get one() {
-      return this.#options.one;
+      return this.#options.innerOne;
     }
 
     get two() {
-      return this.#options.two;
+      return this.#options.innerTwo;
     }
 
     get combined() {
@@ -1762,18 +1725,13 @@ This is reactive because the construction of `State` does not require the value 
     }
   }
   ```
+  In this example, `state.one` and `state.two` are _individually_ reactive. and `state.combined` entantgles with both.
 
-
-
-
-**Why does this matter for auto-tracking?**
-
-Value evaluation must be lazy for reactivity to be wired up as fine-grainedly.
-
-For example:
 
 
 ### Resources
+
+TODO: (adapt from the ember-resources documentation)
 
 
 ### When _not_ to use a resource
