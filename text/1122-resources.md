@@ -517,14 +517,58 @@ function resource<T>(fn: ResourceFunction<T>): Resource<T>
 
 Allows user-defined cleanup to occur when the resource would be torn down. Same behavior as the existing  `registerDestructor`.
 
+Example
+```gjs
+resource(({ on }) => {
+  on.cleanup(() => console.log('cleaning up'));
+})
+```
+
 #### `use`
 
-A short-hand for interacting with `invokeHelper` -- allows using nested resources as stable references. Upon update, cleanup is guaranteed to run before the creation of the .....
+A short-hand for interacting with `invokeHelper` -- allows using nested resources as stable references. Upon update, cleanup is guaranteed to run before the creation / update of the internal state of the `use`d thing.
+
+Use returns a read-only cell, with only a `.current` property.
+
+Example
+```gjs
+resource(({ use }) => {
+  let state = use(OtherResource(() => { /* ... */ }))
+
+  return () => {
+    let active = state.current;
+
+    return active.result;
+  };
+
+})
+```
 
 #### `link`
 
+A shorthand for wiring up the owner and and destruction hierarchies. 
+
+Example
+```gjs
+resource(({ link }) => {
+  let state = new State();
+
+  // enables State to have service injection and use registerDestructor
+  link(state);
+})
+
+```
 
 #### `owner`
+
+Enables accessing services and other things on the owner.
+
+Example
+```gjs
+resource(({ owner }) => {
+  let router = owner.lookup('service:router');
+});
+```
 
 
 
