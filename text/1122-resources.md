@@ -8,7 +8,7 @@ teams:
   - learning
   - typescript
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/1122
 project-link:
 suite: 
 ---
