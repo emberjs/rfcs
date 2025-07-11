@@ -1873,3 +1873,10 @@ n/a
   - [RFC #1067: link](https://github.com/emberjs/rfcs/pull/1067) 
 - Related(ish) / would be influenced by resources
   - [RFC #502: Explicit Service Injection](https://github.com/emberjs/rfcs/pull/502)
+- The earlier Resource RFC, [RFC #567](https://github.com/emberjs/rfcs/pull/567)
+
+Broader community content
+- [How autotracking works](https://www.pzuraq.com/blog/how-autotracking-works)
+- [TC39 Signals Async Discussion](https://github.com/tc39/proposal-signals/issues/30)
+- [TC39 Explicit Resource Management](https://github.com/tc39/proposal-explicit-resource-management)
+
