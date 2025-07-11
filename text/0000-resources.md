@@ -1692,7 +1692,7 @@ This is reactive because the construction of `State` does not require the value 
     }
   }
   ```
-- Multi-value function
+- [Multi-value function](https://limber.glimdown.com/edit?c=JYWwDg9gTgLgBAYQuCA7Apq%2BAzKy4DkAAgOYA2oI6UA9AMbKQZYEDcAUKJLHAN5wwoAQzoBrdABM4AXzi58xcpWo1BI0cFQk2nFD35oZcvCEJF0IAEYqQECcGzBqO9nTJCAzh7gBlGEJh0PnY4OABiCDAYYDQPDlCGVA9BAFc6GGgACkjo2IAxVABKPgEAC2APADoIqJikuABeOBy6jwLWGXYQuBJ0eDR0TOLebtCoPpSoVDKK6pbYocqB%2BM7u3vgYAHcIIeDQsYmpmaqa3KTFrYgV6XYb9nQAD254CXRsIRSyeDdPbwARCwQOCPQKoCTeJAoZjwEahIhqMSSZoYRpwAAMK3hwkRUkuqIxXVCyQCQSaGE2vn8gUyuwaAD44JkDBgAFzHJYYAA0Am2bJg5SqeOkhUKHG6mjo4yoWAAjKjaQz%2BbMBgBqFUrCVSzAwABM8uK9PZlzVYtCAB5AuB3IE6aM%2BLwlVViYEOehpLIAD72x2VZ3oSqXd12s2WFIwDLTXi8QwENzAMQEdmaizamXuunJ6X9DBmmih8NoW37OAhsMR%2B0xuMJpOoSUprA69OZ7U8iC5-MRosl1QWMDW9C2m5AA&format=gjs)
   ```js
   class Demo extends Component {
     @tracked one = 0;
@@ -1706,11 +1706,62 @@ This is reactive because the construction of `State` does not require the value 
   class State {
     constructor(fooFn) { this.#fooFn = fooFn }
 
-    get value() {
-      return this.#fooFn();
+    get one() {
+      return this.#options().one;
+    }
+
+    get two() {
+      return this.#options().two;
     }
   }
   ```  
+  Note that when `one` changes, the whole function passed in to `State` will be considered invalidated -- whet `state.one` is changed, so also will `state.two` be changed. This is simpler, but can be expensive for complex derivations.
+- Fine-grained object
+  ```js
+  class Demo extends Component {
+    @tracked one = 0;
+    @tracked two = 0;
+
+    state = new State(() => {
+      let parent = this;
+
+      return { 
+        // 'this' in a getter in an object refers to the object, not the parent context.
+        get innerOne() {
+          return this.one;
+        },
+        get innerTwo() {
+          return this.two;
+        },
+        get combined() {
+          return this.innerOne * this.innerTwo;
+        }
+    });
+
+    <template>{{this.state.one}}</template>
+  }
+
+  class State {
+    constructor(optionsFn) { this.#options = optionsFn }
+
+    get #options() {
+      return this.#options();
+    }
+
+    // These are individually reactive
+    get one() {
+      return this.#options.one;
+    }
+
+    get two() {
+      return this.#options.two;
+    }
+
+    get combined() {
+      return this.#options.combined;
+    }
+  }
+  ```
 
 
 
