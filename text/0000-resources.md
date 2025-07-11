@@ -1114,9 +1114,10 @@ Function returns are particularly useful for:
 
 The choice between returning cells and returning functions depends on whether the resource primarily holds state (use cells) or computes derived values (use functions).
 
-### Example Use Cases
+### Examples
 
-**1. Data Fetching with Modern Async Patterns**
+**Data Fetching with Modern Async Patterns**
+
 ```js
 const RemoteData = resource(({ on }) => {
   const state = cell({ loading: true, data: null, error: null });
@@ -1164,7 +1165,8 @@ const ProcessedData = resource(({ use }) => {
 });
 ```
 
-**2. WebSocket Connection with Reactive State Management**
+**WebSocket Connection with Reactive State Management**
+
 ```js
 const WebSocketConnection = resource(({ on, owner }) => {
   const notifications = owner.lookup('service:notifications');
@@ -1220,7 +1222,8 @@ const WebSocketConnection = resource(({ on, owner }) => {
 });
 ```
 
-**3. Reactive DOM Event Handling with Debouncing**
+**Reactive DOM Event Handling with Debouncing**
+
 ```js
 const WindowSize = resource(({ on }) => {
   const size = cell({
@@ -1267,8 +1270,6 @@ const BreakpointInfo = resource(({ use }) => {
   };
 });
 ```
-
-### Patterns and Examples
 
 **Hierarchical Composition**: Build complex resources from simpler ones using reactive ownership:
 
