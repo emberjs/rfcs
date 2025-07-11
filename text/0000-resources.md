@@ -1510,6 +1510,286 @@ const NotificationBus = resource(({ on }) => {
 
 These patterns demonstrate how resources can be composed to build sophisticated reactive architectures while maintaining clarity, testability, and performance.
 
+## How we teach this
+
+#### How autotracking works
+
+This information can, and maybe _should_ be added to the guides before this RFC, as much of it is is not specific to resources, but there are core reactivity concepts that our current guides content is presently missing. It is fundamental to understanding reactivity outside the `@tracked` usage that folks may be used to in components.
+
+-------
+
+##### tl;dr: autotracking
+
+Every `{{}}`, `()`, and non-element `<component>` region in a component is auto-tracked. 
+
+What this is means is before the renderer evaluates what content should be rendered, a "tracking frame" is opened -- and when the renderer gets an answer about what should be rendered the "tracking frame" is closed. This happens synchronously, and can be understood with this psuedo code:
+```js
+function getValueFor(x) {
+  openTrackingFrame();
+  x(); // the value, helper, modifier, component, etc
+  closeTrackingFrame();
+}
+```
+
+Internally when we evaluate `x()`, any tracked values encountered are added to the current tracking frame.
+Like this psuedo code / psuedo implementation:
+```
+let currentFrame = null;
+// beginTrackingFrame
+currentFrame = [];
+function readTracked(trackedRef) {
+  currentFrame.push(trackedRef);
+}
+✨ associate currentFrame with the region ✨
+
+// read x
+// -> encounter and read @tracked foo
+readTracked(ref); // for each encountered tracked value (this is inherent to the plumbing of the getter used by @tracked)
+
+// closeTrackingFrame
+currentFrame = null;
+```
+
+Later, when `@tracked foo` is set, we schedule the renderer to check what regions' associated frame informations may have changed, and then re-render just those regions, repeated the above process.
+
+
+##### _what_ is autotracking
+
+Autotracking only works when access of a tracked value is deferred untli the tracked region that needs it. Thinking about this in terms of templates and javascript is inherently different, because the templates are designed to be much less cumbersome than would otherwise be required in JavaScript.
+
+For example, in a component-template, we understand that in
+```gjs
+class Demo extends Component {
+  @tracekd foo = 0;
+
+  <template>
+    <Display @count={{this.foo}} />
+  </template>
+}
+```
+even though `{{this.foo}}` looks like an _eager access_, the actual value of `foo` isn't read until rendered -- until `{{@count}}` is rendered within `<Display>`.
+
+In JavaScript, without templating, this would be the equivelent of:
+```js
+class Demo {
+  @tracked foo;
+
+  render() {
+    return Display({
+      '@count': () => this.foo, 
+    })
+  }
+}
+```
+
+In this hypothetical implementation, `foo` would not be auto-tracked until `@count()` was invoked. 
+
+This is exactly how getters work as well.
+
+> [!NOTE]
+> FUN FACT: in most JS ASTs, a getter is a ClassMethod with `kind: 'get'`
+
+```js
+class Demo {
+  @tracked foo
+
+  get bar() {
+    return this.foo;
+  }
+
+  render() {
+    return Display({
+      '@count': () => this.bar;
+    });
+  }
+}
+```
+
+> [!Important]
+> the `@tracked` decorator replaces the property with a getter, so that the behavior on access is _lazy evaluation_.
+
+Consequentially, this is why this common mistake _doesn't work as initially expected_
+```js
+class Display extends Component {
+  @tracked count = this.args.count;
+
+  <template>
+    {{this.count}}
+  </template>
+}
+```
+the right side of an equals sign only happens one. _There is no possible way in JavaScript to make the right side of an equals sign reactive_.
+
+Access and evaluation is still lazy, however. In decorator terminology this is (roughly) called the `init` phase, and only happens once.
+
+
+Likelwise, when we want to build a plain old javascript object, and give it reactivity, we have to follow the JavaScript rules of lazy evaulation:
+```js
+class Demo extends Component {
+  @tracked foo = 0;
+
+  // 1. ❌ Not reactive, this.foo is evaluated onece when `State` is created
+  state = new State(this.foo)
+
+  // 2. ✅ reactive -- this.foo isn't evaluated until `State` needs it.
+  state = new State(() => this.foo);
+
+  <template>
+    {{this.state.doubledFoo}}
+  </template>
+}
+```
+
+In example 1 where `State` is created via `new State(this.foo)`, `State` may look like this:
+```js
+class State {
+  constructor(foo) {
+    this.#foo = foo;
+  }
+
+  get doubledFoo() {
+    return this.#foo * 2;
+  }
+}
+```
+This is _non_ reactive, because `#foo` is assigned once _and_ is passed a primitive value, `0` in this case -- and primitive values are not capable of being reactive. 
+
+> [!IMPORTANT]
+> Reactivity requires an abstraction around the value we wish to be reactive. This is where [Cell](https://github.com/emberjs/rfcs/pull/1071) comes in for representing reactive references to "some value" (without a class). Note that `@tracked` can be implemented with `Cell` internally. See [RFC #1071](https://github.com/emberjs/rfcs/pull/1071) for details.
+
+In example 2, where `State` is created via `new State(() => this.foo)`, `State` make look like this: 
+```js
+class State {
+  constructor(fooFunction) {
+    this.#fooFn = fooFunction;
+  }
+
+  get doubledFoo() {
+    return this.#fooFn() * 2;
+  }
+}
+```
+This is reactive because the construction of `State` does not require the value (`foo`) to be evaluated. It defers evaluation until later -- in this case when `doubledFoo` would be evaluated. This deferring of evaluation allows the renderer to find the tracked state while rendering each individual `{{}}`, `()`, or `<component>` region in the template. In the example earlier with tracking frames, where we hand-waived over `x()` "adding to the `currentFrame`,  it doesn't matter what is access, or how many things are accessed, because tracked values, when read, push their state into the global `currentFrame` variable.
+
+
+##### The styles of deferring evaluation until _needed_ in JavaScript.
+
+- [Single-value function](https://limber.glimdown.com/edit?c=JYWwDg9gTgLgBAYQuCA7Apq%2BAzKy4DkAAgOYA2oI6UA9AMbKQZYEDcAUKJLHAN5wwoAQzoBrdABM4AXzi58xcpWo1BI0cFQk2nFD35oZcvCEJF0IAEYqQECcGzBqO9nTJCAzh7gBlGEJh0PnY4OABibAgIADFUDlCGVA9BAFc6GGgACkiY1ABKPgEAC2APADoIqNi4AF45KriZdhC4EnR4ADchMhT0TILeFtCodpSoVGLSipzY-vim6Wb0AA9ueAl0bCEUsng3T28AEQsIOBXA1AlvJBRmeEHQojUxSXrTuoAGDhbkgKC6jAAd18-kCmX6tQAfJNyjk8t9Qpo6CMqFhanAITVoTASrCogBqfEIuAAHkC4HcgUhQz4vBxU1%2BgTKXR66Gki1CoRJlhSMAyE14vEMBDcwDEBBhZSRKMwMHZkOlFllJJoPL5aGpXNUFjAlPQ1MWQA&format=gjs)
+  ```js
+  class Demo extends Component {
+    @tracked foo = 0;
+
+    state = new State(() => this.foo);
+
+    <template>{{this.state.value}}</template>
+  }
+
+  class State {
+    constructor(fooFn) { this.#fooFn = fooFn }
+
+    get value() {
+      return this.#fooFn();
+    }
+  }
+  ```
+- Multi-value function
+  ```js
+  class Demo extends Component {
+    @tracked one = 0;
+    @tracked two = 0;
+
+    state = new State(() => ({ one: this.one, two: this.two }));
+
+    <template>{{this.state.value}}</template>
+  }
+
+  class State {
+    constructor(fooFn) { this.#fooFn = fooFn }
+
+    get value() {
+      return this.#fooFn();
+    }
+  }
+  ```  
+
+
+
+
+**Why does this matter for auto-tracking?**
+
+Value evaluation must be lazy for reactivity to be wired up as fine-grainedly.
+
+For example:
+
+
+### Resources
+
+
+### When _not_ to use a resource
+
+- When there is no cleanup or lifecycle management needed.
+  For example, in state containers, you may just want a class. Even if you need to [link](https://github.com/emberjs/rfcs/pull/1067) for service access, managing a class may be easier.
+  
+  ```js
+  function Foo(countFn) {
+    return resource(({ use }) => {
+      let nestedState = use(OtherResource(() => countFn()));
+
+      return {
+        get isLoading() {
+          return nestedState.isPending;
+        },
+        get result() {
+          return nestedState.value;
+        },
+      };
+    });
+  }
+
+  // usage
+  class Demo extends Component {
+    @tracked count = 0;
+
+    @use foo = Foo(() => this.count);
+
+    <template>
+      {{this.foo.result}}
+    </template>
+  }
+  ```
+
+  instead, this would be behaviorally equivelant, and closer to abstractionless JavaScript:
+  ```js
+  class Foo {
+    constructor(countFn) { this.#countFn = countFn; }
+
+    @use nestedState = OtherResource(() => this.#countFn());
+
+    get isLoading() {
+      return this.nastedState.isPending;
+    }
+
+    get result() {
+      return this.nestedState.value;
+    }
+  }
+
+  // usage
+  class Demo extends Component {
+    @tracked count = 0;
+
+    foo = new Foo(() => this.count)
+
+    <template>
+      {{this.foo.result}}
+    </template>
+  }
+  ```
+  When you don't need a resource, your application gets to skip all the infrastructure that makes resources work (at the time of writing: the Helper Manager system). Additionally, when a resource is not needed, your application code stays closer to framework-agnostic concepts, thus improving onboarding for new developers.
+
+
+
+
 ## Drawbacks
 
 - The function coloring problem, described here [TC39 Signals Issue#30](https://github.com/tc39/proposal-signals/issues/30).
