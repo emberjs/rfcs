@@ -515,8 +515,11 @@ function resource<T>(fn: ResourceFunction<T>): Resource<T>
 
 #### `on.cleanup`
 
+Allows user-defined cleanup to occur when the resource would be torn down. Same behavior as the existing  `registerDestructor`.
 
 #### `use`
+
+A short-hand for interacting with `invokeHelper` -- allows using nested resources as stable references. Upon update, cleanup is guaranteed to run before the creation of the .....
 
 #### `link`
 
