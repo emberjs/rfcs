@@ -199,7 +199,7 @@ if we wanted to render ember in ember via modifier (silly):
 ```gjs
 import { modifier } from 'ember-modifier';
 import { destroy } from '@ember/destroyable';
-import { renderComponent from '@ember/renderer';
+import { renderComponent } from '@ember/renderer';
 
 const Demo = <template>hi</template>;
 const render = modifier((element) => {
@@ -221,7 +221,79 @@ const render = modifier((element) => {
 
 ## How we teach this
 
-`renderComponent` is meant as an integration-enabling API and would not be added to the guides, or need any documentation beyond what would live in source on the function itself.
+`renderComponent` _is_ a low-level API, but it's use cases are powerful:
+
+### Micro Applications
+
+In _any_ framework, or _non_-framework, we incidentally re-enable the ability to use [JSBin](https://jsbin.com) or similar tools.
+
+Combined with [RFC #931](https://github.com/emberjs/rfcs/pull/931), we have a completely buildless framework.
+
+For example:
+
+```html
+<script type="importmap">
+{
+  "imports": {
+    "@ember/renderer": "https://esm.sh/*ember-source/dist/packages/@ember/renderer/index.js",
+    "@ember/template-compiler": "https://esm.sh/*ember-source/dist/packages@ember/template-compiler",
+    // etc
+  }
+}
+</script>
+
+<script type="module">
+  import { template } from '@ember/template-compiler';
+  import { renderComponent } from '@ember/renderer';
+
+  const Demo = template('hi');
+  renderComponent(Demo); // default "into" is the document.body
+</script>
+
+<body></body> <!-- "hi" is rendered here -->
+```
+
+### REPL
+
+Combined with [RFC #931](https://github.com/emberjs/rfcs/pull/931), we can dynamically compile and render components from user input.
+
+```html
+  import { template } from '@ember/template-compiler';
+  import { renderComponent } from '@ember/renderer';
+
+  let component;
+  let cleanup;
+
+  document.querySelector('textarea').addEventListener('change', (event) => {
+      if (cleanup) cleanup();
+
+      component = template(event.target.value);
+   
+      if (component) { 
+        let result = renderComponent(component, { into: document.querySelector('#app') });
+        cleanup = () => result.destroy();
+      }
+  });
+
+</script>
+<body>
+  <textarea>template contents</textarea>
+  <div id="render-output"></div>
+</body>
+```
+
+> ![NOTE]
+> Depending on your application, you may want to consider sanitizing user input, so users don't inject their own script / sytle tags into your app.
+> See: [DOMPurify](https://github.com/cure53/DOMPurify) and [Web Sanitizer API](https://developer.mozilla.org/en-US/docs/Web/API/Sanitizer) and [TrustedHTML](https://developer.mozilla.org/en-US/docs/Web/API/TrustedHTML)
+
+### Integration with "islands"-based documentation tools
+
+These include Vitepress, Astro, etc. 
+
+> [!NOTE]
+> We can already make integrations with vitepress, astro, etc, using code similar to [here in repl-sdk](https://github.com/NullVoxPopuli/limber/blob/06a65df246f147bf085ae5240a94d81455616e22/packages/repl-sdk/src/compilers/ember/render-app-island.js#L76). But `renderComponent` is a more streamline, composable, and user-friendly approach to rendering subtrees of ember code.
+
+
 
 ## Drawbacks
 
