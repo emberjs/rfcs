@@ -201,9 +201,15 @@ Update `@ember/service` docs with template examples. Add Guides section on "Serv
 
 ## Alternatives
 
-Keep requiring backing class injection. Maintains separation but creates boilerplate.
+- Keep requiring backing class injection. Maintains separation but creates boilerplate.
+  This leads to utilities like [service in reactiveweb](https://reactive.nullvoxpopuli.com/functions/resource_service.service.html)
 
-This leads to utilities like [service in reactiveweb](https://reactive.nullvoxpopuli.com/functions/resource_service.service.html)
+
+- There could be a future where services are user-land definable as _Resources_, as shown in [RFC #1122: Resources](https://github.com/emberjs/rfcs/pull/1122).|
+  Since resources _are_ helpers (by definition and implementation), the way we access singleton values on the application would be the same in JavaScript as in the component template. 
+
+
+
 
 ## Unresolved questions
 
