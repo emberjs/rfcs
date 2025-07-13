@@ -48,9 +48,11 @@ Making this optimization available by default will:
 
 ## Detailed design
 
-The template compiler will include a new AST transform that runs after all user-defined transforms but before the final compilation step. This transform will implement the same invisible character minification logic currently provided by ember-hbs-minifier.
+Strip the overall indent of a gjs/gts template including the leading / trailing line breaks. -- this is similar to `stripIndent` from [common-tags](https://www.npmjs.com/package/common-tags)
 
-### Core Minification Rules
+----
+
+It's not possible to safely strip all extraneous invisible characters, as the definition of extraneous is dependent on active CSS.
 
 The governing documentation on these rules are official standards documents:
 - [from MDN](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace)
@@ -58,37 +60,18 @@ The governing documentation on these rules are official standards documents:
 - [from CSS WG: Collapsible White Space](https://drafts.csswg.org/css-text-3/#collapsible-white-space)
 
 
-0. The leading and trailing invisible characters for opening `<template>` and closing `</template>` in gjs/gts files should be stripped.
-
-1. Replace leading and trailing invisible character in text nodes with a single space character, unless the text node is entirely invisible character and can be safely removed.
-
-2. Remove text nodes that contain only invisible character characters when they appear:
-   - At the beginning or end of element children
-   - At the beginning or end of template/block bodies
-   - Between block-level elements where they serve no visual purpose
-
-3. Specifically optimize `class` attributes by:
-   - Removing leading and trailing invisible character
-   - Collapsing multiple consecutive invisible character characters to single spaces
-   - Preserving the optimization across concatenated expressions
-   (this also helps tailwind users)
-
-### Skip Conditions
-
-The minification will be automatically disabled for elements where invisible character is semantically significant:
-   - `<pre>` - Preformatted text
-   - `<textarea>` - User input areas where formatting matters
-   - `<script>` and `<style>` - Code content
+But there is a safe transform that we can do only on gjs/gts
+-  The leading and trailing invisible characters for opening `<template>` and closing `</template>` in gjs/gts files should be stripped.
+  - This helps determine the "indentation level" which would also be stripped from each line -- effectively de-denting templates to what developers were used to before we started embedding templates in JS/TS.  
 
 ### Examples
-
-This list is non-comprehensive, as we want to adhere to _goals_ rather than place a test suite for this behavior in the RFC
 
 > [!NOTE]
 > These examples use the format described in [RFC #931](https://github.com/emberjs/rfcs/pull/931) for brevity.
 
 > [!IMPORTANT]
 > Every invisible character and line break unneededly adds to the app-compiled wire-format, which leads to more runtime code for end-users to deal with. The more extraneous invisible characters we can eliminate, the better.
+> For _aggressive_ invisible character stripping, [ember-hbs-minifier](https://github.com/mainmatter/ember-hbs-minifier/) is still a viable option.
 
 <table>
     <thead>
@@ -187,7 +170,7 @@ export default template(
 
 ```js
 export default template(
-    'Hello <span>there</span>. <p><span>how are you</span></p>'
+    'Hello <span>there</span>.\n<p>\n  <span>how are you</span>\n</p>'
 )
 ```
 
@@ -195,26 +178,25 @@ export default template(
 </tbody>
 </table>
 
-The problem with extraneous `\n` and ` ` characters compounds the more components you have.
-
 ### Configuration
 
 There will be no configuration, as this can be enabled with 0 breaking changes to existing behavior.
 
 ### Backward Compatibility
 
-- Existing applications using ember-hbs-minifier can gradually migrate by removing the addon
-- The default configuration will match ember-hbs-minifier's behavior
+- Existing applications using ember-hbs-minifier can continue to do so -- this RFC does not affect the behavior of those transforms.
 
 ## How we teach this
 
-This feature requires minimal teaching as it operates transparently. 
+This feature requires minimal teaching as it operates transparently. It requires more teaching now to explain all teh excessive indentation we have in gjs / gts.
 
 ## Drawbacks
 
 we lose the ability to `white-space: pre` on any content.
 
 ## Alternatives
+
+- This RFC could be considered a bugfix.
 
 - Keep ember-hbs-minifier as an optional addon
    - Pros: No breaking changes, opt-in behavior
@@ -228,7 +210,7 @@ we lose the ability to `white-space: pre` on any content.
     ```
     Which could alleviate the edge case where folks are using `white-space: pre` on arbitrary contents.
 
-- _Only_ strip leading/trailing invisible characters (and indentation) that was introduced by the move to gjs / gts. This would be the same behavior as `stripIndent` from [common-tags](https://www.npmjs.com/package/common-tags)
+- Breaking change for some CSS use cases: enable all ember-hbs-minifier optimization.
 
 ## Unresolved Questions
 
