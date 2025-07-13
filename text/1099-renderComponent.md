@@ -258,6 +258,7 @@ For example:
 Combined with [RFC #931](https://github.com/emberjs/rfcs/pull/931), we can dynamically compile and render components from user input.
 
 ```html
+<script type="module">
   import { template } from '@ember/template-compiler';
   import { renderComponent } from '@ember/renderer';
 
@@ -291,8 +292,75 @@ Combined with [RFC #931](https://github.com/emberjs/rfcs/pull/931), we can dynam
 These include Vitepress, Astro, etc. 
 
 > [!NOTE]
-> We can already make integrations with vitepress, astro, etc, using code similar to [here in repl-sdk](https://github.com/NullVoxPopuli/limber/blob/06a65df246f147bf085ae5240a94d81455616e22/packages/repl-sdk/src/compilers/ember/render-app-island.js#L76). But `renderComponent` is a more streamline, composable, and user-friendly approach to rendering subtrees of ember code.
+> We can already make integrations with [vitepress](https://vitepress.dev/), [astro](https://astro.build/), etc, using code similar to [here in repl-sdk](https://github.com/NullVoxPopuli/limber/blob/06a65df246f147bf085ae5240a94d81455616e22/packages/repl-sdk/src/compilers/ember/render-app-island.js#L76). But `renderComponent` is a more streamline, composable, and user-friendly approach to rendering subtrees of ember code.
 
+<details><summary>hypothetical Astro integration implementation</summary>
+
+This hypothetical implementation _isn't tested_, and is based on [`@astrojs/svelte`](https://github.com/withastro/astro/blob/3276b798d4ecb41c98f97e94d4ddeaa91aa25013/packages/integrations/svelte/src/index.ts#L5) at the time of writing.
+
+> [!IMPORTANT]
+> V1 Addons not supported here. This uses "minimal app" concepts, which we haven't talked about much publicly, but they are present in the [v2 addon blueprint overe here](https://github.com/ember-cli/ember-addon-blueprint/) (for testing, "docs app", etc).
+
+```ts
+// astro/packages/integrations/ember/src/index.ts
+
+import { extensions, ember } from '@embroider/vite';
+import { babel } from '@rollup/plugin-babel';
+import type { AstroIntegration, AstroRenderer, ContainerRenderer } from 'astro';
+
+function getRenderer(): AstroRenderer {
+	return {
+		name: '@astrojs/ember',
+		clientEntrypoint: '@astrojs/ember/client.js',
+		serverEntrypoint: '@astrojs/ember/server.js',
+	};
+}
+
+export function getContainerRenderer(): ContainerRenderer {
+	return {
+		name: '@astrojs/ember',
+		serverEntrypoint: '@astrojs/ember/server.js',
+	};
+}
+
+export default function emberIntegration(options?: Options): AstroIntegration {
+	return {
+		name: '@astrojs/ember',
+		hooks: {
+			'astro:config:setup': async ({ updateConfig, addRenderer }) => {
+				addRenderer(getRenderer());
+				updateConfig({
+					vite: {
+						optimizeDeps: {
+							include: ['@astrojs/ember/client.js'],
+							exclude: ['@astrojs/ember/server.js'],
+						},
+						plugins: [
+              ember(),
+              babel({ babelHelpers: 'inline', extensions }), // NOTE: it may be worth inlining a default config here
+            ],
+					},
+				});
+			},
+		},
+	};
+}
+
+export { vitePreprocess };
+```
+
+```ts
+// astro/packages/integrations/ember/src/client.ts
+
+export default function (element: HTMLElement) => {
+  return async (Component: any, props: Record<string, any>, ...rest: unknown[]) => {
+    let result = renderComponent(Component, { into: element, args: props, /* ... */  });
+    element.addEventListener('astro:unmount', () => result.destroy(), { once: true });
+  }
+}
+```
+
+</details>
 
 
 ## Drawbacks
