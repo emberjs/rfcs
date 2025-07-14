@@ -574,6 +574,26 @@ resource(({ owner }) => {
 
 ### Resource Creation and Usage
 
+
+First, the manual way, as if using resources outside of ember, with no framework whatsoever:
+
+```js
+import { resource } from '@ember/reactive';
+import { setOwner } from '@ember/owner';
+
+let thing = resource(() => 2);
+let owner = {
+  lookup: (registrationName) => { /* ... */ }
+};
+
+// @ts-expect-error - types are a lie due to decorators
+let instance = thing.create();
+
+instance.link(owner);
+assert.strictEqual(instance.current, 2);
+
+```
+
 Resources can be used in several ways:
 
 **1. In Templates (as helpers)**
