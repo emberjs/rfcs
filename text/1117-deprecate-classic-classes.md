@@ -29,9 +29,9 @@ system. The one remaining sticking point has been Mixins. If we
 
 ## Transition Path
 
-All uses of Classic Classes should be converted to Native Classes. Anything that cannot be converted
-will be deprecated first such as [Mixins]((https://github.com/emberjs/rfcs/pull/1116) and the
-[`observer` helper function](https://github.com/emberjs/rfcs/pull/1115).
+All uses of Classic Classes should be converted to Native Classes. Anything that cannot be converted will be deprecated first, such as [Mixins](https://github.com/emberjs/rfcs/pull/1116) and the [`observer` helper function](https://github.com/emberjs/rfcs/pull/1115).
+
+The `@classic` decorator (and any other APIs or patterns used to enable classic class interop) will also be deprecated as part of this transition. All code should migrate to native class syntax and patterns.
 
 ## Exploration
 
