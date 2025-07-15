@@ -371,18 +371,20 @@ n/a
 
 There is an existing implementation in [PR#20781](https://github.com/emberjs/ember.js/pull/20781/)
 
-Here is where this RFC differs:
-- no hasDOM (we always have a DOM, as we have not done any design on [Swappable Renderers](https://github.com/emberjs/ember.js/issues/20648))
-  - different `renderComponent` implementations could be what we swap out for whole-sale different renderers (rather than feature-zebra-striping them) 
+Here is where this RFC differs from that implementatino
+
 - proposed return type is much narrower than what is exposed (not the whole `RenderResult` from `@glimmer/interfaces`)
-- isInteractive is optional and defaults to `true`
-- document is optional and defaults to `globalThis.document`
-- env is optional (as all its contents are optional)
-- owner is optional and defaults to a private empty object (`{}`)
-- returned object from `renderComponent` also has `destroy` on it, for convenience
-- removed `parentElement` from the returned object f rom `renderComponent`
-- removed `alwaysRevalidate` (and the whole options object) from `rerender`) -- as I couldn't find evidence of it being used in the implementation PR -- can always be added later if we need it.
-- removed `rerender` -- we want to encourage reactivity
+    - returned object from `renderComponent` also has `destroy` on it, for convenience
+- Configuration all has **default values**, so that basic runtime usage is as simple as possible:
+    - isInteractive is optional and defaults to `true`
+    - document is optional and defaults to `globalThis.document`
+    - owner is optional and defaults to a private empty object (`{}`)
+    - env is optional (as all its contents are optional)
+    - `hasDOM` defaults to true -- (we mostly have a DOM, but this could be a useful utility (or a derived value from the overall environment -- as would probably shake out of work on [Swappable Renderers](https://github.com/emberjs/ember.js/issues/20648) -- like, defining what `createElement` means in a terminal environment, for example)
+- removed features (can be added later if we need)
+    - removed `parentElement` from the returned object f rom `renderComponent`
+    - removed `alwaysRevalidate` (and the whole options object) from `rerender`) -- as I couldn't find evidence of it being used in the implementation PR -- can always be added later if we need it.
+    - removed `rerender` -- we want to encourage reactivity
 
 ## Unresolved questions
 
