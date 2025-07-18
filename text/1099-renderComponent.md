@@ -82,12 +82,20 @@ export function renderComponent(
              * When false, modifiers will not run.
              */
             isInteractive?: boolean; 
+
+            /**
+             * Defaults to true. 
+             * 
+             * Is relevant for potential other renderers. (SSR, etc)
+             */
+            hasDom?: boolean;
         };
 
         /**
          * These args get passed to the rendered component
          *
          * If your args are reactive, re-rendering will happen automatically.
+         * 
          */
         args?: Record<string, unknown>;
   }
@@ -132,14 +140,6 @@ The element to render the compnoent into.
 #### `args`
 
 The args to pass to the component
-
-### Behaviors
-
-TODO: 
-- rendering multiple renderComponent on the page
-  - who creates tracking frames / how do they interop? all of them? are they coordinated?
-- shared reactive state between multiple renderComponents
-- can the ember-in-ember use case extend the owner in subtrees?
 
 ### Usage
 
@@ -336,9 +336,9 @@ export default function emberIntegration(options?: Options): AstroIntegration {
 							exclude: ['@astrojs/ember/server.js'],
 						},
 						plugins: [
-              ember(),
-              babel({ babelHelpers: 'inline', extensions }), // NOTE: it may be worth inlining a default config here
-            ],
+                            ember(),
+                            babel({ babelHelpers: 'inline', extensions }), // NOTE: it may be worth inlining a default config here
+                        ],
 					},
 				});
 			},
@@ -362,6 +362,12 @@ export default function (element: HTMLElement) => {
 
 </details>
 
+## Potential Nuances
+
+All renderComponents rendered within an ember app would share their reactivity. Since the passed `args`'s reactivity can cause the contents of `renderComponent` to re-render.
+
+Outside of ember projects, _currently_ if multiple `renderComponent`s are used from different ember-source versions (possible if someone pulls in, for example, two web components from different libraries which internally use `renderComponent`), the `renderComponent` usages would not be co-reactive with each other's data. This is something that would need to be resolved in the underlying _renderer_ and is out of scope for discussion in this RFC.
+
 
 ## Drawbacks
 
@@ -377,11 +383,18 @@ Here is where this RFC differs from that implementatino
     - returned object from `renderComponent` also has `destroy` on it, for convenience
 - Configuration all has **default values**, so that basic runtime usage is as simple as possible:
     - isInteractive is optional and defaults to `true`
-    - document is optional and defaults to `globalThis.document`
     - owner is optional and defaults to a private empty object (`{}`)
     - env is optional (as all its contents are optional)
     - `hasDOM` defaults to true -- (we mostly have a DOM, but this could be a useful utility (or a derived value from the overall environment -- as would probably shake out of work on [Swappable Renderers](https://github.com/emberjs/ember.js/issues/20648) -- like, defining what `createElement` means in a terminal environment, for example)
 - removed features (can be added later if we need)
+    - removed `document` from the env, as we already pass in `into`, and `into` cannot be from a different document.
+        ```js
+        document.contains($0) // $0 is an element selected in the browser's element debugger
+        // >  true
+        document.contains(document.createElement('div'))
+        // > false
+        ```
+        so if `false === document.contains(into)`, then we can get the correct `document` via `into.ownerDocument` 
     - removed `parentElement` from the returned object f rom `renderComponent`
     - removed `alwaysRevalidate` (and the whole options object) from `rerender`) -- as I couldn't find evidence of it being used in the implementation PR -- can always be added later if we need it.
     - removed `rerender` -- we want to encourage reactivity
