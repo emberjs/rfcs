@@ -70,13 +70,9 @@ export function renderComponent(
         owner?: object;
 
         /**
-         * Configure the `document` and `isInteractive`
+         * Optionally configure the rendering environment
          */
         env?: { 
-            /**
-             * Defaults to globalThis.document.
-             */
-            document?: SimpleDocument | Document; 
 
             /**
              * When false, modifiers will not run.
@@ -84,11 +80,11 @@ export function renderComponent(
             isInteractive?: boolean; 
 
             /**
-             * Defaults to true. 
-             * 
-             * Is relevant for potential other renderers. (SSR, etc)
+             * All other options are forwarded to the underlying renderer.
+             * (its API is currently private and out of scope for this RFC, 
+             *  so passing additional things here is also considered private API)
              */
-            hasDom?: boolean;
+            [rendererOption: string]?: unknown;
         };
 
         /**
@@ -124,10 +120,6 @@ The details of _how_ are out of scope for this RFC, and could change as we make 
 #### `owner` (defaults to `{}`)
 
 some object to represent the `Owner` (if not the host-app's `Owner`).
-
-#### `env.document` (default's to globalThis.document)
-
-The browser's `document`, for accessing needed APIs for rendering and managing DOM
 
 #### `env.isInteractive` (defaults to true)
 
@@ -199,10 +191,12 @@ if we wanted to render ember in ember via modifier (silly):
 ```gjs
 import { modifier } from 'ember-modifier';
 import { destroy } from '@ember/destroyable';
+import { getOwner } from '@ember/owner';
 import { renderComponent } from '@ember/renderer';
 
 const Demo = <template>hi</template>;
 const render = modifier((element) => {
+    let owner = getOwner(); // hypothetical getOwner that works in function modifiers
     let result = renderComponent(Demo, {
         owner,
         env: { document: document, isInteractive: true },
@@ -385,7 +379,6 @@ Here is where this RFC differs from that implementatino
     - isInteractive is optional and defaults to `true`
     - owner is optional and defaults to a private empty object (`{}`)
     - env is optional (as all its contents are optional)
-    - `hasDOM` defaults to true -- (we mostly have a DOM, but this could be a useful utility (or a derived value from the overall environment -- as would probably shake out of work on [Swappable Renderers](https://github.com/emberjs/ember.js/issues/20648) -- like, defining what `createElement` means in a terminal environment, for example)
 - removed features (can be added later if we need)
     - removed `document` from the env, as we already pass in `into`, and `into` cannot be from a different document.
         ```js
@@ -395,6 +388,7 @@ Here is where this RFC differs from that implementatino
         // > false
         ```
         so if `false === document.contains(into)`, then we can get the correct `document` via `into.ownerDocument` 
+    - removed `hasDOM` -- although for the current implementation defaults to true -- (we mostly have a DOM, but this could be a useful utility (or a derived value from the overall environment -- as would probably shake out of work on [Swappable Renderers](https://github.com/emberjs/ember.js/issues/20648) -- like, defining what `createElement` means in a terminal environment, for example). For the purposes of this RFC, it is "private API" that could be passed to the underlying renderer.
     - removed `parentElement` from the returned object f rom `renderComponent`
     - removed `alwaysRevalidate` (and the whole options object) from `rerender`) -- as I couldn't find evidence of it being used in the implementation PR -- can always be added later if we need it.
     - removed `rerender` -- we want to encourage reactivity
