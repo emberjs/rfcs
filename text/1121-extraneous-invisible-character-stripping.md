@@ -62,7 +62,15 @@ The governing documentation on these rules are official standards documents:
 
 But there is a safe transform that we can do only on gjs/gts
 -  The leading and trailing invisible characters for opening `<template>` and closing `</template>` in gjs/gts files should be stripped.
-  - This helps determine the "indentation level" which would also be stripped from each line -- effectively de-denting templates to what developers were used to before we started embedding templates in JS/TS.  
+    - This helps determine the "indentation level" which would also be stripped from each line -- effectively de-denting templates to what developers were used to before we started embedding templates in JS/TS.  
+    - How to determine indentation:
+        - scan all lines after the line with `<template>` and before the line with `</template>`
+        - indentation is determined by the smallest number of invisible characters for each line
+            - skip lines with 0 characters
+            - ideally all other lines have the same or greater indentation
+            - if spaces and tabs are mixed, we can ignore tabs, and determine indentation from spaces and strip space-indentation
+            - stripping tab indentation can only happen if all lines are indented with tabs
+
 
 ### Examples
 
