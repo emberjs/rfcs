@@ -68,7 +68,7 @@ But there is a safe transform that we can do only on gjs/gts
         - indentation is determined by the smallest number of invisible characters for each line
             - skip lines with 0 characters
             - ideally all other lines have the same or greater indentation
-            - if spaces and tabs are mixed, we can ignore tabs, and determine indentation from spaces and strip space-indentation
+            - if spaces and tabs are mixed, we can ignore tabs -- we don't do any indentation stripping
             - stripping tab indentation can only happen if all lines are indented with tabs
 
 
