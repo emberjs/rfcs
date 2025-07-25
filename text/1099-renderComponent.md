@@ -277,7 +277,7 @@ Combined with [RFC #931](https://github.com/emberjs/rfcs/pull/931), we can dynam
 </body>
 ```
 
-> ![NOTE]
+> [!NOTE]
 > Depending on your application, you may want to consider sanitizing user input, so users don't inject their own script / sytle tags into your app.
 > See: [DOMPurify](https://github.com/cure53/DOMPurify) and [Web Sanitizer API](https://developer.mozilla.org/en-US/docs/Web/API/Sanitizer) and [TrustedHTML](https://developer.mozilla.org/en-US/docs/Web/API/TrustedHTML)
 
