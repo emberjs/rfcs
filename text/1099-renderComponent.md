@@ -395,4 +395,5 @@ Here is where this RFC differs from that implementation
 
 ## Unresolved questions
 
-n/a
+- what happens if `args` is a `TrackedMap` -- what happens if new keys are added or deleted?
+    - it is not intended that `renderComponent` becomes a back door for splat-arguments. We expect the keys within args are static, as they are in other ember code. (There is on-going investigation in to formally supporting splat-arguments everywhere, and when that happens, perhaps a `TrackedMap` can be supported then)
