@@ -1,15 +1,19 @@
 ---
-stage: accepted
+stage: released
 start-date: 2025-01-10T00:00:00.000Z
 release-date:
 release-versions:
-teams: # delete teams that aren't relevant
+  "@ember/test-waiters": "4.1.0"
+  "ember-cli": "6.6.0"
+teams:
   - cli
   - data
   - framework
   - learning
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1065
+  accepted: 'https://github.com/emberjs/rfcs/pull/1065'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/1081'
+  released: 'https://github.com/emberjs/rfcs/pull/1104'
 project-link:
 ---
 
