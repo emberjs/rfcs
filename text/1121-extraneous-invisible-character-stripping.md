@@ -65,6 +65,7 @@ But there is a safe transform that we can do only on gjs/gts
     - This helps determine the "indentation level" which would also be stripped from each line -- effectively de-denting templates to what developers were used to before we started embedding templates in JS/TS.  
     - How to determine indentation:
         - scan all lines after the line with `<template>` and before the line with `</template>`
+            - ignore content on the same line as the opening and closing template tags
         - indentation is determined by the smallest number of invisible characters for each line
             - skip lines with 0 characters
             - ideally all other lines have the same or greater indentation
