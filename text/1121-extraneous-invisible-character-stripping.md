@@ -205,7 +205,7 @@ In the template-tag section of the guide, add a sentence that says that indentat
 
 ## Drawbacks
 
-It's _possible_ that someone wrapped their whole component in `white-space: pre`, but we consider this behavior a bug from the initial gjs/gts implementation.
+It's _possible_ that someone wrapped their whole component in `white-space: pre`, but we consider the extra indentation behavior a bug from the initial gjs/gts implementation.
 
 ## Alternatives
 
