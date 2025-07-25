@@ -371,7 +371,7 @@ n/a
 
 There is an existing implementation in [PR#20781](https://github.com/emberjs/ember.js/pull/20781/)
 
-Here is where this RFC differs from that implementatino
+Here is where this RFC differs from that implementation
 
 - proposed return type is much narrower than what is exposed (not the whole `RenderResult` from `@glimmer/interfaces`)
     - returned object from `renderComponent` also has `destroy` on it, for convenience
