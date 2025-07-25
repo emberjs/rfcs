@@ -197,7 +197,11 @@ There will be no configuration, as this can be enabled with 0 breaking changes t
 
 ## How we teach this
 
-This feature requires minimal teaching as it operates transparently. It requires more teaching now to explain all teh excessive indentation we have in gjs / gts.
+This feature requires minimal teaching as it operates transparently. It requires more teaching now to explain all the excessive indentation we have in gjs / gts.
+
+When releasing the next version of `content-tag`, and `ember-template-imports` should note the new behavior.
+
+In the template-tag section of the guide, add a sentence that says that indentation spacing is stripped.
 
 ## Drawbacks
 
