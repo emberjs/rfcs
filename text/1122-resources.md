@@ -448,7 +448,9 @@ This unification hopefully will lead to simplification of the implmentation of a
 
 ### Overview
 
-A **resource** is a reactive function that represents a value with lifecycle and optional cleanup logic. Resources are created using the `resource()` function and automatically manage their lifecycle through Ember's existing destroyable system, though the exact implementation could change at any time (to be simpler) as we work at simplifying a bunch of internals.
+A **resource** is a reactive function that represents a value with lifecycle and optional cleanup logic. Resources are created using the `resource()` function and automatically manage their lifecycle through Ember's existing destroyable system[^future-destruction], though the exact implementation could change at any time (to be simpler) as we work at simplifying a bunch of internals.
+
+[^future-destruction]:  while today in userland, we can implement what we need through destroyables, the real implementation can eventually become low-level enough where we use it to build the renderer in place of our current VM.
 
 ```gjs
 import { cell, resource } from '@ember/reactive';
@@ -498,19 +500,31 @@ function addScript(url) {
 
 The `resource()` function takes a single argument: a function that receives a ResourceAPI object and returns a reactive value.
 
+The implementation types:
 ```ts
 interface ResourceAPI {
   on: {
     cleanup: (destructor: () => void) => void;
   };
-  use: <T>(resource: T) => ReactiveValue<T>;
-  link: (obj: unknown, parent?: obj: unknown) => void;
+  use: <T>(resource: T) => ReadOnlyCell<T>;
+  link: (obj: unknown) => void;
   owner: Owner;
 }
 
 type ResourceFunction<T> = (api: ResourceAPI) => T;
 
-function resource<T>(fn: ResourceFunction<T>): Resource<T>
+function resource<T>(fn: ResourceFunction<T>): ResourceBuilder<T>
+
+// These APIs are handled by the framework and would not be interacted with by users in app code.
+// But would become useful for unit testing purposes.
+// However, using rendering/reactivity testing would be better and would not require the use of these interfaces.
+interface ResourceBuilder<T> {
+  create(): Resource<T>;
+}
+
+interface Resource<T> extends ReadOnlyCell<T> {
+  link(context: object): void
+}
 ```
 
 #### `on.cleanup`
@@ -523,6 +537,29 @@ resource(({ on }) => {
   on.cleanup(() => console.log('cleaning up'));
 })
 ```
+
+> [!NOTE]
+> If you've seen [Starbeam](https://starbeamjs.com/), you may be aware of an `on.sync`. `on.sync` is not currently possible with today's reactivity system (at the time of writing this RFC). Some updates to how the reactivity system and renderer will be needed before we can add `on.sync`, but it would be in addition to everything described in this RFC and the existing state of this RFC does not conflict with the desire for an `on.sync` later.
+
+<details><summary>AbortController example</summary>
+
+```js
+const DataLoader = resource(({ on }) => {
+  const controller = new AbortController();
+  const state = cell({ loading: true });
+
+  on.cleanup(() => controller.abort());
+
+  fetch('/api/data', { signal: controller.signal })
+    .then(response => response.json())
+    .then(data => state.set({ loading: false, data }))
+    .catch(error => state.set({ loading: false, error }));
+
+  return state;
+});
+```
+
+</details>
 
 #### `use`
 
@@ -543,6 +580,27 @@ resource(({ use }) => {
 
 })
 ```
+
+> [!TIP]
+> Because `use` returns a read-only cell with only a `.current` property, the "value" of the used resource, for clarity, should try to avoid having its own `.current` property, as that would have folks with `state.current.current`, which looks weird. 
+
+<details><summary></summary>
+
+```js
+const Now = resource(({ on }) => {
+  const time = cell(new Date());
+  const timer = setInterval(() => time.set(new Date()), 1000);
+  on.cleanup(() => clearInterval(timer));
+  return time;
+});
+
+const FormattedTime = resource(({ use }) => {
+  const time = use(Now);
+  return () => time.current.toLocaleTimeString();
+});
+```
+
+</detailS>
 
 #### `link`
 
@@ -575,7 +633,10 @@ resource(({ owner }) => {
 ### Resource Creation and Usage
 
 
-First, the manual way, as if using resources outside of ember, with no framework whatsoever:
+First, the manual way, as if using resources outside of ember, with no framework whatsoever.
+
+> [!NOTE]
+> This is using the previously mentioned APIs that *could* be useful for unit testing -- but folks should prefer rendering/reactivity testing.
 
 ```js
 import { resource } from '@ember/reactive';
@@ -586,13 +647,65 @@ let owner = {
   lookup: (registrationName) => { /* ... */ }
 };
 
-// @ts-expect-error - types are a lie due to decorators
 let instance = thing.create();
 
 instance.link(owner);
-assert.strictEqual(instance.current, 2);
-
+// if in a test: 
+// assert.strictEqual(instance.current, 2);
 ```
+
+<details><summary>preview: how one would do the above with a rendering / reactivity test</summary>
+
+```gjs
+import { resource } from '@ember/reactive';
+import { setOwner } from '@ember/owner';
+
+module('suite', function (hooks) {
+  setupRenderingTest(hooks);
+
+  /**
+  * Normally a test would look like this:
+  */
+  test('example', async function () {
+    let thing = resource(() => 2);
+    
+    await render(
+      <template>
+        {{thing}}
+      </template>
+    );
+    
+    assert.dom().hasText('2');
+  });
+
+  /**
+  * When using a manually created and managed resource
+  */
+  test('manual mode', async function () {
+    let thing = resource(() => 2);
+    let owner = {
+      lookup: (registrationName) => { /* ... */ }
+    };
+
+    let instance = thing.create();
+
+    instance.link(owner);
+    
+    await render(
+      <template>
+        {{instance.current}}
+      </template>
+    );
+    
+    assert.dom().hasText('2');
+  });
+})
+```
+
+</details>
+
+
+
 
 Resources can be used in several ways:
 
@@ -612,6 +725,7 @@ const Clock = resource(({ on }) => {
 ```
 
 **2. With the `@use` decorator**
+
 ```js
 import { use } from '@ember/reactive';
 
@@ -640,7 +754,7 @@ This convention makes the code more readable and aligns with the expectation tha
 
 #### Helper Manager Integration and the `@use` Decorator
 
-The `@use` decorator builds upon Ember's existing helper manager infrastructure (RFC 625 and RFC 756) to provide automatic invocation of values with registered helper managers. When a resource is created with `resource()`, it receives a helper manager that makes it invokable in templates and enables the `@use` decorator's automatic behavior.
+The `@use` decorator builds upon Ember's existing helper manager infrastructure ([RFC #625](https://github.com/emberjs/rfcs/pull/625) and [RFC #756](https://github.com/emberjs/rfcs/pull/756)) to provide automatic invocation of values with registered helper managers. When a resource is created with `resource()`, it receives a helper manager that makes it invokable in templates and enables the `@use` decorator's automatic behavior.
 
 Here's how it works:
 
@@ -651,10 +765,10 @@ const Clock = resource(({ on }) => {
 });
 
 // The @use decorator detects the helper manager and automatically invokes it
-@use clock = Clock; // Equivalent to: clock = Clock()
+@use clock = Clock; 
 
-// Without @use, you need explicit invocation or .current access
-clock = use(this, Clock); // Returns object with tracked property: clock.current
+// Without @use, you need explicit invocation or .current access as `clock` cannot be "replaced" as decorators allow.
+clock = use(this, Clock);
 ```
 
 The `@use` decorator pattern extends beyond resources to work with any construct that has registered a helper manager. This means that future primitives that integrate with the helper manager system (like certain kinds of computed values, cached functions, or other reactive constructs) will automatically work with `@use` without any changes to the decorator itself.
@@ -672,96 +786,40 @@ export default class MyComponent extends Component {
 }
 ```
 
-The `use()` function provides manual resource instantiation when you need more control over the lifecycle or want to avoid the automatic invocation behavior of `@use`.
-
-**4. Manual instantiation (for library authors)**
-```js
-const clockBuilder = resource(() => { /* ... */ });
-const owner = getOwner(this);
-const clockInstance = clockBuilder.create();
-clockInstance.link(owner);
-const currentTime = clockInstance.current;
-```
-
-### Resource API Details
-
-**`on.cleanup(destructor)`**
-
-Registers a cleanup function that will be called when the resource is destroyed. This happens automatically when:
-- The owning context (component, service, etc.) is destroyed
-- The resource re-runs due to tracked data changes
-- The resource is manually destroyed
-
-```js
-const DataLoader = resource(({ on }) => {
-  const controller = new AbortController();
-  const state = cell({ loading: true });
-
-  on.cleanup(() => controller.abort());
-
-  fetch('/api/data', { signal: controller.signal })
-    .then(response => response.json())
-    .then(data => state.set({ loading: false, data }))
-    .catch(error => state.set({ loading: false, error }));
-
-  return state;
-});
-```
-
-**`use(resource)` - Resource Composition**
-
-The `use()` method within a resource function allows composition of resources by consuming other resources with proper lifecycle management. This is different from the top-level `use()` function and the `@use` decorator:
-
-```js
-const Now = resource(({ on }) => {
-  const time = cell(new Date());
-  const timer = setInterval(() => time.set(new Date()), 1000);
-  on.cleanup(() => clearInterval(timer));
-  return time;
-});
-
-const FormattedTime = resource(({ use }) => {
-  const time = use(Now);
-  return () => time.current.toLocaleTimeString();
-});
-```
+The `use()` function provides manual resource instantiation when you need more control over the lifecycle or want to potentially avoid "magic" that yet-to-be-understood decorators provide, like that of `@use` - where `.current` would not be needed in the template. 
 
 ### Key Differences Between Usage Patterns
 
 **Understanding `@use` as an Ergonomic Shorthand**
 
-The `@use` decorator is fundamentally an ergonomic convenience that builds upon Ember's helper manager infrastructure. When you apply `@use` to a property, it doesn't assign the value directly—instead, like `@tracked`, it replaces the property with a getter that provides lazy evaluation and automatic invocation.
+The `@use` decorator is fundamentally an ergonomic convenience that builds upon Ember's helper manager infrastructure. When you apply `@use` to a property, it doesn't assign the value directly—instead, like `@tracked`, it replaces the property with a getter that provides lazy evaluation and automatic invocation. This allows you to not need to interact with the `.current` property on resources (and cells as well);
 
 ```js
 export default class MyComponent extends Component {
-  // This:
+  // This
   @use clock = Clock;
   
-  // Is equivalent to defining a getter that automatically invokes
+  // is (roughly) equivalent to defining a getter that automatically invokes
   // any value with a registered helper manager:
+  @cached
   get clock() {
-    // Detect helper manager and invoke automatically
-    if (hasHelperManager(Clock)) {
-      return invokeHelper(this, Clock);
-    }
-    return Clock;
+    return getValue(invokeHelper(this, Clock));
   }
 }
 ```
 
-This getter-based approach enables several key benefits:
-- **Lazy instantiation**: The resource is only created when first accessed
-- **Automatic lifecycle management**: The resource is tied to the component's lifecycle
-- **Transparent integration**: Works seamlessly with any construct that has a helper manager
+> [!NOTE]
+> If one were to do `@use count = Cell(2)`, that would be behaviorally the same as `@tracked count = 2;`, with the exception that `@use` is only ever read-only.
 
 **`@use` decorator vs resource `use()` vs top-level `use()`:**
 
 1. **`@use` decorator** - An ergonomic shorthand that leverages Ember's helper manager system:
    - Replaces the property with a getter (like `@tracked`) for lazy access
-   - Automatically invokes values with registered helper managers (RFC 625/756)
    - Works with resources, but also any construct that has a helper manager
    - Returns the "unwrapped" value directly (no `.current` needed)
-   - Best for when you want the simplest possible API with automatic lifecycle management
+   - Best for when you want the simplest possible API with automatic lifecycle management[^lifecycle-downside]
+
+[^lifecycle-downside] being tied to the component's lifecycle can be a downside depending on the size of your component. For this reason it is important to consider the factoring of your application -- keeping components small, and/or ensuring that when fine-grained destruction is needed, resources are created in the template instead of the JavaScirpt class (but with fine-grained components, js vs template is likely equivelant)
 
 2. **Resource `use()` method** - For resource composition within resource functions:
    - Available only within the resource function's API object
