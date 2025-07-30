@@ -813,6 +813,8 @@ export default class MyComponent extends Component {
 
 **`@use` decorator vs resource `use()` vs top-level `use()`:**
 
+All forms of use can operate on the same structures (resources, helpers, etc)
+
 1. **`@use` decorator** - An ergonomic shorthand that leverages Ember's helper manager system:
    - Replaces the property with a getter (like `@tracked`) for lazy access
    - Works with resources, but also any construct that has a helper manager
@@ -834,59 +836,9 @@ export default class MyComponent extends Component {
    - Useful when you need fine-grained control over instantiation timing
    - Primarily for library authors or advanced use cases where automatic behavior isn't desired
 
-**`owner`**
-
-Provides access to the Ember owner for dependency injection:
-
-```js
-const UserSession = resource(({ owner }) => {
-  const session = owner.lookup('service:session');
-  const router = owner.lookup('service:router');
-  
-  return () => ({
-    user: session.currentUser,
-    route: router.currentRouteName
-  });
-});
-```
-
-### Resource Lifecycle
-
-1. **Creation**: When a resource is first accessed, its function is invoked
-2. **Reactivity**: If the resource function reads tracked data, it will re-run when that data changes
-3. **Cleanup**: Before re-running or when destroyed, all registered cleanup functions are called
-4. **Destruction**: When the owning context is destroyed, the resource and all its cleanup functions are invoked
-
-### Type Definitions
-
-```ts
-interface ResourceAPI {
-  on: {
-    cleanup: (destructor: () => void) => void;
-  };
-  use: <T>(resource: T) => ReactiveValue<T>;
-  owner: Owner;
-}
-
-type ResourceFunction<T> = (api: ResourceAPI) => T;
-
-interface Resource<T> {
-  create(): ResourceInstance<T>;
-}
-
-interface ResourceInstance<T> {
-  current: T;
-  link(context: object): void;
-}
-
-function resource<T>(fn: ResourceFunction<T>): Resource<T>;
-function use<T>(context: object, resource: Resource<T>): ReactiveValue<T>;
-function use<T>(resource: Resource<T>): PropertyDecorator;
-```
-
 ### Relationship to the Cell Primitive
 
-While the `cell` primitive ([RFC #1071](https://github.com/emberjs/rfcs/pull/1071)) is not strictly required for resources to function, resources are significantly more ergonomic and powerful when used together with `cell`. Resources can work with Ember's existing `@tracked` properties, but `cell` provides several advantages:
+While the `cell` primitive ([RFC #1071](https://github.com/emberjs/rfcs/pull/1071)) is not strictly required for resources to function, resources are significantly more ergonomic and powerful when used together with `cell` (this is doubly so since Resources need the interfaces and types from the Cell implementation). Resources can work with Ember's existing `@tracked` properties, but `cell` provides several advantages:
 
 **Without `cell` (using `@tracked`):**
 ```js
@@ -914,7 +866,7 @@ const Clock = resource(({ on }) => {
 <template>Current time: {{Clock}}</template>
 ```
 
-**With `cell` (more ergonomic):**
+**With `cell`:**
 ```js
 import { cell, resource } from '@ember/reactive';
 
@@ -934,109 +886,7 @@ const Clock = resource(({ on }) => {
 <template>Current time: {{Clock}}</template>
 ```
 
-**Key advantages of using `cell` with resources:**
-
-1. **Simpler State Management**: No need to create wrapper classes for tracked properties
-2. **Direct Value Returns**: Resources can return cells directly rather than objects with tracked properties
-3. **Cleaner APIs**: Consumers get more intuitive interfaces without property access
-4. **Better Composition**: Resources that return cells compose more naturally with other resources
-
-While resources provide significant value on their own by solving lifecycle management and cleanup, the combination with `cell` creates a more complete and developer-friendly reactive primitive system.
-
-### Integration with Existing Systems
-
-**Helper Manager Integration**
-
-Resources integrate with Ember's existing helper manager system. The `resource()` function returns a value that can be used directly in templates through the helper invocation syntax.
-
-**Destroyable Integration**
-
-Resources automatically integrate with Ember's destroyable system via `associateDestroyableChild()`, ensuring proper cleanup when parent contexts are destroyed.
-
-**Ownership Integration**
-
-Resources receive the owner from their parent context, enabling dependency injection and integration with existing Ember services and systems.
-
-**Relationship to the Cell Primitive**
-
-While this RFC does not strictly depend on the `cell` primitive from RFC 1071, resources become significantly more ergonomic when used together with `cell`. Resources can work with any reactive primitive, including existing `@tracked` properties and `@cached` getters, but `cell` provides several advantages:
-
-1. **Function-based APIs**: Resources are function-based, and `cell` provides a function-based reactive primitive that composes naturally
-2. **Encapsulated state**: Unlike `@tracked` which requires classes, `cell` allows creating reactive state without class overhead
-3. **Immediate updates**: `cell` provides both getter and setter APIs (`cell.current` and `cell.set()`) that work well in resource contexts
-
-Without `cell`, developers would need to either:
-- Use classes with `@tracked` properties (heavier abstraction)
-- Manually manage reactivity with lower-level tracking APIs
-- Return functions from resources that close over mutable state
-
-Example comparison:
-
-```js
-// With cell (ergonomic)
-const Clock = resource(({ on }) => {
-  const time = cell(new Date());
-  const timer = setInterval(() => time.set(new Date()), 1000);
-  on.cleanup(() => clearInterval(timer));
-  return time;
-});
-
-// Without cell (more verbose)
-const Clock = resource(({ on }) => {
-  let currentTime = new Date();
-  const timer = setInterval(() => {
-    currentTime = new Date();
-    // Manual invalidation needed
-  }, 1000);
-  on.cleanup(() => clearInterval(timer));
-  
-  return () => currentTime; // Must return function for reactivity
-});
-```
-
-Therefore, while `cell` is not a hard dependency, implementing both RFCs together would provide the best developer experience.
-
-### Advanced Reactive Concepts
-
-Ember's resource primitive embodies several advanced reactivity concepts that position it as a modern, best-in-class reactive abstraction. Understanding these concepts helps developers leverage resources most effectively and appreciate how they fit into the broader reactive ecosystem.
-
-#### Evaluation Models: Lazy by Default, Scheduled When Needed
-
-Resources follow a **lazy evaluation model** by default, meaning they are only created and evaluated when their value is actually consumed. This aligns with the principle that expensive computations should only occur when their results are needed:
-
-```js
-const ExpensiveComputation = resource(({ on }) => {
-  console.log('This only runs when accessed'); // Lazy evaluation
-  const result = cell(performExpensiveCalculation());
-  return result;
-});
-
-// Resource not created yet
-@use expensiveData = ExpensiveComputation; 
-
-// Only now is the resource created and evaluated
-<template>{{this.expensiveData}}</template>
-```
-
-However, certain types of resources benefit from **scheduled evaluation**, particularly those that involve side effects or async operations:
-
-```js
-const DataFetcher = resource(({ on }) => {
-  const state = cell({ loading: true });
-  
-  // Side effect happens immediately (scheduled evaluation)
-  // to avoid waterfalls when multiple async resources are composed
-  fetchData().then(data => state.set({ loading: false, data }));
-  
-  on.cleanup(() => {
-    // Cleanup logic
-  });
-
-  return state;
-});
-```
-
-This hybrid approach—lazy by default, scheduled when beneficial—provides optimal performance while avoiding common pitfalls like request waterfalls in async scenarios.
+While this RFC does not strictly depend on the `cell` primitive from [RFC #1071](https://github.com/emberjs/rfcs/pull/1071), resources become significantly more ergonomic when used together with `cell`.
 
 #### Reactive Ownership and Automatic Disposal
 
@@ -1058,236 +908,88 @@ const ParentResource = resource(({ use, on }) => {
 });
 ```
 
+<details><summary>Similaries to "Explicit Resource Management"</summary>
+
+```js
+function parent() {
+  using child1 = someChild();
+  using child2 = anotherChild();
+
+  return () => ({
+    child1,
+    child2,
+  });
+}
+```
+
+This looks fairly similar to our resources, and at a high-level, might behave similarily.
+But a key difference is that each `use` gets its own cache, so `child1` and `child2` can invalidate independently -- whereas all of `parent` would invalidating in the Explicit Resource Management example.
+
+</details>
+
 The ownership model ensures that:
-- **No Memory Leaks**: Child resources are automatically disposed when parents are destroyed
-- **Hierarchical Cleanup**: Disposal propagates down through the resource tree
-- **Automatic Lifecycle**: No manual `willDestroy` or cleanup management needed
-- **Composable Boundaries**: Resources can create isolated ownership scopes
-
-#### Push-Pull Reactivity and Glitch-Free Consistency
-
-Resources participate in Ember's **push-pull reactive system**, which combines the benefits of both push-based (event-driven) and pull-based (demand-driven) reactivity:
-
-```js
-const DerivedValue = resource(({ use }) => {
-  const source1 = use(SourceA);
-  const source2 = use(SourceB);
-  
-  // This derivation is guaranteed to be glitch-free:
-  // When SourceA changes, this won't re-run with stale SourceB data
-  return () => source1.current + source2.current;
-});
-```
-
-**Push Phase**: When tracked data changes, notifications propagate down the dependency graph, marking potentially affected resources as "dirty."
-
-**Pull Phase**: When a value is actually consumed (in templates, effects, etc.), the system pulls fresh values up the dependency chain, ensuring all intermediate values are consistent.
-
-This approach guarantees **glitch-free consistency**—user code never observes intermediate or inconsistent states during reactive updates.
-
-#### Phased Execution and Ember's Rendering Lifecycle
-
-Resources integrate seamlessly with Ember's three-phase execution model:
-
-1. **Pure Phase**: Resource functions run and compute derived values
-2. **Render Phase**: Template rendering consumes resource values
-3. **Post-Render Phase**: Effects and cleanup logic execute
-
-```js
-const UIResource = resource(({ on, use }) => {
-  // PURE PHASE: Calculations and data preparation
-  const data = use(DataSource);
-  const formattedData = () => formatForDisplay(data.current);
-  
-  // RENDER PHASE: Template consumes formattedData
-  
-  // POST-RENDER PHASE: Side effects via cleanup
-  on.cleanup(() => {
-    // Analytics, logging, or other side effects
-    trackResourceUsage('UIResource', data.current);
-  });
-  
-  return formattedData;
-});
-```
-
-This phased approach ensures predictable execution order and enables advanced features like React's concurrent rendering patterns.
-
-#### The Principle: "What Can Be Derived, Should Be Derived"
-
-Resources embody the fundamental reactive principle that **state should be minimized and derived values should be maximized**. This leads to more predictable, testable, and maintainable applications:
-
-```js
-// AVOID: Manual state synchronization
-const BadPattern = resource(({ on }) => {
-  const firstName = cell('John');
-  const lastName = cell('Doe');
-  const fullName = cell(''); // Redundant state!
-  
-  // Manual synchronization - error prone
-  on.cleanup(() => {
-    // Complex logic to keep fullName in sync...
-  });
-  
-  return { firstName, lastName, fullName };
-});
-
-// PREFER: Derived values
-const GoodPattern = resource(() => {
-  const firstName = cell('John');
-  const lastName = cell('Doe');
-  
-  // Derived value - always consistent
-  const fullName = () => `${firstName.current} ${lastName.current}`;
-  
-  return { firstName, lastName, fullName };
-});
-```
-
-Resources make it natural to follow this principle by:
-- **Encouraging functional composition** through the `use()` method
-- **Making derivation explicit** through return values
-- **Automating consistency** through reactive dependencies
-- **Eliminating manual synchronization** through automatic re-evaluation
-
-#### Async Resources and Colorless Async
-
-For async operations, resources support **colorless async**—patterns where async and sync values can be treated uniformly without pervasive `async`/`await` coloring:
-
-```js
-const AsyncData = resource(({ on }) => {
-  const state = cell({ loading: true, data: null, error: null });
-  const controller = new AbortController();
-  
-  on.cleanup(() => controller.abort());
-  
-  fetchData({ signal: controller.signal })
-    .then(data => state.set({ loading: false, data, error: null }))
-    .catch(error => state.set({ loading: false, data: null, error }));
-  
-  return state;
-});
-
-// Usage is the same whether data is sync or async
-const ProcessedData = resource(({ use }) => {
-  const asyncData = use(AsyncData);
-  
-  return () => {
-    const { loading, data, error } = asyncData.current;
-    if (loading) return 'Loading...';
-    if (error) return `Error: ${error.message}`;
-    return processData(data);
-  };
-});
-```
-
-This approach avoids the "function coloring problem" where async concerns leak throughout the application, instead containing them within specific resources while maintaining uniform composition patterns.
-
-These advanced concepts work together to make resources not just a convenience feature, but a foundational primitive that enables sophisticated reactive architectures while remaining approachable for everyday use. By implementing these patterns, Ember's resource system positions itself at the forefront of modern reactive programming, providing developers with tools that are both powerful and intuitive.
-
-### .current Collapsing and Function Returns
-
-A key ergonomic feature of resources is **automatic `.current` collapsing** in templates and with the `@use` decorator. When a resource returns a `cell` or reactive value, consumers don't need to manually access `.current`:
-
-```js
-const Time = resource(({ on }) => {
-  const time = cell(new Date());
-  const timer = setInterval(() => time.set(new Date()), 1000);
-  on.cleanup(() => clearInterval(timer));
-  return time; // Returns a cell
-});
-
-// Template usage - .current is automatic
-<template>Current time: {{Time}}</template>
-
-// @use decorator - .current is automatic
-export default class MyComponent extends Component {
-  @use time = Time;
-  
-  <template>Time: {{this.time}}</template> // No .current needed
-}
-
-// Manual usage - .current is explicit
-export default class MyComponent extends Component {
-  time = use(this, Time);
-  
-  <template>Time: {{this.time.current}}</template> // .current needed
-}
-```
-
-**Alternative Pattern: Function Returns**
-
-Resources can also return functions instead of cells, which provides a different composition pattern:
-
-```js
-const FormattedTime = resource(({ use }) => {
-  const time = use(Time);
-  
-  // Return a function that computes the formatted time
-  return () => time.current.toLocaleTimeString();
-});
-
-// Usage is identical regardless of return type
-<template>Formatted: {{FormattedTime}}</template>
-```
-
-Function returns are particularly useful for:
-- **Derived computations** that transform reactive values
-- **Conditional logic** that depends on multiple reactive sources
-- **Complex formatting** or data transformation
-- **Memoization patterns** where you want to control when computation occurs
-
-The choice between returning cells and returning functions depends on whether the resource primarily holds state (use cells) or computes derived values (use functions).
+- Disposal propagates down through the resource tree
+- No manual `willDestroy` or cleanup management needed
 
 ### Examples
 
 **Data Fetching with Modern Async Patterns**
 
+[Demo here with ember-resources](https://limber.glimdown.com/edit?c=JYWwDg9gTgLgBAbzlApgZwgVygYxQGjjwBti4BfOAMyghDgHIUQAjFKAWlQ2zzQYDcAKCFVMAOxwxgEcXABKzCDBQARAIYx1ACmzEAlIiFxkKGNjncsuFNu1JZFQwF4AfEZMmcstPF%2BaUOGciFFJ7OGIIdQATYHEAcwAuOBgoTAI4aM11ZPFMUkJ2Wihc-LJyfWFPIh94b3FUiFJ2ILhxFAB3OABBFmgYAGFZRuaobUrjOEmTWQA6HGIUdTywOxd3epHFqFn1PthxiZNpuAB6U7gAZRwACxRo-Pu4FAA3dWJMTRk5DmozW7g-lgaDgoBA92AAWIAE8UhA4OoXhBgNE4B0AlAqO9iGgTlR-jddFBiIQkGhgPFxO9kptaKNZuTKe8nCcTLMYHdxNpuJBxGhAm4PNVPMAqHBtABCHk%2BFCzCAAa0MCFZwo5tC67S6AFEoMVtAADAASABVjQAFOAAEgQ0r5sv85jQ5GS1tt-IZWkdxpQAA8YOR9UdhSZyCqTKhzFBLOhee6AFYYLlB6oVFXsznaLJaILuB32szhSIxOJJajvfmELPqQq66ClUhOfRpnCaW7aIrQHNC4PnOAAeXEMLgmDAWcCedBYo5gVQAEd0r40eo0OIGPA9v17mHJ%2BKJbSmtsGRSqcRdvsVNElduTHmGQWkEXYglklicRkq-WSc9a1AnFVgxQKoVP%2BJwRhYgKeig-7AUIoZCL2QzgBAaB7IsmTZHAYC0Hw5IJHAvyIsi0QgnOC7wOiKiYtiuL1IuZrYeg-LRBo2bBFYvC2OEmD8k4XbKl4tTIOoHQseorTcbYiggMoajZNoDA3DAMBgGgiTnB0GkMuiYDAOyKC3Kc6g6acYDEMsZj8PoQaTGBUbius3Y1Hy8APlET7xJW2Q1sUFCtFAwmifM2CoA0-7HNUorio%2BJaGLZchkp63HJAw0UJAwFBhTu7Y-rFZjgQlmhJYwHZQAwhDgmgKHxCgyQlbMFVVYE5DCKBeV2fxwoOkVDBoJgOA4WVKpYRAOH3KJyRVrM3D5DAaD1UZ2jACo9CCvY26zBtS3MPg269hg4IItEsTSLIzJVnAdyoHAnb7WYNwlkBVknM1kwvTB8EXMadw8eoV3iMobQoPcTyyHgF1KSpamnPES03JgLDzHQpzMGwUAJqcmI4GgJllKcACMeMAEyEx9oIgqApnMCgDRbhT-SIKYPA2AAYuoUjQLClA0HQxWsOwXDoNYfCCEI7Es2zMAc9oUkyaJExCAAPMtpkBK4kwIAgABSlx9gAch6UAlqKsLaPRI2MWN2SGHkDYAMzkKGCunMrZkqK4QA&format=gjs)
+
 ```js
-const RemoteData = resource(({ on }) => {
-  const state = cell({ loading: true, data: null, error: null });
-  const controller = new AbortController();
+import { resource, cell } from '@ember/reactive';
 
-  on.cleanup(() => controller.abort());
-
-  // Scheduled evaluation - fetch starts immediately to avoid waterfalls
-  fetch(this.args.url, { signal: controller.signal })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      return response.json();
-    })
-    .then(data => state.set({ loading: false, data, error: null }))
-    .catch(error => {
-      // Only update state if the request wasn't aborted
-      if (!controller.signal.aborted) {
-        state.set({ loading: false, data: null, error });
-      }
-    });
-
-  return state;
-});
+function RemoteData(url) {
+  return resource(({ on }) => {
+    const state = cell({ loading: true, data: null, error: null });
+    const controller = new AbortController();
+  
+    on.cleanup(() => controller.abort());
+  
+    // Scheduled evaluation - fetch starts immediately to avoid waterfalls
+    fetch(url, { signal: controller.signal })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(data => state.set({ loading: false, data, error: null }))
+      .catch(error => {
+        // Only update state if the request wasn't aborted
+        if (!controller.signal.aborted) {
+          state.set({ loading: false, data: null, error });
+        }
+      });
+  
+    return state;
+  });
+}
 
 // Composable data processing - avoids request waterfalls
 const ProcessedData = resource(({ use }) => {
-  const rawData = use(RemoteData);
+  const rawData = use(RemoteData('https://www.swapi.tech/api/planets'));
   
   return () => {
     const { loading, data, error } = rawData.current;
     
     if (loading) return { status: 'loading' };
     if (error) return { status: 'error', message: error.message };
-    
+
     return {
       status: 'success',
-      processedData: data.map(item => ({
+      processedData: data.results.map(item => ({
         ...item,
-        timestamp: new Date(item.createdAt).toLocaleDateString()
+        // some additional data here or something
       }))
     };
   };
 });
+
+<template>
+  {{JSON.stringify (ProcessedData) null 3}}
+</template>
 ```
 
 **WebSocket Connection with Reactive State Management**
@@ -1349,6 +1051,8 @@ const WebSocketConnection = resource(({ on, owner }) => {
 
 **Reactive DOM Event Handling with Debouncing**
 
+[Demo here with ember-resources](https://limber.glimdown.com/edit?c=JYWwDg9gTgLgBAbzlApgZwgVygYxQGjjwBti4BfOAMyghDgHIUQAjFKAWlQ2zzQYDcAKCE4IAOzTwA6sHEATCAHcAysABeKOAF5k6LLhQAKI0gkUAlDoB8iIXCISpcNBq26SxU-YdwlweRgACwAuPzlFJQA6OXF2WUCg-B8HIJRgAHMgmDD-BWUY8TioAAl0rJhk3zgAQzQwFBwYACUamGAIXIiC2PiA4LgAenD86N7S8uyfcgthH0HhgBEUFixxPHk4TDB5Nq0YCFqANwgAuBQADz5XI61ULhQFdjQfYhR4dpAULBgASXlhA4xJJ4NtdjAUGpNDo4EYrNpbAgUkQ3jUoAAVUDfTAwIyfbF-eSzZH4n7-GFod6Yr4-EzwxHIoFOeD%2BRIwvKRQrFBLBQHVRwguBpTLZdndMZFdhlEUwPnVVyaKKU3FI-m%2BVnBKpqoWTSqM3x1BpNVrtTrhNnDYUVfUzOUUQgAVgADMSHOQ5g4OQUavJ5ABRW7iGAAGWAUke7CMDG4bgYhDBeyhBEQcDAdRuKDCMCgmC0tp8PgkURwqPE2zpNjs1S90VQIAgtwDjxDYYhxSjMc0ca2O0TbldvhLKDR1IJeKxZKJfPzPlQMGw4hcbmEM4WcGWUGAt02LFQNQA1pA5PBuAY8KJmXAAEJ7w%2BnIO-cRUQ66U%2B8YymLaUyyV1UC5w1kmMKYJSRiyKMSYDrO7wLrC9JVoOl5IBqQQUGKEFuMW2CoEGHq%2BMAVCwihcAADxwAA7AAbAAHFYc6wUgu7Dnex5hAwtxQAAni4IA1KQDAUHaBFEf0qFkQAjE6ABMAAsdEwVAi6MbeR5BmxaC8fxgnIsJRjERJlFOi6ejzopKZMQeqk5IwXzyMAmAgAJ7rIsi9FmcpzFWWx8joPuBxgE504rsSQgkRC4DEHs1g%2BAgCAAFIqAA8gAckq2ZyBkBHcUYN6efefxPhAVhlqQcAAMzkOQoWDOFYCRRC1hAA&format=gjs)
+
 ```js
 const WindowSize = resource(({ on }) => {
   const size = cell({
@@ -1369,7 +1073,7 @@ const WindowSize = resource(({ on }) => {
         height,
         aspectRatio: width / height
       });
-    }, 150);
+    }, 50);
   };
 
   window.addEventListener('resize', updateSize, { passive: true });
@@ -1396,34 +1100,6 @@ const BreakpointInfo = resource(({ use }) => {
 });
 ```
 
-**Hierarchical Composition**: Build complex resources from simpler ones using reactive ownership:
-
-```js
-const UserSession = resource(({ use, owner }) => {
-  const auth = owner.lookup('service:auth');
-  const currentUser = use(CurrentUser);
-  const preferences = use(UserPreferences);
-  
-  return () => ({
-    user: currentUser.current,
-    preferences: preferences.current,
-    isAdmin: auth.hasRole('admin', currentUser.current)
-  });
-});
-
-const CurrentUser = resource(({ on, owner }) => {
-  const session = owner.lookup('service:session');
-  const userData = cell(session.currentUser);
-  
-  const handleUserChange = () => userData.set(session.currentUser);
-  session.on('userChanged', handleUserChange);
-  on.cleanup(() => session.off('userChanged', handleUserChange));
-  
-  // ".current" is special and is automatically collapsed when rendered.
-  // otherwise you could return () => userDate.current;
-  return userData;
-});
-```
 
 **Parallel Data Loading**: Avoid waterfalls by composing resources that run async independently:
 
@@ -1432,18 +1108,26 @@ const CurrentUser = resource(({ on, owner }) => {
 
 ```js
 const DashboardData = resource(({ use }) => {
-  // All three resources start fetching in parallel
+  // All three resources start fetching in parallel.
+  // A key thing is that they are required to be accessed in order to start their request.
   const userData = use(UserData);
   const analytics = use(AnalyticsData);
   const notifications = use(NotificationData);
   
-  return () => ({
-    user: userData.current,
-    analytics: analytics.current,
-    notifications: notifications.current,
-    get hasUnreadNotifications() {
-      return notifications.current.unreadCount > 0;
-    }
+  // @cached shorthand
+  return () => {
+    // Can access data here
+    let user = userData.current;
+    
+    // When any of the 3 requests invalidates, this object will be dirtied as percieved by consumers
+    return {
+      user,
+      analytics: analytics.current,
+      notifications: notifications.current,
+      get hasUnreadNotifications() {
+        return notifications.current.unreadCount > 0;
+      }
+    };
   });
 });
 ```
@@ -1466,6 +1150,9 @@ const ResilientDataLoader = resource(({ on }) => {
   on.cleanup(() => controller.abort());
   
   const fetchWithRetry = async (attempt = 0) => {
+    // When running code that changes state in the resource body,
+    // it's crucial to detach from auto-tracking via an `await` or some other means.
+    // (in the future, on.sync may help out here)
     try {
       const response = await fetch('/api/critical-data', { signal: controller.signal });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -1854,10 +1541,1266 @@ This is reactive because the construction of `State` does not require the value 
   In this example, `state.one` and `state.two` are _individually_ reactive. and `state.combined` entantgles with both.
 
 
+### Core Primitives
 
-### Resources
+conceptual primitives, even below the "reactive" primitives.
 
-TODO: (adapt from the ember-resources documentation)
+- values  
+  A value is the most basic kind of reactive primitive. It's a place to store data that can be updated atomically. Updates to values take effect immediately.
+
+- functions  
+  JavaScript has a built in mechanism for computing values based on other values: functions. Supporting functions as a reactive primitive, as well as their arguments, is essential for reducing the number of abstractions folks need to learn. 
+
+- functions with cleanup  
+  Many things in a JavaScript app require cleanup, but it is often forgotten about, leading to memory leaks, increased network activity, and increased CPU usage. This includes handling timers, intervals, fetch, sockets, etc.
+	
+### Values
+
+This is a reactive value.
+```js 
+const greeting = cell('Hello there!');
+```
+It can be read and updated, just like a `@tracked` function.
+
+Here is an [interactive demo](https://tutorial.glimdown.com/2-reactivity/1-values) demonstrating how `cell` can be used anywhere (in this case, in module-space[^module-space])
+
+<details><summary>Code for the demo</summary>
+
+```gjs
+import { cell } from '@ember/reactive';
+
+const greeting = cell("Hello there!");
+
+// Change the value after 3 seconds
+setTimeout(() => {
+	greeting.current = "General Kenobi!";
+}, 3000);
+
+<template>
+	Greeting: {{greeting.current}}
+</template>
+```
+
+</details>
+
+
+[^module-space]: Even though we can define state in module-space, you typically do not want to do so in your apps. Adding state at the module level is a "module side-effect", and tree-shaking tools may not tree-shake if they detect a "module side-effect". Additionally, when state is, in some way, only created within the context of an app, that state is easily reset between tests (assuming that app state is not shared between tests).
+
+> **Note** <br>
+> Cells do not _replace_ `@tracked` or `TrackedObject` / `TrackedArray` or any other reactive state utility you may be used to, but they are another tool to use in your applications and libraries and are otherwise an implementation detail of the more complex reactive data-structures.
+
+<details><summary>Deep Dive: Re-implementing @tracked</summary>
+
+When framing reactivity in terms of "cells", the implementation of `@tracked` could be thought of as an abstraction around a `getter` and `setter`, backed by a private `cell`:
+
+```js 
+class Demo {
+	#greeting = cell('Hello there!');
+
+	get greeting() {
+		return this.#greeting.current;
+	}
+	set greeting(value) {
+		this.#greeting.set(value);
+	}
+}
+```
+
+
+And then actual implementation of the decorator, which abstracts the above, is only a handful of lines:
+
+```js 
+function tracked(target, key, descriptor) {
+	let cache = new WeakMap();
+
+	let getCell = (ctx) => {
+		let reactiveValue = cache.get(ctx);
+
+		if (!reactiveValue) {
+			cache.set(ctx, reactiveValue = cell(descriptor.initializer?.()));
+		}
+
+		return reactiveValue;
+	};
+
+	return {
+		get() {
+			return getCell(this).current;
+		},
+		set(value) {
+			getCell(this).set(value);
+		}
+	}
+}
+```
+
+Note that this decorator style is using the [Stage 1 / Legacy Decorators](https://github.com/wycats/javascript-decorators/blob/e1bf8d41bfa2591d949dd3bbf013514c8904b913/README.md)
+
+See also [`@babel/plugin-proposal-decorators`](https://babeljs.io/docs/babel-plugin-proposal-decorators#version)
+
+
+</details>
+
+One huge advantage of this way of defining the lowest level reactive primitive is that we can escape the typical framework boundaries of components, routes, services, etc, and rely every tool JavaScript has to offer. Especially as Starbeam is being developed, abstractions made with these primitives can be used in other frameworks as well.  
+
+
+Here is an [interactive demo showcasing `@tracked`](https://tutorial.glimdown.com/2-reactivity/2-decorated-values), but framed in way that builds off of this new "value" primitive.
+
+<details><summary>Code for the demo</summary>
+
+```gjs
+import { tracked } from '@glimmer/tracking';
+
+class Demo {
+	@tracked greeting = 'Hello there!';
+}
+
+const demo = new Demo();
+
+// Change the value after 3 seconds
+setTimeout(() => {
+	demo.greeting = "General Kenobi!";
+}, 3000);
+
+<template>
+	Greeting: {{demo.greeting}}
+</template>
+```
+
+</details>
+
+### Functions
+
+This is a reactive function.
+
+```js
+function shout(text) {
+	return text.toUpperCase();
+}
+```
+It's _just a function_. And we don't like to use the word "just" in technical writing, but there are honestly 0 caveats or gotchyas here.
+
+Used in Ember, it may look like this:
+```js
+function shout(text) {
+	return text.toUpperCase();
+}
+
+<template>
+	{{shout @greeting}}
+</template>
+```
+
+The function, `shout`, is reactive: in that when the `@greeting` argument changes, `shout` will be re-called with the new value.
+
+
+Here is an interactive demo showcasing how [functions are reactive](https://tutorial.glimdown.com/2-reactivity/4-functions)
+
+<details><summary>Code for the demo</summary>
+
+```gjs
+import { cell } from '@ember/reactive';
+
+const greeting = cell("Hello there!");
+const shout = (text) => text.toUpperCase();
+
+// Change the value after 3 seconds
+setTimeout(() => {
+	greeting.current = "General Kenobi!";
+}, 3000);
+
+<template>
+	Greeting: {{ (shout greeting.current) }}
+</template>
+```
+
+</details>
+
+
+### Functions with cleanup
+
+_Why does cleanup matter?_
+
+Many things in a JavaScript app require cleanup. We need to cleanup in order to:
+- prevent memory leaks
+- reduce unneeded network activity 
+- reduce CPU usage 
+
+This includes handling timers, intervals, fetch, sockets, etc.
+
+_Resources_ are functions with cleanup, but cleanup isn't all they're conceptually concerned with.
+
+>
+> Resources Convert Processes Into Values 
+>
+> Typically, a resource converts an imperative, stateful process.
+> That allows you to work with a process just like you'd work with any other reactive value.
+> 
+
+For details on resources, see the [Resources chapter](./resources.md).
+
+Here is an interactive demo showcasing how [resources are reactive functions with cleanup](https://tutorial.glimdown.com/2-reactivity/5-resources)
+
+<details><summary>Code for the demo</summary>
+
+```gjs 
+import { resource, cell } from '@ember/reactive';
+
+const Clock = resource(({ on }) => {
+	let time = cell(new Date());
+	let interval = setInterval(() => time.current = new Date(), 1000);
+
+	on.cleanup(() => clearInterval(interval));
+
+	return () => time.current;
+});
+
+<template>
+	It is: <time>{{Clock}}</time>
+</template>
+```
+
+</details>
+
+
+# Resources
+
+
+> [!NOTE]
+> A resource is a reactive function with cleanup logic.
+
+Resources are created with an owner, and whenever the owner is cleaned up, the resource is also cleaned up. This is called ownership linking.
+
+Typically, a component in your framework will own your resources. The framework renderer will make sure that when your component is unmounted, its associated resources are cleaned up.
+
+<details>
+<summary>Resources Convert Processes Into Values</summary>
+
+Typically, a resource converts an imperative, stateful process, such as an asynchronous request or a ticking timer, into a reactive value.
+
+That allows you to work with a process just like you'd work with any other reactive value.
+
+This is a very powerful capability, because it means that adding cleanup logic to an existing reactive value doesn't change the code that works with the value.
+
+The only thing that changes when you convert a reactive value into a resource is that it must be instantiated with an owner. The owner defines the resource's lifetime. Once you've instantiated a resource, the value behaves like any other reactive value.
+
+</details>
+
+## A Very Simple Resource
+
+To illustrate the concept, let's create a simple resource that represents the current time.
+
+```js
+import { cell, resource } from "@ember/reactive";
+
+export const Now = resource(({ on }) => {
+  const now = cell(Date.now());
+
+  const timer = setInterval(() => {
+    now.set(Date.now());
+  });
+
+  on.cleanup(() => {
+    clearInterval(timer);
+  });
+
+  return now;
+});
+```
+
+To see this code in action, [checkout the live demo](https://limber.glimdown.com/edit?c=MQAggiDKAuD2AOB3AhtAxgCwFBYCIFMBbWAOwGdoAnVAS1JFgDMRkQAlfM2AV0rXxDQMqEAGt8%2BeGUHU0ohs1yp8AOhKxELaQEduNOVpA1oINMhI4ABtYDmAK2kAbGgDd8WGoXixKJgN4glJw8fPgANKb4jo4gAL4gjJSwhCAA5EQARviUALRBXLz8ZKkA3Dj4AB7evqakFCAAchogALyBwYX4ABRdAfSxAJStAHwgflggteQm6ppt-NFdStCqs10DA2UgE1P10J7ZrSBk%2BNAAkiQrlC7Ijj1DLaPjk5OzKifQS8pqGuubO4MtjtSCo0I58OZuPB7iMxjtJmCIZQLlcbnd9oRsv9JoCdjsgtBeCQQLMyricAAeFZeRzKYY7M4mGhkABcICpB2Gfj8TUQsViFIA9Bj8PShdT4LSVvTrJYgA&format=glimdown).
+
+> **:bulb:** <br>
+> A resource's return value is a reactive value. If your resource represents a single cell, it's fine to return it directly. It's also common to return a function which returns reactive data -- that depends on reactive state that you created inside the resource constructor.
+
+When you use the `Now` resource in a component, it will automatically get its lifetime linked to that component. In this case, that means that the interval will be cleaned up when the component is destroyed.
+
+The `resource` function creates a resource Constructor. A resource constructor:
+
+1. Sets up internal reactive state that changes over time.
+2. Sets up the external process that needs to be cleaned up.
+3. Registers the cleanup code that will run when the resource is cleaned up.
+4. Returns a reactive value that represents the current state of the resource as a value.
+
+In this case:
+
+| internal state | external process | cleanup code | return value |
+| ---- | ---- | ---- | ---- |
+| `Cell<number>` | `setInterval` | `clearInterval` | `Cell<number>` |
+
+
+<details><summary>Resource's values are immutable</summary>
+
+When you return a reactive value from a resource, it will always behave like a generic, immutable reactive value. This means that if you return a `cell` from a resource, the resource's value will have `.current` and `.read()`, but not `.set()`, `.update()` or other cell-specific methods.
+
+If you want your resource to return a value that can support mutation, you can return a JavaScript object with accessors and methods that can be used to mutate the value.
+
+This is an advanced use-case because you will need to think about how external mutations should affect the running process.
+
+</details>
+
+## A Ticking Stopwatch
+
+Here's a demo of a `Stopwatch` resource, similar to the above demo.
+The main difference here is that the return value is a function.
+
+```js
+import { resource, cell } from '@ember/reactive';
+
+const formatter = new Intl.DateTimeFormat("en-US", {
+  hour: "numeric",
+  minute: "numeric",
+  second: "numeric",
+  hour12: false,
+});
+
+export const Stopwatch = resource((r) => {
+  const time = cell(new Date());
+
+  const interval = setInterval(() => {
+    time.set(new Date());
+  }, 1000);
+
+  r.on.cleanup(() => {
+    clearInterval(interval);
+  });
+
+  return () => {
+    const now = time.current;
+
+    return formatter.format(now);
+  };
+});
+```
+
+To see this code in action, [checkout the live demo](https://limber.glimdown.com/edit?c=MQAggiDKAuD2AOB3AhtAxgCwFBYCIFMBbWAOwGdoAnVAS1JFgDMRkQAlfM2AV0rXxDQMqEAGt8%2BeGUHU0ohsyEC0vSvhLRBNQvgA0LEgBMQjWJUKppNTYgzqQao-ko0SAcwB0OAAa%2B3AK2kAGxoAN3wsbXgzTQBvB04ePj0QfiCgkABfE0pYQhAAciIAI2cAWjUuXn4yAoBuHDRSChMzC2hoZxAAXhASfEQQAEkNII9cVHwAFW18ADE21AAKACJ1MoBVSBX9WKwQEAwkgC4QFZJuHRc0Hf2QQlduTtPzy%2BcaG907snwmoxeLlcPrcDkdeABGABMp0YyCCPy%2BmQAlA0sH8WjAECh0Bgegkqsklkt4vRkT0AHwgPYHdGaaCzPFpIJLfqDCadJZIlF3WkgVydSihOF4n7QEYCoXMzkUrQ6DwqSiOTS9Vkgdn4Tn6cEABl13LupHlQXwyAu8CJSJlaGNyEo4uckqW-IdcK5qIOamgvBIIGl3Up1IOqWamhIsEGvXpcoVSvdQc93ta5lQAo8pmT0BZ4e5B0yWGRqIAPJ1CPAgpNyXchpoaGRTsXZuTYrFMUhUJhMplCwB6KP4Ss9ktlitYXzeIA&format=glimdown).
+
+A description of the `Stopwatch` resource:
+
+| internal state | external process | cleanup code | return value |
+| ---- | ---- | ---- | ---- |
+| `Cell<Date>` | `setInterval` | `clearInterval` | `string` |
+
+The internals of the `Stopwatch` resource behave very similarly to the `Now` resource. The main difference is that the `Stopwatch` resource returns the time as a formatted string.
+
+From the perspective of the code that uses the stopwatch, the return value is a normal reactive string.
+
+## Reusing the `Now` Resource in `Stopwatch`
+
+You might be thinking that `Stopwatch` reimplements a whole bunch of `Now`, and you ought to be able to just use `Now` directly inside of `Stopwatch`.
+
+You'd be right!
+
+```js
+const formatter = new Intl.DateTimeFormat("en-US", {
+  hour: "numeric",
+  minute: "numeric",
+  second: "numeric",
+  hour12: false,
+});
+
+const Stopwatch = resource(({ use }) => {
+  const time = use(Now);
+
+  return () => formatter.format(time.current);
+});
+```
+
+The `Stopwatch` resource instantiated a `Now` resource using its use method. That automatically links the `Now` instance to the owner of the `Stopwatch`, which means that when the component that instantiated the stopwatch is unmounted, the interval will be cleaned up.
+
+## Using a Resource to Represent an Open Channel
+
+Resources can do more than represent data like a ticking clock. You can use a resource with any long-running process, as long as you can represent it meaningfully as a "current value".
+
+<details><summany>Compared to other systems: Destiny of Unused Values</summary>
+
+You might be thinking that resources sound a lot like other systems that convert long-running processes into a stream of values (such as observables).
+
+While there are similarities between Resources and stream-based systems, there is an important distinction: because Resources only produce values on demand, they naturally ignore computing values that would never be used.
+
+This includes values that would be superseded before they're used and values that would never be used because the resource was cleaned up before they were demanded.
+
+**This means that resources are not appropriate if you need to fully compute values that aren't used by consumers.**
+
+In stream-based systems, there are elaborate ways to use scheduling or lazy reducer patterns to get similar behavior. These approaches tend to be hard to understand and difficult to compose, because the rules are in a global scheduler, not the definition of the stream itself. These patterns also give rise to distinctions like "hot" and "cold" observables.
+
+On the other hand, Resources naturally avoid computing values that are never used by construction.
+
+TL;DR Resources do not represent a stream of values that you operate on using stream operators.
+
+> **:key: Key Point** <br>
+>resources represent a single reactive value that is always up to date when demanded.
+
+This also allows you to use resources and other values interchangably in functions, and even pass them to functions that expect reactive values.
+
+</details>
+
+Let's take a look at an example of a resource that receives messages on a channel, and returns a string representing the last message it received.
+
+In this example, the channel name that we're subscribing to is dynamic, and we want to unsubscribe from the channel whenever the channel name changes, but not when we get a new message.
+
+```js
+import { resource, cell } from '@ember/reactive';
+
+function ChannelResource(channelName) {
+  return resource(({ on }) => {
+    const lastMessage = cell(null);
+
+    const channel = Channel.subscribe(channelName);
+
+    channel.onMessage((message) => {
+      lastMessage.set(message);
+    });
+
+    on.cleanup(() => {
+      channel.unsubscribe();
+    });
+
+    return () => {
+      const prefix = `[${channelName}] `;
+      if (lastMessage.current === null) {
+        return `${prefix} No messages received yet`;
+      } /*E1*/ else {
+        return `${prefix} ${lastMessage.current}`;
+      }
+    };
+  });
+}
+```
+
+To see this code in action, [checkout the live demo](https://limber.glimdown.com/edit?c=MQAgMglgtgRgpgJxAUQCYQC4HsEChcAicUWAdgM4YICGGEZIWAZiNSAEpzlYCuCAxnBAYAFrRAI4AB0nk4pDOWEihAIhKUJcQQpBQu5agHM4qrYIgA3OKkalWIAOpwYAZSz8A1nAwgAwmKkpHAANgB0%2BAAG0UYAVkohVnC40FI4vgDeWtx8ggBi1PzYCACeADTZvAJwFYIhISAAviBMCFhQIADkxPAIALSyVYLknQDc%2BAD0AFRTIAAKkhjytgHUQaEgqSHE8hi09PZMOCAwkpaYJSBTE7j8ZJqr6w0AvCAZuCAg5Dww5PwIEHgAC4QAAKfiBYIhABy1H0AEoQM8AHxvD6fEDbXz8aj1GCFTxKV4AbQAuuN0Z8JhMvtAeCFaEJJBZzqQjF8PN5fPpyIYTEopIh6OgcfUSpTMT5NgpEJZcUivj4AJIyhBykKg0GIlFojEYrGbWyvACytBEYTaPFIqFBptEFrWqHaWquIAAHAAGREAahAAEZxnrPgaQHwXiBIiIMBgpOQgdTyAB3ahSCBhVBwSwTFMQCYAEgyELWUNh%2Bka%2BYyEFQjUi%2BCDLR8ENBYfhEr1YVE8lBsjSFCEOp79zgYXiZC1rfrnw7KlIoNQtDYOvek4xopC%2BK85DCUBT4Nx64JSNRa43njnC7CpDhcHhE8njXhgYxjQqfo978fdYxiz49mXQbIY0DGMOAQVBJhSG1Y991PLcpB4cgRHAyCyjbUMKB%2BP4AWBMEoN1ScTwJIkQDJJ9634bZqAQFUljVXFQQgVV1U-etGglNjPjYtj8DuChfEeKFOByaoFUGXI4AKIocBKTUiyeUsbyPfCfwQewxOqTUsgYB8lP-T5eM0BlKCA3kQIVOoNVIekQhYiUDOxSENleATQjCb5fn%2BQE4HBRyYWvWy9TkqEwkA4CTE1Hk%2BUUpc0KMjATKityfFBSKQJY58AoxMgwgouA1h4KRNTwvTV18sIrXcrCvK1Mimkyz4VPsF0YvI%2B5fBkOAmAgAAPBVImJAsgtCBTGlJCNas%2BCAWFBOKEpAnK%2BEkXRnhWkArPqRESr1RqIwLDquu65poSwPQwq4cw4CSWwSh8SIJqaEBpmQP1rhAUI5Hw%2BsdsiPbJAO5oC1ms6FoQJaMBre6OOfJ8H3GWH8AAHiWKApAZJZkXRBH0EsL4MBKbZnlUGAcAzBAQT9KReu4RJUFGEApGoVB0DZcnJCgUZVAxvUMgyFyQiEoY1EFLBUdMRooYRiZsYxyXkdRxkMeiWsgA&format=glimdown)
+
+`ChannelResource` is a JavaScript function that takes the channel name as a reactive input and returns a resource constructor.
+
+That resource constructor starts by subscribing to the current value of the `channelName`, and then telling Ember to unsubscribe from the channel when the resource is cleaned up.
+
+It then creates a cell that holds the last message it received on the channel, and returns a function that returns that message as a formatted string (or a helpful message if the channel hasn't received any messages yet).
+
+At this point, let's take a look at the dependencies:
+
+```mermaid
+flowchart LR
+    ChannelResource-->channelName
+    subgraph ChannelResource
+    lastMessage
+    end
+    output-->channelName
+    output-->lastMessage
+
+    style channelName fill:#8888ff,color:white
+    style output fill:#8888ff,color:white
+    style lastMessage fill:#8888ff,color:white
+```
+
+Our output depends on the channel name and the last message received on that channel. The lastMessage depends on the channel name as well, and whenever the channel name changes, the resource is cleaned up and the channel is unsubscribed.
+
+If we receive a new message, the lastMessage cell is set to the new message. This invalidates lastMessage and therefore the output as well.
+
+```mermaid
+flowchart LR
+    ChannelResource-->channelName
+    subgraph ChannelResource
+    lastMessage
+    end
+    output-->channelName
+    output-->lastMessage
+
+    style channelName fill:#8888ff,color:white
+    style output fill:#ff8888,color:black
+    style lastMessage fill:#ff8888,color:black
+```
+
+However, this does not invalidate the resource itself, so the channel subscription remains active.
+
+On the other hand, if we change the channelName, that invalidates the ChannelResource itself.
+
+```mermaid
+flowchart LR
+    ChannelResource-->channelName
+    subgraph ChannelResource
+    lastMessage
+    end
+    output-->channelName
+    output-->lastMessage
+
+    style channelName fill:#ff8888,color:black
+    style output fill:#ff8888,color:black
+    style lastMessage fill:#ff8888,color:black
+
+```
+
+As a result, the resource will be cleaned up and the channel unsubscribed. After that, the resource will be re-created from the new channelName, and the process will continue.
+
+
+> **:key: Key Point** <br> From the perspective of the creator of a resource, the resource represents a stable reactive value.
+
+<details><summary>Under the hood</summary>
+
+Under the hood, the internal `ChannelResource` instance is cleaned up and recreated whenever its inputs change. However, the resource you got back when you created it remains the same.
+</details>
+
+
+----------------------------------------
+
+
+
+[^starbeam]: These docs have been adapted from the [Starbeam](https://www.starbeamjs.com/guides/fundamentals/resources.html) docs on Resources.
+
+[^copying]: while ~90% of the content is copied, adjustments have been made for casing of APIs, as well as omissions / additions as relevant to the ember ecosystem right now. Starbeam is focused on _Universal Reactivity_, which in documentation for Ember, we don't need to focus on in this document. Also, mega huge thanks to [@wycats](https://github.com/wycats) who wrote most of this documentation. I, `@nullvoxpopuli`, am often super stressed by documentation writing (at least when stakes are high) -- I am much happier/relaxed writing code, and getting on the same page between our two projects.
+
+### In Strict Mode / `<template>`
+
+Resources work best in strict mode / gjs/gts / `<template>`.
+
+For more information about this format, please see [this interactive tutorial](https://tutorial.glimdown.com)
+
+```gjs
+const Clock = resource(/* ... */);
+
+<template>
+  {{Clock}}
+</template>
+```
+
+And then if your resource takes arguments:
+
+```gjs
+function Clock(locale) {
+  return resource(/* ... */);
+}
+
+resourceFactory(Clock)
+
+<template>
+  {{Clock 'en-US'}}
+</template>
+```
+
+
+### In Templates
+
+Resources are powered by Ember's "Helper Manager" APIs, such as [`invokeHelper`](https://api.emberjs.com/ember/release/functions/@ember%2Fhelper/invokeHelper).
+
+So in order to use resources in loose-mode or template-only components, they'll need to be re-exported in your `app/helpers/*` folder.
+
+For example, by defining `app/helpers/clock.js`,
+```js
+export { Clock as default } from './location/of/clock';
+```
+
+you'd then be able to directly reference `Clock` in your template, albeit in the lower-kebab-case format (i.e.: if your helper is MultiWord, it's invoked as `multi-word`),
+
+```hbs
+{{ (clock) }}
+```
+
+
+### When the template has a backing class.
+
+Because resources are backed by the Helper Manager API, and ever since "everything that has a value can be used in a template" [docs here](https://guides.emberjs.com/release/in-depth-topics/rendering-values/), we can _almost_ use resources in templates _as if_ you were using `<template>`.
+This is not a feature of resources, but it is a useful technique that we've been able to use since `ember-source@3.25`
+
+```js
+import { Clock } from './location/of/clock';
+import Component from '@glimmer/component';
+
+export default class Demo extends Component {
+  /**
+   * This looks goofy!
+   * This assigns the value "Clock" to the property on Demo, "Clock"
+   * [property] = value;
+   *
+   * It could also be
+   * AClock = Clock, and then access in the template as this.AClock
+   */
+  Clock = Clock;
+}
+```
+```hbs
+{{this.Clock}}
+
+{{! and if Clock takes arguments }}
+
+{{this.Clock 'en-US'}}
+```
+
+## Usage in JavaScript
+
+In JavaScript, we need a helper utility to bridge from native javascript in to ember's reactivity system.
+
+When using `@use`, the host class will need to have [_the Owner_](https://api.emberjs.com/ember/5.0/modules/@ember%2Fowner) set on it.
+
+Resources may only be composed within
+- a class with an owner
+- another resource (covered [here](./resources.md)
+
+
+```js
+import { use } from '@ember/reactive';
+import { Clock } from './location/of/clock';
+
+class Demo {
+  clock = use(this, Clock);
+}
+```
+
+Or, if the resource takes arguments:
+
+```js
+import { use } from '@ember/reactive';
+import { Clock } from './location/of/clock';
+
+class Demo {
+  clock = use(this, Clock('en-US'));
+}
+```
+
+If you need the argument(s) to the resource to be reactive, you can pass a function:
+
+```js
+import { use } from '@ember/reactive';
+import { tracked } from '@glimmer/tracking';
+import { Clock } from './location/of/clock';
+
+class Demo {
+  @tracked locale = 'en-US';
+
+  clock = use(this, Clock(() => this.locale));
+}
+```
+
+<details><summary>why can't a decorator be used here?</summary>
+
+When defining a function in the decorator
+
+```js
+class Demo {
+  @use(Clock(() => this.locale)) clock;
+  /* ... */
+}
+```
+
+The arrow function does _not_ take on the context of the class instance,
+because decorators are evaluated before an instance is created.
+The `this` is actually the type of the context that the class is defined in.
+
+This form of decorator *is* implemented, but it turned out to not be useful
+enough for the variety of use cases we need for resource invocation.
+
+Here is how it looks for no args, and static args, and both of these situations
+work as you'd expect:
+
+```js
+
+import { use } from '@ember/reactive';
+import { Clock, ClockWithArgs } from './location/of/clock';
+
+class Demo {
+  @use(Clock) clock;
+  @use(ClockWithArgs('en-US')) clockWithArg;
+}
+```
+
+</details>
+
+This technique with using a function is nothing special to resources, and can be used with any other data / class / etc as well.
+
+Further, if multiple reactive arguments are needed with individual reactive behavior, you may instead decide to have your wrapping function receive an object.
+
+<details><summary>about resourceFactory</summary>
+
+`resourceFactory` is a pass-through function purely for telling ember to
+invoke the underlying resource immediately after invoking the `resourceFactory` function.
+
+This is why we don't use its return value: it's the same as what you pass to it.
+
+Without `resourceFactory`, ember would need extra internal changes to support primitives that
+don't yet exist within the framework to, by convention, decide to _double-invoke_ the functions.
+
+The signature is basically `() => () => Value`, where we want to flatten that chain of functions to get the underlying `Value`.
+
+</details>
+
+
+```js
+import { use } from '@ember/reactive';
+import { tracked } from '@glimmer/tracking';
+import { Clock } from './location/of/clock';
+
+class Demo {
+  @tracked locale = 'en-US';
+  @tracked timezone = 'America/New_York';
+
+  clock = use(this, Clock({
+    locale: () => this.locale,
+    timeZone: () => this.timezone,
+  }));
+}
+```
+
+So when authoring a `Clock` that receives these types of function arguments, but _also_ needs to support being invoked from a template, how do you implement that?
+
+```js
+import { resource } from '@ember/reactive';
+
+export function Clock(args) {
+  return resource(() => {
+    let { locale, timeZone } = args;
+
+    // each of locale and timeZone could be either be a
+    // string or a function that returns a string
+    let localeValue = typeof locale === 'function' ? locale() : locale;
+    let timeZoneValue = typeof timeZone === 'function' ? timeZone() : timeZone;
+
+    // ...
+  });
+}
+
+resourceFactory(Clock);
+```
+
+<details><summary>using functions for fine-grained reactivity</summary>
+
+Earlier, it was mentioned that this way of managing reactivity isn't specific to resources.
+That's because it's one technique you can use to build native classes in you app that have fine-grained reactivity.
+
+For example, say you have a component:
+```js
+import Component from '@glimmer/component';
+
+export default class Demo extends Component {
+  /** ... */
+}
+```
+
+And you have want to manage state in another class that doesn't necessarily need to a be a component.
+For example, this could be a data abstraction, or a statemachine, or some other integration with the browser.
+
+```js
+class MyState {}
+```
+
+You can assign an instance of `MyState` to an instance of your component by calling `new`.
+
+```js
+import Component from '@glimmer/component';
+
+export default class Demo extends Component {
+  state = new MyState();
+
+  /** ... */
+}
+```
+
+but then to pass args, you may expect that you'd pass them like this:
+
+```js
+import Component from '@glimmer/component';
+
+export default class Demo extends Component {
+  state = new MyState(this.locale, this.timezone);
+
+  /** ... */
+}
+```
+
+But this is not reactive, because the values of `locale` and `timezone` are evaluated at the time of creating `MyState`.
+
+We can delay auto-tracking by converting these properties to functions:
+```js
+import Component from '@glimmer/component';
+
+export default class Demo extends Component {
+  state = new MyState(() => this.locale, () => this.timezone);
+
+  /** ... */
+}
+```
+
+and then using them in getters:
+```js
+class MyState {
+  constructor(localeFn, timeZoneFn) {
+    this.#localeFn = localeFn;
+    this.#timeZoneFn = timeZoneFn;
+  }
+
+  get locale() {
+    return this.#localeFn();
+  }
+
+  get timeZone() {
+    return this.#timeZoneFn();
+  }
+}
+```
+
+And then all the way back in our component template (`demo.hbs`), we can say:
+```hbs
+{{this.state.locale}}
+
+and
+
+{{this.state.timeZone}}
+```
+
+and each of the individual `{{ }}` usages will individually auto-track with the corresponding properties on `MyState`.
+
+
+</details>
+
+
+## Usage in TypeScript / Glint
+
+### Typing the above examples
+
+If you've used TypeScript in Ember before, this may look familiar as we declare the types on services in the same way. This follows the same pattern described [here](https://jamescdavis.com/declare-your-injections-or-risk-losing-them/)
+
+```ts
+import { use } from '@ember/reactive';
+import { Clock, ClockWithArgs } from './location/of/clock';
+
+class Demo {
+  clock = use(this, Clock);
+// ^? string
+
+  clock2 = use(this, ClockWithArgs('en-US'));
+// ^? string
+}
+```
+
+```ts
+import { use } from '@ember/reactive';
+import { tracked } from '@glimmer/tracking';
+import { Clock, ClockWithReactiveArgs } from './location/of/clock';
+
+class Demo {
+  @tracked locale = 'en-US';
+
+  clock = use(this, ClockWithReactiveArgs(() => this.locale));
+// ^? string
+}
+```
+
+
+### For Library Authors
+
+For TypeScript, you may have noticed that, if you're a library author, you may want to be concerned with supporting all usages of resources in all contexts, in which case, you may need to support overloaded function calls.
+
+Here is how the overloads for `Compiled`, the resource that represents a dynamically compiled component, provided by `ember-repl`, and used by https://limber.glimdown.com and https://tutorial.glimdown.com.
+
+[compile/index.ts](https://github.com/NullVoxPopuli/limber/blob/main/packages/ember-repl/addon/src/browser/compile/index.ts)
+
+```ts
+// Additional types and APIs omitted for brevity
+export function Compiled(markdownText: Input | (() => Input)): State;
+export function Compiled(markdownText: Input | (() => Input), options?: Format): State;
+export function Compiled(markdownText: Input | (() => Input), options?: () => Format): State;
+export function Compiled(markdownText: Input | (() => Input), options?: ExtraOptions): State;
+export function Compiled(markdownText: Input | (() => Input), options?: () => ExtraOptions): State;
+
+export function Compiled(
+  markdownText: Input | (() => Input),
+  maybeOptions?: Format | (() => Format) | ExtraOptions | (() => ExtraOptions)
+): State {
+  return resource(() => {
+    let maybeObject =
+      typeof maybeOptions === 'function' ? maybeOptions() : maybeOptions;
+    let format =
+      (typeof maybeObject === 'string' ? maybeObject : maybeObject?.format) || 'glimdown';
+    let options =
+      (typeof maybeObject === 'string' ? {} : maybeObject) || {};
+
+    let input = typeof markdownText === 'function' ? markdownText() : markdownText;
+
+    /* ... */
+
+    return () => ({
+      isReady: ready.current,
+      error: error.current,
+      component: result.current,
+    });
+  });
+}
+```
+
+When defining `Compiled` this way, we can be type-safe in a variety of situations.
+Note that when we invoke from a template, we don't need to worry about functions because,
+in templates, all tracked values are inherently reactive, and will re-invoke functions appropriately.
+
+> [!NOTE]
+> The function concept here is this demo is _an_ example of how to pass on reactivity to future auto-tracking context. You could pass a `Cell`, or some other instance of an object that has its own tracked properties. Functions, however, are a platform primitive that allows for easy demoing -- but it's important to use the abstraction that best fits your, and your team's, use case.
+
+<details>
+<summary>  Using `Compiled` as
+
+`(doc: string) => State`
+
+</summary>
+
+- Usage in gjs directly in the template:
+
+  ```gjs
+  import { Compiled } from 'ember-repl';
+
+  let doc = '...';
+
+  <template>
+    {{#let (Compiled doc) as |state|}}
+       ...
+    {{/let}}
+  </template>
+  ```
+  This is reactive
+
+- Usage in a class
+
+  ```gjs
+  import Component from '@glimmer/component';
+  import { tracked } from '@glimmer/tracking';
+
+  import { use } from '@ember/reactive';
+  import { Compiled } from 'ember-repl';
+
+  export default class Demo extends Component {
+    @tracked doc = '...';
+
+    @use(Compiled(this.doc)) state;
+
+    /* ... */
+  }
+  ```
+  This is _not_ reactive because the value of `this.doc` is read when evaluating the decorator.
+
+</details>
+
+
+<details>
+<summary>  Using `Compiled` as
+
+`(doc: string, options: ExtraOptions) => State`
+
+</summary>
+
+- Usage in gjs directly in the template:
+  ```gjs
+  import { Compiled } from 'ember-repl';
+  import { hash } from '@ember/helper';
+
+  let doc = '...';
+
+  <template>
+    {{#let (Compiled doc (hash format='gjs')) as |state|}}
+       ...
+    {{/let}}
+  </template>
+  ```
+
+- Usage in a class
+
+  ```gjs
+  import Component from '@glimmer/component';
+  import { tracked } from '@glimmer/tracking';
+
+  import { use } from '@ember/reactive';
+  import { Compiled } from 'ember-repl';
+
+  export default class Demo extends Component {
+    @tracked doc = '...';
+    @tracked format = '...';
+
+    state = use(this, Compiled(this.doc, { format: this.format }));
+
+    /* ... */
+  }
+  ```
+  This is _not_ reactive because the value both `this.doc` and the second arg are read when evaluating the decorator.
+
+</details>
+
+
+<details>
+<summary>  Using `Compiled` as
+
+`(doc: string, format: Format) => State`
+
+</summary>
+
+- Usage in gjs directly in the template:
+  ```gjs
+  import { Compiled } from 'ember-repl';
+  import { hash } from '@ember/helper';
+
+  let doc = '...';
+
+  <template>
+    {{#let (Compiled doc 'gjs') as |state|}}
+       ...
+    {{/let}}
+  </template>
+  ```
+
+
+- Usage in a class
+  ```gjs
+  import Component from '@glimmer/component';
+  import { tracked } from '@glimmer/tracking';
+
+  import { use } from '@ember/reactive';
+  import { Compiled } from 'ember-repl';
+
+  export default class Demo extends Component {
+    @tracked doc = '...';
+    @tracked format = '...';
+
+    state = use(this, Compiled(this.doc, this.format));
+
+    /* ... */
+  }
+  ```
+  This is _not_ reactive because the value both `this.doc` and `this.format` are read when evaluating the decorator.
+
+</details>
+
+
+
+<details>
+<summary>  Using `Compiled` as
+
+`(doc: () => string) => State`
+
+</summary>
+
+- Usage in a class
+  ```gjs
+  import Component from '@glimmer/component';
+  import { tracked } from '@glimmer/tracking';
+
+  import { use } from '@ember/reactive';
+  import { Compiled } from 'ember-repl';
+
+  let doc = '...';
+
+  export default class Demo extends Component {
+    @tracked doc = '';
+
+    state = use(this, Compiled(() => this.doc));
+
+    /* ... */
+  }
+  ```
+
+</details>
+
+
+<details>
+<summary>  Using `Compiled` as
+
+`(doc: () => string, format: Format) => State`
+
+</summary>
+
+- Usage in a class
+  ```gjs
+  import Component from '@glimmer/component';
+  import { tracked } from '@glimmer/tracking';
+
+  import { use } from '@ember/reactive';
+  import { Compiled } from 'ember-repl';
+
+  let doc = '...';
+
+  export default class Demo extends Component {
+    @tracked doc = '';
+
+    state = use(this, Compiled(() => this.doc, 'gjs'));
+
+    /* ... */
+  }
+  ```
+
+</details>
+
+<details>
+<summary>  Using `Compiled` as
+
+`(doc: () => string, format: () => Format) => State`
+
+</summary>
+
+- Usage in a class
+  ```gjs
+  import Component from '@glimmer/component';
+  import { tracked } from '@glimmer/tracking';
+
+  import { use } from '@ember/reactive';
+  import { Compiled } from 'ember-repl';
+
+  let doc = '...';
+
+  export default class Demo extends Component {
+    @tracked doc = '';
+    @tracked format = 'gjs';
+
+    state = use(this, Compiled(() => this.doc, () => this.format));
+
+    /* ... */
+  }
+  ```
+
+</details>
+
+<details>
+<summary>  Using `Compiled` as
+
+`(doc: () => string, options: ExtraOptions) => State`
+
+</summary>
+
+- Usage in a class
+  ```gjs
+  import Component from '@glimmer/component';
+  import { tracked } from '@glimmer/tracking';
+
+  import { use } from '@ember/reactive';
+  import { Compiled } from 'ember-repl';
+
+  let doc = '...';
+
+  export default class Demo extends Component {
+    @tracked doc = '';
+
+    state = use(this, Compiled(() => this.doc, { format: 'gjs', ...extraOptions }));
+
+    /* ... */
+  }
+  ```
+
+</details>
+
+
+<details>
+<summary>  Using `Compiled` as
+
+`(doc: () => string, options: () => ExtraOptions) => State`
+
+</summary>
+
+- Usage in a class
+  ```gjs
+  import Component from '@glimmer/component';
+  import { tracked } from '@glimmer/tracking';
+
+  import { use } from '@ember/reactive';
+  import { Compiled } from 'ember-repl';
+
+  let doc = '...';
+
+  export default class Demo extends Component {
+    @tracked doc = '';
+    @tracked options = { format: 'gjs', ...extraOptions };
+
+    state = use(this, Compiled(() => this.doc, () => this.options));
+
+    /* ... */
+  }
+  ```
+
+Note that for this example, it's possible to have as fine-grained reactivity as you want:
+
+  ```gjs
+  import Component from '@glimmer/component';
+  import { tracked } from '@glimmer/tracking';
+
+  import { use } from '@ember/reactive';
+  import { Compiled } from 'ember-repl';
+
+  let doc = '...';
+
+  export default class Demo extends Component {
+    @tracked doc = '';
+
+    // this isn't supported by the example, but it's possible to implement,
+    // if the need is there
+    state = use(this, Compiled(() => this.doc), {
+        format: () => this.format,
+        foo: () => this.foo,
+        bar: () => this.bar,
+    });
+
+    /* ... */
+  }
+  ```
+
+</details>
+
+
+-----------------------------
+
+
+# What are "lifetimes"?
+
+Sometimes known as [Object lifetime](https://en.wikipedia.org/wiki/Object_lifetime) is the timespan between creation and destruction of an object.
+
+Resources have two possible lifetimes:
+- Resources' lifetime is _linked_ to their parent context
+    - this is typically in JavaScript, on a component, service, or custom class
+- Resources' lifetime is contained within the block in which they are rendered
+    - this is typically in the template
+
+## When is a resource created?
+
+In JavaScript, a resource is created only upon access. Like services, there is no runtime cost to the definition of the property that you'll eventually use. Only when accessed does something happen (that something being the initial invocation of the resource). 
+
+In templates, a resource is created / initially invoked when rendered.
+
+## When is a resource destroyed?
+
+In JavaScript, a resource is destroyed when the parent / containing object is destroyed. This could be when a component is no longer needed, or when a service is destroyed, such as what would happen at the end of a test.
+
+In templates, a resource is destroyed when it is no longer rendered.
+
+```hbs
+{{#if condition}}
+    
+    {{LocalizedClock 'en-US'}}
+
+{{/if}}
+```
+
+In this example, the `LocalizedClock` will be created when `condition` is true, and then destroyed when `condition` is false.
+
+
+When a resource is destroyed, its `on.cleanup()` (set of) function(s) runs.
+
+
+### When arguments change
+
+When the argument-reference changes, the resource will be destroyed, and will be re-created.
+
+For example:
+
+```js
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { on } from '@ember/modifier';
+
+import { LocalizedClock } from './clock';
+
+export default Demo extends Component {
+    <template>
+        {{LocalizedClock this.locale}}
+
+        <button {{on 'click' this.changeLocale}}>Update</button>
+    </template>
+
+    @tracked locale = 'en-US';
+
+    changeLocale = (newLocal) => this.locale = newLocal;
+}
+```
+
+Once `this.locale` changes, `LocalizedClock` will be destroyed, and is created again with the new `this.locale` value.
 
 
 ### When _not_ to use a resource
@@ -1922,7 +2865,92 @@ TODO: (adapt from the ember-resources documentation)
   ```
   When you don't need a resource, your application gets to skip all the infrastructure that makes resources work (at the time of writing: the Helper Manager system). Additionally, when a resource is not needed, your application code stays closer to framework-agnostic concepts, thus improving onboarding for new developers.
 
+### Uncategorized Information
 
+#### "What Can Be Derived, Should Be Derived"
+
+Ember encourages the fundamental reactive principle that **state should be minimized and derived**. This leads to more predictable, testable, and maintainable applications:
+
+```js
+// AVOID: Manual state synchronization
+const BadPattern = resource(({ on }) => {
+  const firstName = cell('John');
+  const lastName = cell('Doe');
+  const fullName = cell(''); // Redundant state!
+  
+  return { 
+    get firstName() {
+      return firstName.current;
+    }, 
+    get lastName() {
+      return lastName.current;
+    },
+    get fullName() {
+      return fullName.current;
+    }
+  };
+});
+
+// PREFER: Derived values
+const GoodPattern = resource(() => {
+  const firstName = cell('John');
+  const lastName = cell('Doe');
+  
+  return { 
+    get firstName() {
+      return firstName.current;
+    }, 
+    get lastName() {
+      return lastName.current;
+    }, 
+    // A derived value is always consistent
+    get fullName() {
+      return `${firstName.current} ${lastName.current}`;
+    }
+  };  
+});
+```
+
+#### Async Resources and Colorless Async
+
+For async operations, resources have no inherent way of seamlessly managing the sync and async state without `async`/`await` coloring:
+
+```js
+const AsyncData = resource(({ on }) => {
+  const state = cell({ loading: true, data: null, error: null });
+  const controller = new AbortController();
+  
+  on.cleanup(() => controller.abort());
+  
+  fetchData({ signal: controller.signal })
+    .then(data => state.set({ loading: false, data, error: null }))
+    .catch(error => state.set({ loading: false, data: null, error }));
+  
+  return state;
+});
+
+// Usage is the same whether data is sync or async
+const ProcessedData = resource(({ use }) => {
+  const asyncData = use(AsyncData);
+  
+  // because asyncData encodes state that we expect to change later, we must "deal with it" 
+  // in this resource.
+  return {
+    get loading() {
+      return asyncData.current.loading;
+    },
+    get data() {
+      let data = asyncData.current;
+      return processData(data);
+    },
+    get error() {
+      return asyncData.current.error;
+    }
+  };
+});
+```
+
+This doesn't mean we can't build an abstraction for async on top of resources that uses some common interface, but that is outside the scope of this RFC.
 
 
 ## Drawbacks
@@ -1939,6 +2967,42 @@ TODO: (adapt from the ember-resources documentation)
 - We _could_ do nothing and just encourage [standard explicit resources management](https://v8.dev/features/explicit-resource-management) everywhere -- though they have more limitide functionality, and probably would still want a wrapper to make accessing the owner and handling linkage nicer.  Note that that we absolutely should just make explicit resource management work everywhere anyway. It likely would not even need an RFC, as we could treat those as a limited version of the Resource proposed in this RFC, with the same timing, etc.  When to support this is maybe more of a question of our browser support policy however. Polyfills work in userland, but as a framework we need access to the _same_ `Symbol.dispose` (and `Symbol.asyncDispose`) that userland folks would have access to.
 
 - for the Async / intermediate state / function coloring problem, we could build and design a babel plugin (similar to ember-concurrency that automatically wraps async resource usage and correctly forwards intermediary state in resource definitions, but this may require TypeScript lies, which are not desirable)
+
+### .current Collapsing and Function Returns
+
+A key ergonomic feature of resources is **automatic `.current` collapsing** in templates and with the `@use` decorator. When a resource returns a `cell` or reactive value, consumers don't need to manually access `.current`:
+
+```js
+const Time = resource(({ on }) => {
+  const time = cell(new Date());
+  const timer = setInterval(() => time.set(new Date()), 1000);
+  on.cleanup(() => clearInterval(timer));
+  return time; // Returns a cell
+});
+
+// Template usage - .current is automatic
+<template>Current time: {{Time}}</template>
+
+// @use decorator - .current is automatic
+export default class MyComponent extends Component {
+  @use time = Time;
+  
+  <template>Time: {{this.time}}</template> // No .current needed
+}
+
+// Manual usage - .current is explicit
+export default class MyComponent extends Component {
+  time = use(this, Time);
+  
+  <template>Time: {{this.time.current}}</template> // .current needed
+}
+```
+
+However, it may be desirable by some to _always_ be explicit.
+
+I think we can have a both _while_ having TypeScript be agreeable by having a `Symbol('current')` on Cells and Resources, and we collapse that value. That way, we don't accidentally collapse userland `.current` values that are not from Cells or Resources.
+
+
 
 ## Unresolved questions
 
