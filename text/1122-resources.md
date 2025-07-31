@@ -221,9 +221,9 @@ const Clock = resource(({ on }) => {
 
 **Resources unify all existing concepts** by providing:
 
-1. **A Standard Container**: One primitive that works for components, helpers, modifiers, services, and custom logic (more on this later)
-2. **Co-located Setup/Teardown**: No more spreading logic across constructors, lifecycle hooks, and destructor registrations  
-3. **Hierarchical Cleanup**: Automatic owership linkage and disposal and child management without manual `associateDestroyableChild()` + `registerDestructor` (also with a way to manually link, similar to [RFC #1067](https://github.com/emberjs/rfcs/pull/1067))
+1. One primitive that works for components, helpers, modifiers, services, and custom logic (more on this later)
+2. No more spreading logic across constructors, lifecycle hooks, and destructor registrations  
+3. Automatic owership linkage and disposal and child management without manual `associateDestroyableChild()` + `registerDestructor` (also with a way to manually link, similar to [RFC #1067](https://github.com/emberjs/rfcs/pull/1067))
 
 Resources don't replace existing patterns. Resources unify those patterns under a single abstraction that eliminates the need to choose between different lifecycle approaches or remember multiple APIs.
 
@@ -787,6 +787,48 @@ export default class MyComponent extends Component {
 ```
 
 The `use()` function provides manual resource instantiation when you need more control over the lifecycle or want to potentially avoid "magic" that yet-to-be-understood decorators provide, like that of `@use` - where `.current` would not be needed in the template. 
+
+### Timing
+
+There are several phases to resource creation, and they all auto-track independently.
+
+Coming back to the test from earlier:
+```js
+test('manual mode', async function () {
+    function Doubler(num) {
+        return resource(() => num * 2);
+    }
+    let owner = {
+      lookup: (registrationName) => { /* ... */ }
+    };
+
+    let builder = Doubler(3);
+    let instance = builder.create();
+
+    instance.link(owner);
+
+    instance.current; 
+
+    // ...
+});
+```
+
+We have: 
+- The argument passing function (`Doubler` in this case) 
+- `create` being called on the `builder` 
+- `link` to pass the owner
+- and finally, accessing `.current`
+
+The only two phases that are auto-tracked are invoking `Doubler()` (handled by the default helper manager) and accessing `.current` -- which handles initial calling of the resource's passed callback, as well as subsequent updates and managing the destruction of the previous run.
+
+
+If `num` were a `@tracked` value, when it changes, we toss the entire `builder`, and start over. This is partly why it's useful to pass in objects with getters or functions that delay access to a tracked value.
+
+if a tracked value within a `resource()` changes the whole body will re-run as changes invalidate the computation of the resource callback. This can be mitigated by using the function-return or getter returns from the resource body. 
+
+> [!IMPORTANT]
+> Unlike components' destruction, resource destruction _synchronously_ happens before setup of the next set of values for the resource. (unless it is the final destruction). Destruction is not auto-tracked (and shouldn't be), but as of the writing of this RFC, this behavior is also a happenstance of the current "polyfill", ember-resources. This could change in the future. For example, destruction _could be_ async at some point. 
+
 
 ### Key Differences Between Usage Patterns
 
@@ -3006,7 +3048,8 @@ I think we can have a both _while_ having TypeScript be agreeable by having a `S
 
 ## Unresolved questions
 
-n/a
+- should destruction be async?
+  - are there situations where we need to have destruction of previous phase run before setup of the next?
 
 ## References
 
