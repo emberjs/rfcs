@@ -362,6 +362,8 @@ All renderComponents rendered within an ember app would share their reactivity. 
 
 Outside of ember projects, _currently_ if multiple `renderComponent`s are used from different ember-source versions (possible if someone pulls in, for example, two web components from different libraries which internally use `renderComponent`), the `renderComponent` usages would not be co-reactive with each other's data. This is something that would need to be resolved in the underlying _renderer_ and is out of scope for discussion in this RFC.
 
+Repeat calls to `renderComponent` with the same element will _replace_ all contents on that element. This means if someone wants multiple apps to render on a page as siblings, they should create sibling elements to render each sub-app in to. This is to be consistent with `document.body` vs within an app's component's DOM content. A way to render sibling components _could_ be to use TextNodes (or CommentNodes) to attach `renderComponent` to, but will be considered outside the scope of this RFC. We can add behaviors and ergonomics things later. This RFC is more about the base functionality for `renderComponent`.
+
 
 ## Drawbacks
 
