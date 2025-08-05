@@ -364,6 +364,8 @@ Outside of ember projects, _currently_ if multiple `renderComponent`s are used f
 
 Repeat calls to `renderComponent` with the same element will _replace_ all contents on that element. This means if someone wants multiple apps to render on a page as siblings, they should create sibling elements to render each sub-app in to. This is to be consistent with `document.body` vs within an app's component's DOM content. A way to render sibling components _could_ be to use TextNodes (or CommentNodes) to attach `renderComponent` to, but will be considered outside the scope of this RFC. We can add behaviors and ergonomics things later. This RFC is more about the base functionality for `renderComponent`.
 
+If apps are replaced by other apps (such as rendering into the same element multiple times), there is a risk of memory leak if the prior apps were not destroyed, and _if_ those previous apps have global state that would _need_ cleanup (global event listeners, etc).
+
 
 ## Drawbacks
 
