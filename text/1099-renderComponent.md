@@ -127,7 +127,7 @@ When isInteractive is false, modifiers don't run, when true, modifiers do run.
 
 #### `into`
 
-The element to render the compnoent into.
+The element to render the component into.
 
 #### `args`
 
