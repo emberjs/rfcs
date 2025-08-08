@@ -33,7 +33,7 @@ Additionally, Ember has also not recommended the use of Mixins for a while. Sinc
 to fully remove Mixins.
 
 ## Transition Path
-
+A full deprecation guide is PR'd here: https://github.com/ember-learn/deprecation-app/pull/1407
 ### Observable Mixin
 
 Some of the methods provided by `Observable` are available as standalone methods,
