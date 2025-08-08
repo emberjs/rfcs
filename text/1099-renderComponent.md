@@ -7,6 +7,7 @@ teams:
   - framework
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/1099'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/1128'
 project-link:
 suite:
 ---
