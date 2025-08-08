@@ -48,6 +48,8 @@ deprecate `PromiseProxyMixin`.
 
 There is no direct migration path for these. Code that relies upon this behavior will have to be rewritten.
 
+See the deprecation guide (PR'd here: https://github.com/ember-learn/deprecation-app/pull/1405 )
+
 ## Exploration
 
 To validate this deprecation, I've tried removing the assocaited functionality in this PR:
