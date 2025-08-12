@@ -86,7 +86,25 @@ class UserModel {
 }
 ```
 
-Collection dependency keys like `items.[]`, `items.@each.name`, etc. are replaced by direct property access within the getter. Autotracking observes every `@tracked` read. If you push into an array (mutating method) you must reassign to trigger, e.g. `this.items = [...this.items, newItem]`. Codemod will wrap mutating calls or emit TODO comments.
+Collection dependency keys like `items.[]`, `items.@each.name`, etc. are replaced by direct property access within the getter. Autotracking observes every `@tracked` read. For mutable collections prefer using `TrackedArray` (and the related tracked collection types) from `tracked-built-ins` (or their eventual built-in equivalents per RFC #1068) over manual immutable spread-reassignment. This keeps code concise and minimizes accidental churn.
+
+```js
+import { TrackedArray } from 'tracked-built-ins';
+
+class Store {
+  items = new TrackedArray([]);
+
+  addItem(item) {
+    this.items.push(item); // reactive update without manual reassignment
+  }
+
+  get expensiveItems() {
+    return this.items.filter(i => i.price > 1000);
+  }
+}
+```
+
+If a project does not (yet) use tracked collections you can still fall back to immutable patterns (`this.items = [...this.items, newItem]`), but the deprecation guide will recommend adopting `TrackedArray` during migration for cleaner diffs and better performance characteristics.
 
 For expensive computations previously cached by computed's default memoization, you may cache manually:
 
@@ -276,7 +294,7 @@ Lint rules:
 - suggest getter patterns for boolean macro-like expressions
 - detect lingering classic dependency key strings passed to `computed()` and flag.
 
-Performance Note: Autotracking's fine-grained dependency tracking plus recomputation on demand negates most previous caching advantages. For hot getters performing heavy work, authors may opt-in to manual caching as shown earlier.
+Performance Note: Autotracking's fine-grained dependency tracking plus recomputation on demand negates most previous caching advantages. For hot getters performing heavy work, authors may opt-in to manual caching as shown earlier. When using `TrackedArray` and other tracked collections, mutations are granular (e.g. a push only invalidates dependents once) reducing the need for custom caches.
 
 ### Edge Cases & Advanced Patterns
 
