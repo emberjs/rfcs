@@ -7,7 +7,7 @@ teams:
   - framework
   - typescript
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/1130
 project-link:
 suite: 
 ---
