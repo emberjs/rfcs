@@ -86,25 +86,7 @@ class UserModel {
 }
 ```
 
-Collection dependency keys like `items.[]`, `items.@each.name`, etc. are replaced by direct property access within the getter. Autotracking observes every `@tracked` read. For mutable collections prefer using `TrackedArray` (and the related tracked collection types) from `tracked-built-ins` (or their eventual built-in equivalents per RFC #1068) over manual immutable spread-reassignment. This keeps code concise and minimizes accidental churn.
-
-```js
-import { TrackedArray } from 'tracked-built-ins';
-
-class Store {
-  items = new TrackedArray([]);
-
-  addItem(item) {
-    this.items.push(item); // reactive update without manual reassignment
-  }
-
-  get expensiveItems() {
-    return this.items.filter(i => i.price > 1000);
-  }
-}
-```
-
-If a project does not (yet) use tracked collections you can still fall back to immutable patterns (`this.items = [...this.items, newItem]`), but the deprecation guide will recommend adopting `TrackedArray` during migration for cleaner diffs and better performance characteristics.
+Collection dependency keys like `items.[]`, `items.@each.name`, etc. are replaced by direct property access within the getter. Autotracking observes every `@tracked` read. If you push into an array (mutating method) you must reassign to trigger, e.g. `this.items = [...this.items, newItem]`. Codemod will wrap mutating calls or emit TODO comments.
 
 For expensive computations previously cached by computed's default memoization, you may cache manually:
 
@@ -140,6 +122,7 @@ legacyName: deprecatingAlias('user.name')
 After:
 ```js
 get fullName() { return this.user.fullName; }
+set fullName(value) { this.user.fullName = value; }
 get userName() { return this.user.name; }
 get title() { return this.model.title; } // no setter supplied => read-only
 get tempName() { return this._tempName ??= this.user.name; }
