@@ -31,7 +31,7 @@ suite: Leave as is
 
 ## Summary
 
-Add an option for all tracked-collections (like `TrackedArray`, `TrackedMap` and `TrackedObject`) so that their constructors don't perform a copy of the passed-in collection.
+Add an option for all tracked-collections (like `trackedArray`, `trackedMap` and `trackedObject`) so that their constructors don't perform a copy of the passed-in collection.
 
 ## Motivation
 
@@ -43,7 +43,7 @@ The classes that implement the tracked-collections have an `options` argument. W
 
 The naming is of course the biggest issue. One might argue that it's good to have "unsafe" in the name because that really is unsafe - if the original collection is modified and it is not copied - that change will not be reflected in the template which might be confusing for the user. On the other hand, this is somewhat "obvious" so naming it "unsafe" might prevent people from using it and therefore skipping on potential (big) performance gains.
 
-There is a [PR](https://github.com/glimmerjs/glimmer-vm/pull/1767) in the Glimmer VM repo for an implementation in `TrackedArray`.
+There is a [PR](https://github.com/glimmerjs/glimmer-vm/pull/1767) in the Glimmer VM repo for an implementation in `trackedArray`.
 
 ## How we teach this
 
