@@ -97,6 +97,8 @@ modules = {
 API Docs will explain the above usages.
 We aren't ready to add this to the guides as the community may not be ready for "minimal app" (which may need to be a different app blueprint from the current `@ember/app-blueprint`).
 
+For folks that wish to adopt this pattern today, they can use [the polyfill](https://github.com/NullVoxPopuli/ember-strict-application-resolver)
+
 ## Appendix
 
 
