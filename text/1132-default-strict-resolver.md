@@ -63,10 +63,7 @@ export default class App extends Application {
     ...import.meta.glob('./services/**/*', { eager: true }),
     ...import.meta.glob('./routes/*', { eager: true }),
     ...import.meta.glob('./controllers/*', { eager: true }),
-    ...import.meta.glob('./components/**/*', { eager: true }),
     ...import.meta.glob('./templates/**/*', { eager: true }),
-    ...import.meta.glob('./helpers/*', { eager: true }),
-    ...import.meta.glob('./modifiers/*', { eager: true }),
   };
 }
 ```
