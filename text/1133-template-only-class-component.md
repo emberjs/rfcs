@@ -149,7 +149,7 @@ var Demo = template(`{{@value}}`, { scope: () => ({}) });
 
 However, because we also support compile-less environments, the `TemplateOnly` export would _work_ if it made it to the runtime.
 
-[Here is an example implementation of that fallback behavior in the Limber REPL]()
+[Here is an example implementation of that fallback behavior in the Limber REPL](https://limber.glimdown.com/edit?c=JYWwDg9gTgLgBAbzjKBDAxgawKYBM4C%2BcAZlBCHAOQACA5gDagjZQD0KGmwAdrZQNwAoUJFiI4EboRJkKNbCABGLViAi5gxYCwHDw0eEnSowqRcEYxtAZwA0ca9hgBhcpG7ZuMALKpuqWhYiUnIqagVlNnQ3SU8YXREDcWt0AAs8AFd6bGkQuXClFSgM7noICDBdQXR6VGtrOAAVBTBamGwAeVKAT0QCQVZWOABlAFFRgC44VJgYMGsJwdpgGFSMxQA6aJBWBiYWACtrXcYQZigAWgA3HcUyxVYAZgA2dAAWACYATjeABlxfl9sMRsAB2YjPACMqEej1BqABz0ekI%2BAFZiNDUSjnr9iB9WKYsAFsMcAKR-PZnIolKzMViMB7bdxxdgtNrYC6SejdDYwawAYgAMh8PtVavU4M5xdZmuB2V1ub5-IEoIhBHAHDBUFZ0GqNRrsvAQH5iaqALxwDwAd0l0tlrW1nR6StNAAoAJRCfUOJyufQeLwulWuj1wM0APjgxuVLHs9vlPU9cHVhBTKeMpnMlhsYY1GbMFhWNldlEeG0hj0o9gQKY1uBJKAy6Bg0CmxFQ9EctlrcDq3W46EFmmw6G6NWwzg79EUnAWJA7XZ7GTAuEdAAlypg2wvsN2NQRPYJ01BsI6-cyvK7z7EvFK6nZe1BaNZ3Xr9SeYBkoFJrZKYgGXGlD0vVTFNAhcSR2gADxgUMa29D8vx-LJ6BA-p%2BkEbAoNEeB63bLJ4Bqe84DXbB6DKAB1aB6HwLD2m4XAGnjR0FV6eC4GiGlcw%2BECAB52jlR1wx7bgIDgAADVZgGscSAEIe14sBwwATQgDJplQK4chqYAsDwZB0jgRQMlmSREAQKTrC2NSvAIIhaRJDZeIJYSNWcgSHXaYT%2BiAA&format=gjs)
 
 ### Usage Examples
 
