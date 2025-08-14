@@ -143,7 +143,7 @@ The [TypeScript: Invokables](https://guides.emberjs.com/release/typescript/core-
 2. Examples showing generic Component classes that benefit from this optimization
 3. Guidance on when the optimization applies and when it doesn't
 
-There is little to no benefit to using this feature for JavaScript features unless folks think they might regularly switch between template-only and class components. This could be called out during initial component-authoring guides, but doesn't need much mention, since the goal of this compilation behavior is to be transparent to users (and always correct, so it is not noticed).
+For JavaScript users the benefit is of this compilation behavior is that they'll no longer need to worry about perf implications of "choosing the wrong style of component". TypeScript users also get this benefit, but there is also the genecis benefit for TypeScript.
 
 #### eslint-plugin-ember
 
