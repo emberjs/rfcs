@@ -1,8 +1,10 @@
 ---
-stage: ready-for-release
+stage: released
 start-date: 2025-01-10T00:00:00.000Z
 release-date:
 release-versions:
+  "@ember/test-waiters": "4.1.0"
+  "ember-cli": "6.6.0"
 teams:
   - cli
   - data
@@ -11,6 +13,7 @@ teams:
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/1065'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/1081'
+  released: 'https://github.com/emberjs/rfcs/pull/1104'
 project-link:
 ---
 
