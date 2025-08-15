@@ -135,6 +135,23 @@ function waitFor(context, callback, timeout = 10_000) {
 }
 ```
 
+usage:
+```js
+import { task, waitFor } from 'ember-concurrency';
+
+export class Demo extends Component {
+  @tracked foo = 0;
+
+  myTask = task(async () => {
+    console.log("Waiting for `foo` to become 5");
+
+    await waitFor(this, () => this.foo === 5);
+    
+    console.log("`foo` is 5!");
+  });
+}
+```
+
 ## How we teach this
 
 Until we prove that this isn't problematic, we should not provide documentation other than basic API docs on the export.
