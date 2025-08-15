@@ -8,11 +8,11 @@ teams:
 prs:
   accepted: # Fill this in with the URL for the Proposal RFC PR
 project-link:
-suite: 
+suite:
 ---
 
-<!--- 
-Directions for above: 
+<!---
+Directions for above:
 
 stage: Leave as is
 start-date: Fill in with today's date, 2032-12-01T00:00:00.000Z
