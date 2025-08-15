@@ -61,6 +61,27 @@ There is a [PR](https://github.com/glimmerjs/glimmer-vm/pull/1767) in the Glimme
 
 We add it to the documentation. And also to the TypeScript types (which is already done in the PR above).
 
+Example text for the documentation:
+
+By default, calling `trackedArray` (and any other tracked-collection constructor) copies the given argument. That is, the following code:
+
+```ts
+let original = [123];
+let arr = trackedArray(original);
+original[0]++; // `arr[0]` is *unchanged*
+```
+
+Will **not** modify the tracked array.
+
+That could be expensive when a big array is passed. For these cases, there is a second argument with options that can be passed to `trackedArray`:
+
+```ts
+let original = [123];
+let arr = trackedArray(original, { skipCopy: true });
+```
+
+Note that this could be dangerous! If the array is modified via its untracked reference (`original` in the example) - that change won't be handled by the tracking mechanism and templates won't redraw.
+
 ## Drawbacks
 
 Potential confusion in people why their templates are not modified when the original collection is modified.
