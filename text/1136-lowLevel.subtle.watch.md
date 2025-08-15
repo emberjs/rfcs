@@ -27,7 +27,7 @@ suite: Leave as is
 
 <!-- Replace "RFC title" with the title of your RFC -->
 
-# RFC: lowLevel.subtle.watch
+# lowLevel.subtle.watch
 
 ## Summary
 
@@ -106,6 +106,33 @@ lowLevel.subtle.watch(() => {
 <template>
   <button onclick={{increment}}>++</button>
 </template>
+```
+
+### `waitFor` implementation for `ember-concurrency`
+
+```js
+import { lowLevel } from '@ember/renderer';
+import { registerDestructor, unregisterDestructor } from '@ember/destroyable';
+
+function waitFor(context, callback, timeout = 10_000) {
+  let pass;
+  let fail;
+  let promise = new Promise((resolve, reject) => {
+    pass = resolve;
+    fail = reject;
+  });
+  let timer = setTimeout(() => fail(`Timed out waiting ${timeout}ms!`), timeout);
+  let unwatch = lowLevel.subtle.watch(() => {
+    if (callback()) {
+      clearTimeout(timer);
+      pass();
+      unwatch();
+      unregisterDestructor(context, unwatch);
+    }
+  });
+
+  registerDestructor(context, unwatch);
+}
 ```
 
 ## How we teach this
