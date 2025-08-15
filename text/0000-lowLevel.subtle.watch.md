@@ -42,15 +42,15 @@ It is not a replacement for computed properties, autotracking, or other high-lev
 
 ## Motivation
 
-Some advanced scenarios require observing changes to tracked data without triggering a re-render or scheduling a revalidation. The `lowLevel.subtle.watch` API provides a mechanism for users to hook into tracked data changes at a low level, similar to TC39's signals/watchers proposal, but scoped to Ember's rendering infrastructure.
+Some advanced scenarios require observing changes to tracked data without triggering a re-render or scheduling a revalidation. The `lowLevel.subtle.watch` API provides a mechanism for users to hook into tracked data changes at a low level, similar to [TC39's signals + watchers proposal][tc39-signals]:
 
 Use cases include:
-- Building debugging tools that need to observe tracked data mutations
-- Profiling or logging tracked data changes for performance analysis
-- Advanced integrations with external state management libraries
-- Development tools for tracking reactivity patterns
+- synchronizing external state whithout the need to piggy-back off DOM-rendering
+- ember-concurrency's `waitFor` witch would not need to rely on observers (as today) or polling
+- Building alternate renderers (instead of rendering to DOM, render to `<canvas>`, or the Terminal)
 
-This API is not intended for general application logic or UI updates.
+> [!CAUTION]
+> This API is not intended for application logic.
 
 ## Detailed design
 
