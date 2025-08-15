@@ -252,7 +252,10 @@ Adding another way to define template-only components could be confusing for new
 
 ## Alternatives
 
-n/a
+Potentially, 
+  RFC #1134 https://github.com/emberjs/rfcs/pull/1134
+
+But it's possible to ship both RFCs.
 
 ## Unresolved questions
 
