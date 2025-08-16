@@ -6,7 +6,7 @@ release-versions:
 teams:
   - framework
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/1137
 project-link:
 suite: 
 ---
