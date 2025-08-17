@@ -258,12 +258,12 @@ For some utilities, we can place them under sub-path-exports, such as `@ember/re
 
 This is motivated by actual usage out in the ecosystem of tracked-built-ins:
 
-here are results from github.com searches for the `tracked-built-ins` equivelents:
-- "new TrackedObject(" - [888 Results](https://github.com/search?q=%22new+TrackedObject%28%22&type=code)
-- "new TrackedArray(" - [468 Results](https://github.com/search?q=%22new+TrackedArray(%22&type=code)
-- "new TrackedSet(" - [129 Results](https://github.com/search?q=%22new+TrackedSet(%22&type=code)
-- "new TrackedWeakSet(" - [29 Results](https://github.com/search?q=%22new+TrackedWeakSet(%22&type=code)
-- "new TrackedWeakMap(" - [32 Results](https://github.com/search?q=%22new+TrackedWeakMap(%22&type=code)
+here are results from github.com searches for the `tracked-built-ins` equivalents (excluding ember-owned repos and forks of them):
+- "new TrackedObject(" - [520 Results]([https://github.com/search?q=%22new+TrackedObject%28%22&type=code](https://github.com/search?q=%22new+TrackedObject%28%22+NOT+is%3Afork++NOT+org%3Aemberjs+NOT+org%3Atracked-tools+NOT+org%3Aember-cli+NOT+org%3Aember-migration-utils+NOT+org%3Aember-learn&type=code))
+- "new TrackedArray(" - [312 Results](https://github.com/search?q=%22new+TrackedArray%28%22+NOT+is%3Afork++NOT+org%3Aemberjs+NOT+org%3Atracked-tools+NOT+org%3Aember-cli+NOT+org%3Aember-migration-utils+NOT+org%3Aember-learn+&type=code)
+- "new TrackedSet(" - [74 Results](https://github.com/search?q=%22new+TrackedSet%28%22+NOT+is%3Afork++NOT+org%3Aemberjs+NOT+org%3Atracked-tools+NOT+org%3Aember-cli+NOT+org%3Aember-migration-utils+NOT+org%3Aember-learn+&type=code)
+- "new TrackedWeakSet(" - [5 Results](https://github.com/search?q=%22new+TrackedWeakSet%28%22+NOT+is%3Afork++NOT+org%3Aemberjs+NOT+org%3Atracked-tools+NOT+org%3Aember-cli+NOT+org%3Aember-migration-utils+NOT+org%3Aember-learn+&type=code)
+- "new TrackedWeakMap(" - [4 Results](https://github.com/search?q=%22new+TrackedWeakMap%28%22+NOT+is%3Afork++NOT+org%3Aemberjs+NOT+org%3Atracked-tools+NOT+org%3Aember-cli+NOT+org%3Aember-migration-utils+NOT+org%3Aember-learn+&type=code)
 
 Additionally, specifying collections gives us a blessed path for exported other useful datastructures in the future without continually adding to the main export file (even though dead-code-elimination would eliminate what is unused - not importing what may not be used could help local development)
 
