@@ -27,11 +27,11 @@ suite: Leave as is
 
 <!-- Replace "RFC title" with the title of your RFC -->
 
-# lowLevel.subtle.watch
+# lowLevel.subtle.sync
 
 ## Summary
 
-Introduce a new low-level API, `lowLevel.subtle.watch`, available from `@ember/renderer`, which allows users to register a callback that runs when tracked data changes. This API is designed for advanced use cases and is not intended for general application reactivity.
+Introduce a new low-level API, `lowLevel.subtle.sync`, available from `@ember/renderer`, which allows users to register a callback that runs when tracked data changes. This API is designed for advanced use cases and is not intended for general application reactivity.
 
 It is not a replacement for computed properties, autotracking, or other high-level reactivity features.
 
@@ -42,7 +42,7 @@ It is not a replacement for computed properties, autotracking, or other high-lev
 
 ## Motivation
 
-Some advanced scenarios require observing changes to tracked data without triggering a re-render or scheduling a revalidation. The `lowLevel.subtle.watch` API provides a mechanism for users to hook into tracked data changes at a low level, similar to [TC39's signals + watchers proposal][tc39-signals]:
+Some advanced scenarios require observing changes to tracked data without triggering a re-render or scheduling a revalidation. The `lowLevel.subtle.sync` API provides a mechanism for users to hook into tracked data changes at a low level, similar to [TC39's signals + watchers proposal][tc39-signals]:
 
 Use cases include:
 - synchronizing external state whithout the need to piggy-back off DOM-rendering
@@ -61,7 +61,7 @@ type Unwatch = () => void;
 function watch(callback: () => void): Unwatch;
 ```
 
-The API is available as `lowLevel.subtle.watch` from `@ember/renderer`.
+The API is available as `lowLevel.subtle.sync` from `@ember/renderer`.
 
 ### Lifecycle and Semantics
 
@@ -80,7 +80,7 @@ The API is available as `lowLevel.subtle.watch` from `@ember/renderer`.
 ### Comparison to TC39 Signals/Watchers
 
 - TC39's  `watch` proposal allows observing changes to signals in JavaScript
-- Ember's `lowLevel.subtle.watch` is similar in spirit but scoped to tracked properties and the rendering lifecycle
+- Ember's `lowLevel.subtle.sync` is similar in spirit but scoped to tracked properties and the rendering lifecycle
 - This API does not provide direct access to the changed value or path; it is a notification mechanism only
 - Unlike TC39 watchers, this API is tied to Ember's render transaction system
   - if/when [TC39 Signals][tc39-signals] are implemented, the implementation of this behavior can be swapped out for the native implementation (as would be the case for all of Ember's reactivity)
@@ -95,7 +95,7 @@ import { cell } from '@ember/reactive';
 const count = cell(0);
 const increment = () => count.current++;
 
-lowLevel.subtle.watch(() => {
+lowLevel.subtle.sync(() => {
   // This callback runs when tracked data changes
   console.log('Tracked data changed! :: ', count.current);
   
@@ -122,7 +122,7 @@ function waitFor(context, callback, timeout = 10_000) {
     fail = reject;
   });
   let timer = setTimeout(() => fail(`Timed out waiting ${timeout}ms!`), timeout);
-  let unwatch = lowLevel.subtle.watch(() => {
+  let unwatch = lowLevel.subtle.sync(() => {
     if (callback()) {
       clearTimeout(timer);
       pass();
@@ -179,3 +179,39 @@ n/a (for now / to start with)
 ## Unresolved questions
 
 n/a
+
+## Resolved questions
+
+### Can this be used to create an integration with other frameworks?
+
+At the moment, not without increased resource usage, the timing of `lowLevel.subtle.sync()` requires the creation of an Application instance as it's currently only the Application that configures the rendering and revalidation timing -- so if you were willing to wrap reactive contexts in transparent ember applications, it may be doable.
+
+The smallest application you can have at the time of writing is this:
+```js
+import Application from 'ember-strict-application-resolver';
+import EmberRouter from '@ember/routing/router';
+
+class Router extends EmberRouter {
+  location = 'history';
+  rootURL = '/';
+}
+
+Router.map(function () {});
+
+class App extends Application {
+  modules = {
+    './router': Router,
+    './templates/application': <template>
+      content here
+    </template>,
+  };
+}
+
+App.create({});
+```
+
+There are rough plans for refactoring the rendering system more isolated from whole applications (see: Starbeam), but they're still in an experimental phase.
+
+### Do nested `.sync()` calls work and remain independent?
+
+yes -- `.sync()` would be backed by `createCache()` and each `createCache()` gets its own tracking frame which are independent of wrapping caches.
