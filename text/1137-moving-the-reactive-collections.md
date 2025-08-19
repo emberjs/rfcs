@@ -69,7 +69,7 @@ Same as in RFC #1068, but with updated import paths.
 
 Developers need to remember that collections are imported from `@ember/reactive/collections` rather than the main `@ember/reactive` package, adding one more import path to the mental model.
 
-This maintains the status quo tho as folks are already used to importing from `tracked-bulit-ins` for these collections.
+This maintains the status quo tho as folks are already used to importing from `tracked-built-ins` for these collections.
 
 ## Alternatives
 
