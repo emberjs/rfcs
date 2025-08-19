@@ -28,7 +28,7 @@ RFC 1068 introduced tracked collections into the `@ember/reactive` package, but 
 
 This is somewhat motivated by actual usage out in the ecosystem of tracked-built-ins:
 
-here are results from github.com searches for the `tracked-built-ins` equivelents:
+here are results from github.com searches for the `tracked-built-ins` equivalents:
 - "new TrackedObject(" - [888 Results](https://github.com/search?q=%22new+TrackedObject%28%22&type=code)
 - "new TrackedArray(" - [468 Results](https://github.com/search?q=%22new+TrackedArray(%22&type=code)
 - "new TrackedSet(" - [129 Results](https://github.com/search?q=%22new+TrackedSet(%22&type=code)
