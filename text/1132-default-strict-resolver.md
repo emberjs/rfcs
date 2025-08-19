@@ -28,6 +28,9 @@ The current `ember-resolver` requires that an `Application` has a modulePrefix, 
 
 The strict resolver will be built into Ember applications and imported from `@ember/application` instead of requiring a separate `ember-resolver` package. Applications will register modules explicitly using a `modules` property containing import map objects.
 
+> [!NOTE]
+> This keeps all existing default ember-resolver semantics -- locking down the behaviors as the stable legacy thing and won't change and will no longer be extensible. (e.g.: no custom resolvers will be allowed with the `modules = {}` object.
+
 Example:
 
 ```javascript
@@ -118,6 +121,20 @@ export default class App extends Application {
 ```
 
 See: [the polyfill](https://github.com/NullVoxPopuli/ember-strict-application-resolver?tab=readme-ov-file#buildregistry) for more information.
+
+However, in existing projects, it's perfectly safe to use `compat-modules` from `@embroider/virtual`[^pending-embroider-support]
+
+```javascript
+import compatModules from '@embroider/virtual/compat-modules';
+
+export default class App extends Application {
+    modules = {
+        ...compatModules,
+    }
+}
+```
+
+[^pending-embroider-support]: embroider currently prefixes the compat modules with the `modulePrefix`. That won't exist, so embroider needs to ship a feature that detects this usage of `Application`, and omits the `modulePrefix`
 
 ## Drawbacks
 
