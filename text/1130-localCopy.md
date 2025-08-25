@@ -35,7 +35,7 @@ Currently, developers must manually implement this pattern using multiple `@trac
 
 ## Detailed design
 
-The test-suite of `@localCopy` from [`tracked-toolbox`](https://github.com/tracked-tools/tracked-toolbox/blob/master/test-app/tests/unit/local-copy-test.js) as well as that of []`localCopy`](https://github.com/proposal-signals/signal-utils/blob/main/tests/local-copy.test.ts) and []`@localCopy`](https://github.com/proposal-signals/signal-utils/blob/main/tests/%40localCopy.test.ts) from `signal-utils` describe the acceptance criteria for this utility.
+The test-suite of `@localCopy` from [`tracked-toolbox`](https://github.com/tracked-tools/tracked-toolbox/blob/master/test-app/tests/unit/local-copy-test.js) as well as that of [`localCopy`](https://github.com/proposal-signals/signal-utils/blob/main/tests/local-copy.test.ts) and [`@localCopy`](https://github.com/proposal-signals/signal-utils/blob/main/tests/%40localCopy.test.ts) from `signal-utils` describe the acceptance criteria for this utility.
 
 ### API Overview
 
