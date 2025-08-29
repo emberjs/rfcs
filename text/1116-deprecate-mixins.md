@@ -5,10 +5,8 @@ release-date:
 release-versions:
 teams: # delete teams that aren't relevant
   - cli
-  - data
   - framework
   - learning
-  - steering
   - typescript
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/1116
@@ -28,13 +26,13 @@ deprecate this.
 
 ## Transition Path
 
-All existing public Ember mixins will be deprected:
+All existing public Ember mixins will be deprecated:
 
-- [Ember.Mixin](https://github.com/wagenet/rfcs/pulls/1111)
-- [Ember.PromiseProxyMixin](https://github.com/wagenet/rfcs/pulls/1112)
-- [Ember.Comparable](https://github.com/wagenet/rfcs/pulls/1113)
-- [Ember.Enumerable](https://github.com/wagenet/rfcs/pulls/1114)
-- [Ember.Observable](https://github.com/wagenet/rfcs/pulls/1115)
+- [Ember.Mixin](https://github.com/emberjs/rfcs/pull/1111) (from `@ember/object/mixin`)
+- [Ember.PromiseProxyMixin](https://github.com/emberjs/rfcs/pull/1112) (from `@ember/object/promise-proxy-mixin`)
+- [Ember.Comparable](https://github.com/emberjs/rfcs/pull/1113) (from `@ember/object/comparable`)
+- [Ember.Enumerable](https://github.com/emberjs/rfcs/pull/1114) (from `@ember/object/enumerable`)
+- [Ember.Observable](https://github.com/emberjs/rfcs/pull/1115) (from `@ember/object/observable`)
 
 For users that still want mixin-like functionality, we should recommend class
 decorators. If this feels less ergonimic that we would desire, we can consider
@@ -46,7 +44,7 @@ To validate this deprecation, I've tried removing all Mixins in this PR: https:/
 
 ## How We Teach This
 
-We should remove all references from the guides.
+We should remove all references from the guides and provide a [deprecation guide](https://github.com/ember-learn/deprecation-app/pull/1408).
 
 ## Drawbacks
 
