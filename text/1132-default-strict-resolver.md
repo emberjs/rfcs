@@ -15,14 +15,14 @@ suite:
 
 ## Summary
 
-This RFC proposes shipping a built-in strict resolver as the default in Ember applications, replacing the current `ember-resolver` package. The strict resolver uses explicit module registration through `import.meta.glob('...', { eager: true })` (or manually) instead of dynamic string-based lookups, providing better tree-shaking, build-time optimization, and improved developer experience with static analysis tools.
+This RFC proposes shipping a built-in (opt-in) strict resolver as the default in Ember applications, replacing the current `ember-resolver` package. The strict resolver uses explicit module registration through `import.meta.glob('...', { eager: true })` (or manually) instead of dynamic string-based lookups, providing better tree-shaking, build-time optimization, and improved developer experience with static analysis tools.
 
 ## Motivation
 
 The current `ember-resolver` requires that an `Application` has a modulePrefix, and that every resolver registration begins with that `modulePrefix`. As we start to move towards strict ESM applications, this requirement is unneeded. Previously, if folks wanted to use `import.meta.glob()` in their vite apps (or test-apps (or minimal apps)), they would have to iterate the result of `import.meta.glob` to prepend the `modulePrefix` -- which is entirely boilerplate.
 
 > [!NOTE]
-> The strict resolver does not affect apps using broccoli or `@embroider/virtual/compat-modules`
+> The strict resolver does not affect existing apps using broccoli or `@embroider/virtual/compat-modules`, though users of those environments could opt in to this new behavior.
 
 ## Detailed design
 
