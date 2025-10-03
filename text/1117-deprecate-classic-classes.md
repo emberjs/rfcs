@@ -1,9 +1,9 @@
 ---
-stage: accepted
+stage: ready-for-release
 start-date: 2025-06-20T00:00:00.000Z
 release-date:
 release-versions:
-teams: # delete teams that aren't relevant
+teams:
   - cli
   - data
   - framework
@@ -11,7 +11,8 @@ teams: # delete teams that aren't relevant
   - steering
   - typescript
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1117
+  accepted: 'https://github.com/emberjs/rfcs/pull/1117'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/1141'
 project-link:
 ---
 
