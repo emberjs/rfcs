@@ -1,14 +1,17 @@
 ---
-stage: accepted
+stage: released
 start-date: 2024-05-11T00:00:00.000Z
-release-date: # In format YYYY-MM-DDT00:00:00.000Z
+release-date:
 release-versions:
-teams: # delete teams that aren't relevant
+  ember-data: 4.12.0
+teams:
   - data
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1027
+  accepted: 'https://github.com/emberjs/rfcs/pull/1027'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/1030'
+  released: 'https://github.com/emberjs/rfcs/pull/1106'
 project-link:
-suite: 
+suite:
 ---
 
 # EmberData | SchemaService
