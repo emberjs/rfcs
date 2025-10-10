@@ -1,14 +1,17 @@
 ---
-stage: ready-for-release
+stage: recommended
 start-date: 2023-12-26T00:00:00.000Z
 release-date:
 release-versions:
+  ember-source: 6.3.0
 teams:
   - framework
   - typescript
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/1001'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/1013'
+  released: 'https://github.com/emberjs/rfcs/pull/1061'
+  recommended: 'https://github.com/emberjs/rfcs/pull/1089'
 project-link:
 ---
 
