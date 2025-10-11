@@ -7,7 +7,7 @@ teams: # delete teams that aren't relevant
   - cli
   - framework
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/1148
 project-link:
 suite: 
 ---
@@ -62,3 +62,4 @@ None that I can think of.
 ## Alternatives
 
 Add a guide to the docs on how to opt in to vite's CSS pipeline.
+
