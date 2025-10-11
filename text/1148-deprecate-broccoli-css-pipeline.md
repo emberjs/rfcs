@@ -37,7 +37,7 @@ With vite becoming default we should use it's CSS pipeline as the default experi
 ## Motivation
 
 No longer need to maintain ember specific CSS tooling like ember-cli-sass ember-css-modules etc. Vite comes with sane defaults to use postcss, sass, less, stylus etc out of the box.
-We also wont have to keep explaining to people how to opt in to vite's CSs pipeline.
+We also wont have to keep explaining to people how to opt in to vite's CSS pipeline.
 
 ## Detailed design
 
@@ -62,4 +62,5 @@ None that I can think of.
 ## Alternatives
 
 Add a guide to the docs on how to opt in to vite's CSS pipeline.
+
 
