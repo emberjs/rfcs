@@ -32,16 +32,16 @@ suite: Leave as is
 
 ## Summary
 
-With vite becoming default we should use it's CSS pipeline as the default experience. We can advise in a deprecation guide that `/@embroider/virtual/app.css` exists if they still need to use it but new apps should be using the vite CSS pipeline by default.
+With vite becoming default we should use it's CSS pipeline as the default experience. We can advise in a deprecation guide that `/@embroider/virtual/app.css` exists if they still need to use it but new apps should be using the vite CSS pipeline by default. This would only affect Vite apps, classic build apps will still use the broccoli CSS pipeline, we would not be removing the functionality from ember-cli, just letting vite process application CSS files.
 
 ## Motivation
 
 No longer need to maintain ember specific CSS tooling like ember-cli-sass ember-css-modules etc. Vite comes with sane defaults to use postcss, sass, less, stylus etc out of the box.
 We also wont have to keep explaining to people how to opt in to vite's CSS pipeline.
 
-## Detailed design
+## Transition Path
 
-Replace the CSS import in our app blueprint to the file on disk.
+This can be implemented initialy bu simply replacing the CSS link tags in our app blueprint to load the file on disk. This would be done in the app index.html and the test index.html.
 
 ```html
 <!-- replace this -->
@@ -51,9 +51,27 @@ Replace the CSS import in our app blueprint to the file on disk.
 <link integrity="" rel="stylesheet" href="/app/styles/app.css">
 ```
 
+We can output a warning in the CLI if the virtual file is used.
+
+We would want to eventually remove the virtual file from our vite compat plugins.
+
+The people affected by this will be people using V1 addons that alter the css pipeline to run tools like `ember-cli-sass` and `ember-css-modules`. If you are currently using these addons you can update your `index.html` files to point at `/@embroider/virtual/app.css` instead of `/app/styles/app.css`.
+
+```html
+<!-- replace this -->
+<link integrity="" rel="stylesheet" href="/app/styles/app.css">
+
+<!-- with this -->
+<link integrity="" rel="stylesheet" href="/@embroider/virtual/app.css">
+```
+
+We would encourage you to migrate to the vite pipeline by adopting the right tooling as covered by https://vite.dev/guide/features.html#css-pre-processors
+
 ## How we teach this
 
-As part of a deprecation guide explain how to keep using the broccoli pipeline whilst they migrate (using `/@embroider/virtual/app.css`)
+The guide docs only assume working with plain CSS, this content would be unaffected by this change.
+There is nothing in the API docs that would need updating.
+The change should be transparent for people using plain CSS.
 
 ## Drawbacks
 
@@ -62,5 +80,6 @@ None that I can think of.
 ## Alternatives
 
 Add a guide to the docs on how to opt in to vite's CSS pipeline.
+
 
 
