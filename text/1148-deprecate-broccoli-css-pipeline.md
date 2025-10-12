@@ -41,7 +41,7 @@ We also wont have to keep explaining to people how to opt in to vite's CSS pipel
 
 ## Transition Path
 
-This can be implemented initialy bu simply replacing the CSS link tags in our app blueprint to load the file on disk. This would be done in the app index.html and the test index.html.
+This can be implemented initially by simply replacing the CSS link tags in our app blueprint to load the file on disk. This would be done in the app index.html and the test index.html.
 
 ```html
 <!-- replace this -->
@@ -51,11 +51,13 @@ This can be implemented initialy bu simply replacing the CSS link tags in our ap
 <link integrity="" rel="stylesheet" href="/app/styles/app.css">
 ```
 
-We can output a warning in the CLI if the virtual file is used.
+We can output a deprecation warning in the CLI if the virtual file is used.
 
 We would want to eventually remove the virtual file from our vite compat plugins.
 
-The people affected by this will be people using V1 addons that alter the css pipeline to run tools like `ember-cli-sass` and `ember-css-modules`. If you are currently using these addons you can update your `index.html` files to point at `/@embroider/virtual/app.css` instead of `/app/styles/app.css`.
+Deprecation guide wording might be something like this:
+
+If you are using addons like `ember-cli-sass` and `ember-css-modules` you can update your `index.html` files to point at `/@embroider/virtual/app.css` instead of `/app/styles/app.css` to give you time to migrate to the vite pipeline. 
 
 ```html
 <!-- replace this -->
@@ -80,6 +82,7 @@ None that I can think of.
 ## Alternatives
 
 Add a guide to the docs on how to opt in to vite's CSS pipeline.
+
 
 
 
