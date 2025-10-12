@@ -69,6 +69,8 @@ If you are using addons like `ember-cli-sass` and `ember-css-modules` you can up
 
 We would encourage you to migrate to the vite pipeline by adopting the right tooling as covered by https://vite.dev/guide/features.html#css-pre-processors
 
+You can see examples of different CSS tooling being used in this repository https://github.com/evoactivity/ember-vite-css-examples/
+
 ## How we teach this
 
 The guide docs only assume working with plain CSS, this content would be unaffected by this change.
@@ -82,6 +84,7 @@ None that I can think of.
 ## Alternatives
 
 Add a guide to the docs on how to opt in to vite's CSS pipeline.
+
 
 
 
