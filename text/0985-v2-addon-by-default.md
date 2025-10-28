@@ -17,28 +17,28 @@ suite:
 
 ## Summary
 
-This RFC proposes to make [`@ember/addon-blueprint`](https://github.com/emberjs/ember-addon-blueprint) the default blueprint for new Ember addons, replacing the previous v1 and v2 blueprints. The new blueprint is the result of extensive community feedback, real-world usage, and a focus on modern JavaScript, TypeScript, and Ember best practices. It is designed to provide a streamlined, ergonomic, and future-proof starting point for addon authors.
+This RFC proposes making [`@ember/addon-blueprint`](https://github.com/emberjs/ember-addon-blueprint) the default blueprint for new Ember addons, replacing the previous v1 and v2 blueprints. The new blueprint provides a streamlined, modern starting point for addon authors based on community feedback and real-world usage.
 
 ## Motivation
 
-The previous default blueprints (classic v1 and the original v2 via `@embroider/addon-blueprint`) have served the community well, but both have significant drawbacks:
+The previous default blueprints have significant drawbacks:
 
-- **V1 Addons**: Built by consuming apps on every build, leading to slow builds and complex compatibility issues.
-- **Original V2 Addon Blueprint**: Improved build performance by building at publish time, but required significant manual setup, was monorepo-oriented by default, and lacked ergonomic defaults for modern Ember and TypeScript usage.
+- **V1 Addons**: Built by consuming apps on every build, causing slow builds and compatibility issues.
+- **Original V2 Addon Blueprint**: Required extensive manual setup, defaulted to monorepo structure, and lacked modern Ember/TypeScript defaults.
 
-The new `@ember/addon-blueprint` addresses these issues by:
+The new `@ember/addon-blueprint` addresses these issues:
 
-- Providing a single-package, non-monorepo structure by default, reducing complexity for most addon authors.
-- Including first-class Glint support with Volar-based tsserver plugins, providing the most TypeScript-like experience possible for Ember templates and components.
-- Using modern JavaScript and Ember idioms, including native classes, decorators, and strict mode.
-- Integrating with the latest Ember testing and linting tools out of the box.
-- Reducing boilerplate and cognitive overhead for new addon authors.
+- Single-package structure by default, reducing complexity for most addon authors.
+- First-class Glint support with Volar-based tsserver plugins for superior TypeScript template experience.
+- Modern JavaScript and Ember patterns: native classes, decorators, and strict mode.
+- Integration with latest Ember testing and linting tools.
+- Reduced boilerplate and setup overhead.
 
 ## Detailed design
 
 ### Definitions
 
-**V2 Addon**: An addon published in the V2 package format as defined by RFC 507, with `ember.version: 2` in package.json.
+**V2 Addon**: An addon published in the V2 package format as defined by RFC 507, with `ember-addon.version: 2` in package.json.
 
 **Glint-enabled**: A package that includes TypeScript declaration files for templates and components, leveraging Volar-based language server plugins for superior IDE integration.
 
@@ -50,7 +50,7 @@ The new `@ember/addon-blueprint` addresses these issues by:
 
 ### Blueprint Structure and Tooling Choices
 
-The new blueprint generates a well-organized project structure that follows modern Ember and JavaScript conventions:
+The blueprint generates a modern project structure:
 
 ```
 my-addon/
@@ -64,6 +64,10 @@ my-addon/
 ├── tests/                            # Test files
 │   ├── index.html                    # Test runner page
 │   └── test-helper.ts                # Test setup and configuration
+├── demo-app/                         # Demo application for showcasing addon
+│   ├── app.gts                       # Demo app entry point
+│   ├── styles.css                    # Demo app styles
+│   └── templates/                    # Demo app templates
 ├── unpublished-development-types/    # Development-only types
 │   └── index.d.ts                    # Local development type augmentations
 ├── dist/                             # Built output (gitignored, published)
@@ -89,19 +93,19 @@ my-addon/
 └── addon-main.cjs                    # V1 compatibility shim
 ```
 
-The new blueprint makes several key decisions:
+Key architectural decisions:
 
-- **Single-package, non-monorepo by default**: Most addons do not require a monorepo structure. The blueprint generates a single package with integrated testing, but can be adapted for monorepo setups by ignoring the test infrastructure and creating a separate test application.
+- **Single-package by default**: Most addons don't need monorepo complexity. Generates a single package with integrated testing.
 
-- **Source Organization**: The `src/` directory contains all publishable code, while `tests/` contains the test suite. The `unpublished-development-types/` directory provides a space for development-only type augmentations that won't be included in the published package.
+- **Source organization**: `src/` contains publishable code, `tests/` contains test suite, `unpublished-development-types/` provides development-only type augmentations.
 
-- **Glint-enabled**: All source files include Glint configuration by default, leveraging Volar-based tsserver plugins for superior template type checking and IDE integration. The `template-registry.ts` file provides type safety for consuming applications. This was not available in previous blueprints when opting into TypeScript via `--typescript`.
+- **Glint-enabled**: Includes Glint configuration with Volar-based tsserver plugins for template type checking and IDE integration.
 
-- **Modern Ember Patterns**: Uses native classes, decorators, and strict mode. No legacy Ember object model or classic patterns.
+- **Modern Ember patterns**: Native classes, decorators, strict mode. No legacy object model.
 
-- **Dual Build Systems**: Vite for development (fast rebuilds, HMR) and Rollup for publishing (optimized output, tree-shaking). Each has its own configuration file and Babel setup.
+- **Dual build systems**: Vite for development (fast rebuilds, HMR), Rollup for publishing (optimized output, tree-shaking).
 
-- **Testing**: Integrates with `@ember/test-helpers` and `qunit` for modern testing. Unlike previous blueprints, testing runs entirely through Vite (accessible via the `/tests` URL and CLI), eliminating the need for `ember-auto-import` and webpack for test execution.
+- **Vite-based testing**: Tests run entirely through Vite, eliminating `ember-auto-import` and webpack dependencies.
 
 #### Influence on Future V2 App Blueprint
 
@@ -143,6 +147,9 @@ The generated `package.json` follows modern NPM conventions with several key des
     "dist"
   ],
   "ember": {
+    "edition": "octane"
+  },
+  "ember-addon": {
     "version": 2,
     "type": "addon",
     "main": "addon-main.cjs"
@@ -155,15 +162,11 @@ The generated `package.json` follows modern NPM conventions with several key des
       "types": "./declarations/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./addon-main.js": "./addon-main.cjs",
+    "./*.css": "./dist/*.css",
     "./*": {
       "types": "./declarations/*.d.ts",
       "default": "./dist/*.js"
-    },
-    "./addon-main.js": "./addon-main.cjs"
-  },
-  "typesVersions": {
-    "*": {
-      "*": ["declarations/*"]
     }
   }
 }
@@ -174,7 +177,7 @@ The generated `package.json` follows modern NPM conventions with several key des
 - **Modern Exports Map**: Uses conditional exports to provide both TypeScript declarations and JavaScript modules, ensuring proper resolution in all environments.
 - **Import Maps**: The `#src/*` import map enables clean internal imports without relative paths -- these are meant for use in tests only, and should not be left in files that are built for npm. When published, importers of your library will resolve via `package.json#exports`, rather than `package.json#imports`'s `#src`. Using `#src/` means that you don't need to repeatedly build, or run your library's build in watch mode while working on tests.
 - **Minimal Published Files**: Only publishes essential runtime files (`dist`, `declarations`, `addon-main.cjs`), keeping package size minimal.
-- **V2 Package Metadata**: Declares `ember.version: 2` to indicate V2 package format compliance.
+- **V2 Package Metadata**: Declares `ember-addon.version: 2` to indicate V2 package format compliance.
 
 #### Development vs. Production Configuration Split
 
@@ -186,21 +189,10 @@ import { defineConfig } from 'vite';
 import { extensions, ember, classicEmberSupport } from '@embroider/vite';
 import { babel } from '@rollup/plugin-babel';
 
-// Used for try scenarios where you would want to test ember-source versions < 6.3
+// For scenario testing
 const isCompat = Boolean(process.env.ENABLE_COMPAT_BUILD);
 
 export default defineConfig({
-  resolve: {
-    alias: [
-      {
-        // this enables self-imports within the addon's src files, which will work when built 
-        // via rollup, due to self-imports being a native node-resolve feature 
-        // (and something we've been used to with v1 addons)
-        find: '<%= the library name %>',
-        replacement: `${__dirname}/src`,
-      },
-    ],
-  },
   plugins: [
     ...(isCompat ? [classicEmberSupport()] : []),
     ember(),
@@ -219,11 +211,7 @@ export default defineConfig({
 });
 ```
 
-This configuration enables:
-- **Fast Development Builds**: Vite's native ES module support provides instant rebuilds
-- **Hot Module Replacement**: Changes reflect immediately without full page reloads
-- **Compatibility Mode**: Conditional support for older Ember versions via environment variables
-- **Test Integration**: Direct test execution through Vite's build system
+Enables fast development builds with HMR, compatibility mode for older Ember versions, and direct test execution through Vite.
 
 **Production Configuration (`rollup.config.mjs`)**:
 ```javascript
@@ -255,19 +243,15 @@ export default {
     }),
     addon.hbs(),
     addon.gjs(),
-    // This requires glint@v2/alpha
-    addon.declarations('declarations', 'npx glint --declaration --project ./tsconfig.publish.json'),
+    // Emit .d.ts declaration files
+    addon.declarations('declarations', 'npx ember-tsc --declaration --project ./tsconfig.publish.json'),
     addon.keepAssets(['**/*.css']),
     addon.clean(),
   ],
 };
 ```
 
-This configuration ensures:
-- **Optimized Output**: Tree-shaking and dead code elimination
-- **Type Declaration Generation**: Automatic TypeScript declaration file creation -- though note that while TypeScript is supported is always optional and opt in (via `--typescript`)
-- **V2 Package Compliance**: Proper app reexports and public entrypoint definition
-- **Asset Handling**: CSS and other static assets are properly included
+Ensures optimized output with tree-shaking, automatic TypeScript declaration generation (when using `--typescript`), V2 package compliance, and proper asset handling.
 
 ### TypeScript and Glint Integration
 
@@ -279,48 +263,45 @@ The blueprint employs separate TypeScript configurations for development and pub
 
 **Development Configuration (`tsconfig.json`)**:
 
-The exact configurations here may change as glint @ v2 makes more progress -- for example, there is desire to bundle ember-loose and ember-template-imports environments in to `@glint/core`, so we have 2 less packages when working with Glint.
-
 ```json
 {
   "extends": "@ember/app-tsconfig",
-  "glint": {
-    "environment": ["ember-loose", "ember-template-imports"]
-  },
-  "include": ["src/**/*", "tests/**/*", "unpublished-development-types/**/*"],
+  "include": [
+    "src/**/*",
+    "tests/**/*",
+    "unpublished-development-types/**/*",
+    "demo-app/**/*"
+  ],
   "compilerOptions": {
     "rootDir": ".",
-    "types": ["ember-source/types", "vite/client", "@embroider/core/virtual"]
+    "types": [
+      "ember-source/types",
+      "vite/client",
+      "@embroider/core/virtual",
+      "@glint/ember-tsc/types"
+    ]
   }
 }
 ```
 
 **Publishing Configuration (`tsconfig.publish.json`)**:
 
-Notably, vite and embroider types are not present.
-
-`lint:types` uses this config to help catch accidental usage of vite or embroider features in code that would be published to NPM.
+Notably, vite and embroider types are not present. `lint:types` uses this config to help catch accidental usage of vite or embroider features in code that would be published to NPM.
 
 ```json
 {
   "extends": "@ember/library-tsconfig",
   "include": ["./src/**/*", "./unpublished-development-types/**/*"],
-  "glint": {
-    "environment": ["ember-loose", "ember-template-imports"]
-  },
   "compilerOptions": {
     "allowJs": true,
     "declarationDir": "declarations",
     "rootDir": "./src",
-    "types": ["ember-source/types"]
+    "types": ["ember-source/types", "@glint/ember-tsc/types"]
   }
 }
 ```
 
-**Rationale for Dual Configurations:**
-- **Development Flexibility**: Includes test files and development-only types for comprehensive IDE support
-- **Clean Published Types**: Publishing config generates minimal, focused declaration files
-- **Proper Module Structure**: `rootDir` alignment ensures declaration file structure matches runtime module structure
+**Dual configuration rationale:** Development config includes test files and development types for IDE support; publishing config generates clean declaration files with proper module structure.
 
 #### Glint Template Type Safety
 
@@ -328,12 +309,13 @@ The blueprint includes comprehensive Glint setup for template type safety. Howev
 
 **Template Registry (`src/template-registry.ts`)**:
 ```typescript
-// Easily allow apps, which are not yet using strict mode templates, to consume your Glint types
-// by importing this file. Add all your components, helpers and modifiers to the template registry
-// here, so apps don't have to do this.
+// Easily allow apps, which are not yet using strict mode templates, to consume your Glint types, by importing this file.
+// Add all your components, helpers and modifiers to the template registry here, so apps don't have to do this.
+// See https://typed-ember.gitbook.io/glint/environments/ember/authoring-addons
 
 // import type MyComponent from './components/my-component';
 
+// Uncomment this once entries have been added! 👇
 // export default interface Registry {
 //   MyComponent: typeof MyComponent
 // }
@@ -341,21 +323,9 @@ The blueprint includes comprehensive Glint setup for template type safety. Howev
 
 **Development Type Augmentations (`unpublished-development-types/index.d.ts`)**:
 
-This can be omitted if a library author doesn't need to support loose mode / hbs files.
+This file provides a space for development-only type augmentations that won't be included in the published package. It's initially empty but available for local development type definitions.
 
-```typescript
-// Add any types here that you need for local development only.
-// These will *not* be published as part of your addon, so be careful that your published 
-// code does not rely on them!
-
-import '@glint/environment-ember-loose';
-import '@glint/environment-ember-template-imports';
-```
-
-This setup provides:
-- **Consumer Type Safety**: Apps consuming the addon get proper template type checking
-- **Development-Only Types**: Local development can use additional type definitions without polluting the published package
-- **Template Import Support**: Full support for template imports and strict mode templates
+Provides consumer type safety, development-only types that don't pollute the published package, and full template import support.
 
 ### Testing Architecture
 
@@ -365,8 +335,7 @@ The blueprint implements a revolutionary testing approach that runs entirely on 
 
 **Test Helper (`tests/test-helper.ts`)**:
 ```typescript
-import EmberApp from '@ember/application';
-import Resolver from 'ember-resolver';
+import EmberApp from 'ember-strict-application-resolver';
 import EmberRouter from '@ember/routing/router';
 import * as QUnit from 'qunit';
 import { setApplication } from '@ember/test-helpers';
@@ -378,25 +347,15 @@ class Router extends EmberRouter {
   rootURL = '/';
 }
 
-const registry = {
-  'test-app/router': { default: Router },
-  // add any custom services here
-  // example:
-  //   'test-app/services/store': { default: Store },
-  // and/or initializers:
-  //   'test-app/instance-initializers/foo': { default: Foo }
-  // 
-  // NOTE: when using (instance)initializers, you'll need https://github.com/ember-cli/ember-load-initializers/
-  //       and to call loadInitializers(TestApp, 'test-app', registry);
-}
-
 class TestApp extends EmberApp {
-  modulePrefix = 'test-app';
-  Resolver = Resolver.withModules(registry);
+  modules = {
+    './router': { default: Router },
+    // add any custom services here
+    // import.meta.glob('./services/*', { eager: true }),
+  };
 }
 
 Router.map(function () {});
-
 
 export function start() {
   setApplication(
@@ -443,11 +402,7 @@ export function start() {
 </html>
 ```
 
-**Key Innovations:**
-- **No ember-cli-build.js**: Tests run without traditional Ember CLI build pipeline, `ember-cli` is not even in the package.json.
-- **Direct Ember App Creation**: Creates minimal Ember application using core _public_ APIs
-- **ES Module Test Discovery**: Uses Vite's `import.meta.glob` for automatic test file discovery
-- **Zero Webpack Dependencies**: Eliminates `ember-auto-import` and webpack from test execution
+**Key innovations:** No ember-cli build pipeline, direct Ember app creation using public APIs, ES module test discovery via `import.meta.glob`, zero webpack dependencies.
 
 #### Cross-Version Compatibility Testing
 
@@ -456,7 +411,7 @@ The blueprint includes comprehensive compatibility testing via ember-try scenari
 **Try Configuration (`.try.mjs`)**:
 ```javascript
 const compatFiles = {
-  'ember-cli-build.js': `const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+  'ember-cli-build.cjs': `const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 const { compatBuild } = require('@embroider/compat');
 module.exports = async function (defaults) {
   const { buildOnce } = await import('@embroider/vite');
@@ -492,29 +447,17 @@ export default {
 };
 ```
 
-This provides:
-- **LTS Version Support**: Tests against all supported Ember LTS versions
-- **Future Compatibility**: Tests against beta and alpha releases
-- **Compatibility Mode**: Automatic fallback to compat builds for older versions
-- **Modern Feature Flags**: Enables modern Ember features for optimal performance
+Tests against all supported Ember LTS versions, beta/alpha releases, with automatic compat builds for older versions and modern feature flags enabled.
 
 ### Build System Architecture
 
 #### Dual Build Approach Rationale
 
-The blueprint employs two distinct build systems for different purposes:
+Uses two build systems:
 
-**Vite for Development**:
-- **Instant Startup**: Native ES module support eliminates bundling during development
-- **Hot Module Replacement**: Changes reflect immediately without full rebuilds
-- **Modern Development Experience**: Source maps, error overlay, and debugging tools
-- **Test Integration**: Seamless test execution within the same build system
+**Vite for development**: Instant startup with native ES modules, HMR, modern debugging tools, and integrated test execution.
 
-**Rollup for Production**:
-- **Optimized Output**: Tree-shaking and dead code elimination
-- **Bundle Splitting**: Optimal chunk creation for different consumption patterns
-- **Asset Processing**: Proper handling of CSS, templates, and static assets
-- **Declaration Generation**: TypeScript declaration file creation
+**Rollup for production**: Optimized output with tree-shaking, bundle splitting, asset processing, and TypeScript declaration generation.
 
 #### Babel Configuration Strategy
 
@@ -589,10 +532,7 @@ module.exports = {
 };
 ```
 
-**Configuration Differences:**
-- **Development**: Includes macro support and compatibility transforms for older Ember versions
-- **Production**: Minimal transforms focusing on TypeScript removal and template compilation
-- **Runtime Imports**: Development uses require.resolve for local development, production uses published packages
+**Configuration differences:** Development includes macro support and compatibility transforms; production uses minimal transforms and published package imports.
 
 ### Influence on Future V2 App Blueprint
 
@@ -627,7 +567,7 @@ lint:
     - uses: pnpm/action-setup@v4  # if using pnpm
     - uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version: 22
         cache: pnpm
     - name: Install Dependencies
       run: pnpm install --frozen-lockfile
@@ -635,9 +575,7 @@ lint:
       run: pnpm lint
 ```
 
-The lint job runs ESLint, Prettier, and template-lint checks to ensure code quality and consistent formatting. This catches style issues early and maintains consistency across contributors. The job uses caching to improve performance and includes both JavaScript/TypeScript and Handlebars template linting.
-
-**Defense**: Linting is critical for maintaining code quality in a distributed development environment. By running linting in CI, we ensure that all contributors follow the same code standards, reducing review friction and maintaining consistency.
+Runs ESLint, Prettier, and template-lint with caching for consistent code quality across contributors.
 
 #### Test Job with Matrix Generation
 ```yaml
@@ -656,9 +594,7 @@ test:
         echo "matrix=$(pnpm -s dlx @embroider/try list)" >> $GITHUB_OUTPUT
 ```
 
-This job runs the addon's test suite and generates a matrix of scenarios for compatibility testing. It ensures the addon works correctly and prepares the scenario matrix for broader compatibility testing. The job outputs the matrix for use by the try-scenarios job.
-
-**Defense**: The dual purpose of this job (testing and matrix generation) optimizes CI efficiency. We test the addon in its primary configuration while simultaneously preparing for cross-version compatibility testing.
+Runs the test suite and generates the scenario matrix for cross-version compatibility testing.
 
 #### Floating Dependencies Job
 ```yaml
@@ -674,9 +610,7 @@ floating:
       run: pnpm test
 ```
 
-This job tests the addon against the latest available versions of all dependencies (without lockfile constraints). It catches potential issues with newer dependency versions early and ensures the addon remains compatible as the ecosystem evolves.
-
-**Defense**: Floating dependencies testing is crucial for maintaining forward compatibility. Since addons are consumed by apps with varying dependency versions, testing without lockfile constraints helps identify potential breaking changes before they affect users.
+Tests against latest dependency versions without lockfile constraints to catch compatibility issues early.
 
 #### Try Scenarios Matrix Job
 ```yaml
@@ -701,9 +635,7 @@ try-scenarios:
       env: ${{ matrix.env }}
 ```
 
-This job uses `@embroider/try` to test against multiple Ember versions and dependency combinations defined in `.try.mjs`. It ensures addon compatibility across the supported Ember ecosystem, including LTS versions, latest stable, beta, and alpha releases. Each scenario can include different build modes (like compat builds for older Ember versions).
-
-**Defense**: Comprehensive cross-version testing is essential for addon ecosystem health. By testing against multiple Ember versions, we catch breaking changes early and ensure addons work across the entire supported version range.
+Uses `@embroider/try` to test against multiple Ember versions (LTS, stable, beta, alpha) ensuring compatibility across the supported ecosystem.
 
 #### Push Dist Workflow
 
@@ -723,9 +655,7 @@ jobs:
       # ... build and publish to dist branch
 ```
 
-This workflow automatically builds and pushes compiled assets to a `dist` branch, enabling easy cross-repository testing and consumption of the addon from Git repositories.
-
-**Defense**: The dist branch workflow enables modern development practices where addons can be consumed directly from Git repositories during development. This is particularly valuable for testing pre-release versions and coordinating changes across multiple repositories.
+Automatically builds and pushes compiled assets to a `dist` branch for Git-based consumption during development.
 
 ### Linting and Code Quality Configuration
 
@@ -843,54 +773,22 @@ This minimal shim enables V2 addons to work in V1 (classic ember-cli) environmen
 ### Rationale and Defense of Choices
 
 #### Single Package Architecture
-Most addons are single packages that don't require monorepo complexity. The blueprint generates a single package with integrated testing, but can be adapted for monorepo setups by ignoring the test infrastructure and creating a separate test application using `@ember/app-blueprint`.
-
-**Benefits:**
-- **Reduced Complexity**: Single package structure is easier to understand and maintain
-- **Faster Setup**: No need to coordinate multiple packages during development
-- **Simpler Publishing**: Single package publishing is more straightforward than monorepo coordination
-- **Better IDE Support**: IDEs can better understand and index single-package structures
-
-**Monorepo Migration Path**: For teams currently using monorepo setups from the old `@embroider/addon-blueprint`, the new pattern involves generating your addon with `@ember/addon-blueprint` (ignoring its test setup) and then using a separate test application via `@ember/app-blueprint` (or other app blueprint). This maintains the monorepo benefits while providing cleaner separation of concerns.
+Most addons don't need monorepo complexity. Single packages are easier to understand, maintain, and publish. For monorepo setups, generate the addon with `@ember/addon-blueprint` (ignoring test setup) and create a separate test app.
 
 #### Glint with Volar Integration
-The Ember ecosystem is moving towards TypeScript, and Glint provides the best template type-checking experience. The Volar-based tsserver plugins deliver a native TypeScript-like IDE experience that was previously unavailable in addon blueprints, enabling superior autocomplete, error detection, and refactoring capabilities in templates.
-
-**Technical Advantages:**
-- **Template Type Safety**: Full type checking for Handlebars templates
-- **IDE Integration**: Native TypeScript language server support
-- **Incremental Adoption**: Works with both TypeScript and JavaScript
-- **Consumer Benefits**: Apps consuming the addon get automatic template type checking
+Glint provides template type-checking with Volar-based tsserver plugins for native TypeScript IDE experience. Works with both TypeScript and JavaScript, providing consumer apps with automatic template type checking.
 
 #### Vite Development Architecture
-Vite provides the fastest possible development experience with instant rebuilds and hot reloading, significantly improving addon development productivity. The Vite-based test architecture eliminates traditional build pipeline complexity while maintaining full Ember compatibility.
-
-**Performance Benefits:**
-- **Instant Startup**: Native ES module support eliminates bundling delays
-- **Hot Module Replacement**: Changes reflect immediately without full page reloads
-- **Parallel Processing**: Vite's architecture enables better CPU utilization
-- **Modern Development**: Source maps, error overlay, and debugging tools
+Vite provides instant rebuilds, hot reloading, and modern debugging tools. The Vite-based test architecture eliminates build pipeline complexity while maintaining Ember compatibility.
 
 #### Rollup Production Builds
-Rollup generates optimized, tree-shakeable output that consuming applications can efficiently bundle. The separation between development (Vite) and production (Rollup) builds allows each tool to excel at its intended purpose.
-
-**Optimization Benefits:**
-- **Tree Shaking**: Unused code is eliminated from the final bundle
-- **Bundle Splitting**: Optimal chunk creation for different consumption patterns
-- **Asset Optimization**: Proper handling of CSS, templates, and static assets
-- **Declaration Generation**: Clean TypeScript declaration file creation
+Rollup generates optimized, tree-shakeable output with clean asset handling and TypeScript declaration generation. Separation from Vite development builds allows each tool to excel at its purpose.
 
 ### Migration and Compatibility
 
-Existing addons are not affected by this change. Authors can opt into the new blueprint already by running `npx ember-cli@latest addon <name> --blueprint @ember/app-blueprint`. The blueprint is versioned and locked to the Ember CLI release, ensuring reproducibility.
+Existing addons are unaffected. Authors can opt into the new blueprint with `npx ember-cli@latest addon <name> --blueprint @ember/addon-blueprint`. 
 
-**Migration Strategies:**
-
-**Greenfield Addons**: New addons can immediately use the new blueprint for optimal development experience
-
-For existing addons there is no need to migrate, however if, after trying the new blueprint, folks like the experience better, they can:
-- For V1 addons, follow the "Porting Addons to V2" guide, or generate a new project and copy relevant files into it.
-- For V2 addons, generate a new project and copy relevant files into it.
+**Migration:** New addons use the new blueprint immediately. Existing addons can migrate by generating a new project and copying relevant files.
 
 
 ## How we teach this
