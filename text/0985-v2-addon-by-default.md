@@ -175,7 +175,7 @@ The generated `package.json` follows modern NPM conventions with several key des
 **Key Design Decisions:**
 
 - **Modern Exports Map**: Uses conditional exports to provide both TypeScript declarations and JavaScript modules, ensuring proper resolution in all environments.
-- **Import Maps**: The `#src/*` import map enables clean internal imports without relative paths -- these are meant for use in tests only, and should not be left in files that are built for npm. When published, importers of your library will resolve via `package.json#exports`, rather than `package.json#imports`'s `#src`. Using `#src/` means that you don't need to repeatedly build, or run your library's build in watch mode while working on tests.
+- **Import Maps**: The `#src/*` import map enables clean internal imports without relative paths in tests and demo app only. These imports cannot be used in `src/` files because Rollup doesn't transform them to relative paths during the build process. When published, importers resolve via `package.json#exports`, not `#src` imports.
 - **Minimal Published Files**: Only publishes essential runtime files (`dist`, `declarations`, `addon-main.cjs`), keeping package size minimal.
 - **V2 Package Metadata**: Declares `ember-addon.version: 2` to indicate V2 package format compliance.
 
@@ -793,15 +793,170 @@ Existing addons are unaffected. Authors can opt into the new blueprint with `npx
 
 ## How we teach this
 
+### Core Documentation Updates
+
 - The Ember Guides and CLI documentation will be updated to reference the new blueprint.
 - The blueprint README includes detailed instructions for customization, publishing, and supporting multiple Ember versions.
 - Migration guides will be provided for authors of v1 and v2 addons.
-- Key resources (so far):
-  - [@ember/addon-blueprint README](https://github.com/emberjs/ember-addon-blueprint#readme)
-  - [Addon Author Guide](https://github.com/embroider-build/embroider/blob/main/docs/addon-author-guide.md)
-  - [Porting Addons to V2](https://github.com/embroider-build/embroider/blob/main/docs/porting-addons-to-v2.md)
 
-These will, of course, need to be added to the guides website as well.
+### Library Development Concepts
+
+#### Understanding `package.json#exports` and `package.json#imports`
+
+**`package.json#exports`** defines the public API of your addon - what consuming applications can import:
+
+```json
+{
+  "exports": {
+    ".": {
+      "types": "./declarations/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./*.css": "./dist/*.css",
+    "./*": {
+      "types": "./declarations/*.d.ts", 
+      "default": "./dist/*.js"
+    }
+  }
+}
+```
+
+- **"."** - The main entry point when someone imports your addon by name
+- **"./*.css"** - Allows importing CSS files from your addon 
+- **"./*"** - Allows importing any other file from your dist directory
+- **"types"** - Points to TypeScript declaration files for proper IDE support
+- **"default"** - Points to the actual JavaScript implementation
+
+**`package.json#imports`** provides internal shortcuts for development:
+
+```json
+{
+  "imports": {
+    "#src/*": "./src/*"
+  }
+}
+```
+
+- **#src/*** - Enables clean imports like `import { helper } from '#src/helpers/my-helper'` in tests
+- **Tests and demo app only** - Can only be used in test files and demo app, NOT in `src/` files
+- **Rollup limitation** - Rollup doesn't transform `#src/*` imports to relative paths during the build process
+- **Development convenience** - Avoids relative paths in tests and eliminates need for constant rebuilding during test development
+
+**Important**: Files in `src/` must use standard relative imports (`./`, `../`) or imports from `node_modules`. The `#src/*` imports are only for development convenience in test files.
+
+#### Self-Imports Limitation
+
+**Self-imports are not available during development**. Self-imports would resolve through `package.json#exports`, but during development, the `dist/` directory (referenced in exports) doesn't exist yet - development works directly with source files in `src/`.
+
+```javascript
+// ❌ This won't work in src/ files during development
+import { myHelper } from 'my-addon/helpers/my-helper';
+
+// ✅ Use relative imports instead
+import { myHelper } from './helpers/my-helper';
+```
+
+Self-imports only work after building and publishing your addon, when consuming applications import from the published `dist/` files.
+
+#### Development vs. Production Configuration Strategy
+
+The blueprint uses dual configurations to optimize both development experience and published output:
+
+**Development Configuration (Local Development & Testing)**:
+- `babel.config.cjs` - Includes macro evaluation and compatibility transforms
+- `tsconfig.json` - Includes test files, demo app, and development types
+- `vite.config.mjs` - Optimized for fast rebuilds with HMR
+
+**Production Configuration (Publishing)**:
+- `babel.publish.config.cjs` - Minimal transforms, no macro evaluation (consuming app's responsibility)
+- `tsconfig.publish.json` - Only source files, generates clean declarations
+- `rollup.config.mjs` - Optimized output with tree-shaking and proper exports
+
+**Why This Separation Matters**:
+- **Development**: Includes all necessary transforms and types for productive local development
+- **Publishing**: Generates clean, minimal output that integrates well with consuming applications
+- **Macro Handling**: Development evaluates macros for testing; production leaves them for the consuming app to handle
+- **Type Safety**: Publishing config catches accidental usage of development-only APIs (Vite, Embroider internals)
+
+#### Rollup Build Process
+
+The Rollup configuration transforms your `src/` directory into the `dist/` directory that gets published:
+
+```javascript
+addon.publicEntrypoints(['**/*.js', 'index.js', 'template-registry.js'])
+```
+
+- **publicEntrypoints** - Defines what files consumers can import (matches `package.json#exports`)
+- **appReexports** - Automatically makes components/helpers/etc. available in consuming apps
+- **declarations** - Generates TypeScript declarations alongside JavaScript
+- **keepAssets** - Preserves CSS and other static files
+
+The build process:
+1. Transpiles TypeScript/templates using Babel (publish config)
+2. Generates TypeScript declarations using `ember-tsc`
+3. Creates optimized JavaScript in `dist/` matching your `src/` structure
+4. Preserves CSS and other assets
+
+#### When to Use Monorepo Structure
+
+**Use the default single-package structure when**:
+- Building a typical addon with components, helpers, or services
+- Your addon doesn't need complex integration testing
+- You want minimal setup and maintenance overhead
+- Your tests can adequately cover addon functionality in isolation
+
+**Consider a monorepo structure when**:
+- **Complex Integration Testing**: Your addon needs to be tested within a real application context (routing, complex data flows, etc.)
+- **Multiple Related Packages**: You're building an addon ecosystem with multiple related packages
+- **Advanced Testing Scenarios**: You need to test against multiple Ember app configurations or build setups
+- **Documentation Apps**: You want a full application for showcasing your addon's capabilities
+
+**Setting up a Monorepo**:
+1. Generate your addon: `npx ember-cli@latest addon my-addon --blueprint @ember/addon-blueprint --skip-git`
+2. Remove the generated test infrastructure
+3. Generate a test app: `npx ember-cli@latest app test-app --blueprint @ember/app-blueprint`
+4. Configure your monorepo tool (pnpm workspaces, yarn workspaces, etc.)
+5. Install your addon in the test app and write integration tests
+
+This approach provides the benefits of the modern addon blueprint while giving you a full application environment for comprehensive testing.
+
+#### Package Publishing Workflow
+
+**Development Workflow**:
+1. Write code in `src/`
+2. Write tests using `#src/*` imports for convenience
+3. Run tests with `npm test` (uses development configs)
+4. Use demo app for manual testing and documentation
+
+**Publishing Workflow**:
+1. `npm run build` uses Rollup with production configs
+2. Generates `dist/` and `declarations/` directories
+3. `npm publish` only publishes files listed in `package.json#files`
+4. Consumers import from your `package.json#exports`, not internal paths
+
+#### TypeScript Integration
+
+**When using `--typescript`**:
+- All configurations include TypeScript support
+- Glint provides template type checking
+- Development includes comprehensive types (Vite, Embroider, etc.)
+- Publishing generates clean declaration files for consumers
+- `lint:types` script catches development-only API usage in published code
+
+**JavaScript-only projects**:
+- All TypeScript-specific features are conditional
+- Still benefits from modern build pipeline and tooling
+- Can opt into TypeScript later with minimal changes
+
+### Key Resources
+
+- [@ember/addon-blueprint README](https://github.com/emberjs/ember-addon-blueprint#readme)
+- [Addon Author Guide](https://github.com/embroider-build/embroider/blob/main/docs/addon-author-guide.md) 
+- [Porting Addons to V2](https://github.com/embroider-build/embroider/blob/main/docs/porting-addons-to-v2.md)
+- [Node.js Package Exports Documentation](https://nodejs.org/api/packages.html#exports)
+- [Glint Documentation](https://typed-ember.gitbook.io/glint/)
+
+These resources will be integrated into the official Ember Guides to provide comprehensive addon development guidance.
 
 ## Drawbacks
 
