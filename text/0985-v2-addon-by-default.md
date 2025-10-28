@@ -17,7 +17,7 @@ suite:
 
 ## Summary
 
-This RFC proposes making [`@ember/addon-blueprint`](https://github.com/emberjs/ember-addon-blueprint) the default blueprint for new Ember addons, replacing the current v1 and v2 blueprints. The existing blueprints present significant technical challenges that impact developer productivity and ecosystem compatibility. The new blueprint addresses these issues through modern tooling, streamlined architecture, and comprehensive TypeScript integration based on extensive community feedback and production usage patterns.
+This RFC proposes making [`@ember/addon-blueprint`](https://github.com/ember-cli/ember-addon-blueprint) the default blueprint for new Ember addons, replacing the current v1 and v2 blueprints. The existing blueprints present significant technical challenges that impact developer productivity and ecosystem compatibility. The new blueprint addresses these issues through modern tooling, streamlined architecture, and comprehensive TypeScript integration based on extensive community feedback and production usage patterns.
 
 ## Motivation
 
