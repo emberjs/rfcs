@@ -10,6 +10,7 @@ teams:
   - learning
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/507'
+  recommended: 'https://github.com/emberjs/rfcs/pull/1152'
 project-link:
 ---
 
