@@ -103,9 +103,9 @@ export function renderComponent(
 }
 ```
 
-`RenderResult` is a subset of the currently a pre-existing `interface` from `@glimmer/interfaces`, but would be exposed as public API via the only the return type of `renderComponent`.
+`RenderResult` is a subset of the currently pre-existing `interface` from `@glimmer/interfaces`, but would be exposed as public API via the only return type of `renderComponent`.
 
-It's shape is:
+Its shape is:
 ```ts
 export interface RenderResult {
     /**
@@ -218,7 +218,7 @@ const render = modifier((element) => {
 
 ## How we teach this
 
-`renderComponent` _is_ a low-level API, but it's use cases are powerful:
+`renderComponent` _is_ a low-level API, but its use cases are powerful:
 
 ### Micro Applications
 
@@ -281,7 +281,7 @@ Combined with [RFC #931](https://github.com/emberjs/rfcs/pull/931), we can dynam
 ```
 
 > [!NOTE]
-> Depending on your application, you may want to consider sanitizing user input, so users don't inject their own script / sytle tags into your app.
+> Depending on your application, you may want to consider sanitizing user input, so users don't inject their own script / style tags into your app.
 > See: [DOMPurify](https://github.com/cure53/DOMPurify) and [Web Sanitizer API](https://developer.mozilla.org/en-US/docs/Web/API/Sanitizer) and [TrustedHTML](https://developer.mozilla.org/en-US/docs/Web/API/TrustedHTML)
 
 ### Integration with "islands"-based documentation tools
