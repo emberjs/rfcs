@@ -48,7 +48,7 @@ This RFC provides a public API that enables safe experimentation with Context pa
 ## Detailed design
 
 > [!NOTE]
-> This RFC does not intend to tie is to any implementation details in our renderer, as experimentation in this area should be possible without changing existing behavior for pre-existing apps, and such renderer changes would not change the behavior of what this RFC proposes.
+> This RFC does not intend to tie us to any implementation details in our renderer, as experimentation in this area should be possible without changing existing behavior for pre-existing apps, and such renderer changes would not change the behavior of what this RFC proposes.
 
 ### The Public API
 
@@ -165,6 +165,8 @@ function accessIt() {
 
 ### Interface
 
+Once implemented, this would be the stable public API:
+
 ```ts
 import type Owner from '@ember/owner';
 
@@ -200,7 +202,7 @@ export function addToScope(x: unknown);
 
 ### High-level "how it works"
 
-Similar to the exiting debug-render-tree, we'd keep track of a set of "scope" objects throughout the render hierarchy.
+Similar to the existing debug-render-tree, we'd keep track of a set of "scope" objects throughout the render hierarchy.
 
 And similar to how auto-tracking works, we'd enable access to the scope via:
 ```js
@@ -229,6 +231,14 @@ export function addToScope(x) {
 > [!NOTE]
 > `globalThis.scope` is not literally being suggested here -- this variable should be private, and un findable by means other than the exported `getScope` function.
 
+### Inspector
+
+todo
+
+### Testing
+
+todo
+
 ### How to add to the scope
 
 ### Limitations
@@ -238,7 +248,7 @@ Because this is a synchronous API, `getScope()` will be undefined after any `awa
 
 ## How we teach this
 
-This is a low-level API, and the API Docs generated from the JSDoc for these newly expored functions should have some examples.
+This is a low-level API, and the API Docs generated from the JSDoc for these newly exported functions should have some examples.
 
 It could also be worth demonstrating in the guides how to implement some use cases.
 
@@ -275,7 +285,7 @@ Usage:
 </template>
 ```
 
-Both of these usages would be reactive as teh router changes routes.
+Both of these usages would be reactive as the router changes routes.
 
 ### Example Context Implementation and Usage
 
