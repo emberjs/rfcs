@@ -32,7 +32,7 @@ suite: Leave as is
 
 <!-- Replace "RFC title" with the title of your RFC -->
 
-# Public API for render-tree-based contextual exploration 
+# Public API for render-tree-based scope exploration 
 
 ## Summary
 
