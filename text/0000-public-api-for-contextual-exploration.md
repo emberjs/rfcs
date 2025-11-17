@@ -228,7 +228,44 @@ Because this is a synchronous API, `getScope()` will be undefined after any `awa
 
 This is a low-level API, and the API Docs generated from the JSDoc for these newly expored functions should have some examples.
 
-It could also be worth demonstrating in the guides how to implement "Context" via these APIs -- for example:
+It could also be worth demonstrating in the guides how to implement some use cases.
+
+### Example service access without injection
+
+```gjs
+import { getScope } from '@ember/renderer';
+import { getOwner } from '@ember/owner';
+
+// in a hypothetical library 
+export function service(name) {
+  let scope = getScope();
+  let owner = getOwner(scope);
+
+  return owner.lookup(`service:${name}`);
+}
+
+/**
+ * We no longer need class-based helpers to access services
+ */
+export function currentRouteName() {
+  return service('router').currentRouteName;
+}
+```
+
+Usage:
+```gjs
+<template>
+  {{#let service "router") as |router|}}
+    {{router.currentRouteName}}
+  {{/let}}
+
+  {{ (currentRouteName) }}
+</template>
+```
+
+Both of these usages would be reactive as teh router changes routes.
+
+### Example Context Implementation and Usage
 
 ```ts
 // hypothetical ember-prototype-context library
@@ -366,7 +403,6 @@ const CustomConsume = <template>
 
 </template>
 ```
-
 
 
 ## Drawbacks
