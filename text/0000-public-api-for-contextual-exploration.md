@@ -46,46 +46,336 @@ Additionally, this also enables exploration of providing _owner_ access to plain
 
 ## Detailed design
 
-> This is the bulk of the RFC.
+> [!NOTE]
+> This RFC does not intend to tie is to any implementation details in our renderer, as experimentation in this area should be possible without changing existing behavior for pre-exitsing apps, and such renderer changes would not change the behavior of what this RFC proposes.
 
-> Explain the design in enough detail for somebody
-familiar with the framework to understand, and for somebody familiar with the
-implementation to implement. This should get into specifics and corner-cases,
-and include examples of how the feature is used. Any new terminology should be
-defined here. 
+### The Public API
 
-> Please keep in mind any implications within the Ember ecosystem, such as:
-> - Lint rules (ember-template-lint, eslint-plugin-ember) that should be added, modified or removed
-> - Features that are replaced or made obsolete by this feature and should eventually be deprecated
-> - Ember Inspector and debuggability
-> - Server-side Rendering
-> - Ember Engines
-> - The Addon Ecosystem
-> - IDE Support
-> - Blueprints that should be added or modified
+A few examples of usage, once implemented,
+
+<details><summary>Accessing the owner in a plain function</summary>
+
+```gjs
+import { getScope } from '@ember/renderer';
+import { getOwner } from '@ember/owner';
+
+function currentRoute() {
+  const scope = getScope();
+  const owner = getOwner(scope); 
+
+  return owner.lookup('service:router').currentRouteName;
+}
+
+<template>
+  {{ (currentRoute) }}
+</template>
+```
+
+</details>
+
+<details><summary>Accessing the owner in a modifier</summary>
+
+```gjs
+import { getScope } from '@ember/renderer';
+import { modifier } from 'ember-modifier';
+
+const dimensions = modifier((element) => {
+  const scope = getScope();
+  const owner = getOwner(scope); 
+  const resize = owner.lookup('service:resize');
+  const callback => (entry) => {
+    element.textContent = JSON.stringify(entry);
+  };
+  
+  resize.observe(element, callback);
+
+  return () => {
+    resize.unobserve(element, callback)
+  }
+})
+<template>
+  <div {{dimensions}}></div>
+</template>
+```
+
+</details>
+
+<details><summary>Accessing via component getter</summary>
+
+```gjs
+import Component from '@glimmer/component';
+import { getScope } from '@ember/renderer';
+import { getOwner } from '@ember/owner';
+
+export default class Demo extends Component {
+  // equiv of @service router;
+  get router() {
+    return getOwner(getScope()).lookup('service:router');
+  }
+
+  <template>
+    {{this.router.currentRouteName}}
+  </template>
+}
+```
+
+</details>
+
+<details><summary>Writing to scope: A component adding to the scope for the component's descendants</summary>
+
+```gjs
+import { addToScope, getScope } from '@ember/renderer';
+import Component from '@glimmer/component';
+
+class MyCustomState { 
+  /* ... */ 
+  foo = 2;
+}
+
+class Demo extends Component {
+  constructor(owner, args) {
+    super(owner, args);
+
+    let state = new MyCustomState(owner);
+    addToScope(state);
+  }
+
+  <template>
+    {{yield}}
+  </template>
+}
+
+function accessIt() {
+  let scope = getScope();
+  let state = scope.entries.find(x => x instanceof MyCustomState);
+
+  return state.foo;
+}
+
+// And then accessing:
+<template>
+  <Demo>
+    {{ (accessIt) }} {{! prints 2 }}
+  </Demo>
+</template>
+```
+
+</details>
+
+### Interface
+
+```ts
+import type Owner from '@ember/owner';
+
+function getScope(): Scope | undefined;
+
+interface Scope {
+  /**
+   * The owner can change based on rendering context,
+   * renderComponent usage, engine usage, etc.
+   * 
+   * there are two ways this could be implemented:
+   * - the framework could add the owner into 'entries' whenever it would change
+   * - since the renderer _always_ knows the current owner, we reference that
+   */
+  get [OwnerSymbol](): Owner;
+
+  /**
+   * Each rendering layer will push into this array,
+   * we can detect usage of `addToScope`, and pop when we exit rendering the thing that called `addToScope`.
+   * 
+   * This array should contain references *only* (but we can't enforce that).
+   * For each invokable, we'll associate the scope with the invokable during its creation.
+   * 
+   * This means that modifications to the scope *cannot* occur during updates.
+   */
+  entries: unknown[];
+}
+```
+
+
+
+### High-level "how it works"
+
+Simular to the exiting debug-render-tree, we'd keep track of a set of "scope" objects throughout the render hierarchy.
+
+And similar to how auto-tracking works, we'd enable access to the scope via:
+```js
+// psuedocode
+
+// Evaluating an "Invokable" ( a curly expression, component, etc )
+globalThis.scope = currentScope(); // implementation depends on renderer strategy
+invoke()
+delete globalThis.scope;
+
+// in @ember/renderer
+export function getScope() {
+  return globalThis.scope;
+}
+```
+
+> [!NOTE]
+> `globalThis.scope` is not literally being suggested here -- this variable should be private, and un findable by means other than the exported `getScope` function.
+
+### How to add to the scope
+
+### Limitations
+
+Because this is a synchronous API, `getScope()` will be undefined after any `await`, and should not be used after an `await` as a result. A new rule to `eslint-plugin-ember` can help out here.
+
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
+This is a low-level API, and the API Docs generated from the JSDoc for these newly expored functions should have some examples.
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
+It could also be worth demonstrating in the guides how to implement "Context" via these APIs -- for example:
 
-> How should this feature be introduced and taught to existing Ember
-users?
+```ts
+// hypothetical ember-prototype-context library
+import { addToScope, getScope } from '@ember/renderer';
+import Component from '@glimmer/component';
 
-> Keep in mind the variety of learning materials: API docs, guides, blog posts, tutorials, etc.
+export class Provide extends Component {
+  constructor(owner, args) {
+    assert(`Must pass @context`, args.context);
+    assert(`Must pass a key`, args.key)
+
+    provide([args.key, args.context]);
+  }
+}
+
+export function provide(...args) {
+  if (args.length === 3) {
+    /**
+     * TC39's Stage 1 Decorator 
+     */
+    return provideTC39Stage1Decorator(...args); // implementation omitted for brevity
+  }
+
+  if (args.length === 2 && 'kind' in args[1]) {
+    if (args[1].kind === 'field') {
+      /**
+       * TC39 "Field" Decorator
+       * 
+       * @provide x = new State();
+       */
+      return (initialValue) => provide(initialValue.constructor, initialValue);
+    }
+
+    throw new Error(`Unsupported decorator usage for kind: ${args[1].kind}`);
+  }
+
+  /**
+   *  provide(key, instance or state);
+   */
+  addToScope([key, context]);
+
+  return context;
+}
+
+export function consume<ContextType>(key: ClassType<ContextType>): ContextType {
+  let scope = getScope();
+
+  // search up until we find our key
+  for (let i = 0; i < scope.entries.length; i++) {
+    let entry = scope.entries[i];
+
+    if (!Array.isArray(entry)) continue;
+    if (entry[0] === key) return entry[1];
+  }
+}
+
+export class Consume extends Component {
+  get context() {
+    assert(`Must pass a key`, this.args.key);
+
+    return consume(this.args.key);
+  }
+
+  <template>
+    {{yield this.context}}
+  </template>
+}
+```
+
+This supports both class providing and consuming as well as template-based providing and consuming.
+
+```gjs
+import { Consume, Provide, consume, provide } from 'hypothetical ember-prototype-context library';
+
+let id = 0;
+class StateA { foo = 'a'; id = id++; }
+class StateB { foo = 'b' }
+
+const newA = () => new StateA();
+const newB = () => new StateB();
+
+class CustomProvide extends Component {
+  @provide a = new StateA();
+}
+
+const CustomConsume = <template>
+  {{yield (consume @key)}}
+</template>;
+
+<template>
+  <Provide @key={{StateA}} @context={{ (newA) }}>
+    <Consume @key={{StateA}} as |a|>
+      {{a.foo}} === "a"
+      {{a.id}} === 0
+    </Consume>
+
+    {{#let (consume StateA) as |a|}}
+      {{a.foo}} === "a"
+      {{a.id}} === 0;
+    {{/let}}
+  </Provide>
+
+  <Provide @key={{StateA}} @context={{ (newA) }}>
+    {{#let (provide StateB (newB)) as |b|}}
+      {{b.foo}} === "b"
+
+      <Consume @key={{StateB}} as |b|>
+        {{b.foo}} === "b"
+
+        <Consume @key={{StateA}} as |a|>
+          {{a.foo}} === "a"
+          {{a.id}} === 1
+        </Consume>
+      </Consume>
+    {{/let}}
+
+    <Consume @key={{StateA}} as |a|>
+      {{a.foo}} === "a"
+      {{a.id}} === 1
+    </Consume>
+
+    <CustomConsume @key={{StateA}} as |a|>
+      {{a.foo}} === "a"
+      {{a.id}} === 1;
+    </CustomConsume>
+  </Provide>
+
+
+  <CustomProvide>
+    {{#let (consume StateA) as |a|}}
+      {{a.foo}} === "a"
+      {{a.id}} === 2;
+    {{/let}}
+  </CustomProvide>
+
+</template>
+```
+
+
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
+We already track a "stack" in our current renderer, but depending on how this is implemented, it could accidentally double the memory usage of that stack -- however most "scopes" will be empty / reused between render nodes, as what is in the scope is not expected to change that often.
 
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+Depending on implementation, there _could_ be a userland-induced memory leak, so we'll want to explore how to ensure the scope entries don't endlessly grow over time (we already manage this with the current renderer's stack (see second alternative below)).
+
+Adding more APIs is always more for people to learn, but many frontend frameworks already have similar features, so developers should have an easy time picking this up if they wish (or the future features enabled by this API).
 
 ## Alternatives
 
@@ -94,5 +384,4 @@ on the impact of the API churn on existing apps, etc.
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+n/a (so far)
