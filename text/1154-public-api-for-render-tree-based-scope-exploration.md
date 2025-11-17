@@ -168,7 +168,7 @@ function accessIt() {
 ```ts
 import type Owner from '@ember/owner';
 
-function getScope(): Scope | undefined;
+export function getScope(): Scope | undefined;
 
 interface Scope {
   /**
@@ -192,6 +192,8 @@ interface Scope {
    */
   entries: unknown[];
 }
+
+export function addToScope(x: unknown);
 ```
 
 
@@ -212,6 +214,15 @@ delete globalThis.scope;
 // in @ember/renderer
 export function getScope() {
   return globalThis.scope;
+}
+
+export function addToScope(x) {
+  let scope = getScope();
+  
+  assert('cannot add to scope when there is no current scope', scope);
+  // It will probably be better to make this readonly from the outside and have some other way of 
+  // manipulating the entries
+  scope.entries.push(x);
 }
 ```
 
