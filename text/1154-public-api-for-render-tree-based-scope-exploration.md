@@ -48,7 +48,7 @@ This RFC provides a public API that enables safe experimentation with Context pa
 ## Detailed design
 
 > [!NOTE]
-> This RFC does not intend to tie is to any implementation details in our renderer, as experimentation in this area should be possible without changing existing behavior for pre-exitsing apps, and such renderer changes would not change the behavior of what this RFC proposes.
+> This RFC does not intend to tie is to any implementation details in our renderer, as experimentation in this area should be possible without changing existing behavior for pre-existing apps, and such renderer changes would not change the behavior of what this RFC proposes.
 
 ### The Public API
 
@@ -200,7 +200,7 @@ export function addToScope(x: unknown);
 
 ### High-level "how it works"
 
-Simular to the exiting debug-render-tree, we'd keep track of a set of "scope" objects throughout the render hierarchy.
+Similar to the exiting debug-render-tree, we'd keep track of a set of "scope" objects throughout the render hierarchy.
 
 And similar to how auto-tracking works, we'd enable access to the scope via:
 ```js
@@ -218,7 +218,7 @@ export function getScope() {
 
 export function addToScope(x) {
   let scope = getScope();
-  
+
   assert('cannot add to scope when there is no current scope', scope);
   // It will probably be better to make this readonly from the outside and have some other way of 
   // manipulating the entries
