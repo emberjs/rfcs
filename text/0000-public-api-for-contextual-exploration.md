@@ -204,7 +204,7 @@ And similar to how auto-tracking works, we'd enable access to the scope via:
 // psuedocode
 
 // Evaluating an "Invokable" ( a curly expression, component, etc )
-globalThis.scope = currentScope(); // implementation depends on renderer strategy
+globalThis.scope = currentScope(); // implementation may depend on renderer strategy
 invoke()
 delete globalThis.scope;
 
