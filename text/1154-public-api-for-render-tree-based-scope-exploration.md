@@ -37,9 +37,13 @@ This RFC proposes a public API that enables safe experimentation with render-tre
 
 ## Motivation
 
-The Ember community has long desired a Context API to share state across the render tree without prop drilling, but developers currently must resort to [abusing private Glimmer APIs](https://github.com/customerio/ember-provide-consume-context/blob/def6d34f639d56ebec1c7c8c888f86ec524b8688/ember-provide-consume-context/src/-private/override-glimmer-runtime-classes.ts#L1), creating upgrade risks and maintenance burdens. This RFC provides a public API that enables safe experimentation with Context patterns for use cases like theme systems, authentication state, and feature flags. The expected outcome is to establish a stable foundation for community exploration of contextual data access patterns while gathering real-world feedback to inform future official Context API design.
+The Ember community has long desired a Context API to share state across the render tree without prop drilling -- and currently developers must resort to [abusing private Glimmer APIs](https://github.com/customerio/ember-provide-consume-context/blob/def6d34f639d56ebec1c7c8c888f86ec524b8688/ember-provide-consume-context/src/-private/override-glimmer-runtime-classes.ts#L1), creating upgrade risks and [maintenance burdens](https://github.com/customerio/ember-provide-consume-context/pull/49). The last action item for the [Context RFC, #975](https://github.com/emberjs/rfcs/pull/975) is to propose a public API for experimentation.
 
-Additionally, this also enables exploration of providing _owner_ access to plain function helpers, modifiers, (all invokables).
+This RFC does not propose a solution for Context directly.
+
+This RFC provides a public API that enables safe experimentation with Context patterns as well aligning with some feature design discussed in Discord as well as spec meetings (all public) - enabling exploration of providing _owner_ access to plain function helpers, modifiers, (all invokables).
+
+
 
 ## Detailed design
 
