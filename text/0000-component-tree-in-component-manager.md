@@ -155,6 +155,40 @@ It should be noted that there is room for improvement in the above example to ma
 > 1. Expose ARGS_SET from BaseGlimmerComponentManager since this is required to be able to extend the BaseGlimmerComponentManager in debug builds without tripping assertions.
 > 2. export EmberGlimmerComponentManager (and likely BaseComponentManager for completeness) from `@glimmer/component`. Without exporting these there is no way to provide a custom component manager for something that extends GlimmerComponent without breaking into private API.
 
+### Example Use - Debug Tooling
+
+In design systems or other contextual component libraries, there is often a desire to give better developer feedback around misuse or unexpected use of components.
+For instance in a select option component, it is common to want to assert that the option is being used within a select component.
+This could be done using context, but could also be done by using a component tree with a custom component manager:
+
+```ts
+import { Select } from 'my-design-system';
+import Component, { ComponentManager as BaseComponentManager } from '@glimmer/component';
+import { setComponentManager } from '@glimmer/manager';
+
+class SelectOption extends Component {
+  // ...
+}
+
+if (isDeveloping()) {
+  class SelectOptionManager extends BaseComponentManager {
+    createComponent(ComponentClass, args, stack) {
+      for (const component of stack) {
+        if (component instanceof Select) {
+          return super.createComponent(ComponentClass, args, stack);
+        }
+      }
+
+      assert('SelectOption must be used within a Select component', false);
+    }
+  }
+
+  setComponentManager(
+    (owner) => new SelectOptionManager(owner),
+    SelectOption
+  );
+}
+```
 
 ## How we teach this
 
@@ -163,7 +197,11 @@ Since custom component managers are not commonly used, there would be no need to
 
 ## Drawbacks
 
-This does add an additional argument to the component manager API and while component instances are not private, there is possible concern that these instances could be misused.
+This does add an additional argument to the component manager API.
+
+While component instances and structured hierarchy is not private API, this could open up weird patterns of modifying parent components elsewhere in the tree.
+We can't really stop people from doing bad patterns and this is already possible via private API, but it is something to consider.
+Since the actual VM stack is not exposed, there is no major change in risk beyond the existing limitations and risks of lifecycle management or hanging memory references that exist today.
 
 ## Alternatives
 
