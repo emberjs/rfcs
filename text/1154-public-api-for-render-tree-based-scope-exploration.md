@@ -41,7 +41,7 @@ The Ember community has long desired a Context API to share state across the ren
 
 This RFC does not propose a solution for Context directly.
 
-This RFC provides a public API that enables safe experimentation with Context patterns as well aligning with some feature design discussed in Discord as well as spec meetings (all public) - enabling exploration of providing _owner_ access to plain function helpers, modifiers, (all invokables).
+This RFC provides a public API that enables safe experimentation with Context patterns as well as aligning with some feature design discussed in Discord as well as spec meetings (all public) - enabling exploration of providing _owner_ access to plain function helpers, modifiers, (all invokables).
 
 
 
@@ -220,7 +220,7 @@ export function addToScope(x) {
 
   assert('cannot add to scope when there is no current scope', scope);
   
-  // Implementation ommitted for brevity
+  // Implementation omitted for brevity
   setScopeData(scope, x);
 }
 ```
@@ -439,7 +439,7 @@ const CustomConsume = <template>
 
 ## Drawbacks
 
-This isn't _Context_, and _Context_ is what our users want, but I think we want strong public APIs so that we can explore userland APIs, and then RFC what those end up being, what the requiremnts are, and then add that to the framework once the idea and capabilities is stable.
+This isn't _Context_, and _Context_ is what our users want, but I think we want strong public APIs so that we can explore userland APIs, and then RFC what those end up being, what the requirements are, and then add that to the framework once the idea and capabilities is stable.
 
 Adding more APIs is always more for people to learn, but many frontend frameworks already have similar features, so developers should have an easy time picking this up if they wish (or the future features enabled by this API).
 
@@ -457,6 +457,7 @@ Context Explorations
   - for this RFC, we don't want to change how component managers work, because this scope feature should work for _all_ invokables and _all_ `{{}}` regions
   - an RFC about this approach was opened at [RFC#1155](https://github.com/emberjs/rfcs/pull/1155)
     - This RFC focuses on changing component manager APIs (additively), which means that only components can interact with the context.
+    - It exposes some currently internal private values for existing internal component managers, which are not meant for extension (both for safety and maintenance reasons).
   
 
 Service-like things with non-string keys:
