@@ -351,9 +351,7 @@ export function consume<ContextType>(key: ClassType<ContextType>): ContextType {
   let scope = getScope();
 
   // search up until we find our key
-  for (let i = 0; i < scope.entries.length; i++) {
-    let entry = scope.entries[i];
-
+  for (let entry of scope.entries) {
     if (!Array.isArray(entry)) continue;
     if (entry[0] === key) return entry[1];
   }
