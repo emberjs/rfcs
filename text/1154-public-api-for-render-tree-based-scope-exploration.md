@@ -437,8 +437,21 @@ Adding more APIs is always more for people to learn, but many frontend framework
 
 ## Alternatives
 
+None.
+
+### Prior Art
+
+Context Explorations
+
 - [ember-provide-consume-context](https://github.com/customerio/ember-provide-consume-context)
-- [passing a third argument to component constructors that is the VM Stack](https://github.com/rtablada/ember-context-experiment/blob/main/app/components/UserName.gjs)
+- [experiment passing the component tree to component managers](https://github.com/rtablada/ember-context-experiment/blob/main/app/components/UserName.gjs)
+  - for this RFC, we don't want to change how component managers work, because this scope feature should work for _all_ invokables and _all_ `{{}}` regions
+  
+
+Service-like things with non-string keys:
+
+- [createStore](https://ember-primitives.pages.dev/6-utils/createStore.md) 
+- [ember-polaris-service](https://github.com/chancancode/ember-polaris-service)
 
 ## Unresolved questions
 
