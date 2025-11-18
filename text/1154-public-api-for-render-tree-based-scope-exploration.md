@@ -239,7 +239,7 @@ interface Scope {
   entries: Iterator<unknown>;
 }
 
-export function addToScope(x: unknown);
+export function addToScope(x: unknown): void;
 ```
 
 
@@ -519,3 +519,4 @@ Service-like things with non-string keys:
 - other names for `entries`? `hierarchy`? `ancestry`?
 - add `.owner` property/getter on the `scope`, instead of requiring `getOwner(scope)`
 - should `scope` be an object that you _must_ set key-value pairs on? (right now it's just a single value that can be anything)
+- testing details depend on how `scope` is used, but I could add samples based on the example implementations in "How we teach this" if folks think that's useful?
