@@ -219,8 +219,7 @@ Since the actual VM stack is not exposed, there is no major change in risk beyon
   * Pro: Allows for more reactive as well as lazy consume/provide patterns
   * Pro: Allows for context use in Helpers and Modifiers without API change
   * Con: Requires a much larger change to internals
-  * Con: Does not give public API for things like dev tools that wish to inspect component tree
 
 ## Unresolved questions
 
-2. Should this component tree also be added to helper and modifier managers?
+1. Should this component tree also be added to helper and modifier managers?
