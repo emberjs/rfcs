@@ -242,7 +242,7 @@ For crawling up the userland metadata of the render tree, you'd iterate over the
 - Iterating `scope.entries` will always have _one_ iteration, unless `addToScope` is called during rendering.
 - `scope.entries` is lazy, in that when rendering, we don't eagerly calculate what can be found within, nor while iterating (unless iteration completes, and hits the _root metadata_)
 - For each render node, the metadata is undefined until set, so that iteration can skip over empty metadatas
-
+- Changes to this `scope.entries` are _not_ reactive, because reactivity is not needed. The access of `scope.entries` is always just-in-time, because access-order is the same as render-order, and cleanup / "removal" happens in-tandem with render node cleanup (which only happens when all render children are cleaned up).
 
 
 
