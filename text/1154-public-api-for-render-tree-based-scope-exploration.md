@@ -180,6 +180,9 @@ interface Scope {
    * there are two ways this could be implemented:
    * - the framework could add the owner into 'entries' whenever it would change
    * - since the renderer _always_ knows the current owner, we reference that
+   * 
+   * This "OwnerSymbol" is a placeholder for the Symbol used by `setOwner`, 
+   * which enables `getOwner(scope)`
    */
   get [OwnerSymbol](): Owner;
 
@@ -239,6 +242,8 @@ For crawling up the userland metadata of the render tree, you'd iterate over the
 - Iterating `scope.entries` will always have _one_ iteration, unless `addToScope` is called during rendering.
 - `scope.entries` is lazy, in that when rendering, we don't eagerly calculate what can be found within, nor while iterating (unless iteration completes, and hits the _root metadata_)
 - For each render node, the metadata is undefined until set, so that iteration can skip over empty metadatas
+
+
 
 
 ### Inspector
@@ -468,3 +473,4 @@ Service-like things with non-string keys:
 ## Unresolved questions
 
 - other names for `entries`? `hierarchy`? `ancestry`?
+- add `.owner` property/getter on the `scope`, instead of requiring `getOwner(scope)`
