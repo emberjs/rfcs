@@ -57,12 +57,11 @@ A few examples of usage, once implemented,
 <details><summary>Accessing the owner in a plain function</summary>
 
 ```gjs
-import { getScope } from '@ember/renderer';
 import { getOwner } from '@ember/owner';
 
 function currentRoute() {
-  const scope = getScope();
-  const owner = getOwner(scope); 
+  // getOwner is now aware of the active scope
+  const owner = getOwner(); 
 
   return owner.lookup('service:router').currentRouteName;
 }
@@ -77,12 +76,11 @@ function currentRoute() {
 <details><summary>Accessing the owner in a modifier</summary>
 
 ```gjs
-import { getScope } from '@ember/renderer';
+import { getOwner } from '@ember/owner';
 import { modifier } from 'ember-modifier';
 
 const dimensions = modifier((element) => {
-  const scope = getScope();
-  const owner = getOwner(scope); 
+  const owner = getOwner(); 
   const resize = owner.lookup('service:resize');
   const callback => (entry) => {
     element.textContent = JSON.stringify(entry);
@@ -105,13 +103,13 @@ const dimensions = modifier((element) => {
 
 ```gjs
 import Component from '@glimmer/component';
-import { getScope } from '@ember/renderer';
 import { getOwner } from '@ember/owner';
 
 export default class Demo extends Component {
   // equiv of @service router;
   get router() {
-    return getOwner(getScope()).lookup('service:router');
+    // NOTE: this is less safe than `getOwner(this)`
+    return getOwner().lookup('service:router');
   }
 
   <template>
