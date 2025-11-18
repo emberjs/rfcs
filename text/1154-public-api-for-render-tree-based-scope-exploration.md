@@ -41,9 +41,10 @@ The Ember community has long desired a Context API to share state across the ren
 
 This RFC does not propose a solution for Context directly.
 
-This RFC provides a public API that enables safe experimentation with Context patterns as well as aligning with some feature design discussed in Discord as well as spec meetings (all public) - enabling exploration of providing _owner_ access to plain function helpers, modifiers, (all invokables).
+This RFC provides:
+- New ability for _`getOwner`_: can be updated to not require passing a `this` and still get owner -- which means `getOwner` can be used in plain functions, modifiers, etc (all invokables).
+- safe experimentation with context patterns 
 
-_`getOwner`_ can then also be updated to not require passing a `this` and still get owner -- which means `getOwner` can be used in plain functions, modifiers, etc.
 
 
 
