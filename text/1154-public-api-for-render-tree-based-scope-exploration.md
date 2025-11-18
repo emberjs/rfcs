@@ -163,6 +163,51 @@ function accessIt() {
 
 </details>
 
+<details><summary>Usage with renderComponent</summary>
+
+```gjs
+import Component from '@glimmer/component';
+import { getScope, renderComponent } from '@ember/renderer';
+import { getOwner } from '@ember/owner';
+
+class Demo extends Component {
+  // equiv of @service router;
+  get name() {
+    let scope = getScope();
+    let owner = getOwner(scope);
+    return owner.lookup('service:router')?.currentRouteName ?? 'no router';
+  }
+
+  <template>
+    {{this.name}}
+  </template>
+}
+
+function customRender() {
+  let element = document.createElement('div');
+
+  renderComponent(Demo, {
+    into: element,
+    owner: {
+      lookup(name) {
+        // not implemented
+        return;
+      }
+    }
+  });
+
+  return element;
+}
+
+<template>
+  {{ (customRender) }} {{! renders "no router"}}
+
+  <Demo /> {{! renders "index", (if the URL is "/") }}
+</template>
+```
+
+</details>
+
 ### Interface
 
 Once implemented, this would be the stable public API:
@@ -243,8 +288,6 @@ For crawling up the userland metadata of the render tree, you'd iterate over the
 - `scope.entries` is lazy, in that when rendering, we don't eagerly calculate what can be found within, nor while iterating (unless iteration completes, and hits the _root metadata_)
 - For each render node, the metadata is undefined until set, so that iteration can skip over empty metadatas
 - Changes to this `scope.entries` are _not_ reactive, because reactivity is not needed. The access of `scope.entries` is always just-in-time, because access-order is the same as render-order, and cleanup / "removal" happens in-tandem with render node cleanup (which only happens when all render children are cleaned up).
-
-
 
 ### Inspector
 
@@ -475,3 +518,4 @@ Service-like things with non-string keys:
 
 - other names for `entries`? `hierarchy`? `ancestry`?
 - add `.owner` property/getter on the `scope`, instead of requiring `getOwner(scope)`
+- should `scope` be an object that you _must_ set key-value pairs on? (right now it's just a single value that can be anything)
