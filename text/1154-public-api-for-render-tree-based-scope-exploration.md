@@ -184,15 +184,11 @@ interface Scope {
   get [OwnerSymbol](): Owner;
 
   /**
-   * Each rendering layer will push into this array,
-   * we can detect usage of `addToScope`, and pop when we exit rendering the thing that called `addToScope`.
+   * For iterating up the render tree.
    * 
-   * This array should contain references *only* (but we can't enforce that).
-   * For each invokable, we'll associate the scope with the invokable during its creation.
-   * 
-   * This means that modifications to the scope *cannot* occur during updates.
+   * This the data within should contain references *only* (but we can't enforce that).
    */
-  entries: unknown[];
+  entries: Iterator<unknown>;
 }
 
 export function addToScope(x: unknown);
@@ -207,6 +203,7 @@ Similar to the existing debug-render-tree, we'd keep track of a set of "scope" o
 And similar to how auto-tracking works, we'd enable access to the scope via:
 ```js
 // psuedocode
+// for demonstration only, not actual code
 
 // Evaluating an "Invokable" ( a curly expression, component, etc )
 globalThis.scope = currentScope(); // implementation may depend on renderer strategy
@@ -222,24 +219,37 @@ export function addToScope(x) {
   let scope = getScope();
 
   assert('cannot add to scope when there is no current scope', scope);
-  // It will probably be better to make this readonly from the outside and have some other way of 
-  // manipulating the entries
-  scope.entries.push(x);
+  
+  // Implementation ommitted for brevity
+  setScopeData(scope, x);
 }
 ```
 
 > [!NOTE]
 > `globalThis.scope` is not literally being suggested here -- this variable should be private, and un findable by means other than the exported `getScope` function.
 
+
+In renderer code, we already know the render tree, but none of it is exposed to users (it is all private API, and the debugRenderTree uses this for inspector support).  Each rendering node will have the opportunity to set some userland metadata via `addToScope`. This userland metadata is privately stored on the rendering node, and can only be accessed via `getScope`. 
+
+For crawling up the userland metadata of the render tree, you'd iterate over the [entries Iterator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/Iterator) looking for whatever you need.
+
+### What's in `scope.entries`?
+
+- At a minimum, the `scope.entries` will contain a _root metadata_, the root of the application (containing the `owner`).
+- Iterating `scope.entries` will always have _one_ iteration, unless `addToScope` is called during rendering.
+- `scope.entries` is lazy, in that when rendering, we don't eagerly calculate what can be found within, nor while iterating (unless iteration completes, and hits the _root metadata_)
+- For each render node, the metadata is undefined until set, so that iteration can skip over empty metadatas
+
+
 ### Inspector
 
-todo
+Because the inspector uses the debugRenderTree, and the debugRenderTree has access to everything that can have a scope -- the inspector can display the scope in the object inspector.
 
 ### Testing
 
-todo
+Testing with scope is the same as using in the application or library code.
 
-### How to add to the scope
+If you want to use a separate value or implementation of something higher up in the render tree, the test rendered code should be wrapped wiht a test implementation which sets the test-specific scope value.
 
 ### Limitations
 
@@ -429,9 +439,7 @@ const CustomConsume = <template>
 
 ## Drawbacks
 
-We already track a "stack" in our current renderer, but depending on how this is implemented, it could accidentally double the memory usage of that stack -- however most "scopes" will be empty / reused between render nodes, as what is in the scope is not expected to change that often.
-
-Depending on implementation, there _could_ be a userland-induced memory leak, so we'll want to explore how to ensure the scope entries don't endlessly grow over time (we already manage this with the current renderer's stack (see second alternative below)).
+This isn't _Context_, and _Context_ is what our users want, but I think we want strong public APIs so that we can explore userland APIs, and then RFC what those end up being, what the requiremnts are, and then add that to the framework once the idea and capabilities is stable.
 
 Adding more APIs is always more for people to learn, but many frontend frameworks already have similar features, so developers should have an easy time picking this up if they wish (or the future features enabled by this API).
 
@@ -444,8 +452,11 @@ None.
 Context Explorations
 
 - [ember-provide-consume-context](https://github.com/customerio/ember-provide-consume-context)
+  - proposed in [RFC#975](https://github.com/emberjs/rfcs/pull/975)
 - [experiment passing the component tree to component managers](https://github.com/rtablada/ember-context-experiment/blob/main/app/components/UserName.gjs)
   - for this RFC, we don't want to change how component managers work, because this scope feature should work for _all_ invokables and _all_ `{{}}` regions
+  - an RFC about this approach was opened at [RFC#1155](https://github.com/emberjs/rfcs/pull/1155)
+    - This RFC focuses on changing component manager APIs (additively), which means that only components can interact with the context.
   
 
 Service-like things with non-string keys:
@@ -455,4 +466,4 @@ Service-like things with non-string keys:
 
 ## Unresolved questions
 
-n/a (so far)
+- other names for `entries`? `hierarchy`? `ancestry`?
