@@ -163,7 +163,7 @@ function accessIt() {
 
 </details>
 
-<details><summary>Usage with renderComponent</summary>
+<details><summary>Usage with renderComponent with owner override</summary>
 
 ```gjs
 import Component from '@glimmer/component';
