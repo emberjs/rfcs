@@ -456,11 +456,14 @@ Context Explorations
 
 - [ember-provide-consume-context](https://github.com/customerio/ember-provide-consume-context)
   - proposed in [RFC#975](https://github.com/emberjs/rfcs/pull/975)
+    - only allows use in components
+    - relies on tight coupling to the VM's current implementation
 - [experiment passing the component tree to component managers](https://github.com/rtablada/ember-context-experiment/blob/main/app/components/UserName.gjs)
   - for this RFC, we don't want to change how component managers work, because this scope feature should work for _all_ invokables and _all_ `{{}}` regions
   - an RFC about this approach was opened at [RFC#1155](https://github.com/emberjs/rfcs/pull/1155)
     - This RFC focuses on changing component manager APIs (additively), which means that only components can interact with the context.
     - It exposes some currently internal private values for existing internal component managers, which are not meant for extension (both for safety and maintenance reasons).
+
   
 
 Service-like things with non-string keys:
