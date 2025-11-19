@@ -8,7 +8,7 @@ teams: # delete teams that aren't relevant
   - framework
   - learning
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/1101
 project-link:
 suite:
 ---
@@ -33,13 +33,29 @@ suite: Leave as is
 
 ## Summary
 
-The published ember-source package contains two different builds of Ember. This RFC deprecates the older one.
+The published `ember-source` package contains several AMD-specific bundled builds
+of Ember that are appended to `vendor.js` in the classic build system. 
+This RFC deprecates the following files:
+
+- `ember.debug.js`
+- `ember.prod.js`
+- `ember-testing.js`
+- `ember-template-compiler.js`
+
+Instead, Ember will be included in application builds as ES module library via `ember-auto-import`.
 
 ## Motivation
 
-We don't want to to forever maintain the legacy, AMD-specific bundled copies of Ember that ember-cli traditionally appends to vendor.js. Instead, we want everybody consuming Ember as a modern ES module library.
+Maintaining the legacy AMD-specific bundled copies of Ember is no longer necessary. 
+Modern Ember applications should consume Ember as ES modules, which aligns with 
+the broader JavaScript ecosystem. This change simplifies the build pipeline and 
+reduces maintenance overhead.
 
-## Detailed design
+This deprecation will have no effect on applications using Embroider with 
+`staticEmberSource: true` or Embroider v4 (Vite). It only impacts applications 
+using the classic build system without Embroider.
+
+## Transition Path
 
 > This is the bulk of the RFC.
 
@@ -63,6 +79,19 @@ We don't want to to forever maintain the legacy, AMD-specific bundled copies of 
 - Introduce an optional feature that opts into the new behavior (this is not hard to implement, it's mostly just disabling some existing compat code)
 - Deprecate not enabling the optional feature
 
+### Classic Build System
+
+We will introduce a new optional feature for projects to opt into consuming 
+Ember as ES modules. Not having this optional feature enabled will result in 
+a deprecation warning.
+
+Addons that rely on accessing Ember from `treeForVendor` or on accessing Ember
+from vendor will need to update their implementation. 
+
+### Embroider v4 or with `staticEmberSource: true`
+
+This deprecation will have no effect on these projects. They already consume Ember as ES modules.
+
 ## How we teach this
 
 > What names and terminology work best for these concepts and why? How is this
@@ -78,8 +107,35 @@ We don't want to to forever maintain the legacy, AMD-specific bundled copies of 
 
 > Keep in mind the variety of learning materials: API docs, guides, blog posts, tutorials, etc.
 
-- Need to explain what addon authors should do if they were accessing Ember from code in treeForVendor.
-- Explain that this whole thing is a no-op for Embroider users with `staticEmberSource:true` or `@embroider/core >= 4.0`.
+### Deprecation Guide
+
+Ember will no longer publish legacy AMD-specific Ember builds. To opt-in to 
+consuming Ember as ES modules and clear this deprecation, enable the 
+`ember-modules` optional feature by running `ember feature:enable ember-modules`.
+
+This applies only to the classic build system or to Embroider < 4.0 without the
+`staticEmberSource: true` option. If you see this deprecation warning in these 
+setups, please [open an issue](https://github.com/emberjs/ember.js/issues/new/choose).
+
+Alternatively, you can also clear the deprecation by moving to Embroider v4 by 
+running the [Ember Vite Codemod](https://github.com/mainmatter/ember-vite-codemod),
+but this may require additional changes to your project. 
+
+The AMD-specific Ember builds will no longer be published in next Ember major release 
+and no longer be bundled into `vendor.js`, even on the classic build system. These files are:
+- 
+- `ember.debug.js`
+- `ember.prod.js`
+- `ember-testing.js`
+- `ember-template-compiler.js`
+
+- In rare cases, Addons were relying on accessing Ember from `vendor`. If you have 
+addons that do so they will need to be updated to consume Ember as ES modules.
+
+A known addon that previously relied on accessing Ember from `vendor` is 
+[ember-cli-deprecation-workflow](https://github.com/ember-cli/ember-cli-deprecation-workflow). 
+Please ensure you are on the latest version of this addon as that reliance has 
+been removed.
 
 ## Drawbacks
 
@@ -94,8 +150,6 @@ We don't want to to forever maintain the legacy, AMD-specific bundled copies of 
 > What other designs have been considered? What is the impact of not doing this?
 
 > This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
-
-This RFC will cover ember.debug.js and ember.prod.js. It could also cover ember-template-compiler.js, or that can be a separate RFC.
 
 ## Unresolved questions
 
