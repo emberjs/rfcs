@@ -76,8 +76,6 @@ using the classic build system without Embroider.
 > - IDE Support
 > - Blueprints that should be added or modified
 
-- Introduce an optional feature that opts into the new behavior (this is not hard to implement, it's mostly just disabling some existing compat code)
-- Deprecate not enabling the optional feature
 
 ### Classic Build System
 
