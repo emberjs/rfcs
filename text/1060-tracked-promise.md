@@ -143,7 +143,7 @@ let a = Promise.resolve(2); // <state> "fulfilled"
 </template>
 ```
 
-This component renders only once, and _both_ occurances of of `trackedPromise` immediately resolve and _never_ enter the pending states.
+This component renders only once, and _both_ occurrences of `trackedPromise` immediately resolve and _never_ enter the pending states.
 
 ```gjs
 let a = Promise.resolve(2); // <state> "fulfilled"
