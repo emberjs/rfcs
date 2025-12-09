@@ -1,16 +1,19 @@
 ---
-stage: accepted
+stage: released
 start-date: 2025-01-12T00:00:00.000Z
-release-date: # In format YYYY-MM-DDT00:00:00.000Z
+release-date: 2025-10-13
 release-versions:
-teams: # delete teams that aren't relevant
+  ember-source: 6.8.0
+teams:
   - data
   - framework
   - learning
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1068 
+  accepted: 'https://github.com/emberjs/rfcs/pull/1068'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/1088'
+  released: 'https://github.com/emberjs/rfcs/pull/1146'
 project-link:
-suite: 
+suite:
 ---
 
 <!--- 
@@ -118,7 +121,7 @@ import {
     trackedObject, trackedArray, 
     trackedMap, trackedWeakMap,
     trackedSet, trackedWeakSet
-} from '@ember/reactive';
+} from '@ember/reactive/collections';
 ```
 
 ### `trackedObject`, `trackedArray`, `trackedMap`, etc
@@ -149,7 +152,7 @@ Some examples assuming implementation of [RFC#998: Make fn built-in in strict-mo
 
 
 ```gjs
-import { trackedArray } from '@ember/reactive';
+import { trackedArray } from '@ember/reactive/collections';
 
 const nonTrackedArray = [1, 2, 3];
 const addTo = (arr) => arr.push(Math.random());
@@ -187,7 +190,7 @@ const addTo = (arr) => arr.push(Math.random());
 #### Example `trackedObject`
 
 ```gjs
-import { trackedObject } from '@ember/reactive';
+import { trackedObject } from '@ember/reactive/collections';
 
 const nonTrackedObject = { a: 1 };
 const addTo = (obj) => obj[Math.random()] = Math.random();
@@ -248,6 +251,23 @@ For example, other future exports from `@ember/reactive` (in future RFCs), may i
 without the static analysis guarantees of `type=module`, every consumer of `@ember/reactive` would always have all of these exports in their build.
 For some utilities, we can place them under sub-path-exports, such as `@ember/reactive/window`, for window-specific reactive properties, but the exact specifics of each of these can be hashed out in their individual RFCs.
 
+#### Why are the collections under `@ember/reactive/collections`?
+
+ Placing the collections in the main export surface alongside core primitives like `tracked`, `cached`, `cell`, and `resource` may not conflate importance of the collections. 
+
+> [!NOTE]
+> At the time of writing of this RFC, `tracked`, `cached`, `cell`, and `resource` RFCs have not been accepted for inclusion in `@ember/reactive`
+
+This is motivated by actual usage out in the ecosystem of tracked-built-ins:
+
+here are results from github.com searches for the `tracked-built-ins` equivalents (excluding ember-owned repos and forks of them):
+- "new TrackedObject(" - [520 Results]([https://github.com/search?q=%22new+TrackedObject%28%22&type=code](https://github.com/search?q=%22new+TrackedObject%28%22+NOT+is%3Afork++NOT+org%3Aemberjs+NOT+org%3Atracked-tools+NOT+org%3Aember-cli+NOT+org%3Aember-migration-utils+NOT+org%3Aember-learn&type=code))
+- "new TrackedArray(" - [312 Results](https://github.com/search?q=%22new+TrackedArray%28%22+NOT+is%3Afork++NOT+org%3Aemberjs+NOT+org%3Atracked-tools+NOT+org%3Aember-cli+NOT+org%3Aember-migration-utils+NOT+org%3Aember-learn+&type=code)
+- "new TrackedSet(" - [74 Results](https://github.com/search?q=%22new+TrackedSet%28%22+NOT+is%3Afork++NOT+org%3Aemberjs+NOT+org%3Atracked-tools+NOT+org%3Aember-cli+NOT+org%3Aember-migration-utils+NOT+org%3Aember-learn+&type=code)
+- "new TrackedWeakSet(" - [5 Results](https://github.com/search?q=%22new+TrackedWeakSet%28%22+NOT+is%3Afork++NOT+org%3Aemberjs+NOT+org%3Atracked-tools+NOT+org%3Aember-cli+NOT+org%3Aember-migration-utils+NOT+org%3Aember-learn+&type=code)
+- "new TrackedWeakMap(" - [4 Results](https://github.com/search?q=%22new+TrackedWeakMap%28%22+NOT+is%3Afork++NOT+org%3Aemberjs+NOT+org%3Atracked-tools+NOT+org%3Aember-cli+NOT+org%3Aember-migration-utils+NOT+org%3Aember-learn+&type=code)
+
+Additionally, specifying collections gives us a blessed path for exported other useful datastructures in the future without continually adding to the main export file (even though dead-code-elimination would eliminate what is unused - not importing what may not be used could help local development)
 
 ### Consumption
 
@@ -274,7 +294,7 @@ A utility for creating tracked arrays, copying the original data so that mutatio
 See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
 
 ```gjs
-import { trackedArray } from '@ember/reactive';
+import { trackedArray } from '@ember/reactive/collections';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 
@@ -301,7 +321,7 @@ A utility for creating tracked objects, copying the original data so that mutati
 See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
 ```gjs
-import { trackedObject } from '@ember/reactive';
+import { trackedObject } from '@ember/reactive/collections';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 
@@ -328,7 +348,7 @@ A utility for creating tracked maps, copying the original data so that mutations
 See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
 
 ```gjs
-import { trackedMap } from '@ember/reactive';
+import { trackedMap } from '@ember/reactive/collections';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 
@@ -356,7 +376,7 @@ A utility for creating tracked weak maps, copying the original data so that muta
 See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap)
 
 ```gjs
-import { trackedWeakMap } from '@ember/reactive';
+import { trackedWeakMap } from '@ember/reactive/collections';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 
@@ -380,7 +400,7 @@ A utility for creating tracked maps, copying the original data so that mutations
 See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set)
 
 ```gjs
-import { trackedSet } from '@ember/reactive';
+import { trackedSet } from '@ember/reactive/collections';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 
@@ -408,7 +428,7 @@ A utility for creating tracked weak sets, copying the original data so that muta
 See [MDN for more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet)
 
 ```gjs
-import { trackedWeakSet } from '@ember/reactive';
+import { trackedWeakSet } from '@ember/reactive/collections';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 
@@ -469,7 +489,7 @@ We should do a codemod to convert the newable constructors from tracked-built-in
 Using Vite or Webpack (Embroider 3+), we can alias `tracked-built-ins` to point at the new modules, using a shim -- for example:
 ```js 
 // app/built-ins-shim.js
-import { trackedArray } from '@ember/reactive';
+import { trackedArray } from '@ember/reactive/collections';
 
 export class TrackedArray {
     constructor(arr) {
