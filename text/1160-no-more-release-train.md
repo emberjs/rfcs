@@ -5,9 +5,10 @@ release-date: # In format YYYY-MM-DDT00:00:00.000Z
 release-versions:
 teams: # delete teams that aren't relevant
   - cli
-  - steering
+  - learning
+  - framework
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/1160
 project-link:
 suite: 
 ---
@@ -120,6 +121,23 @@ The prompt should be explicit about the tradeoff:
 - Latest: includes the newest blueprint improvements.
 
 If the registry lookup fails (offline, network errors, etc.), `ember-cli` should proceed with the bundled version and must not block generation.
+
+#### Examples
+
+If the bundled blueprint version and latest blueprint version differ:
+
+- `ember new my-app`
+  - Prompt: Use bundled version (vX.Y.Z, recommended) / Use latest version (vX.Y.Z)
+
+If the bundled blueprint version and latest blueprint version are the same:
+
+- `ember new my-app`
+  - No prompt; generation proceeds.
+
+If the user is offline or the registry is unavailable:
+
+- `ember new my-app`
+  - No prompt; generation proceeds using the bundled version.
 
 #### Non-interactive environments
 
