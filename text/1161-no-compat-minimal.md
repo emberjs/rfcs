@@ -8,8 +8,8 @@ teams: # delete teams that aren't relevant
   - framework
   - typescript
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1120
-project-link: https://github.com/ember-cli/ember-app-blueprint/pull/49
+  accepted: https://github.com/emberjs/rfcs/pull/1161
+project-link: 
 suite: 
 ---
 
