@@ -1,13 +1,15 @@
 ---
-stage: ready-for-release
+stage: released
 start-date: 2025-07-09T00:00:00.000Z
 release-date:
 release-versions:
+  content-tag: 4.1.0
 teams:
   - framework
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/1121'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/1127'
+  released: 'https://github.com/emberjs/rfcs/pull/1157'
 project-link:
 suite:
 ---
