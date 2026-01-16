@@ -3,6 +3,7 @@ stage: released
 start-date: 2025-07-09T00:00:00.000Z
 release-date:
 release-versions:
+  content-tag: 4.1.0
 teams:
   - framework
 prs:
