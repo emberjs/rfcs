@@ -354,6 +354,7 @@ Unless otherwise stated, there will not be usage-based decision on these, as the
 |🌐 | `Ember._on` | `import { on } from '@ember/modifier';` | 
 |🌐 | `Ember._fn` | `import { fn } from '@ember/helper';` | 
 |🌐 | `Ember.ENV` | `import MyEnv from '<my-app>/config/environment';` (for apps) or `owner.resolveRegistration('config:environment')` for addons|
+|🌐 | `Ember.libraries` | `import { libraries } from '@ember/-internals/metal';` |
 
 
 [RFC-615]: https://rfcs.emberjs.com/id/0615-autotracking-memoization
@@ -365,17 +366,10 @@ These can happen in any order
 - Add deprecations to each `Ember.*` access
 - Add the [Testing utilities](#testing-utilities) to `@ember/test`, if needed.
 - Add an `@ember/version` package to `ember-source`
-- Add re-exports of private APIs, `ComputedProperty`, and `_setClassicDecorator` 
-    These will still be deprecated on `Ember.`, and will be deprecated themselves as we progress through deprecating Ember Classic.
+- ~Add re-exports of private APIs, `ComputedProperty`, and `_setClassicDecorator`~
+    ~These will still be deprecated on `Ember.`, and will be deprecated themselves as we progress through deprecating Ember Classic.~
+    This was proposed back when ember-concurrency relied on it, but current versions no longer do.
 - Update ember-inspector to use imports for the internals and instrumentation APIs
-- Add `@ember/inspector-support` to `ember-source` to manage things like `LIBRARIES`. 
-    ```js
-    import { libraries } from '@ember/inspector-support';
-
-    libraries.add('ember-data', '5.3.1');
-    // and/or
-    libraries.addAll(depInfoFromPlugin);
-    ```
 - Add deprecation guide entries for each API
 
 ## How We Teach This
