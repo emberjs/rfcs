@@ -34,6 +34,8 @@ Adopt the Agent Skills repository (https://github.com/NullVoxPopuli/agent-skills
 
 In practice, this gives the community a stable, reviewable way to package Ember best practices and lightweight automation for agents, similar in spirit to how we treat lint rules and guides as shared infrastructure.
 
+Agent skills are supplemental to the official Guides. They should never be treated as a replacement for canonical documentation, and they are maintained for the current Ember version only (not as a historical, multi-version compatibility reference).
+
 ## Motivation
 
 AI assistants are already part of day-to-day development. The ecosystem needs a way to:
@@ -72,6 +74,8 @@ This RFC does not require any one editor or AI provider. The point is to maintai
 ### Scope (initial)
 
 Start with the Ember-focused skill(s) already present in the fork, especially “ember-best-practices” (performance + accessibility oriented), and iterate from there.
+
+Version policy: Ember-focused skills in this repo target the current Ember version. We do not plan to maintain skills for older Ember majors; users working on older versions should rely on versioned docs and migration guides.
 
 Non-Ember skills that happen to live in the repo today can remain if they are useful for web development in general, but the adoption goal is to ensure Ember-centric guidance is first-class.
 
