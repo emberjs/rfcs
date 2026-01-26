@@ -7,8 +7,8 @@ teams:
   - learning
   - tooling
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
-project-link: https://github.com/ember-tooling/ember-mcp
+  accepted: https://github.com/emberjs/rfcs/pull/1164
+project-link: 
 suite: 
 ---
 
