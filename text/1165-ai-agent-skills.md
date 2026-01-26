@@ -7,7 +7,7 @@ teams:
   - learning
   - tooling
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/1165
 project-link: 
 suite: 
 ---
