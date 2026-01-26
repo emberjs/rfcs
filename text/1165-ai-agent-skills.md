@@ -36,6 +36,8 @@ In practice, this gives the community a stable, reviewable way to package Ember 
 
 Agent skills are supplemental to the official Guides. They should never be treated as a replacement for canonical documentation, and they are maintained for the current Ember version only (not as a historical, multi-version compatibility reference).
 
+Also Agent skills can cover more topics than the official guides, have more opinions, etc.
+
 ## Motivation
 
 AI assistants are already part of day-to-day development. The ecosystem needs a way to:
