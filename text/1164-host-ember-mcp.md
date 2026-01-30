@@ -64,9 +64,7 @@ Any MCP-compatible client can run it via `npx`:
 
 ### “Hosted” expectation
 
-Even when users run the server locally via `npx`, this RFC treats the package itself as hosted infrastructure: it is published, versioned, and maintained so users don’t have to clone repos or wire up their own doc indexers.
-
-We should also consider providing an “officially hosted endpoint” later (run by Ember/partners) for clients that support remote MCP servers, but that is not required for the recommendation.
+A public endpoint: `https://mcp.emberjs.com` (or similar)
 
 ## How we teach this
 
