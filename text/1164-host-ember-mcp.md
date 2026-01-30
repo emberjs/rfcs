@@ -64,7 +64,14 @@ Any MCP-compatible client can run it via `npx`:
 
 ### “Hosted” expectation
 
-A public endpoint: `https://mcp.emberjs.com` (or similar)
+A public endpoint: `https://mcp.emberjs.com` (or similar) for the latest version
+
+And then for versions:
+- `https://mcp.emberjs.com/beta`
+- `https://mcp.emberjs.com/v6.10.x`
+- `https://mcp.emberjs.com/v6.8.x`
+- etc
+
 
 ## How we teach this
 
