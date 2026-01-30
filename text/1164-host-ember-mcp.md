@@ -12,7 +12,7 @@ project-link:
 suite: 
 ---
 
-# Recommend `ember-mcp` (Hosted MCP Server)
+# Recommend hosting `ember-mcp` on emberjs.com
 
 ## Summary
 
