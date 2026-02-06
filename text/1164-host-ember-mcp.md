@@ -5,7 +5,7 @@ release-date: # In format YYYY-MM-DDT00:00:00.000Z
 release-versions:
 teams:
   - learning
-  - tooling
+  - cli
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/1164
 project-link: 
