@@ -81,7 +81,7 @@ And then for versions:
 
 ## Disclaimer and safety
 
-From the upstream project’s disclaimer (paraphrased): use at your own risk. MCP servers often interact with project files and may execute commands. Even if a server doesn’t “suggest” anything on its own, it exposes tools that an AI agent can use in ways that are harmful or destructive.
+The ember-mcp server is a read-only source of documentation. The server itself does not offer any mutation actions. But like any MCP server, it may suggest a command to your agent that your agent will run, and you need to be responsible for securing your environment against dangerous or destructive actions by your agent.
 
 This includes (but isn’t limited to):
 
