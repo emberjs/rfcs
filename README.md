@@ -537,6 +537,12 @@ did not get advancement PRs to their next stage. See the
 - [ ] Comment about the end of the FCP period with no new info
 - [ ] Close the PR
 
+#### Running the app locally
+
+The app that renders our RFCs, [rfcs.emberjs.com/](https://rfcs.emberjs.com/)
+can be found in [ember-learn/rfcs-app](https://github.com/ember-learn/rfcs-app).
+The app deploys automatically via GitHub hooks.
+
 **Ember's RFC process owes its inspiration to the [Rust RFC process]**
 
 [Rust RFC process]: https://github.com/rust-lang/rfcs
