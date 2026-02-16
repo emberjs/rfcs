@@ -82,7 +82,6 @@ Documentation updates for this feature would require new pages in the ember-lear
 
 1. **Ember CLI Guides**: Would benefit from a section explaining the @e18e/eslint-plugin and its purpose in the default linting setup
 2. **Linting Guide**: Could include documentation about the e18e rules alongside existing ESLint and template-lint documentation
-3. **Migration Guide**: For existing projects, could provide instructions on how to add the plugin manually
 
 ### Teaching Strategy:
 
