@@ -104,7 +104,6 @@ Existing projects would not be affected unless they upgrade their blueprints or 
 
 - **Additional dependency**: Adds another package to the dependency tree, though the size impact should be minimal
 - **More linting messages**: Developers may see additional linting warnings/errors, especially in projects with older code patterns
-- **Learning curve**: Developers need to understand another set of linting rules
 
 ## Alternatives
 
