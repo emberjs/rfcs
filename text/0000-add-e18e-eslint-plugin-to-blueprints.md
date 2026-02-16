@@ -37,7 +37,7 @@ This aligns with Ember's commitment to shipping apps with modern JavaScript patt
 ### Implementation Steps:
 
 **For the app blueprint:**
-- Add `"@e18e/eslint-plugin": "^<version>"` to the `devDependencies` in `blueprints/app/files/package.json`
+- Add `"@e18e/eslint-plugin"` to the `devDependencies` in `blueprints/app/files/package.json` using the latest stable version at the time of implementation
 - Update the ESLint config (typically in the blueprint's ESLint configuration file) to extend or include the `@e18e/eslint-plugin/recommended` configuration
 
 **For the addon blueprint:**
