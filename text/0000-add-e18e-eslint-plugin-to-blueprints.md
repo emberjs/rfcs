@@ -46,44 +46,47 @@ This aligns with Ember's commitment to shipping apps with modern JavaScript patt
 
 ### Configuration Example:
 
-The ESLint configuration would include the e18e plugin:
+The ESLint configuration would include the e18e plugin. Additionally, the e18e plugin includes rules that can lint `package.json` files (e.g., `ban-dependencies`), so we should configure JSON linting support:
 
 ```js
 import e18e from '@e18e/eslint-plugin';
+import json from '@eslint/json';
+import {defineConfig} from 'eslint/config';
 
-export default [
+export default defineConfig([
+  {
+    files: ['package.json'],
+    language: 'json/json',
+    plugins: {
+      e18e,
+      json
+    },
+    extends: ['e18e/recommended'],
+  },
   // ... other configs
   e18e.configs.recommended,
   // ... project-specific overrides
-];
+]);
 ```
-
-### Phased Rollout:
-
-The plugin could be introduced with warnings initially, then gradually moved to errors as the ecosystem adopts the patterns. This follows the same pattern used for other linting rules in Ember CLI.
 
 ## How we teach this
 
 ### Documentation Updates:
 
-1. **Ember CLI Guides**: Add a section explaining the @e18e/eslint-plugin and its purpose in the default linting setup
-2. **Linting Guide**: Update the linting documentation to mention the e18e rules alongside existing ESLint and template-lint documentation
-3. **Migration Guide**: For existing projects, provide instructions on how to add the plugin manually
+Documentation updates for this feature would require new pages in the ember-learn/guides-source repository, as there is currently no comprehensive explanation of Ember's approach to linting. These documentation pages would be valuable to have but are outside the scope of this RFC:
+
+1. **Ember CLI Guides**: Would benefit from a section explaining the @e18e/eslint-plugin and its purpose in the default linting setup
+2. **Linting Guide**: Could include documentation about the e18e rules alongside existing ESLint and template-lint documentation
+3. **Migration Guide**: For existing projects, could provide instructions on how to add the plugin manually
 
 ### Teaching Strategy:
 
-The @e18e/eslint-plugin should be taught as a natural extension of Ember's existing linting infrastructure, similar to how `eslint-plugin-ember` is currently positioned. Key points:
+The @e18e/eslint-plugin should be taught as a natural extension of Ember's existing linting infrastructure, similar to how `eslint-plugin-ember` is currently positioned. The recommended set of eslint rules provides a good signal to users starting new projects about how they should maintain their apps and libraries. Key points:
 
 - The plugin helps developers write modern, performant JavaScript code
 - It's part of Ember's commitment to shipping modern applications
 - The rules are auto-fixable in many cases, reducing friction
 - Developers can disable specific rules if they conflict with project requirements
-
-### Communication:
-
-- Blog post announcing the addition, explaining the benefits and showing examples
-- Include in Ember CLI release notes
-- Highlight the auto-fix capabilities to reduce the learning burden
 
 ### For New Users:
 
@@ -91,38 +94,19 @@ New users would naturally encounter these rules as they develop, with helpful er
 
 ### For Existing Users:
 
-Existing projects would not be affected unless they upgrade their blueprints or manually add the plugin. Documentation would help teams evaluate whether to adopt it in existing codebases.
+Existing projects would not be affected unless they upgrade their blueprints or manually add the plugin. Users' processes would be unchanged from normal—most developers already customize their lint configurations and would need to evaluate any changes carefully as they normally do when updating dependencies or adopting new tooling.
 
 ## Drawbacks
 
 - **Additional dependency**: Adds another package to the dependency tree, though the size impact should be minimal
 - **More linting messages**: Developers may see additional linting warnings/errors, especially in projects with older code patterns
 - **Learning curve**: Developers need to understand another set of linting rules
-- **Rule conflicts**: Potential for conflicts with existing project-specific ESLint rules or team preferences
-- **Breaking changes**: As the @e18e/eslint-plugin evolves, rule updates could introduce new warnings/errors in projects
-- **Ecosystem maturity**: The plugin is relatively new compared to established tools like eslint-plugin-ember
 
 ## Alternatives
 
 ### Do Nothing
 Continue with the current default linting setup, letting developers add @e18e/eslint-plugin manually if desired. This avoids the drawbacks but also means new projects miss out on modern best practices by default.
 
-### Add as Optional Addon
-Create an optional addon or blueprint flag that allows developers to opt-in during project creation. This reduces friction for those who don't want the additional rules but may lead to fragmentation in the ecosystem.
-
-### Use Individual Rules
-Instead of the full plugin, cherry-pick specific rules that align most closely with Ember's goals. This provides more control but requires ongoing maintenance to evaluate new rules.
-
-### Wait for Broader Adoption
-Delay adding the plugin to blueprints until it sees wider adoption in the JavaScript ecosystem. This reduces risk but means Ember projects lag behind modern best practices.
-
-### Create Ember-Specific Plugin
-Develop an Ember-specific linting plugin that incorporates similar modernization rules tailored to the Ember ecosystem. This would provide more control but requires significant development and maintenance effort.
-
 ## Unresolved questions
 
-- What version of @e18e/eslint-plugin should be included initially?
-- Should any specific rules be disabled or configured differently for Ember projects?
-- Should the rules be set to "warn" or "error" by default?
-- How should this interact with existing TypeScript ESLint configurations in apps that use TypeScript?
-- Should there be a way to opt-out during project generation?
+None. This RFC proposes using the latest version of @e18e/eslint-plugin with its recommended configuration and default settings. Developers can manually remove the plugin by deleting the relevant lines from their configuration if they prefer not to use it.
