@@ -51,22 +51,27 @@ The ESLint configuration would include the e18e plugin. Additionally, the e18e p
 ```js
 import e18e from '@e18e/eslint-plugin';
 import json from '@eslint/json';
-import {defineConfig} from 'eslint/config';
 
-export default defineConfig([
+export default [
+  // Enable e18e rules for all JavaScript/TypeScript files
+  e18e.configs.recommended,
+  
+  // Enable JSON linting with e18e rules for package.json
   {
     files: ['package.json'],
     language: 'json/json',
+    ...json.configs.recommended,
     plugins: {
       e18e,
-      json
     },
-    extends: ['e18e/recommended'],
+    rules: {
+      // e18e rules that apply to package.json
+      ...e18e.configs.recommended.rules,
+    }
   },
-  // ... other configs
-  e18e.configs.recommended,
-  // ... project-specific overrides
-]);
+  
+  // ... other project-specific configs
+];
 ```
 
 ## How we teach this
