@@ -86,7 +86,7 @@ Documentation updates for this feature would require new pages in the ember-lear
 
 ### Teaching Strategy:
 
-The @e18e/eslint-plugin should be taught as a natural extension of Ember's existing linting infrastructure, similar to how `eslint-plugin-ember` is currently positioned. The recommended set of eslint rules provides a good signal to users starting new projects about how they should maintain their apps and libraries. Key points:
+The @e18e/eslint-plugin should be taught as a natural extension of Ember's existing linting infrastructure, similar to how `eslint-plugin-ember` is currently positioned. The recommended set of ESLint rules provides a good signal to users starting new projects about how they should maintain their apps and libraries. Key points:
 
 - The plugin helps developers write modern, performant JavaScript code
 - It's part of Ember's commitment to shipping modern applications
