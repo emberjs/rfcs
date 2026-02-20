@@ -1,16 +1,16 @@
 ---
-# FIXME: This seems to be at least partially implemented in Ember 3.24
-stage: accepted
+stage: ready-for-release
 start-date: 2020-06-18T00:00:00.000Z
-release-date: # FIXME
-release-versions: # FIXME
+release-date:
+release-versions:
 teams:
   - framework
   - learning
   - steering
   - cli
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/649
+  accepted: 'https://github.com/emberjs/rfcs/pull/649'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/896'
 project-link:
 ---
 
