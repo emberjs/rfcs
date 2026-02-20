@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="435px" height="252px" viewBox="0 0 435 252" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.1 (67048) - http://www.bohemiancoding.com/sketch -->
+    <title>Artboard</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-4" transform="translate(24.000000, 17.000000)">
+            <g id="Group-2" transform="translate(36.000000, 38.000000)">
+                <path d="M0.451388889,35.5 L325,35.5" id="Line-Copy-2" stroke="#E0D8D8" stroke-linecap="square"></path>
+                <rect id="Rectangle" fill="#E0EEFF" x="0" y="87" width="325" height="17"></rect>
+                <path d="M0.450468943,104.5 L324.548611,104.5" id="Line-Copy-4" stroke="#174E92" stroke-linecap="square"></path>
+                <path d="M0.451388889,70.5 L324.548611,70.5" id="Line-Copy-3" stroke="#E0D8D8" stroke-linecap="square"></path>
+                <path d="M0,87.5065943 C6.875,87.5065943 13.8903654,88.4026242 28.8405316,50.3213496 C38.807309,24.9338332 53.5581395,11.4933833 73.0930233,10 C92.2292359,10 107.777409,23.4404499 119.737542,50.3213496 C129.15078,71.4779971 136.481728,87.5065943 161,87.5065943 C185.518272,87.5065943 196.352671,68.421346 203.458472,50.3213496 C213.425249,24.9338332 228.17608,11.4933833 247.710963,10 C266.847176,10 282.395349,23.4404499 294.355482,50.3213496 C312.295681,90.6426992 317.75,87.5065943 325,87.5065943" id="Path" stroke="#87B3E9" fill="#E0EEFF"></path>
+                <path d="M0.451388889,0.5 L325,0.5" id="Line" stroke="#E0D8D8" stroke-linecap="square"></path>
+            </g>
+            <path d="M108.5,15.5 L108.5,142" id="Line-3" stroke="#41578A" stroke-linecap="square" stroke-dasharray="4,3"></path>
+            <path d="M284.5,14.5 L284.5,141" id="Line-3-Copy" stroke="#41578A" stroke-linecap="square" stroke-dasharray="4,3"></path>
+            <g id="Group-3" transform="translate(7.000000, 51.000000)">
+                <text id="COHERENCE" transform="translate(6.000000, 51.000000) rotate(-90.000000) translate(-6.000000, -51.000000) " font-family="Helvetica-Light, Helvetica" font-size="10" font-weight="300" letter-spacing="0.9166667" fill="#4A4A4A">
+                    <tspan x="-29" y="55">COHERENC</tspan>
+                    <tspan x="33.8833336" y="55" letter-spacing="0.8333334">E</tspan>
+                </text>
+                <path id="Line-2" d="M16.5,2.40875332 L12.9357878,8.74513062 L12.6906571,9.18091839 L11.8190816,8.69065715 L12.0642122,8.25486938 L16.5642122,0.25486938 L17,-0.519864431 L17.4357878,0.25486938 L21.9357878,8.25486938 L22.1809184,8.69065715 L21.3093429,9.18091839 L21.0642122,8.74513062 L17.5,2.40875332 L17.5,8.5 L17.5,86 L17.5,86.5 L16.5,86.5 L16.5,86 L16.5,8.5 L16.5,2.40875332 Z" fill="#D1CED2" fill-rule="nonzero"></path>
+            </g>
+            <g id="Group" transform="translate(86.000000, 165.001953) rotate(-270.000000) translate(-86.000000, -165.001953) translate(77.500000, 122.001953)">
+                <text id="TIME" transform="translate(11.000000, 72.500000) rotate(-90.000000) translate(-11.000000, -72.500000) " font-family="Helvetica-Light, Helvetica" font-size="10" font-weight="300" letter-spacing="0.9166667" fill="#4A4A4A">
+                    <tspan x="-2.2233334" y="76.5">TIME</tspan>
+                </text>
+                <path id="Line-2-Copy" d="M-1.11022302e-16,2.40875332 L-3.56421223,8.74513062 L-3.80934285,9.18091839 L-4.68091839,8.69065715 L-4.43578777,8.25486938 L0.0642122314,0.25486938 L0.5,-0.519864431 L0.935787769,0.25486938 L5.43578777,8.25486938 L5.68091839,8.69065715 L4.80934285,9.18091839 L4.56421223,8.74513062 L1,2.40875332 L1,8.5 L1,86 L1,86.5 L0,86.5 L0,86 L0,8.5 L-4.8304588e-17,2.40875332 Z" fill="#D1CED2" fill-rule="nonzero"></path>
+            </g>
+            <text id="Octane" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#377FD2">
+                <tspan x="50.5380859" y="14">Octane</tspan>
+            </text>
+            <text id="Nitro" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#377FD2">
+                <tspan x="242.337891" y="14">Nitro</tspan>
+            </text>
+            <circle id="Oval" fill="#4A90E2" cx="108.5" cy="9.5" r="4.5"></circle>
+            <g id="Coherence-Label" transform="translate(141.000000, 54.000000)">
+                <path d="M3,139 L3,0" id="Line-3-Copy-2" stroke="#F39EA9" stroke-linecap="square" stroke-dasharray="1,2"></path>
+                <circle id="Oval-Copy" fill="#E16E7C" cx="3" cy="140" r="3"></circle>
+            </g>
+            <g id="Coherence-Label-Copy" transform="translate(226.000000, 91.000000)">
+                <path d="M3,103 L3,0" id="Line-3-Copy-2" stroke="#F39EA9" stroke-linecap="square" stroke-dasharray="1,2"></path>
+                <circle id="Oval-Copy" fill="#E16E7C" cx="3" cy="104" r="3"></circle>
+            </g>
+            <text id="New-APIs-added-(decr" font-family="Helvetica" font-size="11" font-weight="normal" fill="#D0021B">
+                <tspan x="52.6655273" y="198">New APIs added  </tspan>
+                <tspan x="20.8793945" y="211" font-family="Helvetica-Oblique, Helvetica" font-style="italic">(decreased coherence)</tspan>
+            </text>
+            <text id="Old-APIs-superseded" font-family="Helvetica" font-size="11" font-weight="normal" fill="#D0021B">
+                <tspan x="241" y="198">Old APIs superseded </tspan>
+                <tspan x="241" y="211" font-family="Helvetica-Oblique, Helvetica" font-style="italic">(increased coherence)</tspan>
+            </text>
+            <circle id="Oval" fill="#4A90E2" cx="284.5" cy="9.5" r="4.5"></circle>
+            <path d="" id="Path-2" stroke="#979797"></path>
+            <path id="Path-3" d="M167.272736,88.5043584 L168.625741,81.3613433 L169.60827,81.5474506 L167.900033,90.565872 L167.734604,91.4392315 L167.074137,90.8443313 L160.254066,84.7013159 L160.923329,83.9582901 L166.325283,88.8239711 L164.401551,83.1170709 C156.79581,63.4387743 142.60608,49.2262418 121.805831,40.4607584 L122.194169,39.5392416 C143.239934,48.4081883 157.628822,62.8201987 165.341722,82.7770695 L167.272736,88.5043584 Z" fill="#D0021B" fill-rule="nonzero"></path>
+            <path id="Path-3-Copy" d="M235.008125,73.617402 L229.327547,78.1543965 L228.703479,77.3730268 L235.875499,71.6448396 L236.57005,71.090112 L236.683448,71.971738 L237.85441,81.07552 L236.862581,81.2030928 L235.935121,73.9924458 L233.671558,79.5868498 C223.577977,103.478112 213.730138,115.31319 203.982903,114.998763 L204.015144,113.999283 C213.183517,114.295037 222.810313,102.725608 232.747476,79.20473 L235.008125,73.617402 Z" fill="#D0021B" fill-rule="nonzero"></path>
+        </g>
+        <text id="Edition-One" font-family="Helvetica-Light, Helvetica" font-size="10" font-weight="300" letter-spacing="0.9166667" fill="#4A4A4A">
+            <tspan x="49.2883332" y="15">EDITION ONE </tspan>
+        </text>
+        <text id="Edition-TWO" font-family="Helvetica-Light, Helvetica" font-size="10" font-weight="300" letter-spacing="0.9166667" fill="#4A4A4A">
+            <tspan x="225.456666" y="15">EDITION TWO </tspan>
+        </text>
+    </g>
+</svg>
