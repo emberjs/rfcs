@@ -329,7 +329,7 @@ The model hooks are an RSVP Promise chain handled by router_js. We can put them 
 
 `willExit`:
 
-- `willTransition` event (currently sync), bubbles through RouteInfos as long as true is returned or no handler is present. **NOTE: THESE BUBBLE BOTTOM UP!**
+- `willTransition` event (currently sync), bubbles through RouteInfos as long as true is returned or no handler is present. **NOTE:** these bubble.
 - `routeWillChange` event (currently sync), router service event.
 
 `enter`:
@@ -347,7 +347,7 @@ The model hooks are an RSVP Promise chain handled by router_js. We can put them 
 
 - `activate` hook
 - `setupController` hook
-- `didTransition` event **NOTE: THESE BUBBLE BOTTOM UP!**
+- `didTransition` event **NOTE:** these bubble.
 - `routeDidChange` event, router service event
 
 ---
