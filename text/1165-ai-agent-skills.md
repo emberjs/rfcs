@@ -49,6 +49,21 @@ AI assistants are already part of day-to-day development. The ecosystem needs a 
 The `agent-skills` project provides an existing, interoperable format (agentskills.io) for packaging agent instructions and helper scripts.
 
 The fork at https://github.com/NullVoxPopuli/agent-skills already includes Ember-focused content (notably an “ember-best-practices” skill) and supporting build/validation tooling.
+### Skills benefit humans too
+
+While the packaging format is designed for agent consumption, the actual content—best practices, patterns, architectural guidance—is equally valuable to human developers. Skills partially supersede the [Cookbook RFC](https://github.com/emberjs/rfcs/issues/786) and could eventually be rendered on a site like [cookbook.emberjs.com](https://cookbook.emberjs.com/) so the same knowledge base serves both audiences.
+
+One might ask: why not just write documentation for humans and let LLMs discover it? Skills complement official documentation rather than replace it. The official Guides and API docs remain canonical. Skills add value by:
+
+- Providing opinionated, action-oriented instructions tuned to agent workflows (e.g. "review this component for accessibility regressions")
+- Bundling implicit knowledge that experienced Ember developers carry but that isn't always captured in reference docs
+- Pointing agents to the right canonical docs at the right time, rather than leaving them to search the entire surface area
+
+Where gaps exist in official documentation, skills can serve as a forcing function to identify and fix them upstream.
+
+### Why adopt now?
+
+Skills may not be the dominant AI integration pattern forever. However, there is demonstrated value today: community testing has shown that injecting Ember skills into a local model (e.g. qwen3-coder-next) improved output from roughly 70% correct (and confusing to newcomers) to nearly fault-free. Moving quickly lets the Ember ecosystem benefit now while the format is actively evolving (which [it is](https://agentskills.io/home), and the format generated into a project changes over time to use better techniques for ai token efficiency).
 
 ## Detailed design
 
@@ -73,17 +88,58 @@ The intention is that an agent can automatically apply a skill when it detects t
 
 This RFC does not require any one editor or AI provider. The point is to maintain shared content in a vendor-neutral format.
 
+**Scope clarification:** This RFC is about adopting the skills repo as shared infrastructure. The actual skill contents are a living set of micro-documents and are intentionally out of scope—they will evolve through normal PR workflows without requiring further RFCs. The contribution bar should be low: since AI output quality is inherently fuzzy, any potential improvement is worth trying, and we should not gate contributions on heavy process.
+
 ### Scope (initial)
 
 Start with the Ember-focused skill(s) already present in the fork, especially “ember-best-practices” (performance + accessibility oriented), and iterate from there.
 
-Version policy: Ember-focused skills in this repo target the current Ember version. We do not plan to maintain skills for older Ember majors; users working on older versions should rely on versioned docs and migration guides.
-
 Non-Ember skills that happen to live in the repo today can remain if they are useful for web development in general, but the adoption goal is to ensure Ember-centric guidance is first-class.
+
+### Versioning strategy
+
+Ember-focused skills target the **current Ember release** by default. The repo will use LTS-based folders so users can select the skill set appropriate for their project:
+
+```
+❯ pnpm dlx skills add ember-tooling/agent-skills
+
+┌   skills
+│
+◇  Found 2 skills
+│
+◆  Select skills to install (space to toggle)
+│  ◻ ember-release
+│  ◻ ember-lts-6.12
+└
+```
+
+When a new LTS is declared, the current `ember-release` files are copied into a new LTS folder (e.g. `ember-lts-6.12`). This gives LTS users a stable snapshot while `ember-release` continues to evolve.
+
+Backporting skills to much older versions (e.g. Ember 4) is possible if there is community desire, but it would require reorganizing skills by feature (e.g. template-tag, classic HBS) rather than by version, so that feature-specific guidance isn't incorrectly recommended to users whose projects don't use that feature.
+
+### External content policy
+
+Skills should avoid fetching content from external URLs at runtime. If a skill references third-party guidance (for example, Vercel's Web Interface Guidelines), that content should be **vendored** into the repo so that:
+
+- Skills work offline and in air-gapped environments
+- There is no risk of upstream content changing unexpectedly
+- All content is auditable through the normal PR review process
+
+Vendored content can be periodically updated via automated PRs that diff upstream changes.
+
+### Token efficiency
+
+Skill authors should follow emerging [agentskills best practices](https://github.com/mgechev/skills-best-practices) (and on [agentskills.io](https://agentskills.io/home)) for token efficiency. Since skills are injected into agent context windows, every token matters. Guidance should be concise, structured, and free of boilerplate.
 
 ### Installation / usage
 
-Agent Skills are installed from a repository reference (for example via tooling that supports []`npx add-skill …`](https://github.com/vercel-labs/skills?tab=readme-ov-file#skills)). Once installed, compatible agents can auto-apply skills when prompted.
+Agent Skills are installed from a repository reference. The recommended command once the repo is adopted:
+
+```sh
+pnpm dlx skills add ember-tooling/agent-skills
+```
+
+(This uses the [skills CLI](https://github.com/vercel-labs/skills?tab=readme-ov-file#skills).) Once installed, compatible agents can auto-apply skills when prompted.
 
 We should document the “happy path” using the `ember-tooling` repo location once adopted.
 
@@ -95,12 +151,16 @@ We should document the “happy path” using the `ember-tooling` repo location 
   - “Audit this template for accessibility regressions”
   - “Suggest improvements for bundle size / build output”
 - Cross-link from the `ember-mcp` recommendation: MCP provides data/tools; skills provide opinionated workflows.
+- Emphasize that skills are supplemental to the official Guides and API docs—not a replacement. Where skill content reveals gaps in canonical docs, those gaps should be fixed upstream.
+- Consider rendering skill content on [cookbook.emberjs.com](https://cookbook.emberjs.com/) so the same knowledge base is browsable by humans in a web-friendly format.
 
 ## Drawbacks
 
 - Maintenance burden: best practices evolve, and a “recommended” skill set must keep pace.
 - Risk of over-prescription: skills can encode opinions; we’ll need clear language about what’s “recommended” vs “optional.”
 - Safety: skills may include scripts; maintainers should be conservative about automation and emphasize review of actions.
+- Longevity: the "skills" format may be superseded as AI tooling matures. However, the underlying knowledge is valuable regardless of packaging, and the low-overhead nature of skills means the investment is proportionate to the risk.
+- Overlap with existing docs: skill content may duplicate guidance already in the Guides or API docs. This is acceptable as long as skills point back to canonical sources and doc gaps discovered through skill authoring are fed back upstream.
 
 ## Alternatives
 
@@ -111,6 +171,8 @@ We should document the “happy path” using the `ember-tooling` repo location 
 ## Unresolved questions
 
 - Governance: which group owns reviews and releases (Tooling team, Learning team, or shared working group)?
-- Release model: tags only, GitHub releases, or also published packages?
-- Policy: what skills qualify as “recommended” (and how do we deprecate or supersede skills)?
-- Security posture: what constraints do we place on including scripts (network access, destructive commands, sandboxing guidance)?
+- Release model: tags only, GitHub releases, or also published packages? (LTS-based folder snapshots are planned, but the exact release mechanics need definition.)
+- Policy: what skills qualify as "recommended" (and how do we deprecate or supersede skills)?
+- Security posture: what constraints do we place on including scripts (network access, destructive commands, sandboxing guidance)? All external content should be vendored rather than fetched at runtime.
+- Backporting: how far back do we support? The default is current-release-only, but community demand for older LTS or Ember 4 support would require feature-based skill organization.
+- Cookbook RFC integration: should skill content also be rendered on [cookbook.emberjs.com](https://cookbook.emberjs.com/), and if so, what is the build/publishing pipeline?
