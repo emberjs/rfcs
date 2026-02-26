@@ -50,7 +50,7 @@ This RFC is **not** intended to describe APIs that Ember app developers would ge
 
 The minimal API for a Route Manager consists of `capabilities`, `createRoute` and a `getDestroyable` method.
 
-```ts
+```typescript
 interface RouteManager {
 	capabilities: Capabilities;
 
@@ -85,7 +85,7 @@ The `getDestroyable` method takes a `RouteStateBucket` and will return the `Dest
 
 This follows the same pattern as existing manager implementations. This method will be used by the framework for the Route Base Classes it provides as well as by non-framework code wanting to provide their own Route Manager implementation.
 
-```ts
+```typescript
 // Takes a Factory function for the Manager with an Owner argument and
 // the Route base object/class/function for which the manager applies.
 setRouteManager: (
@@ -98,7 +98,7 @@ setRouteManager: (
 
 The NavigationState is an interface for the router to pass information to the manager methods. This interface can be extended with capabilities in the future.
 
-```ts
+```typescript
 // Passed in to the lifecycle methods
 interface NavigationState {
 	from: RouteInfo | undefined;
@@ -117,7 +117,7 @@ The `RouteInfo` classes refer to the existing public API `RouteInfo` as specifie
 
 The `NavigationActions` interface defines any actions that some of the manager hooks are allowed to call. For now this is just the `cancel` action which stops the current navigation. The implementation details are left to the router, but will at least need to abort the `signal` defined in the [`AsyncNavigationState` interface](#asyncnavigationstate-interface).
 
-```ts
+```typescript
 interface NavigationActions {
 	// Cancels the current navigation
 	cancel: () => void;
@@ -134,7 +134,7 @@ The `signal` is an `AbortSignal` provided by the Router which can be used to rea
 
 In addition, the Router will need to provide a method to the Route Managers to retrieve the [`resolvedContext`](#resolvedcontext) of a Route based on its `RouteInfo`.
 
-```ts
+```typescript
 // Exposes API used to interact with the active navigation, like awaiting ancestor's async behaviour.
 interface AsyncNavigationState  {
 	// Signal for the current navigation
@@ -160,7 +160,7 @@ This RFC proposes 3 groups of hooks for lifecycle management of a Route.
 
 The main lifecycle methods are accompanied by synchronous will*/did* methods. This gives the possibility of implementing lifecycle features like cancelling/preventing a route change, cleaning up after a route branch was fully exited. `update` and `enter` are promise-aware and will be awaited. These methods give the option to do asynchronous work that needs to happen before rendering.
 
-```ts
+```typescript
 
 interface RouteManager {
 	// Lifecycle hook called when the Route is about to be entered.
@@ -239,7 +239,7 @@ Any time the Classic Router interfaces with the RouteManager in a way we do not 
 
 A separate optional capability will be introduced to access the last resolved value of the model hook (equivalent). This leaves open the possibility of asynchronous lifecycle combined with routes accessing ancestor model data through use of the `getResolvedContext` method. A route manager may choose not to implement this capability.
 
-```ts
+```typescript
 interface RouteManagerWithResolvedContext = RouteManager & {
 	// Get the current resolved context (a.k.a. model) from the RouteStateBucket
 	resolvedContext(bucket: RouteStateBucket) => unknown;
@@ -250,7 +250,7 @@ interface RouteManagerWithResolvedContext = RouteManager & {
 
 When the `classicInterop` capability is set to `true` the Route Manager will have to provide an implementation for the methods that cross the Route Manager boundary to recreate the current Classic Router behaviour. The following list is a best-effort to find those methods, but it may need to change during implementation. The capability that opts in to these functions is not intended to be implemented by any other future Route Manager.
 
-```ts
+```typescript
 // Classic Router interoperability
 interface RouteManagerWithClassicInterop = RouteManager & {
 	getRouteName(bucket: RouteStateBucket) => string;
@@ -275,7 +275,7 @@ The necessary state will be taken from and stored in the passed `RouteStateBucke
 
 With the Classic Router, rendering is handled through `RenderState` objects combined with a (scheduled once) call to `router._setOutlets` which updates the render state tree with the new `RenderState` objects from the current routes. This looks something like:
 
-```ts
+```typescript
 let render: RenderState = {
     owner,
     name,
@@ -289,7 +289,7 @@ For the Route Manager API we will rework this structure to a generic invokable. 
 
 The return value of `getInvokable` is an object that needs to have an associated `ComponentManager`.
 
-```ts
+```typescript
 interface RouteManager {
 	getInvokable: (bucket: RouteStateBucket) => object;
 }
