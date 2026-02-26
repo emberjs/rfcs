@@ -115,7 +115,7 @@ The `RouteInfo` classes refer to the existing public API `RouteInfo` as specifie
 
 ### NavigationActions interface
 
-The `NavigationActions` interface defines any actions that some of the manager hooks are allowed to call. For now this is just the `cancel` action which stops the current navigation. The implementation details are left to the router, but will at least need to abort the `signal` defined in the `AsyncNavigationState` interface.
+The `NavigationActions` interface defines any actions that some of the manager hooks are allowed to call. For now this is just the `cancel` action which stops the current navigation. The implementation details are left to the router, but will at least need to abort the `signal` defined in the [`AsyncNavigationState` interface](#asyncnavigationstate-interface).
 
 ```ts
 interface NavigationActions {
@@ -132,7 +132,7 @@ The `signal` is an `AbortSignal` provided by the Router which can be used to rea
 
 `ancestorPromises` allows you to tie in to the asynchronous lifecycle of ancestor Routes. This opens the possibility for a RouteManager implementation for parallel resolution of the asynchronous lifecycle. The Classic Route Manager will rely on this behaviour to implement the current waterfall lifecycle.
 
-In addition, the Router will need to provide a method to the Route Managers to retrieve the `resolvedContext` (defined later in this document) of a Route based on its `RouteInfo`.
+In addition, the Router will need to provide a method to the Route Managers to retrieve the [`resolvedContext`](#resolvedcontext) of a Route based on its `RouteInfo`.
 
 ```ts
 // Exposes API used to interact with the active navigation, like awaiting ancestor's async behaviour.
