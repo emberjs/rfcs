@@ -67,6 +67,10 @@ If one day agent-skills are no longer needed by agents, these docs are still use
 
 Skills may not be the dominant AI integration pattern forever. However, there is demonstrated value today: community testing has shown that injecting Ember skills into a local model (e.g. qwen3-coder-next) improved output from roughly 70% correct (and confusing to newcomers) to nearly fault-free. Moving quickly lets the Ember ecosystem benefit now while the format is actively evolving (which [it is](https://agentskills.io/home), and the format generated into a project changes over time to use better techniques for ai token efficiency).
 
+We are prioritizing moving quickly and will not be guaranteeing any format stability within the agent-skills repo, but will put forth a best-effort for compatibility with the skill-generating/consuming tools available. 
+
+This is not promising the same stability that ember promises.
+
 ## Detailed design
 
 ### What is an “Agent Skill”?
