@@ -61,6 +61,8 @@ One might ask: why not just write documentation for humans and let LLMs discover
 
 Where gaps exist in official documentation, skills can serve as a forcing function to identify and fix them upstream.
 
+If one day agent-skills are no longer needed by agents, these docs are still useful for humans, training, reference, ideas, etc.
+
 ### Why adopt now?
 
 Skills may not be the dominant AI integration pattern forever. However, there is demonstrated value today: community testing has shown that injecting Ember skills into a local model (e.g. qwen3-coder-next) improved output from roughly 70% correct (and confusing to newcomers) to nearly fault-free. Moving quickly lets the Ember ecosystem benefit now while the format is actively evolving (which [it is](https://agentskills.io/home), and the format generated into a project changes over time to use better techniques for ai token efficiency).
