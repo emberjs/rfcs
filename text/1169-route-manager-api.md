@@ -69,7 +69,7 @@ interface CreateRouteArgs {
 
 #### `createRoute`
 
-The `createRoute` method on the Route Manager is responsible for taking the Route’s factory and arguments and based on that return a `RouteStateBucket` .
+The `createRoute` method on the Route Manager is responsible for taking the Route’s factory and arguments and based on that return a `RouteStateBucket`. This is invoked by a Router.
 
 ***Note:** It is up to the manager to decide whether or not this method actually instantiates the factory or if that happens at a later time, depending on the specific lifecycle the manager implementation wants to provide.*
 
@@ -79,7 +79,7 @@ The `RouteStateBucket` is a stable reference provided by the manager’s `create
 
 #### `getDestroyable`
 
-The `getDestroyable` method takes a `RouteStateBucket` and will return the `Destroyable` if applicable. This can be used by the manager implementation to wire up the lifetime of the route.
+The `getDestroyable` method takes a `RouteStateBucket` and will return the corresponding `Destroyable` if applicable.
 
 ### Determining which route manager to use
 
@@ -301,15 +301,15 @@ Since this is not an Ember app developer facing feature the guides don’t need 
 
 ## Drawbacks
 
-TBD
+This introduces a new layer that isn't strictly required, but experiments would be much harder without it. Splitting the existing implementation will not be trivial to separate, but it is worth the effort long term.
 
 ## Alternatives
 
-TBD
+The manager pattern is used across the Ember codebase with success and this is just the first step for formalizing improvements to the Router, alternatives were not explored. 
 
 ## Unresolved questions
 
-TBD
+None beyond implementation details.
 
 ## Addenda
 
