@@ -55,7 +55,7 @@ interface RouteManager {
 	capabilities: Capabilities;
 
 	// Responsible for the creation of a RouteStateBucket. Returns a RouteStateBucket, defined by the manager implementation.
-	createRoute: (factory, args: CreateRouteArgs) => RouteStateBucket;
+	createRoute: (factory: object, args: CreateRouteArgs) => RouteStateBucket;
 
 	// Returns the destroyable (if any) for the RouteStateBucket
 	getDestroyable: (bucket: RouteStateBucket) => Destroyable | null;
@@ -143,7 +143,9 @@ interface AsyncNavigationState  {
 	signal: AbortSignal;
 	
 	// A WeakMap of ancestor promises that can be used to await async ancestor behaviour.
-	ancestorPromises: WeakMap<RouteInfo, ReturnType<RouteManager.enter | RouteManager.update>>
+	private ancestorPromises: WeakMap<RouteInfo, ReturnType<RouteManager.enter>>;
+	
+	async getAncestorPromises(routeInfo: RouteInfo): ReturnType<RouteManager.enter>;
 	
 	// Retrieve the resolvedContext of an ancestor route.
 	getResolvedContext: (routeInfo: RouteInfo) => ReturnType<RouteManager.resolvedContext> | undefined;
@@ -285,8 +287,10 @@ For the Route Manager API we will rework this structure to a generic invokable. 
 The return value of `getInvokable` is an object that needs to have an associated `ComponentManager`.
 
 ```typescript
+import { ComponentLike } from '@glimmer/template';
+
 interface RouteManager {
-	getInvokable: (bucket: RouteStateBucket) => object;
+	getInvokable: (bucket: RouteStateBucket) => ComponentLike;
 }
 ```
 
