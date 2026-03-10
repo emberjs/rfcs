@@ -48,7 +48,7 @@ This RFC is **not** intended to describe APIs that Ember app developers would ge
 
 ### Route Manager basics
 
-The minimal API for a Route Manager consists of `capabilities`, `createRoute` and a `getDestroyable` method.
+A Route Manager always has `capabilities`, `createRoute` and a `getDestroyable` method.
 
 ```typescript
 interface RouteManager {
@@ -59,6 +59,8 @@ interface RouteManager {
 
 	// Returns the destroyable (if any) for the RouteStateBucket
 	getDestroyable: (bucket: RouteStateBucket) => Destroyable | null;
+	
+    // ... see below
 }
 
 interface CreateRouteArgs {
