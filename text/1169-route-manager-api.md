@@ -170,13 +170,6 @@ interface RouteManager {
 	// Called after all `enter` hooks for the current Route hierarchy have succesfully resolved.
 	didEnter: (bucket: RouteStateBucket, args: NavigationState) => void;
 
-	// Similar to willEnter, but called on a Route that was also part of the previous navigation.
-	willUpdate: (bucket: RouteStateBucket, args: NavigationState & NavigationActions) => void;
-	// Called when the dynamic segments (and in the case of the classic router query parameters as well) for the Route have been updated.
-	update: (bucket: RouteStateBucket, args: NavigationState & NavigationActions & AsyncNavigationState) => Promise<void>;
-	// Called when all updating Routes have updated.
-	didUpdate: (bucket: RouteStateBucket, args: NavigationState) => void;
-
 	// Called when the Route is about to be exited.
 	willExit: (bucket: RouteStateBucket, args: NavigationState & NavigationActions) => void;
 	// Called when the Route is exited.
@@ -186,7 +179,7 @@ interface RouteManager {
 }
 ```
 
-We strongly considered not adding the `update` hooks, but decided against it for ergonomics and simplicity reasons. Not adding it would minimise the Route Manager API surface, but make implementing different behaviour significantly less ergonomic for most Route Manager implementations, whereas implement the `update` hooks with the same behaviour as `exit` + `enter` is simply calling those methods within the manager.
+Capabilities could be used to implement optional `willUpdate`, `update`, and `didUpdate` hooks to increase developer ergonomics for dealing with entering a Route that was part of the previous navigation. They were dropped from the base manager to minimise the Route Manager API surface.
 
 The lifecycle of an example navigation between two nested routes looks as follows:
 
