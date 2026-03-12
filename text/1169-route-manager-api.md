@@ -69,6 +69,8 @@ interface CreateRouteArgs {
 }
 ```
 
+Note: this does not represent the full interface, it is expanded upon further into the RFC.
+
 #### `createRoute`
 
 The `createRoute` method on the Route Manager is responsible for taking the Route’s factory and arguments and based on that return a `RouteStateBucket`. This is invoked by a Router.
@@ -132,9 +134,7 @@ The `AsyncNavigationState` interface allows Route Managers to have a certain amo
 
 The `signal` is an `AbortSignal` provided by the Router which can be used to react to a cancellation of the current navigation. It can be passed to, for example, a `fetch` call.
 
-`ancestorPromises` allows you to tie in to the asynchronous lifecycle of ancestor Routes. This opens the possibility for a RouteManager implementation for parallel resolution of the asynchronous lifecycle. The Classic Route Manager will rely on this behaviour to implement the current waterfall lifecycle.
-
-In addition, the Router will need to provide a method to the Route Managers to retrieve the [`resolvedContext`](#resolvedcontext) of a Route based on its `RouteInfo`.
+`ancestorPromises` allows you to tie in to the asynchronous lifecycle of ancestor Routes. This opens the possibility for a RouteManager implementation for parallel resolution of the asynchronous lifecycle. The Classic Route Manager will rely on this behaviour to implement the current waterfall lifecycle. The ancestor promise will resolve with the `context` for that route i.e. in the Classic Route Manager that would be the return value for the `model()` hook.
 
 ```typescript
 // Exposes API used to interact with the active navigation, like awaiting ancestor's async behaviour.
@@ -143,14 +143,9 @@ interface AsyncNavigationState  {
 	signal: AbortSignal;
 	
 	// Retrieve the ancestor promises for an ancestor route that can be used to await async ancestor behaviour.
-	async getAncestorPromises(routeInfo: RouteInfo): ReturnType<RouteManager.enter>;
-	
-	// Retrieve the resolvedContext of an ancestor route.
-	getResolvedContext: (routeInfo: RouteInfo) => ReturnType<RouteManager.resolvedContext> | undefined;
+	async getAncestorPromise(routeInfo: RouteInfo): ReturnType<RouteManager.enter>;
 }
 ```
-
-Since `RouteManager.resolvedContext` is part of an optional capability for Route Manager implementations, `getResolvedContext` could return `undefined`.
 
 ### Route lifecycle
 
@@ -167,8 +162,8 @@ The main lifecycle methods are accompanied by synchronous will*/did* methods. Th
 interface RouteManager {
 	// Lifecycle hook called when the Route is about to be entered.
 	willEnter: (bucket: RouteStateBucket, args: NavigationState & NavigationActions) => void;
-	// Main asynchronous entry point
-	enter: (bucket: RouteStateBucket, args: NavigationState & NavigationActions & AsyncNavigationState) => Promise<void>;
+	// Main asynchronous entry point - return value is the context (a.k.a model) for the current route
+	enter: (bucket: RouteStateBucket, args: NavigationState & NavigationActions & AsyncNavigationState) => Promise<unknown>;
 	// Called after all `enter` hooks for the current Route hierarchy have succesfully resolved.
 	didEnter: (bucket: RouteStateBucket, args: NavigationState) => void;
 
@@ -230,17 +225,6 @@ Route Managers are required to have a `capabilities` property.  This property mu
 
 Any time the Classic Router interfaces with the RouteManager in a way we do not want in the future, we will shield this behind an optional capability. This capability or capabilities will at some point in the future be turned off by default through a deprecation.
 
-#### resolvedContext
-
-A separate optional capability will be introduced to access the last resolved value of the model hook (equivalent). This leaves open the possibility of asynchronous lifecycle combined with routes accessing ancestor model data through use of the `getResolvedContext` method. A route manager may choose not to implement this capability.
-
-```typescript
-interface RouteManagerWithResolvedContext = RouteManager & {
-	// Get the current resolved context (a.k.a. model) from the RouteStateBucket
-	resolvedContext(bucket: RouteStateBucket) => unknown;
-}
-```
-
 #### Classic Router interoperability
 
 When the `classicInterop` capability is set to `true` the Route Manager will have to provide an implementation for the methods that cross the Route Manager boundary to recreate the current Classic Router behaviour. The following list is a best-effort to find those methods, but it may need to change during implementation. The capability that opts in to these functions is not intended to be implemented by any other future Route Manager.
@@ -258,6 +242,9 @@ interface RouteManagerWithClassicInterop = RouteManager & {
 	serializeQueryParam(bucket: RouteStateBucket, value: unknown, urlKey: string, defaultValueType: string);
 	deserializeQueryParam(bucket: RouteStateBucket, value: unknown, urlKey: string, defaultValueType: string);
 	
+    // this allows for the implementation of Route.serialize()
+    serializeContext(bucket: RouteStateBucket, routeInfo: RouteInfo<Route>, value: unknown) => Record<string, unknown>;
+
 	// Actions/event handlers
 	queryParamsDidChange(bucket: RouteStateBucket, changed: {}, totalPresent: unknown, removed: {}) => boolean | void;
 	finalizeQueryParamChange(bucket: RouteStateBucket, params: Record<string, string | null | undefined>, finalParams: {}[], transition: Transition) => boolean | void;
