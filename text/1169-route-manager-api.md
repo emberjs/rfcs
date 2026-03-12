@@ -142,9 +142,7 @@ interface AsyncNavigationState  {
 	// Signal for the current navigation
 	signal: AbortSignal;
 	
-	// A WeakMap of ancestor promises that can be used to await async ancestor behaviour.
-	private ancestorPromises: WeakMap<RouteInfo, ReturnType<RouteManager.enter>>;
-	
+	// Retrieve the ancestor promises for an ancestor route that can be used to await async ancestor behaviour.
 	async getAncestorPromises(routeInfo: RouteInfo): ReturnType<RouteManager.enter>;
 	
 	// Retrieve the resolvedContext of an ancestor route.
@@ -183,7 +181,7 @@ interface RouteManager {
 }
 ```
 
-Capabilities could be used to implement optional `willUpdate`, `update`, and `didUpdate` hooks to increase developer ergonomics for dealing with entering a Route that was part of the previous navigation. They were dropped from the base manager to minimise the Route Manager API surface.
+Note: The current Route implementation has a different behaviour depending on if you are transitioning between two routes that are different, or if you are transitioning to the route you are currently on and changing any of the params for that route. This is an **internal concern** of the Route manager and will be implemented in the Classic Route Manager. We do not need to provide any `update()` hooks on the Route lifecycle to cater for this.
 
 The lifecycle of an example navigation between two nested routes looks as follows:
 
@@ -287,7 +285,7 @@ For the Route Manager API we will rework this structure to a generic invokable. 
 The return value of `getInvokable` is an object that needs to have an associated `ComponentManager`.
 
 ```typescript
-import { ComponentLike } from '@glimmer/template';
+import type { ComponentLike } from '@glint/template';
 
 interface RouteManager {
 	getInvokable: (bucket: RouteStateBucket) => ComponentLike;
@@ -305,6 +303,12 @@ This introduces a new layer that isn't strictly required, but experiments would 
 ## Alternatives
 
 The manager pattern is used across the Ember codebase with success and this is just the first step for formalizing improvements to the Router, alternatives were not explored. 
+
+### Route lifecycle update hooks
+
+A previous iteration of this RFC provided explicit `willUpdate()`, `update()`, and `didUpdate()` hooks in the Root Manager interface that were distinct to the `enter()` related hooks and would only be called when you are entering the same route you are currently on with a transition. This was added to simplify the implementation of the Classic Route Manager, which is intended to encapsulate the current behaviour of Ember's existing routes. In reality the trade-off between making the implementation easier and having a wider API surface area is most likely not worth it.
+
+This will require the Classic Route Manager to do some more elaborate internal work to provide the same lifecycle hooks that current Routes expect, this is an intentional decision to improve the interface of the Manager API and will not have a lasting impact on Ember as the Classic Route Manager is intended to be a compatibility-layer for existing applications and will be phased out.
 
 ## Unresolved questions
 
