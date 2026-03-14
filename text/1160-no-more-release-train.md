@@ -58,6 +58,7 @@ We want a workflow where blueprint changes can ship as soon as they are merged, 
 - Blueprint packages ship continuously from `main`.
 - `ember-cli` defaults to a known-good, pinned blueprint version.
 - Users may choose the latest blueprint version at generation time.
+- Users may specify any specific blueprint version at generation time (e.g. for testing).
 - If pinned and latest match, do not prompt.
 
 ### Non-goals
@@ -139,13 +140,31 @@ If the user is offline or the registry is unavailable:
 - `ember new my-app`
   - No prompt; generation proceeds using the bundled version.
 
+If the user specifies a specific blueprint version:
+
+- `ember new my-app --blueprints-version=1.2.3`
+  - No prompt; generation proceeds using blueprint version `1.2.3`.
+
+#### Specifying a specific blueprint version
+
+Users may also specify an exact blueprint version using a flag such as `--blueprints-version=X.Y.Z` (or equivalent). This is useful for:
+
+- Testing a specific blueprint release before it becomes the bundled default.
+- Reproducing a blueprint output from a known version for debugging or comparison.
+- Downgrading to an older blueprint version when needed (e.g. to verify behavior differences between releases).
+
+When this flag is provided, `ember-cli` must skip the interactive prompt and use the requested version directly. If the requested version cannot be resolved (e.g. it does not exist on the registry), `ember-cli` should report an error and abort.
+
+This flag is intentionally lower-profile than `--use-latest-blueprints`—it targets advanced users and tooling authors who have a specific reason to pin to a particular version. It should be documented but not prominently featured in onboarding materials.
+
 #### Non-interactive environments
 
 When `ember-cli` is running in a non-interactive environment (e.g. CI), the default must be bundled to preserve determinism.
 
-This RFC recommends (but does not require) an explicit opt-in flag to avoid relying on interactive prompting in automation:
+This RFC recommends (but does not require) explicit opt-in flags to avoid relying on interactive prompting in automation:
 
 - `--use-latest-blueprints` (or equivalent) to force using the latest blueprint version.
+- `--blueprints-version=X.Y.Z` (or equivalent) to force using a specific blueprint version.
 
 ### Implementation notes (non-normative)
 
