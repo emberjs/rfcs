@@ -58,6 +58,7 @@ We want a workflow where blueprint changes can ship as soon as they are merged, 
 - Blueprint packages ship continuously from `main`.
 - `ember-cli` defaults to a known-good, pinned blueprint version.
 - Users may choose the latest blueprint version at generation time.
+- Users may specify any specific blueprint version at generation time—interactively via a version selection UI, or non-interactively via `--blueprint @blueprint/name@version` (e.g. for testing).
 - If pinned and latest match, do not prompt.
 
 ### Non-goals
@@ -110,6 +111,7 @@ When a user runs `ember new` or `ember addon`, `ember-cli` must:
 
   - Use bundled version (recommended): generate with the pinned version.
   - Use latest version: generate with the latest published blueprint version.
+  - Choose a specific version: present a version selection UI (e.g. a list of recent published versions from the registry) so the user can pick an exact version.
 
 4. If the versions are the same, proceed with no prompt.
 
@@ -119,6 +121,7 @@ The prompt should be explicit about the tradeoff:
 
 - Bundled: maximizes stability and matches the `ember-cli` release.
 - Latest: includes the newest blueprint improvements.
+- Specific version: allows the user to pick any published version from a list.
 
 If the registry lookup fails (offline, network errors, etc.), `ember-cli` should proceed with the bundled version and must not block generation.
 
@@ -127,7 +130,12 @@ If the registry lookup fails (offline, network errors, etc.), `ember-cli` should
 If the bundled blueprint version and latest blueprint version differ:
 
 - `ember new my-app`
-  - Prompt: Use bundled version (vX.Y.Z, recommended) / Use latest version (vX.Y.Z)
+  - Prompt: Use bundled version (vX.Y.Z, recommended) / Use latest version (vX.Y.Z) / Choose a specific version…
+
+If the user selects "Choose a specific version":
+
+- `ember new my-app` → selects "Choose a specific version"
+  - Secondary prompt: presents a list of recent published blueprint versions for selection; generation proceeds with the chosen version.
 
 If the bundled blueprint version and latest blueprint version are the same:
 
@@ -139,6 +147,27 @@ If the user is offline or the registry is unavailable:
 - `ember new my-app`
   - No prompt; generation proceeds using the bundled version.
 
+If the user specifies a specific blueprint version:
+
+- `ember new my-app --blueprint @ember/app-blueprint@1.2.3`
+  - No prompt; generation proceeds using blueprint version `1.2.3`.
+
+#### Specifying a specific blueprint version
+
+Users can select an exact blueprint version in two ways:
+
+**Interactive mode:** When the interactive prompt is shown, users may choose "Choose a specific version". `ember-cli` fetches a list of recent published versions from the registry and presents them as a selectable list. After the user picks a version, generation proceeds with that version and no further prompt is shown.
+
+> **Note:** The interactive version selection UI described here is contingent on out-of-scope work to make blueprint generation generally interactive (i.e. the broader effort to add interactive prompting to `ember new`/`ember addon` flows). That work is a prerequisite for this UI and is not defined by this RFC.
+
+**Non-interactive mode:** Users can pass a version-qualified package specifier to the existing `--blueprint` flag:
+
+```
+ember new my-app --blueprint @ember/app-blueprint@1.2.3
+```
+
+`ember-cli` must skip the interactive prompt when a versioned blueprint is explicitly specified this way.
+
 #### Non-interactive environments
 
 When `ember-cli` is running in a non-interactive environment (e.g. CI), the default must be bundled to preserve determinism.
@@ -146,6 +175,8 @@ When `ember-cli` is running in a non-interactive environment (e.g. CI), the defa
 This RFC recommends (but does not require) an explicit opt-in flag to avoid relying on interactive prompting in automation:
 
 - `--use-latest-blueprints` (or equivalent) to force using the latest blueprint version.
+
+To use a specific blueprint version in automation, use `--blueprint @blueprint/name@version` (the existing mechanism).
 
 ### Implementation notes (non-normative)
 
