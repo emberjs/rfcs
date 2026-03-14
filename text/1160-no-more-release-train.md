@@ -158,6 +158,8 @@ Users can select an exact blueprint version in two ways:
 
 **Interactive mode:** When the interactive prompt is shown, users may choose "Choose a specific version". `ember-cli` fetches a list of recent published versions from the registry and presents them as a selectable list. After the user picks a version, generation proceeds with that version and no further prompt is shown.
 
+> **Note:** The interactive version selection UI described here is contingent on out-of-scope work to make blueprint generation generally interactive (i.e. the broader effort to add interactive prompting to `ember new`/`ember addon` flows). That work is a prerequisite for this UI and is not defined by this RFC.
+
 **Non-interactive mode:** Users can pass a version-qualified package specifier to the existing `--blueprint` flag:
 
 ```
