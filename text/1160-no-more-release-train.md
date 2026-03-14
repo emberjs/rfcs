@@ -58,7 +58,7 @@ We want a workflow where blueprint changes can ship as soon as they are merged, 
 - Blueprint packages ship continuously from `main`.
 - `ember-cli` defaults to a known-good, pinned blueprint version.
 - Users may choose the latest blueprint version at generation time.
-- Users may specify any specific blueprint version at generation time via `--blueprint @blueprint/name@version` (e.g. for testing).
+- Users may specify any specific blueprint version at generation time—interactively via a version selection UI, or non-interactively via `--blueprint @blueprint/name@version` (e.g. for testing).
 - If pinned and latest match, do not prompt.
 
 ### Non-goals
@@ -111,6 +111,7 @@ When a user runs `ember new` or `ember addon`, `ember-cli` must:
 
   - Use bundled version (recommended): generate with the pinned version.
   - Use latest version: generate with the latest published blueprint version.
+  - Choose a specific version: present a version selection UI (e.g. a list of recent published versions from the registry) so the user can pick an exact version.
 
 4. If the versions are the same, proceed with no prompt.
 
@@ -120,6 +121,7 @@ The prompt should be explicit about the tradeoff:
 
 - Bundled: maximizes stability and matches the `ember-cli` release.
 - Latest: includes the newest blueprint improvements.
+- Specific version: allows the user to pick any published version from a list.
 
 If the registry lookup fails (offline, network errors, etc.), `ember-cli` should proceed with the bundled version and must not block generation.
 
@@ -128,7 +130,12 @@ If the registry lookup fails (offline, network errors, etc.), `ember-cli` should
 If the bundled blueprint version and latest blueprint version differ:
 
 - `ember new my-app`
-  - Prompt: Use bundled version (vX.Y.Z, recommended) / Use latest version (vX.Y.Z)
+  - Prompt: Use bundled version (vX.Y.Z, recommended) / Use latest version (vX.Y.Z) / Choose a specific version…
+
+If the user selects "Choose a specific version":
+
+- `ember new my-app` → selects "Choose a specific version"
+  - Secondary prompt: presents a list of recent published blueprint versions for selection; generation proceeds with the chosen version.
 
 If the bundled blueprint version and latest blueprint version are the same:
 
@@ -147,19 +154,17 @@ If the user specifies a specific blueprint version:
 
 #### Specifying a specific blueprint version
 
-Users who need to generate a project with a specific blueprint version can use the existing `--blueprint` flag with a version-qualified package specifier:
+Users can select an exact blueprint version in two ways:
+
+**Interactive mode:** When the interactive prompt is shown, users may choose "Choose a specific version". `ember-cli` fetches a list of recent published versions from the registry and presents them as a selectable list. After the user picks a version, generation proceeds with that version and no further prompt is shown.
+
+**Non-interactive mode:** Users can pass a version-qualified package specifier to the existing `--blueprint` flag:
 
 ```
 ember new my-app --blueprint @ember/app-blueprint@1.2.3
 ```
 
-This is useful for:
-
-- Testing a specific blueprint release before it becomes the bundled default.
-- Reproducing a blueprint output from a known version for debugging or comparison.
-- Downgrading to an older blueprint version when needed (e.g. to verify behavior differences between releases).
-
-Because this uses ember-cli's existing `--blueprint` mechanism, no new flag is required. `ember-cli` must skip the interactive prompt when a versioned blueprint is explicitly specified.
+`ember-cli` must skip the interactive prompt when a versioned blueprint is explicitly specified this way.
 
 #### Non-interactive environments
 
