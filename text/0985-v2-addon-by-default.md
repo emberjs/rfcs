@@ -65,9 +65,12 @@ my-addon/
 │   └── templates/                    # Demo app templates
 ├── unpublished-development-types/    # Development-only types
 │   └── index.d.ts                    # Local development type augmentations
+├── config/
+│   └── ember-cli-update.json         # Blueprint version tracking
 ├── dist/                             # Built output (gitignored, published)
 ├── declarations/                     # TypeScript declarations (gitignored, published)
 ├── package.json                      # Package configuration with modern exports
+├── index.html                        # Demo application entry page
 ├── rollup.config.mjs                 # Production build configuration
 ├── vite.config.mjs                   # Development build configuration
 ├── tsconfig.json                     # Development TypeScript config
@@ -75,13 +78,14 @@ my-addon/
 ├── babel.config.cjs                  # Development Babel config
 ├── babel.publish.config.cjs          # Publishing Babel config
 ├── eslint.config.mjs                 # Modern ESLint flat config
-├── .prettierrc.cjs                   # Code formatting configuration
-├── .template-lintrc.cjs              # Template linting rules
+├── .prettierrc.mjs                   # Code formatting configuration
+├── .prettierignore                   # Prettier ignore patterns
+├── .template-lintrc.mjs              # Template linting rules
 ├── testem.cjs                        # Test runner configuration
 ├── .try.mjs                          # Ember version compatibility scenarios
-├── .npmrc                            # Package manager configuration
 ├── .editorconfig                     # Editor consistency rules
 ├── .env.development                  # Development environment variables
+├── .gitignore                        # Git ignore patterns
 ├── README.md                         # Documentation template
 ├── CONTRIBUTING.md                   # Contribution guidelines
 ├── LICENSE.md                        # MIT license
@@ -106,7 +110,7 @@ The testing architecture implemented in this addon blueprint serves as a technic
 
 The test environment demonstrates a minimal Ember application running entirely on Vite without webpack or ember-cli-build.js dependencies. This architecture eliminates complex build pipeline abstractions while maintaining full framework compatibility, suggesting viability for production application development.
 
-The `tests/test-helper.js` implementation creates Ember applications using only `EmberApp`, `Resolver`, and `EmberRouter` - a significantly simplified bootstrap process compared to traditional ember-cli approaches. This pattern demonstrates how future applications could reduce initialization complexity while preserving framework functionality.
+The `tests/test-helper.ts` implementation creates Ember applications using `EmberApp` (from `ember-strict-application-resolver`) and `EmberRouter` - a significantly simplified bootstrap process compared to traditional ember-cli approaches. This pattern demonstrates how future applications could reduce initialization complexity while preserving framework functionality.
 
 The architecture utilizes ES modules and standard import semantics throughout, replacing the AMD/requirejs patterns prevalent in traditional Ember applications. The test discovery mechanism employs Vite's `import.meta.glob`, which could extend to application development for route and component discovery through standard module resolution rather than custom file-system scanning.
 
@@ -133,7 +137,8 @@ The generated `package.json` follows modern NPM conventions with several key des
   "files": [
     "addon-main.cjs",
     "declarations",
-    "dist"
+    "dist",
+    "src"
   ],
   "ember": {
     "edition": "octane"
@@ -165,7 +170,7 @@ The package configuration implements several important architectural patterns:
 
 The exports map utilizes conditional exports to ensure proper resolution of both TypeScript declarations and JavaScript modules across all environments. Import maps (`#src/*`) enable clean internal imports for test and demo application code, though these cannot be used within `src/` files due to Rollup's transformation limitations during the build process.
 
-The published package includes only essential runtime files (`dist`, `declarations`, `addon-main.cjs`) to minimize package size, while the `ember-addon.version: 2` declaration ensures proper V2 addon recognition by tooling and consuming applications.
+The published package includes essential runtime files (`dist`, `declarations`, `addon-main.cjs`) along with `src` for source-level debugging and editor go-to-definition support, while the `ember-addon.version: 2` declaration ensures proper V2 addon recognition by tooling and consuming applications.
 
 #### Development vs. Production Configuration Split
 
@@ -205,19 +210,23 @@ Enables fast development builds with HMR, compatibility mode for older Ember ver
 ```javascript
 import { babel } from '@rollup/plugin-babel';
 import { Addon } from '@embroider/addon-dev/rollup';
+import { fileURLToPath } from 'node:url';
+import { resolve, dirname } from 'node:path';
 
 const addon = new Addon({
   srcDir: 'src',
   destDir: 'dist',
 });
 
+const rootDirectory = dirname(fileURLToPath(import.meta.url));
+const babelConfig = resolve(rootDirectory, './babel.publish.config.cjs');
+const tsConfig = resolve(rootDirectory, './tsconfig.publish.json');
+
 export default {
   output: addon.output(),
   plugins: [
     addon.publicEntrypoints(['**/*.js', 'index.js', 'template-registry.js']),
     addon.appReexports([
-      // (instance) initializers are omitted from this list, because not many libraries provide them.
-      // There is also an upcoming RFC on this topic.
       'components/**/*.js',
       'helpers/**/*.js',
       'modifiers/**/*.js',
@@ -227,19 +236,22 @@ export default {
     babel({
       extensions: ['.js', '.gjs', '.ts', '.gts'],
       babelHelpers: 'bundled',
-      configFile: './babel.publish.config.cjs',
+      configFile: babelConfig,
     }),
     addon.hbs(),
     addon.gjs(),
     // Emit .d.ts declaration files
-    addon.declarations('declarations', 'npx ember-tsc --declaration --project ./tsconfig.publish.json'),
+    addon.declarations(
+      'declarations',
+      `npx @glint/ember-tsc -- --declaration --project ${tsConfig}`,
+    ),
     addon.keepAssets(['**/*.css']),
     addon.clean(),
   ],
 };
 ```
 
-Ensures optimized output with tree-shaking, automatic TypeScript declaration generation (when using `--typescript`), V2 package compliance, and proper asset handling.
+Ensures optimized output with tree-shaking, automatic TypeScript declaration generation via `@glint/ember-tsc` (when using `--typescript`), V2 package compliance, and proper asset handling.
 
 ### TypeScript and Glint Integration
 
@@ -329,6 +341,7 @@ import * as QUnit from 'qunit';
 import { setApplication } from '@ember/test-helpers';
 import { setup } from 'qunit-dom';
 import { start as qunitStart, setupEmberOnerrorValidation } from 'ember-qunit';
+import { setTesting } from '@embroider/macros';
 
 class Router extends EmberRouter {
   location = 'none';
@@ -337,7 +350,7 @@ class Router extends EmberRouter {
 
 class TestApp extends EmberApp {
   modules = {
-    './router': { default: Router },
+    './router': Router,
     // add any custom services here
     // import.meta.glob('./services/*', { eager: true }),
   };
@@ -346,6 +359,7 @@ class TestApp extends EmberApp {
 Router.map(function () {});
 
 export function start() {
+  setTesting(true);
   setApplication(
     TestApp.create({
       autoboot: false,
@@ -415,6 +429,13 @@ module.exports = async function (defaults) {
   }),
 };
 
+const compatDeps = {
+  '@embroider/compat': '^4.0.3',
+  'ember-cli': '^5.12.0',
+  'ember-auto-import': '^2.10.0',
+  '@ember/optional-features': '^2.2.0',
+};
+
 export default {
   scenarios: [
     {
@@ -430,12 +451,56 @@ export default {
       },
       files: compatFiles,
     },
-    // Additional scenarios for 5.12, 6.4, latest, beta, alpha
+    {
+      name: 'ember-lts-5.12',
+      npm: {
+        devDependencies: {
+          'ember-source': '~5.12.0',
+          ...compatDeps,
+        },
+      },
+      env: {
+        ENABLE_COMPAT_BUILD: true,
+      },
+      files: compatFiles,
+    },
+    {
+      name: 'ember-lts-6.4',
+      npm: {
+        devDependencies: {
+          'ember-source': 'npm:ember-source@~6.4.0',
+        },
+      },
+    },
+    {
+      name: 'ember-latest',
+      npm: {
+        devDependencies: {
+          'ember-source': 'npm:ember-source@latest',
+        },
+      },
+    },
+    {
+      name: 'ember-beta',
+      npm: {
+        devDependencies: {
+          'ember-source': 'npm:ember-source@beta',
+        },
+      },
+    },
+    {
+      name: 'ember-alpha',
+      npm: {
+        devDependencies: {
+          'ember-source': 'npm:ember-source@alpha',
+        },
+      },
+    },
   ],
 };
 ```
 
-Tests against all supported Ember LTS versions, beta/alpha releases, with automatic compat builds for older versions and modern feature flags enabled.
+Tests against all supported Ember LTS versions, beta/alpha releases, with automatic compat builds for older versions requiring `@embroider/compat` and modern feature flags enabled. Ember 6.4+ scenarios run without compat mode, demonstrating the path toward a fully native Vite build.
 
 ### Build System Architecture
 
@@ -456,14 +521,17 @@ The blueprint maintains separate Babel configurations for development and produc
 Like the `tsconfig.json`, this is the configuration used by editors and tests.
 
 ```javascript
+/**
+ * This babel.config is not used for publishing.
+ * It's only for the local editing experience
+ * (and linting)
+ */
 const { buildMacros } = require('@embroider/macros/babel');
 const { babelCompatSupport, templateCompatSupport } = require('@embroider/compat/babel');
 
-/**
- * In testing, we need to evaluate @embroider/macros
- * in the publish config we omit this, because it's the consuming app's responsibility to evaluate the macros. 
- */
 const macros = buildMacros();
+
+// For scenario testing
 const isCompat = Boolean(process.env.ENABLE_COMPAT_BUILD);
 
 module.exports = {
@@ -493,10 +561,12 @@ module.exports = {
 
 **Production Babel (`babel.publish.config.cjs`)**:
 
-> [!IMPORTANT]
-> @embroider/macros is deliberately omitted from this config, because it's the consuming app's responsibility to evaluate macros.
-
 ```javascript
+/**
+ * This babel.config is only used for publishing.
+ *
+ * For local dev experience, see the babel.config
+ */
 module.exports = {
   plugins: [
     ['@babel/plugin-transform-typescript', {
@@ -530,7 +600,7 @@ The test architecture in this addon blueprint serves as a prototype for how we e
 
 **Vite-First Architecture**: The addon's test setup demonstrates a minimal Ember application running entirely on Vite without any webpack or ember-cli-build.js complexity. This same pattern would be ideal for v2 apps - direct Vite integration with Ember resolver and routing eliminates the need for complex build pipeline abstractions.
 
-**Minimal Application Bootstrap**: The `tests/test-helper.js` creates a bare-bones Ember app using just `EmberApp`, `Resolver`, and `EmberRouter`. This approach eliminates the traditional ember-cli build pipeline and shows how future apps could bootstrap with much less ceremony. The pattern of directly importing and configuring Ember's core classes provides a blueprint for simpler app initialization.
+**Minimal Application Bootstrap**: The `tests/test-helper.ts` creates a bare-bones Ember app using just `EmberApp` (from `ember-strict-application-resolver`) and `EmberRouter`. This approach eliminates the traditional ember-cli build pipeline and shows how future apps could bootstrap with much less ceremony. The pattern of directly importing and configuring Ember's core classes provides a blueprint for simpler app initialization.
 
 **Modern Module Resolution**: The test setup uses ES modules and modern imports throughout, avoiding the complex AMD/requirejs patterns of traditional Ember apps. Future v2 apps should follow this same module pattern, using standard `import` statements and module resolution rather than the custom loader.js system.
 
@@ -651,8 +721,9 @@ Automatically builds and pushes compiled assets to a `dist` branch for Git-based
 The blueprint uses modern ESLint flat configuration (`eslint.config.mjs`):
 
 ```javascript
-import babelParser from '@babel/eslint-parser';
+import babelParser from '@babel/eslint-parser/experimental-worker';
 import js from '@eslint/js';
+import { defineConfig, globalIgnores } from 'eslint/config';
 import prettier from 'eslint-config-prettier';
 import ember from 'eslint-plugin-ember/recommended';
 import importPlugin from 'eslint-plugin-import';
@@ -660,14 +731,34 @@ import n from 'eslint-plugin-n';
 import globals from 'globals';
 import ts from 'typescript-eslint';
 
-const config = [
+const esmParserOptions = {
+  ecmaFeatures: { modules: true },
+  ecmaVersion: 'latest',
+};
+
+const tsParserOptions = {
+  projectService: true,
+  tsconfigRootDir: import.meta.dirname,
+};
+
+export default defineConfig([
+  globalIgnores(['dist/', 'dist-*/', 'declarations/', 'coverage/', '!**/.*']),
   js.configs.recommended,
   prettier,
   ember.configs.base,
   ember.configs.gjs,
   ember.configs.gts,
-  
-  // File-specific configurations for different contexts
+  {
+    linterOptions: {
+      reportUnusedDisableDirectives: 'error',
+    },
+  },
+  {
+    files: ['**/*.js'],
+    languageOptions: {
+      parser: babelParser,
+    },
+  },
   {
     files: ['**/*.{js,gjs}'],
     languageOptions: {
@@ -680,21 +771,31 @@ const config = [
     languageOptions: {
       parser: ember.parser,
       parserOptions: tsParserOptions,
+      globals: { ...globals.browser },
     },
-    extends: [...ts.configs.recommendedTypeChecked, ember.configs.gts],
+    extends: [
+      ...ts.configs.recommendedTypeChecked,
+      { ...ts.configs.eslintRecommended, files: undefined },
+      ember.configs.gts,
+    ],
   },
-  // ... additional configurations
-];
-
-export default ts.config(...config);
+  {
+    files: ['src/**/*'],
+    plugins: { import: importPlugin },
+    rules: {
+      'import/extensions': ['error', 'always', { ignorePackages: true }],
+    },
+  },
+  // ... additional CJS/ESM node file configurations
+]);
 ```
 
-This uses ESLint's new flat configuration format (which is faster and clearer), includes full TypeScript support with type-aware linting, has comprehensive Ember-specific rules including .gjs/.gts support, uses different rules for different contexts (browser vs. Node.js), and validates your imports to make sure you're using relative paths correctly.
+This uses ESLint's flat configuration format with `defineConfig` and `globalIgnores` from `eslint/config`, includes full TypeScript support with type-aware linting via `projectService`, has comprehensive Ember-specific rules including .gjs/.gts support, uses different rules for different contexts (browser vs. Node.js), and validates your imports to make sure you're using relative paths correctly with proper extensions in `src/`.
 
 #### Template Linting
 ```javascript
-// .template-lintrc.cjs
-module.exports = {
+// .template-lintrc.mjs
+export default {
   extends: 'recommended',
   checkHbsTemplateLiterals: false,
 };
@@ -704,8 +805,8 @@ The template linting configuration uses the recommended rule set but disables ch
 
 #### Prettier Configuration
 ```javascript
-// .prettierrc.cjs
-module.exports = {
+// .prettierrc.mjs
+export default {
   plugins: ['prettier-plugin-ember-template-tag'],
   overrides: [
     {
@@ -720,19 +821,6 @@ module.exports = {
 ```
 
 This configuration ensures consistent formatting across all JavaScript/TypeScript files while properly handling .gjs/.gts template tags.
-
-### Package Management Configuration
-
-#### NPM Configuration (`.npmrc`)
-```
-# we don't want addons to be bad citizens of the ecosystem
-auto-install-peers=false
-
-# we want true isolation, if a dependency is not declared, we want an error
-resolve-peers-from-workspace-root=false
-```
-
-The NPM configuration enforces explicit dependency declaration by disabling auto-install-peers and prevents workspace root resolution to ensure complete package isolation. These constraints guarantee proper dependency boundaries and maintain NPM ecosystem compatibility standards.
 
 ### V1 Compatibility Strategy
 
@@ -865,12 +953,12 @@ addon.publicEntrypoints(['**/*.js', 'index.js', 'template-registry.js'])
 
 - **publicEntrypoints** - Defines what files consumers can import (matches `package.json#exports`)
 - **appReexports** - Automatically makes components/helpers/etc. available in consuming apps
-- **declarations** - Generates TypeScript declarations alongside JavaScript
+- **declarations** - Generates TypeScript declarations alongside JavaScript via `@glint/ember-tsc`
 - **keepAssets** - Preserves CSS and other static files
 
 The build process:
 1. Transpiles TypeScript/templates using Babel (publish config)
-2. Generates TypeScript declarations using `ember-tsc`
+2. Generates TypeScript declarations using `@glint/ember-tsc`
 3. Creates optimized JavaScript in `dist/` matching your `src/` structure
 4. Preserves CSS and other assets
 
