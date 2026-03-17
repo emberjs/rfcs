@@ -274,9 +274,79 @@ The blueprint uses two tsconfigs:
 
 The Glint template registry (`src/template-registry.ts`) lets apps using loose mode (hbs files) consume your types. Not needed if your library only targets strict mode consumers.
 
+### The Strict Resolver and `modules`
+
+Both the test helper and the demo app use `ember-strict-application-resolver` instead of the classic Ember resolver. Instead of filesystem conventions, you explicitly register modules via a `modules` object. Each key must match a `./[type]/[name]` pattern (see [RFC 1132](https://rfcs.emberjs.com/id/1132-default-strict-resolver)):
+
+```typescript
+class MyApp extends EmberApp {
+  modules = {
+    './router': Router,                              // direct assignment
+    './services/page-title': PageTitleService,        // explicit import
+    ...import.meta.glob('./services/**/*', { eager: true }),  // bulk registration
+    ...import.meta.glob('./templates/**/*', { eager: true }),
+  };
+}
+```
+
+You can register modules individually (useful for things from dependencies) or use `import.meta.glob` to sweep up everything in a directory. The glob approach is convenient but imports everything matching the pattern -- if you have non-service files in `services/`, they'll get pulled in too.
+
+This pattern is used in two places:
+
+- **Test helper** -- registers a minimal Router and optionally any services needed for tests
+- **Demo app** -- registers the Router, templates, services, and anything else the demo needs
+
+### Demo App
+
+The blueprint includes a small demo application for manually testing your addon during development. Run `npm start` (or `pnpm start`) to launch Vite's dev server, which serves the root `index.html`:
+
+**`index.html`**:
+```html
+<!doctype html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8" />
+  <title>Demo App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./demo-app/styles.css" />
+</head>
+<body>
+  <script type="module">
+    import { App } from './demo-app/app';
+    App.create({})
+  </script>
+</body>
+</html>
+```
+
+**`demo-app/app.gts`**:
+```typescript
+import EmberApp from 'ember-strict-application-resolver';
+import EmberRouter from '@ember/routing/router';
+import PageTitleService from 'ember-page-title/services/page-title';
+
+class Router extends EmberRouter {
+  location = 'history';
+  rootURL = '/';
+}
+
+export class App extends EmberApp {
+  modules = {
+    './router': Router,
+    './services/page-title': PageTitleService,
+    ...import.meta.glob('./services/**/*', { eager: true }),
+    ...import.meta.glob('./templates/**/*', { eager: true }),
+  };
+}
+
+Router.map(function () {});
+```
+
+The demo app is a real Ember app -- it has routes, templates, and services -- but it boots directly via `ember-strict-application-resolver` with no ember-cli build step. Any addon code you want to exercise in the demo needs to be imported in the demo app's templates or registered in `modules`. The demo app's files are not published (they're not in the `files` array or `exports`).
+
 ### Testing
 
-Tests run entirely on Vite -- no ember-cli build pipeline, no webpack.
+Tests also run entirely on Vite -- no ember-cli build pipeline, no webpack.
 
 **`tests/test-helper.ts`**:
 ```typescript
@@ -349,7 +419,7 @@ export function start() {
 </html>
 ```
 
-The test setup creates a minimal Ember app using `ember-strict-application-resolver` and `EmberRouter` directly -- no ember-cli abstraction layer. Test discovery uses `import.meta.glob`. This is also a proof-of-concept for how future compat-less Ember apps could work: ES modules throughout, Vite-native builds, direct framework API usage.
+The test app is structurally the same as the demo app -- a minimal Ember app via `ember-strict-application-resolver` -- but configured for testing (`location = 'none'`, `autoboot: false`, `setTesting(true)`). Test discovery uses `import.meta.glob` in the HTML entry point. This is also a proof-of-concept for how future compat-less Ember apps could work.
 
 #### Cross-Version Testing
 
@@ -709,9 +779,31 @@ Existing addons are unaffected. New addons get the new blueprint automatically. 
 
 `imports` with `#src/*` lets tests and the demo app import from source without rebuilding. Can't be used in `src/` (Rollup won't transform these). Files in `src/` must use relative imports.
 
+#### Importing Addon Code in Tests: `#src/*` vs. Consumer-Style
+
+When writing tests, you have two ways to import from your addon:
+
+**`#src/*` imports** -- import directly from source files:
+```javascript
+import { myHelper } from '#src/helpers/my-helper';
+```
+- Works immediately, no build step needed
+- Fast feedback loop during development
+- Tests the source code directly
+
+**Consumer-style imports** -- import as a consumer would:
+```javascript
+import { myHelper } from 'my-addon/helpers/my-helper';
+```
+- Tests the published API surface
+- Requires `dist/` to exist (needs a build first)
+- Catches issues with `exports` mapping or build transforms
+
+**Recommendation**: Use `#src/*` imports for day-to-day development. The try-scenarios CI matrix will catch build/export issues by running against real builds. If you need to specifically test the published output, use consumer-style imports in a dedicated test file and run `npm run build` first.
+
 #### Self-Imports
 
-Self-imports (e.g. `import { x } from 'my-addon/foo'`) don't work during development because they resolve through `exports` to `dist/`, which doesn't exist until you build. Use relative imports in `src/`:
+Self-imports (e.g. `import { x } from 'my-addon/foo'`) don't work during development in `src/` files because they resolve through `exports` to `dist/`, which doesn't exist until you build. Use relative imports in `src/`:
 
 ```javascript
 // In src/ files:
@@ -738,6 +830,40 @@ The single-package default works for most addons. If you need a monorepo (comple
 3. Generate test app: `npx ember-cli@latest app test-app --blueprint @ember/app-blueprint`
 4. Set up workspace tooling (pnpm/yarn workspaces)
 5. Install addon in test app
+
+#### Unpublished Addons in a Monorepo
+
+Sometimes you have a v2 addon in a monorepo that's only consumed by other packages in the workspace -- it's never published to npm. In this case you can skip the build step entirely and point `exports` at your source files:
+
+```json
+{
+  "name": "my-internal-addon",
+  "ember-addon": {
+    "version": 2,
+    "type": "addon",
+    "main": "addon-main.cjs"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "types": "./src/*.ts",
+      "default": "./src/*.ts"
+    }
+  }
+}
+```
+
+Key differences from a published addon:
+- `exports` points to `src/` instead of `dist/` and `declarations/`
+- No `files` array needed (not publishing to npm)
+- No rollup build, no `prepack` script, no `declarations/` directory
+- No `babel.publish.config.cjs` or `tsconfig.publish.json` needed
+- You still need `addon-main.cjs` if any consuming app in the workspace uses the classic ember-cli build
+
+The consuming app's build tooling (Vite/Embroider) handles the transpilation. This is much simpler to maintain for workspace-internal code.
 
 #### Publishing
 
