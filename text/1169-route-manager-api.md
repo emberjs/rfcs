@@ -35,7 +35,7 @@ Define a generic Route Manager concept that can be used to implement new Route b
 
 ## Motivation
 
-The intent of this RFC is to implement a generic Route Manager concept so that we’re able to provide room for experimentation and migration to a new router solution. It aims to provide a well-defined interface between the Router and Route concepts. Well-defined in this case means both API and lifecycle.
+The intent of this RFC is to implement a generic Route Manager concept so that we’re able to provide room for experimentation and migration to a new router solution. It aims to provide a well-defined interface between the Router and Route concepts. Well-defined in this case means that we are specifying both the API that Route managers can provide and the order that those APIs are called (i.e. the lifecycle).
 
 This will unlock the possibility of implementing new Route base classes while also making it easier to replace the current router.
 
@@ -87,7 +87,7 @@ The `getDestroyable` method takes a `RouteStateBucket` and will return the corre
 
 ### Determining which route manager to use
 
-This follows the same pattern as existing manager implementations. This method will be used by the framework for the Route Base Classes it provides as well as by non-framework code wanting to provide their own Route Manager implementation.
+The technique used to determine the correct route manager to invoke will follow the well-established examples of manager implementations that already exist in the codebase e.g. for the Component, Modifier, or Helper Managers used by Glimmer. This method will be used by the framework for the Route Base Classes it provides as well as by non-framework code wanting to provide their own Route Manager implementation.
 
 ```typescript
 // Takes a Factory function for the Manager with an Owner argument and
@@ -134,7 +134,7 @@ The `AsyncNavigationState` interface allows Route Managers to have a certain amo
 
 The `signal` is an `AbortSignal` provided by the Router which can be used to react to a cancellation of the current navigation. It can be passed to, for example, a `fetch` call.
 
-`ancestorPromises` allows you to tie in to the asynchronous lifecycle of ancestor Routes. This opens the possibility for a RouteManager implementation for parallel resolution of the asynchronous lifecycle. The Classic Route Manager will rely on this behaviour to implement the current waterfall lifecycle. The ancestor promise will resolve with the `context` for that route i.e. in the Classic Route Manager that would be the return value for the `model()` hook.
+`ancestorPromises` allows a child-route to optionally tie in to the asynchronous lifecycle of ancestor Routes. This opens the possibility for a RouteManager implementation for parallel resolution of the asynchronous lifecycle. The Classic Route Manager will rely on this behaviour to implement the current waterfall lifecycle. The ancestor promise will resolve with the `context` for that route i.e. in the Classic Route Manager that would be the return value for the `model()` hook.
 
 ```typescript
 // Exposes API used to interact with the active navigation, like awaiting ancestor's async behaviour.
@@ -149,13 +149,12 @@ interface AsyncNavigationState  {
 
 ### Route lifecycle
 
-This RFC proposes 3 groups of hooks for lifecycle management of a Route.
+This RFC proposes 2 groups of hooks for lifecycle management of a Route.
 
 - `enter` - called when a route is visited.
-- `update` - called when the input for a route has changed, think dynamic segment or query param.
 - `exit` - called when a route is exited.
 
-The main lifecycle methods are accompanied by synchronous will*/did* methods. This gives the possibility of implementing lifecycle features like cancelling/preventing a route change, cleaning up after a route branch was fully exited. `update` and `enter` are promise-aware and will be awaited. These methods give the option to do asynchronous work that needs to happen before rendering.
+The main lifecycle methods are accompanied by synchronous will*/did* methods. This gives the possibility of implementing lifecycle features like cancelling/preventing a route change, cleaning up after a route branch was fully exited. `enter` is promise-aware and will be awaited. This gives the option to do asynchronous work that needs to happen before rendering.
 
 ```typescript
 
@@ -176,7 +175,7 @@ interface RouteManager {
 }
 ```
 
-Note: The current Route implementation has a different behaviour depending on if you are transitioning between two routes that are different, or if you are transitioning to the route you are currently on and changing any of the params for that route. This is an **internal concern** of the Route manager and will be implemented in the Classic Route Manager. We do not need to provide any `update()` hooks on the Route lifecycle to cater for this.
+Note: The current Route implementation has a different behaviour depending on if you are transitioning between two routes that are different, or if you are transitioning to the route you are currently on and changing any of the params for that route. This is an **internal concern** of the Route manager and will be implemented in the Classic Route Manager, a Route Manager implementation that is designed to encapsulate the current behaviour of Ember's Routes. We do not need to provide any `update()` hooks on the Route lifecycle to cater for this.
 
 The lifecycle of an example navigation between two nested routes looks as follows:
 
@@ -293,7 +292,7 @@ The manager pattern is used across the Ember codebase with success and this is j
 
 ### Route lifecycle update hooks
 
-A previous iteration of this RFC provided explicit `willUpdate()`, `update()`, and `didUpdate()` hooks in the Root Manager interface that were distinct to the `enter()` related hooks and would only be called when you are entering the same route you are currently on with a transition. This was added to simplify the implementation of the Classic Route Manager, which is intended to encapsulate the current behaviour of Ember's existing routes. In reality the trade-off between making the implementation easier and having a wider API surface area is most likely not worth it.
+A previous iteration of this RFC provided explicit `willUpdate()`, `update()`, and `didUpdate()` hooks in the Route Manager interface that were distinct to the `enter()` related hooks and would only be called when you are entering the same route you are currently on with a transition. This was added to simplify the implementation of the Classic Route Manager, which is intended to encapsulate the current behaviour of Ember's existing routes. In reality the trade-off between making the implementation easier and having a wider API surface area is most likely not worth it.
 
 This will require the Classic Route Manager to do some more elaborate internal work to provide the same lifecycle hooks that current Routes expect, this is an intentional decision to improve the interface of the Manager API and will not have a lasting impact on Ember as the Classic Route Manager is intended to be a compatibility-layer for existing applications and will be phased out.
 
