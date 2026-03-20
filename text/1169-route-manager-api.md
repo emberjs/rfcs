@@ -266,7 +266,7 @@ let render: RenderState = {
   };
 ```
 
-For the Route Manager API we will rework this structure to a generic invokable. This way the manager implementation can decide how render happens and what arguments are passed. Deferring render while waiting on asynchronous behaviour (like the Classic Route model hooks) will be a Route Manager concern.
+For the Route Manager API we will rework this structure so that the manager returns a generic invokable via a specific API. This way the manager implementation can decide how render happens and what arguments are passed. Deferring render while waiting on asynchronous behaviour (like the Classic Route model hooks) will be a Route Manager concern.
 
 The return value of `getInvokable` is an object that needs to have an associated `ComponentManager`.
 
