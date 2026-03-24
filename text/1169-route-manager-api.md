@@ -268,15 +268,17 @@ let render: RenderState = {
 
 For the Route Manager API we will rework this structure so that the manager returns a generic invokable via a specific API. This way the manager implementation can decide how render happens and what arguments are passed. Deferring render while waiting on asynchronous behaviour (like the Classic Route model hooks) will be a Route Manager concern.
 
-The return value of `getInvokable` is an object that needs to have an associated `ComponentManager`.
+The return value of `getInvokable` is a Promise that resolves to an object that needs to have an associated `ComponentManager`.
 
 ```typescript
 import type { ComponentLike } from '@glint/template';
 
 interface RouteManager {
-	getInvokable: (bucket: RouteStateBucket) => ComponentLike;
+	getInvokable: (bucket: RouteStateBucket) => Promise<ComponentLike>;
 }
 ```
+
+Note: `getInvokable()` is an async function so that it is able to absorb any potential `await import()` calls to load modules. 
 
 ## How we teach this
 
@@ -295,6 +297,14 @@ The manager pattern is used across the Ember codebase with success and this is j
 A previous iteration of this RFC provided explicit `willUpdate()`, `update()`, and `didUpdate()` hooks in the Route Manager interface that were distinct to the `enter()` related hooks and would only be called when you are entering the same route you are currently on with a transition. This was added to simplify the implementation of the Classic Route Manager, which is intended to encapsulate the current behaviour of Ember's existing routes. In reality the trade-off between making the implementation easier and having a wider API surface area is most likely not worth it.
 
 This will require the Classic Route Manager to do some more elaborate internal work to provide the same lifecycle hooks that current Routes expect, this is an intentional decision to improve the interface of the Manager API and will not have a lasting impact on Ember as the Classic Route Manager is intended to be a compatibility-layer for existing applications and will be phased out.
+
+### Sync getInvokable() 
+
+A previous version of this RFC had a sync version of the `getInvokable()` function on the Route Manager API. This was changed to give a slightly better developer experience to allow poeople to absorb asyncronous imports of modules. Note: this is not intended to have any implications on the `enter()` hook and the async data loading is never intended to happen during the `getInvokable()` promise lifecycle.
+
+### Merging enter() and getInvokable() hooks
+
+Comments on this RFC proposed that we could unify the `enter()` and the `getInvokable()` functions. We are explictly not merging those two functions because the `enter()` hook returns context (usually from data-loading) which is entirely separate from the concerns of `getInvokable()`. Also it's worth noting that the promise returned by the `getInvokable()` is never expoesed to any route via the Route Manager API, and will be an internal concern of the Router itself. The promise returned from `enter()` is exposed to child routes via the `getAncestorPromise()` function so they can await the result to get the context of parent routes.
 
 ## Unresolved questions
 
