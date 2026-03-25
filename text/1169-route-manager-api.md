@@ -156,6 +156,8 @@ This RFC proposes 2 groups of hooks for lifecycle management of a Route.
 
 The main lifecycle methods are accompanied by synchronous will*/did* methods. This gives the possibility of implementing lifecycle features like cancelling/preventing a route change, cleaning up after a route branch was fully exited. `enter` is promise-aware and will be awaited. This gives the option to do asynchronous work that needs to happen before rendering.
 
+Note: `willEnter()` **must** be sync so that, in the case that the URL update is synchronous, the user-feedback of the URL update is immediate and does not feel "laggy" to the end-user.
+
 ```typescript
 
 interface RouteManager {
@@ -177,7 +179,7 @@ interface RouteManager {
 
 Note: The current Route implementation has a different behaviour depending on if you are transitioning between two routes that are different, or if you are transitioning to the route you are currently on and changing any of the params for that route. This is an **internal concern** of the Route manager and will be implemented in the Classic Route Manager, a Route Manager implementation that is designed to encapsulate the current behaviour of Ember's Routes. We do not need to provide any `update()` hooks on the Route lifecycle to cater for this.
 
-The lifecycle of an example navigation between two nested routes looks as follows:
+The lifecycle of an example navigation between two routes 'a.b' and 'x.y' looks as follows:
 
 ```mermaid
 sequenceDiagram
@@ -193,7 +195,7 @@ sequenceDiagram
 	    participant XY as Route "x.y"
     end
     
-    Browser-->>R: navigate from a.b to x.y
+    Browser->>R: navigate from a.b to x.y
     R->>AB: willExit()
     R->>A: willExit()
     R->>X: willEnter()
@@ -202,7 +204,17 @@ sequenceDiagram
     R-->>Browser: location.href update if eager
     
     R-)+X: enter()
+    R-)+X: getInvokable()
+    X->>-R: Promise.resolve()
+
+    R-->>Browser: render invokable returned fom Route "x"
+
     R-)+XY: enter()
+    R-)+XY: getInvokable()
+    XY->>-R: Promise.resolve()
+
+    R-->>Browser: render invokable returned fom Route "x.y"
+
     X->>-R: Promise.resolve()
     XY->>-R: Promise.resolve()
 
@@ -217,6 +229,12 @@ sequenceDiagram
     R->>A: didExit()
 
 ```
+
+Note: this is the full list of lifecycle events in a single transition between 'a.b' and 'x.y' i.e. the time before this sequence diagram the application will be on route 'a.b', the sequence diagram starts with the action `navigate from a.b to x.y` which can be a user action clicking a `<LinkTo>` or a `transitionTo()` event, and the time after this sequence diagram the application will be on route 'x.y'.
+
+This sequence diagram only specifies the order of the hooks that are called as part of the Route Manager API, the dotted lines from the Router to the Browser are there for illustrative purposes only and are not specified as part of this RFC. Individual Route managers might express substates (such as loading states) as part of their own APIs, but they would have to do that within the constraints of the Route Manager API hooks.
+
+In the above diagram the `enter()` is called before the `getInvokable()` for a given route. This doesn't really need to be done in this order, and logically they can be considered as happening "at the same time" since there is no awaiting between their respective promises. The only order that is important is **between routes** i.e. you cannot render a sub-route's invokable without all ancestor route invokables having been rendered, therefore you should not call `getInvokable()` on a sub-route until the parent's `getInvokable()` has resolved.
 
 ### Capabilities
 
@@ -278,7 +296,7 @@ interface RouteManager {
 }
 ```
 
-Note: `getInvokable()` is an async function so that it is able to absorb any potential `await import()` calls to load modules. 
+Note: `getInvokable()` is an async function so that it is able to absorb any potential `await import()` calls to load modules. This promise is never exposed to any other Route Manager APIs and is entirely managed by the Router. 
 
 ## How we teach this
 
@@ -300,11 +318,13 @@ This will require the Classic Route Manager to do some more elaborate internal w
 
 ### Sync getInvokable() 
 
-A previous version of this RFC had a sync version of the `getInvokable()` function on the Route Manager API. This was changed to give a slightly better developer experience to allow poeople to absorb asyncronous imports of modules. Note: this is not intended to have any implications on the `enter()` hook and the async data loading is never intended to happen during the `getInvokable()` promise lifecycle.
+A previous version of this RFC had a sync version of the `getInvokable()` function on the Route Manager API. This was changed to give a slightly better developer experience to allow people to absorb asynchronous imports of modules. Note: this is not intended to have any implications on the `enter()` hook and the async data loading is never intended to happen during the `getInvokable()` promise lifecycle.
+
+We do not strictly need to have an async `getInvokable()` because you could always return a sync invokable that managed the async internally, i.e. using a resource-style pattern. As these APIs are quite low-level it doesn't really matter which way we lean on this decision since the complexity will never leak into Ember App Developer ergonomics.
 
 ### Merging enter() and getInvokable() hooks
 
-Comments on this RFC proposed that we could unify the `enter()` and the `getInvokable()` functions. We are explictly not merging those two functions because the `enter()` hook returns context (usually from data-loading) which is entirely separate from the concerns of `getInvokable()`. Also it's worth noting that the promise returned by the `getInvokable()` is never expoesed to any route via the Route Manager API, and will be an internal concern of the Router itself. The promise returned from `enter()` is exposed to child routes via the `getAncestorPromise()` function so they can await the result to get the context of parent routes.
+Comments on this RFC proposed that we could unify the `enter()` and the `getInvokable()` functions. We are explicitly not merging those two functions because the `enter()` hook returns context (usually from data-loading) which is entirely separate from the concerns of `getInvokable()`. Also, it's worth noting that the promise returned by the `getInvokable()` is never exposed to any route via the Route Manager API, and will be an internal concern of the Router itself. The promise returned from `enter()` is exposed to child routes via the `getAncestorPromise()` function so they can await the result to get the context of parent routes.
 
 ## Unresolved questions
 
