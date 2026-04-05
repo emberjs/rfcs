@@ -111,7 +111,6 @@ The following are **not** affected by this change:
 - TypeScript support
 - The Vite-based build pipeline itself
 - `ember-welcome-page` (follows existing defaults)
-- `@embroider/macros` — remains a default dependency; v2 addons depend on it and there is no omitting it for the time being
 
 ### Implementation approach
 
