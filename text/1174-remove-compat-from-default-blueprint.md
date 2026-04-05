@@ -26,7 +26,7 @@ project-link: Leave as is
 suite: Leave as is
 -->
 
-# Remove Compatibility Layers from the Default Blueprint
+# Remove Compat for the Default App Blueprint
 
 ## Summary
 
