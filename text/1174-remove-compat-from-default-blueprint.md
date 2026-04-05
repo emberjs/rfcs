@@ -111,7 +111,7 @@ The following are **not** affected by this change:
 - TypeScript support
 - The Vite-based build pipeline itself
 - `ember-welcome-page` (follows existing defaults)
-- `@embroider/macros` — still available for v2 addons that use it; whether it remains a default dependency is an implementation detail
+- `@embroider/macros` — remains a default dependency; v2 addons depend on it and there is no omitting it for the time being
 
 ### Implementation approach
 
@@ -129,7 +129,7 @@ The implementation mirrors [ember-cli/ember-app-blueprint#49](https://github.com
 
 New developers benefit the most. They see a clean, modern app with fewer files, fewer dependencies, and a simpler mental model. The Guides should be updated to use the no-compat app as the default starting point.
 
-The getting-started tutorial should use the default (no-compat) output. The concepts of `ember-cli-build`, `content-for`, and v1 addons don't need to appear until an "Advanced" or "Migration" section.
+The getting-started tutorial should use the default (no-compat) output. The concepts of `ember-cli-build`, `content-for`, and v1 addons belong in a "Migration" section of the Guides. A separate RFC will address making v2 addons the default and further unrecommending v1 addons.
 
 ### For existing developers
 
@@ -139,6 +139,8 @@ A short section in the Guides or a blog post should explain:
 - If you need v1 addon support or classic conventions, pass `--compat`
 - Existing apps are not affected. This changes only what `ember new` generates
 - If you're starting a new app and aren't sure whether you need `--compat`, you probably don't. If a dependency requires it, you'll know quickly (build errors referencing v1 addon APIs)
+
+For existing apps that want to remove compat, we should publish a "How to remove compat layers from an existing project" guide. The performance gains are substantial — large apps can see up to 70 seconds faster initial boot time after removing all compat layers, depending on their situation.
 
 ### Decision guide
 
@@ -171,6 +173,4 @@ A short section in the Guides or a blog post should explain:
 
 ## Unresolved questions
 
-- Should the minimum Node version be bumped in the default (no-compat) output? The reverted PR #49 set `engines.node >= 24`. This may be appropriate but is orthogonal to the compat question.
-- Should `@embroider/macros` remain a default dependency in the no-compat output, or should it only be included with `--compat`? v2 addons may use macros, but new code generally shouldn't need them.
-- What is the right timing for this change relative to the Ember release cycle? This should ideally land in a major version boundary or a well-communicated minor release.
+- **Should we have v2 addon by default first?** No. The no-compat app's design and functionality is "done" and doesn't have to wait for v2 addon by default.
