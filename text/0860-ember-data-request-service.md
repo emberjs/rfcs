@@ -1,5 +1,5 @@
 ---
-stage: released
+stage: recommended
 start-date: 2023-11-10T00:00:00.000Z
 release-date:
 release-versions:
@@ -10,6 +10,7 @@ prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/860'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/879'
   released: 'https://github.com/emberjs/rfcs/pull/925'
+  recommended: 'https://github.com/emberjs/rfcs/pull/942'
 project-link:
 ---
 
