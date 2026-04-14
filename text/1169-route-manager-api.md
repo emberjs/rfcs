@@ -31,7 +31,7 @@ suite: Leave as is
 
 ## Summary
 
-Define a generic Route Manager concept that can be used to implement new Route base classes as a stepping stone towards a new router.
+This RFC Defines a generic Route Manager concept that can be used to implement new Route base classes as a stepping stone towards a new router. The Route Manager API proposed in this RFC is not intended to be consumed by Ember app developers, but will allow Framework authors and addon developers to create new Route base classes.
 
 ## Motivation
 
