@@ -42,29 +42,17 @@ Add `{{and}}`, `{{or}}` and `{{not}}` helpers.
 
 #### `{{and}}`
 Takes at least two positional arguments. Raises an error if invoked with less than two arguments.
-It evaluates arguments left to right, returning the first one that is not _truthy_ (**by handlebar's definition of truthiness**)
+It evaluates arguments left to right, returning the first one that is not _truthy_ (**by javascript's definition of truthiness**)
 or the right-most arguments if **all** evaluate to _truthy_.
-This is *NOT* equivalent to the `{{and}}` helper from `ember-truth-helpers` because unlike this proposed helper, the one in `ember-truth-helpers`
-uses Javascript's definition of truthiness.
 
 #### `{{or}}`
 Takes at least two positional arguments. Raises an error if invoked with less than two arguments.
-It evaluates arguments left to right, returning the first one that is _truthy_ (**by handlebar's definition of truthiness**) or the
+It evaluates arguments left to right, returning the first one that is _truthy_ (**by javascript's definition of truthiness**) or the
 right-most argument if all evaluate to _falsy_.
-This is *NOT* equivalent to the `{{or}}` helper from `ember-truth-helpers` because unlike this proposed helper, the one in `ember-truth-helpers`
-uses Javascript's definition of truthiness.
 
 #### `{{not}}`
 Unary operator. Raises an error if invoked with more than one positional argument. If the given value evaluates to a _truthy_ value (**by handlebar's definition of truthiness**),
-the `false` is returned. If the given value evaluates to a _falsy_ value (**by handlebar's definition of truthiness**) then it returns `true`.
-This is *NOT* equivalent to the `{{not}}` helper from `ember-truth-helpers` because unlike this proposed helper, the one in `ember-truth-helpers`
-uses Javascript's definition of truthiness.
-
-#### Handlebar's definition of truthiness
-This is the most important detail of this proposal because it's where it deviates from `ember-truth-helpers`.
-Handlebars has its own definition of _truthyness_, which is similar to Javascripts except that empty arrays are
-considered **falsy**, while in JS are considered **truthy**.
-
+the `false` is returned. If the given value evaluates to a _falsy_ value (**by javascript's definition of truthiness**) then it returns `true`.
 
 This RFC intentionally leaves the implementation details unspecified, but one can think of those helpers as macros that
 expand to combinations of `if`s.
