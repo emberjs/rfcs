@@ -85,18 +85,22 @@ One important underlying problem with the current architecture is that most of t
 
 - The Inspector's code contains complex conditional pieces to support different Ember versions as the framework internals evolve. What piece of code supports what version is not explicitly indicated and the code is hard to maintain overall. Also, it happens that latest changes in the framework are not reflected, and tests are not always able to catch the issues (e.g. in Ember Inspector 4.13.1, most services are marked as computed properties because the execution path that marks services is no longer taken).
 
+The current implementation of the Inspector is outdated:
+
 - New concepts such as renderComponent which might not require an app at all are currently not covered by the Inspector, making it impossible to to debug or interact with them in a meaningful way.
 
 - There is no clear way to extend the Inspector with custom functionality while we also face a lot of entanglement. E.g. Ember Data evolved into Warpdrive. Inspector has no good answer to this.
 
 - We want to integrate with the wider ecosystem, allowing us to work across framework boundaries.
 
+- The current implementation uses private code to sync the Inspector with the tracked system, reaching into and patching internals to allow changes to tracked properties to be propangated into the Inspector. This system, even if maintained carefully is prone to leaks and is one of the reasons both the Inspector and inspected apps experience slow-downs when in use.
+
 ## Updated architecture
 
 The new approach features three main aspects. 
 
 1. A new and consistent global registry object living on `globalThis`
-2. A new async inspection module which is shipped with every app by default
+2. A new async inspection module which is shipped with every app by default providing static snapshots of state
 3. A consistent API for registering inspectable apps
 
 While some of these do exist in one form or another in the old setup, new names were chosen to separate this new API from the previous setup. The existing `@embroider/legacy-inspector-support` could be used to provide a compat integration. 
@@ -157,7 +161,9 @@ class DebugClient {
 
 ### `@ember/debug/inspect`
 
-This new module encapsulates methods necessary for an Inspector to inspect all aspects of an app without having to inject or load Ember internals. The methods return both machine and human readable information. This is most important change to the current Inspector workflow: All necessary information is provided by the app and Ember source. Future Inspectors are mostly user interfaces that display the provided data prepared by an app.
+Future iterations of the Inspector should be mostly user interfaces that display the provided data prepared by an app. 
+
+This new module replaces the `ember_debug` package inside the Inspector codebase. It encapsulates methods necessary for an Inspector to inspect all aspects of an app without having to inject or load Ember internals. The methods return both machine and human readable information. This is most important change to the current Inspector workflow: All necessary information is provided by the app and Ember source as static snapshots of object state. 
 
 The methods become part of the module hierarchy within the page, allowing the DebugClient instances injected into the page to interact with objects on that page. 
 
@@ -215,7 +221,7 @@ The implementation is intimate API. It will be documented within the code. It co
 
 ## Drawbacks
 
-Replacing the existing system does require extensive refactoring.
+The new API is not reactive, which means we need to implement live updates to the Inspector in a different way to the current implementation.
 
 ## Alternatives
 
