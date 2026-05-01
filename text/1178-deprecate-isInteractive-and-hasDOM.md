@@ -97,6 +97,9 @@ A deprecation guide should be published at `https://deprecations.emberjs.com/` c
 - **Blueprints**: no changes needed; blueprints do not generate code that uses these options.
 - **IDE / TypeScript**: the public type for `BootOptions` should mark `isInteractive` and `isBrowser` as `@deprecated` so editors surface the warning at call sites.
 
+For console or other rendering environments, they should be unaffected, because they are also implementing a browser of sorts.
+If/when we want to formally support different renderers (rather than "anything that can be browser like"), we can design an API that allows the whole renderer to be swapped out, and not bundled).
+
 ## How We Teach This
 
 The Ember Guides do not currently teach `isInteractive` or `isBrowser`; they are mentioned only in API docs for `Application#visit` and `BootOptions`. The teaching work is therefore concentrated in the API docs and the deprecation guide:
