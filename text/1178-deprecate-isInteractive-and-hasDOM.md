@@ -28,6 +28,9 @@ There is now a _broader-ecosystem_ path for SSR with current Ember that does not
 
 The replacement functionality is: render in interactive mode against a DOM (real or JSDOM) and, for SSR, `await settled()` before serializing the result, as demonstrated by `vite-ember-ssr`.
 
+> [!IMPORTANT]
+> This RFC does not explicitly deprecate fastboot, but it deprecates the technique that fastboot currently relies on for SSR/SSG and it will need to move to a more modern approach if it wants to remain in use.
+
 ## Transition Path
 
 The following public API surface is deprecated. Each item should issue a deprecation when used, and continue to behave as it does today until the deprecation is removed in a subsequent major.
