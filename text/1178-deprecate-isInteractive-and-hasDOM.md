@@ -83,13 +83,14 @@ A deprecation guide should be published at `https://deprecations.emberjs.com/` c
 - In order to do this migration, users must:
   - disable FastBoot and remove any local FastBoot-specific tests
   - complete their vite migration
+  - complete the gjs/gts migration
   - follow the README for vite-ember-ssr (for the time being)
 
 > [!NOTE]
 > vite-ember-ssr is not currently "formally supported" by the core team, but is the SSR solution based on vite, which is not built on so many hacks as fastboot was. Discussion of formal adoption / support of vite-ember-ssr is out of scope for this RFC -- we are wanting to lean on broader ecosystem patterns.
 
 > [!IMPORTANT]
-> Details of this migration have been done for ember-page-title, tho will vary depending on your project, addon, etc, and the list of PRs that made up the migration can be [found here](https://github.com/ember-cli/ember-page-title/pull/308)
+> Details of this migration have been done for ember-page-title, tho will vary depending on your project, addon, etc, and the list of PRs that made up the migration can be [found here](https://github.com/ember-cli/ember-page-title/commits/master/?since=2026-03-01&until=2026-05-01)
 
 ### Ecosystem implications
 
@@ -134,7 +135,7 @@ n/a
 - [Vite SSR Docs](https://vite.dev/guide/ssr)
 - [vite-ember-ssr](https://github.com/evoactivity/vite-ember-ssr)
   - Tool using Vite SSR
-- [ember-page-title](https://github.com/ember-cli/ember-page-title/pull/308)
+- [ember-page-title](https://github.com/ember-cli/ember-page-title/commits/master/?since=2026-03-01&until=2026-05-01)
   - sample series of PRs on an infrequently updated repo to bring it up to modern compatibility, and migrate the SSR solution
 - [how to use settled() in SSR/SSG](https://github.com/NullVoxPopuli/limber/blob/788bcac364fa562a5b875293a404b6318abd62eb/apps/repl/app/app-ssr.ts#L39)
   - useful when your pages use modifiers with async / etc
