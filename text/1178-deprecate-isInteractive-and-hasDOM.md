@@ -18,7 +18,7 @@ Deprecate the `isInteractive` and `isBrowser` boot options on `ApplicationInstan
 
 ## Motivation
 
-These flags exist to support a non-interactive, non-browser rendering mode that was originally added for FastBoot-style server-side rendering. FastBoot was only a "best effort" sort of support, never officially documented in the guides, or recommended as a good SSR solution (it did happen to be the _only_ SSR solution for a while). Fastboot has not kept up with current Ember and is incompatible with the Vite-based build pipeline, and the codepaths it required impose cost on every consumer:
+These flags exist to support a non-interactive, non-browser rendering mode that was originally added for FastBoot-style server-side rendering. FastBoot was only a "best effort" sort of support, never officially documented in the guides, or recommended as a good SSR solution (it did happen to be the _only_ SSR solution for a while). Fastboot was a virus that made an (un)countable number of addons mistakenly worry about whether they were being ran in "an SSR environment" vs the browser. This distinction, for the most part, no longer matters, freeing the community to develop code that works in all environments without worry. Additionally, Fastboot has not kept up with current Ember and is incompatible with the Vite-based build pipeline, and the codepaths it required impose cost on every consumer:
 
 - `Renderer`, the curly component manager, the `Input` built-in, the event dispatcher, and `ApplicationInstance` all carry branches that exist only to handle `isInteractive === false` or `hasDOM === false`.
 - The `BootEnvironment` shape spreads `@ember/-internals/browser-environment` (which itself only exists to expose `hasDOM`) into the renderer for compatibility.
@@ -79,21 +79,21 @@ Component lifecycle hooks (`didInsertElement`, `didRender`, `willRender`, `didRe
 
 A deprecation guide should be published at `https://deprecations.emberjs.com/` covering:
 
-- Pointing FastBoot users at `vite-ember-ssr` as the supported SSR path.
+- Pointing FastBoot users at `vite-ember-ssr` as the suggested SSR path.
 - In order to do this migration, users must:
-  - disable FastBoot
+  - disable FastBoot and remove any local FastBoot-specific tests
   - complete their vite migration
   - follow the README for vite-ember-ssr (for the time being)
 
 > [!NOTE]
-> vite-ember-ssr is not currently "formally supported" by the core team, but is the SSR solution based on vite, which is not built on so many hacks as fastboot was.
+> vite-ember-ssr is not currently "formally supported" by the core team, but is the SSR solution based on vite, which is not built on so many hacks as fastboot was. Discussion of formal adoption / support of vite-ember-ssr is out of scope for this RFC -- we are wanting to lean on broader ecosystem patterns.
 
 > [!IMPORTANT]
 > Details of this migration have been done for ember-page-title, tho will vary depending on your project, addon, etc, and the list of PRs that made up the migration can be [found here](https://github.com/ember-cli/ember-page-title/pull/308)
 
 ### Ecosystem implications
 
-- **FastBoot**: FastBoot was never formally supported, but is the primary real-world consumer of these flags. Its maintainers, and any apps still on FastBoot, should plan a migration to vite-based-SSR, such as `vite-ember-ssr` (or accept that they cannot upgrade past the major in which these flags are removed).
+- **FastBoot**: Outside of FastBoot moving to do exactly what `vite-ember-ssr` is doing, any apps still on FastBoot should plan a migration to vite-based-SSR, such as `vite-ember-ssr` (or accept that they cannot upgrade past the major in which these flags are removed).
 - **Addons**: addons would have primarily only incidentally encountered these deprecated features via fastboot 
 - **Ember Inspector**: no impact.
 - **Ember Engines**: `EngineInstance#boot` accepts the same `BootOptions`; the deprecation applies there as well.
@@ -116,15 +116,25 @@ For existing users, the framing is: "Ember's renderer assumes a DOM. If you need
 
 ## Drawbacks
 
-- Apps still running on FastBoot cannot upgrade past the major that removes these flags without first migrating to `vite-ember-ssr` or dropping SSR. There is real migration cost for those users, even though FastBoot was never officially supported.
+- Apps still running on FastBoot cannot upgrade past the major that removes these flags without first migrating to `vite-ember-ssr` or dropping SSR. There is real migration cost for those users.
 - Any addon that intentionally skipped work during FastBoot rendering will now run that work during SSR. Most such addons should be fine — `vite-ember-ssr` runs in interactive mode, which is exactly what those addons used to opt out of — but a few may need updates.
 - We are formalising "ember-source only supports browser-like environments" as a constraint. Future SSR work that wants to render without a DOM at all (e.g., a streaming string renderer) would have to reintroduce a similar split.
 
 ## Alternatives
 
-- **Do nothing.** Keep `isInteractive`/`hasDOM` indefinitely. This preserves theoretical FastBoot compatibility but leaves the renderer carrying branches for a path that is not formally supported, not tested against current Ember, and not compatible with the Vite build that the ecosystem is moving to.
-- **Remove without deprecation.** These are semi-private APIs, and fastboot's current CI is all failing, so it's not clear that fastboot even works with current ember.
+- **Do nothing.** Keep `isInteractive`/`hasDOM` indefinitely. 
+- **Remove without deprecation.** These are semi-private APIs, and fastboot's current CI is all failing, so it's not clear that fastboot even works with current ember. Fastboot's only real mentions on the official site are in the [blog](https://blog.emberjs.com/tag/fastboot/), with the last past in 2017.
 
 ## Unresolved questions
 
 n/a
+
+## Appendix
+
+- [Vite SSR Docs](https://vite.dev/guide/ssr)
+- [vite-ember-ssr](https://github.com/evoactivity/vite-ember-ssr)
+  - Tool using Vite SSR
+- [ember-page-title](https://github.com/ember-cli/ember-page-title/pull/308)
+  - sample series of PRs on an infrequently updated repo to bring it up to modern compatibility, and migrate the SSR solution
+- [how to use settled() in SSR/SSG](https://github.com/NullVoxPopuli/limber/blob/788bcac364fa562a5b875293a404b6318abd62eb/apps/repl/app/app-ssr.ts#L39)
+  - useful when your pages use modifiers with async / etc
