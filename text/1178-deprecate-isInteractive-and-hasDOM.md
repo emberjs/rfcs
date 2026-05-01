@@ -6,7 +6,7 @@ release-versions:
 teams:
   - framework
 prs:
-  accepted:
+  accepted: https://github.com/emberjs/rfcs/pull/1178
 project-link:
 ---
 
