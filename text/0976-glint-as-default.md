@@ -54,11 +54,21 @@ defined here.
 
 The adoption of Glint as a default/recommended tool in Ember.js involves the following steps:
 
-**Integration:** Add `glint` as a dependency by default, allowing Glint to analyze templates during the build process for TypeScript projects and enabling Glint tooling in both TypeScript and JavaScript projects. Configure `glint` by default in blueprint output. Currently, `glint` is *mostly* configured when running the blueprint with the `--typescript` flag.
+**Integration:** Add Glint as a default dependency in blueprint output for both TypeScript and JavaScript projects. The current blueprint wires Glint up only when `--typescript` is passed; this RFC moves Glint to the always-installed set so JS apps benefit from editor tooling without opting in.
+
+The Glint v2 stack is published as three packages:
+
+- `@glint/ember-tsc` — the `ember-tsc` CLI used in `lint:types` for TS projects, plus the standalone Glint language server. Replaces the v1 `@glint/core` package.
+- `@glint/tsserver-plugin` — a TypeScript Server plugin (Volar-based) that augments the TS language service with template-aware diagnostics. This is the primary path for editor integration via VS Code, Neovim, and other tsserver-aware editors.
+- `@glint/template` — type definitions for Glimmer templates.
+
+TypeScript itself becomes a peer requirement (`>= 5.6`) installed by the blueprint regardless of authoring language, and `@ember/app-tsconfig` / `@ember/library-tsconfig` provide the base config.
+
+For JS apps, the blueprint emits a `jsconfig.json` (rather than a `tsconfig.json`) that signals "IDE tooling only, no CLI type-check." JS apps therefore install Glint but do not get a `lint:types` script. TS apps continue to get `lint:types: ember-tsc --noEmit`.
 
 **Community Adoption:** Encourage the Ember.js community to adopt Glint by showcasing its benefits and providing resources for migration.
 
-**Plugin Ecosystem:** Encourage the development of plugins and extensions that enhance Glint's functionality for Ember.js projects. ([VSCode extension](https://marketplace.visualstudio.com/items?itemName=typed-ember.glint-vscode), other IDE extensions).
+**Plugin Ecosystem:** Encourage the development of plugins and extensions that enhance Glint's functionality for Ember.js projects. ([VS Code extension](https://marketplace.visualstudio.com/items?itemName=typed-ember.glint2-vscode), [ember.nvim](https://github.com/NullVoxPopuli/ember.nvim) for Neovim, and other tsserver-aware editors).
 
 ## How we teach this
 
@@ -78,15 +88,7 @@ users?
 
 ### Terminology
 
-********************registry:******************** In traditional templates with `.hbs` files (i.e. not template tag), all lookups are done via strings. Since we can’t rely on import statements to discover types, we instead use a type-registry which serves to map strings to their corresponding type definitions.
-
-```ts
-declare module '@glint/environment-ember-loose/registry' {
-	export default interface Registry {
-		'MyComponent': typeof MyComponent;
-	}
-}
-```
+**template-tag (`.gts` / `.gjs`):** Template-tag is the import-based authoring format that ties a template to a backing module. Glint v2 supports template-tag files exclusively — type-checking flows through normal import resolution, so no string-based registry is required.
 
 ### Documentation
 
@@ -116,11 +118,9 @@ There are some potential drawbacks to adopting Glint:
 
 **Migration Effort:** Existing projects may require effort to migrate from not having a template checking system to Glint.
 
-**********************************************Registries Boilerplate:**********************************************
+**Template-tag Required for Type-Checking:** Glint v2 supports only template-tag (`.gts` / `.gjs`) files. Apps and addons that still rely on `.hbs` files for components, helpers, or modifiers will not get template type-checking until those files are converted (codemods are available). Route templates remain authorable as `.hbs` and `.gts` (via `ember-route-template`); `.hbs` route templates are not type-checked by Glint v2.
 
-Because Ember's template resolution occurs dynamically at runtime when using `.hbs` files, Glint needs a way of mapping the names used in your templates to the actual backing value they'll be resolved to. This takes the form of a "type registry" as defined above.
-
-Note that this is *not* an issue for users using `.gts` templates.
+**TypeScript Install Footprint:** Even JS-only projects pull in `typescript` and the Glint packages so that the IDE tooling activates. This is a minor disk-space and install-time cost in exchange for editor-integrated template diagnostics.
 
 ## Alternatives
 
@@ -144,9 +144,13 @@ We should verify that there are no redundancies between the Glint Language Serve
 
 Should Glint Language Server features be merged into the Ember Language Server? Alternatively, should we remove the redundancy between them but keep them separate?
 
+**Resolved by Glint v2:** Glint v2's primary editor integration is `@glint/tsserver-plugin`, a TypeScript Server plugin that augments the TS language service rather than running a separate language server. There is no overlap with the [Ember Language Server](https://github.com/lifeart/ember-language-server), which focuses on Ember-specific concerns (route discovery, template-relative resolution). A standalone `glint-language-server` binary is still shipped in `@glint/ember-tsc` for non-tsserver editors.
+
 ### Does the Glint Language Server need full feature parity with the TypeScript Language Server before this is merged?
 
 Currently, we recommend Glint users enable the Glint Language Server in their IDE and disable the TypeScript Language Server to avoid duplicate errors. The Glint Language Server does not, however, currently have full feature parity with the TypeScript Language Server, so in doing so, users are losing some language server features. There is [work in progress](https://github.com/typed-ember/glint/issues/626) to rectify this issue.
+
+**Resolved by Glint v2:** Under v2's tsserver-plugin architecture the TypeScript language service *is* the language server; Glint augments it with template-aware diagnostics. There is no longer a feature-parity gap to close because users do not disable the TypeScript language server.
 
 ### Should we require that GTS is recommended before we recommend Glint?
 
@@ -155,6 +159,8 @@ As noted above, using Glint with `.hbs` files, there is boilerplate necessary fo
 In the opinion of the authors of this RFC, the benefit of Glint outweighs the downsides of requiring the boilerplate.
 
 Additionally, `.gts` is not supported for route templates by default, so that issue would need to be resolved, delaying the Glint recommendation further.
+
+**Resolved by Glint v2:** Glint v2 supports template-tag (`.gts` / `.gjs`) files only, so `.gts` is the de facto path for users who want template type-checking — the registries-boilerplate objection no longer applies. Route templates can be authored in `.gts` via `ember-route-template` (RFC #1046).
 
 ### Should we include JSDoc types in the JS blueprints?
 
