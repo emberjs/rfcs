@@ -1,13 +1,16 @@
 ---
-stage: ready-for-release
+stage: recommended
 start-date: 2024-05-11T00:00:00.000Z
 release-date:
 release-versions:
+  ember-data: 5.3.0
 teams:
   - data
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/1026'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/1035'
+  released: 'https://github.com/emberjs/rfcs/pull/1047'
+  recommended: 'https://github.com/emberjs/rfcs/pull/1051'
 project-link:
 suite:
 ---
