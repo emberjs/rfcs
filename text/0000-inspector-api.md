@@ -110,56 +110,45 @@ While some of these do exist in one form or another in the old setup, new names 
 Replaces: `globalThis.emberInspectorApps`, `globalThis.emberInspector` (and potentially more)
 
 ```js
-globalThis.__EMBER_DEBUG__ = {
-    entries: [], // stores references to inspectable applications
-    clients: [], // stores references to attached Inspectors
-};
+globalThis.__EMBER_DEBUG_ENTRIES__ = [], // stores references to inspectable entities like applications
 ```
 
 Each entry in the list is an object which provides meta data and a way for a debug client to load the modules provided by Ember. Here is potential implementation stub:
 
-```js
-class DebugEntry {
-    static PACKAGE = 'ember-source';
-    static VERSION = '7.0.0';
-    
-    constructor(reference, importCallback = () => import('@ember/debug/inspect')) {
-        this.id = `entry-${globalThis.__EMBER_DEBUG__.entries.length}`;
-        this.reference = reference;
-        this.importCallback = importCallback;
-        
-        globalThis.__EMBER_DEBUG__.entries.push(this);
-        globalThis.dispatchEvent?.(new CustomEvent('EMBER_DEBUG.boot', { detail: this.id }));
-    }
-    
-    async modules() {
-        this._promise ??= this.importCallback();
-        return this._promise;
-    }
+```ts
+import type ApplicationInstance from 'ember-source/application/instance';
+
+type EmberDebugEntry = {
+    /**
+    * This is the version field in package.json exactly as it is written
+    * e.g. 7.0.0 or 7.1.0-alpha.1
+     */
+    VERSION: string;
+    id: string;
+    reference: ApplicationInstance;
+    modules: () => Promise<import('@ember/debug/inspect')>
+}
+
+declare global {
+    const __EMBER_DEBUG_ENTRIES__: EmberDebugEntry[]
 }
 ```
 
-Each client object is defined in a similar way. This is created by code injected into the page by the bookmarklet / web extension. It encapsulates the data transport and acts as intermediary. Instanciating a new client starts fetching the debug modules for each entry.
+An `ApplicationInstance` can take care of registering and deregistering itself from the global list in its [init](https://github.com/emberjs/ember.js/blob/8c2698de3c91133065de0d0cded1a2667f592abb/packages/%40ember/application/instance.ts#L67) and [willDestroy](https://github.com/emberjs/ember.js/blob/8c2698de3c91133065de0d0cded1a2667f592abb/packages/%40ember/application/instance.ts#L288) methods.
 
-```js
-class DebugClient {
-    static PACKAGE = '@ember-inspector/bookmarklet';
-    static VERSION = '5.0.0';
-    
-    constructor(reference) {
-        this.id = `client-${globalThis.__EMBER_DEBUG__.clients.length}`;
-        
-        globalThis.__EMBER_DEBUG__.clients.push(this);
-        globalThis.addEventListener('EMBER_DEBUG.boot', this.connect);
-    }
-    
-    async connect() {
-        globalThis.__EMBER_DEBUG__.entries.forEach(entry => etry.modules());
-    }
-}
+Adding entries to the list should dispatch a custom event on the global context so consuming Inspectors can be notified without having to poll for updates to the list.
+
+```ts
+// register in init()
+globalThis.__EMBER_DEBUG_ENTRIES__.push(/* ... */);
+globalThis.dispatchEvent(new CustomEvent('EmberDebugEntryAdded', { detail: EmberDebugEntry.id }))
+
+// deregister in willDestroy()
+globalThis.__EMBER_DEBUG_ENTRIES__.splice(/* ... */);
+globalThis.dispatchEvent(new CustomEvent('EmberDebugEntryRemoved', { detail: EmberDebugEntry.id }))
 ```
 
-### `@ember/debug/inspect`
+### Inspection APIs in `@ember/debug/inspect`
 
 Future iterations of the Inspector should be mostly user interfaces that display the provided data prepared by an app. 
 
@@ -167,53 +156,51 @@ This new module replaces the `ember_debug` package inside the Inspector codebase
 
 The methods become part of the module hierarchy within the page, allowing the DebugClient instances injected into the page to interact with objects on that page. 
 
-#### `inspectProperty()`
+#### `inspectObject()`
 
-Get information about a property of an object including user-readable labels.
+List relevant information for a single object. This should be the place to deal with specialized behavior for things like mixins and customized properties like decorators and legacy computed properties. Properties do not contain their actual value, only a value type.
 
-For this to work, we will have to amend parts of the Ember codebase to attach markers to the descriptors used for things like `@tracked`. These markers can be short human readable strings, which makes them light weight in regards to the build size.
-
-```js
-function inspectProperty(object, name) {
-    const prototype = Object.getPrototypeOf(object);
-    const descriptor = Object.getOwnPropertyDescriptor(prototype, name);
-    
-    if (descriptor.get.__descriptor__ === "decorator:tracked") {
-        return '@tracked'
-    }
-    // ...
-    
-    return (typeof descriptor.value);
+```ts
+type InspectedProperty = {
+    enumerable?: boolean;
+    configurable?: boolean;
+    readOnly?: boolean;
+    instanceOf?: string; // e.g. TrackedDescriptor, ComputedProperty, AliasedProperty
+    valueType: string;
+    /* tbd */
 }
 
-class Foo {
-    @tracked foo;
+type InspectedObject = {
+    id: string;
+    name: string;
+    properties: InspectedProperty[]
 }
 
-inspectProperty(new Foo(), 'foo') === '@tracked';
-```
-
-#### `inspectIdentity()`
-
-List relevant information for a single object. This should be the place to deal with specialized behavior for things like mixins.
-
-{TBD}
-
-```js
-function inspectIdentity(object) {
-    // based on existing similar code within ember_debug moved into ember-source
-}
-
-inspectIdentity()
+function inspectObject(object: unknown): InspectedObject {};
 ```
 
 #### `inspectAncestors()`
 
-Provides a list of structured objects describing the lineage of an object. 
+Walks the list of contructors / prototypes of an object and returns an array of `inspectObject` return values.
 
-{TBD}
+```ts
+function inspectAncestors(object: unknown): InspectedObject[] {};
+````
 
+#### `inspectValue()`
 
+```ts
+type InspectedValue = {
+    name: string;
+    type: string;
+    description: string; // human readable string representation e.g. foo() {…}, [1,2,…], [Object], etc. 
+    isCalculated?: boolean;
+    value: unkown;
+    dependentKeys?: string[];
+};
+
+function inspectValue(object: unknown, property): InspectedObject {};
+```
 
 ## How we teach this
 
@@ -221,7 +208,7 @@ The implementation is intimate API. It will be documented within the code. It co
 
 ## Drawbacks
 
-The new API is not reactive, which means we need to implement live updates to the Inspector in a different way to the current implementation.
+The new API does not account for reactive changes to properties, which is a deviation from the current Inspector. Reactivity for inspected values in the Inspector UI can reintroduced later.
 
 ## Alternatives
 
