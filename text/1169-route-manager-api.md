@@ -286,12 +286,19 @@ For the Route Manager API rendering is split into two manager-provided invokable
 ```typescript
 import type { ComponentLike } from '@glint/template';
 
-interface RouteManager {
-  getRouteWrapper(bucket: RouteStateBucket): ComponentLike<Component: ComponentLike; controller: Controller; model: unknown; routeInfo: InternalRouteInfo<Route>>;
+interface RouteManager<T extends ComponentLike<unknown>> = {
+  getRouteWrapper(bucket: RouteStateBucket): ComponentLike<{
+    Args: {
+      Component: T;
+      context: ReturnType<RouteManager['enter']>;
+      bucket: RouteStateBucket;
+    }
+  }>;
+
   getInvokable(
     bucket: RouteStateBucket,
     enterPromise: Promise<unknown>,
-  ): Promise<ComponentLike<unknown>>;
+  ): Promise<T>;
 }
 ```
 
