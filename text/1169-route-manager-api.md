@@ -135,7 +135,7 @@ The `AsyncNavigationState` interface allows Route Managers to have a certain amo
 
 The `signal` is an `AbortSignal` provided by the Router which can be used to react to a cancellation of the current navigation. It can be passed to, for example, a `fetch` call.
 
-`getAncestorPromise` allows a child-route to optionally tie in to the asynchronous lifecycle of ancestor Routes. This opens the possibility for a RouteManager implementation for parallel resolution of the asynchronous lifecycle. The Classic Route Manager will rely on this behaviour to implement the current waterfall lifecycle. The ancestor promise will resolve with the `context` for that route i.e. in the Classic Route Manager that would be the return value for the `model()` hook. When called with no argument it returns the immediate parent route's promise.
+`getAncestorPromise` allows a child-route to optionally tie in to the asynchronous lifecycle of ancestor Routes. This opens the possibility for a RouteManager implementation for parallel resolution of the asynchronous lifecycle. The Classic Route Manager will rely on this behaviour to implement the current waterfall lifecycle. The ancestor promise will resolve with the `context` for that route i.e. in the Classic Route Manager that would be the return value for the `model()` hook.
 
 ```typescript
 // Exposes API used to interact with the active navigation, like awaiting ancestor's async behaviour.
@@ -144,7 +144,7 @@ interface AsyncNavigationState {
   signal: AbortSignal;
 
   // Retrieve the ancestor promise for an ancestor route, used to await async ancestor behaviour.
-  getAncestorPromise(routeInfo?: RouteInfo): ReturnType<RouteManager['enter']>;
+  getAncestorPromise(routeInfo: RouteInfo): ReturnType<RouteManager['enter']>;
 }
 ```
 
