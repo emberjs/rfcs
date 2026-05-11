@@ -287,7 +287,7 @@ For the Route Manager API rendering is split into two manager-provided invokable
 import type { ComponentLike } from '@glint/template';
 
 interface RouteManager<T extends ComponentLike<unknown>> = {
-  getRouteWrapper(bucket: RouteStateBucket): ComponentLike<{
+  getRouteWrapper(): ComponentLike<{
     Args: {
       Component: T;
       context: ReturnType<RouteManager['enter']>;
