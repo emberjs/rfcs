@@ -80,6 +80,8 @@ The `createRoute` method on the Route Manager is responsible for taking the Rout
 
 The `RouteStateBucket` is a stable reference provided by the manager’s `createRoute` method. All interaction through the Route Manager API will require passing this same stable reference as an argument. The shape and contents of `RouteStateBucket` is defined by the specific Route Manager implementation.
 
+The bucket carries stable identity for a route definition. Per-navigation state lives for the lifetime of each individual render of the route, with the current router provided `RouteInfo` serving this purpose.
+
 #### `getDestroyable`
 
 The `getDestroyable` method takes a `RouteStateBucket` and will return the corresponding `Destroyable` if applicable.
@@ -104,7 +106,7 @@ The NavigationState is an interface for the router to pass information to the ma
 ```typescript
 // Passed in to the lifecycle methods
 interface NavigationState {
-  from: RouteInfo | undefined;
+  from?: RouteInfo;
   to: RouteInfo;
 }
 
@@ -133,16 +135,16 @@ The `AsyncNavigationState` interface allows Route Managers to have a certain amo
 
 The `signal` is an `AbortSignal` provided by the Router which can be used to react to a cancellation of the current navigation. It can be passed to, for example, a `fetch` call.
 
-`ancestorPromises` allows a child-route to optionally tie in to the asynchronous lifecycle of ancestor Routes. This opens the possibility for a RouteManager implementation for parallel resolution of the asynchronous lifecycle. The Classic Route Manager will rely on this behaviour to implement the current waterfall lifecycle. The ancestor promise will resolve with the `context` for that route i.e. in the Classic Route Manager that would be the return value for the `model()` hook.
+`getAncestorPromise` allows a child-route to optionally tie in to the asynchronous lifecycle of ancestor Routes. This opens the possibility for a RouteManager implementation for parallel resolution of the asynchronous lifecycle. The Classic Route Manager will rely on this behaviour to implement the current waterfall lifecycle. The ancestor promise will resolve with the `context` for that route i.e. in the Classic Route Manager that would be the return value for the `model()` hook. When called with no argument it returns the immediate parent route's promise.
 
 ```typescript
 // Exposes API used to interact with the active navigation, like awaiting ancestor's async behaviour.
-interface AsyncNavigationState  {
+interface AsyncNavigationState {
   // Signal for the current navigation
   signal: AbortSignal;
 
-  // Retrieve the ancestor promises for an ancestor route that can be used to await async ancestor behaviour.
-  async getAncestorPromise(routeInfo: RouteInfo): ReturnType<RouteManager.enter>;
+  // Retrieve the ancestor promise for an ancestor route, used to await async ancestor behaviour.
+  getAncestorPromise(routeInfo?: RouteInfo): ReturnType<RouteManager['enter']>;
 }
 ```
 
@@ -241,7 +243,7 @@ Note: this is the full list of lifecycle events in a single transition between '
 
 This sequence diagram only specifies the order of the hooks that are called as part of the Route Manager API, the dotted lines from the Router to the Browser are there for illustrative purposes only and are not specified as part of this RFC. Individual Route managers might express substates (such as loading states) as part of their own APIs, but they would have to do that within the constraints of the Route Manager API hooks.
 
-In the above diagram the `enter()` is called before the `getInvokable()` for a given route. This doesn't really need to be done in this order, and logically they can be considered as happening "at the same time" since there is no awaiting between their respective promises. The only order that is important is **between routes** i.e. you cannot render a sub-route's invokable without all ancestor route invokables having been rendered, therefore you should not call `getInvokable()` on a sub-route until the parent's `getInvokable()` has resolved.
+In the above diagram the `enter()` is called before the `getInvokable()` for a given route. The promise returned from `enter()` is exposed to `getInvokable()`, so a manager may either await it (to gate rendering on data) or ignore it (to render immediately and coordinate loading inside its wrapper).
 
 ### Capabilities
 
@@ -279,31 +281,23 @@ The necessary state will be taken from and stored in the passed `RouteStateBucke
 
 ### Rendering
 
-With the Classic Router, rendering is handled through `RenderState` objects combined with a (scheduled once) call to `router._setOutlets` which updates the render state tree with the new `RenderState` objects from the current routes. This looks something like:
-
-```typescript
-let render: RenderState = {
-  owner,
-  name,
-  controller: undefined, // aliased as @controller argument
-  model: undefined, // aliased as @model argument
-  template, // template factory or component reference
-};
-```
-
-For the Route Manager API we will rework this structure so that the manager returns a generic invokable via a specific API. This way the manager implementation can decide how render happens and what arguments are passed. Deferring render while waiting on asynchronous behaviour (like the Classic Route model hooks) will be a Route Manager concern.
-
-The return value of `getInvokable` is a Promise that resolves to an object that needs to have an associated `ComponentManager`.
+For the Route Manager API rendering is split into two manager-provided invokables: a per-render `invokable` from `getInvokable`, and a module-stable `wrapper` from `getRouteWrapper`. The router renders the wrapper and curries the invokable, alongside per-render context, onto it. This keeps the rendering policy in the manager while letting the framework own the curried argument conventions.
 
 ```typescript
 import type { ComponentLike } from '@glint/template';
 
 interface RouteManager {
-  getInvokable: (bucket: RouteStateBucket) => Promise<ComponentLike>;
+  getRouteWrapper(bucket: RouteStateBucket): ComponentLike;
+  getInvokable(
+    bucket: RouteStateBucket,
+    args: { enterPromise: Promise<unknown> },
+  ): Promise<ComponentLike>;
 }
 ```
 
-Note: `getInvokable()` is an async function so that it is able to absorb any potential `await import()` calls to load modules. This promise is never exposed to any other Route Manager APIs and is entirely managed by the Router.
+`getRouteWrapper` returns a component that calls the route's invokable. The router curries `@Component` (the invokable), the routeInfo, the model, and the controller onto it. The wrapper should be stable across renders so that the rendering layer can use identity to determine when to tear it down.
+
+`getInvokable` returns the component for the current route. It receives the in-flight `enterPromise` so the manager can choose whether to await data before resolving, or to resolve immediately and defer loading-state handling to the wrapper. The promise is async to allow `await import()` for lazy-loaded route modules, and is never exposed elsewhere on the manager-facing API.
 
 ## How we teach this
 
@@ -331,7 +325,11 @@ We do not strictly need to have an async `getInvokable()` because you could alwa
 
 ### Merging enter() and getInvokable() hooks
 
-Comments on this RFC proposed that we could unify the `enter()` and the `getInvokable()` functions. We are explicitly not merging those two functions because the `enter()` hook returns context (usually from data-loading) which is entirely separate from the concerns of `getInvokable()`. Also, it's worth noting that the promise returned by the `getInvokable()` is never exposed to any route via the Route Manager API, and will be an internal concern of the Router itself. The promise returned from `enter()` is exposed to child routes via the `getAncestorPromise()` function so they can await the result to get the context of parent routes.
+Comments on this RFC proposed that we could unify the `enter()` and the `getInvokable()` functions. We are explicitly not merging those two functions because the `enter()` hook returns context (usually from data-loading) which is entirely separate from the concerns of `getInvokable()`.
+
+Separate functions also allow for more flexible implementations of the manager lifecycle, for example you could have a manager that always resolves `getInvokable()` immediately and does not gate rendering on the result of `enter()`, or you could have a manager that waits for the result of `enter()` before resolving `getInvokable()`.
+
+Also, it's worth noting that the promise returned by the `getInvokable()` is never exposed to any route via the Route Manager API, and will be an internal concern of the Router itself. The promise returned from `enter()` is exposed to child routes via the `getAncestorPromise()` function so they can await the result to get the context of parent routes.
 
 ## Unresolved questions
 
@@ -341,7 +339,7 @@ None beyond implementation details.
 
 ### #1 What Classic Routes look like implemented with the Route Manager API
 
-The existing `@ember/route`  Route base class will be referred to as Classic Route. Below is a description of how the current Classic Route implementation could be supported by the proposed Route Manager API.
+The existing `@ember/route` Route base class will be referred to as Classic Route. Below is a description of how the current Classic Route implementation could be supported by the proposed Route Manager API.
 
 #### Hooks & events
 
