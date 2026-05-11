@@ -8,11 +8,11 @@ teams: # delete teams that aren't relevant
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/1169
 project-link:
-suite: 
+suite:
 ---
 
-<!--- 
-Directions for above: 
+<!---
+Directions for above:
 
 stage: Leave as is
 start-date: Fill in with today's date, 2032-12-01T00:00:00.000Z
@@ -43,7 +43,6 @@ A concrete example: since it’s the Route that brings in the Controller, it wil
 
 This RFC is **not** intended to describe APIs that Ember app developers would generally use, but it describes the low-level API intended for framework developers to develop next generation routing and for the rare ecosystem developer wanting to write their own Route base classes with an accompanying Route Manager implementation.
 
-
 ## Detailed design
 
 ### Route Manager basics
@@ -52,20 +51,20 @@ A Route Manager always has `capabilities`, `createRoute` and a `getDestroyable` 
 
 ```typescript
 interface RouteManager {
-	capabilities: Capabilities;
+  capabilities: Capabilities;
 
-	// Responsible for the creation of a RouteStateBucket. Returns a RouteStateBucket, defined by the manager implementation.
-	createRoute: (factory: object, args: CreateRouteArgs) => RouteStateBucket;
+  // Responsible for the creation of a RouteStateBucket. Returns a RouteStateBucket, defined by the manager implementation.
+  createRoute: (factory: object, args: CreateRouteArgs) => RouteStateBucket;
 
-	// Returns the destroyable (if any) for the RouteStateBucket
-	getDestroyable: (bucket: RouteStateBucket) => Destroyable | null;
-	
-    // ... see below
+  // Returns the destroyable (if any) for the RouteStateBucket
+  getDestroyable: (bucket: RouteStateBucket) => Destroyable | null;
+
+  // ... see below
 }
 
 interface CreateRouteArgs {
-	// By convention this is currently the dot separated route path.
-	name: typeof RouteInfo.name 
+  // By convention this is currently the dot separated route path.
+  name: typeof RouteInfo.name;
 }
 ```
 
@@ -75,11 +74,13 @@ Note: this does not represent the full interface, it is expanded upon further in
 
 The `createRoute` method on the Route Manager is responsible for taking the Route’s factory and arguments and based on that return a `RouteStateBucket`. This is invoked by a Router.
 
-***Note:** It is up to the manager to decide whether or not this method actually instantiates the factory or if that happens at a later time, depending on the specific lifecycle the manager implementation wants to provide.*
+**\*Note:** It is up to the manager to decide whether or not this method actually instantiates the factory or if that happens at a later time, depending on the specific lifecycle the manager implementation wants to provide.\*
 
 #### `RouteStateBucket`
 
 The `RouteStateBucket` is a stable reference provided by the manager’s `createRoute` method. All interaction through the Route Manager API will require passing this same stable reference as an argument. The shape and contents of `RouteStateBucket` is defined by the specific Route Manager implementation.
+
+The bucket carries stable identity for a route definition. Per-navigation state lives for the lifetime of each individual render of the route, with the current router provided `RouteInfo` serving this purpose.
 
 #### `getDestroyable`
 
@@ -93,8 +94,8 @@ The technique used to determine the correct route manager to invoke will follow 
 // Takes a Factory function for the Manager with an Owner argument and
 // the Route base object/class/function for which the manager applies.
 setRouteManager: (
-	createManager: (owner: Owner) => MyRouteManager,
-	definition: object
+  createManager: (owner: Owner) => MyRouteManager,
+  definition: object
 ) => void
 ```
 
@@ -105,13 +106,13 @@ The NavigationState is an interface for the router to pass information to the ma
 ```typescript
 // Passed in to the lifecycle methods
 interface NavigationState {
-	from: RouteInfo | undefined;
-	to: RouteInfo;
+  from?: RouteInfo;
+  to: RouteInfo;
 }
 
 // Classic interoperability, only provided if manager requests classicInterop capability
 interface NavigationStateWithTransition = NavigationState & {
-	transition: Transition;
+  transition: Transition;
 }
 ```
 
@@ -123,8 +124,8 @@ The `NavigationActions` interface defines any actions that some of the manager h
 
 ```typescript
 interface NavigationActions {
-	// Cancels the current navigation
-	cancel: () => void;
+  // Cancels the current navigation
+  cancel: () => void;
 }
 ```
 
@@ -134,16 +135,16 @@ The `AsyncNavigationState` interface allows Route Managers to have a certain amo
 
 The `signal` is an `AbortSignal` provided by the Router which can be used to react to a cancellation of the current navigation. It can be passed to, for example, a `fetch` call.
 
-`ancestorPromises` allows a child-route to optionally tie in to the asynchronous lifecycle of ancestor Routes. This opens the possibility for a RouteManager implementation for parallel resolution of the asynchronous lifecycle. The Classic Route Manager will rely on this behaviour to implement the current waterfall lifecycle. The ancestor promise will resolve with the `context` for that route i.e. in the Classic Route Manager that would be the return value for the `model()` hook.
+`getAncestorPromise` allows a child-route to optionally tie in to the asynchronous lifecycle of ancestor Routes. This opens the possibility for a RouteManager implementation for parallel resolution of the asynchronous lifecycle. The Classic Route Manager will rely on this behaviour to implement the current waterfall lifecycle. The ancestor promise will resolve with the `context` for that route i.e. in the Classic Route Manager that would be the return value for the `model()` hook.
 
 ```typescript
 // Exposes API used to interact with the active navigation, like awaiting ancestor's async behaviour.
-interface AsyncNavigationState  {
-	// Signal for the current navigation
-	signal: AbortSignal;
-	
-	// Retrieve the ancestor promises for an ancestor route that can be used to await async ancestor behaviour.
-	async getAncestorPromise(routeInfo: RouteInfo): ReturnType<RouteManager.enter>;
+interface AsyncNavigationState {
+  // Signal for the current navigation
+  signal: AbortSignal;
+
+  // Retrieve the ancestor promise for an ancestor route, used to await async ancestor behaviour.
+  getAncestorPromise(routeInfo: RouteInfo): ReturnType<RouteManager['enter']>;
 }
 ```
 
@@ -159,21 +160,29 @@ The main lifecycle methods are accompanied by synchronous will*/did* methods. Th
 Note: `willEnter()` **must** be sync so that, in the case that the URL update is synchronous, the user-feedback of the URL update is immediate and does not feel "laggy" to the end-user.
 
 ```typescript
-
 interface RouteManager {
-	// Lifecycle hook called when the Route is about to be entered.
-	willEnter: (bucket: RouteStateBucket, args: NavigationState & NavigationActions) => void;
-	// Main asynchronous entry point - return value is the context (a.k.a model) for the current route
-	enter: (bucket: RouteStateBucket, args: NavigationState & NavigationActions & AsyncNavigationState) => Promise<unknown>;
-	// Called after all `enter` hooks for the current Route hierarchy have succesfully resolved.
-	didEnter: (bucket: RouteStateBucket, args: NavigationState) => void;
+  // Lifecycle hook called when the Route is about to be entered.
+  willEnter: (
+    bucket: RouteStateBucket,
+    args: NavigationState & NavigationActions,
+  ) => void;
+  // Main asynchronous entry point - return value is the context (a.k.a model) for the current route
+  enter: (
+    bucket: RouteStateBucket,
+    args: NavigationState & NavigationActions & AsyncNavigationState,
+  ) => Promise<unknown>;
+  // Called after all `enter` hooks for the current Route hierarchy have succesfully resolved.
+  didEnter: (bucket: RouteStateBucket, args: NavigationState) => void;
 
-	// Called when the Route is about to be exited.
-	willExit: (bucket: RouteStateBucket, args: NavigationState & NavigationActions) => void;
-	// Called when the Route is exited.
-	exit: (bucket: RouteStateBucket, args: NavigationState) => void;
-	// Called when all exiting routes have exited
-	didExit: (bucket: RouteStateBucket, args: NavigationState) => void;
+  // Called when the Route is about to be exited.
+  willExit: (
+    bucket: RouteStateBucket,
+    args: NavigationState & NavigationActions,
+  ) => void;
+  // Called when the Route is exited.
+  exit: (bucket: RouteStateBucket, args: NavigationState) => void;
+  // Called when all exiting routes have exited
+  didExit: (bucket: RouteStateBucket, args: NavigationState) => void;
 }
 ```
 
@@ -186,23 +195,23 @@ sequenceDiagram
     %% When putting this in github try using - participant Browser@{ "type" : "boundary" }
     Actor Browser
     participant R as Router
-    
+
     box rgba(255, 255, 255, 0.2) RouteManagerAPI
-	    %% participant I as Route "index"
-	    participant A as Route "a"
-	    participant AB as Route "a.b"
-	    participant X as Route "x"
-	    participant XY as Route "x.y"
+      %% participant I as Route "index"
+      participant A as Route "a"
+      participant AB as Route "a.b"
+      participant X as Route "x"
+      participant XY as Route "x.y"
     end
-    
+
     Browser->>R: navigate from a.b to x.y
     R->>AB: willExit()
     R->>A: willExit()
     R->>X: willEnter()
     R->>XY: willEnter()
-    
+
     R-->>Browser: location.href update if eager
-    
+
     R-)+X: enter()
     R-)+X: getInvokable()
     X->>-R: Promise.resolve()
@@ -220,9 +229,9 @@ sequenceDiagram
 
     R->>AB: exit()
     R->>A: exit()
-    
+
     R-->>Browser: location.href update if deferred
-    
+
     R->>X: didEnter()
     R->>XY: didEnter()
     R->>AB: didExit()
@@ -234,11 +243,11 @@ Note: this is the full list of lifecycle events in a single transition between '
 
 This sequence diagram only specifies the order of the hooks that are called as part of the Route Manager API, the dotted lines from the Router to the Browser are there for illustrative purposes only and are not specified as part of this RFC. Individual Route managers might express substates (such as loading states) as part of their own APIs, but they would have to do that within the constraints of the Route Manager API hooks.
 
-In the above diagram the `enter()` is called before the `getInvokable()` for a given route. This doesn't really need to be done in this order, and logically they can be considered as happening "at the same time" since there is no awaiting between their respective promises. The only order that is important is **between routes** i.e. you cannot render a sub-route's invokable without all ancestor route invokables having been rendered, therefore you should not call `getInvokable()` on a sub-route until the parent's `getInvokable()` has resolved.
+In the above diagram the `enter()` is called before the `getInvokable()` for a given route. The promise returned from `enter()` is exposed to `getInvokable()`, so a manager may either await it (to gate rendering on data) or ignore it (to render immediately and coordinate loading inside its wrapper).
 
 ### Capabilities
 
-Route Managers are required to have a `capabilities` property.  This property must be set to the result of calling the `capabilities` function provided by Ember.
+Route Managers are required to have a `capabilities` property. This property must be set to the result of calling the `capabilities` function provided by Ember.
 
 Any time the Classic Router interfaces with the RouteManager in a way we do not want in the future, we will shield this behind an optional capability. This capability or capabilities will at some point in the future be turned off by default through a deprecation.
 
@@ -249,22 +258,22 @@ When the `classicInterop` capability is set to `true` the Route Manager will hav
 ```typescript
 // Classic Router interoperability
 interface RouteManagerWithClassicInterop = RouteManager & {
-	getRouteName(bucket: RouteStateBucket) => string;
-	getFullRouteName(bucket: RouteStateBucket) => string;
-	
-	// Query Parameter handling
-	stashNames(bucket: RouteStateBucket, routeInfo: ExtendedInternalRouteInfo<Route>, dynamicParent: ExtendedInternalRouteInfo<Route>) => void;
-	qp(bucket: RouteStateBucket): it's complicated
-	
-	serializeQueryParam(bucket: RouteStateBucket, value: unknown, urlKey: string, defaultValueType: string);
-	deserializeQueryParam(bucket: RouteStateBucket, value: unknown, urlKey: string, defaultValueType: string);
-	
-    // this allows for the implementation of Route.serialize()
-    serializeContext(bucket: RouteStateBucket, routeInfo: RouteInfo<Route>, value: unknown) => Record<string, unknown>;
+  getRouteName(bucket: RouteStateBucket) => string;
+  getFullRouteName(bucket: RouteStateBucket) => string;
 
-	// Actions/event handlers
-	queryParamsDidChange(bucket: RouteStateBucket, changed: {}, totalPresent: unknown, removed: {}) => boolean | void;
-	finalizeQueryParamChange(bucket: RouteStateBucket, params: Record<string, string | null | undefined>, finalParams: {}[], transition: Transition) => boolean | void;
+  // Query Parameter handling
+  stashNames(bucket: RouteStateBucket, routeInfo: ExtendedInternalRouteInfo<Route>, dynamicParent: ExtendedInternalRouteInfo<Route>) => void;
+  qp(bucket: RouteStateBucket): it's complicated
+
+  serializeQueryParam(bucket: RouteStateBucket, value: unknown, urlKey: string, defaultValueType: string);
+  deserializeQueryParam(bucket: RouteStateBucket, value: unknown, urlKey: string, defaultValueType: string);
+
+  // this allows for the implementation of Route.serialize()
+  serializeContext(bucket: RouteStateBucket, routeInfo: RouteInfo<Route>, value: unknown) => Record<string, unknown>;
+
+  // Actions/event handlers
+  queryParamsDidChange(bucket: RouteStateBucket, changed: {}, totalPresent: unknown, removed: {}) => boolean | void;
+  finalizeQueryParamChange(bucket: RouteStateBucket, params: Record<string, string | null | undefined>, finalParams: {}[], transition: Transition) => boolean | void;
 }
 ```
 
@@ -272,31 +281,30 @@ The necessary state will be taken from and stored in the passed `RouteStateBucke
 
 ### Rendering
 
-With the Classic Router, rendering is handled through `RenderState` objects combined with a (scheduled once) call to `router._setOutlets` which updates the render state tree with the new `RenderState` objects from the current routes. This looks something like:
-
-```typescript
-let render: RenderState = {
-    owner,
-    name,
-    controller: undefined, // aliased as @controller argument
-    model: undefined, // aliased as @model argument
-    template, // template factory or component reference
-  };
-```
-
-For the Route Manager API we will rework this structure so that the manager returns a generic invokable via a specific API. This way the manager implementation can decide how render happens and what arguments are passed. Deferring render while waiting on asynchronous behaviour (like the Classic Route model hooks) will be a Route Manager concern.
-
-The return value of `getInvokable` is a Promise that resolves to an object that needs to have an associated `ComponentManager`.
+For the Route Manager API rendering is split into two manager-provided invokables: a per-route `invokable` from `getInvokable`, and a module-stable `wrapper` from `getRouteWrapper`. The router renders the wrapper and curries the invokable, alongside per-render context, onto it. This keeps the rendering policy in the manager while letting the framework own the curried argument conventions.
 
 ```typescript
 import type { ComponentLike } from '@glint/template';
 
-interface RouteManager {
-	getInvokable: (bucket: RouteStateBucket) => Promise<ComponentLike>;
+interface RouteManager<T extends ComponentLike<unknown>> = {
+  getRouteWrapper(bucket: RouteStateBucket): ComponentLike<{
+    Args: {
+      Component: T;
+      context: ReturnType<RouteManager['enter']>;
+      bucket: RouteStateBucket;
+    }
+  }>;
+
+  getInvokable(
+    bucket: RouteStateBucket,
+    enterPromise: Promise<unknown>,
+  ): Promise<T>;
 }
 ```
 
-Note: `getInvokable()` is an async function so that it is able to absorb any potential `await import()` calls to load modules. This promise is never exposed to any other Route Manager APIs and is entirely managed by the Router. 
+`getRouteWrapper` returns a component that calls the route's invokable. The router curries `@Component` (the invokable), the `RouteInfo`, the context, and the controller onto it. The wrapper should be stable across renders so that the rendering layer can use identity to determine when to tear it down.
+
+`getInvokable` returns the component for the current route. It receives the in-flight `enterPromise` so the manager can choose whether to await data before resolving, or to resolve immediately and defer loading-state handling to the wrapper. The promise is async to allow `await import()` for lazy-loaded route modules, and is never exposed elsewhere on the manager-facing API.
 
 ## How we teach this
 
@@ -308,7 +316,7 @@ This introduces a new layer that isn't strictly required, but experiments would 
 
 ## Alternatives
 
-The manager pattern is used across the Ember codebase with success and this is just the first step for formalizing improvements to the Router, alternatives were not explored. 
+The manager pattern is used across the Ember codebase with success and this is just the first step for formalizing improvements to the Router, alternatives were not explored.
 
 ### Route lifecycle update hooks
 
@@ -316,7 +324,7 @@ A previous iteration of this RFC provided explicit `willUpdate()`, `update()`, a
 
 This will require the Classic Route Manager to do some more elaborate internal work to provide the same lifecycle hooks that current Routes expect, this is an intentional decision to improve the interface of the Manager API and will not have a lasting impact on Ember as the Classic Route Manager is intended to be a compatibility-layer for existing applications and will be phased out.
 
-### Sync getInvokable() 
+### Sync getInvokable()
 
 A previous version of this RFC had a sync version of the `getInvokable()` function on the Route Manager API. This was changed to give a slightly better developer experience to allow people to absorb asynchronous imports of modules. Note: this is not intended to have any implications on the `enter()` hook and the async data loading is never intended to happen during the `getInvokable()` promise lifecycle.
 
@@ -324,7 +332,11 @@ We do not strictly need to have an async `getInvokable()` because you could alwa
 
 ### Merging enter() and getInvokable() hooks
 
-Comments on this RFC proposed that we could unify the `enter()` and the `getInvokable()` functions. We are explicitly not merging those two functions because the `enter()` hook returns context (usually from data-loading) which is entirely separate from the concerns of `getInvokable()`. Also, it's worth noting that the promise returned by the `getInvokable()` is never exposed to any route via the Route Manager API, and will be an internal concern of the Router itself. The promise returned from `enter()` is exposed to child routes via the `getAncestorPromise()` function so they can await the result to get the context of parent routes.
+Comments on this RFC proposed that we could unify the `enter()` and the `getInvokable()` functions. We are explicitly not merging those two functions because the `enter()` hook returns context (usually from data-loading) which is entirely separate from the concerns of `getInvokable()`.
+
+Separate functions also allow for more flexible implementations of the manager lifecycle, for example you could have a manager that always resolves `getInvokable()` immediately and does not gate rendering on the result of `enter()`, or you could have a manager that waits for the result of `enter()` before resolving `getInvokable()`.
+
+Also, it's worth noting that the promise returned by the `getInvokable()` is never exposed to any route via the Route Manager API, and will be an internal concern of the Router itself. The promise returned from `enter()` is exposed to child routes via the `getAncestorPromise()` function so they can await the result to get the context of parent routes.
 
 ## Unresolved questions
 
@@ -334,7 +346,7 @@ None beyond implementation details.
 
 ### #1 What Classic Routes look like implemented with the Route Manager API
 
-The existing `@ember/route`  Route base class will be referred to as Classic Route. Below is a description of how the current Classic Route implementation could be supported by the proposed Route Manager API.
+The existing `@ember/route` Route base class will be referred to as Classic Route. Below is a description of how the current Classic Route implementation could be supported by the proposed Route Manager API.
 
 #### Hooks & events
 
@@ -374,17 +386,17 @@ The model hooks are an RSVP Promise chain handled by router_js. We can put them 
 #### Updating the model for an existing route mapped to manager hooks:
 
 - `willUpdate` (leaf-most)
-    - `willTransition` event
-    - `routeWillChange` event, router service
+  - `willTransition` event
+  - `routeWillChange` event, router service
 - `update`
-    - `beforeModel`
-    - `model`
-    - `afterModel`
+  - `beforeModel`
+  - `model`
+  - `afterModel`
 - `didUpdate` (leaf-most)
-    - `resetController` (conditionally, if model return value changed)
-    - `setupController` (conditionally, if model return value changed)
-    - `didTransition` (event, leafmost)
-    - `routeDidChange` event, router service
+  - `resetController` (conditionally, if model return value changed)
+  - `setupController` (conditionally, if model return value changed)
+  - `didTransition` (event, leafmost)
+  - `routeDidChange` event, router service
 
 #### Mapping of existing events and methods to the new API
 
@@ -393,33 +405,33 @@ sequenceDiagram
     %% When putting this in github try using - participant Browser@{ "type" : "boundary" }
     Actor Browser
     participant R as Router
-    
+
     box rgba(255, 255, 255, 0.2) RouteManagerAPI
-	    participant A as Route "a"
-	    participant AB as Route "a.b"
-	    participant X as Route "x"
-	    participant XY as Route "x.y"
+      participant A as Route "a"
+      participant AB as Route "a.b"
+      participant X as Route "x"
+      participant XY as Route "x.y"
     end
-    
+
     Browser-->>R: navigate from a.b to x.y
     R->>AB: willExit()<br>Event:willTransition
     R->>A: willExit()
     R->>X: willEnter()
     R->>XY: willEnter()
-    
+
     R-)+X: enter()
     X->>X: beforeModel()<br>model()<br>afterModel()
     X->>-R: Promise.resolve()
-    
+
     R-)+XY: enter()
     XY->>XY: beforeModel()<br>model()<br>afterModel()
     XY->>-R: Promise.resolve()
-    
+
     R->>AB: exit()<br>resetController()<br>deactivate()
     R->>A: exit()<br>resetController()<br>deactivate()
-    
+
     R-->>Browser: location.href update
-    
+
     R->>X: didEnter()<br>activate()<br>setupController()
     R->>XY: didEnter()<br>activate()<br>setupController()<br>Event:didTransition
     R->>AB: didExit()
