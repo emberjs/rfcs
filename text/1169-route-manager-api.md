@@ -302,7 +302,7 @@ interface RouteManager<T extends ComponentLike<unknown>> = {
 }
 ```
 
-`getRouteWrapper` returns a component that calls the route's invokable. The router curries `@Component` (the invokable), the `RouteInfo`, the context, and the controller onto it. The wrapper should be stable across renders so that the rendering layer can use identity to determine when to tear it down.
+`getRouteWrapper` returns a component that calls the route's invokable. The router curries `@Component` (the invokable), the context, and the bucket onto it. The wrapper should be stable across renders so that the rendering layer can use identity to determine when to tear it down.
 
 `getInvokable` returns the component for the current route. It receives the in-flight `enterPromise` so the manager can choose whether to await data before resolving, or to resolve immediately and defer loading-state handling to the wrapper. The promise is async to allow `await import()` for lazy-loaded route modules, and is never exposed elsewhere on the manager-facing API.
 
