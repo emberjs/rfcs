@@ -281,21 +281,21 @@ The necessary state will be taken from and stored in the passed `RouteStateBucke
 
 ### Rendering
 
-For the Route Manager API rendering is split into two manager-provided invokables: a per-render `invokable` from `getInvokable`, and a module-stable `wrapper` from `getRouteWrapper`. The router renders the wrapper and curries the invokable, alongside per-render context, onto it. This keeps the rendering policy in the manager while letting the framework own the curried argument conventions.
+For the Route Manager API rendering is split into two manager-provided invokables: a per-route `invokable` from `getInvokable`, and a module-stable `wrapper` from `getRouteWrapper`. The router renders the wrapper and curries the invokable, alongside per-render context, onto it. This keeps the rendering policy in the manager while letting the framework own the curried argument conventions.
 
 ```typescript
 import type { ComponentLike } from '@glint/template';
 
 interface RouteManager {
-  getRouteWrapper(bucket: RouteStateBucket): ComponentLike;
+  getRouteWrapper(bucket: RouteStateBucket): ComponentLike<Component: ComponentLike; controller: Controller; model: unknown; routeInfo: InternalRouteInfo<Route>>;
   getInvokable(
     bucket: RouteStateBucket,
     args: { enterPromise: Promise<unknown> },
-  ): Promise<ComponentLike>;
+  ): Promise<ComponentLike<unknown>>;
 }
 ```
 
-`getRouteWrapper` returns a component that calls the route's invokable. The router curries `@Component` (the invokable), the routeInfo, the model, and the controller onto it. The wrapper should be stable across renders so that the rendering layer can use identity to determine when to tear it down.
+`getRouteWrapper` returns a component that calls the route's invokable. The router curries `@Component` (the invokable), the `RouteInfo`, the context, and the controller onto it. The wrapper should be stable across renders so that the rendering layer can use identity to determine when to tear it down.
 
 `getInvokable` returns the component for the current route. It receives the in-flight `enterPromise` so the manager can choose whether to await data before resolving, or to resolve immediately and defer loading-state handling to the wrapper. The promise is async to allow `await import()` for lazy-loaded route modules, and is never exposed elsewhere on the manager-facing API.
 
