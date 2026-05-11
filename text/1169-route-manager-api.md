@@ -290,7 +290,7 @@ interface RouteManager {
   getRouteWrapper(bucket: RouteStateBucket): ComponentLike<Component: ComponentLike; controller: Controller; model: unknown; routeInfo: InternalRouteInfo<Route>>;
   getInvokable(
     bucket: RouteStateBucket,
-    args: { enterPromise: Promise<unknown> },
+    enterPromise: Promise<unknown>,
   ): Promise<ComponentLike<unknown>>;
 }
 ```
