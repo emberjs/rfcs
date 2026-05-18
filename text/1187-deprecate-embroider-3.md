@@ -15,7 +15,6 @@ prs:
 project-link:
 ---
 
-<-- Replace "RFC title" with the title of your RFC -->
 # Deprecate Embroider@3
 
 ## Summary
@@ -28,11 +27,11 @@ This RFC officially deprecates Embroider@3 and is a clear communication that no 
 
 ## Motivation
 
-The first version of Embroider that was in any official default bluprint was Embroider@4, which was included in [Ember@6.8 when Embroider+Vite became the default build system](https://blog.emberjs.com/ember-released-6-8#toc_embroider-and-vite-by-default). There have been other application blueprints available for early-adopters for quite some time, but the Ember Core Tooling team was never confident enough in the implementation to make it the default for everyone. This was not a negative view of the Embroider code itself, it was more a lack of confidence in one of the core architectural decisions of the old approach. Embroider@3 wrapped Webpack inside the existing ember-cli broccoli-based build system and was a fundemental limiting factor that prevented Ember from taking advantage of improvements in the modern build tooling ecosystem.
+The first version of Embroider that was in any official default blueprint was Embroider@4, which was included in [Ember@6.8 when Embroider+Vite became the default build system](https://blog.emberjs.com/ember-released-6-8#toc_embroider-and-vite-by-default). There have been other application blueprints available for early-adopters for quite some time, but the Ember Core Tooling team was never confident enough in the implementation to make it the default for everyone. This was not a negative view of the Embroider code itself, it was more a lack of confidence in one of the core architectural decisions of the old approach. Embroider@3 wrapped Webpack inside the existing ember-cli broccoli-based build system and was a fundamental limiting factor that prevented Ember from taking advantage of improvements in the modern build tooling ecosystem.
 
-Embroider@4 was a significant refactoring of the architecture and approach of building Ember apps with modern tooling (such as Vite), where Embroider no longer wrapped the bundler in an ember-cli pipeline but instead Embroider acted as a **plugin** for the bundler. This meant that we could make use of the improvements from the respective bundler's dev servers without having to implemet all of those features as a pass-through for ember-cli.
+Embroider@4 was a significant refactoring of the architecture and approach of building Ember apps with modern tooling (such as Vite), where Embroider no longer wrapped the bundler in an ember-cli pipeline but instead Embroider acted as a **plugin** for the bundler. This meant that we could make use of the improvements from the respective bundler's dev servers without having to implement all of those features as a pass-through for ember-cli.
 
-The Ember Tooling Team decided to keep maintaining the legacy Embroider@3 branch (with bugfixes and security patches) so that we would give early adpoters who had already opted-in to Embroider@3 time to migrate to the new system.
+The Ember Tooling Team decided to keep maintaining the legacy Embroider@3 branch (with bugfixes and security patches) so that we would give early adopters who had already opted-in to Embroider@3 time to migrate to the new system.
 
 We knew that we couldn't maintain the legacy Embroider@3 branch forever but we have recently discovered that because of the changes needed for the [using-amd-bundles deprecation](https://deprecations.emberjs.com/id/using-amd-bundles) it is practically impossible to support Ember@7 with Embroider@3 without any breaking changes. This fact has been the motivating factor for deprecating Embroider@3 now.
 
