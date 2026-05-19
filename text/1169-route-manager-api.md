@@ -1,12 +1,12 @@
 ---
-stage: accepted
+stage: ready-for-release
 start-date: 2026-02-26T00:00:00.000Z
-release-date: # In format YYYY-MM-DDT00:00:00.000Z
+release-date:
 release-versions:
-teams: # delete teams that aren't relevant
+teams:
   - framework
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1169
+  accepted: 'https://github.com/emberjs/rfcs/pull/1169'
 project-link:
 suite:
 ---
