@@ -21,9 +21,9 @@ project-link:
 
 Embroider+Vite is now the default build system for any newly generated Ember application. To achieve this implementation we needed to release a breaking change of Embroider (Embroider@4) which represents a complete re-architecture of how the Embroider build system works. 
 
-As Embroider@4 was a breaking change, that required some manual migration steps to upgrade to, the Ember Core Tooling Team has been maintaining the Embroider@3 branch to give developers time to upgrade/migrate.
+As Embroider@4 was a breaking change, that required some manual migration steps to upgrade to it. The Ember Core Tooling Team has been maintaining the Embroider@3 branch to give developers time to upgrade/migrate.
 
-This RFC officially deprecates Embroider@3 and is a clear communication that no more maintenance will be done on the old version. All apps should upgrade to Embroider@4 as soon as possible.
+This RFC officially deprecates Embroider@3 and is a clear communication that no new features will be backported to this version. We will continue to backport any security fixes, but only while Ember@6.12 remains an **active LTS version** as we are not backporting the changes necessary to support Ember@7. This means that all apps should upgrade to Embroider@4 as soon as possible, and all apps **must** upgrade to Embroider@4 before they can upgrade to Ember@7.
 
 ## Motivation
 
@@ -34,6 +34,8 @@ Embroider@4 was a significant refactoring of the architecture and approach of bu
 The Ember Tooling Team decided to keep maintaining the legacy Embroider@3 branch (with bugfixes and security patches) so that we would give early adopters who had already opted-in to Embroider@3 time to migrate to the new system.
 
 We knew that we couldn't maintain the legacy Embroider@3 branch forever but we have recently discovered that because of the changes needed for the [using-amd-bundles deprecation](https://deprecations.emberjs.com/id/using-amd-bundles) it is practically impossible to support Ember@7 with Embroider@3 without any breaking changes. This fact has been the motivating factor for deprecating Embroider@3 now.
+
+If this RFC is accepted that means that Ember@7 will never be supported on Embroider@3. The only way to upgrade an application to Ember@7+ is to first upgrade to Embroider@4 (and switch to Vite) and then continue to update your application to Ember@7. The Ember Core Tooling Team will no longer work on bugfixes for Embroider@3, but will backport any necessary security fixes until Ember@6.12 LTS has reached End of Life. 
 
 ## Technical details
 
@@ -46,7 +48,7 @@ To be clear about the changes that will actually happen if this RFC is accepted 
 
 ### Applications
 
-The transition path for Applications is the same as it was for anyone wanting to move from ember-cli to vite, the Ember Tooling Team recommends that you run the [ember-vite-codemod](https://github.com/mainmatter/ember-vite-codemod). This has well-tested support for upgrading applications from either classic ember-cli build pipelines or Embroider@3 build piplelines.
+The transition path for Applications is the same as it was for anyone wanting to move from ember-cli to Vite, the Ember Tooling Team recommends that you run the [ember-vite-codemod](https://github.com/mainmatter/ember-vite-codemod). This has well-tested support for upgrading applications from either classic ember-cli build pipelines or Embroider@3 build piplelines.
 
 For a slightly easier migration experience we recommend that you migrate all of your templates to GJS/GTS using the [@embroider/template-tag-codemod](https://github.com/embroider-build/embroider/tree/main/packages/template-tag-codemod) before running the `ember-vite-codemod`. This will allow you to solve any issues that your own app might have with Vite on a file-by-file basis before moving the whole app.
 
