@@ -1,12 +1,13 @@
 ---
-stage: accepted
+stage: ready-for-release
 start-date: 2019-12-08T00:00:00.000Z
 release-date:
 release-versions:
 teams:
   - framework
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/560
+  accepted: 'https://github.com/emberjs/rfcs/pull/560'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/1180'
 project-link:
 ---
 
