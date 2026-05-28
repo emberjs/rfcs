@@ -201,7 +201,7 @@ class TrackedValuePolyfill {
 The key difference is that with a `TrackedValue`, we've exposed a new way for developers to decide when their value becomes dirty.
 The above example, and the default value, would use the "always dirty" behavior of `() => false`.
 
-This default value allows the `TrackedValue` to _conceptually_ (but not reality, becuse less abstraction layers are speedier) be the backing implementation if `@tracked`, as `@tracked` values do not have equalty checking to decide when to become dirty.
+This default value allows the `TrackedValue` to _conceptually_ (but not reality, becuse less abstraction layers are speedier) be the backing implementation of `@tracked`, as `@tracked` values do not have equalty checking to decide when to become dirty.
 
 For example, with this `TrackedValue` and equality function:
 
