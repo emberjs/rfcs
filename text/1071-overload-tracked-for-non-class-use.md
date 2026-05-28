@@ -506,7 +506,7 @@ export class Demo extends Component {
 
 ### When to use `freeze()`
 
-Prevents further updates to the Cell. 
+Prevents further updates to the `ReactiveValue`. 
 
 ## Drawbacks
 
