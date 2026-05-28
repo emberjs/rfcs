@@ -122,7 +122,7 @@ function tracked<Value>(
 interface TrackedValue<Value> extends Reactive<Value> {
     /**
     * Function short-hand of updating the value
-    * of the Cell
+    * of the TrackedValue
     *
     * This is a convience method for different usage-styles, and is functionally the same as
     * assigning the `.value` value.
@@ -130,13 +130,19 @@ interface TrackedValue<Value> extends Reactive<Value> {
     set: (value: Value) => boolean;
 
     /**
+    * Function short-hand of reading the value
+    * of the TrackedValue
+    */
+    get: () => Value;
+
+    /**
     * Function short-hand for using the value to 
-    * update the state of the Cell
+    * update the state of the TrackedValue
     */
     update: (fn: (value: Value) => Value) => void;
 
     /**
-     * Prevents further updates, making the Cell
+     * Prevents further updates, making the TrackedValue
      * behave as a ReadOnlyReactive
      *
      * This is an optimization that avoids update-checking later.
@@ -171,6 +177,10 @@ class TrackedValuePolyfill {
         // + dirty
         this.#value = value;
     } 
+
+    get() {
+        return this.value;
+    }
 
     set(value) {
         this.value = value;
@@ -382,7 +392,7 @@ function getReactivity(obj) {
 function consume(cacheForObj, key) {
     let cache = keyCache(cacheForObj, key);
 
-    cache.read();
+    cache.get();
 }
 
 function dirty(cacheForObj, key) {
@@ -520,12 +530,15 @@ Other proposed options from comments were: `current`.
 Value is generic enough, and is a generally understood concept without nuance.
 
 
-### Naming: _avoiding_ `get`, favoring `read` 
+### Naming: `get` and `read` 
 
-- `get` implies that you are always going to do something with what is given to you
+> [!NOTE]
+> Developers should only access values they want to use, and not with the intent of causinge side-effects -- however, certain patterns (such as "side-signals")
+
+- `get` implies that you are always going to do something with what is given to you 
 - `read` somewhat implies that you want to see the state of tracked value, but is ambigous about if you want to do anything with that information
 
-This is useful in the "side-signals" example above, where we "read", but don't use the value.
+`get`, in particular, (while ~ unfortunately ~, matches legacy naming in our history), matches existing JS concepts from Map, WeakMap, other other concepts.
 
 ### Naming: `set`
 
