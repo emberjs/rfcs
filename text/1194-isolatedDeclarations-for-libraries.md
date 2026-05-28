@@ -1,17 +1,14 @@
 ---
 stage: accepted
-start-date: # In format YYYY-MM-DDT00:00:00.000Z
+start-date: 2026-05-28T00:00:00.000Z 
 release-date: # In format YYYY-MM-DDT00:00:00.000Z
 release-versions:
 teams: # delete teams that aren't relevant
   - cli
-  - data
-  - framework
   - learning
-  - steering
   - typescript
 prs:
-  accepted: # Fill this in with the URL for the Proposal RFC PR
+  accepted: https://github.com/emberjs/rfcs/pull/1194 
 project-link:
 suite: 
 ---
@@ -34,7 +31,7 @@ suite: Leave as is
 
 ## Summary
 
-Turn on `isolatedDeclarations` in `@ember/library-tsconfig`, the base config that v2 addons extend from. Library authors will need to annotate the types of their exports. In return, type-checking gets faster, the public API of an addon becomes an explicit contract instead of whatever `tsc` happened to infer, and non-`tsc` tools like `tsdown` and `rolldown` can generate `.d.ts` files directly from source.
+Turn on `isolatedDeclarations` in `@ember/library-tsconfig`, the base config that v2 addons extend from. Library authors will need to annotate the types of their exports. In return, type-checking gets faster, the public API of an addon becomes an explicit contract instead of whatever `(ember-)tsc` happened to infer, and non-`(ember-)tsc` tools like `tsdown` and `rolldown` can generate `.d.ts` files directly from source.
 
 ## Motivation
 
