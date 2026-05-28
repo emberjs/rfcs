@@ -30,34 +30,43 @@ project-link: Leave as is
 suite: Leave as is
 -->
 
-# Introduce `cell` 
+# Overload `tracked` to work outside of classes 
 
 ## Summary
 
-This RFC introduces a new tracking primitive, which represents a single value, the `Cell`.
+This RFC introduces two overloads to the existing `tracked` function, allowing it to be used outside of classes.
 
 ## Motivation
 
-The `Cell` is part of the "spreadsheet analogy"[^formula] when talking about reactivity -- it represents a single tracked value, and can be created without the use of a class, making it a primate candidate for demos[^demos] and for creating reactive values in function-based APIs, such as _helpers_, _modifiers_, or _resources_. They also provide a benefit in testing as well, since tests tend to want to work with some state, the `Cell` is wholly encapsulated, and can be quickly created with 0 ceremony. 
+Our documentation / guides currently don't have much of anything on reactivity, and over the years, it's been useful to talk about reactive primitives as things _outside_ of classes, and compose/wrap them in to refactoring boundaries (classes, components, etc). 
 
-This is not too dissimilar to the [Tracked Storage Primitive in RFC#669](https://github.com/emberjs/rfcs/blob/master/text/0669-tracked-storage-primitive.md)[^tracked-storage-future]. The `Cell` provides more ergonomic benefits as it doesn't require 3 imports to use. This RFC intends to replace the unimplemented storage-primitives. 
+Additionally, other new reactive utilities have an options object that allow power-users to configure equality and dirtying behavior (see: `@ember/reactive/collections` for those), and we want that same configurability for `tracked`.
 
-The `Cell` was prototyped in [Starbeam](https://starbeamjs.com/guides/fundamentals/cells.html) and has been available for folks to try out in ember via [ember-resources](https://github.com/NullVoxPopuli/ember-resources/tree/main/docs/docs). 
+Enabling `tracked` to be used outside of a class makes it a good tool for demos[^demos] for creating reactive values in function-based APIs, such as _helpers_, _modifiers_, or _resources_ (or even in module space)[^apps]. They also provide a benefit in testing as well, since tests tend to want to work with some state. 
+
+This is not too dissimilar to the [Tracked Storage Primitive in RFC#669](https://github.com/emberjs/rfcs/blob/master/text/0669-tracked-storage-primitive.md)[^tracked-storage-future]. Making `tracked` work outside of classes provides the same benefit without requiring 3 imports to use. This RFC intends to provide a tool enabling us to sunset/abandon the unimplemented storage-primitives. 
+
+`tracked`-as-non-decorator was prototyped in [Starbeam](https://starbeamjs.com/guides/fundamentals/cells.html) and has been available for folks to try out in ember via [ember-resources](https://github.com/NullVoxPopuli/ember-resources/tree/main/docs/docs) (though, under a different name: `cell`). 
+
+[^apps]: Apps typically should not have reactive state in module space, becaues it doesn't get automatically reset between tests, since we don't reload modules between each tests (partly for perf reasons).
 
 [^demos]: demos _must_ over simplify to bring attention to a specific concept. Too much syntax getting in the way easily distracts from what is trying to be demoed. This has benefits for actual app development as well though, as we're, by focusing on concise demo-ability, gradually removing the amount of typing needed to create features. 
 
-[^tracked-storage-future]: This may likely be deprecated at some point -- especially since it was never implemented, and `cell` is a better successor to it (in general). The library itself will need to be converted to a v2 addon, and then at some point we can add a message to the top of the README stating that we don't intend to implement it in Ember (but the library will still exist, and builts on top of public APIs, so the library itself does not need to be deprecated). Any actoun around this is outside the scope of this RFC.
-
-[^formula]: a subsequent RFC (depending on this one) would be a better version of today's `createCache` + `getValue` pairing, `Formula`
+[^tracked-storage-future]: This may likely be deprecated at some point -- especially since it was never implemented, and `cell`/`tracked` is a better successor to it (in general). 
 
 ## Detailed design
 
-> [!NOTE]  
-> Only `cell` will be importable as a value. The types will also be importable, but the `Cell` class is private. 
+Developers will continue to use: 
 
 ```ts
-import { cell, type Cell } from '@ember/reactive';
+import { tracked } from '@glimmer/tracking';
 ```
+
+however, when used as a function (not a decorator), a different return value will be available:
+- a `Reactive`
+
+> [!IMPORTANT]
+> This particular return value gives us the abilitiy in the future guides talking about reactivity a way to describe what the `@tracked` decorator is doing (since decorators are not in every ecosystem), we can describe them as a syntactic sugar on top of a `Reactive`.
 
 ### Types 
 
@@ -73,36 +82,35 @@ interface Reactive<Value> {
     * @example
     *
     * ```gjs
-    * const myCell = cell(0);
+    * const myValue = tracked(0);
     * <template>
-    *   {{myCell.current}}
+    *   {{myCell.value}}
     * </template>
     * ```
     */
-    current: Value;
+    value: Value;
 }
 
+// Useful internal concept for optimizations
 interface ReadOnlyReactive<Value> extends Reactive<Value> {
     /**
     * The underlying value.
     * Cannot be set.
     */
-    readonly current: Value;
+    readonly value: Value;
 }
 
 /**
-* Utility to create a Cell without the caller using the `new` keyword.
-* exists as a separate function so that in memory, there is only one copy of the Cell class,
-* with a single constructor.
+* Utility to create a tracked value. 
 */
-function cell<Value>(
+function tracked<Value>(
     initialValue: Value,
     options?: { 
         equals: (a: Value, b: Value) => boolean, 
         description?: string 
     } = {}
 ) {
-  return new Cell(
+  return new TrackedValue(
     initialValue,
     {
       equals: options?.equals ?? Object.is,
@@ -111,17 +119,18 @@ function cell<Value>(
   );
 }
 
-interface Cell<Value> extends Reactive<Value> {
+interface TrackedValue<Value> extends Reactive<Value> {
     /**
-    * Function short-hand of updating the current value
+    * Function short-hand of updating the value
     * of the Cell
     *
     * This is a convience method for different usage-styles, and is functionally the same as
-    * assigning the `.current` value.
+    * assigning the `.value` value.
     */
     set: (value: Value) => boolean;
+
     /**
-    * Function short-hand for using the current value to 
+    * Function short-hand for using the value to 
     * update the state of the Cell
     */
     update: (fn: (value: Value) => Value) => void;
@@ -136,13 +145,13 @@ interface Cell<Value> extends Reactive<Value> {
 }
 ~~~
 
-Behaviorally, the `Cell` behaves almost the same as this function:
+Behaviorally, `tracked()` behaves almost the same as this function:
 ```js
-function cell(initial, { equals, description ) = {}) {
-  return new CellPolyfill(initial, { equals, description });
+function tracked(initial, { equals, description ) = {}) {
+  return new TrackedValuePolyfill(initial, { equals, description });
 }
 
-class CellPolyfill {
+class TrackedValuePolyfill {
     #isFrozen = false;
     #value;
 
@@ -153,24 +162,24 @@ class CellPolyfill {
         // ...
     }
 
-    get current() {
+    get value() {
         // + consume
         return this.#value;
     }
-    set current(value) {
+    set value(value) {
         assert(`Cannot set a frozen Cell`, !this.#isFrozen);
         // + dirty
         this.#value = value;
     } 
 
     set(value) {
-        this.current = value;
+        this.value = value;
     }
 
     update(updater) {
         // #value is not tracked, 
         // so update reads without consuming
-        this.current = updater(this.#value);
+        this.value = updater(this.#value);
     }
 
     freeze() {
@@ -179,17 +188,17 @@ class CellPolyfill {
 }
 ```
 
-The key difference is that with a primitive, we expose a new way for developers to decide when their value becomes dirty.
+The key difference is that with a `TrackedValue`, we've exposed a new way for developers to decide when their value becomes dirty.
 The above example, and the default value, would use the "always dirty" behavior of `() => false`.
 
-This default value allows the `Cell` to be the backing implementation if `@tracked`, as `@tracked` values do not have equalty checking to decide when to become dirty.
+This default value allows the `TrackedValue` to _conceptually_ (but not reality, becuse less abstraction layers are speedier) be the backing implementation if `@tracked`, as `@tracked` values do not have equalty checking to decide when to become dirty.
 
-For example, with this Cell and equality function:
+For example, with this `TrackedValue` and equality function:
 
 ```gjs
-const value = cell(0, { equals (a, b) => a === b });
+const value = tracked(0, { equals: (a, b) => a === b });
 
-const selfAssign = () => value.current = value.current;
+const selfAssign = () => value.value = value.value;
 
 <template>
     <output>{{value}}</output>
@@ -200,7 +209,9 @@ const selfAssign = () => value.current = value.current;
 
 The contents of the `output` element would never re-render due to the value never changing. 
 
-This differs from `@tracked`, as the contents of `output` would always re-render.
+This differs from `@tracked` (no args), as the contents of `output` would always re-render.
+
+But, this RFC is always proposing we overload the decorator so that it can be configured to have customizable equality checking (see Usage below)
 
 
 ### Usage
@@ -208,13 +219,13 @@ This differs from `@tracked`, as the contents of `output` would always re-render
 Incrementing a count with local state.
 
 ```gjs
-import { cell } from '@ember/reactive';
+import { tracked } from '@glimmer/tracking';
 
-const increment = (c) => c.current++;
+const increment = (c) => c.value++;
 
 <template>
-    {{#let (cell @initialCount) as |count|}}
-       Count is: {{count.current}} 
+    {{#let (tracked @initialCount) as |count|}}
+        Count is: {{count.value}} 
 
         <button {{on "click" (fn increment count)}}>add one</button>
     {{/let}}
@@ -225,13 +236,13 @@ Incrementing a count with module state.
 This is already common in demos.
 
 ```gjs
-import { cell } from '@ember/reactive';
+import { tracked } from '@glimmer/tracking';
 
-const count = cell(0);
-const increment => count.current++;
+const count = tracked(0);
+const increment = () => count.value++;
 
 <template>
-   Count is: {{count.current}} 
+    Count is: {{count.value}} 
 
     <button {{on "click" increment}}>add one</button>
 </template>
@@ -241,45 +252,80 @@ Using private mutable properties providing public read-only access:
 
 ```gjs
 export class MyAPI {
-    #state = cell(0);
+    #state = tracked(0);
 
     get myValue() {
-        return this.#state;
+        return this.#state.value;
     }
 
     doTheThing() {
-        this.#state = secretFunctionFromSomewhere(); 
+        this.#state.value = secretFunctionFromSomewhere(); 
     }
+}
+```
+
+Customizable equality in a class:
+
+```gjs
+import { tracked } from '@glimmer/tracking';
+
+export default class Demo extends Component {
+    @tracked({ equals: (a, b) => a === b}) value;
+
+    // Does not "dirty" the value
+    doNothing = () => this.value = this.value;
+
+    // ....
+}
+```
+
+when not called with options, the behavior remains the same as it does today:
+
+```gjs
+import { tracked } from '@glimmer/tracking';
+
+export default class Demo extends Component {
+    @tracked value;
+
+    // The value *is* dirtied 
+    doNothing = () => this.value = this.value;
+
+    // ....
 }
 ```
 
 
 ### Re-implementing `@tracked` 
 
+> [!NOTE]
+> This is a conceptual exercise, and for performance reasons it won't be implemented this way
+
 For most current ember projects, using the TC39 Stage 1 implementation of decorators:
 
 ```js
+import { tracked as glimmerTracked } from '@glimmer/tracking';
+
 function tracked(target, key, { initializer }) {
-  let cells = new WeakMap();
+  let caches = new WeakMap();
 
-  function getCell(obj) {
-    let myCell = cells.get(obj);
+  function getValue(obj) {
+    let myValue = caches.get(obj);
 
-    if (myCell === undefined) {
-      myCell = cell(initializer.call(this), { equals: null, description: `tracked:${key}` });
-      cells.set(this, myCell);
+    if (myValue === undefined) {
+      myValue = glimmerTracked(initializer.call(this), { equals: () => false, description: `tracked:${key}` });
+      caches.set(this, myValue);
     }
 
-    return myCell;
+    return myValue;
   };
 
   return {
     get() {
-      return getCell(this).current;
+      return getValue(this).value;
     },
 
     set(value) {
-      getCell(this).set(value);
+      getValue(this).set(value);
     },
   };
 }
@@ -288,14 +334,14 @@ function tracked(target, key, { initializer }) {
 <details><summary>Using spec / standards-decorators</summary>
 
 ```js
-import { cell } from '@ember/reactive';
+import { tracked as glimmerTracked } from '@glimmer/tracking';
     
 export function tracked(target, context) {
   const { get } = target;
 
   return {
     get() {
-      return get.call(this).current;
+      return get.call(this).value;
     },
 
     set(value) {
@@ -303,7 +349,7 @@ export function tracked(target, context) {
     },
 
     init(value) {
-      return cell(value, { equals: null, description: `tracked:${key}` });
+      return glimmerTracked(value, { equals: () => false, description: `tracked:${key}` });
     },
   };
 }
@@ -313,15 +359,15 @@ export function tracked(target, context) {
 
 ### Usage as "side-signals"
 
-Side-signals are the reactive approach used in tracked-bulit-ins, and other reactive-collections, where the Signal/Cell/tracked value isn't relevant / not used, and the reactive collection only uses the reactive structure for telling the renderer when to update/render/etc.
+Side-signals are the reactive approach used in tracked-bulit-ins, and other reactive-collections, where the Signal/tracked value isn't relevant / not used, and the reactive collection only uses the reactive structure for telling the renderer when to update/render/etc.
 
 This can often be done with proxies:
 ```ts
-import { cell } from '@ember/reactive';
+import { tracked } from '@glimmer/tracking';
 
 const nonReactiveObject = {};
 
-let cache = new WeakMap<object, Map<key, Cell>>();
+let cache = new WeakMap<object, Map<key, TrackedValue>>();
 
 function getReactivity(obj) {
     if (cache.has(obj)) {
@@ -352,7 +398,7 @@ function keyCache(obj, key) {
         return existing;
     }
 
-    existing = cell(null, { equals: () => false });
+    existing = tracked(null, { equals: () => false });
     cacheForObj.set(existing, key);
     return existing;
 }
@@ -381,24 +427,24 @@ myReactiveObject.foo = 2;
 
 ## How we teach this
 
-The `Cell` is a primitive, and for most real applications, folks should continue to use classes, with `@tracked`, as the combination of classes with decorators provide unparalleled ergonomics in state management. 
+The `tracked` function is a low-level tool, for folks that want specific behavior and for most real applications, folks should continue to use classes, with `@tracked`, as the combination of classes with decorators provide unparalleled ergonomics in state management. 
 
-However, developers may think of `@tracked` (or decorators in general) as magic -- we can utilize `Cell` as a storytelling tool to demystify how `@tracked` works -- since `Cell` will be public API, we can easily explain how `Cell` is used to _create the `@tracked` decorator_.
+However, developers may think of `@tracked` (or decorators in general) as magic -- we can utilize `tracked()` as a storytelling tool to demystify how `@tracked` works -- since `tracked()` will be public API, we can easily explain how `tracked()` is used to _create the `@tracked` decorator_ (without discussing the real private APIs that we _don't_ want folks using (such as those exported from `@glimmer/validator`).
 
 We can even use the example over-simplified implementation of `@tracked` from the _Detailed Design_ section above.
 
-### When to use `current`
+### When to use `value`
 
 Allows for easy use in templates as well as assignment
 
 ```gjs
-import { cell } from '@ember/reactive';
+import { tracked } from '@glimmer/tracking';
 
-const increment = (c) => c.current++;
+const increment = (c) => c.value++;
 
 <template>
-    {{#let (cell @initialCount) as |count|}}
-       Count is: {{count.current}} 
+    {{#let (tracked @initialCount) as |count|}}
+       Count is: {{count.value}} 
 
         <button {{on "click" (fn increment count)}}>add one</button>
     {{/let}}
@@ -410,11 +456,11 @@ const increment = (c) => c.current++;
 Allows partial application, e.g.:
 
 ```gjs
-import { cell } from '@ember/reactive';
+import { tracked } from '@glimmer/tracking';
 
 <template>
-    {{#let (cell @initialCount) as |count|}}
-       Count is: {{count.current}} 
+    {{#let (tracked @initialCount) as |count|}}
+       Count is: {{count.value}} 
 
         <button {{on "click" (fn count.set 1)}}>set one</button>
         <button {{on "click" (fn count.set 2)}}>set two</button>
@@ -429,9 +475,9 @@ Can be useful for changing the initial value once.
 
 
 ```gjs
-import { cell } from '@ember/reactive';
+import { tracked } from '@glimmer/tracking';
 
-let num = cell(0);
+let num = tracked(0);
 
 export class Demo extends Component {
     constructor() {
@@ -441,7 +487,7 @@ export class Demo extends Component {
     }
 
     <template>
-        {{num.current}} => renders 1
+        {{num.value}} => renders 1
     </template>
 }
 
@@ -452,14 +498,14 @@ export class Demo extends Component {
 
 Prevents further updates to the Cell. 
 
-
 ## Drawbacks
 
-- another API
+- same API does multiple things based on usage, but developers should be used to this somewhat as overloading is nothing new -- TS will also be agreeable with the overloads 
+- potential confusion around why default `@tracked` has dirty-all-the-time reactivity (`equals: () => false`) -- this is for historical reasons, and we probably can't change this default behavior right now -- but might be able to in the future via different re-export from a different location (such as `@ember/reactive` -- but this has its own drawbacks (teaching, cognitive overload, etc))
 
 ## Alternatives
 
-- Have the cell's equality function check value-equality of primitives, rather than _always_ dirty. This may mean that folks apps could subtly break if we changed the `@tracked` implementation. But we could maybe provide a different tracked implementation from a different import, if we want to pursue this equality checking without breaking folks existing apps.
+- completetly new API, such as `cell`
 
 ## Unresolved questions
 
@@ -467,185 +513,33 @@ Prevents further updates to the Cell.
 
 ## Appendix
 
-### Naming: Cell
+### Naming: value
 
-Naming in the broader context of the JavaScript ecosystem, and why we're using "Cell"[^other-rfcs-pending][^relationships-for-demonstration-only]:
+Other proposed options from comments were: `current`.
 
-
-[^other-rfcs-pending]: Other RFCs are pending for this all to be fully coherent and make sense. For example, we need [RFC #1122: Resources](https://github.com/emberjs/rfcs/pull/1122) as well as a (at the time of writing) not yet submitted RFC for how we adapt with TC39 Signals, and the other reactive ecosystems[^implementation-details].
-
-
-[^relationships-for-demonstration-only]: The relationships shown between TC39 and the respective frameworks here are speculative, and while we can prepare for reactive programming making in to _THE PLATFORM_ and have what's going on in the broader ecosystem, it is too early to _formally support_ something like TC39 Signals. But this is not to say we can't have interop with something generic in the future (so if folks wanted to use something they're actively told not use in production, they could)
-
-[^implementation-details]: the details of how Cell gets implemented _could_ be the glue that holds all ecosystems together. More on that in another RFC (see also: [Starbeam](https://starbeamjs.com/)).
-
-```mermaid
----
-title: "Reactive primitive naming"
----
-flowchart LR
-    tracked("@tracked")
-    subgraph TC39
-        Signal("Signal.State")
-        Computed("Signal.Computed")
-    end
-
-    subgraph "Framework Wrappers"
-        subgraph "Vue"
-            ref
-            reactiveVue("reactive()")
-            computedVue("computed()")
-        end
-
-        subgraph "Svelte"
-            state("$state")
-            reactiveSvelte("reactive()")
-            derived("$derived.by()")
-        end
-
-        subgraph "Ember"
-            cell
-            tracked
-            reactiveEmber("reactive{Object,etc}()")
-            cached("@cached")
-        end
-
-        subgraph "Solid"
-            createSignal
-            createMemo
-        end
-    end
-
-    TC39-->Vue
-    TC39-->Svelte
-    TC39-->Solid
-    TC39-->Ember
-```
-
-#### TC39
-
-Current proposed namespace is `Signal`, but an individual state value _is_ called a `Signal`.
-
-#### Vue
-
-Vue uses `ref` for state and `computed()` for cached values.
-
-```mermaid
-flowchart LR
-    subgraph TC39
-        Signal("Signal.State")
-        Computed("Signal.Computed")
-    end
-
-    subgraph "Vue"
-        Signal-->ref
-        Signal-->reactiveVue("reactive()")
-        Computed-->computedVue("computed()")
-    end
-```
-
-
-#### Svelte
-
-Svelte uses _runes_, and changes semantics of syntax of runtime javascript, to help its developers type less (at the cost of learning magic behavior).
-
-But they use `$state` and `$derived` for their state + cache concepts.
-
-```mermaid
-flowchart LR
-    subgraph TC39
-        Signal("Signal.State")
-        Computed("Signal.Computed")
-    end
-
-    subgraph "Svelte"
-        Signal-->state("$state")
-        Signal-->reactiveSvelte("reactive()")
-        Computed-->derived("$derived.by()")
-    end
-```
-
-#### Solid
-
-Solid has a slight SEO situation as their primitive value is _also_ called a Signal conflates TC39's Signal with its own Signals. This can be an SEO problem, as folks searching for "JavaScript Signals" can find results for both TC39 Signals and Solid Signals.
-
-This brings up something we need to consider when naming -- the intent of what we're using in our reactive programs/apps vs what the name of the actual APIs. 
-
-```mermaid
-flowchart LR
-    subgraph TC39
-        Signal("Signal.State")
-        Computed("Signal.Computed")
-    end
-
-    subgraph "Solid"
-        Signal-->createSignal
-        Computed-->createMemo
-    end
-```
-
-#### Ember
-
-We have a strong case for using `cell` in Ember, because of the aforementioned "spreadsheet analogy".
-
-`cell` is a single value, and it isn't currently used by any of the other reactive frameworks, thus helping with our SEO (avoiding conflation, as we'd have with `Signal`, or if we chose any other name, we'd conflict and be conflated with the other frameworks).
-
-TC39 has chosen _computed_ for its cache, which we _cannot_ use due to our historical use of `computed()` and `@computed` in pre-Octane-era Ember (pre 2019), so sticking to `@cached` makes sense for us long-term.
-
-```mermaid
-flowchart LR
-    tracked("@tracked")
-    subgraph TC39
-        Signal("Signal.State")
-        Computed("Signal.Computed")
-    end
-
-    subgraph "Ember"
-        Signal-->cell
-        Signal-->tracked
-        Signal-->reactiveEmber("reactive{Object,etc}()")
-        Computed-->cached("@cached")
-    end
-```
-
-> [!IMPORTANT]
-> We have no intention of renaming our our core utilities in ember as that would cause a ton of unneeded churn for no value. This deos not mean that at some point in the future, all the other framework's utilities wouldn't be usable in ember. We want our specific names (Cell, etc), to be unique to ember for both SEO reasons, and for future conflict avoidance reasons (which are currently outside the scope of this RFC)
-
-
-### Naming: current
-
-Other proposed options from comments were: `value`.
-
-However, `current` communicates more meaning than `value` as `current` implies that the value is specifically up to date and cannot be out of date. `value` alone has no implications of history, up-to-date-ness, etc.
-
-Arguments for `value`:
-- Other state containers use `value`
-- `current` has other meanings (electricity)  
-    (so does value, though)
-- supposed vibes with streams and `rx`   
-    (not sure if this is a bad thing?)
+Value is generic enough, and is a generally understood concept without nuance.
 
 
 ### Naming: _avoiding_ `get`, favoring `read` 
 
 - `get` implies that you are always going to do something with what is given to you
-- `read` somewhat implies that you want to see the state of cell, but is ambigous about if you want to do anything with that information
+- `read` somewhat implies that you want to see the state of tracked value, but is ambigous about if you want to do anything with that information
 
 This is useful in the "side-signals" example above, where we "read", but don't use the value.
 
 ### Naming: `set`
 
 - `set` implies mutation and potential side-effectful behavior, which is exactly what is happening
-- `write` implies that data is being _written_ somewhere, which may not be true, depending on your point of view. There may also not even be state within the cell (as in the case of the "side-signals" example)
+- `write` implies that data is being _written_ somewhere, which may not be true, depending on your point of view. There may also not even be state within the tracked value (as in the case of the "side-signals" example)
 
 ### Extension
 
-If folks wanted, they could make their own cell with previous or historical values. This could be useful for extremely expensive operations that depend on previous computations. 
+If folks wanted, they could make their own tracked value with previous or historical values. This could be useful for extremely expensive operations that depend on previous computations. 
 To do this, folks would need to implement their own class:
 ```js
-class HistoryCell {
+class TrackedValueWithHistory {
     #previous;
-    #current = cell();
+    #current = tracked();
 
     get current() {
         return this.#current.current;
