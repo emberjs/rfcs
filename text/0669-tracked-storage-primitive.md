@@ -12,6 +12,9 @@ project-link:
 
 # Tracked Storage Primitives
 
+> [!IMPORTANT]
+> This RFC has been abandoned, because of the unergonomic APIs it suggested, and this RFC (in use case) has been replaced with [RFC#1071](https://github.com/emberjs/rfcs/pull/1071)
+
 ## Summary
 
 Provide a low level primitive for storing tracked values:
