@@ -42,7 +42,7 @@ If this RFC is accepted that means that Ember@7 will never be supported on Embro
 To be clear about the changes that will actually happen if this RFC is accepted I want to list out the exact changes that will happen during the implementation of the RFC:
 
 - A new warning will be added to Embroider@3 in a patch release that communicates that Embroider@3 is deprecated and will link to documentation on how to upgrade
-- The `stable` branch on the `embroider-build/embroider` repo will be renamed to `legacy` to confuse anyone
+- The `stable` branch on the `embroider-build/embroider` repo will be renamed to `legacy` to not confuse anyone
 
 ## Transition Path
 
