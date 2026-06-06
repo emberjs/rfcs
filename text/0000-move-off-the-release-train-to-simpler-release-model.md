@@ -39,6 +39,8 @@ SemVer, the six-week cadence, the deprecation policy, LTS, and the major-version
 
 The expensive part of the release train is all the machinery around it, plus the time it takes maintainers with limited availability to keep it running.
 
+Moving to release-plan also enables us to easily release the other packages in this repo (`@glimmer/syntax`, etc)
+
 ### Releases depend on too few people
 
 We don't actually have a formal release-manager rotation. In practice the release comes down to essentially one person per project: @katiegengler for `ember.js`, @mansona for `ember-cli`. This is a bus-factor and burnout risk -- which other teams have already faced. When that person isn't around (due to life, unplanned things, etc (this alone is not a big deal)), the release slips.
