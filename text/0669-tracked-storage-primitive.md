@@ -7,7 +7,7 @@ teams:
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/669
-  discontinue: https://github.com/emberjs/rfcs/pull/1195
+  discontinued: https://github.com/emberjs/rfcs/pull/1195
 project-link:
 ---
 
