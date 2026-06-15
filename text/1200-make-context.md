@@ -54,7 +54,7 @@ So this RFC proposes the feature itself, and nothing else:
 The expected outcome is that [ember-provide-consume-context][epcc] users (and everyone who wanted Context but wouldn't take on a private-API dependency to get it) have a built-in, supported, typed primitive.
 
 > [!IMPORTANT]
-> The APIs proposed here are different from [ember-provide-consume-context][epcc] -- with the goal of having the clearest block-semantics. This RFC does not propose any decerators, and use of Provide and consume are thus only available in synchronous calls from the `<template>`
+> The APIs proposed here differ from [ember-provide-consume-context][epcc]. This RFC proposes no decorators: `Provide` and `consume` work only synchronously during render.
 
 ## Detailed design
 
@@ -220,7 +220,7 @@ None of this is public API. The tracker, its module, and its shape may change fr
 
 ### What this RFC does _not_ propose
 
-To be explicit, because the surrounding discussion has covered a lot of ground over the years -- none of the following is proposed here:
+None of the following is proposed here:
 
 - no `getScope` / `addToScope` or any other render-tree exploration API (that was [RFC #1154][rfc-1154]; this supersedes it)
 - no `@provide` / `@consume` decorators and no string-keyed contexts (sketched in [RFC #975][rfc-975])
@@ -276,7 +276,7 @@ The API docs come from the JSDoc on `makeContext` (already written in the implem
 ## Appendix: what this primitive makes cheap (not proposed here)
 
 > [!IMPORTANT]
-> Nothing in this appendix is proposed by this RFC. It exists to show that the machinery behind `makeContext` is the right altitude for future work -- and to record where that exploration lives -- so that the proposal above can stay minimal.
+> Nothing in this appendix is proposed by this RFC. It records where related exploration lives so that the proposal above can stay minimal.
 
 A long-wanted capability is `getOwner()` with **no arguments** working inside plain function helpers, which have no `this` to read an owner from:
 
@@ -308,4 +308,4 @@ return read ? read() : undefined;
 
 A working implementation of this, stacked on the implementation of this RFC, is at [NullVoxPopuli/ember.js#16](https://github.com/NullVoxPopuli/ember.js/pull/16) -- and because the owner lookup walks the render tree like any other context, it resolves correctly through `renderComponent` owner overrides and re-renders, for free.
 
-That a years-old request becomes a three-line patch is the strongest evidence we have that this is the right primitive. If/when no-arg `getOwner` is wanted, it will be its own RFC; it would change the public signature of `getOwner`, and deserves its own discussion.
+If/when no-arg `getOwner` is wanted, it will be its own RFC; it would change the public signature of `getOwner`, and deserves its own discussion.
