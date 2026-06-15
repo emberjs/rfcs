@@ -30,7 +30,7 @@ suite: Leave as is
 
 ## Summary
 
-This RFC proposes one new export from `@ember/helper`: `makeContext`, which creates a render-tree-scoped _context_ -- a `Provide` component for binding a value into a region of the render tree, and a `consume` function for reading the nearest provided value from anywhere below it. This is the Context feature the community has been asking for since (at least) [RFC #975][rfc-975], scoped down to the smallest API that delivers it.
+This RFC proposes one new export from `@ember/helper`: `makeContext`, which creates a render-tree-scoped _context_ -- a `Provide` component for binding a value into a region of the render tree, and a `consume` getter for reading the nearest provided value from anywhere below it. This is the Context feature the community has been asking for since (at least) [RFC #975][rfc-975], scoped down to the smallest API that delivers it.
 
 This RFC supersedes [RFC #1154][rfc-1154], incorporating what was learned while implementing it. An implementation of this proposal exists at [emberjs/ember.js#21450][impl-pr].
 
@@ -83,17 +83,17 @@ export interface Context<T> {
   }>;
 
   /**
-   * Returns the value from the nearest enclosing `<Provide>`
-   * for this context.
+   * The value from the nearest enclosing `<Provide>` for this
+   * context.
    *
-   * Usable as a template helper -- `(theme.consume)` -- or called
+   * Usable in a template -- `{{theme.consume}}` -- or read
    * directly from JS that runs while rendering (e.g. a component
    * constructor or a function helper).
    *
    * Throws if there is no enclosing `<Provide>` for this context,
-   * or if called outside of rendering.
+   * or if read outside of rendering.
    */
-  consume: () => T;
+  get consume(): T;
 }
 ```
 
@@ -115,12 +115,12 @@ const defaultTheme = new Theme();
   <theme.Provide @value={{defaultTheme}}>
 
     {{! with let }}
-    {{#let (theme.consume) as |t|}}
+    {{#let theme.consume as |t|}}
       {{t.color}} {{! "dark" }}
     {{/let}}
 
     {{! passing elsewhere }}
-    <SomeCompnoent @foo={{ (theme.consume) }} />
+    <SomeCompnoent @foo={{theme.consume}} />
   </theme.Provide>
 </template>
 ```
@@ -141,7 +141,7 @@ import { theme } from 'my-app/theme';
 
 export default class FancyButton extends Component {
   get color() {
-    return theme.consume().color;
+    return theme.consume.color;
   }
 
   <template>
@@ -152,16 +152,16 @@ export default class FancyButton extends Component {
 
 ### Semantics
 
-**Identity.** Every call to `makeContext()` creates a distinct context. A `consume()` only matches a `<Provide>` from the _same_ `makeContext()` call. There are no string keys, so there are no naming collisions: two addons can each have a context for "theme" and they cannot interfere with each other.
+**Identity.** Every call to `makeContext()` creates a distinct context. A `consume` only matches a `<Provide>` from the _same_ `makeContext()` call. There are no string keys, so there are no naming collisions: two addons can each have a context for "theme" and they cannot interfere with each other.
 
-**Nearest provider wins.** `consume()` walks up the render tree and returns the value from the closest enclosing `<Provide>` for its context:
+**Nearest provider wins.** `consume` walks up the render tree and returns the value from the closest enclosing `<Provide>` for its context:
 
 ```gjs
 <template>
   <ctx.Provide @value="outer">
-    {{(ctx.consume)}} {{! "outer" }}
+    {{ctx.consume}} {{! "outer" }}
     <ctx.Provide @value="inner">
-      {{(ctx.consume)}} {{! "inner" }}
+      {{ctx.consume}} {{! "inner" }}
     </ctx.Provide>
   </ctx.Provide>
 </template>
@@ -169,22 +169,22 @@ export default class FancyButton extends Component {
 
 **Scoping follows the render tree.** A `<Provide>` is only visible to its descendants. Sibling subtrees do not see each other's providers, even for the same context. Separate `renderComponent` trees are fully isolated from each other. Because resolution follows the _render_ tree (not module structure, not the owner), a context provided in an app is visible inside a mounted engine's components, and a context can cross any component/helper boundary without anyone in the middle participating.
 
-**Missing provider is an error.** `consume()` throws if there is no enclosing `<Provide>` for its context, and throws if called outside of rendering entirely. This is intentional harm-reduction: a missing provider is almost always a bug, and `undefined` would let that bug travel. There is no "default value" feature -- if you want an always-available value, render a `<Provide>` at your application root. (Note that this is a place where this proposal is deliberately stricter than [ember-provide-consume-context][epcc], whose `getContext` returns `undefined`.)
+**Missing provider is an error.** `consume` throws if there is no enclosing `<Provide>` for its context, and throws if read outside of rendering entirely. This is intentional harm-reduction: a missing provider is almost always a bug, and `undefined` would let that bug travel. There is no "default value" feature -- if you want an always-available value, render a `<Provide>` at your application root. (Note that this is a place where this proposal is deliberately stricter than [ember-provide-consume-context][epcc], whose `getContext` returns `undefined`.)
 
-**An explicit `undefined` is still provided.** `<ctx.Provide @value={{undefined}}>` (or omitting `@value`) means the provider _is_ in the tree and provides `undefined` -- `consume()` returns `undefined` rather than throwing. "You provided nothing" and "there is no provider" are different situations, and only the latter is an error.
+**An explicit `undefined` is still provided.** `<ctx.Provide @value={{undefined}}>` (or omitting `@value`) means the provider _is_ in the tree and provides `undefined` -- `consume` returns `undefined` rather than throwing. "You provided nothing" and "there is no provider" are different situations, and only the latter is an error.
 
 **Reactivity is just autotracking.** The `@value` binding is reactive: when the argument passed to `<Provide>` changes, consumers update. If `@value` is a stable object, mutating its `@tracked` fields updates consumers, and the object's identity is preserved across re-renders. There is no subscription API and no special invalidation mechanism -- a provided value behaves exactly like the same value passed as an argument.
 
-**Where `consume()` may be called.** Anywhere that runs synchronously during rendering, below a matching `<Provide>`:
+**Where `consume` may be read.** Anywhere that runs synchronously during rendering, below a matching `<Provide>`:
 
-- in a template, as a helper: `(ctx.consume)`
+- in a template, as a path: `{{ctx.consume}}`
 - in a plain function helper's body
 - in a component's constructor or getters
 
-Because this is a synchronous, render-scoped API, `consume()` does not work after an `await` (there is no render tree position to resolve against anymore -- it throws the "outside of rendering" error). Read the context first, then go async.
+Because this is a synchronous, render-scoped API, `consume` does not work after an `await` (there is no render tree position to resolve against anymore -- it throws the "outside of rendering" error). Read the context first, then go async.
 
 > [!NOTE]
-> In the current implementation, `consume()` inside a *modifier* also throws "outside of rendering", because modifiers run during the commit phase, after the render frame has unwound. Supporting modifiers is a desirable, purely-additive follow-up (it relaxes an error into working behavior, so it would not need a new RFC), but this RFC does not promise it.
+> In the current implementation, `consume` inside a *modifier* also throws "outside of rendering", because modifiers run during the commit phase, after the render frame has unwound. Supporting modifiers is a desirable, purely-additive follow-up (it relaxes an error into working behavior, so it would not need a new RFC), but this RFC does not promise it.
 
 ### Testing
 
@@ -209,13 +209,13 @@ test('FancyButton uses the provided theme', async function (assert) {
 
 ### How it works (non-normative)
 
-The renderer already tracks the render-tree hierarchy (this is how the debug render tree behind Ember Inspector works). The implementation maintains a similar, always-on tracker of "scope nodes" as components are created and re-rendered. `<Provide>` records its (lazily-read, autotracked) `@value` on the current node under its context's private identity; `consume()` walks the current node's parent chain looking for that identity.
+The renderer already tracks the render-tree hierarchy (this is how the debug render tree behind Ember Inspector works). The implementation maintains a similar, always-on tracker of "scope nodes" as components are created and re-rendered. `<Provide>` records its (lazily-read, autotracked) `@value` on the current node under its context's private identity; `consume` walks the current node's parent chain looking for that identity.
 
 None of this is public API. The tracker, its module, and its shape may change freely as the renderer evolves -- the only stable surface is `makeContext` and the behavior specified above. (This is the most important difference from [RFC #1154][rfc-1154], which would have made the tree-walking itself public.)
 
 ### Ecosystem implications
 
-- a rule in `eslint-plugin-ember` flagging `consume()` (and other render-scoped calls) after an `await` would be a nice addition, but is not required for this feature to ship.
+- a rule in `eslint-plugin-ember` flagging `consume` (and other render-scoped reads) after an `await` would be a nice addition, but is not required for this feature to ship.
 - [ember-provide-consume-context][epcc] can migrate its internals onto this (or document a migration path for its users) and stop overriding VM internals.
 
 ### What this RFC does _not_ propose
@@ -251,7 +251,7 @@ The API docs come from the JSDoc on `makeContext` (already written in the implem
 ## Drawbacks
 
 - It is one more state-sharing tool to choose between (arguments, yields/contextual components, services, and now context), and it can be misused -- overly-broad context values cause the same problems in every framework that has the feature. This is a teaching problem, and the guides section above is most of the mitigation.
-- `consume()` throwing on a missing provider is stricter than what existing [ember-provide-consume-context][epcc] users are used to, so migrating code may surface latent "consumed but never provided" bugs. (We think surfacing those is the point, but it is a real migration bump.)
+- `consume` throwing on a missing provider is stricter than what existing [ember-provide-consume-context][epcc] users are used to, so migrating code may surface latent "consumed but never provided" bugs. (We think surfacing those is the point, but it is a real migration bump.)
 - The always-on scope tracker adds a small amount of bookkeeping to every component create/update, whether or not an app uses context. The implementation keeps this to a stack push/pop with lazy allocation of everything else, and the implementation PR's smoke tests exist to keep it honest.
 
 ## Alternatives
@@ -263,6 +263,8 @@ The API docs come from the JSDoc on `makeContext` (already written in the implem
 **[RFC #1154][rfc-1154]: public `getScope` / `addToScope`.** The previous attempt, by this RFC's author. It proposed the general capability (walk the render tree's userland metadata) so that Context could be explored in userland. Implementation showed that the general capability is the expensive thing to stabilize -- iteration order, entry shapes, owner access, and reactivity caveats all become public commitments -- while the thing people want to build with it took an API one-tenth the size. This RFC keeps the same underlying machinery private and ships the feature instead.
 
 **[RFC #1155][rfc-1155]: expose the render tree to component managers.** This only serves components (helpers and other invokables can't participate), requires addon authors to interact with manager APIs to use it, and exposes internal manager values that aren't designed for extension.
+
+**`consume` as a function instead of a getter.** Earlier drafts (and the implementation PR) made `consume` a function. A function signals "this runs work and can throw" more loudly than a property access. But the getter composes with template paths (`{{theme.consume.color}}`) and reads as what it is -- a value you read, autotracked like any other -- and the throwing and render-scoped restrictions are identical either way. Nothing about the underlying machinery depends on the choice; this is purely the public spelling.
 
 **Prior art.** [ember-provide-consume-context][epcc] (whose test suite the implementation PR ports, so its production-proven behaviors -- sibling isolation, conditional providers, reactivity to value changes -- are pinned down as this feature's behavior), [React Context](https://react.dev/learn/passing-data-deeply-with-context), [Vue provide/inject](https://vuejs.org/guide/components/provide-inject.html), [Svelte setContext/getContext](https://svelte.dev/docs/svelte#setcontext), and [ember-context](https://github.com/alexlafroscia/ember-context) (which doesn't follow the render tree, and documents the resulting caveats).
 
