@@ -184,7 +184,7 @@ export default class FancyButton extends Component {
 Because this is a synchronous, render-scoped API, `consume` does not work after an `await` (there is no render tree position to resolve against anymore -- it throws the "outside of rendering" error). Read the context first, then go async.
 
 > [!NOTE]
-> In the current implementation, `consume` inside a *modifier* also throws "outside of rendering", because modifiers run during the commit phase, after the render frame has unwound. Supporting modifiers is a desirable, purely-additive follow-up (it relaxes an error into working behavior, so it would not need a new RFC), but this RFC does not promise it.
+> In the current implementation, `consume` inside a *modifier* also throws "outside of rendering", because modifiers run during the commit phase, after the render frame has unwound. 
 
 ### Testing
 
