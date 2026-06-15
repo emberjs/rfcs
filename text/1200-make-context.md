@@ -26,11 +26,11 @@ project-link: Leave as is
 suite: Leave as is
 -->
 
-# `makeContext`: Provide, consume 
+# `createContext`: Provide, consume 
 
 ## Summary
 
-This RFC proposes one new export from `@ember/helper`: `makeContext`, which creates a render-tree-scoped _context_ -- a `Provide` component for binding a value into a region of the render tree, and a `consume` getter for reading the nearest provided value from anywhere below it. This is the Context feature the community has been asking for since (at least) [RFC #975][rfc-975], scoped down to the smallest API that delivers it.
+This RFC proposes one new export from `@ember/helper`: `createContext`, which creates a render-tree-scoped _context_ -- a `Provide` component for binding a value into a region of the render tree, and a `consume` getter for reading the nearest provided value from anywhere below it. This is the Context feature the community has been asking for since (at least) [RFC #975][rfc-975], scoped down to the smallest API that delivers it.
 
 This RFC supersedes [RFC #1154][rfc-1154], incorporating what was learned while implementing it. An implementation of this proposal exists at [emberjs/ember.js#21450][impl-pr].
 
@@ -63,12 +63,12 @@ The expected outcome is that [ember-provide-consume-context][epcc] users (and ev
 One new export from `@ember/helper` (plus its type):
 
 ```ts
-import { makeContext, type Context } from '@ember/helper';
+import { createContext, type Context } from '@ember/helper';
 // ComponentLike is used for exposition (it's the @glint/template notion of
 // "anything invokable as a component") -- the implementation returns an
 // internal component class that satisfies this signature.
 
-export function makeContext<T>(): Context<T>;
+export function createContext<T>(): Context<T>;
 
 export interface Context<T> {
   /**
@@ -97,18 +97,18 @@ export interface Context<T> {
 }
 ```
 
-`makeContext` takes **no arguments**. It does not take a default value. The optional type parameter declares the shape of the value; the value itself is supplied at render time via `<Provide @value={{...}}>`.
+`createContext` takes **no arguments**. It does not take a default value. The optional type parameter declares the shape of the value; the value itself is supplied at render time via `<Provide @value={{...}}>`.
 
 ### Usage
 
 ```gts
-import { makeContext } from '@ember/helper';
+import { createContext } from '@ember/helper';
 
 class Theme {
   color = 'dark';
 }
 
-const theme = makeContext<Theme>();
+const theme = createContext<Theme>();
 const defaultTheme = new Theme();
 
 <template>
@@ -129,9 +129,9 @@ The context object is shared the same way any other value is shared in strict mo
 
 ```gjs
 // app/theme.js
-import { makeContext } from '@ember/helper';
+import { createContext } from '@ember/helper';
 
-export const theme = makeContext();
+export const theme = createContext();
 ```
 
 ```gjs
@@ -152,7 +152,7 @@ export default class FancyButton extends Component {
 
 ### Semantics
 
-**Identity.** Every call to `makeContext()` creates a distinct context. A `consume` only matches a `<Provide>` from the _same_ `makeContext()` call. There are no string keys, so there are no naming collisions: two addons can each have a context for "theme" and they cannot interfere with each other.
+**Identity.** Every call to `createContext()` creates a distinct context. A `consume` only matches a `<Provide>` from the _same_ `createContext()` call. There are no string keys, so there are no naming collisions: two addons can each have a context for "theme" and they cannot interfere with each other.
 
 **Nearest provider wins.** `consume` walks up the render tree and returns the value from the closest enclosing `<Provide>` for its context:
 
@@ -211,7 +211,7 @@ test('FancyButton uses the provided theme', async function (assert) {
 
 The renderer already tracks the render-tree hierarchy (this is how the debug render tree behind Ember Inspector works). The implementation maintains a similar, always-on tracker of "scope nodes" as components are created and re-rendered. `<Provide>` records its (lazily-read, autotracked) `@value` on the current node under its context's private identity; `consume` walks the current node's parent chain looking for that identity.
 
-None of this is public API. The tracker, its module, and its shape may change freely as the renderer evolves -- the only stable surface is `makeContext` and the behavior specified above. (This is the most important difference from [RFC #1154][rfc-1154], which would have made the tree-walking itself public.)
+None of this is public API. The tracker, its module, and its shape may change freely as the renderer evolves -- the only stable surface is `createContext` and the behavior specified above. (This is the most important difference from [RFC #1154][rfc-1154], which would have made the tree-walking itself public.)
 
 ### Ecosystem implications
 
@@ -240,13 +240,13 @@ In the guides, context belongs after services, as "like a service, but scoped to
 | | service | context |
 |---|---|---|
 | visibility | whole application | descendants of a `<Provide>` |
-| key | string (module name) | object identity (`makeContext()` result) |
+| key | string (module name) | object identity (`createContext()` result) |
 | lifetime | application | the provider's block |
 | can have many simultaneous values | no | yes (one per `<Provide>`) |
 
 Guidance on _when_ to reach for it matters as much as the mechanics: app-wide state should remain a service; passing data one or two levels down should remain plain arguments; context is for when a component family or a region of the app needs shared ambient state and threading arguments through every intermediate component is the thing being avoided.
 
-The API docs come from the JSDoc on `makeContext` (already written in the implementation PR) and should lead with a complete provide-then-consume example, plus the two error cases, since the throwing behavior is the part most likely to surprise someone coming from [ember-provide-consume-context][epcc].
+The API docs come from the JSDoc on `createContext` (already written in the implementation PR) and should lead with a complete provide-then-consume example, plus the two error cases, since the throwing behavior is the part most likely to surprise someone coming from [ember-provide-consume-context][epcc].
 
 ## Drawbacks
 
@@ -258,11 +258,13 @@ The API docs come from the JSDoc on `makeContext` (already written in the implem
 
 **Do nothing.** The community keeps depending on a VM-internals override that ember-source has to tiptoe around. 
 
-**[RFC #975][rfc-975]: `@provide` / `@consume` decorators with string keys.** This was the original proposal and it shaped this one. Its API has three problems this design avoids: string keys collide across addons; decorators only serve class components (template-only components, function helpers, and strict-mode templates are left out); and it coupled the design to the services API ("if services change form, context changes with it"). `makeContext` works in every component form, keys by identity, and stands alone. The decorators could still be built _on top of_ this primitive by anyone who wants them.
+**[RFC #975][rfc-975]: `@provide` / `@consume` decorators with string keys.** This was the original proposal and it shaped this one. Its API has three problems this design avoids: string keys collide across addons; decorators only serve class components (template-only components, function helpers, and strict-mode templates are left out); and it coupled the design to the services API ("if services change form, context changes with it"). `createContext` works in every component form, keys by identity, and stands alone. The decorators could still be built _on top of_ this primitive by anyone who wants them.
 
 **[RFC #1154][rfc-1154]: public `getScope` / `addToScope`.** The previous attempt, by this RFC's author. It proposed the general capability (walk the render tree's userland metadata) so that Context could be explored in userland. Implementation showed that the general capability is the expensive thing to stabilize -- iteration order, entry shapes, owner access, and reactivity caveats all become public commitments -- while the thing people want to build with it took an API one-tenth the size. This RFC keeps the same underlying machinery private and ships the feature instead.
 
 **[RFC #1155][rfc-1155]: expose the render tree to component managers.** This only serves components (helpers and other invokables can't participate), requires addon authors to interact with manager APIs to use it, and exposes internal manager values that aren't designed for extension.
+
+**`createContext` vs `makeContext`.** Earlier drafts named this `makeContext`. The name was changed to `createContext` for two reasons. First, it matches the most widely-known prior art: React's [`createContext`](https://react.dev/reference/react/createContext). Second, it follows a useful convention from the [Solid](https://www.solidjs.com/) ecosystem, where [SolidJS Primitives](https://github.com/solidjs-community/solid-primitives#design-maxims) distinguishes the two prefixes by reactivity: `make` marks a bare, _non-reactive_ foundation primitive (it does the bare essentials -- e.g. `makeTimer` just creates and cleans up a scheduler), while `create` marks a _reactive_ primitive that composes on top of it (`createTimer` is the properly reactive version). The thing this RFC exports is reactive -- `consume` is autotracked and a `<Provide>` value change re-renders consumers -- so `create` is the accurate prefix. (A future, non-reactive lower-level primitive, if one were ever wanted, is exactly what a `make`-prefixed name would be reserved for.) `Provide` is kept over React's `Provider` because it is invoked as a component doing the providing, not named as the thing that provides.
 
 **`consume` as a function instead of a getter.** Earlier drafts (and the implementation PR) made `consume` a function. A function signals "this runs work and can throw" more loudly than a property access. But the getter composes with template paths (`{{theme.consume.color}}`) and reads as what it is -- a value you read, autotracked like any other -- and the throwing and render-scoped restrictions are identical either way. Nothing about the underlying machinery depends on the choice; this is purely the public spelling.
 
@@ -271,7 +273,6 @@ The API docs come from the JSDoc on `makeContext` (already written in the implem
 ## Unresolved questions
 
 - **Module home.** The implementation exports from `@ember/helper`, since `consume` is helper-shaped and that module already exports the template utilities (`fn`, `hash`, `array`, ...). A dedicated `@ember/context` module is the plausible alternative. The behavior in this RFC is unaffected either way.
-- **Naming.** `makeContext` vs `createContext` (React's name), and `Provide` vs `Provider`. The implementation deliberately does not reuse React's exact names, since the shapes differ (`createContext(defaultValue)` vs `makeContext()` with no default), but bikeshedding is welcome.
 
 ## Appendix: what this primitive makes cheap (not proposed here)
 
