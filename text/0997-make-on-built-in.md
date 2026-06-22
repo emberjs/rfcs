@@ -1,14 +1,16 @@
 ---
-stage: ready-for-release
+stage: released
 start-date: 2023-12-22T00:00:00.000Z
-release-date:
+release-date: 2026-06-22T00:00:00.000Z
 release-versions:
+  ember-source: 7.1.0
 teams:
   - framework
   - learning
   - typescript
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/997'
+  released: 'https://github.com/emberjs/rfcs/pull/1191'
 project-link:
 suite:
 ---
