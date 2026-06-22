@@ -15,6 +15,8 @@ project-link:
 
 # Deprecate Loose Mode and HBS File Authoring
 
+⚠️  Placeholder RFC generated with copilot, probably don't bother reading yet. 
+
 ## Summary
 
 Deprecate loose mode Handlebars templates and authoring components and route
