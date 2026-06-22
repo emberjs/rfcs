@@ -7,10 +7,14 @@ teams:
   - framework
 prs:
   accepted: https://github.com/emberjs/rfcs/pull/669
+  discontinued: https://github.com/emberjs/rfcs/pull/1195
 project-link:
 ---
 
 # Tracked Storage Primitives
+
+> [!IMPORTANT]
+> This RFC has been discontinued, because of the unergonomic APIs it suggested, and this RFC (in use case) has been replaced with [RFC#1071](https://github.com/emberjs/rfcs/pull/1071)
 
 ## Summary
 
