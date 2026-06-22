@@ -9,6 +9,7 @@ teams:
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/389'
   released: 'https://github.com/emberjs/rfcs/pull/1184'
+  recommended: 'https://github.com/emberjs/rfcs/pull/1212'
 project-link:
 meta:
   tracking: 'https://github.com/emberjs/rfc-tracking/issues/42'
