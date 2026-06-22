@@ -12,6 +12,7 @@ prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/1000'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/1034'
   released: 'https://github.com/emberjs/rfcs/pull/1188'
+  recommended: 'https://github.com/emberjs/rfcs/pull/1209'
 project-link:
 suite:
 ---
