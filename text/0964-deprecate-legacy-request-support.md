@@ -1,14 +1,15 @@
 ---
-stage: accepted
+stage: ready-for-release
 start-date: 2023-09-18T00:00:00.000Z
-release-date: # In format YYYY-MM-DDT00:00:00.000Z
+release-date:
 release-versions:
-teams: # delete teams that aren't relevant
+teams:
   - data
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/964
+  accepted: 'https://github.com/emberjs/rfcs/pull/964'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/1092'
 project-link:
-suite: 
+suite:
 ---
 
 <!--- 
