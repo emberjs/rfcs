@@ -114,13 +114,8 @@ const defaultTheme = new Theme();
 <template>
   <theme.Provide @value={{defaultTheme}}>
 
-    {{! with let }}
-    {{#let theme.value as |t|}}
-      {{t.color}} {{! "dark" }}
-    {{/let}}
+  {{theme.value.color}} {{! "dark" }}
 
-    {{! passing elsewhere }}
-    <SomeComponent @foo={{theme.value}} />
   </theme.Provide>
 </template>
 ```
