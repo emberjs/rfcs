@@ -31,6 +31,8 @@ Each Ember core team will be requested as a reviewer on the PR to move into this
 - [ ] Implementation is complete according to plan outlined in the RFC, with any adjustments noted in the RFC
 - [ ] Any necessary learning materials have been updated
 - [ ] The Ember team is ready to commit to the stability of any interfaces exposed by the current implementation of the feature. This is the go/no go decision for any feature flags, but the flags should only be turned on when moving to Released.
+- [ ] The feature may not yet have support by the entire ecosystem (e.g. IDEs, addons, Ember Inspector, Engines, Lint Rules, Blueprints, etc), but it does not unintentionally break any existing functionality in those areas.
+- [ ] The Interactive Tutorial is not broken by this feature.
 - [ ] Criteria for moving to the Recommended Stage has been filled out
 - [ ] This PR has been converted from a draft to a regular PR and the `Final Comment Period` label has been added to start the FCP
 - [ ] Each [team](https://github.com/emberjs/rfcs#relevant-teams) has been added as a reviewer to the PR at the start of the FCP. Reviews are not required by the end of the FCP. This is a notification step.

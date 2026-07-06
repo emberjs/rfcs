@@ -119,6 +119,8 @@ Read more about the RFC [Stages].
 ## Stages
 [Stages]: #stages
 
+Here are all the stages that an RFC can be in:
+
 | Stage| Description| Requires FCP to enter? |
 | -----| -----------|----- |
 | [0 - Proposed](#Proposed) | A proposal for a change to Ember or its processes that is offered for community and team evaluation. | no |

@@ -1,15 +1,18 @@
 ---
-stage: accepted
+stage: recommended
 start-date: 2022-07-22T00:00:00.000Z
-release-date: Unreleased
+release-date: 2024-04-19T00:00:00.000Z
 release-versions:
-teams: # delete teams that aren't relevant
+teams:
   - cli
   - learning
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/831
-project-link: https://github.com/ember-learn/cli-guides/issues/272
-suite: 
+  accepted: 'https://github.com/emberjs/rfcs/pull/831'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/959'
+  released: 'https://github.com/emberjs/rfcs/pull/1018'
+  recommended: 'https://github.com/emberjs/rfcs/pull/1019'
+project-link: 'https://github.com/ember-learn/cli-guides/issues/272'
+suite:
 ---
 
 <!--- 
@@ -25,7 +28,6 @@ RFC PR: Fill this in with the URL for the Proposal RFC PR
 
 # Standardize use of scripts in package.json for common tasks
 
-Standardize the use of yarn and npm scripts in the Ember experience
 
 ## Summary
 
