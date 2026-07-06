@@ -309,3 +309,31 @@ return read ? read() : undefined;
 A working implementation of this, stacked on the implementation of this RFC, is at [NullVoxPopuli/ember.js#16](https://github.com/NullVoxPopuli/ember.js/pull/16) -- and because the owner lookup walks the render tree like any other context, it resolves correctly through `renderComponent` owner overrides and re-renders, for free.
 
 If/when no-arg `getOwner` is wanted, it will be its own RFC; it would change the public signature of `getOwner`, and deserves its own discussion.
+
+### A decorator for `@consume`
+
+One of the features of [ember-provide-consume-context][epcc], is to be able to access the context "at any time" within your component. This is possible in this RFC's proposal via capturing the context at instantiation time
+
+For example:
+
+```js
+import Component from '@glimmer/component';
+
+import { theme } from '#my-app/theme';
+
+class Demo extends Component {
+    #context;
+
+    constructor(owner, args) {
+        super(owner, args);
+
+        this.#context = theme.value;
+    }
+
+
+    toggleTheme = () => {
+        this.#context.color = '#' + Math.random();
+    }
+} 
+
+```
