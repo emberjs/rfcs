@@ -336,96 +336,78 @@ There is no equivalent -- angle bracket invocation has no positional arguments. 
 
 You do not need a flag day. Classic and Glimmer components coexist in the same app, the same route, even the same template -- migrate one component at a time, in any order.
 
-Here is the whole path in one picture. Diamonds ask "does your code do this?", rectangles are hand-work, double-walled boxes are codemods that do the work for you. The top section runs once across the whole app; the bottom section repeats for each component, top to bottom:
+Here is the whole path in one picture. Diamonds ask "does your code do this?" -- a "no" means there is nothing to do on that track. Rectangles are hand-work, double-walled boxes are codemods that do the work for you. Anything side-by-side is genuinely independent: do it in any order, or in parallel across a team. The only arrows that mean "must happen first" are the ones you see:
 
 ```mermaid
 flowchart TD
-    Start(["import Component from '@ember/component'"]) --> Colocated
+    Start(["import Component from '@ember/component'"])
 
-    subgraph once["once, app-wide"]
-        Colocated{"templates in app/templates/components/,<br>or layout / layoutName?"}
-        Migrator[["ember-component-template-colocation-migrator"]]
-        Curlies{"invoked curly-style: {{my-component}}?"}
-        Angle[["ember-angle-brackets-codemod"]]
-        Implicit{"bare {{foo}} in templates instead of<br>{{this.foo}} / {{@foo}}?"}
-        NoImplicit[["ember-no-implicit-this-codemod"]]
-        ClassicClass{"still using .extend()?"}
-        Mixins["deal with Mixins first: inline them, or<br>convert to class decorators (RFC #1116)"]
-        Native[["ember-native-class-codemod"]]
-
-        Colocated -->|yes| Migrator --> Curlies
-        Colocated -->|no| Curlies
-        Curlies -->|yes| Angle --> Implicit
-        Curlies -->|no| Implicit
-        Implicit -->|yes| NoImplicit --> ClassicClass
-        Implicit -->|no| ClassicClass
-        ClassicClass -->|"yes, with Mixins"| Mixins --> Native
+    subgraph once["once, app-wide -- these four are independent of each other"]
+        Colocated{"templates in app/templates/components/,<br>or layout / layoutName?"} -->|yes| Migrator[["ember-component-template-colocation-migrator"]]
+        Curlies{"invoked curly-style:<br>{{my-component}}?"} -->|yes| Angle[["ember-angle-brackets-codemod"]]
+        Implicit{"bare {{foo}} in templates instead of<br>{{this.foo}} / {{@foo}}?"} -->|yes| NoImplicit[["ember-no-implicit-this-codemod"]]
+        ClassicClass{"still using .extend()?"} -->|"yes, with Mixins"| Mixins["deal with Mixins first: inline them, or<br>convert to class decorators (RFC #1116)"]
+        Mixins --> Native[["ember-native-class-codemod"]]
         ClassicClass -->|yes| Native
     end
 
-    ClassicClass -->|no| Element
-    Native --> Element
+    Start --> once
+    once --> Hub["then, for each component (leaves first):<br>four tracks, no order between them --<br>work them in parallel if you like"]
 
-    subgraph each["per component, in order -- every step ships on its own, while still classic"]
-        Element{"tagName / classNames / classNameBindings /<br>attributeBindings / elementId / ariaRole?"}
-        Flatten["write the element in the template,<br>move the bindings onto it, add ...attributes,<br>set tagName = ''"]
-        Events{"click() / keyDown() / mouseEnter() / ...?"}
-        On["{{on}} on the element, in the template"]
-        Hooks{"didInsertElement / didUpdateAttrs /<br>willDestroyElement / didRender / this.element?"}
-        Mod["extract a modifier (ember-modifier);<br>@ember/render-modifiers as an intermediate"]
-        TwoWay{"this.set() on passed-in properties,<br>or callers reaching for {{mut}}?"}
-        Ddau["the caller keeps the state and<br>passes a callback down"]
-        Evented{"this.trigger() / this.on() from Evented?"}
-        Cb["plain functions / callbacks (see RFC #1111)"]
-        Derive{"didReceiveAttrs / observers / @computed<br>deriving data?"}
-        Getter["native getters; @cached if expensive"]
-        Local{"local mutable state via this.set()?"}
-        Tracked["@tracked + plain assignment<br>(ember-tracked-properties-codemod)"]
-        Actions{"actions hash / this.send()?"}
-        Methods["@action methods, called directly"]
-        Positional{"positionalParams?"}
-        Named["named arguments, at every call site"]
+    Hub --> el
+    Hub --> data
+    Hub --> derived
+    Hub --> inv
 
-        Element -->|yes| Flatten --> Events
-        Element -->|no| Events
-        Events -->|yes| On --> Hooks
-        Events -->|no| Hooks
-        Hooks -->|yes| Mod --> TwoWay
-        Hooks -->|no| TwoWay
-        TwoWay -->|yes| Ddau --> Evented
-        TwoWay -->|no| Evented
-        Evented -->|yes| Cb --> Derive
-        Evented -->|no| Derive
-        Derive -->|yes| Getter --> Local
-        Derive -->|no| Local
-        Local -->|yes| Tracked --> Actions
-        Local -->|no| Actions
-        Actions -->|yes| Methods --> Positional
-        Actions -->|no| Positional
-        Positional -->|yes| Named --> Swap
-        Positional -->|no| Swap
+    subgraph el["the element"]
+        Element{"anything on the wrapper element?<br>tagName / classNames / classNameBindings /<br>attributeBindings / elementId / ariaRole,<br>click()-style methods, this.element"} -->|yes| Flatten["write the element in the template,<br>move the bindings onto it, add ...attributes,<br>set tagName = ''"]
+        Flatten --> Events{"click() / keyDown() /<br>mouseEnter() / ...?"}
+        Events -->|yes| On["{{on}} on the element,<br>in the template"]
+        Flatten --> Hooks{"didInsertElement / didUpdateAttrs /<br>willDestroyElement / this.element?"}
+        Hooks -->|yes| Mod["extract a modifier (ember-modifier);<br>@ember/render-modifiers as an intermediate"]
     end
 
-    Swap["swap the superclass:<br>'@ember/component' → '@glimmer/component',<br>this.foo → this.args.foo ({{@foo}} in the template),<br>init() → constructor()"]
-    Gjs{"want template tag / gjs? (RFC #779)"}
-    TT[["@embroider/template-tag-codemod"]]
-    Done(["no more '@ember/component'"])
+    subgraph data["data flow"]
+        TwoWay{"this.set() on passed-in properties,<br>or callers reaching for {{mut}}?"} -->|yes| Ddau["the caller keeps the state and<br>passes a callback down"]
+        Evented{"this.trigger() / this.on()<br>from Evented?"} -->|yes| Cb["plain functions / callbacks<br>(see RFC #1111)"]
+    end
 
-    Swap --> Gjs
-    Gjs -->|yes| TT --> Done
-    Gjs -->|no| Done
+    subgraph derived["derived state"]
+        Observers{"observers?"} -->|yes| RmObs["remove them -- observers do not<br>fire for @tracked updates"]
+        RmObs --> Derive{"didReceiveAttrs / @computed<br>deriving data?"}
+        Observers -->|no| Derive
+        Derive -->|yes| Getter["native getters;<br>@cached if expensive"]
+    end
+
+    subgraph inv["invocation + actions"]
+        Actions{"actions hash /<br>this.send()?"} -->|yes| Methods["@action methods,<br>called directly"]
+        Positional{"positionalParams?"} -->|yes| Named["named arguments,<br>at every call site"]
+    end
+
+    el --> Swap
+    data --> Swap
+    derived --> Swap
+    inv --> Swap
+
+    Swap["one pass, per component: swap '@ember/component' → '@glimmer/component',<br>this.foo → this.args.foo ({{@foo}} in the template), init() → constructor(),<br>and local this.set() state → @tracked (ember-tracked-properties-codemod)"]
+    Swap --> Gjs{"want template tag / gjs?<br>(RFC #779)"}
+    Gjs -->|yes| TT[["@embroider/template-tag-codemod<br>(skips components that are not<br>colocated + native-class)"]]
+    TT --> Done
+    Gjs -->|no| Done(["no more '@ember/component'"])
 ```
 
-Within a single component, the trick is that almost every step above **works while the component is still classic**. That means each step is a small, shippable PR, and the scary-looking superclass swap is the _last_ and _smallest_ diff, not the first:
+"Leaves first" because computed properties cannot depend on native getters or tracked data without extra annotations -- so convert components that do not feed data into still-unconverted parents, and work your way up the tree. And `@tracked` rides along with the superclass swap rather than getting its own step: both require actually understanding the component's data flow, so pay that cost once. Both of these come straight from [LinkedIn's migration guides](https://github.com/chriskrycho/octane-migration-guides), which are the most battle-tested writeup of this migration -- they note their ordering exists to minimize how many times you touch each file, not because things break.
+
+Within a single component, the trick is that almost every step above **works while the component is still classic**. That means each step is a small, shippable PR, and the scary-looking superclass swap is the _last_ and _smallest_ diff, not the first. The numbering below is a sensible default, not a dependency list -- the only hard edges are that the element has to be in the template (step 2) before anything can attach to it (steps 3 and 4), and that everything classic-only has to be gone before the swap (step 7):
 
 1. **Get on native classes first.** If the component is still `Component.extend({ ... })`, run [ember-native-class-codemod](https://github.com/ember-codemods/ember-native-class-codemod). Everything below assumes native class syntax.
 2. **Flatten the element into the template.** Write the root element explicitly in the template, move `classNames` / `classNameBindings` / `attributeBindings` / `ariaRole` onto it, add `...attributes`, then set `tagName = ''`. Classic components fully support `tagName: ''` + splattributes, so this ships on its own.
 3. **Replace event methods with `{{on}}`.** Once the element is in the template, `click()` becomes `{{on "click" this.select}}` on that element. Also shippable while classic.
 4. **Move lifecycle hooks into modifiers.** [@ember/render-modifiers](https://github.com/emberjs/ember-render-modifiers) (`{{did-insert}}` / `{{did-update}}` / `{{will-destroy}}`) is the mechanical intermediate step; a purpose-built [ember-modifier](https://github.com/ember-modifier/ember-modifier) is the end state. Modifiers work on classic components' templates too.
 5. **Untangle two-way bindings.** Stop `this.set()`-ing anything that was passed in; take a callback argument instead. This is the only step that changes the component's public interface, so it's the one to review carefully.
-6. **Replace `@computed` with getters and local state with `@tracked`.** Tracked properties work inside classic components, so this also ships independently.
-7. **Swap the superclass.** `import Component from '@ember/component'` → `import Component from '@glimmer/component'`, and argument access moves from `this.foo` to `this.args.foo` (`{{@foo}}` in the template). Because of steps 2--6, there is nothing else left in the class that needs to change.
-8. **(Optional) convert to `<template>`.** See [RFC #779](https://rfcs.emberjs.com/id/0779-first-class-component-templates).
+6. **Replace `@computed` with getters.** Getters work inside classic components, so this also ships independently. If the component has observers, remove those first -- observers do not fire for `@tracked` updates, so they have to be gone before anything they watch becomes tracked.
+7. **Swap the superclass, and adopt `@tracked` in the same pass.** `import Component from '@ember/component'` → `import Component from '@glimmer/component'`, argument access moves from `this.foo` to `this.args.foo` (`{{@foo}}` in the template), `init()` becomes `constructor()`, and local mutable state becomes `@tracked` with plain assignment ([ember-tracked-properties-codemod](https://github.com/ember-codemods/ember-tracked-properties-codemod) handles the mechanical part). These travel together because both require understanding the component's data flow -- understand it once. Go leaves-first across the app, since a computed property in a not-yet-converted parent cannot depend on this component's new native getters. Because of steps 2--6, there is nothing else left in the class that needs to change.
+8. **(Optional) convert to `<template>`.** See [RFC #779](https://rfcs.emberjs.com/id/0779-first-class-component-templates). [@embroider/template-tag-codemod](https://github.com/embroider-build/embroider/tree/main/packages/template-tag-codemod) does this mechanically, and (deliberately) skips any component that is not yet colocated and on native class syntax.
 
 There is deliberately no single classic→glimmer codemod: steps 2, 4, and 5 involve decisions (where does `...attributes` go? what is the modifier's responsibility? who owns this state?) that a codemod would get wrong silently. The mechanical parts are covered:
 
