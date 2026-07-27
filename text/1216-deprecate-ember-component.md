@@ -86,7 +86,7 @@ Each scenario below shows a classic component and what it becomes. The "after" e
 > [!NOTE]
 > gjs / gts is supported back to 3.28, and includes `@ember/component`. This allows very zebra-striped incremental migrations, if needed.
 
-##### You only have a JS file 
+<details><summary>You only have a JS file</summary> 
 
 ```js
 // before: app/components/greeting.js
@@ -109,7 +109,9 @@ Delete the class. A template is a component:
 </template>
 ```
 
-##### Local state and actions
+</details>
+
+<details><summary>Local state and actions</summary>
 
 ```js
 // before
@@ -147,7 +149,9 @@ export default class Toggle extends Component {
 
 `this.set` becomes plain assignment to a `@tracked` property.
 
-##### The element: `tagName`, `classNames`, `attributeBindings`, `elementId`, `ariaRole`
+</details>
+
+<details><summary>The element: <code>tagName</code>, <code>classNames</code>, <code>attributeBindings</code>, <code>elementId</code>, <code>ariaRole</code></summary>
 
 Glimmer components have no wrapper element. Write the element in the template, and move each JS setting onto it as an attribute:
 
@@ -187,7 +191,9 @@ export default class UserCard extends Component {
 
 `...attributes` receives the attributes passed at the call site (`class`, `id`, `data-*`, ...); place it on the element that should receive them.
 
-##### DOM event methods: `click()`, `mouseEnter()`, `keyDown()`, ...
+</details>
+
+<details><summary>DOM event methods: <code>click()</code>, <code>mouseEnter()</code>, <code>keyDown()</code>, ...</summary>
 
 ```js
 // before
@@ -213,7 +219,9 @@ import { on } from '@ember/modifier';
 
 Each event method maps to `{{on}}` with the DOM event name: `click()` → `{{on "click" ...}}`, `keyDown()` → `{{on "keydown" ...}}`, `mouseEnter()` → `{{on "mouseenter" ...}}`.
 
-##### Lifecycle hooks and `this.element`
+</details>
+
+<details><summary>Lifecycle hooks and <code>this.element</code></summary>
 
 Anything that used `didInsertElement` / `didUpdateAttrs` / `willDestroyElement` to touch the DOM becomes a modifier, attached to the element it manages. Teardown is the modifier's return value.
 
@@ -256,7 +264,9 @@ const drawChart = modifier((element, [data]) => {
 
 For non-DOM teardown, `@glimmer/component` still has `willDestroy`, and `registerDestructor` from `@ember/destroyable` works everywhere.
 
-##### `didReceiveAttrs` / computed properties deriving state
+</details>
+
+<details><summary><code>didReceiveAttrs</code> / computed properties deriving state</summary>
 
 Derived data becomes a getter:
 
@@ -286,7 +296,9 @@ export default class FullName extends Component {
 
 If the getter is expensive, `@cached` (from `@glimmer/tracking`) memoizes it. If the getter only formats arguments (like this one), skip the class and put the expression in a template-only component.
 
-##### Two-way bindings
+</details>
+
+<details><summary>Two-way bindings</summary>
 
 Classic components let a child `this.set()` an argument and have the write propagate into the parent. Glimmer components' `this.args` is read-only: the owner of the state changes it, and the child asks via a callback.
 
@@ -321,7 +333,9 @@ export default class Parent extends Component {
 }
 ```
 
-##### `positionalParams`
+</details>
+
+<details><summary><code>positionalParams</code></summary>
 
 Angle bracket invocation has no positional arguments. Give the arguments names:
 
@@ -334,6 +348,8 @@ Angle bracket invocation has no positional arguments. Give the arguments names:
 {{! after }}
 <Avatar @user={{user}} @size={{size}} />
 ```
+
+</details>
 
 #### Migrating incrementally
 
