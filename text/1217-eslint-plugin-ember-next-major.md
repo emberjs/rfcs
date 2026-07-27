@@ -181,93 +181,93 @@ Then `recommended` would blow up for anyone with `.hbs` files who hasn't configu
 
 87 rules, at `error`, scoped to `**/*.{gjs,gts}`. This is the `template-lint-migration` rule set (`ember-template-lint`'s recommended preset -- minus `no-partial`, which has no equivalent because `{{partial}}` no longer exists -- plus `template-no-template-lint-directives`) with the loose-mode-only rules from Appendix B taken out.
 
-- `ember/template-builtin-component-arguments`
-- `ember/template-link-href-attributes`
-- `ember/template-link-rel-noopener`
-- `ember/template-no-abstract-roles`
-- `ember/template-no-accesskey-attribute`
-- `ember/template-no-action-on-submit-button`
-- `ember/template-no-args-paths`
-- `ember/template-no-arguments-for-html-elements`
-- `ember/template-no-aria-hidden-body`
-- `ember/template-no-aria-unsupported-elements`
-- `ember/template-no-array-prototype-extensions`
-- `ember/template-no-at-ember-render-modifiers`
-- `ember/template-no-attrs-in-components`
-- `ember/template-no-autofocus-attribute`
-- `ember/template-no-block-params-for-html-elements`
-- `ember/template-no-builtin-form-components`
-- `ember/template-no-capital-arguments`
-- `ember/template-no-class-bindings`
-- `ember/template-no-debugger`
-- `ember/template-no-duplicate-attributes`
-- `ember/template-no-duplicate-id`
-- `ember/template-no-duplicate-landmark-elements`
-- `ember/template-no-empty-headings`
-- `ember/template-no-extra-mut-helper-argument`
-- `ember/template-no-forbidden-elements`
-- `ember/template-no-heading-inside-button`
-- `ember/template-no-html-comments`
-- `ember/template-no-index-component-invocation`
-- `ember/template-no-inline-styles`
-- `ember/template-no-invalid-aria-attributes`
-- `ember/template-no-invalid-interactive`
-- `ember/template-no-invalid-link-text`
-- `ember/template-no-invalid-link-title`
-- `ember/template-no-invalid-meta`
-- `ember/template-no-invalid-role`
-- `ember/template-no-link-to-positional-params`
-- `ember/template-no-link-to-tagname`
-- `ember/template-no-log`
-- `ember/template-no-negated-condition`
-- `ember/template-no-nested-interactive`
-- `ember/template-no-nested-landmark`
-- `ember/template-no-nested-splattributes`
-- `ember/template-no-obscure-array-access`
-- `ember/template-no-obsolete-elements`
-- `ember/template-no-outlet-outside-routes`
-- `ember/template-no-passed-in-event-handlers`
-- `ember/template-no-pointer-down-event-binding`
-- `ember/template-no-positional-data-test-selectors`
-- `ember/template-no-positive-tabindex`
-- `ember/template-no-potential-path-strings`
-- `ember/template-no-quoteless-attributes`
-- `ember/template-no-redundant-fn`
-- `ember/template-no-redundant-role`
-- `ember/template-no-scope-outside-table-headings`
-- `ember/template-no-shadowed-elements`
-- `ember/template-no-template-lint-directives`
-- `ember/template-no-triple-curlies`
-- `ember/template-no-unbalanced-curlies`
-- `ember/template-no-unbound`
-- `ember/template-no-unknown-arguments-for-builtin-components`
-- `ember/template-no-unnecessary-component-helper`
-- `ember/template-no-unnecessary-curly-parens`
-- `ember/template-no-unnecessary-curly-strings`
-- `ember/template-no-unsupported-role-attributes`
-- `ember/template-no-unused-block-params`
-- `ember/template-no-valueless-arguments`
-- `ember/template-no-whitespace-for-layout`
-- `ember/template-no-whitespace-within-word`
-- `ember/template-no-yield-only`
-- `ember/template-no-yield-to-default`
-- `ember/template-require-aria-activedescendant-tabindex`
-- `ember/template-require-button-type`
-- `ember/template-require-context-role`
-- `ember/template-require-has-block-helper`
-- `ember/template-require-iframe-title`
-- `ember/template-require-input-label`
-- `ember/template-require-lang-attribute`
-- `ember/template-require-mandatory-role-attributes`
-- `ember/template-require-media-caption`
-- `ember/template-require-presentational-children`
-- `ember/template-require-valid-alt-text`
-- `ember/template-require-valid-named-block-naming-format`
-- `ember/template-simple-modifiers`
-- `ember/template-simple-unless`
-- `ember/template-splat-attributes-only`
-- `ember/template-style-concatenation`
-- `ember/template-table-groups`
+- [`ember/template-builtin-component-arguments`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-builtin-component-arguments.md)
+- [`ember/template-link-href-attributes`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-link-href-attributes.md)
+- [`ember/template-link-rel-noopener`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-link-rel-noopener.md)
+- [`ember/template-no-abstract-roles`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-abstract-roles.md)
+- [`ember/template-no-accesskey-attribute`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-accesskey-attribute.md)
+- [`ember/template-no-action-on-submit-button`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-action-on-submit-button.md)
+- [`ember/template-no-args-paths`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-args-paths.md)
+- [`ember/template-no-arguments-for-html-elements`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-arguments-for-html-elements.md)
+- [`ember/template-no-aria-hidden-body`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-aria-hidden-body.md)
+- [`ember/template-no-aria-unsupported-elements`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-aria-unsupported-elements.md)
+- [`ember/template-no-array-prototype-extensions`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-array-prototype-extensions.md)
+- [`ember/template-no-at-ember-render-modifiers`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-at-ember-render-modifiers.md)
+- [`ember/template-no-attrs-in-components`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-attrs-in-components.md)
+- [`ember/template-no-autofocus-attribute`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-autofocus-attribute.md)
+- [`ember/template-no-block-params-for-html-elements`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-block-params-for-html-elements.md)
+- [`ember/template-no-builtin-form-components`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-builtin-form-components.md)
+- [`ember/template-no-capital-arguments`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-capital-arguments.md)
+- [`ember/template-no-class-bindings`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-class-bindings.md)
+- [`ember/template-no-debugger`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-debugger.md)
+- [`ember/template-no-duplicate-attributes`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-duplicate-attributes.md)
+- [`ember/template-no-duplicate-id`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-duplicate-id.md)
+- [`ember/template-no-duplicate-landmark-elements`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-duplicate-landmark-elements.md)
+- [`ember/template-no-empty-headings`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-empty-headings.md)
+- [`ember/template-no-extra-mut-helper-argument`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-extra-mut-helper-argument.md)
+- [`ember/template-no-forbidden-elements`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-forbidden-elements.md)
+- [`ember/template-no-heading-inside-button`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-heading-inside-button.md)
+- [`ember/template-no-html-comments`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-html-comments.md)
+- [`ember/template-no-index-component-invocation`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-index-component-invocation.md)
+- [`ember/template-no-inline-styles`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-inline-styles.md)
+- [`ember/template-no-invalid-aria-attributes`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-invalid-aria-attributes.md)
+- [`ember/template-no-invalid-interactive`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-invalid-interactive.md)
+- [`ember/template-no-invalid-link-text`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-invalid-link-text.md)
+- [`ember/template-no-invalid-link-title`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-invalid-link-title.md)
+- [`ember/template-no-invalid-meta`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-invalid-meta.md)
+- [`ember/template-no-invalid-role`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-invalid-role.md)
+- [`ember/template-no-link-to-positional-params`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-link-to-positional-params.md)
+- [`ember/template-no-link-to-tagname`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-link-to-tagname.md)
+- [`ember/template-no-log`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-log.md)
+- [`ember/template-no-negated-condition`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-negated-condition.md)
+- [`ember/template-no-nested-interactive`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-nested-interactive.md)
+- [`ember/template-no-nested-landmark`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-nested-landmark.md)
+- [`ember/template-no-nested-splattributes`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-nested-splattributes.md)
+- [`ember/template-no-obscure-array-access`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-obscure-array-access.md)
+- [`ember/template-no-obsolete-elements`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-obsolete-elements.md)
+- [`ember/template-no-outlet-outside-routes`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-outlet-outside-routes.md)
+- [`ember/template-no-passed-in-event-handlers`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-passed-in-event-handlers.md)
+- [`ember/template-no-pointer-down-event-binding`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-pointer-down-event-binding.md)
+- [`ember/template-no-positional-data-test-selectors`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-positional-data-test-selectors.md)
+- [`ember/template-no-positive-tabindex`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-positive-tabindex.md)
+- [`ember/template-no-potential-path-strings`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-potential-path-strings.md)
+- [`ember/template-no-quoteless-attributes`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-quoteless-attributes.md)
+- [`ember/template-no-redundant-fn`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-redundant-fn.md)
+- [`ember/template-no-redundant-role`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-redundant-role.md)
+- [`ember/template-no-scope-outside-table-headings`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-scope-outside-table-headings.md)
+- [`ember/template-no-shadowed-elements`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-shadowed-elements.md)
+- [`ember/template-no-template-lint-directives`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-template-lint-directives.md)
+- [`ember/template-no-triple-curlies`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-triple-curlies.md)
+- [`ember/template-no-unbalanced-curlies`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-unbalanced-curlies.md)
+- [`ember/template-no-unbound`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-unbound.md)
+- [`ember/template-no-unknown-arguments-for-builtin-components`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-unknown-arguments-for-builtin-components.md)
+- [`ember/template-no-unnecessary-component-helper`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-unnecessary-component-helper.md)
+- [`ember/template-no-unnecessary-curly-parens`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-unnecessary-curly-parens.md)
+- [`ember/template-no-unnecessary-curly-strings`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-unnecessary-curly-strings.md)
+- [`ember/template-no-unsupported-role-attributes`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-unsupported-role-attributes.md)
+- [`ember/template-no-unused-block-params`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-unused-block-params.md)
+- [`ember/template-no-valueless-arguments`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-valueless-arguments.md)
+- [`ember/template-no-whitespace-for-layout`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-whitespace-for-layout.md)
+- [`ember/template-no-whitespace-within-word`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-whitespace-within-word.md)
+- [`ember/template-no-yield-only`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-yield-only.md)
+- [`ember/template-no-yield-to-default`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-yield-to-default.md)
+- [`ember/template-require-aria-activedescendant-tabindex`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-require-aria-activedescendant-tabindex.md)
+- [`ember/template-require-button-type`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-require-button-type.md)
+- [`ember/template-require-context-role`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-require-context-role.md)
+- [`ember/template-require-has-block-helper`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-require-has-block-helper.md)
+- [`ember/template-require-iframe-title`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-require-iframe-title.md)
+- [`ember/template-require-input-label`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-require-input-label.md)
+- [`ember/template-require-lang-attribute`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-require-lang-attribute.md)
+- [`ember/template-require-mandatory-role-attributes`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-require-mandatory-role-attributes.md)
+- [`ember/template-require-media-caption`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-require-media-caption.md)
+- [`ember/template-require-presentational-children`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-require-presentational-children.md)
+- [`ember/template-require-valid-alt-text`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-require-valid-alt-text.md)
+- [`ember/template-require-valid-named-block-naming-format`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-require-valid-named-block-naming-format.md)
+- [`ember/template-simple-modifiers`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-simple-modifiers.md)
+- [`ember/template-simple-unless`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-simple-unless.md)
+- [`ember/template-splat-attributes-only`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-splat-attributes-only.md)
+- [`ember/template-style-concatenation`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-style-concatenation.md)
+- [`ember/template-table-groups`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-table-groups.md)
 
 ## Appendix B: loose-mode-only rules, not added to `recommended`
 
@@ -275,12 +275,12 @@ These 9 rules stay in the hbs config (`template-lint-migration`), keeping full `
 
 | Rule | Why it doesn't apply to gjs/gts |
 | ---- | ------------------------------- |
-| `ember/template-no-implicit-this` | strict mode has no implicit `this` -- an unresolved reference is a build error |
-| `ember/template-no-curly-component-invocation` | the component-or-property ambiguity doesn't exist in strict mode |
-| `ember/template-no-action` | `{{action}}` has no strict-mode import |
-| `ember/template-no-route-action` | `{{route-action}}` has no strict-mode import |
-| `ember/template-no-input-block` | curly `{{input}}` cannot resolve in strict mode |
-| `ember/template-no-input-tagname` | curly `{{input}}` cannot resolve in strict mode |
-| `ember/template-no-with` | `{{#with}}` was removed in ember-source 4.0 and cannot be expressed in strict mode |
-| `ember/template-deprecated-render-helper` | `{{render}}` is long gone and cannot be expressed in strict mode |
-| `ember/template-deprecated-inline-view-helper` | `{{view}}` is long gone and cannot be expressed in strict mode |
+| [`ember/template-no-implicit-this`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-implicit-this.md) | strict mode has no implicit `this` -- an unresolved reference is a build error |
+| [`ember/template-no-curly-component-invocation`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-curly-component-invocation.md) | the component-or-property ambiguity doesn't exist in strict mode |
+| [`ember/template-no-action`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-action.md) | `{{action}}` has no strict-mode import |
+| [`ember/template-no-route-action`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-route-action.md) | `{{route-action}}` has no strict-mode import |
+| [`ember/template-no-input-block`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-input-block.md) | curly `{{input}}` cannot resolve in strict mode |
+| [`ember/template-no-input-tagname`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-input-tagname.md) | curly `{{input}}` cannot resolve in strict mode |
+| [`ember/template-no-with`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-no-with.md) | `{{#with}}` was removed in ember-source 4.0 and cannot be expressed in strict mode |
+| [`ember/template-deprecated-render-helper`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-deprecated-render-helper.md) | `{{render}}` is long gone and cannot be expressed in strict mode |
+| [`ember/template-deprecated-inline-view-helper`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-deprecated-inline-view-helper.md) | `{{view}}` is long gone and cannot be expressed in strict mode |
