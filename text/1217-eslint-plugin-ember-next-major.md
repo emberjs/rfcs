@@ -30,7 +30,7 @@ Per the process agreed to in [eslint-plugin-ember#2158][issue-2158], changes to 
 
 ## Motivation
 
-Two things are converging on this major:
+This major has two motivations:
 
 1. [RFC #1214][rfc-1214] deprecates `ember-template-lint` and unifies all Ember lint rules in `eslint-plugin-ember`. As of `eslint-plugin-ember@13`, every `ember-template-lint` rule has been re-implemented as an `ember/template-*` rule[^no-partial], but none of them are in `recommended` yet -- they were kept opt-in (via the `template-lint-migration` config) so that folks running both tools wouldn't get two errors for every violation. With `ember-template-lint` deprecated, the template rules need to be on by default, or newly generated apps lose lint coverage they've always had -- including the A11y rules, which the Ember project has a core commitment to keeping on by default.
 
@@ -46,7 +46,7 @@ The rules from the existing [`template-lint-migration` config][migration-config]
 
 "Applicable to strict-mode templates" excludes two groups, which stay in the hbs config only ([Appendix B](#appendix-b-loose-mode-only-rules-not-added-to-recommended)):
 
-- `ember/template-no-implicit-this` and `ember/template-no-curly-component-invocation` -- strict mode _is_ the fix these rules push you toward. `ember-template-lint`'s own recommended preset disables both for gjs/gts.
+- `ember/template-no-implicit-this` and `ember/template-no-curly-component-invocation` -- the whole point of these rules is to prepare loose-mode templates for strict mode, and a gjs/gts file is already there. `ember-template-lint`'s own recommended preset disables both for gjs/gts.
 - rules that lint constructs which cannot be expressed in strict mode in the first place (`{{action}}`, curly `{{input}}`, `{{#with}}`, the old `{{view}}`/`{{render}}` helpers, ...). These can never fire in a gjs/gts file, so keeping them enabled would only cost lint time -- the same reasoning as the legacy JS rule removals below.
 
 The `recommended` config today is gjs/gts (and js/ts) only, and that does not change -- it never touches `.hbs` files, so adding it to a project can never require also configuring an hbs parser. Newly generated apps have no `.hbs` files, so `recommended` alone gives them full lint parity with what `ember-template-lint` provided.
@@ -56,7 +56,7 @@ The `recommended` config today is gjs/gts (and js/ts) only, and that does not ch
 > [!NOTE]
 > `ember-template-lint`'s recommended preset also had to disable `builtin-component-arguments`, `no-builtin-form-components`, and `no-unknown-arguments-for-builtin-components` for gjs/gts, because it has no knowledge of imports. The eslint implementations don't have this problem -- they can see the whole module, so (for example) `ember/template-builtin-component-arguments` can check whether `<Input>` is actually the one from `@ember/component`, and not a local component that happens to share the name. Those rules _do_ move to `recommended`. This is one of the motivations of [RFC #1214][rfc-1214].
 
-Additionally, `ember/no-builtin-form-components` is added to `recommended` (flagged for the next major in [eslint-plugin-ember#2060][issue-2060], implemented in [#2282][pr-2282]) -- native `<input>` / `<textarea>` are preferred over the classic-component `<Input>` / `<Textarea>` wrappers.
+One more addition: `ember/no-builtin-form-components` (called out for the next major in [eslint-plugin-ember#2060][issue-2060], implemented in [#2282][pr-2282]) -- native `<input>` / `<textarea>` are preferred over the classic-component `<Input>` / `<Textarea>` wrappers.
 
 [pr-2282]: https://github.com/ember-cli/eslint-plugin-ember/pull/2282
 
@@ -126,17 +126,17 @@ export default [
 or simply stay on `eslint-plugin-ember@13` until they're on ember-source 4+.
 
 > [!NOTE]
-> There is a second group of rules that guard against `@ember/component`-era patterns (`ember/no-actions-hash`, `ember/no-component-lifecycle-hooks`, `ember/no-attrs-in-components`, `ember/no-observers`, `ember/require-tagless-components`, `ember/no-classic-components`). Those patterns are still _possible_ today, so these rules stay in `recommended` for this major. They become removal candidates once `@ember/component` is deprecated (see [RFC #1216](https://github.com/emberjs/rfcs/pull/1216)).
+> There is a second group of rules that lint against `@ember/component`-era patterns (`ember/no-actions-hash`, `ember/no-component-lifecycle-hooks`, `ember/no-attrs-in-components`, `ember/no-observers`, `ember/require-tagless-components`, `ember/no-classic-components`). Those patterns are still _possible_ today, so these rules stay in `recommended` for this major. They become removal candidates once `@ember/component` is deprecated (see [RFC #1216](https://github.com/emberjs/rfcs/pull/1216)).
 
 ### What happens to `template-lint-migration`
 
-The config sticks around and takes on a permanent role: it is what folks who still have `.hbs` files should use. It keeps the full `ember-template-lint` parity set, so hbs coverage is identical before and after this major. It's also load-bearing for the [RFC #1214][rfc-1214] migration guide.
+The config stays, permanently: it is what folks who still have `.hbs` files should use. It keeps the full `ember-template-lint` parity set, so hbs coverage is identical before and after this major, and the [RFC #1214][rfc-1214] migration guide is written around it.
 
 Since it's not really a _migration_ config anymore, v14 should rename it to `hbs` (keeping `template-lint-migration` as an alias for the deprecation window) so that its long-term purpose is reflected in its name.
 
 ### Other breaking changes
 
-[#2060][issue-2060] also tracks routine breaking changes for the release (dropping EOL node versions, matching eslint's supported version ranges, config export cleanup). Those don't change what is linted, so they don't need an RFC and aren't specified here -- they're listed only so readers know this RFC is intentionally scoped to the `recommended` rule set.
+[#2060][issue-2060] also tracks routine breaking changes for the release (dropping EOL node versions, matching eslint's supported version ranges, config export cleanup). Those don't change what is linted, so they don't need an RFC and aren't specified here -- this RFC is only about the `recommended` rule set.
 
 ## How we teach this
 
@@ -151,7 +151,7 @@ For the v14 upgrade itself:
 
 ## Drawbacks
 
-- Existing apps get a wall of new lint errors on upgrade. This is unavoidable if we want parity for new apps (per RFC #1214), and bulk suppressions make it a mechanical one-time cost rather than a blocker.
+- Existing apps get a bunch of new lint errors on upgrade. That's the point of the major (per RFC #1214), and bulk suppressions exist so that nobody has to fix them all in one PR.
 - Apps still supporting ember-source 3.x silently lose coverage for the removed rules unless they re-enable them. The release notes and the changelog entry for each removed rule cover this -- and staying on v13 is always an option, since nothing about v13 stops working.
 
 ## Alternatives
@@ -162,19 +162,19 @@ This contradicts RFC #1214 -- newly generated apps would ship without the defaul
 
 ### Enable only the A11y subset by default
 
-Preserves the A11y commitment with fewer new errors, but breaks parity with what `ember-template-lint` users have today, and makes "did I migrate correctly?" harder to answer. Parity is the simpler story: same rules, one tool.
+Preserves the A11y commitment with fewer new errors, but breaks parity with what `ember-template-lint` users have today, and makes "did I migrate correctly?" harder to answer. Parity is easier to explain: same rules, one tool.
 
 ### Ship a `legacy` config with the removed rules
 
-[#1950][issue-1950] proposed this. It's a config we'd have to name, document, and maintain for an audience that shrinks every year -- and that audience already has two simpler options: stay on v13, or re-enable the handful of rules they still want in their own config. Not worth the surface area.
+[#1950][issue-1950] proposed this. It's another config to name, document, and maintain, for a set of apps that shrinks every year -- and those apps already have two options: stay on v13, or re-enable the handful of rules they still want in their own config. Not worth maintaining.
 
 ### Merge the template rules into `recommended` unscoped (including `.hbs`)
 
-Then `recommended` would error-or-crash for anyone with `.hbs` files who hasn't configured the hbs parser. Keeping `recommended` gjs/gts-only means it stays safe to adopt without any parser setup, and hbs linting remains a deliberate opt-in.
+Then `recommended` would blow up for anyone with `.hbs` files who hasn't configured the hbs parser. Keeping `recommended` gjs/gts-only means it works without any parser setup, and hbs linting stays opt-in.
 
 ## Unresolved questions
 
-- The Appendix A / Appendix B partition should be treated as the starting point, not gospel -- the implementation should audit each rule against what strict mode can actually express (some loose-mode constructs, like `{{unbound}}` or `{{mut}}`, are still keywords in strict mode and their rules stay in Appendix A). Rules found to be miscategorized during implementation move to the right list without re-RFCing.
+- The Appendix A / Appendix B split is a best guess -- during implementation, each rule should be checked against what strict mode can actually express (some loose-mode constructs, like `{{unbound}}` or `{{mut}}`, are still keywords in strict mode, so their rules stay in Appendix A). Rules that end up in the wrong list move without re-RFCing.
 - Should `ember/template-no-bare-strings` (off by default in `ember-template-lint`, off by default here) get any special mention in the migration guide for i18n-heavy apps? (Leaning yes, but it's a docs question, not a config question.)
 
 ## Appendix A: template rules added to `recommended`
@@ -276,7 +276,7 @@ These 9 rules stay in the hbs config (`template-lint-migration`), keeping full `
 | Rule | Why it doesn't apply to gjs/gts |
 | ---- | ------------------------------- |
 | `ember/template-no-implicit-this` | strict mode has no implicit `this` -- an unresolved reference is a build error |
-| `ember/template-no-curly-component-invocation` | the component-or-property ambiguity this rule guards against doesn't exist in strict mode |
+| `ember/template-no-curly-component-invocation` | the component-or-property ambiguity doesn't exist in strict mode |
 | `ember/template-no-action` | `{{action}}` has no strict-mode import |
 | `ember/template-no-route-action` | `{{route-action}}` has no strict-mode import |
 | `ember/template-no-input-block` | curly `{{input}}` cannot resolve in strict mode |
