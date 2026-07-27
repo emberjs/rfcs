@@ -77,13 +77,16 @@ The built-in components (`<Input>`, `<Textarea>`, `<LinkTo>`) were already moved
 
 ### Deprecation Guide
 
-The guide leads with what your code should look like when you're done, because folks doing this migration have reported that the hardest part is not any individual step -- it's knowing where they're going. The steps come after.
+The end state for each classic component feature comes first; the migration steps come after.
 
 #### The end state
 
 Each scenario below shows a classic component and what it becomes. The "after" examples use `<template>` ([RFC #779](https://rfcs.emberjs.com/id/0779-first-class-component-templates)), but everything shown also works in loose-mode `.hbs` + `.js` colocation if you haven't adopted gjs/gts yet.
 
-##### You only have a JS file out of habit
+> [!NOTE]
+> gjs / gts is supported back to 3.28, and includes `@ember/component`. This allows very zebra-striped incremental migrations, if needed.
+
+##### You only have a JS file 
 
 ```js
 // before: app/components/greeting.js
@@ -142,11 +145,11 @@ export default class Toggle extends Component {
 }
 ```
 
-No more `this.set` -- assignment to a `@tracked` property is all there is.
+`this.set` becomes plain assignment to a `@tracked` property.
 
 ##### The element: `tagName`, `classNames`, `attributeBindings`, `elementId`, `ariaRole`
 
-Classic components conjure a wrapper element out of JS configuration. Glimmer components don't have a wrapper element at all -- whatever element you want, you write in the template, where it was always visible to begin with.
+Glimmer components have no wrapper element. Write the element in the template, and move each JS setting onto it as an attribute:
 
 ```js
 // before
@@ -182,7 +185,7 @@ export default class UserCard extends Component {
 </template>
 ```
 
-`...attributes` covers what `class` / `id` / attribute merging from the call site used to do -- and unlike the classic behavior, callers can now target it exactly where you place it.
+`...attributes` receives the attributes passed at the call site (`class`, `id`, `data-*`, ...); place it on the element that should receive them.
 
 ##### DOM event methods: `click()`, `mouseEnter()`, `keyDown()`, ...
 
@@ -208,11 +211,11 @@ import { on } from '@ember/modifier';
 </template>
 ```
 
-The `{{on}}` modifier attaches a real event listener to a real element -- no `EventDispatcher`, no delegation, no guessing which element receives the event.
+Each event method maps to `{{on}}` with the DOM event name: `click()` → `{{on "click" ...}}`, `keyDown()` → `{{on "keydown" ...}}`, `mouseEnter()` → `{{on "mouseenter" ...}}`.
 
 ##### Lifecycle hooks and `this.element`
 
-Anything that needed `didInsertElement` / `didUpdateAttrs` / `willDestroyElement` to touch the DOM becomes a modifier. Modifiers are targeted at the exact element that needs the behavior, and their cleanup is not optional-by-convention -- it's the return value.
+Anything that used `didInsertElement` / `didUpdateAttrs` / `willDestroyElement` to touch the DOM becomes a modifier, attached to the element it manages. Teardown is the modifier's return value.
 
 ```js
 // before
@@ -255,7 +258,7 @@ For non-DOM teardown, `@glimmer/component` still has `willDestroy`, and `registe
 
 ##### `didReceiveAttrs` / computed properties deriving state
 
-Derived data doesn't need a lifecycle hook or a dependent-key list. It's a getter.
+Derived data becomes a getter:
 
 ```js
 // before
@@ -281,7 +284,7 @@ export default class FullName extends Component {
 }
 ```
 
-If the getter is expensive, `@cached` (from `@glimmer/tracking`) memoizes it. If the getter is trivial (like this one), you likely don't need the class at all.
+If the getter is expensive, `@cached` (from `@glimmer/tracking`) memoizes it. If the getter only formats arguments (like this one), skip the class and put the expression in a template-only component.
 
 ##### Two-way bindings
 
@@ -320,7 +323,7 @@ export default class Parent extends Component {
 
 ##### `positionalParams`
 
-There is no equivalent -- angle bracket invocation has no positional arguments. Give the arguments names:
+Angle bracket invocation has no positional arguments. Give the arguments names:
 
 ```hbs
 {{! before }}
@@ -396,27 +399,27 @@ flowchart TD
     Gjs -->|no| Done(["no more '@ember/component'"])
 ```
 
-"Leaves first" because computed properties cannot depend on native getters or tracked data without extra annotations -- so convert components that do not feed data into still-unconverted parents, and work your way up the tree. And `@tracked` rides along with the superclass swap rather than getting its own step: both require actually understanding the component's data flow, so pay that cost once.
+"Leaves first": computed properties cannot depend on native getters or tracked data, so convert components that do not feed data into still-unconverted parents, then work up the tree.
 
-None of this is new ground. Folks have been writing up this migration since 2019, and the writeups disagree on ordering precisely because so little of it is load-bearing:
+Longer walkthroughs of the same migration:
 
 - the official [Octane upgrade guide](https://guides.emberjs.com/v5.12.0/upgrading/current-edition/) -- recommends starting with components that have no two-way bindings, computed properties, or observers
-- [Chris Krycho's phased migration guides](https://github.com/chriskrycho/octane-migration-guides), battle-tested on one of the largest Ember apps in existence -- the leaves-first rule and "do `@tracked` with the swap" both come from here, and they are explicit that their ordering exists to minimize how many times you touch each file, not because things break
-- the Ember Atlas recommended migration order (preserved in [Melanie Sumner's slides](https://noti.st/melsumner/Hl16PZ/slides)) -- the source of "observers go before `@tracked`"
-- community walkthroughs like [Lighthouse's](https://dev.to/lighthouse-intelligence/the-road-from-ember-classic-to-glimmer-components-4hlc) (superclass swap dead last, same as this guide) and [Isaac Lee's](https://crunchingnumbers.live/2019/12/23/rewriting-apps-in-ember-octane/) (route by route, with tests gating each step)
+- [Chris Krycho's phased migration guides](https://github.com/chriskrycho/octane-migration-guides) -- source of the leaves-first rule and of doing `@tracked` with the superclass swap
+- the Ember Atlas recommended migration order (preserved in [Melanie Sumner's slides](https://noti.st/melsumner/Hl16PZ/slides)) -- source of "observers go before `@tracked`"
+- community walkthroughs from [Lighthouse](https://dev.to/lighthouse-intelligence/the-road-from-ember-classic-to-glimmer-components-4hlc) and [Isaac Lee](https://crunchingnumbers.live/2019/12/23/rewriting-apps-in-ember-octane/)
 
-Within a single component, the trick is that almost every step above **works while the component is still classic**. That means each step is a small, shippable PR, and the scary-looking superclass swap is the _last_ and _smallest_ diff, not the first. The numbering below is a sensible default, not a dependency list -- the only hard edges are that the element has to be in the template (step 2) before anything can attach to it (steps 3 and 4), and that everything classic-only has to be gone before the swap (step 7):
+Every step below except the swap itself works while the component is still classic, so each one is a small, shippable PR. The numbering is a sensible default, not a dependency list -- the only hard edges are that the element has to be in the template (step 2) before anything can attach to it (steps 3 and 4), and that everything classic-only has to be gone before the swap (step 7):
 
 1. **Get on native classes first.** If the component is still `Component.extend({ ... })`, run [ember-native-class-codemod](https://github.com/ember-codemods/ember-native-class-codemod). Everything below assumes native class syntax.
 2. **Flatten the element into the template.** Write the root element explicitly in the template, move `classNames` / `classNameBindings` / `attributeBindings` / `ariaRole` onto it, add `...attributes`, then set `tagName = ''`. Classic components fully support `tagName: ''` + splattributes, so this ships on its own.
 3. **Replace event methods with `{{on}}`.** Once the element is in the template, `click()` becomes `{{on "click" this.select}}` on that element. Also shippable while classic.
 4. **Move lifecycle hooks into modifiers.** [@ember/render-modifiers](https://github.com/emberjs/ember-render-modifiers) (`{{did-insert}}` / `{{did-update}}` / `{{will-destroy}}`) is the mechanical intermediate step; a purpose-built [ember-modifier](https://github.com/ember-modifier/ember-modifier) is the end state. Modifiers work on classic components' templates too.
 5. **Untangle two-way bindings.** Stop `this.set()`-ing anything that was passed in; take a callback argument instead. This is the only step that changes the component's public interface, so it's the one to review carefully.
-6. **Replace `@computed` with getters.** Getters work inside classic components, so this also ships independently. If the component has observers, remove those first -- observers do not fire for `@tracked` updates, so they have to be gone before anything they watch becomes tracked.
-7. **Swap the superclass, and adopt `@tracked` in the same pass.** `import Component from '@ember/component'` → `import Component from '@glimmer/component'`, argument access moves from `this.foo` to `this.args.foo` (`{{@foo}}` in the template), `init()` becomes `constructor()`, and local mutable state becomes `@tracked` with plain assignment ([ember-tracked-properties-codemod](https://github.com/ember-codemods/ember-tracked-properties-codemod) handles the mechanical part). These travel together because both require understanding the component's data flow -- understand it once. Go leaves-first across the app, since a computed property in a not-yet-converted parent cannot depend on this component's new native getters. Because of steps 2--6, there is nothing else left in the class that needs to change.
-8. **(Optional) convert to `<template>`.** See [RFC #779](https://rfcs.emberjs.com/id/0779-first-class-component-templates). [@embroider/template-tag-codemod](https://github.com/embroider-build/embroider/tree/main/packages/template-tag-codemod) does this mechanically, and (deliberately) skips any component that is not yet colocated and on native class syntax. Those are its only real prerequisites, though -- `<template>` compiles to `setComponentTemplate(...)`, which works on classic components too, so this step is available the moment step 1 is done. It does not have to wait for the superclass swap.
+6. **Replace `@computed` with getters.** Getters work inside classic components, so this also ships independently. If the component has observers, remove those first: observers do not fire for `@tracked` updates, so they have to be gone before anything they watch becomes tracked.
+7. **Swap the superclass, and adopt `@tracked` in the same pass.** `import Component from '@ember/component'` → `import Component from '@glimmer/component'`, argument access moves from `this.foo` to `this.args.foo` (`{{@foo}}` in the template), `init()` becomes `constructor()`, and local mutable state becomes `@tracked` with plain assignment ([ember-tracked-properties-codemod](https://github.com/ember-codemods/ember-tracked-properties-codemod) handles the mechanical part). Go leaves-first across the app, since a computed property in a not-yet-converted parent cannot depend on this component's new native getters. After steps 2--6, nothing else in the class needs to change.
+8. **(Optional) convert to `<template>`.** See [RFC #779](https://rfcs.emberjs.com/id/0779-first-class-component-templates). [@embroider/template-tag-codemod](https://github.com/embroider-build/embroider/tree/main/packages/template-tag-codemod) does this mechanically; it skips any component that is not yet colocated and on native class syntax. `<template>` works with classic components (it compiles to `setComponentTemplate(...)`), so this step is available any time after step 1 -- it does not have to wait for the superclass swap.
 
-There is deliberately no single classic→glimmer codemod: steps 2, 4, and 5 involve decisions (where does `...attributes` go? what is the modifier's responsibility? who owns this state?) that a codemod would get wrong silently. The mechanical parts are covered:
+There is no single classic→glimmer codemod; steps 2, 4, and 5 require per-component decisions. The mechanical parts are covered by:
 
 - [ember-component-template-colocation-migrator](https://github.com/ember-codemods/ember-component-template-colocation-migrator)
 - [ember-angle-brackets-codemod](https://github.com/ember-codemods/ember-angle-brackets-codemod)
@@ -427,7 +430,7 @@ There is deliberately no single classic→glimmer codemod: steps 2, 4, and 5 inv
 
 ### Ecosystem
 
-- `eslint-plugin-ember` already has [`ember/no-classic-components`](https://github.com/ember-cli/eslint-plugin-ember/blob/main/docs/rules/no-classic-components.md) in its recommended config, so most apps have been told about this for years.
+- `eslint-plugin-ember` already has [`ember/no-classic-components`](https://github.com/ember-cli/eslint-plugin-ember/blob/main/docs/rules/no-classic-components.md) in its recommended config.
 - The component blueprint has generated Glimmer components since Octane; no blueprint changes needed.
 - Addons that ship classic components will need to migrate before the next major. Per usual, addon authors are expected to move faster than app authors, and the deprecation window exists for exactly this.
 - Ember Inspector renders both component systems today; removal (at the major) only deletes code paths.
