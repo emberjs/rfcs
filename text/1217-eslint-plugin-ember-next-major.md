@@ -19,8 +19,8 @@ suite:
 ## Summary
 
 This RFC defines the `recommended` config for the next major of `eslint-plugin-ember` (v14):
-- all of the template rules that were enabled by default in `ember-template-lint` become enabled by default in `eslint-plugin-ember` -- this is the config change that [RFC #1214 "Deprecate ember-template-lint"][rfc-1214] committed us to
-- rules that only exist to catch patterns from `ember-source` 3.x and earlier are removed from `recommended` and moved to a new `legacy` config
+- the template rules that were enabled by default in `ember-template-lint` become enabled by default for gjs/gts files -- this is the config change that [RFC #1214 "Deprecate ember-template-lint"][rfc-1214] committed us to. The `recommended` config is (and stays) gjs/gts only -- linting `.hbs` files remains opt-in via the hbs config (currently named `template-lint-migration`)
+- rules that only exist to catch patterns from `ember-source` 3.x and earlier are removed from `recommended`
 
 Per the process agreed to in [eslint-plugin-ember#2158][issue-2158], changes to the recommended sets of rules require an RFC -- this is that RFC. Planning for the release itself is tracked in [eslint-plugin-ember#2060][issue-2060].
 
@@ -40,32 +40,31 @@ Two things are converging on this major:
 
 ## Detailed design
 
-### Add the template rules to `recommended`
+### Add the template rules to `recommended`, for gjs/gts only
 
-The entire rule set of the existing [`template-lint-migration` config][migration-config] is added to `recommended`. This is exact parity with `ember-template-lint`'s `recommended` preset (95 rules), plus `ember/template-no-template-lint-directives`, which converts leftover `{{! template-lint-disable ... }}` comments to eslint directives via `eslint --fix`.
+The entire rule set of the existing [`template-lint-migration` config][migration-config] is added to `recommended`, scoped to `**/*.{gjs,gts}`. This is exact parity with `ember-template-lint`'s `recommended` preset (95 rules), plus `ember/template-no-template-lint-directives`, which converts leftover `{{! template-lint-disable ... }}` comments to eslint directives via `eslint --fix`.
 
 The full list is in the [Appendix](#appendix-template-rules-added-to-recommended).
+
+The `recommended` config today is gjs/gts (and js/ts) only, and that does not change -- it never touches `.hbs` files, so adding it to a project can never require also configuring an hbs parser. Newly generated apps have no `.hbs` files, so `recommended` alone gives them full lint parity with what `ember-template-lint` provided.
 
 [migration-config]: https://github.com/ember-cli/eslint-plugin-ember/blob/main/lib/config/template-lint-migration.js
 
 > [!NOTE]
 > `ember-template-lint`'s own recommended preset had to _disable_ several rules for gjs/gts files (`no-implicit-this`, `builtin-component-arguments`, `no-builtin-form-components`, etc.) because it has no knowledge of imports and strict mode makes some of them redundant or wrong. The eslint implementations don't have this problem -- they can see the whole module, so (for example) `ember/template-builtin-component-arguments` can check whether `<Input>` is actually the one from `@ember/component`, and not a local component that happens to share the name. This is one of the motivations of [RFC #1214][rfc-1214].
 
-These rules apply anywhere eslint can parse a template:
-- `.gjs` / `.gts` files -- already wired up by the existing configs via `ember-eslint-parser`, nothing for users to do
-- `.hbs` files -- requires a small config block (see below)
-
 Additionally, `ember/no-builtin-form-components` is added to `recommended` (flagged for the next major in [eslint-plugin-ember#2060][issue-2060], implemented in [#2282][pr-2282]) -- native `<input>` / `<textarea>` are preferred over the classic-component `<Input>` / `<Textarea>` wrappers.
 
 [pr-2282]: https://github.com/ember-cli/eslint-plugin-ember/pull/2282
 
-### Linting `.hbs` files
+### Linting `.hbs` files stays opt-in
 
-Existing apps with loose-mode templates opt in with one config block, using the hbs parser that `eslint-plugin-ember` already ships (via `ember-eslint-parser/hbs`):
+Existing apps with loose-mode templates opt in with the hbs config -- the [`template-lint-migration` config][migration-config] (same rule set as above) plus a parser block routing `.hbs` files to the hbs parser that `eslint-plugin-ember` already ships (via `ember-eslint-parser/hbs`):
 
 ```js
 // eslint.config.mjs
 import { hbsParser, plugin as ember } from 'eslint-plugin-ember/recommended';
+import emberTemplateLintMigration from 'eslint-plugin-ember/configs/template-lint-migration';
 
 export default [
   // ... existing config ...
@@ -74,17 +73,16 @@ export default [
     plugins: { ember },
     languageOptions: { parser: hbsParser },
   },
+  ...emberTemplateLintMigration,
 ];
 ```
-
-Because the recommended template rules live in a `rules` block with no `files` restriction, they apply to these `.hbs` files automatically once the parser is in place -- there is no separate "hbs ruleset" to keep in sync.
 
 > [!IMPORTANT]
 > If a config has a `@typescript-eslint/parser` block with a broad `files` glob, that glob must be narrowed to `['**/*.{js,ts,gjs,gts}']` so it doesn't try to parse `.hbs` files -- flat config merges every matching block, and type-aware rules will error on non-JS files.
 
 This config block is documented in the migration guide required by [RFC #1214][rfc-1214], and does not go in the app blueprint -- newly generated apps have no `.hbs` files.
 
-### Remove legacy rules from `recommended`, add a `legacy` config
+### Remove legacy rules from `recommended`
 
 The following rules are removed from `recommended`. They lint against APIs that no longer exist in `ember-source` 4+, so on any app that can actually install `eslint-plugin-ember@14` they can never fire -- they only cost lint time.
 
@@ -108,23 +106,28 @@ The following rules are removed from `recommended`. They lint against APIs that 
 [issue-1950]: https://github.com/ember-cli/eslint-plugin-ember/issues/1950
 [issue-1224]: https://github.com/ember-cli/eslint-plugin-ember/issues/1224
 
-None of these rules are deleted from the plugin. As proposed in [#1950][issue-1950], they move to a new `legacy` config, so apps still working through older ember-source versions can do:
+None of these rules are deleted from the plugin -- they just come out of `recommended`. Apps still working through an older ember-source can re-enable them in their own config:
 
 ```js
-import emberRecommended from 'eslint-plugin-ember/configs/recommended';
-import emberLegacy from 'eslint-plugin-ember/configs/legacy';
-
-export default [...emberRecommended, ...emberLegacy];
+export default [
+  ...emberRecommended,
+  {
+    rules: {
+      'ember/no-get-with-default': 'error',
+      // ...whichever of the removed rules still apply
+    },
+  },
+];
 ```
 
-and get exactly the coverage they have today.
+or simply stay on `eslint-plugin-ember@13` until they're on ember-source 4+.
 
 > [!NOTE]
-> There is a second group of rules that guard against `@ember/component`-era patterns (`ember/no-actions-hash`, `ember/no-component-lifecycle-hooks`, `ember/no-attrs-in-components`, `ember/no-observers`, `ember/require-tagless-components`, `ember/no-classic-components`). Those patterns are still _possible_ today, so these rules stay in `recommended` for this major. They become `legacy` candidates once `@ember/component` is deprecated (see [RFC #1216](https://github.com/emberjs/rfcs/pull/1216)).
+> There is a second group of rules that guard against `@ember/component`-era patterns (`ember/no-actions-hash`, `ember/no-component-lifecycle-hooks`, `ember/no-attrs-in-components`, `ember/no-observers`, `ember/require-tagless-components`, `ember/no-classic-components`). Those patterns are still _possible_ today, so these rules stay in `recommended` for this major. They become removal candidates once `@ember/component` is deprecated (see [RFC #1216](https://github.com/emberjs/rfcs/pull/1216)).
 
 ### What happens to `template-lint-migration`
 
-The config sticks around in v14 unchanged -- it's load-bearing for the [RFC #1214][rfc-1214] migration guide, and spreading it after `recommended` is harmless once the rules overlap. It gets removed in the major after this one, when the `ember-template-lint` deprecation window closes.
+The config sticks around -- it's load-bearing for the [RFC #1214][rfc-1214] migration guide, and once `ember-template-lint` is gone it's not really a _migration_ config anymore, it's the hbs config. v14 should rename it to `hbs` (keeping `template-lint-migration` as an alias for the deprecation window) so that its long-term purpose is reflected in its name.
 
 ### Other breaking changes
 
@@ -137,13 +140,14 @@ Most of the teaching work is already required by [RFC #1214][rfc-1214]: the migr
 For the v14 upgrade itself:
 
 - Newly generated apps just get the new config from the blueprint. No teaching needed.
-- Existing apps upgrading to v14 will see new errors -- in gjs/gts files immediately, and in hbs files once they add the parser block. The release notes should point at [eslint bulk suppressions](https://eslint.org/blog/2025/04/introducing-bulk-suppressions/) and [Lint to the Future](https://github.com/mansona/lint-to-the-future) for adopting the new rules incrementally instead of fixing everything in one PR. (This replaces the `lint-todo` workflow from `ember-template-lint`, per RFC #1214.)
+- Existing apps upgrading to v14 will see new errors in their gjs/gts files. The release notes should point at [eslint bulk suppressions](https://eslint.org/blog/2025/04/introducing-bulk-suppressions/) and [Lint to the Future](https://github.com/mansona/lint-to-the-future) for adopting the new rules incrementally instead of fixing everything in one PR. (This replaces the `lint-todo` workflow from `ember-template-lint`, per RFC #1214.)
+- Apps with `.hbs` files opt in to hbs linting via the hbs config -- that's a migration-from-`ember-template-lint` task (covered by RFC #1214's migration guide), not a v14-upgrade task.
 - Apps that were already using the `template-lint-migration` config see no new template errors at all -- v14 is a no-op for them.
 
 ## Drawbacks
 
 - Existing apps get a wall of new lint errors on upgrade. This is unavoidable if we want parity for new apps (per RFC #1214), and bulk suppressions make it a mechanical one-time cost rather than a blocker.
-- Apps still supporting ember-source 3.x need to know to add the `legacy` config. The release notes and the changelog entry for each removed rule cover this.
+- Apps still supporting ember-source 3.x silently lose coverage for the removed rules unless they re-enable them. The release notes and the changelog entry for each removed rule cover this -- and staying on v13 is always an option, since nothing about v13 stops working.
 
 ## Alternatives
 
@@ -155,9 +159,13 @@ This contradicts RFC #1214 -- newly generated apps would ship without the defaul
 
 Preserves the A11y commitment with fewer new errors, but breaks parity with what `ember-template-lint` users have today, and makes "did I migrate correctly?" harder to answer. Parity is the simpler story: same rules, one tool.
 
-### Delete the legacy rules instead of moving them to a `legacy` config
+### Ship a `legacy` config with the removed rules
 
-Less maintenance, but folks on long-lived 3.x apps lose coverage with no recourse. The rules already exist and are tested; keeping them in an off-by-default config costs almost nothing.
+[#1950][issue-1950] proposed this. It's a config we'd have to name, document, and maintain for an audience that shrinks every year -- and that audience already has two simpler options: stay on v13, or re-enable the handful of rules they still want in their own config. Not worth the surface area.
+
+### Merge the template rules into `recommended` unscoped (including `.hbs`)
+
+Then `recommended` would error-or-crash for anyone with `.hbs` files who hasn't configured the hbs parser. Keeping `recommended` gjs/gts-only means it stays safe to adopt without any parser setup, and hbs linting remains a deliberate opt-in.
 
 ## Unresolved questions
 
