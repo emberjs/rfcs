@@ -349,58 +349,64 @@ Angle bracket invocation has no positional arguments. Give the arguments names:
 
 You do not need a flag day. Classic and Glimmer components coexist in the same app, the same route, even the same template -- migrate one component at a time, in any order.
 
-Here is the whole path in one picture. Diamonds ask "does your code do this?" -- a "no" means there is nothing to do on that track. Rectangles are hand-work, double-walled boxes are codemods that do the work for you. Anything side-by-side is genuinely independent: do it in any order, or in parallel across a team. The only arrows that mean "must happen first" are the ones you see:
+Here is the whole path in one picture. Diamonds ask "does your code do this?" -- a "no" means there is nothing to do on that branch. Rectangles are hand-work, double-walled boxes are codemods that do the work for you. When several branches leave the same node, they are independent: do them in any order, or in parallel across a team. The only arrows that mean "must happen first" are the ones you see:
 
 ```mermaid
 flowchart TD
     Start(["import Component from '@ember/component'"])
+    AppWide(["once, app-wide: run whichever apply"])
+    Hub(["then, for each component, leaves first"])
 
-    subgraph once["once, app-wide -- these four are independent of each other"]
-        Colocated{"templates in app/templates/components/,<br>or layout / layoutName?"} -->|yes| Migrator[["ember-component-template-colocation-migrator"]]
-        Curlies{"invoked curly-style:<br>{{my-component}}?"} -->|yes| Angle[["ember-angle-brackets-codemod"]]
-        Implicit{"bare {{foo}} in templates instead of<br>{{this.foo}} / {{@foo}}?"} -->|yes| NoImplicit[["ember-no-implicit-this-codemod"]]
-        ClassicClass{"still using .extend()?"} -->|"yes, with Mixins"| Mixins["deal with Mixins first: inline them, or<br>convert to class decorators (RFC #1116)"]
-        Mixins --> Native[["ember-native-class-codemod"]]
-        ClassicClass -->|yes| Native
-    end
+    Start --> AppWide
 
-    Start --> once
-    once --> Hub["then, for each component (leaves first):<br>four tracks, no order between them --<br>work them in parallel if you like"]
+    AppWide --> Colocated{"templates in app/templates/components/,<br>or layout / layoutName?"}
+    AppWide --> Curlies{"invoked curly-style:<br>{{my-component}}?"}
+    AppWide --> Implicit{"bare {{foo}} in templates instead of<br>{{this.foo}} / {{@foo}}?"}
+    AppWide --> ClassicClass{"still using .extend()?"}
 
-    Hub --> el
-    Hub --> data
-    Hub --> derived
-    Hub --> inv
+    Colocated -->|yes| Migrator[["ember-component-template-colocation-migrator"]]
+    Curlies -->|yes| Angle[["ember-angle-brackets-codemod"]]
+    Implicit -->|yes| NoImplicit[["ember-no-implicit-this-codemod"]]
+    ClassicClass -->|"yes, with Mixins"| Mixins["deal with Mixins first: inline them, or<br>convert to class decorators (RFC #1116)"]
+    Mixins --> Native[["ember-native-class-codemod"]]
+    ClassicClass -->|yes| Native
 
-    subgraph el["the element"]
-        Element{"anything on the wrapper element?<br>tagName / classNames / classNameBindings /<br>attributeBindings / elementId / ariaRole,<br>click()-style methods, this.element"} -->|yes| Flatten["write the element in the template,<br>move the bindings onto it, add ...attributes,<br>set tagName = ''"]
-        Flatten --> Events{"click() / keyDown() /<br>mouseEnter() / ...?"}
-        Events -->|yes| On["{{on}} on the element,<br>in the template"]
-        Flatten --> Hooks{"didInsertElement / didUpdateAttrs /<br>willDestroyElement / this.element?"}
-        Hooks -->|yes| Mod["extract a modifier (ember-modifier);<br>@ember/render-modifiers as an intermediate"]
-    end
+    Migrator --> Hub
+    Angle --> Hub
+    NoImplicit --> Hub
+    Native --> Hub
 
-    subgraph data["data flow"]
-        TwoWay{"this.set() on passed-in properties,<br>or callers reaching for {{mut}}?"} -->|yes| Ddau["the caller keeps the state and<br>passes a callback down"]
-        Evented{"this.trigger() / this.on()<br>from Evented?"} -->|yes| Cb["plain functions / callbacks<br>(see RFC #1111)"]
-    end
+    Hub --> Element{"anything on the wrapper element?<br>tagName / classNames / classNameBindings /<br>attributeBindings / elementId / ariaRole,<br>click()-style methods, this.element"}
+    Hub --> TwoWay{"this.set() on passed-in properties,<br>or callers reaching for {{mut}}?"}
+    Hub --> Evented{"this.trigger() / this.on()<br>from Evented?"}
+    Hub --> Observers{"observers?"}
+    Hub --> Actions{"actions hash /<br>this.send()?"}
+    Hub --> Positional{"positionalParams?"}
 
-    subgraph derived["derived state"]
-        Observers{"observers?"} -->|yes| RmObs["remove them -- observers do not<br>fire for @tracked updates"]
-        RmObs --> Derive{"didReceiveAttrs / @computed<br>deriving data?"}
-        Observers -->|no| Derive
-        Derive -->|yes| Getter["native getters;<br>@cached if expensive"]
-    end
+    Element -->|yes| Flatten["write the element in the template,<br>move the bindings onto it, add ...attributes,<br>set tagName = ''"]
+    Flatten --> Events{"click() / keyDown() /<br>mouseEnter() / ...?"}
+    Events -->|yes| On["{{on}} on the element,<br>in the template"]
+    Flatten --> Hooks{"didInsertElement / didUpdateAttrs /<br>willDestroyElement / this.element?"}
+    Hooks -->|yes| Mod["extract a modifier<br>(ember-modifier)"]
 
-    subgraph inv["invocation + actions"]
-        Actions{"actions hash /<br>this.send()?"} -->|yes| Methods["@action methods,<br>called directly"]
-        Positional{"positionalParams?"} -->|yes| Named["named arguments,<br>at every call site"]
-    end
+    TwoWay -->|yes| Ddau["the caller keeps the state and<br>passes a callback down"]
+    Evented -->|yes| Cb["plain functions / callbacks<br>(see RFC #1111)"]
 
-    el --> Swap
-    data --> Swap
-    derived --> Swap
-    inv --> Swap
+    Observers -->|yes| RmObs["remove them -- observers do not<br>fire for @tracked updates"]
+    RmObs --> Derive{"didReceiveAttrs / @computed<br>deriving data?"}
+    Observers -->|no| Derive
+    Derive -->|yes| Getter["native getters;<br>@cached if expensive"]
+
+    Actions -->|yes| Methods["@action methods,<br>called directly"]
+    Positional -->|yes| Named["named arguments,<br>at every call site"]
+
+    On --> Swap
+    Mod --> Swap
+    Ddau --> Swap
+    Cb --> Swap
+    Getter --> Swap
+    Methods --> Swap
+    Named --> Swap
 
     Swap["one pass, per component: swap '@ember/component' → '@glimmer/component',<br>this.foo → this.args.foo ({{@foo}} in the template), init() → constructor(),<br>and local this.set() state → @tracked (ember-tracked-properties-codemod)"]
     Swap --> Gjs{"want template tag / gjs? (RFC #779)<br>note: does not have to wait for the swap --<br>gjs/gts works with '@ember/component' too,<br>any time after native class syntax + colocation"}
