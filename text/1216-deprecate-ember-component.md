@@ -499,5 +499,4 @@ The mitigations are that the deprecation window is long, every intermediate step
 
 ## Unresolved questions
 
-- Should `@ember/component/template-only` be deprecated alongside this? `<template>` makes it unnecessary, but plenty of v2 addons use it in their compiled output, so it likely wants its own RFC and timeline.
-- Exact `until` / `since` versions depend on which release the deprecation lands in.
+n/a
