@@ -25,7 +25,7 @@ prs:
 project-link: Leave as is
 -->
 
-# Deprecate `import Component from '@ember/component'`
+# Deprecate Classic Ember Component aka `import Component from '@ember/component'`
 
 ## Summary
 
