@@ -36,7 +36,7 @@ Glimmer components ([`@glimmer/component`](https://api.emberjs.com/ember/release
 ## Motivation
 Classic Components have been replaced by Glimmer Components. The replacement was introduced nearly a decade ago and made default in 2019. We've known since we began designing Glimmer Components that the Classic Components had serious limitations and were difficult to teach. 
 
-Classic components are the largest remaining consumer of everything else we've been deprecating:
+Additionally, Classic components are the largest remaining consumer of everything else we've been deprecating or working to deprecate:
 
 - they extend `EmberObject`, requiring the [Classic Class system](https://github.com/emberjs/rfcs/pull/1117)
 - they are assembled out of [Mixins](https://github.com/emberjs/rfcs/pull/1116) (`Evented`, `ActionSupport`, `TargetActionSupport`, ...)
