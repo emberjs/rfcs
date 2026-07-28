@@ -34,6 +34,7 @@ Deprecate the classic component class -- the default export of `@ember/component
 Glimmer components ([`@glimmer/component`](https://api.emberjs.com/ember/release/modules/@glimmer%2Fcomponent)) have been the default component in Ember projects since Octane (`ember-source@3.15`, 2019), and every feature of the classic component has a replacement that is smaller, easier to teach, and doesn't depend on the classic object model.
 
 ## Motivation
+Classic Components have been replaced by Glimmer Components. The replacement was introduced nearly a decade ago and made default in 2019. We've known since we began designing Glimmer Components that the Classic Components had serious limitations and were difficult to teach. 
 
 Classic components are the largest remaining consumer of everything else we've been deprecating:
 
