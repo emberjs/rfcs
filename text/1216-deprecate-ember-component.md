@@ -426,6 +426,7 @@ Longer walkthroughs of the same migration:
 - the Ember Atlas recommended migration order (preserved in [Melanie Sumner's slides](https://noti.st/melsumner/Hl16PZ/slides)) -- source of "observers go before `@tracked`"
 - community walkthroughs from [Lighthouse](https://dev.to/lighthouse-intelligence/the-road-from-ember-classic-to-glimmer-components-4hlc) and [Isaac Lee](https://crunchingnumbers.live/2019/12/23/rewriting-apps-in-ember-octane/)
 
+In no particular order:
 
 - **Get on native classes.**
     - codemod: [ember-native-class-codemod](https://github.com/ember-codemods/ember-native-class-codemod)
