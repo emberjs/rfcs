@@ -47,6 +47,8 @@ Additionally, Classic components are the largest remaining consumer of everythin
 
 Deleting the classic component (at the major following this deprecation) lets us also delete the `EventDispatcher`, `Ember.View`-era internals, and the component half of the two-way binding system -- some of the oldest and most expensive code in `ember-source`.
 
+Removing Classic components can drastically reduce the maintenance and teaching burden of the Framework. 
+
 ## Transition Path
 
 ### What is deprecated
