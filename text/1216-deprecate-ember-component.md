@@ -426,33 +426,29 @@ Longer walkthroughs of the same migration:
 - the Ember Atlas recommended migration order (preserved in [Melanie Sumner's slides](https://noti.st/melsumner/Hl16PZ/slides)) -- source of "observers go before `@tracked`"
 - community walkthroughs from [Lighthouse](https://dev.to/lighthouse-intelligence/the-road-from-ember-classic-to-glimmer-components-4hlc) and [Isaac Lee](https://crunchingnumbers.live/2019/12/23/rewriting-apps-in-ember-octane/)
 
-Every step ships on its own, while the component is still classic. The numbering is a sensible default, not a dependency list. The only hard edges:
 
-- step 2 before steps 3 and 4 (the element has to exist in the template before things can attach to it)
-- everything before step 7 (the swap)
-
-1. **Get on native classes.**
+- **Get on native classes.**
     - codemod: [ember-native-class-codemod](https://github.com/ember-codemods/ember-native-class-codemod)
     - docs: [Native Classes upgrade guide](https://guides.emberjs.com/v5.12.0/upgrading/current-edition/native-classes/)
-2. **Flatten the element into the template**, then set `tagName = ''`.
+- **Flatten the element into the template**, then set `tagName = ''`.
     - codemod: [tagless-ember-components-codemod](https://github.com/ember-codemods/tagless-ember-components-codemod)
     - docs: [Glimmer Components upgrade guide](https://guides.emberjs.com/v5.12.0/upgrading/current-edition/glimmer-components/)
-3. **Replace event methods with `{{on}}`** on the element from step 2.
+- **Replace event methods with `{{on}}`** on the element from step 2.
     - docs: [`{{on}}` API](https://api.emberjs.com/ember/release/functions/@ember%2Fmodifier/on), [Actions, `{{on}}`, and `{{fn}}` upgrade guide](https://guides.emberjs.com/v5.12.0/upgrading/current-edition/action-on-and-fn/)
-4. **Move lifecycle hooks into modifiers.**
+- **Move lifecycle hooks into modifiers.**
     - docs: [Template Lifecycle, DOM, and Modifiers guide](https://guides.emberjs.com/release/components/template-lifecycle-dom-and-modifiers/), [ember-modifier](https://github.com/ember-modifier/ember-modifier)
     - optional intermediate: [@ember/render-modifiers](https://github.com/emberjs/ember-render-modifiers) -- a migration tool only, not recommended for applications (see its README); skippable entirely
-5. **Untangle two-way bindings**: take a callback argument instead.
+- **Untangle two-way bindings**: take a callback argument instead.
     - the only step that changes the component's public interface -- review carefully
     - docs: [Octane vs Classic cheat sheet](https://ember-learn.github.io/ember-octane-vs-classic-cheat-sheet/) (Data Down, Actions Up)
-6. **Replace `@computed` with getters.**
+- **Replace `@computed` with getters.**
     - observers first: they do not fire for `@tracked` updates, so remove them before anything they watch becomes tracked
     - docs: [Tracked Properties upgrade guide](https://guides.emberjs.com/v5.12.0/upgrading/current-edition/tracked-properties/)
-7. **Swap the superclass, and adopt `@tracked` in the same pass.**
+- **Swap the superclass, and adopt `@tracked` in the same pass.**
     - codemod for the `@tracked` part: [ember-tracked-properties-codemod](https://github.com/ember-codemods/ember-tracked-properties-codemod)
     - docs: [Glimmer Components upgrade guide](https://guides.emberjs.com/v5.12.0/upgrading/current-edition/glimmer-components/) covers the whole conversion (`this.args`, `constructor()`, ...)
     - go leaves-first: a computed property in a not-yet-converted parent cannot depend on this component's new native getters
-8. **(Optional) convert to `<template>`.**
+- **(Optional) convert to `<template>`.**
     - codemod: [@embroider/template-tag-codemod](https://github.com/embroider-build/embroider/tree/main/packages/template-tag-codemod) (requires colocation + native class syntax; works with classic components, so this is available any time after step 1)
     - docs: [Template Tag Format guide](https://guides.emberjs.com/release/components/template-tag-format/), [RFC #779](https://rfcs.emberjs.com/id/0779-first-class-component-templates)
 
