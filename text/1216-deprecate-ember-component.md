@@ -349,7 +349,7 @@ Angle bracket invocation has no positional arguments. Give the arguments names:
 
 #### Migrating incrementally
 
-You do not need a flag day. Classic and Glimmer components coexist in the same app, the same route, even the same template -- migrate one component at a time, in any order.
+You do not need to migrate everything all at once. Classic and Glimmer components coexist in the same app, the same route, even the same template -- migrate one component at a time, in any order.
 
 Here is the whole path in one picture. Diamonds ask "does your code do this?" -- a "no" means there is nothing to do on that branch. Rectangles are hand-work, double-walled boxes are codemods that do the work for you. When several branches leave the same node, they are independent: do them in any order, or in parallel across a team. The only arrows that mean "must happen first" are the ones you see:
 
