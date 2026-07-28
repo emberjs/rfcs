@@ -489,7 +489,7 @@ The guides have not taught classic components since Octane -- there is nothing t
 
 ## Drawbacks
 
-This is the big one. Every long-lived Ember app has classic components, and unlike `inject`-vs-`service` there is no find-and-replace -- each component takes actual thought. Apps with hundreds of classic components will feel this deprecation more than any since Octane shipped.
+Every long-lived Ember app has classic components, and unlike `inject`-vs-`service` there is no find-and-replace -- each component takes actual thought.
 
 The mitigations are that the deprecation window is long, every intermediate step is shippable on its own (see above), and the replacement has been the default -- with documentation, lint rules, and community experience -- for over six years.
 
