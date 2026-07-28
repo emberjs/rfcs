@@ -76,7 +76,6 @@ deprecate(message, false, {
 });
 ```
 
-The built-in components (`<Input>`, `<Textarea>`, `<LinkTo>`) were already moved off the classic component base class in [RFC #671](https://rfcs.emberjs.com/id/0671-modernize-built-in-components-1), so they do not trigger this deprecation.
 
 ### Deprecation Guide
 
