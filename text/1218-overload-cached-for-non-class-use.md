@@ -8,7 +8,7 @@ teams: # delete teams that aren't relevant
   - learning
   - typescript
 prs:
-  accepted: https://github.com/NullVoxPopuli/rfcs/pull/19
+  accepted: https://github.com/emberjs/rfcs/pull/1218/
 project-link:
 suite: 
 ---
