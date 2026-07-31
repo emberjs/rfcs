@@ -331,6 +331,7 @@ class CachedValueWithHistory {
 
     constructor(fn) {
         this.#current = cached(() => {
+            // BUG: previous is not reactive
             this.#previous = untrack(() => this.#current?.value);
             return fn(this.#previous);
         });
