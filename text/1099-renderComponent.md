@@ -1,13 +1,15 @@
 ---
-stage: ready-for-release
+stage: released
 start-date: 2025-05-01T00:00:00.000Z
-release-date:
+release-date: 2025-10-13
 release-versions:
+  ember-source: 6.8.0
 teams:
   - framework
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/1099'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/1128'
+  released: 'https://github.com/emberjs/rfcs/pull/1144'
 project-link:
 suite:
 ---
@@ -101,9 +103,9 @@ export function renderComponent(
 }
 ```
 
-`RenderResult` is a subset of the currently a pre-existing `interface` from `@glimmer/interfaces`, but would be exposed as public API via the only the return type of `renderComponent`.
+`RenderResult` is a subset of the currently pre-existing `interface` from `@glimmer/interfaces`, but would be exposed as public API via the only return type of `renderComponent`.
 
-It's shape is:
+Its shape is:
 ```ts
 export interface RenderResult {
     /**
@@ -216,7 +218,7 @@ const render = modifier((element) => {
 
 ## How we teach this
 
-`renderComponent` _is_ a low-level API, but it's use cases are powerful:
+`renderComponent` _is_ a low-level API, but its use cases are powerful:
 
 ### Micro Applications
 
@@ -279,7 +281,7 @@ Combined with [RFC #931](https://github.com/emberjs/rfcs/pull/931), we can dynam
 ```
 
 > [!NOTE]
-> Depending on your application, you may want to consider sanitizing user input, so users don't inject their own script / sytle tags into your app.
+> Depending on your application, you may want to consider sanitizing user input, so users don't inject their own script / style tags into your app.
 > See: [DOMPurify](https://github.com/cure53/DOMPurify) and [Web Sanitizer API](https://developer.mozilla.org/en-US/docs/Web/API/Sanitizer) and [TrustedHTML](https://developer.mozilla.org/en-US/docs/Web/API/TrustedHTML)
 
 ### Integration with "islands"-based documentation tools
@@ -363,7 +365,7 @@ All renderComponents rendered within an ember app would share their reactivity. 
 
 Outside of ember projects, _currently_ if multiple `renderComponent`s are used from different ember-source versions (possible if someone pulls in, for example, two web components from different libraries which internally use `renderComponent`), the `renderComponent` usages would not be co-reactive with each other's data. This is something that would need to be resolved in the underlying _renderer_ and is out of scope for discussion in this RFC.
 
-Repeat calls to `renderComponent` with the same element will _replace_ all contents on that element. This means if someone wants multiple apps to render on a page as siblings, they should create sibling elements to render each sub-app in to. This is to be consistent with `document.body` vs within an app's component's DOM content. A way to render sibling components _could_ be to use TextNodes (or CommentNodes) to attach `renderComponent` to, but will be considered outside the scope of this RFC. We can add behaviors and ergonomics things later. This RFC is more about the base functionality for `renderComponent`.
+Repeat calls to `renderComponent` with the same element will _append_ all contents on that element. This means if someone wants multiple apps to replace one another, they should manually manage the destruction of the previously rendered app before calling `renderComponent` with the same element again. This is to be consistent with `document.body` vs within an app's component's DOM content. 
 
 If apps are replaced by other apps (such as rendering into the same element multiple times), there is a risk of memory leak if the prior apps were not destroyed, and _if_ those previous apps have global state that would _need_ cleanup (global event listeners, etc).
 
