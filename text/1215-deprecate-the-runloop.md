@@ -46,6 +46,19 @@ The runloop is one of the largest remaining sources of "you just have to know" k
 
 This is a part of _[Deprecating Ember Classic (pre-Octane)](https://github.com/emberjs/rfcs/issues/832)_.
 
+## Relationship to RFC #957 (Render Aware Scheduler Interface)
+
+[RFC #957](https://github.com/emberjs/rfcs/pull/957) shares this RFC's entire diagnosis: backburner predates microtasks, `requestAnimationFrame`, and native promises; polyfilled task queues ruin stack traces and profiler output; and interleaving RSVP/backburner flushes with native async causes extraneous renders, DOM thrash, and backtracking-render hazards. On the "why", the two RFCs are the same RFC.
+
+They differ on the "what instead":
+
+- **RFC #957** replaces `@ember/runloop` with a new public scheduling *interface* -- work is scheduled by declaring intent relative to the browser's frame lifecycle (`tasks`, `render`, `layout`, `composite`, `next`, `idle`), with pluggable `Strategy` implementations.
+- **This RFC** replaces `@ember/runloop` with *nothing*. Platform primitives, modifiers, destroyables, and test waiters cover the use-cases that actually appear in apps and addons, and Ember's own render scheduling stays internal and non-public.
+
+These are not in conflict -- deprecating `@ember/runloop`'s public API is the shared first step of both proposals, and this RFC deliberately takes no position that would block #957. If a coordinated read/write phase model proves necessary (the `layout` / `composite` phases are the part the platform genuinely does not give you, for avoiding layout thrash during animation-heavy work), that interface can ship later -- as a standalone package or a follow-up RFC -- and it would be *easier* to ship into an ecosystem that has already migrated off runloop semantics, because the new scheduler wouldn't need to interoperate with backburner's queues, timers, or autorun behavior.
+
+Put differently: #957 is "replace the runloop with a better scheduler"; this RFC is "remove the runloop, then find out whether we still need a scheduler at all." The migration work asked of app and addon authors is nearly identical in both, so no effort spent following this RFC's transition path is wasted if #957 (or a successor) is accepted later.
+
 ## Transition Path
 
 Ecosystem usage of each API, for gauging impact:
@@ -303,6 +316,7 @@ The new content needed is a good deprecation guide (the scenarios above) and a g
   - test-mode autorun errors keep being the first impression of Ember's testing story
   - internals keep maintaining ordering guarantees (queue semantics) that nothing modern relies on
 - Deprecate only the obviously-dead exports (`begin`, `end`, `join`, `bind`, `getCurrentRunLoop`) and keep the timer conveniences (`later`, `debounce`, `throttle`, `cancel`). This keeps backburner in every bundle to provide utilities that npm and the platform provide better, and keeps the implicit-settledness trap around.
+- Adopt [RFC #957](https://github.com/emberjs/rfcs/pull/957)'s scheduler interface as the designated replacement, and make this deprecation part of that migration. This is a viable path (see _[Relationship to RFC #957](#relationship-to-rfc-957-render-aware-scheduler-interface)_), but it couples "stop shipping backburner" to "design, implement, and stabilize a new public scheduler" -- the deprecation shouldn't have to wait on the harder of the two projects, and most runloop usage migrates to the platform, not to a scheduler.
 - Move the timer utilities to a standalone `@ember/timers` package with test-waiter integration built in. This is really just "bless ember-lifeline", which already exists -- the ecosystem doesn't need `ember-source` to own it.
 
 ## Unresolved questions
