@@ -16,22 +16,22 @@ project-link:
 
 ## Summary
 
-Deprecate `Ember.RSVP` and the `rsvp` module bundled with `ember-source`.
+Deprecate the `rsvp` module bundled with `ember-source`.
 
 Native `Promise` has been in every browser and node version we support for a long time now, and covers nearly everything RSVP does. 
 [`ember-data` already did this](https://github.com/emberjs/rfcs/pull/796) back in 2022.
 
-The [`rsvp` package on npm](https://www.npmjs.com/package/rsvp) isn't going anywhere -- if folks want to keep using it, they can depend on it directly.
+The [`rsvp` package on npm](https://www.npmjs.com/package/rsvp) itself is unaffected by this deprecation, but we recommend migrating to native `Promise` rather than adding a direct dependency on `rsvp`.
 
 ## Motivation
 
-RSVP was created before `Promise` existed in any browser. It was needed then. It is not needed now.
+RSVP is Ember's Promises/A+ implementation from before browsers had one, and native `Promise` has since made almost all of it redundant.
 
 Deprecating it:
 - slims down our public API surface area to more of _what's needed_
 - removes bytes from every app (RSVP is bundled with `ember-source` whether you use it or not)
-- removes one of the remaining ties to the runloop -- `ember-source` configures RSVP to schedule promise resolution via backburner, which is a blocker for eventually removing the runloop
-- removes "another case to cover" for tooling, types, and teaching -- new folks should only ever learn native `Promise`
+- removes one of the remaining ties to the runloop (`ember-source` configures RSVP to schedule promise resolution via backburner, which blocks eventually removing the runloop)
+- removes "another case to cover" for tooling, types, and teaching. New folks should only ever have to learn native `Promise`
 
 ## Transition Path
 
@@ -56,7 +56,7 @@ Most usage is a mechanical find-and-replace:
 
 [^settled]: the result objects differ slightly: RSVP uses `{ state: 'fulfilled' }`, native uses `{ status: 'fulfilled' }`.
 
-[^defer]: `{ promise, resolve, reject }` -- same shape as `RSVP.defer()`.
+[^defer]: returns `{ promise, resolve, reject }`, the same shape as `RSVP.defer()`.
 
 `RSVP.hash` is the only utility without a native equivalent, and it's a one-liner:
 
@@ -70,7 +70,7 @@ async function hash(obj) {
 }
 ```
 
-(or use an existing micro-library, such as the one behind [`WarpDrive`'s `getPromiseState`](https://docs.warp-drive.io), or write it inline -- two `await`s is often clearer than `hash` anyway)
+(or write it inline; two `await`s is often clearer than `hash` anyway)
 
 <details><summary>example codemod-ish diff</summary>
 
@@ -102,15 +102,14 @@ async function hash(obj) {
 In practice these are nearly indistinguishable (backburner has been microtask-based since ember-source@3.x), but:
 
 - test code that relied on `await settled()` "seeing" pending RSVP chains should use [`@ember/test-waiters`](https://github.com/emberjs/ember-test-waiters) for any async that renders
-- code that relied on `RSVP.on('error')` for global error reporting should use the `unhandledrejection` event (or `Ember.onerror`, until [that, too, goes away](https://deprecations.emberjs.com/))
+- code that relied on `RSVP.on('error')` for global error reporting should use the `unhandledrejection` event
 
 ### Deprecation mechanics
 
-- accessing `Ember.RSVP` issues a deprecation
-  - `id: deprecate-rsvp`, `until: 7.0.0`
-- importing `'rsvp'` in an app or v1 addon where the module is provided by `ember-source` issues a build-time deprecation
-- apps / addons that install `rsvp` from npm themselves are unaffected -- the deprecation only covers the copy bundled with `ember-source`
-- `ember-source`'s internals (`ember-testing`, router promise handling) migrate to native promises -- not observable except via `instanceof RSVP.Promise` checks, which nobody should be doing
+- the `rsvp` module provided by `ember-source` issues a runtime deprecation (via the existing deprecation system, `deprecate` from `@ember/debug`) when any of its exports are used
+  - `id: deprecate-rsvp`, `until: 8.0.0`
+- the deprecation only covers the copy bundled with `ember-source`. Installing `rsvp` from npm directly would silence it, but migrating to native `Promise` is the recommended path
+- `ember-source`'s internals (`ember-testing`, router promise handling) migrate to native promises. This is not observable, except via `instanceof RSVP.Promise` checks, which nobody should be doing
 - a lint rule should be added to `eslint-plugin-ember`'s recommended config flagging `rsvp` imports
 
 ### Deprecation guide
@@ -129,7 +128,7 @@ In practice these are nearly indistinguishable (backburner has been microtask-ba
 > await Promise.all(promises);
 > ```
 >
-> If you need RSVP-specific behavior, add `rsvp` to your own `package.json` -- the npm package is unaffected by this deprecation.
+> We recommend migrating to native `Promise` rather than adding a dependency on the `rsvp` npm package; everything RSVP provides has a native equivalent or a small inline replacement.
 
 ## How We Teach This
 
@@ -137,24 +136,24 @@ The guides and blueprints already use native promises and `async`/`await` everyw
 
 Remaining work:
 - add the deprecation guide entry to https://deprecations.emberjs.com
-- mark `Ember.RSVP` / the `rsvp` module as deprecated in the API docs
+- mark the `rsvp` module as deprecated in the API docs
 
-This is a _reduction_ in what we have to teach: there is no longer a "which Promise?" question.
+Overall, this reduces what we have to teach, since there is only one kind of promise left.
 
 ## Drawbacks
 
 As with any deprecation, we introduce an upgrade cliff for addons that are updated infrequently, and consequently their consuming apps.
 
-The mitigation here is unusually easy though: unlike most deprecations, the replacement (`Promise`) works in _every_ supported Ember version, so addons can migrate today with no `@embroider/macros` dance and no version-range narrowing. Addons that genuinely need RSVP can depend on it from npm directly, which also works across all versions.
+Unlike most deprecations, though, the replacement (`Promise`) works in every supported Ember version, so addons can migrate today without `@embroider/macros` and without narrowing their supported version range.
 
-The main real cost is timing-sensitive test suites discovering they were implicitly depending on RSVP's runloop scheduling. `@ember/test-waiters` is the answer, and that migration is valuable independent of this RFC.
+The bigger cost is timing-sensitive test suites that implicitly depend on RSVP's runloop scheduling. Those need `@ember/test-waiters`, which they should be using regardless of this RFC.
 
 ## Alternatives
 
 do nothing, the cost of bundling RSVP is:
 - bytes in every app, used or not
 - a permanent tie between promise resolution and the runloop
-- mental gymnastics for teaching ("use native promises, except this framework object you may encounter is a different kind of promise")
+- mental gymnastics for teaching ("use native promises, except this module the framework ships is a different kind of promise")
 - "another case to cover" for tooling and types
 
 deprecate only the runloop integration, keep re-exporting `rsvp`
