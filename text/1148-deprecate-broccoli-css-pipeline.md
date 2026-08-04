@@ -55,21 +55,41 @@ We can output a deprecation warning in the CLI if the virtual file is used.
 
 We would want to eventually remove the virtual file from our vite compat plugins.
 
-Deprecation guide wording might be something like this:
+Deprecation guide wording
 
-If you are using addons like `ember-cli-sass` and `ember-css-modules` you can update your `index.html` files to point at `/@embroider/virtual/app.css` instead of `/app/styles/app.css` to give you time to migrate to the vite pipeline. 
+---
+
+### Broccoli CSS pipeline
+
+until: 8.0.0
+
+id: broccoli-css-pipeline
+
+Referencing `/@embroider/virtual/app.css` in your `index.html` is deprecated.
+This virtual stylesheet is produced by the classic Broccoli CSS pipeline. Now
+that Vite is the default build for Ember apps, application CSS should be
+processed by Vite's own CSS pipeline instead.
+
+Update the stylesheet link in both `index.html` and `tests/index.html`:
 
 ```html
-<!-- replace this -->
-<link integrity="" rel="stylesheet" href="/app/styles/app.css">
-
-<!-- with this -->
+<!-- remove this -->
 <link integrity="" rel="stylesheet" href="/@embroider/virtual/app.css">
+
+<!-- use this -->
+<link integrity="" rel="stylesheet" href="/app/styles/app.css">
 ```
 
-We would encourage you to migrate to the vite pipeline by adopting the right tooling as covered by https://vite.dev/guide/features.html#css-pre-processors
+Vite processes app/styles/app.css directly and supports PostCSS, Sass, Less,
+and Stylus out of the box. See CSS Pre-processors (https://vite.dev/guide/features.html#css-pre-processors)
+in the Vite guide, and ember-vite-css-examples (https://github.com/evoactivity/ember-vite-css-examples/)
+for working setups.
+If you depend on addons that hook into the Broccoli CSS pipeline, such as
+`ember-cli-sass` or `ember-css-modules`, you can keep referencing
+`/@embroider/virtual/app.css` for now to give yourself time to migrate to the
+Vite pipeline. The virtual stylesheet will be removed in a future release.
 
-You can see examples of different CSS tooling being used in this repository https://github.com/evoactivity/ember-vite-css-examples/
+---
 
 ## How we teach this
 
