@@ -3,7 +3,7 @@ stage: accepted
 start-date: 2023-09-09T00:00:00.000Z
 release-date: # In format YYYY-MM-DDT00:00:00.000Z
 release-versions:
-teams: # delete teams that aren't relevant
+teams:
   - cli
   - data
   - framework
@@ -14,33 +14,21 @@ project-link:
 suite: 
 ---
 
-<!--- 
-Directions for above: 
-
-stage: Leave as is
-start-date: Fill in with today's date, 2032-12-01T00:00:00.000Z
-release-date: Leave as is
-release-versions: Leave as is
-teams: Include only the [team(s)](README.md#relevant-teams) for which this RFC applies
-prs:
-  accepted: Fill this in with the URL for the Proposal RFC PR
-project-link: Leave as is
-suite: Leave as is
--->
-
 # Render Aware Scheduler Interface
 
 ## Summary
 
-This RFC Proposes replacing `@ember/runloop` [Backburner.js](https://github.com/BackburnerJS/backburner.js)
-with an [interface](https://www.typescriptlang.org/docs/handbook/interfaces.html) for common scheduling needs.
+This RFC proposes replacing `@ember/runloop` ([Backburner.js](https://github.com/BackburnerJS/backburner.js))
+with an interface for common scheduling needs.
 
 The interface describes *intent* for when work should be performed in relation to the native
 event queues and render cycle of the browser. The details of *how* that work is scheduled and
 flushed are up to the specific implementation, allowing for experiments in this space.
 
-Additionally, this RFC proposes deprecations and alterations to associated async primitives
-such as RSVP to support this exploration.
+Only the new interface, its phase functions, and a default implementation are proposed for
+acceptance here; deprecating `@ember/runloop` and RSVP are proposed separately as
+[RFC #1219](https://github.com/emberjs/rfcs/pull/1219) and
+[RFC #1220](https://github.com/emberjs/rfcs/pull/1220).
 
 ## Motivation
 
@@ -57,7 +45,7 @@ within the same frame. In effect, this allowed Backburner to *also* function to 
 Promises *and* to function as an *after microtasks complete* callback from which Ember's render work would be
 flushed.
 
-Noteably, the idea of being able to control the last microtask in the queue for this sort of framework level
+Notably, the idea of being able to control the last microtask in the queue for this sort of framework level
 work has become [a common need](https://twitter.com/jarredsumner/status/1694351991626166658?s=20), but remains
 a missing primitive.
 
@@ -80,8 +68,8 @@ in most situations an error stack or a pause in a debugger to allow the develope
 an originating change more quickly. This includes in performance
 tooling such as the chrome profiler, where promises and other async callbacks will draw a line back to the point they were scheduled to help explore how the work evolved.
 
-Thus encouraging use of native microtasks whereever possible automatically improves the debugging
-experience for all developers, espcially for remote traces captured by bugtracking software.
+Thus encouraging use of native microtasks wherever possible automatically improves the debugging
+experience for all developers, especially for remote traces captured by bugtracking software.
 
 It also significantly simplifies the mental model and clarity for developers. While the concept of scheduling
 will still exist, this RFC would enable developers to remove
@@ -118,8 +106,25 @@ written multiple times.
 3) Awaiting a data fetch and assuming that the work done after await occurs before render, when
 due to Ember's current zealous flushing it is taking place post-render.
 
-
 ## Detailed design
+
+### Scope of This RFC
+
+Only the brand-new, purely additive API is proposed for acceptance here:
+the `Strategy` interface, the phase functions and `registerStrategy` in
+`@ember/scheduler`, and the default strategy in `@ember/scheduler/strategy`
+(implemented in [emberjs/ember.js#21493](https://github.com/emberjs/ember.js/pull/21493)).
+This surface is opt-in and changes no existing behavior.
+
+Everything else is proposed in its own RFC: deprecating `@ember/runloop`
+([RFC #1219](https://github.com/emberjs/rfcs/pull/1219)), deprecating RSVP
+([RFC #1220](https://github.com/emberjs/rfcs/pull/1220)), and eventually
+driving Ember's own rendering through this interface, once it has been
+proven in apps, addons, and framework spikes
+([emberjs/ember.js#21520](https://github.com/emberjs/ember.js/pull/21520)).
+See the [Migration Roadmap](#migration-roadmap).
+
+### Overview
 
 The scheduler interface defines several "phases" of when work should be done
 that align to concepts in the browser's render cycle. The primary goal is
@@ -144,11 +149,11 @@ Below is a rough approximation of how browsers schedule various work.
 
 ![Frame Overview](../images/0957-frame-overview.svg)
 
-Tasks are things such as `setTimout`, callbacks for `DOMEvent`s, or the completion
+Tasks are things such as `setTimeout`, callbacks for `DOMEvent`s, or the completion
 of an `xhr` or `fetch` request. The browser will execute as many tasks as it can
 until it has met or passed the point at which it would like to try to update the screen.
 
-`Microtasks` are callbacks executed via  `createMicrotask(callback)`, promise completion
+`Microtasks` are callbacks executed via `queueMicrotask(callback)`, promise completion
 such as `Promise.resolve().then(callback)`, `MutationObserver` callbacks, or `MessageChannel`
 callbacks. Microtasks can recursively schedule new microtasks, and the browser will not
 move on to another task or continue towards updating the screen until the queue is exhausted.
@@ -160,7 +165,7 @@ will go into the "next" Frame.
 
 Similar to `FrameTasks`, `ResizeTasks` are for `ResizeObserver` callbacks and `IntersectionTasks`
 are for `IntersectionObserver` callbacks. These queues can recursively schedule, though if
-too much recursion is encountered by a `ResizeObserver` is errors and tries again on the next frame.
+too much recursion is encountered by a `ResizeObserver` it errors and tries again on the next frame.
 
 ### Phases
 
@@ -170,7 +175,7 @@ framework and other parts of our application.
 
 We divide this work into 6 conceptual phases:
 
-- `tasks` - work that updates reactive state
+- `tasks` - work that updates reactive state. This phase is not part of the scheduler interface: it is where code runs by default, and so needs no scheduling function.
 - `render` - work that may need to adjust reactive state that needs to occur after Ember has updated the DOM and run any associated modifiers but before the browser shows the new state
 - `layout` - work that needs to read DOM but does not require adjusting reactive state and should occur after `render` but before the browser shows the new state.
 - `composite` - work that needs to write DOM but does not require reading state or adjusting reactive state and should occur after `render` and `layout` but before the browser shows the new state. E.g. adjusting transform values during an animation.
@@ -182,7 +187,7 @@ We will discuss these phases in more depth below.
 ### Strategies
 
 We refer to an implementation of the scheduler interface as a `Strategy`. The
-strategy gets to shoose when each promise will resolve, and what happens if
+strategy gets to choose when each promise will resolve, and what happens if
 say `render` is invoked while `layout` is flushing.
 
 ```ts
@@ -199,119 +204,134 @@ Notably the strategy has no knowledge of the work to be done. This keeps the sch
 overhead light, and enables async stack traces for scheduled work to maintain the context
 of where the work was scheduled.
 
-For instance, take the partial strategy implementation shown below which handles `render`
-`layout` and `composite` by scheduling three `requestAnimationFrame` callbacks wrapped in
-promises and allows recursive calls to render and just-in-time calls to layout and composite.
+For instance, take the strategy sketched below, a slightly simplified
+version of the proposed default strategy discussed later. (The full
+implementation, including `next()`, `idle()`, and non-browser fallbacks, is
+in [emberjs/ember.js#21493](https://github.com/emberjs/ember.js/pull/21493).)
+It handles `render`, `layout` and `composite` by registering ordered
+`requestAnimationFrame` callbacks whose resolution flushes each phase's
+awaiting work, allowing recursive calls to `render` and just-in-time calls
+to `layout` and `composite` within the current frame. The `console.log`
+calls exist purely to make the flush order visible in the examples that
+follow.
 
 **Example 1**
 ```ts
-class Scheduler {
-  _nextRender = null;
-  _nextLayout = null;
-  _nextComposite = null;
-  _isFlushing = false;
-  _isFlushingRender = false;
-  _flushComplete = null;
+type FramePhase = 'render' | 'layout' | 'composite';
 
-  ensureFrame(name) {
-    if (!this._nextRender) {
-      if (this._isFlushingRender) {
-          this._nextRender = Promise.resolve();
-      } else if (!this._isFlushing || name === 'render') {
-        this._nextRender = new Promise(resolve => {
-          requestAnimationFrame(() => {
-            console.log('flushing render');
-            this._isFlushing = true;
-            this._isFlushingRender = true;
-            this._nextRender = null;
-            resolve();
-          });
-        });
-      }
-    }
+const PHASE_ORDER: Record<FramePhase, number> = { render: 0, layout: 1, composite: 2 };
 
-    if (!this._nextLayout) {
-      if (!this._isFlushing || name === 'layout') {
-        this._nextLayout = new Promise(resolve => {
-          requestAnimationFrame(() => {
-            console.log('flushing layout');
-            this._isFlushingRender = false;
-            this._nextRender = null;
-            this._nextLayout = null;
-            resolve();
-          });
-        });
-      }
-    }
+class Frame {
+  render = Promise.withResolvers<void>();
+  layout = Promise.withResolvers<void>();
+  composite = Promise.withResolvers<void>();
+  complete = Promise.withResolvers<void>();
+}
 
-    if (!this._nextComposite) {
-      this._nextComposite = new Promise(resolve => {
-        requestAnimationFrame(() => {
-          console.log('flushing composite');
-          this._nextComposite = null;
-          resolve();
-        });
-      });
-    }
+class FrameStrategy {
+  _frame: Frame | null = null;      // the frame registered but not yet completed
+  _nextFrame: Frame | null = null;  // while flushing, the frame to run after it
+  _flushing: FramePhase | null = null;
 
-    if (!this._flushComplete) {
-      this._flushComplete = new Promise(resolve => {
-        requestAnimationFrame(() => {
-          console.log('flushing complete');
-          this._isFlushingRender = false;
-          this._isFlushing = false;
-          this._flushComplete = null;
-          resolve();
-        });
-      });
+  render(): Promise<void> {
+    if (this._flushing === 'render') {
+      // recursive scheduling into `render` resolves within the current window
+      return Promise.resolve();
     }
+    return this._phase('render');
   }
 
-  render() {
-      this.ensureFrame('render');
-      return this._nextRender;
+  layout(): Promise<void> {
+    return this._phase('layout');
   }
 
-  layout() {
-      this.ensureFrame('layout');
-      return this._nextLayout;
+  composite(): Promise<void> {
+    return this._phase('composite');
   }
 
-  composite() {
-      this.ensureFrame('composite');
-      return this._nextComposite;
+  _phase(name: FramePhase): Promise<void> {
+    if (this._flushing === null) {
+      this._frame ??= this._scheduleFrame();
+      return this._frame[name].promise;
+    }
+
+    if (PHASE_ORDER[name] > PHASE_ORDER[this._flushing]) {
+      // this phase of the flushing frame is still upcoming: resolve
+      // just-in-time within the current frame
+      return this._frame![name].promise;
+    }
+
+    // the window for this phase has already flushed this frame
+    this._nextFrame ??= this._scheduleFrame();
+    return this._nextFrame[name].promise;
+  }
+
+  _scheduleFrame(): Frame {
+    let frame = new Frame();
+
+    // callbacks registered with the browser in the same frame run in
+    // registration order, giving us ordered phase windows within a single
+    // frame, all before the next paint. Microtasks (and thus work awaiting
+    // a phase) flush between callbacks. When a frame is scheduled while
+    // another frame is flushing, the browser runs these callbacks in the
+    // next frame.
+    requestAnimationFrame(() => {
+      console.log('flushing render');
+      this._flushing = 'render';
+      frame.render.resolve();
+    });
+    requestAnimationFrame(() => {
+      console.log('flushing layout');
+      this._flushing = 'layout';
+      frame.layout.resolve();
+    });
+    requestAnimationFrame(() => {
+      console.log('flushing composite');
+      this._flushing = 'composite';
+      frame.composite.resolve();
+    });
+    requestAnimationFrame(() => {
+      console.log('flushing complete');
+      this._flushing = null;
+      this._frame = this._nextFrame;
+      this._nextFrame = null;
+      frame.complete.resolve();
+    });
+
+    return frame;
   }
 }
-const scheduler = new Scheduler();
+
+const scheduler = new FrameStrategy();
 ```
 
-Using this strategy, lets observe what happens when we use normal `async/await`
+Using this strategy, let's observe what happens when we use normal `async/await`
 patterns to schedule some work.
 
 **Example 2**
 ```ts
-
-// puts some blocking named work into the performance profiler
-// to make it more obvious where the work was done and what work it was
+// simulates expensive blocking work, logging when it runs so the ordering
+// is visible in the console and the performance profiler
 function doExpensiveWork(name, step) {
-  const fn = new Function(`return function ${name}() {const start = performance.now(); while (performance.now() - start < 10) {} console.log('${step}. ${name}');};`);
-  return fn();
-}      
+  const start = performance.now();
+  while (performance.now() - start < 10) {}
+  console.log(`${step}. ${name}`);
+}
 
 async function doWork() {
-  requestAnimationFrame(() => { doExpensiveWork('before', 1)() });
+  requestAnimationFrame(() => doExpensiveWork('before', 1));
   let render = scheduler.render();
-  requestAnimationFrame(() => { doExpensiveWork('after', 7)() });
+  requestAnimationFrame(() => doExpensiveWork('after', 7));
   await render;
-  doExpensiveWork('render', 2)();
+  doExpensiveWork('render', 2);
   await Promise.resolve();
-  doExpensiveWork('promise', 3)();
+  doExpensiveWork('promise', 3);
   await scheduler.render();
-  doExpensiveWork('renderAgain', 4)();
+  doExpensiveWork('renderAgain', 4);
   await scheduler.layout();
-  bdoExpensiveWork('layout', 5)();
+  doExpensiveWork('layout', 5);
   await scheduler.composite();
-  doExpensiveWork('composite', 6)();
+  doExpensiveWork('composite', 6);
 }
 
 doWork();
@@ -321,11 +341,12 @@ doWork();
 // flushing render
 // 2. render
 // 3. promise
-// 4. render again
+// 4. renderAgain
 // flushing layout
 // 5. layout
 // flushing composite
 // 6. composite
+// flushing complete
 // 7. after
 ```
 
@@ -333,43 +354,44 @@ And a more complicated example with interleaving:
 
 **Example 3**
 ```ts
-requestAnimationFrame(() => { doExpensiveWork('before', 0)() });
+requestAnimationFrame(() => doExpensiveWork('before', 0));
 scheduler.render()
   .then(() => {
-    doExpensiveWork('render', 1)();
+    doExpensiveWork('render', 1);
 
     scheduler.composite()
       .then(() => {
-        doExpensiveWork('composite', 5)();
+        doExpensiveWork('composite', 5);
       })
   });
-requestAnimationFrame(() => { doExpensiveWork('after', 8)() });
+requestAnimationFrame(() => doExpensiveWork('after', 8));
 
 scheduler.render()
   .then(() => {
-    doExpensiveWork('render', 2)();
+    doExpensiveWork('render', 2);
 
     scheduler.composite()
       .then(() => {
-        doExpensiveWork('composite', 6)();
+        doExpensiveWork('composite', 6);
       });
 
     return scheduler.composite();
   })
   .then(() => {
-    doExpensiveWork('composite', 7)();
+    doExpensiveWork('composite', 7);
   });
 
 scheduler.composite()
   .then(() => {
-    doExpensiveWork('composite', 4)();
+    doExpensiveWork('composite', 4);
   });
 
 scheduler.layout()
   .then(() => {
-    doExpensiveWork('layout', 3)();
+    doExpensiveWork('layout', 3);
+    // `layout` is currently flushing, so this resolves in the next frame
     scheduler.layout()
-      .then(() => { doExpensiveWork('layout', 9)(); });
+      .then(() => doExpensiveWork('layout', 9));
   });
 
 // Output:
@@ -386,14 +408,45 @@ scheduler.layout()
 // 7. composite
 // flushing complete
 // 8. after
+// flushing render   (the next frame begins)
+// flushing layout
 // 9. layout
+// flushing composite
+// flushing complete
 ```
 
 ### The Default Strategy
 
+Ember provides a default implementation of the scheduler interface as the
+default export of `@ember/scheduler/strategy`:
+
 ```ts
 import strategy from '@ember/scheduler/strategy';
 ```
+
+The default strategy is the `FrameStrategy` sketched in Example 1 above,
+completed with `next()`, `idle()`, environment fallbacks, and no logging.
+It models work as belonging to a Frame and flushes
+the `render` → `layout` → `composite` windows in order within a single frame,
+before the next paint, by registering ordered `requestAnimationFrame`
+callbacks. Its semantics follow the examples above:
+
+- work scheduled while no Frame is flushing resolves in the corresponding
+  phase of the upcoming Frame
+- scheduling into a phase that the flushing Frame has not yet reached
+  resolves "just-in-time" within the current Frame
+- scheduling into `render` while `render` is flushing resolves recursively
+  within the current Frame's render phase
+- scheduling into a phase the flushing Frame has already passed (or into
+  `layout`/`composite` while that same phase is flushing) resolves in the
+  next Frame
+- `next()` resolves in a new task once the current (or upcoming) Frame has
+  completed; `idle()` resolves via `requestIdleCallback` where available,
+  with a timeout cap so the promise remains resolvable on pages that never
+  go idle
+- in environments without `requestAnimationFrame` (such as SSR / FastBoot),
+  phases degrade to equal-delay timers, preserving FIFO phase ordering
+
 ### Providing a Strategy
 
 ```ts
@@ -407,7 +460,7 @@ import Application from '@ember/application';
 import { registerStrategy } from '@ember/scheduler';
 import Resolver from 'ember-resolver';
 import loadInitializers from 'ember-load-initializers';
-import config from 'test-embroider/config/environment';
+import config from 'my-app/config/environment';
 
 // the default scheduler implementation
 import strategy from '@ember/scheduler/strategy';
@@ -422,9 +475,16 @@ registerStrategy(strategy);
 loadInitializers(App, config.modulePrefix);
 ```
 
+The strategy is registered exactly once: calling `registerStrategy` a second
+time with a different strategy is an assertion error, as swapping strategies
+mid-flight would strand work already scheduled into the previous strategy's
+phases. Scheduling into a phase before any strategy has been registered is
+also an assertion error, with a message that shows how to register the
+default strategy.
+
 ### Scheduling Work Into a Phase
 
-Each phase has a corresponding import fom `@ember/scheduler` for 
+Each phase has a corresponding import from `@ember/scheduler` for
 use in scheduling in the app.
 
 ```ts
@@ -432,13 +492,13 @@ import { render, layout, composite, next, idle } from '@ember/scheduler';
 ```
 
 Each import is a function returning a promise that resolves according
-to the strategy of the configured strategy.
+to the registered strategy.
 
 ```ts
 await render();
 ```
 
-This allows scheduling from any function, class or context irregardless
+This allows scheduling from any function, class or context regardless
 of ability to access an ember service.
 
 ### Cancelling Work
@@ -448,15 +508,21 @@ to tell the scheduler to cancel work. Instead, if your work requires cancellatio
 or cleanup, handle this at the point the work was scheduled.
 
 ```ts
-class extends Component {
-  @tracked width= 10;
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { isDestroyed } from '@ember/destroyable';
+import { render } from '@ember/scheduler';
 
-  doWork() {
+class Example extends Component {
+  @tracked width = 10;
+
+  async doWork() {
     this.width = 100;
     await render();
-    if (this.isDestroyed) {
+    if (isDestroyed(this)) {
       return;
     }
+    // safe to continue working with the updated DOM
   }
 }
 ```
@@ -466,6 +532,19 @@ and can do so over this much simpler primitive.
 
 ### The Phases In Detail
 
+Each phase carries rules about the kind of work that is appropriate within
+it, collected here in one place. Violations of the ❌ rules error in
+development mode:
+
+| Phase | Write reactive state | Read DOM | Write DOM |
+| --- | --- | --- | --- |
+| `tasks` | ✅ | ✅ | ✅ |
+| `render` | ✅ (a rerender before paint is not guaranteed) | ✅ | ❌ |
+| `layout` | ❌ | ✅ | ❌ |
+| `composite` | ❌ | ⚠️ allowed but discouraged (forces layout) | ✅ |
+| `next` | ✅ | ✅ | ✅ |
+| `idle` | ✅ | ✅ | ✅ |
+
 #### Phase 1: Tasks
 
 In this first phase, state is read and modified as a reaction to either
@@ -473,8 +552,8 @@ a user interaction, network request completion, or timer callback.
 
 These "tasks" and their associated microtasks "simply just work". Users
 need to do no special scheduling (such as the runloop's former `schedule('actions', callback)`
-and `schedule('routerTransitions', callback)` queues), and need to use zero framework =
-or library provided primitives (such as RSVP, or the runloop's `bind` `run` or `join` methods).
+and `schedule('routerTransitions', callback)` queues), and need to use zero framework-
+or library-provided primitives (such as RSVP, or the runloop's `bind` `run` or `join` methods).
 
 In order for this to work, Ember's reactivity system will be evolved to ensure that it
 becomes responsible for scheduling an update to render whenever reactive state has changed.
@@ -489,7 +568,7 @@ state. This is similar to how the timing expectations work in the runloop today 
 and `afterRender`, but extends this expectation across potentially multiple tasks and
 microtasks.
 
-### Phase 2: Render
+#### Phase 2: Render
 
 The render phase occurs whenever Ember has decided to render new DOM containing
 the changes you've just made. Scheduling into `render` guarantees that your work has
@@ -503,23 +582,26 @@ import { render } from '@ember/scheduler';
 await render();
 ```
 
-A Scheduler implementation may choose to flush render at any time, potentially
-multiple times so long as the work completes prior to the next paint.
+A strategy may choose to flush render at any time, potentially multiple
+times, so long as the work completes prior to the next paint.
 
-The magic here is in `@ember/scheduler`. It wraps the promise returned by the strategy
-for `render`, allowing it to flush generation of DOM and execution of modifiers before
-any `await render()` calls flush no matter when that might be.
+The phase functions in `@ember/scheduler` delegate directly to the registered
+strategy and add no wrapping of their own. The guarantee that new DOM exists
+by the time your work runs comes from ordering: once Ember's rendering is
+driven by this interface (see the Migration Roadmap), the renderer awaits
+`render` before any application code can, so generation of DOM and execution
+of modifiers flush ahead of application `await render()` continuations.
 
 During the render phase, updates to reactive state are allowed, but Ember does not
-guarantee that any updates will rerender before the next paint, this is up to the
-scheduler implementation to decide.
+guarantee that any updates will rerender before the next paint; this is up to the
+strategy to decide.
 
-Writing DOM during this phase will error in development.
+During the transition away from the runloop, both `schedule('render')` and
+`schedule('afterRender')` will be mapped mechanically onto this phase,
+preserving their relative order. Code that used `afterRender` to *measure*
+DOM should migrate to `layout()`, the phase designed for reads.
 
-Both `schedule('render')` and `schedule('afterRender')` will be mapped to this phase
-in the transition.
-
-### Phase 3: Layout
+#### Phase 3: Layout
 
 The layout phase occurs after the render phase and prior to the next paint.
 
@@ -533,10 +615,7 @@ await layout();
 
 This phase is for work that needs to read DOM but does not require adjusting reactive state.
 
-Writing DOM during this phase will error in development.
-Ember should Error in this phase if reactive state is written.
-
-### Phase 4: Composite
+#### Phase 4: Composite
 
 The composite phase occurs after the layout phase and prior to the next paint.
 
@@ -557,9 +636,7 @@ layouts and interleaved read/write of DOM state.
 This phase is ideal for updating animations or moving tooltips to a final position based
 on measurements made in the previous phase.
 
-Ember should Error in this phase if reactive state is written.
-
-### Phase 5: Next
+#### Phase 5: Next
 
 This phase is for work that needs to escape the current frame but is still a relatively
 high priority.
@@ -572,7 +649,7 @@ import { next } from '@ember/scheduler';
 await next();
 ```
 
-### Phase 6: Idle
+#### Phase 6: Idle
 
 This phase is for work that is low priority. Most commonly tasks like background fetch, server pings, or analytics processing.
 
@@ -584,63 +661,188 @@ import { idle } from '@ember/scheduler';
 await idle();
 ```
 
-### Outline of Work To Be Done
+### Migration Roadmap
 
-- Remove configuration logic for RSVP from Ember, allow it to use its own polyfill without the runloop
-- Deprecate RSVP in favor of a smaller util library for just things like `hash`
-- Move "timers" (`throttle`, `debounce` and `later`) out of `@ember/runloop` into their own standalone
-  library.
-- Deprecate (no replacement) `run` `join` and `bind` from `@ember/runloop`
-- Replace `schedule` and `next` with a new Scheduler interface
-- Provide a default implementation of the new scheduler interface
-- Remove `@types/ember__runloop`, `@types/rsvp`, `rsvp`, and `ember-fetch` from anywhere they still live in the default blueprint
-  or as a dependency in a core package
+None of the following is proposed for acceptance by this RFC; the linked
+RFCs are the authoritative source for their own details.
 
-### Implementation Strategy
+1. **Deprecate RSVP** — [RFC #1220](https://github.com/emberjs/rfcs/pull/1220).
+   Native `Promise` replaces the `rsvp` module bundled with `ember-source`,
+   and Ember stops configuring RSVP's flush through backburner.
+2. **Deprecate `@ember/runloop`** — [RFC #1219](https://github.com/emberjs/rfcs/pull/1219).
+   All exports are deprecated in favor of platform primitives, modifiers,
+   destroyables, and test waiters, `later`/`debounce`/`throttle` included.
+   See [Alternatives](#alternatives) for how #1219 relates to this
+   proposal.
+3. **An async-rendering RFC** for a `use-async-scheduler` optional feature —
+   the point at which the registered strategy actually controls Ember's own
+   render timing. Ember's glimmer integration shifts from assuming its
+   render flush is synchronous to scheduling its render and revalidation
+   through this interface. This carries the bulk of the compatibility risk,
+   since apps may be accidentally reliant on "sync complete" timing, so it
+   ships behind an app-wide optional feature, following the
+   `default-async-observers` precedent (RFC #0494). During the transition,
+   any not-yet-removed runloop APIs delegate into the interface:
+   `run`/`join`/`bind` simply execute their callback, `next` and the named
+   queues map onto the corresponding phases, and `schedule('actions', doWork)`
+   becomes `Promise.resolve().then(doWork)`. The test story ships with the
+   feature: test waiters observe the scheduler so `settled()` continues to
+   mean "all scheduled work has finished."
 
-- RSVP configuration would be gated behind an optional feature flag `use-native-rsvp-flush`, with a deprecation
-    to set it to the new behavior
-- RSVP usage would be deprecated at the import level at build time, using infra similar to ember-cli-babel deprecation
-- ember-concurrency should remove its usage of the runloop and RSVP
-- ember-concurrency should add a test-waiter to tasks
-- Timer move would be handled via a normal deprecation + codemod to shift imports to the new import location
-- an optional feature flag `use-async-scheduler` would move `scheduleOnce`, `schedule`, `next`, `run`, `join` and `bind` to delegating
-  into the new scheduler interface.
-  - `run`, `join` and `bind` would execute the callback given to them and do no more.
-  - `next` and the named queues except for `actions` for `schedule` and `scheduleOnce` would be mapped onto the new scheduler
-     interface and executed accordingly.
-  - work scheduled into `actions` would run as a microtask right away: `schedule('action', doWork)` becomes `Promise.resolve().then(doWork)`
-  - Ember's glimmer integration would shift from assuming that scheduling render in the render phase of every backburner flush and additionally validating that render at the end of every flush is "sync" to being aware that it is async and utilizing the new scheduler interface to schedule its render and its revalidate at the appropriate times. **This is one of the biggest reasons this migration is handled by an app-wide flag** as it carries the potential for apps to encounter bugs due to having become accidentally reliant on existing "sync complete" timing semantics.
-- a deprecation would be printed for usage of any `@ember/runloop` API
-- the ability to use zero-production-cost promise-based test-waiters quickly throughought code should be improved
+In parallel (not RFC-gated), ember-concurrency should remove its usage of
+the runloop and RSVP, and add a test waiter to its tasks.
 
 ## How we teach this
 
-> What names and terminology work best for these concepts and why? How is this
-idea best presented? As a continuation of existing Ember patterns, or as a
-wholly new one?
+### The platform comes first
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
+The first lesson is when *not* to use this API. Most code needs no
+scheduler at all: update `@tracked` state and rendering happens; use a
+modifier to set up and tear down behavior on an element; use
+`async`/`await`, `setTimeout`, `requestAnimationFrame`,
+`requestIdleCallback`, `ResizeObserver`, and `IntersectionObserver`
+directly for everything they already cover. The terms "runloop",
+"Backburner", and "RSVP" leave the mental model, and "scheduler" does not
+take their place for everyday code.
 
-> How should this feature be introduced and taught to existing Ember
-users?
+`@ember/scheduler` is for the unusual remainder: performance-sensitive code
+that must coordinate DOM reads and writes with Ember's DOM update and the
+upcoming paint, a window the platform has no hook for. Its audience is
+addon authors of DOM-coordinating libraries (animation, measurement,
+virtualized lists, positioning) and the framework itself, the same way
+`requestAnimationFrame` is documented for library authors rather than for
+everyday application code.
+
+| You want to… | Use |
+| --- | --- |
+| Update tracked state | nothing — just update it |
+| Set up / tear down behavior on an element | a modifier |
+| Delays, polling, one-off frame callbacks | `setTimeout` / `requestAnimationFrame` |
+| React to size or visibility changes | `ResizeObserver` / `IntersectionObserver` |
+| Coordinate work with Ember's DOM update, before paint | `await render()` |
+| …then measure DOM without thrashing layout | `await layout()` |
+| …then write styles from those measurements | `await composite()` |
+| Continue after the frame has been shown | `await next()` |
+| Low-priority background work | `await idle()` |
+
+### Names and terminology
+
+The phase names come from the browser's rendering pipeline rather than from
+Ember's history: `render`, `layout`, and `composite` correspond to stages
+developers already see in browser performance tooling. Two terms are
+introduced: a **phase** (a named window of time within or after a frame,
+entered by awaiting a promise) and a **strategy** (an implementation of the
+interface, which decides when each phase's promise resolves). Present this
+as a new pattern, not as "the new runloop".
+
+### Guides and API documentation
+
+The runloop currently occupies an entire advanced section of the guides.
+That section is eventually replaced by a much shorter advanced guide,
+"Scheduling work around rendering", built around the frame diagram and
+phase table from this RFC. Nothing about the scheduler needs to appear in
+the introductory guides. All new API ships with full API documentation
+([emberjs/ember.js#21493](https://github.com/emberjs/ember.js/pull/21493)),
+and the development-mode assertions cover misuse at the point it happens:
+scheduling with no registered strategy, and the phase-rule violations in
+the table above.
+
+### Existing users
+
+Existing users know this problem space through `@ember/runloop`; the
+deprecation guides for RFCs #1219 and #1220 teach by translation:
+
+| Today | After this RFC's roadmap |
+| --- | --- |
+| `schedule('render', cb)` / `schedule('afterRender', cb)` | `await render()` |
+| DOM measurement in `afterRender` | `await layout()` |
+| `next(cb)` | `await next()` |
+| `later` / `debounce` / `throttle` | `setTimeout` and userland utilities (per RFC #1219) |
+| `run`, `join`, `bind` | none needed — just call the function |
+| `RSVP.Promise`, `RSVP.resolve`, … | native `Promise` (per RFC #1220) |
+| `scheduleOnce('render', obj, method)` | `await render()`, deduplicating at the call site |
+
+Test-writers keep their existing mental model: `await settled()` continues to
+mean "all scheduled work has finished."
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-
-> There are tradeoffs to choosing any path, please attempt to identify them here.
+- `@ember/runloop` and RSVP appear in nearly every mature app and many
+  addons. The deprecate-and-remove arc spans multiple majors, though much
+  of it is already chartered by the RFCs listed in the Motivation and by
+  RFC #1219 and RFC #1220.
+- Timing changes show up as behavioral bugs, not build warnings. Apps that
+  depend on synchronous flush semantics only find out at runtime, which is
+  why rendering through the scheduler will ship behind an app-wide optional
+  feature, at the cost of two timing modes coexisting during the
+  transition.
+- Test integration is the critical path. Until test waiters can observe the
+  scheduler, `settled()` cannot, and the async-rendering feature is not
+  practically adoptable.
+- Because the scheduler stores no callbacks, there is no `cancel()`, no
+  `scheduleOnce`-style deduplication, and no queue for tooling like Ember
+  Inspector to display. Cleanup and deduplication move to the call site.
+- Promises cannot express "flush right now". Interop that relies on `run()`
+  forcing a synchronous flush has no equivalent in this interface.
+- "Before the next paint" only holds where a paint exists. In background
+  tabs and SSR the default strategy degrades to ordered timers.
+- The development-mode phase errors require instrumentation in the
+  framework and carry some risk of false positives.
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
+### Do nothing
 
-> This section could also include prior art, that is, how other frameworks in the same domain have solved this problem.
+The costs in the Motivation grow as native async usage grows. The
+performance exploration accompanying this RFC
+([emberjs/ember.js#21520](https://github.com/emberjs/ember.js/pull/21520))
+measured scheduler-driven rendering at roughly 4.5x frame throughput on the
+DB Monitor benchmark and 6-21x on update-heavy benchmarks, and found
+scheduling to be a larger performance lever than any rendering-engine
+optimization tested alongside it.
+
+### Deprecate the runloop with no replacement
+
+[RFC #1219](https://github.com/emberjs/rfcs/pull/1219) proposes that
+platform primitives, modifiers, destroyables, and test waiters cover
+real-world needs, with no public scheduling interface at all. The two
+proposals share the same diagnosis and nearly the same migration path, and
+are not in conflict. This RFC holds that `layout`/`composite`, coordinated
+read/write batching between Ember's DOM update and paint, is the one need
+on that list the platform does not cover.
+
+### Modernize Backburner in place
+
+Keeps the callback-queue model: stack traces still originate inside a
+flush, and every native `await` still exits the unified flush.
+
+### A callback-based scheduler interface
+
+`schedule('layout', cb)` with a cancellation token would keep central
+cancellation and introspection, but loses native async stack traces and
+`async`/`await` composability, and requires the scheduler to store and
+flush work.
+
+### Build on `scheduler.postTask`
+
+Provides task priorities but no phases relative to the framework's DOM
+update. A future strategy could implement `next` and `idle` on top of it
+without changing the interface.
+
+### Adopt an existing scheduling library
+
+React's `scheduler` time-slices the framework's own work; `fastdom` batches
+DOM reads and writes but has no knowledge of a framework render. Neither
+covers this interface.
+
+### Prior art
+
+React (`useLayoutEffect` / `useEffect`), Vue (`nextTick` and watcher
+`flush: 'pre' | 'post' | 'sync'`), Svelte (`tick()`), and Angular's move to
+zoneless change detection all give user code a way to schedule relative to
+framework-owned render timing. What is distinctive here is that the phases
+are awaitable promises and the strategy is swappable.
 
 ## Unresolved questions
 
-Is `@ember/scheduler` the right name? Or is there utility in a non-Ember associated name?
+None at this time.
