@@ -596,6 +596,8 @@ During the render phase, updates to reactive state are allowed, but Ember does n
 guarantee that any updates will rerender before the next paint; this is up to the
 strategy to decide.
 
+Writing DOM during this phase errors in development.
+
 During the transition away from the runloop, both `schedule('render')` and
 `schedule('afterRender')` will be mapped mechanically onto this phase,
 preserving their relative order. Code that used `afterRender` to *measure*
@@ -614,6 +616,8 @@ await layout();
 ```
 
 This phase is for work that needs to read DOM but does not require adjusting reactive state.
+
+Writing DOM or writing reactive state during this phase errors in development.
 
 #### Phase 4: Composite
 
@@ -635,6 +639,8 @@ layouts and interleaved read/write of DOM state.
 
 This phase is ideal for updating animations or moving tooltips to a final position based
 on measurements made in the previous phase.
+
+Writing reactive state during this phase errors in development.
 
 #### Phase 5: Next
 
