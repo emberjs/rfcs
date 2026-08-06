@@ -1,6 +1,14 @@
-- Start Date: 2016-12-04
-- Relevant Team(s): Ember CLI
-- RFC PR: [#86](https://github.com/ember-cli/rfcs/pull/86)
+---
+stage: discontinued
+start-date: 2016-12-04T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - cli
+prs:
+  accepted: https://github.com/ember-cli/rfcs/pull/86
+project-link:
+---
 
 # Summary
 

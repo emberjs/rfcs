@@ -1,7 +1,17 @@
-- Start Date: 2019-05-20
-- Relevant Team(s): Ember.js, Learning
-- RFC PR: https://github.com/emberjs/rfcs/pull/491
-- Tracking: (leave this empty)
+---
+stage: recommended
+start-date: 2019-05-20T00:00:00.000Z
+release-date: 2021-05-03T00:00:00.000Z
+release-versions:
+  ember-source: v3.27.0
+
+teams:
+  - framework
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/491
+project-link:
+---
 
 # Deprecate `disconnectOutlet`
 

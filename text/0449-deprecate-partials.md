@@ -1,7 +1,19 @@
-- Start Date: 2019-02-17
-- Relevant Teams: Ember.js, Learning
-- RFC PR: https://github.com/emberjs/rfcs/pull/449
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/38
+---
+stage: recommended
+start-date: 2019-02-17T00:00:00.000Z
+release-date: 2019-12-09T00:00:00.000Z
+release-versions:
+  ember-source: v3.15.0
+
+teams:
+  - framework
+  - learning
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/449
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/38
+---
 
 # Deprecate `{{partial}}`
 
@@ -11,7 +23,7 @@ Partials are an old Ember construct that have no benefits and many downsides whe
 
 ## Motivation
 
-Partials have a number of downsides when compared with components: 
+Partials have a number of downsides when compared with components:
 
  - They are hard to reason about as they inherit the scope of the calling template
  - They perform poorly in comparison to components

@@ -1,6 +1,16 @@
-- Start Date: 2018-02-12
-- Relevant Team(s): Ember CLI
-- RFC PR: [#116](https://github.com/ember-cli/rfcs/pull/116)
+---
+stage: recommended
+start-date: 2018-02-12T00:00:00.000Z
+release-date: 2018-07-02T00:00:00.000Z
+release-versions:
+  ember-cli: v3.2.0
+
+teams:
+  - cli
+prs:
+  accepted: https://github.com/ember-cli/rfcs/pull/116
+project-link:
+---
 
 # Summary
 
@@ -101,7 +111,7 @@ migrate their existing tests to `qunit-dom` a basic codemod exists at
 
 - `qunit-dom` is another abstraction layer on top of the raw QUnit assertions
   which adds to the existing learning curve.
-  
+
 - Adding `qunit-dom` to the default blueprint could make it look even more like
   `ember-mocha` is only a second-class citizen. Since we add it to the default
   `package.json` file it is easy to opt-out though and can be replaced with
@@ -116,7 +126,7 @@ migrate their existing tests to `qunit-dom` a basic codemod exists at
   as mentioned above they still result in more verbose code than using
   `qunit-dom`. Another advantage is that `qunit-dom` generates a useful
   assertion description by default, while `assert.equal()` will just show
-  something like "A does not match B". 
+  something like "A does not match B".
 
 > What is the impact of not doing this?
 

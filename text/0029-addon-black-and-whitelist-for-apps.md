@@ -1,6 +1,14 @@
-- Start Date: 2015-11-11
-- Relevant Team(s): Ember CLI
-- RFC PR: [#29](https://github.com/ember-cli/rfcs/pull/29)
+---
+stage: accepted # FIXME: This may be a further stage or Discontinued since we now have allowlist and blocklist.
+start-date: 2015-11-11T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - cli
+prs:
+  accepted: https://github.com/ember-cli/rfcs/pull/29
+project-link:
+---
 
 # Summary
 

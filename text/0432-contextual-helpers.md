@@ -1,7 +1,18 @@
-- Start Date: 2018-12-17
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/432
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/6
+---
+stage: released
+start-date: 2018-12-17T00:00:00.000Z
+release-date: 2021-05-03T00:00:00.000Z
+release-versions:
+  ember-source: v3.27.0
+
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/432
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/6
+---
 
 # Contextual Helpers and Modifiers (a.k.a. "first-class helpers/modifiers")
 

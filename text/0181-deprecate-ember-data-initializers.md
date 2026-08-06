@@ -1,6 +1,14 @@
-- Start Date: 2016-11-22
-- RFC PR: (leave this empty)
-- Ember Issue: (leave this empty)
+---
+stage: recommended
+start-date: 2016-11-22T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/181
+project-link:
+---
 
 # Summary
 

@@ -1,7 +1,18 @@
-- Start Date: 2017-05-05
-- Relevant Team(s): Ember.js
-- RFC PR: https://github.com/emberjs/rfcs/pull/226
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/13
+---
+stage: recommended
+start-date: 2017-05-05T00:00:00.000Z
+release-date: 2021-02-08T00:00:00.000Z
+release-versions:
+  ember-source: v3.25.0
+
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/226
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/13
+---
 
 # Summary
 
@@ -112,7 +123,7 @@ them, and the mental/teaching model behind how it all works.
 - Angle-bracket syntax does not support passing positional params
 
 Implementation-wise, these varying semantics will be defined/implemented via
-[Component Managers](https://github.com/emberjs/rfcs/blob/custom-components/text/0000-custom-components.md#componentmanager).
+[Component Managers](https://github.com/emberjs/rfcs/blob/master/text/0213-custom-components.md#registering-component-managers).
 
 ## Multi-block Syntax
 

@@ -1,6 +1,16 @@
-- Start Date: 2017-09-07
-- Relevant Team(s): Ember CLI
-- RFC PR: [#110](https://github.com/ember-cli/rfcs/pull/110)
+---
+# FIXME: This may be a further stage or Discontinued.
+# The v3.20.0 changelog mentions deprecating the packager experiment. Does that refer to this?
+stage: accepted
+start-date: 2017-09-07T00:00:00.000Z
+release-date: # FIXME
+release-versions: # FIXME
+teams:
+  - cli
+prs:
+  accepted: https://github.com/ember-cli/rfcs/pull/110
+project-link:
+---
 
 # Summary
 

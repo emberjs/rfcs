@@ -1,0 +1,28 @@
+name: Generate a JSON file of all frontmatter
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'text/*.md'
+
+jobs:
+  generate-rfc-frontmatter-data-artifact:
+    name: 'Generate a JSON file of RFC status'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup RFCs tooling
+        uses: ./.github/actions/setup-rfcs-tooling
+
+      - name: Generate frontmatter data file
+        run: |
+          node rfcs-tooling/scripts/list-frontmatter.mjs text/*.md > rfc-data.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rfc-data
+          path: rfc-data.json
+          if-no-files-found: error
+          overwrite: true

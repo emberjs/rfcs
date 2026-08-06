@@ -1,6 +1,16 @@
-- Start Date: 2017-06-18
-- Relevant Team(s): Ember CLI
-- RFC PR: [#108](https://github.com/ember-cli/rfcs/pull/108)
+---
+stage: released # FIXME: This may be a further stage
+start-date: 2017-06-18T00:00:00.000Z
+release-date: 2017-10-09T00:00:00.000Z
+release-versions:
+  ember-cli: v2.16.0
+
+teams:
+  - cli
+prs:
+  accepted: https://github.com/ember-cli/rfcs/pull/108
+project-link:
+---
 
 # Summary
 

@@ -1,6 +1,16 @@
-- Start Date: 2015-06-12
-- RFC PR: https://github.com/emberjs/rfcs/pull/64
-- Ember Issue: (leave this empty)
+---
+stage: recommended
+start-date: 2015-06-12T00:00:00.000Z
+release-date: 2015-03-28T00:00:00.000Z
+release-versions:
+  ember-source: v1.11.0
+
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/64
+project-link:
+---
 
 # Summary
 

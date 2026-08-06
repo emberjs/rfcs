@@ -1,7 +1,17 @@
-- Start Date: 2018-12-21
-- Relevant Team(s): Learning, Steering
-- RFC PR: https://github.com/emberjs/rfcs/pull/425
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/35
+---
+stage: recommended
+start-date: 2018-12-21T00:00:00.000Z
+release-date: # FIXME
+release-versions:
+teams:
+  - learning
+  - steering
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/425
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/35
+---
 
 # Website Redesign
 
@@ -24,13 +34,13 @@ A visual redesign is a bit different than most of the Code RFCs, so showing beco
 
 Like any good design project, we expect changes along the way, but that these comps present the primary thrust and look/feel of the things that have not yet been designed.
 
-[![Comp 1](../images/website_1.png)](https://user-images.githubusercontent.com/2922250/50390285-67d7c100-0703-11e9-9841-f3d3b4d34f7f.png)
+![Comp 1](/images/website_1.png)
 
 Much of the copy is placeholder, but much of it represents concrete thought. A lot of that content was gleaned from a survey of about 200 of our most active users, who told us that they most value *clear best practices* and *productivity*.
 
-![Survey Results](../images/survey_results.png)
+![Survey Results](/images/survey_results.png)
 
-[A significantly detailed write up of the survey results can be found here](../images/survey_results_analysis.pdf). Various team members reviewed the results, and then worked together [to outline copy for the website based on the feedback](../images/EmberJS_Homepage_Outline.pdf). The goal was to reach consensus on what the homepage should communicate, disregarding design, aesthetic, and code.
+[A significantly detailed write up of the survey results can be found here](/images/survey_results_analysis.pdf). Various team members reviewed the results, and then worked together [to outline copy for the website based on the feedback](/images/EmberJS_Homepage_Outline.pdf). The goal was to reach consensus on what the homepage should communicate, disregarding design, aesthetic, and code.
 
 The hierarchy of the first comp that resulted from that outline was deliberate—for example, the Social Proof section comes first right after the Hero, since it’s the next most important section. This hierarchy will continue to be apparent in the final design. The general instructions provided to the designer was that a tone of "friendly professional" was ideal, building on Ember's deliberately optimistic and friendly look and feel (and mascot!) up until now.
 
@@ -62,9 +72,9 @@ The exact *plan* for this will have to be developed next, hence, unresolved.
 
 Some areas of the primary comp came with more detailed design views. Those can be seen here:
 
-* [Header Dropdowns](../images/website_2_header_dropdown.png)
-* [URL Examples](../images/website_3_url_examples.png)
-* [Button UI](../images/website_4-button_ui.png)
-* [Scrolled Nav, Concept 1](../images/website_5_scrolled_nav.png)
-* [Scrolled Nav, Concept 2](../images/website_6_nav_alt.png)
-* [Pointer](../images/website_7_pointer.png)
+* [Header Dropdowns](/images/website_2_header_dropdown.png)
+* [URL Examples](/images/website_3_url_examples.png)
+* [Button UI](/images/website_4-button_ui.png)
+* [Scrolled Nav, Concept 1](/images/website_5_scrolled_nav.png)
+* [Scrolled Nav, Concept 2](/images/website_6_nav_alt.png)
+* [Pointer](/images/website_7_pointer.png)

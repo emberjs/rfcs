@@ -1,6 +1,18 @@
-- Start Date: 2015-05-24
-- RFC PR: https://github.com/emberjs/rfcs/pull/58
-- Ember Issue: https://github.com/emberjs/ember.js/pull/11393
+---
+stage: discontinued
+start-date: 2015-05-24T00:00:00.000Z
+release-date: 2016-06-12T00:00:00.000Z
+release-versions:
+  ember-source: v1.13.0
+
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/58
+project-link:
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/pull/11393
+---
 
 # Summary
 

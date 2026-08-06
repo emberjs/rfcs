@@ -1,6 +1,16 @@
-- Start Date: 2017-12-12
-- RFC PR: https://github.com/emberjs/rfcs/pull/281
-- Ember Issue: (leave this empty)
+---
+stage: recommended
+start-date: 2017-12-12T00:00:00.000Z
+release-date: 2018-04-10T00:00:00.000Z
+release-versions:
+  ember-source: v3.1.0
+
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/281
+project-link:
+---
 
 # Summary
 

@@ -1,9 +1,35 @@
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
-- Relevant Team(s): (fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies)
-- RFC PR: (after opening the RFC PR, update this with a link to it and update the file name)
-- Tracking: (leave this empty)
+---
+stage: accepted
+start-date:
+release-date:
+release-versions:
+teams: # delete teams that aren't relevant
+  - cli
+  - data
+  - framework
+  - learning
+  - steering
+  - typescript
+prs:
+  accepted: # update this to the PR that you propose your RFC in
+project-link:
+---
 
-# <RFC title>
+<!---
+Directions for above:
+
+stage: Leave as is
+start-date: Fill in with today's date, 2032-12-01T00:00:00.000Z
+release-date: Leave as is
+release-versions: Leave as is
+teams: Include only the [team(s)](README.md#relevant-teams) for which this RFC applies
+prs:
+  accepted: Fill this in with the URL for the Proposal RFC PR
+project-link: Leave as is
+-->
+
+<-- Replace "RFC title" with the title of your RFC -->
+# RFC Title 
 
 ## Summary
 
@@ -22,6 +48,19 @@ Describe it in enough detail for someone who uses the deprecated functionality
 to understand, for someone to write the deprecation guide, and for someone
 familiar with the implementation to implement.
 
+> It can be helpful to write the deprecation guide as part of this section. Published deprecation
+> guides can be found at https://deprecations.emberjs.com/.
+
+> Please keep in mind any implications within the Ember ecosystem, such as:
+> - Lint rules (ember-template-lint, eslint-plugin-ember) that should be added, modified or removed
+> - Features that are replaced or made obsolete by this feature and should eventually be deprecated
+> - Ember Inspector and debuggability
+> - Server-side Rendering
+> - Ember Engines
+> - The Addon Ecosystem
+> - IDE Support
+> - Blueprints that should be added or modified
+
 ## How We Teach This
 
 > Would the acceptance of this proposal mean the Ember guides must be
@@ -29,9 +68,11 @@ re-organized or altered? Does it change how Ember is taught to new users
 at any level?
 Does it mean we need to put effort into highlighting the replacement
 functionality more? What should we do about documentation, in the guides
-related to this feature?  
+related to this feature?
 How should this deprecation be introduced and explained to existing Ember
 users?
+
+> Keep in mind the variety of learning materials: API docs, guides, blog posts, tutorials, etc.
 
 ## Drawbacks
 

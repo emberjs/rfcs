@@ -1,7 +1,18 @@
-- Start Date: 2018-10-31
-- Relevant Team(s): Ember Data
-- RFC PR: https://github.com/emberjs/rfcs/pull/395
-- Tracking: https://github.com/emberjs/rfc-tracking/issues/11
+---
+stage: recommended
+start-date: 2018-10-31T00:00:00.000Z
+release-date: 2019-06-28T00:00:00.000Z
+release-versions:
+  ember-data: v3.11.0
+
+teams:
+  - data
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/395
+project-link:
+meta:
+  tracking: https://github.com/emberjs/rfc-tracking/issues/11
+---
 
 # Ember Data Packages
 

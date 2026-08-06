@@ -1,6 +1,18 @@
-- Start Date: 2016-04-18
-- RFC PR: [#139](https://github.com/emberjs/rfcs/pull/139)
-- Ember Issue: [emberjs/ember.js#13666](https://github.com/emberjs/ember.js/pull/13666)
+---
+stage: recommended
+start-date: 2016-04-18T00:00:00.000Z
+release-date: 2016-09-08T00:00:00.000Z
+release-versions:
+  ember-source: v2.8.0
+
+teams:
+  - framework
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/139
+project-link:
+meta:
+  ember-issue: https://github.com/emberjs/ember.js/pull/13666
+---
 
 # Summary
 
