@@ -1,7 +1,18 @@
-- Start Date: 2019-06-14
-- Relevant Team(s): (fill this in with the [team(s)](README.md#relevant-teams) to which this RFC applies)
-- RFC PR: https://github.com/emberjs/rfcs/pull/502
-- Tracking: (leave this empty)
+---
+stage: accepted
+start-date: 2019-06-14T00:00:00.000Z # In format YYYY-MM-DDT00:00:00.000Z
+release-date: # In format YYYY-MM-DDT00:00:00.000Z
+release-versions: 
+teams: # delete teams that aren't relevant
+  - data
+  - framework
+  - learning
+  - typescript
+prs:
+  accepted: https://github.com/emberjs/rfcs/pull/502
+project-link:
+suite: 
+---
 
 # Explicit Service Injection
 
