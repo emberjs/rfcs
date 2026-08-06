@@ -24,20 +24,34 @@ Note: while this RFC mainly talks in terms in services, this applies to all inje
 
 ## Motivation
 
-The main goal is to _use the platform_ and enable "go to definition" support from service definitions so developers can more easily discover the where and how their service is defined.
+The main goal is to _use the platform_ and enable "go to definition" support from service definitions so developers can more easily discover the where and how their service is defined. Additionally, addons need to be able to create services that are not forced to be inluded in the initial JS bundle of applications -- if an addon is used in a split route, so, too, should their services.
 
 ## Detailed design
 
-instead of:
+The existing, not deprecated as a part of this RFC,  
 ```ts
 @service notifications;
 @service('notifications') notifications;
 @service('messages/dispatcher') dispatcher;
 ```
-This will be the new default:
+
+has this behavior:
+- service is not instantiated until accessed (even though the code for it is loaded)
+- service is matched to a _file path_ within the `app/services` directory via custom build tooling
+- usage with typescript requires that the developer import from the service file to `@service declare notifications: Notifications` - which is very repetitive
+- service can be overridden later (if they have not previously been accessed) via `owner.register(key)`
+- service can be resolved later without a decorator via `owner.lookup(key)`
+
+
+This RFC proposes a new default, retaining the benefits of the above described features without the downsides:
+
 ```ts
-@service(NotificationsService) notifications;
-@service(MessageDispatcherService) dispatcher;
+@service(Notifications) notifications;
+@service(MessageDispatcher) dispatcher;
+
+// or
+notifications = service(this, Notifications);
+dispatcher = service(this, MessageDispatcher);
 ```
 
 This means that the shorthand syntax of using `@service` without a parameter should be discouraged, and the use of the service class should be used in its place.
@@ -58,11 +72,81 @@ function service(nameOrClass) {
     return appInstance.lookup(`service:${name}`);
   }
 
-  return appInstance.lookup(nameOrClass);
+
+  if (hasRegistration(appInstance, nameOrClass)) {
+    return appInstance.lookup(nameOrClass);
+  }
+
+  // emulate maximal interface matching with the presently available services
+  let shape = shapeOf(nameOrClass);
+
+  return lookupServiceByShape(appInstance, shape);
 }
 ```
 
 In order for `lookup` to be able to take a class definition as an argument, there will need to be an alternative way to _lookup_ instances of services by the class. Though, when a class is used for lookup, if there is no existing registration found, lookup _will register the class and instantiate it for you_.
+
+
+Additionally we need to solve for libraries using services they are not the owners of is the "by-shape" lookup. Without doing so, there is a risk of "duplicate but same" services being included in an app's built output.
+
+### lookup forms
+
+#### decorators
+
+##### by string 
+
+the existing behavior
+
+```js
+class Demo {
+    @service('service') myService!: Service;
+    @service() service!: Service;
+    @service service!: Service;
+}
+```
+
+##### by class / shape
+
+proposed by this RFC
+
+- retains lazy instantiation 
+
+```ts
+class Demo {
+    @service(Service) myService!: Service;
+}
+```
+
+##### via function returning class / shape
+
+proposed by this RFC
+
+- retains lazy instantiation 
+- retains lazy definition / cycle-solving benefits 
+
+```ts
+class Demo {
+    @service(() => Service) myService!: Service;
+}
+```
+
+#### without decorators
+
+proposed by this RFC
+
+- retains TypeScript types ahead of Decorators being shipped
+- retains lazy instantiation 
+- retains lazy definition / cycle-solving benefits 
+- can be '#privateField'
+- can be used in getter, function, etc
+
+```ts
+class Demo {
+    myService = service(this, Service);
+}
+```
+
+### lookup by exact class
 
 Consider:
 
@@ -73,7 +157,7 @@ appInstance.lookup(MyClass);
 
 is the same as 
 ```ts
-// no registration
+// no registration needed, because MyClass could be in a dynamic bundle
 appInstance.lookup(MyClass);
 ```
 
@@ -109,7 +193,6 @@ Examples:
     Now, where this _IS_ Dependency Injection, and how we aren't just using the concrete class all the time is where you can do things like this
 
     ```ts
-    // note that this must share ancestry with the registered service.
     class MyFooOverrideService extends MyFooService {
       add() {
         this.foo += 2;
@@ -154,7 +237,7 @@ Examples:
 
     // app/components/my-component.js
     import Component from '@glimmer/component';
-    import { inject as service } from '@ember/service';
+    import { service } from '@ember/service';
 
     class MyComponent extends Component {
       @service(CookieService) cookie;
@@ -202,6 +285,12 @@ Examples:
     ```
 
 Logic will be added to the register method to ensure that the lookup type either is the same as the service instance's type or is an ancestor type. This will prevent the ability to register unrelated classes that would break the implied class hierarchy that is assumed with dependency injection. 
+
+### lookup by shape 
+
+- javascript does not have interfaces
+- explicit services _can_ result in [module cycles](https://github.com/chancancode/ember-polaris-service/issues/18), due to how decorators work
+  because instantiation is lazy, however, we can devise a safe way to declare the service that is cycle-safe
 
 ### Usage in testing
 
@@ -292,19 +381,30 @@ module('Integration | Component | location-indicator', function(hooks) {
 
 Instead of using strings or inferred injections, the guides should be updated to use the Class definition of a service that it intends to inject.
 
-Ember Inspector and the unstable-ember-language-server will likely need to be updated to support this kind of lookup.
+The guides already cover usage of services, as well as techniques for setting up [any class for injection](https://guides.emberjs.com/release/in-depth-topics/native-classes-in-depth/#toc_using-injection) (albeit under "in depth topics") -- some of this probably could be expanded on but would be out of scope for this RFC. 
+
+For libraries and apps wanting to incrementally migrate from string to explicit, we can provide instructions during a future depreaction-of-string-based-services RFC after a compat library exists, (proxying the string-instantiated service to the real one).
+
+
 
 ## Drawbacks
 
 - more verbose
+- disruptive for libraries providing services
 
 ## Alternatives
 
- - Convert the dependency injection lookup to a `WeakMap<Klass, instanceof Klass>`
-
-    This would likely result in faster lookup, but would require more upfront work to change how the lookup method works on the `ApplicationInstance` / "owner". This _could_ be a separate RFC, but without benchmarking it's hard to say if this massive of a change would be worth it.
-
  - in C# + asp.net core, dependency injections are resolved in the constructor of a class. This would be _even more verbose_ than what is being proposed in this RFC, as for many situations in Ember, the constructor can be omitted. 
+
+ - just use `<library>`
+   - many existing libraries for other ecosystems: very verbose, and use class-decorators, and/or constructor decorators -- which is more like C# + asp.net core.
+
+   - some existing explorations
+     - https://github.com/chancancode/ember-polaris-service
+     - https://ember-primitives.pages.dev/6-utils/createService 
+   a goal of the RFC is to signal to the community which approach will be supported and is safest.
+   ember-polaris-service did a lot of the exploration early, and ember-primitives' createService is a demonstration of how, if you really want, you don't need a service abstraction at all (leaning in to "don't mock", and "WeakMap on the owner is good")
+
 
 
  ## Unresolved Questions
@@ -318,3 +418,13 @@ Ember Inspector and the unstable-ember-language-server will likely need to be up
       - registry is an instance of `Registry`
         - defined at `ember.js/packages/@ember/-internals/container/lib/registry.ts` 
           - in here is where the bulk of the implementation of this RFC would live? (along with updating the type signatures of the methods all the way up the call tree (where not inferred))
+
+
+## Appendix
+
+- Previous Alternative: Convert the dependency injection lookup to a `WeakMap<Klass, instanceof Klass>`
+
+    This would likely result in faster lookup, but would require more upfront work to change how the lookup method works on the `ApplicationInstance` / "owner". This _could_ be a separate RFC, but without benchmarking it's hard to say if this massive of a change would be worth it.
+
+
+    Moved out of `Alternatives`, because this RFC should not explicitly recommend or unrecommend specific implementation styles. A `WeakMap` style of managing singletons tied to an owner is exactly the strategy that [`createService`](https://ember-primitives.pages.dev/6-utils/createService) from ember-primitives uses.
