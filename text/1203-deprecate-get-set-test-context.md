@@ -45,7 +45,7 @@ Note that `get` and `getProperties` are not `run()`-wrapped. They are thin wrapp
 
 ### What is deprecated
 
-`setupContext` from `@ember/test-helpers` installs `get`, `set`, `getProperties`, and `setProperties` on the context. All four are deprecated. Because they come from `setupContext` and not `setupRenderingContext`, they are present in unit, rendering, and application tests alike, and the deprecation covers all three.
+`setupContext` from `@ember/test-helpers` installs `get`, `set`, `getProperties`, and `setProperties` on the context. All four are deprecated. 
 
 ### What is not deprecated
 
