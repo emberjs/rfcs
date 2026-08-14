@@ -16,7 +16,7 @@ project-link:
 
 ## Summary
 
-Deprecate the four data-manipulation methods that `@ember/test-helpers` installs on the test context: `this.get`, `this.set`, `this.getProperties`, and `this.setProperties`. Everything else the test context provides is untouched: `this.owner`, `this.element`, `this.pauseTest`, `this.resumeTest`, and properties you assign yourself.
+Deprecate the four data-manipulation methods that `@ember/test-helpers` installs on the test context: `this.get`, `this.set`, `this.getProperties`, and `this.setProperties`. 
 
 ## Motivation
 
