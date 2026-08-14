@@ -8,7 +8,7 @@ teams:
   - learning
   - typescript
 prs:
-  accepted:
+  accepted: 'https://github.com/emberjs/rfcs/pull/1225'
 project-link:
 ---
 
@@ -23,8 +23,8 @@ instead.
 
 ## Motivation
 
-These components exist for historical reasons because templates long ago could not bind attributes to elements and
-because two-way binding used to be how Ember worked. Neither is true anymore:
+These components date from a time when templates could not bind attributes to elements
+and two-way binding was how Ember worked. Neither is true anymore:
 
 - `<input value={{this.name}}>` has worked since HTMLBars.
 - Glimmer components removed two-way binding on purpose, but `<Input>` still installs one
@@ -181,14 +181,14 @@ already ship one.
 
 ### Lint rules
 
-- `eslint-plugin-ember`: flag the `@ember/component` imports.
+`eslint-plugin-ember` should flag the `@ember/component` imports.
 
 ### Other ecosystem effects
 
-Addons that render `<Input>` will trigger the deprecation in consuming apps; the
-compatibility addon gives them a one-line fix that works across Ember versions. Glint
-already types native elements, so most apps gain type coverage. No impact on FastBoot,
-Engines, blueprints, or Ember Data. Ember Inspector's component tree gets smaller.
+Addons that render `<Input>` will trigger the deprecation in apps that consume them, and
+those apps cannot fix it themselves. Glint already types native elements, so most apps
+gain type coverage. No impact on FastBoot, Engines, blueprints, or Ember Data. Ember
+Inspector's component tree gets smaller.
 
 ## How We Teach This
 
@@ -213,19 +213,23 @@ been working around these components for years.
 
 - Usage is large. These appear in most apps that have forms, in many addons, and in a
   decade of tutorials and Stack Overflow answers that will not be updated.
-- The replacement is more code. Two-way binding is fewer characters, even though it is harder to debug when things go wrong.
+- The replacement is more code. Two-way binding is fewer characters, even though it is
+  harder to debug.
 - There is still no blessed template-level way to say "set this to the event's value".
   `@pzuraq` raised this in #498 and it is still open: `(mut)` is not the happy path, there
   are no template closures, and there is no `(set ... (pick ...))`. Every migration adds a
   method to a class.
-- Apps will see deprecations from addon code they cannot fix themselves (as with all deprecations that affect libraries)
+- Apps will see deprecations from addon code they cannot fix themselves, as with any
+  deprecation that reaches libraries.
 
 ## Alternatives
 
 - Do nothing. The components keep working and keep costing maintenance, bundle size, and
   the "why is there an `<Input>` but no `<Select>`?" question.
-- Provide a build-time transform that tries to re-implement the components at build time and convert userland code to `<Input>` and `<Textarea>`
-- Move them to an addon 
+- Ship a build-time transform that rewrites `<Input>` and `<Textarea>` to native elements,
+  so apps get the output without touching their own code.
+- Move them to an addon and keep recommending them. Fixes the maintenance cost, not the
+  teaching problem.
 
 No other major framework ships an input component. React, Svelte, Vue, and Solid all use
 the native element, and where they add sugar it is a binding attached to that element
