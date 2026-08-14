@@ -36,15 +36,6 @@ One reason is newer. `set` and `setProperties` are `run()`-wrapped, so each call
 
 All four are installed by `setupContext` from `@ember/test-helpers`, and all four are deprecated.
 
-### What is not deprecated
-
-- `this.owner`.
-- `this.element`, in rendering tests. Whether it should exist at all is a separate question.
-- `this.pauseTest()` and `this.resumeTest()`, useful mid-debug without editing imports.
-- Properties you assign to `this` yourself, for sharing setup between hooks and tests.
-
-`render` binds the test context as the rendered template's backing object, which is what makes `{{this.name}}` resolve against it. This RFC does not change that binding, so `this.name = 'Zoey'` before `render` still renders "Zoey"; it just will not update on reassignment. Severing the binding needs its own RFC.
-
 ### Before
 
 ```js
