@@ -98,9 +98,9 @@ Deprecate:
 
 `<LinkTo>` is out of scope. It has no native equivalent.
 
-Proposed ids `built-in-components.input` and `built-in-components.textarea`, `for:
-'ember-source'`, `until: '8.0.0'`. The deprecation must report the template location so
-app authors can tell their own usage apart from an addon's.
+Proposed ids: `built-in-components.input` and `built-in-components.textarea`, for
+`ember-source`, until `8.0.0`. The deprecation must report the template location so app
+authors can tell their own usage apart from an addon's.
 
 ### Text inputs
 
@@ -131,8 +131,6 @@ export default class Search extends Component {
   </template>
 }
 ```
-
-The handler reads the value off the event, so it cannot go stale the way #19222 does.
 
 ### Checkboxes
 
@@ -219,8 +217,6 @@ been working around these components for years.
   `@pzuraq` raised this in #498 and it is still open: `(mut)` is not the happy path, there
   are no template closures, and there is no `(set ... (pick ...))`. Every migration adds a
   method to a class.
-- Apps will see deprecations from addon code they cannot fix themselves, as with any
-  deprecation that reaches libraries.
 
 ## Alternatives
 
@@ -233,8 +229,7 @@ been working around these components for years.
 
 No other major framework ships an input component. React, Svelte, Vue, and Solid all use
 the native element, and where they add sugar it is a binding attached to that element
-(`bind:value`, `v-model`, `[(ngModel)]`), not a replacement element. That is the shape of
-the gap here.
+(`bind:value`, `v-model`, `[(ngModel)]`), not a replacement element.
 
 ## Unresolved questions
 
