@@ -68,15 +68,13 @@ test('it renders the name', async function (assert) {
 
 ```js
 import { render, rerender } from '@ember/test-helpers';
-import { tracked } from '@glimmer/tracking';
+import { trackedObject } from '@ember/reactive/collections';
 import MyComponent from 'my-app/components/my-component';
 
 test('it renders the name', async function (assert) {
-  class State {
-    @tracked name = 'Zoey';
-  }
-
-  const state = new State();
+  const state = trackedObject({
+    name: 'Zoey',
+  });
 
   await render(<template><MyComponent @name={{state.name}} /></template>);
 
@@ -89,11 +87,9 @@ test('it renders the name', async function (assert) {
 });
 ```
 
-The `await rerender()` is not optional. `this.set` gave you a synchronous flush; assigning to tracked state does not.
-
 ### After, for a single value
 
-Most rendering tests hold one value, and a backing class for one field is a lot of ceremony. [RFC #1071](https://github.com/emberjs/rfcs/blob/main/text/1071-overload-tracked-for-non-class-use.md) overloads `tracked` for use outside a class, which collapses it:
+Many rendering tests hold one value:
 
 ```js
 import { render, rerender } from '@ember/test-helpers';
@@ -113,8 +109,6 @@ test('it renders the name', async function (assert) {
   assert.dom('[data-test-name]').hasText('Tomster');
 });
 ```
-
-That overload is accepted but not yet released. Until it ships, the class form is the migration target.
 
 ### `settled()` vs `renderSettled()` vs `rerender()`
 
