@@ -185,8 +185,7 @@ A rule that is already in `recommended` bans one import for the same pattern as 
 
 ## Unresolved questions
 
-- The split between Appendix A and Appendix B is a best guess. During implementation, each rule must be checked against what strict mode can express. Some loose-mode constructs, such as `{{unbound}}` and `{{mut}}`, are still keywords in strict mode, so their rules stay in Appendix A. A rule in the wrong list moves without a new RFC.
-- The rule for bare strings in templates is off by default in `ember-template-lint`, and it stays off here. Does the migration guide need a special note about it, for an app with heavy i18n? This is a docs question, not a config question.
+n/a
 
 ## Appendix A: template rules added to `recommended`
 
