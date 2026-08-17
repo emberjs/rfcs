@@ -21,7 +21,7 @@ suite:
 This RFC defines the `recommended` config for the next major of `eslint-plugin-ember` (v14).
 
 - The template rules that `ember-template-lint` enabled by default become enabled by default for gjs/gts files. This covers the rules that apply to strict mode. [RFC #1214 "Deprecate ember-template-lint"][rfc-1214] committed us to this config change.
-- `recommended` stays gjs/gts only. Linting of `.hbs` files stays opt-in through `template-lint-migration`, the hbs config, which keeps the full `ember-template-lint` parity set.
+- `recommended` stays gjs/gts only. Linting of `.hbs` files stays opt-in through the `hbs` config, which keeps the full `ember-template-lint` parity set.
 - Rules that catch patterns from `ember-source` 3.x and earlier come out of `recommended`.
 - A number of other recommended rule changes (see appendices)
 - The `recommended-gjs` and `recommended-gts` configs are removed. `recommended` now carries their rules, scoped per file type.
@@ -90,12 +90,12 @@ An app that extends `plugin:ember/recommended-gjs` or `plugin:ember/recommended-
 
 ### Linting `.hbs` files stays opt-in
 
-An app with loose-mode templates opts in with the hbs config. That config is [`template-lint-migration`][migration-config]. It keeps the _full_ `ember-template-lint` parity set, and that set includes the loose-mode-only rules that stay out of `recommended`. The app also needs a parser block that routes `.hbs` files to the hbs parser. `eslint-plugin-ember` already ships that parser as `ember-eslint-parser/hbs`.
+An app with loose-mode templates opts in with the `hbs` config, which v14 renames from [`template-lint-migration`][migration-config]. It keeps the _full_ `ember-template-lint` parity set, and that set includes the loose-mode-only rules that stay out of `recommended`. The app also needs a parser block that routes `.hbs` files to the hbs parser. `eslint-plugin-ember` already ships that parser as `ember-eslint-parser/hbs`.
 
 ```js
 // eslint.config.mjs
 import { hbsParser, plugin as ember } from 'eslint-plugin-ember/recommended';
-import emberTemplateLintMigration from 'eslint-plugin-ember/configs/template-lint-migration';
+import emberHbs from 'eslint-plugin-ember/configs/hbs';
 
 export default [
   // ... existing config ...
@@ -104,7 +104,7 @@ export default [
     plugins: { ember },
     languageOptions: { parser: hbsParser },
   },
-  ...emberTemplateLintMigration,
+  ...emberHbs,
 ];
 ```
 
@@ -136,7 +136,7 @@ That app can also stay on `eslint-plugin-ember@13` until it is on ember-source 4
 
 The config stays for as long as `.hbs` exists. An app with `.hbs` files uses it, and hbs coverage does not change in this major. The migration guide from [RFC #1214][rfc-1214] is written around it.
 
-This config is no longer a migration config, so v14 renames it to `hbs`. `template-lint-migration` stays as an alias for the deprecation window.
+This config is no longer a migration config, so v14 renames it to `hbs`. The old name stops working in v14, and the release notes carry the rename.
 
 ### Other breaking changes
 
@@ -282,7 +282,7 @@ A rule that is already in `recommended` bans one import for the same pattern as 
 
 ## Appendix B: loose-mode-only rules, not added to `recommended`
 
-These 9 rules stay in the hbs config, `template-lint-migration`. They keep full `ember-template-lint` parity for `.hbs` files.
+These 9 rules stay in the `hbs` config. They keep full `ember-template-lint` parity for `.hbs` files.
 
 | Rule | Why it does not apply to gjs/gts |
 | ---- | ------------------------------- |
