@@ -23,7 +23,7 @@ This RFC defines the `recommended` config for the next major of `eslint-plugin-e
 - The template rules that `ember-template-lint` enabled by default become enabled by default for gjs/gts files. This covers the rules that apply to strict mode. [RFC #1214 "Deprecate ember-template-lint"][rfc-1214] committed us to this config change.
 - `recommended` stays gjs/gts only. Linting of `.hbs` files stays opt-in through `template-lint-migration`, the hbs config, which keeps the full `ember-template-lint` parity set.
 - Rules that catch patterns from `ember-source` 3.x and earlier come out of `recommended`.
-- Two JS rules go into `recommended`: `ember/no-builtin-form-components` and `ember/no-modifier-without-element-usage`. Both catch patterns that are still possible today.
+- A number of other recommended rule changes (see appendices)
 - The `recommended-gjs` and `recommended-gts` configs are removed. `recommended` now carries their rules, scoped per file type.
 
 [eslint-plugin-ember#2158][issue-2158] requires an RFC for each change to a recommended rule set. This is that RFC. [eslint-plugin-ember#2060][issue-2060] tracks the plan for the release itself.
