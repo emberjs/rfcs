@@ -134,9 +134,9 @@ That app can also stay on `eslint-plugin-ember@13` until it is on ember-source 4
 
 ### What happens to `template-lint-migration`
 
-The config stays, permanently. An app that still has `.hbs` files uses it. It keeps the full `ember-template-lint` parity set, so hbs coverage is the same before and after this major. The migration guide from [RFC #1214][rfc-1214] is written around it.
+The config stays for as long as `.hbs` exists. An app with `.hbs` files uses it, and hbs coverage does not change in this major. The migration guide from [RFC #1214][rfc-1214] is written around it.
 
-This config is no longer a _migration_ config, so v14 renames it to `hbs`. The name `template-lint-migration` stays as an alias for the deprecation window. The new name states the long-term purpose of the config.
+This config is no longer a migration config, so v14 renames it to `hbs`. `template-lint-migration` stays as an alias for the deprecation window.
 
 ### Other breaking changes
 
