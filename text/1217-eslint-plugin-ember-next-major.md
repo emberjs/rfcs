@@ -21,6 +21,7 @@ suite:
 This RFC defines the `recommended` config for the next major of `eslint-plugin-ember` (v14):
 - the template rules that were enabled by default in `ember-template-lint` -- those of them that are applicable to strict mode -- become enabled by default for gjs/gts files. This is the config change that [RFC #1214 "Deprecate ember-template-lint"][rfc-1214] committed us to. The `recommended` config is (and stays) gjs/gts only -- linting `.hbs` files remains opt-in via `template-lint-migration` (the hbs config), which keeps the full `ember-template-lint` parity set
 - rules that only exist to catch patterns from `ember-source` 3.x and earlier are removed from `recommended`
+- two JS rules that catch patterns which are still possible today are added to `recommended`: `ember/no-builtin-form-components` and `ember/no-modifier-without-element-usage`
 
 Per the process agreed to in [eslint-plugin-ember#2158][issue-2158], changes to the recommended sets of rules require an RFC -- this is that RFC. Planning for the release itself is tracked in [eslint-plugin-ember#2060][issue-2060].
 
@@ -30,11 +31,13 @@ Per the process agreed to in [eslint-plugin-ember#2158][issue-2158], changes to 
 
 ## Motivation
 
-This major has two motivations:
+This major has three motivations:
 
 1. [RFC #1214][rfc-1214] deprecates `ember-template-lint` and unifies all Ember lint rules in `eslint-plugin-ember`. As of `eslint-plugin-ember@13`, every `ember-template-lint` rule has been re-implemented as an `ember/template-*` rule[^no-partial], but none of them are in `recommended` yet -- they were kept opt-in (via the `template-lint-migration` config) so that folks running both tools wouldn't get two errors for every violation. With `ember-template-lint` deprecated, the template rules need to be on by default, or newly generated apps lose lint coverage they've always had -- including the A11y rules, which the Ember project has a core commitment to keeping on by default.
 
 2. The current `recommended` set still spends time linting for patterns that cannot exist in apps on `ember-source` 4+. Some of these rules are also the most expensive rules in the set -- profiling in [eslint-plugin-ember#2060][issue-2060] showed `ember/no-implicit-injections` and `ember/no-deprecated-router-transition-methods` at ~6.2 seconds _each_ (5.9% of total lint time, each) on a large app, checking for things that were removed from ember-source years ago.
+
+3. A major is the only place `recommended` can gain a rule that reports on existing code. Two such rules are ready and are held back only by the semver cost: `ember/no-builtin-form-components` and `ember/no-modifier-without-element-usage`. Both catch patterns that are still reachable in an app on the latest `ember-source`, which is the opposite of the rules being removed in motivation 2.
 
 [^no-partial]: every rule except `no-partial` -- `{{partial}}` was removed from ember-source in 4.0, so there is nothing left to lint against.
 
@@ -56,7 +59,16 @@ The `recommended` config today is gjs/gts (and js/ts) only, and that does not ch
 > [!NOTE]
 > `ember-template-lint`'s recommended preset also had to disable `builtin-component-arguments`, `no-builtin-form-components`, and `no-unknown-arguments-for-builtin-components` for gjs/gts, because it has no knowledge of imports. The eslint implementations don't have this problem -- they can see the whole module, so (for example) `ember/template-builtin-component-arguments` can check whether `<Input>` is actually the one from `@ember/component`, and not a local component that happens to share the name. Those rules _do_ move to `recommended`. This is one of the motivations of [RFC #1214][rfc-1214].
 
-One more addition: `ember/no-builtin-form-components` (called out for the next major in [eslint-plugin-ember#2060][issue-2060], implemented in [#2282][pr-2282]) -- native `<input>` / `<textarea>` are preferred over the classic-component `<Input>` / `<Textarea>` wrappers.
+### Add two JS rules to `recommended`
+
+Both rules already ship in the plugin as opt-in. Neither is a template rule, so both are scoped the way the rest of `recommended` is, not to `**/*.{gjs,gts}`.
+
+| Rule | Why it belongs in `recommended` |
+| ---- | ------------------------------- |
+| [`ember/no-builtin-form-components`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-builtin-form-components.md) | native `<input>` / `<textarea>` are preferred over the classic-component `<Input>` / `<Textarea>` wrappers. Called out for the next major in [#2060][issue-2060], implemented in [#2282][pr-2282] |
+| [`ember/no-modifier-without-element-usage`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-modifier-without-element-usage.md) | a modifier that never references its element is an effect scheduled by render. That is the data flow this RFC's `recommended` set already rejects in templates via `ember/template-no-at-ember-render-modifiers`, and it is just as available through `ember-modifier` directly |
+
+`ember/no-modifier-without-element-usage` covers both modifier styles: the `element` parameter of a `modifier()` callback, and `modify(element)` or `this.element` in a class modifier. Any reference counts, so passing the element to a chart library or a `ResizeObserver` is fine. What it catches is the modifier that exists only to run code at render time, which brings the problems that [`ember/no-at-ember-render-modifiers`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-at-ember-render-modifiers.md) documents: extra renders, render loops, and behavior separated from the data it depends on. Those problems do not come from `@ember/render-modifiers` as a package, so a rule that only bans that import leaves the pattern reachable with three lines of `ember-modifier`.
 
 [pr-2282]: https://github.com/ember-cli/eslint-plugin-ember/pull/2282
 
@@ -145,13 +157,14 @@ Most of the teaching work is already required by [RFC #1214][rfc-1214]: the migr
 For the v14 upgrade itself:
 
 - Newly generated apps just get the new config from the blueprint. No teaching needed.
-- Existing apps upgrading to v14 will see new errors in their gjs/gts files. The release notes should point at [eslint bulk suppressions](https://eslint.org/blog/2025/04/introducing-bulk-suppressions/) and [Lint to the Future](https://github.com/mansona/lint-to-the-future) for adopting the new rules incrementally instead of fixing everything in one PR. (This replaces the `lint-todo` workflow from `ember-template-lint`, per RFC #1214.)
+- Existing apps upgrading to v14 will see new errors in their gjs/gts files, and in js/ts files from the two added JS rules. The release notes should point at [eslint bulk suppressions](https://eslint.org/blog/2025/04/introducing-bulk-suppressions/) and [Lint to the Future](https://github.com/mansona/lint-to-the-future) for adopting the new rules incrementally instead of fixing everything in one PR. (This replaces the `lint-todo` workflow from `ember-template-lint`, per RFC #1214.)
 - Apps with `.hbs` files opt in to hbs linting via the hbs config -- that's a migration-from-`ember-template-lint` task (covered by RFC #1214's migration guide), not a v14-upgrade task.
 - Apps that were already using the `template-lint-migration` config see no new template errors at all -- v14 is a no-op for them.
 
 ## Drawbacks
 
 - Existing apps get a bunch of new lint errors on upgrade. That's the point of the major (per RFC #1214), and bulk suppressions exist so that nobody has to fix them all in one PR.
+- `ember/no-modifier-without-element-usage` has no autofix, and clearing a violation is a refactor rather than a rename: the behavior moves to derived state, a resource, or an event handler on the element that already triggers it. Apps that used modifiers as render hooks will want bulk suppressions for this rule while they work through it.
 - Apps still supporting ember-source 3.x silently lose coverage for the removed rules unless they re-enable them. The release notes and the changelog entry for each removed rule cover this -- and staying on v13 is always an option, since nothing about v13 stops working.
 
 ## Alternatives
@@ -167,6 +180,10 @@ Preserves the A11y commitment with fewer new errors, but breaks parity with what
 ### Ship a `legacy` config with the removed rules
 
 [#1950][issue-1950] proposed this. It's another config to name, document, and maintain, for a set of apps that shrinks every year -- and those apps already have two options: stay on v13, or re-enable the handful of rules they still want in their own config. Not worth maintaining.
+
+### Keep `ember/no-modifier-without-element-usage` opt-in and rely on `ember/no-at-ember-render-modifiers`
+
+`ember/no-at-ember-render-modifiers` is already in `recommended`, so the argument is that the pattern is covered. It is not: that rule bans an import, and the same effect-on-render pattern is available by writing the modifier by hand. An app that removes `@ember/render-modifiers` by reimplementing `{{did-insert}}` locally passes today's `recommended` set.
 
 ### Merge the template rules into `recommended` unscoped (including `.hbs`)
 
