@@ -66,7 +66,7 @@ Two groups of rules do not apply to strict-mode templates. Both stay in the hbs 
 
 ### Add two JS rules to `recommended`
 
-Two JS rules go into `recommended`. Both are already in the plugin as opt-in. Neither one is a template rule, so `recommended` scopes both the way it scopes its other JS rules, not to `**/*.{gjs,gts}`. [Appendix C](#appendix-c-js-rules-added-to-recommended) has both, with the reason for each.
+Two JS rules go into `recommended`. Both are already in the plugin as opt-in. Neither one is a template rule, so `recommended` scopes both the way it scopes its other JS rules, not to `**/*.{gjs,gts}`. [Appendix C](#appendix-c-js-rules-in-recommended) lists every JS rule in the set, and gives the reason for each new one.
 
 ### Remove the `recommended-gjs` and `recommended-gts` configs
 
@@ -177,7 +177,7 @@ This keeps the A11y commitment and creates fewer new errors. It also breaks pari
 
 ### Keep the two new JS rules opt-in
 
-A rule that is already in `recommended` bans one import for the same pattern as one of the two new rules. That ban is not enough, because hand-written code reaches the same pattern without that import. [Appendix C](#appendix-c-js-rules-added-to-recommended) has the detail.
+A rule that is already in `recommended` bans one import for the same pattern as one of the two new rules. That ban is not enough, because hand-written code reaches the same pattern without that import. [Appendix C](#appendix-c-js-rules-in-recommended) has the detail.
 
 ### Merge the template rules into `recommended` unscoped (including `.hbs`)
 
@@ -190,6 +190,8 @@ n/a
 ## Appendix A: template rules added to `recommended`
 
 87 rules, at `error`, scoped to `**/*.{gjs,gts}`. This is the `template-lint-migration` rule set without the loose-mode-only rules of Appendix B. That set is the recommended preset of `ember-template-lint`, minus `no-partial`, plus `template-no-template-lint-directives`. `no-partial` has no equivalent, because `{{partial}}` no longer exists.
+
+`recommended` also enables [`ember/template-no-let-reference`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/template-no-let-reference.md) for gjs/gts today, and that does not change. `ember-template-lint` has no equivalent rule. The gjs/gts set is 88 rules in total.
 
 - [`ember/template-builtin-component-arguments`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-builtin-component-arguments.md)
 - [`ember/template-link-href-attributes`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-link-href-attributes.md)
@@ -295,11 +297,73 @@ These 9 rules stay in the `hbs` config. They keep full `ember-template-lint` par
 | [`ember/template-deprecated-render-helper`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-deprecated-render-helper.md) | `{{render}}` is long gone, and strict mode cannot express it |
 | [`ember/template-deprecated-inline-view-helper`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-deprecated-inline-view-helper.md) | `{{view}}` is long gone, and strict mode cannot express it |
 
-## Appendix C: JS rules added to `recommended`
+## Appendix C: JS rules in `recommended`
 
-Both rules are in the plugin today as opt-in.
+59 rules, at `error`, for js/ts and gjs/gts. Two of them are new in v14.
 
-| Rule | Why it belongs in `recommended` |
+- [`ember/avoid-leaking-state-in-ember-objects`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/avoid-leaking-state-in-ember-objects.md)
+- [`ember/classic-decorator-hooks`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/classic-decorator-hooks.md)
+- [`ember/classic-decorator-no-classic-methods`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/classic-decorator-no-classic-methods.md)
+- [`ember/jquery-ember-run`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/jquery-ember-run.md)
+- [`ember/new-module-imports`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/new-module-imports.md)
+- [`ember/no-actions-hash`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-actions-hash.md)
+- [`ember/no-arrow-function-computed-properties`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-arrow-function-computed-properties.md)
+- [`ember/no-assignment-of-untracked-properties-used-in-tracking-contexts`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-assignment-of-untracked-properties-used-in-tracking-contexts.md)
+- [`ember/no-at-ember-render-modifiers`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-at-ember-render-modifiers.md)
+- [`ember/no-attrs-in-components`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-attrs-in-components.md)
+- [`ember/no-attrs-snapshot`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-attrs-snapshot.md)
+- [`ember/no-builtin-form-components`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-builtin-form-components.md) (new in v14)
+- [`ember/no-capital-letters-in-routes`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-capital-letters-in-routes.md)
+- [`ember/no-classic-classes`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-classic-classes.md)
+- [`ember/no-classic-components`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-classic-components.md)
+- [`ember/no-component-lifecycle-hooks`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-component-lifecycle-hooks.md)
+- [`ember/no-computed-properties-in-native-classes`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-computed-properties-in-native-classes.md)
+- [`ember/no-controller-access-in-routes`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-controller-access-in-routes.md)
+- [`ember/no-duplicate-dependent-keys`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-duplicate-dependent-keys.md)
+- [`ember/no-ember-super-in-es-classes`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-ember-super-in-es-classes.md)
+- [`ember/no-ember-testing-in-module-scope`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-ember-testing-in-module-scope.md)
+- [`ember/no-empty-glimmer-component-classes`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-empty-glimmer-component-classes.md)
+- [`ember/no-get`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-get.md)
+- [`ember/no-global-jquery`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-global-jquery.md)
+- [`ember/no-incorrect-calls-with-inline-anonymous-functions`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-incorrect-calls-with-inline-anonymous-functions.md)
+- [`ember/no-incorrect-computed-macros`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-incorrect-computed-macros.md)
+- [`ember/no-invalid-debug-function-arguments`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-invalid-debug-function-arguments.md)
+- [`ember/no-invalid-dependent-keys`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-invalid-dependent-keys.md)
+- [`ember/no-invalid-test-waiters`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-invalid-test-waiters.md)
+- [`ember/no-jquery`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-jquery.md)
+- [`ember/no-legacy-test-waiters`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-legacy-test-waiters.md)
+- [`ember/no-mixins`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-mixins.md)
+- [`ember/no-modifier-without-element-usage`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-modifier-without-element-usage.md) (new in v14)
+- [`ember/no-new-mixins`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-new-mixins.md)
+- [`ember/no-noop-setup-on-error-in-before`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-noop-setup-on-error-in-before.md)
+- [`ember/no-observers`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-observers.md)
+- [`ember/no-on-calls-in-components`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-on-calls-in-components.md)
+- [`ember/no-pause-test`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-pause-test.md)
+- [`ember/no-private-routing-service`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-private-routing-service.md)
+- [`ember/no-restricted-resolver-tests`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-restricted-resolver-tests.md)
+- [`ember/no-runloop`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-runloop.md)
+- [`ember/no-settled-after-test-helper`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-settled-after-test-helper.md)
+- [`ember/no-shadow-route-definition`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-shadow-route-definition.md)
+- [`ember/no-side-effects`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-side-effects.md)
+- [`ember/no-test-and-then`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-test-and-then.md)
+- [`ember/no-test-import-export`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-test-import-export.md)
+- [`ember/no-test-support-import`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-test-support-import.md)
+- [`ember/no-test-this-render`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-test-this-render.md)
+- [`ember/no-tracked-properties-from-args`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-tracked-properties-from-args.md)
+- [`ember/no-unnecessary-route-path-option`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-unnecessary-route-path-option.md)
+- [`ember/prefer-ember-test-helpers`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/prefer-ember-test-helpers.md)
+- [`ember/require-computed-macros`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/require-computed-macros.md)
+- [`ember/require-computed-property-dependencies`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/require-computed-property-dependencies.md)
+- [`ember/require-return-from-computed`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/require-return-from-computed.md)
+- [`ember/require-super-in-lifecycle-hooks`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/require-super-in-lifecycle-hooks.md)
+- [`ember/require-tagless-components`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/require-tagless-components.md)
+- [`ember/require-valid-css-selector-in-test-helpers`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/require-valid-css-selector-in-test-helpers.md)
+- [`ember/use-brace-expansion`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/use-brace-expansion.md)
+- [`ember/use-ember-data-rfc-395-imports`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/use-ember-data-rfc-395-imports.md)
+
+Both new rules are in the plugin today as opt-in.
+
+| New rule | Why it belongs in `recommended` |
 | ---- | ------------------------------- |
 | [`ember/no-builtin-form-components`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-builtin-form-components.md) | A native `<input>` or `<textarea>` is better than the classic-component `<Input>` or `<Textarea>` wrapper. Named for the next major in [#2060][issue-2060], and implemented in [#2282][pr-2282] |
 | [`ember/no-modifier-without-element-usage`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-modifier-without-element-usage.md) | A modifier that never reads its element is an effect that render schedules. `ember/template-no-at-ember-render-modifiers` already rejects that data flow in a template, and it is in `recommended` today. That rule bans one import, and `ember-modifier` reaches the same pattern in three lines |
