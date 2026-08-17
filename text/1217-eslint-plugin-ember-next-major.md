@@ -22,6 +22,7 @@ This RFC defines the `recommended` config for the next major of `eslint-plugin-e
 - the template rules that were enabled by default in `ember-template-lint` -- those of them that are applicable to strict mode -- become enabled by default for gjs/gts files. This is the config change that [RFC #1214 "Deprecate ember-template-lint"][rfc-1214] committed us to. The `recommended` config is (and stays) gjs/gts only -- linting `.hbs` files remains opt-in via `template-lint-migration` (the hbs config), which keeps the full `ember-template-lint` parity set
 - rules that only exist to catch patterns from `ember-source` 3.x and earlier are removed from `recommended`
 - two JS rules that catch patterns which are still possible today are added to `recommended`: `ember/no-builtin-form-components` and `ember/no-modifier-without-element-usage`
+- the `recommended-gjs` and `recommended-gts` configs are removed, because `recommended` now carries their rules, scoped per file type
 
 Per the process agreed to in [eslint-plugin-ember#2158][issue-2158], changes to the recommended sets of rules require an RFC -- this is that RFC. Planning for the release itself is tracked in [eslint-plugin-ember#2060][issue-2060].
 
@@ -71,6 +72,26 @@ Both rules already ship in the plugin as opt-in. Neither is a template rule, so 
 `ember/no-modifier-without-element-usage` covers both modifier styles: the `element` parameter of a `modifier()` callback, and `modify(element)` or `this.element` in a class modifier. Any reference counts, so passing the element to a chart library or a `ResizeObserver` is fine. What it catches is the modifier that exists only to run code at render time, which brings the problems that [`ember/no-at-ember-render-modifiers`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-at-ember-render-modifiers.md) documents: extra renders, render loops, and behavior separated from the data it depends on. Those problems do not come from `@ember/render-modifiers` as a package, so a rule that only bans that import leaves the pattern reachable with three lines of `ember-modifier`.
 
 [pr-2282]: https://github.com/ember-cli/eslint-plugin-ember/pull/2282
+
+### Remove the `recommended-gjs` and `recommended-gts` configs
+
+`recommended` now carries the gjs and gts rules itself, in blocks scoped by `files`. Both extra configs became redundant, so v14 removes them.
+
+`recommended-gts` also did one thing that `recommended` did not. It turned off the core rules that TypeScript already reports, and turned on the four that TypeScript makes better (`no-var`, `prefer-const`, `prefer-rest-params`, `prefer-spread`). That set comes from the `eslint-recommended` config of typescript-eslint. `recommended` now applies it to `**/*.gts`.
+
+The result is one config instead of three:
+
+```js
+// eslint.config.mjs
+import emberRecommended from 'eslint-plugin-ember/configs/recommended';
+
+export default [
+  ...emberRecommended,
+  // a parser block per file type is still required
+];
+```
+
+An app that extends `plugin:ember/recommended-gjs` or `plugin:ember/recommended-gts` deletes those two lines. Every rule they set is in `recommended` already.
 
 ### Linting `.hbs` files stays opt-in
 
@@ -148,7 +169,7 @@ Since it's not really a _migration_ config anymore, v14 should rename it to `hbs
 
 ### Other breaking changes
 
-[#2060][issue-2060] also tracks routine breaking changes for the release (dropping EOL node versions, matching eslint's supported version ranges, config export cleanup). Those don't change what is linted, so they don't need an RFC and aren't specified here -- this RFC is only about the `recommended` rule set.
+[#2060][issue-2060] also tracks routine breaking changes for the release (dropping EOL node versions, matching eslint's supported version ranges, config export cleanup). Those don't change what is linted, so they don't need an RFC and aren't specified here -- this RFC is only about the `recommended` rule set. The two config removals above are the exception: they are specified here because folding the typescript-eslint disables into `recommended` changes what is linted in a gts file.
 
 ## How we teach this
 
