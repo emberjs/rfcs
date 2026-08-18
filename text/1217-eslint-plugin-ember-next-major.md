@@ -159,9 +159,9 @@ For the v14 upgrade itself:
 
 ## Drawbacks
 
-- An existing app gets many new lint errors after the upgrade. That is the purpose of the major, per RFC #1214. Bulk suppressions exist, so no team has to correct every error in one PR.
-- Neither added JS rule has an autofix, so a report means a refactor and not a rename. An app can suppress both rules in bulk while it works through them.
-- An app that still supports ember-source 3.x loses the coverage of the removed rules, unless it turns them on again. The release notes and the changelog entry for each removed rule state this. An app can also stay on v13, because nothing in v13 stops working.
+- Not all rules have autofixes, but those that don't should already be linking to sufficient documentation to help developers have actionable information
+
+- No `hbs` support by default (some have not yet migrated to gjs/gts)
 
 ## Alternatives
 
