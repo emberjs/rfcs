@@ -155,6 +155,8 @@ For the v14 upgrade itself:
 - An app with `.hbs` files opts in to hbs linting with the hbs config. That is a task for the migration from `ember-template-lint`, which the RFC #1214 guide covers. It is not a v14 upgrade task.
 - An app that already uses the `template-lint-migration` config sees no new template errors. For that app, v14 is a no-op.
 
+- Ensure the Guides and Tutorial follow the new recommended config
+
 ## Drawbacks
 
 - An existing app gets many new lint errors after the upgrade. That is the purpose of the major, per RFC #1214. Bulk suppressions exist, so no team has to correct every error in one PR.
