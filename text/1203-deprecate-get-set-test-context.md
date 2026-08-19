@@ -34,7 +34,6 @@ One reason is newer. `set` and `setProperties` are `run()`-wrapped, so each call
 
 ## Transition Path
 
-All four are installed by `setupContext` from `@ember/test-helpers`, and all four are deprecated.
 
 ### Before
 
