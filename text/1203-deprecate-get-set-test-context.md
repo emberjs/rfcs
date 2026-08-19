@@ -12,29 +12,20 @@ prs:
 project-link:
 ---
 
-# Deprecate `this.get` and `this.set` on Test Contexts
+# Deprecate `get`, `set`, `getProperties`, and `setProperties` on test contexts
 
 ## Summary
 
-Deprecate the use of `this.get` and `this.set` on the test context object in rendering tests, as a logical conclusion of [RFC #785](https://github.com/emberjs/rfcs/blob/master/text/0785-remove-set-get-in-tests.md), which introduced `render(component)` and `rerender()` as the modern replacements.
+Deprecate the four data-manipulation methods that `@ember/test-helpers` installs on the test context: `this.get`, `this.set`, `this.getProperties`, and `this.setProperties`.
 
 ## Motivation
 
-RFC #785 introduced two new testing utilities — an updated `render` helper that accepts a component directly, and a new `rerender()` function — specifically to remove the need for `this.get` and `this.set` in rendering tests. Those APIs shipped in Ember v4.5.0 and are now the recommended approach for writing rendering tests.
-
-The legacy pattern of setting values on `this` in a rendering test was problematic for several reasons laid out in RFC #785:
-
-1. **Inconsistency with application code.** In post-Octane Ember, `get` and `set` are unnecessary; properties are tracked natively. Requiring them in tests is a confusing holdover.
-
-2. **Incorrect rendering semantics.** `this.set` in tests is run-wrapped, causing a synchronous full DOM flush on every call. This does not reflect how Ember schedules DOM updates in production code, where changes to tracked state are coalesced.
-
-3. **TypeScript friction.** Assigning arbitrary properties to `this` forces developers to redeclare the `TestContext` interface for every test module, causing leakage of property declarations across tests and defeating the purpose of static type checking.
-
-Now that the modern replacements have been stable for multiple major versions, it is appropriate to deprecate the old approach and eventually remove it, completing the migration to a cleaner and more accurate testing model.
+[RFC #785](https://github.com/emberjs/rfcs/blob/main/text/0785-remove-set-get-in-tests.md) shipped replacements for these methods. We believe that rendering tests should be using the replacements: `render` accepting a component, and `rerender`, landed in `@ember/test-helpers` 2.8.0, backed by `renderSettled` from `@ember/renderer` in `ember-source` 4.5.0.
 
 ## Transition Path
 
-### Before (deprecated)
+
+### Before
 
 ```js
 import { render } from '@ember/test-helpers';
@@ -45,24 +36,25 @@ test('it renders the name', async function (assert) {
 
   await render(hbs`<MyComponent @name={{this.name}} />`);
 
-  assert.dom('[data-test-name]').hasText(this.get('name'));
+  assert.dom('[data-test-name]').hasText('Zoey');
 
   this.set('name', 'Tomster');
 
-  assert.dom('[data-test-name]').hasText(this.get('name'));
+  assert.dom('[data-test-name]').hasText('Tomster');
 });
 ```
 
-### After (recommended)
+### After
 
 ```js
 import { render, rerender } from '@ember/test-helpers';
-import { tracked } from '@glimmer/tracking';
+import { trackedObject } from '@ember/reactive/collections';
+import MyComponent from 'my-app/components/my-component';
 
 test('it renders the name', async function (assert) {
-  const state = new class {
-    @tracked name = 'Zoey';
-  };
+  const state = trackedObject({
+    name: 'Zoey',
+  });
 
   await render(<template><MyComponent @name={{state.name}} /></template>);
 
@@ -75,76 +67,75 @@ test('it renders the name', async function (assert) {
 });
 ```
 
-For projects that have not yet adopted `<template>` tag syntax, `precompileTemplate` from `@ember/template-compilation` can be used together with a scope hash instead:
+### After, for a single value
+
+Many rendering tests hold one value:
 
 ```js
 import { render, rerender } from '@ember/test-helpers';
-import { precompileTemplate } from '@ember/template-compilation';
 import { tracked } from '@glimmer/tracking';
+import MyComponent from 'my-app/components/my-component';
 
 test('it renders the name', async function (assert) {
-  const state = new class {
-    @tracked name = 'Zoey';
-  };
+  const name = tracked('Zoey');
 
-  await render(precompileTemplate('<MyComponent @name={{state.name}} />', {
-    scope: () => ({ state, MyComponent }),
-  }));
+  await render(<template><MyComponent @name={{name.value}} /></template>);
 
   assert.dom('[data-test-name]').hasText('Zoey');
 
-  state.name = 'Tomster';
+  name.value = 'Tomster';
   await rerender();
 
   assert.dom('[data-test-name]').hasText('Tomster');
 });
 ```
 
-### Deprecation message
+### `settled()` vs `renderSettled()` vs `rerender()`
 
-When `this.set` or `this.get` is called on the test context, `@ember/test-helpers` should emit a deprecation warning of the form:
+- `settled()`, from `@ember/test-helpers`, waits on everything the test framework tracks: rendering, timers, requests, transitions, and test waiters.
+- `renderSettled()`, from `@ember/renderer`, waits only for tracked state consumed by the template to reach the DOM.
+- `rerender()`, from `@ember/test-helpers`, is a re-export of `renderSettled()`. No behavioral difference.
 
+Use `rerender()` after changing tracked state, `settled()` when the assertion depends on more than rendering, and both when the intermediate state is the point:
+
+```js
+state.isLoading = true;
+await rerender();
+assert.dom('[data-test-status]').hasText('Loading');
+
+await finishLoadingRequest();
+await settled();
+assert.dom('[data-test-status]').hasText('Loaded');
 ```
-Using `this.set` / `this.get` on the test context is deprecated.
-Please migrate to passing a component or template with a local tracked state object to `render()`,
-and use `rerender()` to await DOM updates.
-See https://deprecations.emberjs.com/id/test-context-get-set for details.
-```
 
-### Ecosystem considerations
+### Ecosystem
 
-- **`eslint-plugin-ember`** — A new lint rule (or an update to an existing rule) should be introduced to flag `this.set(…)` and `this.get(…)` calls inside `module(…)` / `test(…)` callbacks, guiding users toward the modern pattern.
-- **Blueprints** — Any existing blueprints in `ember-source` or `ember-cli` that generate rendering-test boilerplate using `this.set`/`this.get` should be updated to use the component-based pattern.
-- **Codemods** — A codemod (e.g. as part of `ember-codemods` or a standalone package) should be provided to automate the majority of the migration. Cases where the test drives complex state that touches multiple `this.set` calls will require manual attention, but simple single-value cases should be fully automatable.
+- An `eslint-plugin-ember` rule flagging the four methods in tests, so they are caught at lint time rather than at runtime.
+- Blueprints in `ember-source` and `ember-cli` that still emit `this.set`.
+- A codemod for the mechanical case: state set before `render`, never reassigned. Tests that reassign need `rerender()` placed correctly, and the codemod should skip what it cannot do safely.
+- `ember-source` and the addon ecosystem need migration passes of their own.
 
 ## How We Teach This
 
-The [Testing Components](https://guides.emberjs.com/release/testing/testing-components/) section of the official guides should be updated to:
+The guides should cover `rerender` versus `settled`, since `this.set`'s flush is what hid the distinction. A missing `await rerender()` will be the most common migration bug, and it presents as an assertion against stale DOM.
 
-1. Remove all examples that use `this.set` / `this.get`.
-2. Present the `render(component)` + `rerender()` pattern as the canonical approach.
-3. Include a brief migration note linking to the deprecation guide on `deprecations.emberjs.com`.
-
-The API docs for `@ember/test-helpers` should likewise be updated to mark `TestContext#set` and `TestContext#get` as deprecated and point to the alternatives.
-
-A deprecation guide entry should be added to `deprecations.emberjs.com` covering:
-
-- What was deprecated and why.
-- The before/after code examples above.
-- Guidance for the less common edge cases (e.g. deeply nested `this.set` calls, helper-heavy templates).
+API docs mark the four methods deprecated. The deprecation guide covers the before and after in both forms, and states that `this.owner`, `this.element`, `this.pauseTest`, and `this.resumeTest` are unaffected.
 
 ## Drawbacks
 
-- **Migration cost.** `this.set` and `this.get` have been in use since the beginning of Ember's testing story. Large codebases may have hundreds or thousands of test files that need updating. A well-maintained codemod should substantially reduce the burden.
-- **Loss of a simple entry point.** For simple tests, `this.set('value', x)` is arguably terser than introducing a tracked class. This cost is outweighed by the correctness and TypeScript benefits, but should be acknowledged in migration documentation.
+Mature codebases have thousands of these calls, and the codemod only covers tests that never reassign state, which are the least interesting ones.
+
+The replacement is more verbose for a small test, at least until `tracked()` for a single value ships. A backing class for one field is four lines where `this.set` was one.
+
+Deprecating `get` and `getProperties` is arguably scope creep, since they cause no rendering problems on their own.
 
 ## Alternatives
 
-- **Do nothing.** Leave `this.set` / `this.get` available indefinitely. This leaves the inconsistency and TypeScript friction in place and means RFC #785's goal of a cleaner test model is never fully realized.
-- **Hard removal without a deprecation period.** Would be a breaking change and is not appropriate given how widespread the pattern is.
+- Do nothing, and leave every `this.set` for whoever lands the render-aware scheduler.
+- Deprecate everything except `this.owner`. Considered first on the PR, but `pauseTest` and `resumeTest` are load-bearing for debugging, and stashing properties on `this` is a common pattern.
+- Deprecate only `set` and `setProperties`, the two that are `run()`-wrapped. Rejected above.
+- Remove without a deprecation period. Not proportionate to how widespread the pattern is.
 
 ## Unresolved questions
 
-- What is the appropriate Ember version for the deprecation to land in, and what is the target removal version (i.e. the next major)?
-- Should the deprecation be opt-in (gated by a flag in `@ember/test-helpers` config) initially, to allow teams to migrate on their own schedule, before becoming unconditional?
-- Should `this.owner` and other non-`get`/`set` test-context properties remain unaffected? (Yes — this RFC is scoped only to `get` and `set`.)
+None.
