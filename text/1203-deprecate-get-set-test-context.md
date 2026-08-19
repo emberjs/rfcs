@@ -22,16 +22,6 @@ Deprecate the four data-manipulation methods that `@ember/test-helpers` installs
 
 [RFC #785](https://github.com/emberjs/rfcs/blob/main/text/0785-remove-set-get-in-tests.md) shipped replacements for these methods. We believe that rendering tests should be using the replacements: `render` accepting a component, and `rerender`, landed in `@ember/test-helpers` 2.8.0, backed by `renderSettled` from `@ember/renderer` in `ember-source` 4.5.0.
 
-The reasons from #785 still hold:
-
-- `get` and `set` are not how application code is written after Octane.
-- Template state on `this` forces TypeScript users to widen `TestContext` per module, and those widenings then appear to apply to every test in it.
-- A test context that is both harness and template backing object is hard to teach.
-
-One reason is newer. `set` and `setProperties` are `run()`-wrapped, so each call synchronously flushes the DOM, where an application coalesces updates into a single render pass. That flush is also what a render-aware scheduler ([RFC #957](https://github.com/emberjs/rfcs/pull/957)) cannot preserve. This deprecation is not a prerequisite for that work, since tests avoiding these methods can adopt an async scheduler today, but every remaining `this.set` is a test that will need rewriting when the scheduler lands, and a migration guide is a better place to do that than a scheduler change.
-
-`get` and `getProperties` cause none of this. They are included because they exist to read back what `set` wrote.
-
 ## Transition Path
 
 
