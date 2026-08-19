@@ -117,8 +117,6 @@ assert.dom('[data-test-status]').hasText('Loaded');
 
 ## How We Teach This
 
-[Testing Components](https://guides.emberjs.com/release/testing/testing-components/) teaches `this.set` as the way to get data into a rendering test, so it needs rewriting rather than patching. #785 confined the replacement to a TypeScript-specific subsection because passing arguments was awkward without `<template>`; that is no longer true, and it should now be taught as the default.
-
 The guides should cover `rerender` versus `settled`, since `this.set`'s flush is what hid the distinction. A missing `await rerender()` will be the most common migration bug, and it presents as an assertion against stale DOM.
 
 API docs mark the four methods deprecated. The deprecation guide covers the before and after in both forms, and states that `this.owner`, `this.element`, `this.pauseTest`, and `this.resumeTest` are unaffected.
