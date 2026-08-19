@@ -20,7 +20,7 @@ Deprecate the four data-manipulation methods that `@ember/test-helpers` installs
 
 ## Motivation
 
-[RFC #785](https://github.com/emberjs/rfcs/blob/main/text/0785-remove-set-get-in-tests.md) argued these methods should go and shipped the replacements, but never set an end date. This RFC sets one. `render` accepting a component, and `rerender`, landed in `@ember/test-helpers` 2.8.0, backed by `renderSettled` from `@ember/renderer` in `ember-source` 4.5.0.
+[RFC #785](https://github.com/emberjs/rfcs/blob/main/text/0785-remove-set-get-in-tests.md) shipped replacements for these methods. We believe that rendering tests should be using the replacements: `render` accepting a component, and `rerender`, landed in `@ember/test-helpers` 2.8.0, backed by `renderSettled` from `@ember/renderer` in `ember-source` 4.5.0.
 
 The reasons from #785 still hold:
 
