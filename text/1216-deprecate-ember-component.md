@@ -1,5 +1,5 @@
 ---
-stage: accepted
+stage: ready-for-release
 start-date: 2026-07-27T00:00:00.000Z
 release-date:
 release-versions:
@@ -8,7 +8,7 @@ teams:
   - learning
   - typescript
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1216
+  accepted: 'https://github.com/emberjs/rfcs/pull/1216'
 project-link:
 ---
 
