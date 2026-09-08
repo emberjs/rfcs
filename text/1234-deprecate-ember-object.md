@@ -62,6 +62,10 @@ At `ember-source` v9, `EmberObject` is removed fully along with the feature flag
 > This includes `@computed`, as `@computed` is part of the "Ember Object Model" of reactivity.
 
 
+Internally, implementation would likely be similar to how Mixins were initially deprecated -- copied to an "internal" file, and then the "public" version of `EmberObject` would override `init`, and provide the deprecations. 
+
+On the internal copy of `EmberObject`, we deprecate all the methods (`get`, / `set` / etc), so that the deprecations flow through to other framework classes such as `Route`, `Controller`, `Service`, etc.
+
 ## How We Teach This
 
 > Would the acceptance of this proposal mean the Ember guides must be
