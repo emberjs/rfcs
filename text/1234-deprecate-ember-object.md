@@ -11,7 +11,7 @@ teams: # delete teams that aren't relevant
   - steering
   - typescript
 prs:
-  accepted: # update this to the PR that you propose your RFC in
+  accepted: https://github.com/emberjs/rfcs/pull/1234 
 project-link:
 ---
 
@@ -28,38 +28,39 @@ prs:
 project-link: Leave as is
 -->
 
-<-- Replace "RFC title" with the title of your RFC -->
-# RFC Title 
+# Deprecate EmberObject 
 
 ## Summary
 
-> One paragraph explanation of the deprecation.
+Deprecates `EmberObject` in a way that is initually opt-in, so people can more gradually prepare their codebase for the removal of `EmberObject`. 
+
 
 ## Motivation
 
-> Why are we doing this? What are the problems with the deprecated feature?
-What is the replacement functionality?
+`EmberObject` has had heavy use in the early days of Ember (pre-JavaScript having classes), and since classes shipped in 2015, the need for `EmberObject` has greatly diminished. 
+
+Removing `EmberObject` is one of the last steps in coercing codebases to be plain modern JavaScript.
 
 ## Transition Path
 
-> This is the bulk of the RFC. Explain the use-cases that deprecated functionality
-covers, and for each use-case, describe the transition path.
-Describe it in enough detail for someone who uses the deprecated functionality
-to understand, for someone to write the deprecation guide, and for someone
-familiar with the implementation to implement.
+Unlike previous deprecations, this is targeting Ember 9, and will have a feature flag that removes all behavior related to `EmberObject`. This does require a lot of internal implementation in `ember-source`, but is needed anyway for the removal of `EmberObject`, ultimately.
 
-> It can be helpful to write the deprecation guide as part of this section. Published deprecation
-> guides can be found at https://deprecations.emberjs.com/.
+This will be the first deprecation that users will be able to preview the removal off.
 
-> Please keep in mind any implications within the Ember ecosystem, such as:
-> - Lint rules (ember-template-lint, eslint-plugin-ember) that should be added, modified or removed
-> - Features that are replaced or made obsolete by this feature and should eventually be deprecated
-> - Ember Inspector and debuggability
-> - Server-side Rendering
-> - Ember Engines
-> - The Addon Ecosystem
-> - IDE Support
-> - Blueprints that should be added or modified
+Leading up to v8, the feature flag will be "off":
+- deprecation logged for all EmberObject APIs (even thoose acessible through framework objects (get/set/etc))
+- EmberObject is still usable
+
+With the release of v8, and leading up to v9, the feature flag will be "on" by default:
+- EmberObject (and related APIs) is/are not usable, due to the feature flag removing all of the implementation
+- if users wish, the feature flag can be flipped back off, which brings back the EmberObject behavior along with the deprecations
+
+At `ember-source` v9, `EmberObject` is removed fully along with the feature flag.
+
+
+> [!NOTE]
+> This includes `@computed`, as `@computed` is part of the "Ember Object Model" of reactivity.
+
 
 ## How We Teach This
 
@@ -76,16 +77,14 @@ users?
 
 ## Drawbacks
 
-> Why should we *not* do this? Please consider the impact on teaching Ember,
-on the integration of this feature with other existing and planned features,
-on the impact of the API churn on existing apps, etc.
-There are tradeoffs to choosing any path, please attempt to identify them here.
+keeping EmberObject is a drawback, because of the dozens of KB that come along with it.
+
+all codebases with old code probably have some usage of EmberObject remaining, so they need to migrate.
 
 ## Alternatives
 
-> What other designs have been considered? What is the impact of not doing this?
+- do nothing
 
 ## Unresolved questions
 
-> Optional, but suggested for first drafts. What parts of the design are still
-TBD?
+n/a
