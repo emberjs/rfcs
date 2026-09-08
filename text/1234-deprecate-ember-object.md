@@ -48,12 +48,12 @@ Unlike previous deprecations, this is targeting Ember 9, and will have a feature
 This will be the first deprecation that users will be able to preview the removal off.
 
 Leading up to v8, the feature flag will be "off":
-- deprecation logged for all EmberObject APIs (even thoose acessible through framework objects (get/set/etc))
-- EmberObject is still usable
+- deprecation logged for not having this feature flag "on" 
+- EmberObject and all related APIs are still usable
 
 With the release of v8, and leading up to v9, the feature flag will be "on" by default:
-- EmberObject (and related APIs) is/are not usable, due to the feature flag removing all of the implementation
-- if users wish, the feature flag can be flipped back off, which brings back the EmberObject behavior along with the deprecations
+- EmberObject and related APIs are not usable, due to the feature flag removing all of the implementation
+- if users wish, the feature flag can be flipped back off, which brings back the EmberObject behavior along with the deprecation
 
 At `ember-source` v9, `EmberObject` is removed fully along with the feature flag.
 
