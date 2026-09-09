@@ -264,8 +264,6 @@ When the `classicInterop` capability is set to `true` the Route Manager will hav
 interface RouteManagerWithClassicInterop<
   Bucket extends RouteStateBucket = RouteStateBucket,
 > extends RouteManager<Bucket> {
-  getRoute(bucket: Bucket): unknown;
-
   willEnter(bucket: Bucket, state: ClassicWillEnterState): void;
   enter(bucket: Bucket, state: ClassicEnterState): Promise<unknown>;
   didEnter(bucket: Bucket, state: ClassicDidEnterState): void;
@@ -324,6 +322,13 @@ interface RouteManagerWithClassicInterop<
     context: unknown,
     transition: Transition,
   ): void;
+
+  // Route's actions: { [key:string] () => {} }. Handles generic user-defined @actions.
+  // Effectively `Route.send` is what invokes it
+  invokeAction(bucket: Bucket, name: string, args: unknown[]): boolean | undefined;
+
+  // Effectively reads the Route.inaccessibleByURL
+  isInaccessibleByURL(bucket: Bucket): boolean;
 
   // Route's actions: { `error`, `loading` } triggers and handlers
   triggerLoadingEvent(bucket: Bucket, transition: Transition): void;
