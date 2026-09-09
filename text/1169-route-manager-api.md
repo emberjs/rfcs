@@ -45,6 +45,8 @@ This RFC is **not** intended to describe APIs that Ember app developers would ge
 
 ## Detailed design
 
+Each of the following sections details certain parts of the RouteManager interface individually. To see the full interface you can check the [Appendix section below](#full-route-manager-api).
+
 ### Route Manager basics
 
 A Route Manager always has `capabilities`, `createRoute` and a `getDestroyable` method.
@@ -54,16 +56,6 @@ interface RouteManager<Bucket extends RouteStateBucket = RouteStateBucket> {
   capabilities: RouteCapabilities;
   createRoute(factory: object, args: CreateRouteArgs): Bucket;
   getDestroyable(bucket: Bucket): object | null;
-
-  willEnter(bucket: Bucket, state: WillEnterState): void;
-  enter(bucket: Bucket, state: EnterState): Promise<unknown>;
-  didEnter(bucket: Bucket, state: DidEnterState): void;
-  willExit(bucket: Bucket, state: WillExitState): void;
-  exit(bucket: Bucket, state?: ExitState): void;
-  didExit(bucket: Bucket, state: DidExitState): void;
-
-  getRouteWrapper(): object;
-  getInvokable(bucket: Bucket): Promise<object>;
 }
 
 interface CreateRouteArgs {
@@ -247,7 +239,7 @@ Note: this is the full list of lifecycle events in a single transition between '
 
 This sequence diagram only specifies the order of the hooks that are called as part of the Route Manager API, the dotted lines from the Router to the Browser are there for illustrative purposes only and are not specified as part of this RFC. Individual Route managers might express substates (such as loading states) as part of their own APIs, but they would have to do that within the constraints of the Route Manager API hooks.
 
-In the above diagram the `enter()` is called together with the `getInvokable()` for a given route. Both are executed at the same time and are required to resolve before route info is marked `resolved`.
+In the above diagram the `enter()` is called together with the `getInvokable()` for a given route. Both are executed at the same time and are required to resolve before the route is rendered.
 
 ### Capabilities
 
@@ -423,7 +415,37 @@ It's worth noting that the promise returned by the `getInvokable()` is never exp
 
 None beyond implementation details.
 
-## Addenda
+## Appendix
+
+### Full Route Manager API
+
+The above sections detail each part of the Route Manager interface individually but we have included the full interface here for easy reference: 
+
+```typescript
+interface RouteManager<Bucket extends RouteStateBucket = RouteStateBucket> {
+  capabilities: RouteCapabilities;
+  createRoute(factory: object, args: CreateRouteArgs): Bucket;
+  getDestroyable(bucket: Bucket): object | null;
+
+  willEnter(bucket: Bucket, state: WillEnterState): void;
+  enter(bucket: Bucket, state: EnterState): Promise<unknown>;
+  didEnter(bucket: Bucket, state: DidEnterState): void;
+  willExit(bucket: Bucket, state: WillExitState): void;
+  exit(bucket: Bucket, state?: ExitState): void;
+  didExit(bucket: Bucket, state: DidExitState): void;
+
+  getRouteWrapper(): object;
+  getInvokable(bucket: Bucket): Promise<object>;
+}
+
+interface CreateRouteArgs {
+  // By convention this is currently the dot separated route path.
+  name: typeof RouteInfo.name;
+}
+```
+
+Note this does not list the full set of hooks that are available if you are implementing the `classicInterop` capability, you can [read more about the extra hooks above](#classic-router-interoperability).
+
 
 ### #1 What Classic Routes look like implemented with the Route Manager API
 
