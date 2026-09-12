@@ -1,6 +1,6 @@
 ---
 stage: accepted
-start-date:
+start-date: 2026-10-08T00:00:00.000Z
 release-date:
 release-versions:
 teams: # delete teams that aren't relevant
