@@ -49,7 +49,7 @@ This will be the first deprecation that users will be able to preview the remova
 
 Leading up to v8, the feature flag will be "off":
 - deprecation logged for not having this feature flag "on" 
-- EmberObject and all related APIs are still usable
+- EmberObject and all related APIs are still usable (unless the feature flag is "on")
 
 With the release of v8, and leading up to v9, the feature flag will be "on" by default:
 - EmberObject and related APIs are not usable, due to the feature flag removing all of the implementation
@@ -68,16 +68,246 @@ On the internal copy of `EmberObject`, we deprecate all the methods (`get`, / `s
 
 ## How We Teach This
 
-> Would the acceptance of this proposal mean the Ember guides must be
-re-organized or altered? Does it change how Ember is taught to new users
-at any level?
-Does it mean we need to put effort into highlighting the replacement
-functionality more? What should we do about documentation, in the guides
-related to this feature?
-How should this deprecation be introduced and explained to existing Ember
-users?
+The guides have not taught `EmberObject` since Octane. The work is:
 
-> Keep in mind the variety of learning materials: API docs, guides, blog posts, tutorials, etc.
+- publish the deprecation guide below at [deprecations.emberjs.com](https://deprecations.emberjs.com)
+- mark `EmberObject`, `@computed`, and the `@ember/object/computed` macros deprecated in the API docs, linking to the guide
+- link the [Octane vs Classic cheat sheet](https://guides.emberjs.com/release/upgrading/current-edition/) from the deprecation message; it already has the before/afters
+
+### Deprecation Guide
+
+The deprecation fires once per app boot while the feature flag is off. Turning the flag on removes `EmberObject` from the build, which is how you confirm the migration is complete.
+
+```js
+deprecate(message, false, {
+  id: 'deprecate-ember-object',
+  until: '9.0.0',
+  for: 'ember-source',
+  url: 'https://deprecations.emberjs.com/id/deprecate-ember-object',
+  since: { available: '7.x', enabled: '7.x' }, 
+});
+```
+
+#### What is deprecated
+
+|   | API | status |
+| - | --- | ------ |
+| 🌐 | `EmberObject` (default export of `@ember/object`) | **deprecated** |
+| 🌐 | `this.get` / `this.set` / `setProperties` / `getProperties` / `incrementProperty` / `toggleProperty` / `notifyPropertyChange` on any class that extends `EmberObject`, including `Route`, `Controller`, `Service` | **deprecated** |
+| 🌐 | `init`, `willDestroy`, `destroy`, `isDestroying`, `isDestroyed` as `EmberObject` methods | **deprecated** |
+| 🌐 | `reopen` / `reopenClass` | **deprecated** |
+| 🌐 | `@computed` and the `@ember/object/computed` macros | **deprecated** |
+
+Related deprecations with their own guides:
+
+- [`.extend()` / `.create()`](https://rfcs.emberjs.com/id/1117-deprecate-classic-classes)
+- [Mixins](https://rfcs.emberjs.com/id/1116-deprecate-mixins)
+- [observers](https://github.com/emberjs/rfcs/pull/1115)
+- [`EmberArray` / `A()`](https://rfcs.emberjs.com/id/1114-deprecate-ember-array)
+- [`ObjectProxy` / `ArrayProxy`](https://rfcs.emberjs.com/id/1112-deprecate-proxy)
+- [`Evented`](https://rfcs.emberjs.com/id/1111-deprecate-evented-mixin)
+- [`@ember/component`](https://rfcs.emberjs.com/id/1216-deprecate-ember-component)
+
+#### Migration
+
+<details><summary>Your own class extends <code>EmberObject</code></summary>
+
+```js
+// before
+import EmberObject from '@ember/object';
+
+export default class Cart extends EmberObject {
+  items = [];
+
+  init() {
+    super.init(...arguments);
+    this.total = 0;
+  }
+}
+
+let cart = Cart.create({ currency: 'USD' });
+```
+
+```js
+// after
+export default class Cart {
+  items = [];
+  total = 0;
+
+  constructor({ currency }) {
+    this.currency = currency;
+  }
+}
+
+let cart = new Cart({ currency: 'USD' });
+```
+
+`create()` assigned every key of its argument onto the instance. A constructor receives the same object and assigns what it needs.
+
+</details>
+
+<details><summary><code>this.get</code> / <code>this.set</code></summary>
+
+```js
+// before
+this.set('count', this.get('count') + 1);
+this.setProperties({ name, email });
+let { name, email } = this.getProperties('name', 'email');
+this.incrementProperty('count');
+this.toggleProperty('isOpen');
+this.get('user.address.city');
+```
+
+```js
+// after
+this.count = this.count + 1;
+Object.assign(this, { name, email });
+let { name, email } = this;
+this.count++;
+this.isOpen = !this.isOpen;
+this.user?.address?.city;
+```
+
+Assignment only results in a rerender when the property is `@tracked`. [ember-tracked-properties-codemod](https://github.com/ember-codemods/ember-tracked-properties-codemod) adds `@tracked` to properties that `set` wrote to. The `ember/no-get` lint rule autofixes the reads.
+
+`notifyPropertyChange` has no replacement. With `@tracked`, the write is the notification.
+
+</details>
+
+<details><summary><code>@computed</code></summary>
+
+```js
+// before
+import { computed } from '@ember/object';
+import { alias, filterBy, sort } from '@ember/object/computed';
+
+export default class Cart extends EmberObject {
+  @computed('items.@each.price')
+  get total() {
+    return this.items.reduce((sum, item) => sum + item.price, 0);
+  }
+
+  @alias('user.name') owner;
+  @filterBy('items', 'isGift', true) gifts;
+  @sort('items', 'sortKeys') sorted;
+}
+```
+
+```js
+// after
+import { cached } from '@glimmer/tracking';
+
+export default class Cart {
+  @cached
+  get total() {
+    return this.items.reduce((sum, item) => sum + item.price, 0);
+  }
+
+  get owner() { return this.user.name; }
+  get gifts() { return this.items.filter((item) => item.isGift); }
+  get sorted() { return this.items.toSorted(byKeys(this.sortKeys)); }
+}
+```
+
+Dependent keys go away. A getter re-runs when any `@tracked` value it read changes. Use `@cached` only when the getter is expensive.
+
+</details>
+
+<details><summary><code>willDestroy</code> / <code>destroy()</code></summary>
+
+```js
+// before
+export default class Poller extends EmberObject {
+  init() {
+    super.init(...arguments);
+    this.timer = setInterval(this.tick, 1000);
+  }
+
+  willDestroy() {
+    clearInterval(this.timer);
+    super.willDestroy(...arguments);
+  }
+}
+
+poller.destroy();
+```
+
+```js
+// after
+import { registerDestructor, destroy } from '@ember/destroyable';
+
+export default class Poller {
+  constructor() {
+    this.timer = setInterval(this.tick, 1000);
+    registerDestructor(this, () => clearInterval(this.timer));
+  }
+}
+
+destroy(poller);
+```
+
+`isDestroying` and `isDestroyed` are also exported from `@ember/destroyable`. `Route`, `Controller`, and `Service` keep `willDestroy`.
+
+</details>
+
+<details><summary><code>Route</code>, <code>Controller</code>, <code>Service</code></summary>
+
+Only the `EmberObject` methods on these classes are deprecated:
+
+```js
+// before
+import Service from '@ember/service';
+import { computed } from '@ember/object';
+
+export default class Session extends Service {
+  init() {
+    super.init(...arguments);
+    this.set('user', null);
+  }
+
+  @computed('user')
+  get isLoggedIn() {
+    return Boolean(this.get('user'));
+  }
+}
+```
+
+```js
+// after
+import Service from '@ember/service';
+import { tracked } from '@glimmer/tracking';
+
+export default class Session extends Service {
+  @tracked user = null;
+
+  get isLoggedIn() {
+    return Boolean(this.user);
+  }
+}
+```
+
+</details>
+
+<details><summary><code>reopen</code> / <code>reopenClass</code></summary>
+
+```js
+// before
+Cart.reopen({ currency: 'USD' });
+Cart.reopenClass({ fromJSON(json) { /* ... */ } });
+```
+
+```js
+// after
+export default class Cart {
+  currency = 'USD';
+
+  static fromJSON(json) { /* ... */ }
+}
+```
+
+If the class is not yours, you may use the Presenter pattern for wrapping/enriching the source data. Addons that expected consumers to `reopen` their classes need to expose a configuration API instead.
+
+</details>
 
 ## Drawbacks
 
