@@ -32,7 +32,7 @@ project-link: Leave as is
 
 ## Summary
 
-Deprecates `EmberObject` in a way that is initually opt-in, so people can more gradually prepare their codebase for the removal of `EmberObject`. 
+Deprecates `EmberObject` in a way that is initially opt-in, so people can more gradually prepare their codebase for the removal of `EmberObject`. 
 
 
 ## Motivation
