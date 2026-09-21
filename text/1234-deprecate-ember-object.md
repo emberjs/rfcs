@@ -45,15 +45,23 @@ Removing `EmberObject` is one of the last steps in coercing codebases to be plai
 
 Unlike previous deprecations, this is targeting Ember 9, and will have a feature flag that removes all behavior related to `EmberObject`. This does require a lot of internal implementation in `ember-source`, but is needed anyway for the removal of `EmberObject`, ultimately.
 
-This will be the first deprecation that users will be able to preview the removal off.
+This will be the first deprecation that users will be able to preview the removal of.
 
-Leading up to v8, the feature flag will be "off":
-- deprecation logged for not having this feature flag "on" 
-- EmberObject and all related APIs are still usable (unless the feature flag is "on")
+Leading up to v8, the feature flag will be:
+  - for existing apps: "off" (someone who hasn't updated their `optional-features.json`):
+    - deprecation logged for not having this feature flag "on"
+    - EmberObject and all related APIs are still usable (unless the feature flag is "on")
+  - for the blueprint: "on" (the setting in `optional-features.json` is set to `true`:
+    - new apps cannot throw deprecations, so new apps get the benefits of this feature flag being "on" right away
+   
+When the feature flag is "on":
+  - each API-to-be-removed will throw an error (until we ship the build-time feature-stripping for all the EmberObject and related code)
+  - ideally, setting the feature flag to "on" _removes_ all of the implementation for EmberObject, though this is not a blocker for the deprecation's behavior
+  - if we aren't able to implement removal in the initial release, we will implement the removal in a future minor release
 
 With the release of v8, and leading up to v9, the feature flag will be "on" by default:
-- EmberObject and related APIs are not usable, due to the feature flag removing all of the implementation
 - if users wish, the feature flag can be flipped back off, which brings back the EmberObject behavior along with the deprecation
+- when no `optional-features.json` is present, or the `optional-features.json` does not contain the feature flag for this deprecation, the default value is assumed to be "on"
 
 At `ember-source` v9, `EmberObject` is removed fully along with the feature flag.
 
