@@ -84,7 +84,8 @@ The guides have not taught `EmberObject` since Octane. The work is:
 
 ### Deprecation Guide
 
-The deprecation fires once per app boot while the feature flag is off. 
+> [!NOTE]
+> We are aware that this could be a very noisy deprecation, and are investigating ways to reduce that noise in a digestible way -- this _could_ mean only logging the deprecation once, for example - but would then mean people can only resolve one violation at a time after turning on the feature flag.
 
 ```js
 deprecate(message, false, {
