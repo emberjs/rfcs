@@ -118,6 +118,8 @@ Related deprecations with their own guides:
 
 #### Migration
 
+These are only small examples. For a full guide, see the [Octane migration guides](https://guides.emberjs.com/v5.12.0/upgrading/current-edition/).
+
 <details><summary>Your own class extends <code>EmberObject</code></summary>
 
 ```js
