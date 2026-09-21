@@ -84,7 +84,7 @@ The guides have not taught `EmberObject` since Octane. The work is:
 
 ### Deprecation Guide
 
-The deprecation fires once per app boot while the feature flag is off. Turning the flag on removes `EmberObject` from the build, which is how you confirm the migration is complete.
+The deprecation fires once per app boot while the feature flag is off. 
 
 ```js
 deprecate(message, false, {
