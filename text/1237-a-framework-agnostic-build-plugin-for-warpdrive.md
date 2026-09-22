@@ -10,12 +10,12 @@ release-versions:
 teams:
   - data
 prs:
-  accepted:
+  accepted: https://github.com/emberjs/rfcs/pull/1237
 project-link:
 suite:
 ---
 
-# WarpDrive: A Framework-Agnostic Build Plugin for WarpDrive
+# A Framework-Agnostic Build Plugin for WarpDrive
 
 ## Summary
 
