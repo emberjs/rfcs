@@ -10,12 +10,12 @@ release-versions:
 teams:
   - data
 prs:
-  accepted:
+  accepted: https://github.com/emberjs/rfcs/pull/1236
 project-link:
 suite:
 ---
 
-# WarpDrive: Transactional Notification Delivery and Reactive Request State
+# Transactional Notification Delivery and Reactive Request State
 
 ## Summary
 
