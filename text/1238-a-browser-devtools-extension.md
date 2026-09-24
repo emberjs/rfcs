@@ -7,12 +7,12 @@ teams:
   - data
   - framework
 prs:
-  accepted:
+  accepted: https://github.com/emberjs/rfcs/pull/1238
 project-link:
 suite:
 ---
 
-# WarpDrive: A Browser Devtools Extension
+# A Browser Devtools Extension
 
 ## Summary
 
