@@ -6,12 +6,12 @@ release-versions:
 teams:
   - data
 prs:
-  accepted:
+  accepted: https://github.com/emberjs/rfcs/pull/1241
 project-link:
 suite:
 ---
 
-# WarpDrive: Pointer and Reference Fields
+# Pointer and Reference Fields
 
 ## Summary
 
