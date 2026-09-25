@@ -7,12 +7,12 @@ teams:
   - data
   - learning
 prs:
-  accepted:
+  accepted: https://github.com/emberjs/rfcs/pull/1240
 project-link:
 suite:
 ---
 
-# WarpDrive: Deprecating the Legacy ember-data Packages and @warp-drive/core-types
+# Deprecating the Legacy ember-data Packages and @warp-drive/core-types
 
 ## Summary
 
