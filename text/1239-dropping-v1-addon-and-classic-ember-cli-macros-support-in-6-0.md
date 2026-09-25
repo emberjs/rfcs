@@ -7,12 +7,12 @@ teams:
   - data
   - cli
 prs:
-  accepted:
+  accepted: https://github.com/emberjs/rfcs/pull/1239
 project-link:
 suite:
 ---
 
-# WarpDrive: Dropping V1 Addon and Classic ember-cli Macros Support in 6.0
+# Dropping V1 Addon and Classic ember-cli Macros Support in 6.0
 
 ## Summary
 
