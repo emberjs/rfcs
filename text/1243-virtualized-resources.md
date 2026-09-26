@@ -6,12 +6,12 @@ release-versions:
 teams:
   - data
 prs:
-  accepted:
+  accepted: https://github.com/emberjs/rfcs/pull/1243
 project-link:
 suite:
 ---
 
-# WarpDrive: Virtualized Resources
+# Virtualized Resources
 
 ## Summary
 
