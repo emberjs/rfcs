@@ -7,12 +7,12 @@ teams:
   - data
   - learning
 prs:
-  accepted:
+  accepted: https://github.com/emberjs/rfcs/pull/1245
 project-link:
 suite:
 ---
 
-# WarpDrive: Deprecating Subscription-Based Request State
+# Deprecating Subscription-Based Request State
 
 ## Summary
 
