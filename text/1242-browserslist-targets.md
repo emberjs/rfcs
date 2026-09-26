@@ -7,7 +7,7 @@ teams:
   - cli
   - learning
 prs:
-  accepted:
+  accepted: https://github.com/emberjs/rfcs/pull/1242
 project-link:
 suite:
 ---
