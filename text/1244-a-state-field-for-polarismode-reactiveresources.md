@@ -8,12 +8,12 @@ teams:
   - learning
   - typescript
 prs:
-  accepted:
+  accepted: https://github.com/emberjs/rfcs/pull/1244
 project-link:
 suite:
 ---
 
-# WarpDrive: A $state Field for PolarisMode ReactiveResources
+# A `$state` Field for PolarisMode ReactiveResources
 
 ## Summary
 
