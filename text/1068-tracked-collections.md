@@ -228,29 +228,6 @@ const addTo = (obj) => obj[Math.random()] = Math.random();
 </template>
 ```
 
-### `@ember/reactive`
-
-The process of making libraries support wide-ranges of `ember-source` is known. `ember-source` has recently been adapting its release process to use [release-plan][gh-release-plan], so that the [ember.js][gh-emberjs] repo can publish multiple packages seemslessly, rather than always bundle everything under one package.
-
-With those new release capabilities within the [ember.js][gh-emberjs] repo, Instead of a polyfill for older versions of ember, `@ember/reactive`, the package (at the time of this RFC, does not exist, but would have the two exported utilities from it), would be published as its own `type=module` package _and_ included with ember-source, as to not add more dependencies to the package.json going forward.
-
-[gh-release-plan]: https://github.com/embroider-build/release-plan
-[gh-emberjs]: https://github.com/emberjs/ember.js/
-
-Why `type=module`?
-
-This is a requirement for some optimization features of packages (webpack / vite), such as _proper_ treeshaking -- without `type=module`, the best optimization we can get is "pay for only what you import". For large projects this isn't so much of a problem, but for small projects (or highly optimized projects), the impact to network transfer/parse/eval is measurable. This RFC is also proposing that `@ember/reactive` be _the_ place for all our ecosystem's reactivity utilities will end up once they've been proven out, tested, and desire for standardization is seen.
-
-For example, other future exports from `@ember/reactive` (in future RFCs), may include:
-- Resource
-- AsyncResource
-- TrackedPromise
-- localCopy
-- certain [window properties](https://svelte.dev/docs/svelte/svelte-reactivity-window)
-- ...and more
-
-without the static analysis guarantees of `type=module`, every consumer of `@ember/reactive` would always have all of these exports in their build.
-For some utilities, we can place them under sub-path-exports, such as `@ember/reactive/window`, for window-specific reactive properties, but the exact specifics of each of these can be hashed out in their individual RFCs.
 
 #### Why are the collections under `@ember/reactive/collections`?
 
