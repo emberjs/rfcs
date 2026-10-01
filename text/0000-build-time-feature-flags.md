@@ -225,28 +225,20 @@ A deprecation with no flag in its RFC gets no `EMBER_DEPRECATION_*` constant.
 
 The guides page for [feature flags](https://guides.emberjs.com/release/configuring-ember/feature-flags/) and the page for optional features change to show `.env` and `define` first, with `config/environment.js` as the classic option.
 
-The message for app developers is short: set flags where you set other build config, and Ember ships less code.
-
-The deprecation guide for each sveltable deprecation adds one line with the name of its `EMBER_DEPRECATION_*` flag.
+The deprecation guides for each sveltable deprecation should document which enviranment variable to set in order to remove the deprecated code.
 
 ## Drawbacks
 
 - Apps that set `window.EmberENV` outside of `config/environment.js` must move that config into the build. The error in development builds finds each case, but it is still a change for those apps.
-- A flag cannot change at runtime. A test suite that toggles a flag needs one build per value, the same way the ember.js CI runs `ALL_DEPRECATIONS_ENABLED` today.
-- Every supported build must define the `EMBER_*` values. A build that does not define them silently falls back to defaults.
+- A flag cannot change at runtime. A test suite that toggles a flag needs one build per value, the same way the ember.js CI runs `ALL_DEPRECATIONS_ENABLED` today (using `define`, you can bring back EmberENV / runtime behavior, however).
+- Every supported build must define the `EMBER_*` values if those builds want non-defaults. 
 - Without a bundler, there is no way to set a flag.
-- Dead-code removal depends on a rule that a type checker does not enforce: code reads the `const`, not `ENV.X`. The ember.js repo needs a test that builds `v2-app-hello-world-template` with flags set and checks the output for the removed code.
-- A sveltable deprecation flag lets an app remove code that an addon still calls. The app finds out at runtime, not at build time.
 
 ## Alternatives
 
 - `@embroider/macros` (`getOwnConfig`, `macroCondition`). This works today, but it is Ember-specific and requires Babel. `import.meta.env` is the ecosystem standard, and every modern bundler supports it.
-- `process.env.EMBER_*`. Older convention, and it throws in the browser without a bundler. `import.meta.env?.` does not throw.
-- Keep `window.EmberENV` as a runtime fallback: `import.meta.env?.EMBER_X ?? EmberENV.X ?? <default>`. No app loses config, but each flag then has two sources of truth. Any flag that the build does not set keeps both branches, and the Inspector and the debugger can show a different value than the build config.
 - Do nothing. Apps keep paying for code paths that they turned off.
 
 ## Unresolved questions
 
-- Vite 7 and Vite 8 replace the optional-chained form `import.meta.env?.X`. Does webpack do the same?
-- Does `ember-auto-import` define `import.meta.env` today, or does it need a new release first?
-- Is an error in development builds enough for apps that set `window.EmberENV` at runtime, or does that case need a deprecation cycle that ends in the next major?
+n/a
