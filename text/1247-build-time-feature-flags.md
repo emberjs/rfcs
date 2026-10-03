@@ -18,20 +18,22 @@ suite:
 
 ## Summary
 
-`ember-source` reads every flag from `import.meta.env?.EMBER_*`, and from nowhere else:
+`ember-source` reads each flag with the literal expression `import.meta.env?.EMBER_*`:
 
 ```js
-// @ember/-internals/environment
-export const DEFAULT_ASYNC_OBSERVERS = import.meta.env?.EMBER_DEFAULT_ASYNC_OBSERVERS ?? true;
+if (import.meta.env?.EMBER_SYNC_OBSERVERS) {
+  // sync observer path
+}
 ```
 
-The bundler replaces the expression with a literal.
-Every read of `DEFAULT_ASYNC_OBSERVERS` then folds to a constant, and the minifier removes the code that the app does not use.
-This covers canary features, optional features, `EmberENV`, and deprecations that can remove their code early.
+The bundler replaces the expression with a literal, and the minifier removes the branch.
+Each flag defaults to falsy, so an app that sets nothing gets the default behavior.
 
-Existing config files keep working, because the build reads them and turns them into `import.meta.env` values.
+`EmberENV`, `config/environment.js`, and optional features work the same until v8.
+`EMBER_DROP_LEGACY_CONFIG_ENV` removes that code now.
 Minimal apps with no config files get a way to set flags for the first time.
-The runtime global `window.EmberENV` stops being a source of flags.
+
+A separate RFC will be needed for deprecations of the old styles of flagging.
 
 ## Motivation
 
@@ -39,49 +41,39 @@ Today, all of Ember's flags are read at runtime from `window.EmberENV`, so every
 - an app that turned on `default-async-observers` years ago still ships the sync observer path
 - an app that turns off `EmberObject` ([RFC 1234](./1234-deprecate-ember-object.md)) would still ship `EmberObject`
 
-A build-time value with a runtime fallback (`import.meta.env?.X ?? EmberENV.X`) does not fix this, because any flag that the build does not set keeps both branches.
-Dead-code removal requires one source of truth.
+While `ember-source` reads `EmberENV` at runtime, the build cannot remove either branch.
+`EMBER_DROP_LEGACY_CONFIG_ENV` removes that read, so `import.meta.env` becomes the one source of truth.
 
 Minimal apps, such as [`v2-app-hello-world-template`](https://github.com/emberjs/ember.js/tree/main/smoke-tests/v2-app-hello-world-template) and the [`ember.nvp`](https://github.com/NullVoxPopuli/ember.nvp) `minimal-app`, have no `config/environment.js` and no `@embroider/virtual/vendor.js`, so they have no way to set a flag at all.
 
 ## Detailed design
 
-Each flag is an exported `const`, and `ENV` is built from those:
-
-```js
-// @ember/-internals/environment
-export const DEFAULT_ASYNC_OBSERVERS = import.meta.env?.EMBER_DEFAULT_ASYNC_OBSERVERS ?? true;
-export const DEBUG_RENDER_TREE = import.meta.env?.EMBER_DEBUG_RENDER_TREE ?? DEBUG;
-export const FEATURE_FOO_BAR = import.meta.env?.EMBER_FEATURE_FOO_BAR ?? false;
-
-export const ENV = {
-  _DEFAULT_ASYNC_OBSERVERS: DEFAULT_ASYNC_OBSERVERS,
-  _DEBUG_RENDER_TREE: DEBUG_RENDER_TREE,
-  FEATURES: { FOO_BAR: FEATURE_FOO_BAR },
-};
-```
-
+- Each read is the literal expression `import.meta.env?.EMBER_SOME_FEATURE`. No module re-exports a flag or gives it a second name, so a build tool only needs expression replacement to remove dead code.
+- Each flag defaults to falsy. A flag turns on a non-default behavior.
+- When a major makes an optional behavior the default, its flag goes away. If the old behavior stays available, it gets a new flag.
 - The `?.` is for environments without `import.meta.env` (plain `<script type="module">`, import maps, Node). Those get the default.
-- The default sits next to each flag, which decides if the flag is opt-in or opt-out.
-- Internal code imports the `const`, not `ENV.X`. Vite 8 (Rolldown) does not fold property reads, even on an object that nothing writes to. Both Vite 7 and Vite 8 fold a `const`.
-- `ENV` stays (for the Inspector and `isEnabled`), but nothing writes to it, and the `for (flag in EmberENV)` merge goes away.
 
-The name is `EMBER_` plus the existing name in `SCREAMING_SNAKE_CASE`, without the leading underscore.
-Canary features get `FEATURE_` because their names are free-form.
+Names are `EMBER_` plus `SCREAMING_SNAKE_CASE`.
 Values are JSON (`EMBER_RERENDER_LOOP_LIMIT` is a number, for example).
+
+| Flag | Effect |
+| --- | --- |
+| `EMBER_DROP_LEGACY_CONFIG_ENV` | removes all reads of the legacy config |
+| `EMBER_SYNC_OBSERVERS` | observers are sync (async is the default) |
+| `EMBER_DROP_DEBUG_RENDER_TREE` | removes the debug render tree, in development too |
 
 ### Setting flags
 
 ```bash
 # .env
-EMBER_DEBUG_RENDER_TREE=false
+EMBER_DROP_DEBUG_RENDER_TREE=true
 ```
 
 ```js
 // vite.config.mjs
 export default defineConfig({
   define: {
-    'import.meta.env.EMBER_DEBUG_RENDER_TREE': 'false',
+    'import.meta.env.EMBER_DROP_DEBUG_RENDER_TREE': 'true',
   },
 });
 ```
@@ -89,54 +81,51 @@ export default defineConfig({
 Either one removes the whole debug render tree, in development too.
 Today it always ships, because development builds force it on.
 
-The `ember()` plugin from `@embroider/vite`:
-- reads `config/environment.js` (`EmberENV`) and `config/optional-features.json`, and defines the matching `EMBER_*` values. Existing apps get smaller builds with no changes.
-- parses `.env` values as JSON. Plain Vite gives the string `"false"`, which is truthy, so without the plugin, use `define`.
-- resolves conflicts as `define`, then `.env`, then `config/environment.js`.
+Plain Vite gives `.env` values as strings, and the string `"false"` is truthy.
+To turn a flag off, leave it out.
 
 Minimal apps have no config files, so they use `.env` or `define` like any other Vite config.
-Generators can drop the `EmberENV` key from `app/config.ts` (in `ember.nvp`, nothing reads it).
 
-### `window.EmberENV`
+### Legacy config
 
-`ember-source` no longer reads `window.EmberENV`.
-Most apps won't notice, because Embroider fills it from the same `config/environment.js` that the plugin reads.
-Apps that set it by hand lose those values.
-For those, development builds throw an error for each mismatched key, naming the `EMBER_*` flag to use.
+`window.EmberENV`, `config/environment.js`, `@ember/optional-features`, and `@ember/canary-features` work as they do today until v8.
 
-The same goes for runtime writes to `FEATURES` from `@ember/canary-features`.
-`isEnabled` stays public, but internal code uses the `FEATURE_*` constants, because `isEnabled('FOO')` can't fold.
-Beta and release builds of `ember-source` replace `EMBER_FEATURE_*` with the channel's value, so unfinished features stay out of the tarball (same as today).
+`EMBER_DROP_LEGACY_CONFIG_ENV` removes the code that reads them.
+With the flag set, development builds throw an error for each key in `window.EmberENV`, and the error names the `EMBER_*` flag to use.
 
-### Optional features
+### Unstable features
 
-`default-async-observers` is the only optional feature that `ember-source` still reads.
-Its default becomes `true`, matching the app blueprint.
-Apps that don't list it in `optional-features.json` have sync observers today, so for them the plugin defines `false`.
-
-> [!NOTE]
-> Observers are deprecated ([RFC #1115](https://github.com/emberjs/rfcs/pull/1115)) and removed in v8, along with `EMBER_DEFAULT_ASYNC_OBSERVERS`.
-
-`@ember/optional-features` is not deprecated by this RFC.
+Features in development use `import.meta.env?.UNSTABLE_EMBER_*`.
+Code behind an unstable flag can change or break in any release.
 
 ### Sveltable deprecations
 
 How deprecations work does not change.
 
-Some deprecations come with a flag that removes the deprecated feature before the major that removes it (for example, `deprecate-ember-object` from [RFC 1234](./1234-deprecate-ember-object.md)).
-These get a `const` named after the deprecation `id`:
+Some deprecations come with a flag that removes the deprecated feature before the major that removes it (for example, `deprecate-ember-object` from [RFC 1234](./1234-deprecate-ember-object.md)):
 
 ```js
-export const DEPRECATION_DEPRECATE_EMBER_OBJECT =
-  import.meta.env?.EMBER_DEPRECATION_DEPRECATE_EMBER_OBJECT ?? false;
+if (!import.meta.env?.EMBER_DROP_EMBER_OBJECT) {
+  // EmberObject
+}
 ```
 
-`true` removes the code.
-The default stays `false` until the major where that deprecation's RFC turns it on.
+The flag goes away in the major that removes the code.
+
+### What this replaces
+
+Each deprecation is a follow-up RFC.
+
+| Today | Replacement |
+| --- | --- |
+| `window.EmberENV`, `EmberENV.FEATURES` | `import.meta.env?.EMBER_*` |
+| `@ember/optional-features` | an `EMBER_*` flag per feature |
+| canary features | `import.meta.env?.UNSTABLE_EMBER_*` |
+| `config/environment.js`, `@embroider/config-meta-loader` | a normal module at `app/config/environment.js` for runtime config |
+| `import { DEBUG } from '@glimmer/env'` | export conditions for addons, `import.meta.env.DEV` for apps |
 
 ### Ecosystem
 
-- `ember-auto-import` must define the `EMBER_*` values from the config files, or classic apps lose their config. This is required before `ember-source` ships the change.
 - v2 addons can use the same pattern for their own flags.
 - TypeScript: `ember-source` declares the `EMBER_*` keys on `ImportMetaEnv`.
 - SSR, FastBoot, and the Inspector: no change.
@@ -149,9 +138,8 @@ The deprecation guide for each sveltable deprecation documents which environment
 
 ## Drawbacks
 
-- Apps that set `window.EmberENV` outside of `config/environment.js` must move that config into the build. The error in development builds finds each case.
-- A flag can't change at runtime, so a test suite that toggles a flag needs one build per value, like the ember.js CI does for `ALL_DEPRECATIONS_ENABLED` today. (With `define`, you can bring back runtime behavior, however.)
-- Every build that wants non-defaults must define the `EMBER_*` values.
+- Apps that set `EMBER_DROP_LEGACY_CONFIG_ENV` must move their `EmberENV` config into the build. The error in development builds finds each key.
+- A build that replaces a flag cannot change it at runtime. Vite in development leaves `import.meta.env` as a mutable object, so flags can change there.
 - Without a bundler, there is no way to set a flag.
 
 ## Alternatives
