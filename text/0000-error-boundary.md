@@ -15,7 +15,7 @@ suite:
 
 ## Summary
 
-Give Ember a way to contain a render error instead of letting it take down the page. A boundary catches synchronous errors thrown during Glimmer VM render, on both initial render and rerender, shows fallback content in their place, and can recover afterwards. The proposed surface is a built-in `<ErrorBoundary>` component, with a `<:try>` block for the happy path and a `<:catch>` block for the fallback. Recovery comes from the reactivity system: a boundary retries when tracked state read by the failed render changes, and the fallback also gets a `retry` function for errors tracking can't see. The component is the shape suggested here, not the point of the proposal, and [Alternatives](#alternatives) covers why it was preferred to a block keyword.
+Give Ember a way to contain a render error instead of letting it take down the page. A boundary catches synchronous errors thrown during Glimmer VM render, on both initial render and rerender, shows fallback content in their place, and can recover afterwards. The proposed surface is a built-in `<ErrorBoundary>` component, with a `<:try>` block for the happy path and a `<:catch>` block for the fallback. Recovery comes from the reactivity system: a boundary retries when tracked state read by the failed render changes, and the fallback also gets a `retry` function for errors tracking can't see. The component is the shape suggested here, not the point of the proposal. [Alternatives](#alternatives) compares it with a block keyword, and the choice between them is still open.
 
 ## Motivation
 
@@ -307,6 +307,10 @@ Developers may assume that wrapping content in `<ErrorBoundary>` catches all pos
 
 An implementation would touch sensitive internal parts of the Glimmer VM: state restoration during error recovery, DOM cleanup of partially-rendered trees, and tracking system integration. This increases the maintenance surface area for the VM team and introduces new code paths that need to be considered during future VM changes.
 
+### Performance
+
+Catching render errors adds work to rendering. No benchmarks have been run yet, so the cost of this proposal is still unknown and would need to be measured.
+
 ### Retry churn
 
 Automatic retry follows whatever the failed render read. If that includes state that changes often, like a clock or a value updated on every animation frame, the boundary would attempt `<:try>` on each change, and in development each failed attempt would log the error again. That is arguably correct, since any of those changes could have fixed the error, but it can be surprising. A render that writes to tracked state it already read is a separate problem: it would retry itself in a loop. Ember's existing development-mode assertion against updating state already read in the same render should catch it before it ships.
@@ -319,7 +323,7 @@ In production, caught errors aren't surfaced to the user beyond the fallback UI.
 
 ### Prior discussion
 
-[RFC issue #513](https://github.com/emberjs/rfcs/issues/513) (2019) and [RFC issue #518](https://github.com/emberjs/rfcs/issues/518) (2019) both requested error boundaries for Ember but were never formalized into an RFC. There's no known community addon that provides render-level error boundaries, likely because the feature requires changes to the Glimmer VM itself. Existing error handling addons operate at the application level (via `Ember.onerror` / `window.onerror`), not within the component tree.
+[RFC issue #513](https://github.com/emberjs/rfcs/issues/513) (2019) and [RFC issue #518](https://github.com/emberjs/rfcs/issues/518) (2019) both requested error boundaries for Ember but were never formalized into an RFC. At the VM level, [glimmer-vm#1462](https://github.com/glimmerjs/glimmer-vm/pull/1462) and its follow-up [glimmer-vm#1501](https://github.com/glimmerjs/glimmer-vm/pull/1501) explored error recovery inside the VM, without settling on a user-facing API. There's no known community addon that provides render-level error boundaries, likely because the feature requires changes to the Glimmer VM itself. Existing error handling addons operate at the application level (via `Ember.onerror` / `window.onerror`), not within the component tree.
 
 ### React's class-based API
 
@@ -336,18 +340,16 @@ The obvious alternative shape is a block form rather than a component:
 ```hbs
 {{#try}}
   <RiskyComponent />
-  {{catch error retry}}
+{{catch as |error retry|}}
   <p>Something went wrong: {{error.message}}</p>
 {{/try}}
 ```
 
-The component was chosen initially for a practical reason rather than an aesthetic one: it requires no tooling change. `<ErrorBoundary>` with `<:try>` and `<:catch>` blocks is built entirely from syntax that already exists, so linters, the Prettier template plugin, Glint, syntax highlighting and the language server all understand it on the day it ships. Nothing needs to learn a new construct.
+This would be a keyword rather than a component, in line with recent releases that made fundamental behaviour into keywords. A keyword without new syntax sigils needs little from tooling beyond Glint and ESLint updates, so tooling cost doesn't decide between the two forms. The template compiler would still need to support `{{catch}}` as a second clause that receives `error` and `retry`.
 
-Named blocks also have no ordering requirement, which a keyword can't offer. `{{#try}}` / `{{catch}}` can only be written one way round, while `<:catch>` can come before `<:try>`. Error boundaries are the first of several render states a template may want to express, alongside loading states for async work. Those are state machines, and named blocks represent each state cleanly without the framework imposing an order on them.
+The main argument for the component is that named blocks have no ordering requirement. `{{#try}}` / `{{catch}}` can only be written one way round, while `<:catch>` can come before `<:try>`. Error boundaries are the first of several render states a template may want to express, alongside loading states for async work. Those are state machines, and named blocks represent each state cleanly without the framework imposing an order on them.
 
-A block keyword would not be free. `{{#try}}` would have to be taught to the template compiler, and `{{catch}}` is the harder half, because it has to be a second clause inside the same block and it has to receive `error` and `retry`. The one clause templates have today, `{{else}}`, takes no parameters, so `{{catch}}` could not be built on top of it. It would be genuinely new syntax. Named blocks give us a fallback clause with parameters already.
-
-None of that makes a keyword the wrong answer, and the semantics in this RFC carry over to one unchanged. It is a statement about cost: the component form can be evaluated, and shipped, without a coordinated change across the template toolchain. If the framework team would rather spend that cost for a nicer surface syntax, this proposal does not stand in the way.
+The semantics in this RFC carry over to either form unchanged. The choice between them is still open (see [Unresolved questions](#unresolved-questions)).
 
 ### Block names: `<:default>` and `<:error>`
 
@@ -380,6 +382,8 @@ Doing nothing leaves Ember as one of the few major frameworks without declarativ
 ## Unresolved questions
 
 - **Should ErrorBoundary catch modifier errors?** See [What is NOT caught](#what-is-not-caught) for why this is harder than widening the `try`. It needs a defined meaning for unwinding a partially applied modifier, and is the most likely candidate for a follow-up RFC.
+
+- **Component or keyword?** A spike of the keyword form, benchmarked against the component, would help decide. See [Block syntax](#block-syntax-try--catch) and [Performance](#performance).
 
 - **Should the block-combination check be static?** As proposed, it would be a development-mode assertion that fires when a boundary renders, so a template that never renders would go unreported. A lint rule could catch it earlier. See [Ecosystem implications](#ecosystem-implications).
 
