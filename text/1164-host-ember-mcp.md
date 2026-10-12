@@ -1,15 +1,16 @@
 ---
-stage: accepted
+stage: discontinued
 start-date: 2026-01-26T00:00:00.000Z
-release-date: # In format YYYY-MM-DDT00:00:00.000Z
+release-date:
 release-versions:
 teams:
   - learning
   - cli
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1164
-project-link: 
-suite: 
+  accepted: 'https://github.com/emberjs/rfcs/pull/1164'
+  discontinued: 'https://github.com/emberjs/rfcs/pull/1168'
+project-link:
+suite:
 ---
 
 # Recommend hosting `ember-mcp` on emberjs.com
