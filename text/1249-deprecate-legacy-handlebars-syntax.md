@@ -29,11 +29,9 @@ project-link: Leave as is
 ## Summary
 
 Deprecate four pieces of template syntax that Ember inherited from the Handlebars parser, each of
-which has a documented equivalent: the `{{&foo}}` mustache (use `{{{foo}}}`), `{{^}}` as the
-start of an else section (use `{{else}}`), blocks that start with `{{^` and have an `{{else}}`
-(`{{^foo}}a{{else}}b{{/foo}}`, use `{{#foo}}b{{else}}a{{/foo}}`), and raw blocks
-(`{{{{foo}}}}...{{{{/foo}}}}`, use `{{#foo}}...{{/foo}}` with `\{{` escapes). The deprecations are
-reported when a template is compiled, and the syntax is removed in Ember 8.0.
+which has a documented equivalent: the `{{&foo}}` mustache, `{{^}}` as the
+start of an else section, blocks that start with `{{^`, and quadruple-curly raw blocks
+(`{{{{foo}}}}...{{{{/foo}}}}`). 
 
 ## Motivation
 
@@ -44,7 +42,7 @@ them behave in ways that surprise the people who use them:
 - **`{{&foo}}`** is an unescaped mustache, exactly like `{{{foo}}}`.
 - **`{{^}}`** starts the else section of a block, exactly like `{{else}}`.
 - **`{{^foo}}a{{else}}b{{/foo}}`** swaps the two halves of the block: `a` renders when `foo` would
-  render its *inverse*, and `b` when it would render its main block. It reads as the opposite of
+  render its _inverse_, and `b` when it would render its main block. It reads as the opposite of
   what it does. Block parameters on such a block are silently ignored:
   `{{^each this.items as |item|}}...{{else}}{{item}}{{/each}}` never binds `item`, so `{{item}}` is
   looked up as an unrelated name. (Without an `{{else}}`, `{{^foo}}...{{/foo}}` is already a syntax
@@ -68,12 +66,12 @@ deprecations were (for example `ember-template-compiler.deprecate-render`). The 
 tell these forms from their replacements (`{{&foo}}` and `{{{foo}}}` produce the same node), so the
 parser detects them from the source text while parsing.
 
-| Id | Deprecated | Replacement | Prettier |
-|---|---|---|---|
-| `template-ampersand-mustache` | `{{&foo}}` | `{{{foo}}}` | fixes it, except with `~` (see below) |
-| `template-caret-else` | `{{^}}` | `{{else}}` | fixes it |
-| `template-inverse-block-with-else` | `{{^foo}}a{{else}}b{{/foo}}` | `{{#foo}}b{{else}}a{{/foo}}` | fixes it |
-| `template-raw-block` | `{{{{foo}}}}...{{{{/foo}}}}` | `{{#foo}}...{{/foo}}`, with `\{{` for each `{{` in the body | fixes it |
+| Id                                 | Deprecated                   | Replacement                                                 | Prettier                              |
+| ---------------------------------- | ---------------------------- | ----------------------------------------------------------- | ------------------------------------- |
+| `template-ampersand-mustache`      | `{{&foo}}`                   | `{{{foo}}}`                                                 | fixes it, except with `~` (see below) |
+| `template-caret-else`              | `{{^}}`                      | `{{else}}`                                                  | fixes it                              |
+| `template-inverse-block-with-else` | `{{^foo}}a{{else}}b{{/foo}}` | `{{#foo}}b{{else}}a{{/foo}}`                                | fixes it                              |
+| `template-raw-block`               | `{{{{foo}}}}...{{{{/foo}}}}` | `{{#foo}}...{{/foo}}`, with `\{{` for each `{{` in the body | fixes it                              |
 
 The replacements produce exactly the same template, including whitespace control: in every case
 the `~` stays on the delimiter it was on, except for `{{&foo}}`, where it moves between the braces
@@ -93,16 +91,13 @@ should be fixed to print `{{~{foo}}}` and `{{{foo}~}}`. This was checked with Pr
 
 **Ecosystem.**
 
-- *Lint rules.* ember-template-lint could add a rule (with an auto-fix) for each form, so that
-  projects that lint but do not run Prettier on templates get the same fixes. Not required for the
-  deprecation.
-- *Addons.* An addon whose published templates use these forms triggers the deprecation in the
+- _Addons._ An addon whose published templates use these forms triggers the deprecation in the
   apps that compile them (v1 addons) or in its own build (v2 addons). The addon has to be updated
   before Ember 8.0; app authors who see the deprecation for an addon's template should report it
   to the addon.
-- *IDE support, Glint, codemods.* Tools that parse templates with `@glimmer/syntax` keep working
-  through the deprecation period; after removal, the forms are syntax errors there too.
-- *Ember Inspector, server-side rendering, Ember Engines, blueprints.* Not affected: this is
+- _IDE support, Glint, codemods._ Tools that parse templates with `@glimmer/syntax` keep working
+  through the deprecation period; after removal, the forms can become syntax errors there too.
+- _Ember Inspector, server-side rendering, Ember Engines, blueprints._ Not affected: this is
   compile-time syntax only, and no blueprint uses it.
 
 ## How We Teach This
@@ -148,9 +143,9 @@ grep -rnE '\{\{~?&' app
 Before:
 
 ```handlebars
-<p>{{&this.renderedMarkdown}}</p>
-<div title={{&@title}}></div>
-{{~&this.footer~}}
+<p>{{{this.renderedMarkdown}}}</p>
+<div title={{{@title}}}></div>
+{{{~this.footer~}}}
 ```
 
 After:
@@ -158,7 +153,7 @@ After:
 ```handlebars
 <p>{{{this.renderedMarkdown}}}</p>
 <div title={{{@title}}}></div>
-{{~{this.footer}~}}
+{{{~this.footer~}}}
 ```
 
 Arguments and named arguments stay as they are: `{{&format-html @value mode="short"}}` becomes
@@ -205,13 +200,13 @@ Before:
 ```handlebars
 {{#if this.isLoggedIn}}
   Welcome back!
-{{^}}
+{{else}}
   Please log in.
 {{/if}}
 
 {{#each this.items as |item|}}
   <li>{{item.name}}</li>
-{{~^~}}
+{{~else~}}
   <li>No items</li>
 {{/each}}
 ```
@@ -235,7 +230,7 @@ After:
 Keep any `~` where it was: `{{~^}}` becomes `{{~else}}`, `{{^~}}` becomes `{{else~}}`, and
 `{{~^~}}` becomes `{{~else~}}`.
 
-This deprecation is only about `{{^}}` on its own. A block that *starts* with `{{^`, such as
+This deprecation is only about `{{^}}` on its own. A block that _starts_ with `{{^`, such as
 `{{^if this.isLoggedIn}}`, is a different deprecated form with
 [its own guide](/deprecations/v7.x/#toc_template-inverse-block-with-else).
 
@@ -245,11 +240,11 @@ This deprecation is only about `{{^}}` on its own. A block that *starts* with `{
 
 Starting a block with `{{^` instead of `{{#`, as in `{{^if this.isLoggedIn}}...{{else}}...{{/if}}`,
 is deprecated. This "inverse block" form comes from Handlebars. It swaps the two halves of the
-block: the part before `{{else}}` is what renders when the condition is *false*, and the part after
-`{{else}}` is what renders when it is *true*.
+block: the part before `{{else}}` is what renders when the condition is _false_, and the part after
+`{{else}}` is what renders when it is _true_.
 
 To fix it, start the block with `{{#` and swap the two halves, so that it reads the way it
-renders. (An inverse block *without* `{{else}}`, like `{{^if x}}...{{/if}}`, is already a syntax
+renders. (An inverse block _without_ `{{else}}`, like `{{^if x}}...{{/if}}`, is already a syntax
 error.)
 
 ### Fixing it automatically with Prettier
@@ -280,10 +275,10 @@ grep -rnE '\{\{~?\^[[:space:]]*[^}~[:space:]]' app
 Before:
 
 ```handlebars
-{{^if this.isLoggedIn}}
-  Please log in.
-{{else}}
+{{#if this.isLoggedIn}}
   Welcome back!
+{{else}}
+  Please log in.
 {{/if}}
 ```
 
@@ -313,10 +308,11 @@ The same swap works for any block, for example `each`:
 Before:
 
 ```handlebars
-{{^each this.results}}
-  No results.
+{{#each this.results}}
+  {{this.results.length}}
+  results found.
 {{else}}
-  {{this.results.length}} results found.
+  No results.
 {{/each}}
 ```
 
@@ -324,7 +320,8 @@ After:
 
 ```handlebars
 {{#each this.results}}
-  {{this.results.length}} results found.
+  {{this.results.length}}
+  results found.
 {{else}}
   No results.
 {{/each}}
@@ -347,10 +344,10 @@ way it was intended, with `as |item|` on the `{{#each}}`:
 Before:
 
 ```handlebars
-{{^each this.items as |item|}}
-  No items.
-{{else}}
+{{#each this.items}}
   <li>{{item.name}}</li>
+{{else}}
+  No items.
 {{/each}}
 ```
 
@@ -410,9 +407,9 @@ Then, for each raw block:
 Before:
 
 ```handlebars
-{{{{code-sample language="handlebars"}}}}
-  <p>Hello, {{@name}}!</p>
-{{{{/code-sample}}}}
+{{#code-sample language="handlebars"}}
+  <p>Hello, \{{@name}}!</p>
+{{/code-sample}}
 ```
 
 After:
@@ -430,7 +427,7 @@ the same way, as `\{{{`.
 If the body was in a raw block so that it could show template code, you may find it clearer to
 pass that code as a string instead, for example
 `<CodeSample @language="handlebars" @code={{"<p>Hello, {{@name}}!</p>"}} />`. A string literal
-*inside* a mustache is never processed for mustaches. (A quoted attribute value is:
+_inside_ a mustache is never processed for mustaches. (A quoted attribute value is:
 `@code="Hello, {{@name}}"` would insert the value of `@name`.)
 
 </details>
@@ -444,6 +441,7 @@ pass that code as a string instead, for example
   until the addon is updated.
 - Prettier's output for `{{&foo}}` with whitespace control is wrong until Prettier is fixed, so
   "run Prettier" is not a complete fix for that one case.
+- Build-time deprecations are easier to miss than runtime ones that report in the browser. This one is only visible at build time, unless we build a new mechanism for propagating syntax deprecation info to the browser. This RFC does not propose that, so it means the warnings are only in the terminal.
 
 ## Alternatives
 
@@ -454,11 +452,10 @@ pass that code as a string instead, for example
   tool still have to support them.
 - **Remove them without a deprecation.** They are rare, but removing working syntax without a
   deprecation cycle is against Ember's semver policy.
+- **Build run-time reporting for purely syntactic deprecations**. Deprecations in the terminal are easier to miss and harder to manage than ones in the browser. These particular features are not visible to Ember at runtime, but we could build a new mechanism for propagating the warnings to the browser.
 
 ## Unresolved questions
 
-- The exact wording of each deprecation message.
-- Whether ember-template-lint should add rules with auto-fixes for these forms.
 - Whether other Handlebars-inherited quirks should be deprecated at the same time, for example
   that `{{else-thing}}` is an else section that invokes `-thing`, rather than a mustache named
   `else-thing`.
