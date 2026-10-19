@@ -3,6 +3,7 @@ stage: released
 start-date: 2025-07-15T00:00:00.000Z
 release-date:
 release-versions:
+ - ember-source: 7.5.0
 teams:
   - framework
 prs:
