@@ -1,9 +1,10 @@
 ---
-stage: accepted
+stage: released
 start-date: 2025-01-19T00:00:00.000Z
-release-date: # In format YYYY-MM-DDT00:00:00.000Z
+release-date:
 release-versions:
-teams: # delete teams that aren't relevant
+  ember-source: 7.3.0
+teams:
   - cli
   - data
   - framework
@@ -11,9 +12,11 @@ teams: # delete teams that aren't relevant
   - steering
   - typescript
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1071
+  accepted: 'https://github.com/emberjs/rfcs/pull/1071'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/1202'
+  released: 'https://github.com/emberjs/rfcs/pull/1228'
 project-link:
-suite: 
+suite:
 ---
 
 <!--- 
