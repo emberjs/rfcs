@@ -88,7 +88,7 @@ Minimal apps have no config files, so they use `.env` or `define` like any other
 
 ### Legacy config
 
-`window.EmberENV`, `config/environment.js`, `@ember/optional-features`, and `@ember/canary-features` work as they do today until v8.
+`window.EmberENV`, `config/environment.js`, `@ember/optional-features`, and `@ember/canary-features` work as they do today until we RFC the deprecation of them after these import.meta.glob flags ship.
 
 `EMBER_DROP_LEGACY_CONFIG_ENV` removes the code that reads them.
 With the flag set, development builds throw an error for each key in `window.EmberENV`, and the error names the `EMBER_*` flag to use.
