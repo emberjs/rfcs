@@ -22,7 +22,8 @@ This RFC defines the `recommended` config for the next major of `eslint-plugin-e
 
 - The template rules that `ember-template-lint` enabled by default become enabled by default for gjs/gts files. This covers the rules that apply to strict mode. [RFC #1214 "Deprecate ember-template-lint"][rfc-1214] committed us to this config change.
 - `recommended` stays gjs/gts only. Linting of `.hbs` files stays opt-in through the `hbs` config, which keeps the full `ember-template-lint` parity set.
-- Rules that catch patterns from `ember-source` 3.x and earlier come out of `recommended`.
+- Rules that catch patterns from `ember-source` 3.x and earlier come out of `recommended`. They move to a new `Legacy` category.
+- A new `recommended-v13` config keeps the v13 `recommended` rule set without changes.
 - A number of other recommended rule changes (see appendices)
 - The `recommended-gjs` and `recommended-gts` configs are removed. `recommended` now carries their rules, scoped per file type.
 
@@ -90,20 +91,16 @@ An app that extends `plugin:ember/recommended-gjs` or `plugin:ember/recommended-
 
 ### Linting `.hbs` files stays opt-in
 
-An app with loose-mode templates opts in with the `hbs` config, which v14 renames from [`template-lint-migration`][migration-config]. It keeps the _full_ `ember-template-lint` parity set, and that set includes the loose-mode-only rules that stay out of `recommended`. The app also needs a parser block that routes `.hbs` files to the hbs parser. `eslint-plugin-ember` already ships that parser as `ember-eslint-parser/hbs`.
+An app with loose-mode templates opts in with the `hbs` config, which v14 renames from [`template-lint-migration`][migration-config]. It keeps the _full_ `ember-template-lint` parity set, and that set includes the loose-mode-only rules that stay out of `recommended`. The config applies to `**/*.hbs` only, and it sets the hbs parser (`ember-eslint-parser/hbs`) for those files. The app needs no separate parser block.
 
 ```js
 // eslint.config.mjs
-import { hbsParser, plugin as ember } from 'eslint-plugin-ember/recommended';
+import emberRecommended from 'eslint-plugin-ember/configs/recommended';
 import emberHbs from 'eslint-plugin-ember/configs/hbs';
 
 export default [
   // ... existing config ...
-  {
-    files: ['app/**/*.hbs'],
-    plugins: { ember },
-    languageOptions: { parser: hbsParser },
-  },
+  ...emberRecommended,
   ...emberHbs,
 ];
 ```
@@ -130,7 +127,20 @@ export default [
 ];
 ```
 
-That app can also stay on `eslint-plugin-ember@13` until it is on ember-source 4+.
+The rule docs and the README rules table put these rules in a new `Legacy` category, so a reader can find them in one place.
+
+### Add a `recommended-v13` config
+
+`recommended-v13` is the `recommended` rule set of v13, without changes. An app can use it to upgrade the plugin and ESLint, and keep the lint results it has today. It can then adopt the v14 `recommended` set later, in a separate change.
+
+```js
+// eslint.config.mjs
+import emberRecommendedV13 from 'eslint-plugin-ember/configs/recommended-v13';
+
+export default [...emberRecommendedV13];
+```
+
+The config is a fixed list. A rule change in a later release does not change it. Each later major can add a config of the same kind for the major before it.
 
 ### What happens to `template-lint-migration`
 
@@ -138,11 +148,13 @@ The config stays for as long as `.hbs` exists. An app with `.hbs` files uses it,
 
 This config is no longer a migration config, so v14 renames it to `hbs`. The old name stops working in v14, and the release notes carry the rename.
 
+In v13 the config applied to every file. In v14 it applies to `**/*.hbs` only, because `recommended` now covers gjs/gts.
+
 ### Other breaking changes
 
 [#2060][issue-2060] also tracks routine breaking changes for the release. The plugin drops EOL node versions, matches the supported version range of eslint, and cleans up its config exports. Those changes do not change what the plugin lints, so they need no RFC and are not specified here. This RFC covers the `recommended` rule set.
 
-The two config removals above are the exception. This RFC specifies them, because the typescript-eslint disables move into `recommended` and change what the plugin lints in a gts file.
+The config changes above are the exception. This RFC specifies them, because each one changes what an app lints. The typescript-eslint disables move into `recommended` and change what the plugin lints in a gts file. `recommended-v13` and the `hbs` scope change which rules apply to which files.
 
 ## How we teach this
 
@@ -173,9 +185,9 @@ This contradicts RFC #1214. A new app then ships without the default lint covera
 
 This keeps the A11y commitment and creates fewer new errors. It also breaks parity with what an `ember-template-lint` user has today, and it makes the question "did I migrate correctly?" harder to answer. Parity is easier to explain: the same rules, one tool.
 
-### Ship a `legacy` config with the removed rules
+### Ship a `legacy` config with only the removed rules
 
-[#1950][issue-1950] proposed this. It is one more config to name, to document, and to maintain, for a set of apps that gets smaller every year. Those apps already have two options. They can stay on v13, or they can turn on the few rules they still want in their own config. The cost of maintenance is too high for that result.
+[#1950][issue-1950] proposed this. A config that holds only the removed rules is one more set to maintain, and an app still has to combine it with `recommended`. `recommended-v13` covers the same need in one config: it is the full v13 set, so an app that wants the old behavior gets all of it. The `Legacy` category makes the removed rules easy to find for an app that wants only some of them.
 
 ### Keep the two new JS rules opt-in
 
@@ -187,7 +199,7 @@ A rule that is already in `recommended` bans one import for the same pattern as 
 
 ## Unresolved questions
 
-n/a
+- Does [`ember/use-ember-data-rfc-395-imports`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/use-ember-data-rfc-395-imports.md) stay in `recommended`? The app blueprint no longer has `ember-data` or `@ember-data/*` packages, and WarpDrive ships its own [`no-legacy-imports`](https://warp-drive.io/api/eslint-plugin-warp-drive/rules/no-legacy-imports/) rule.
 
 ## Appendix A: template rules added to `recommended`
 
@@ -301,12 +313,11 @@ These 9 rules stay in the `hbs` config. They keep full `ember-template-lint` par
 
 ## Appendix C: JS rules in `recommended`
 
-59 rules, at `error`, for js/ts and gjs/gts. Two of them are new in v14.
+56 rules, at `error`, for js/ts and gjs/gts. Two of them are new in v14.
 
 - [`ember/avoid-leaking-state-in-ember-objects`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/avoid-leaking-state-in-ember-objects.md)
 - [`ember/classic-decorator-hooks`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/classic-decorator-hooks.md)
 - [`ember/classic-decorator-no-classic-methods`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/classic-decorator-no-classic-methods.md)
-- [`ember/jquery-ember-run`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/jquery-ember-run.md)
 - [`ember/new-module-imports`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/new-module-imports.md)
 - [`ember/no-actions-hash`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-actions-hash.md)
 - [`ember/no-arrow-function-computed-properties`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-arrow-function-computed-properties.md)
@@ -326,13 +337,11 @@ These 9 rules stay in the `hbs` config. They keep full `ember-template-lint` par
 - [`ember/no-ember-testing-in-module-scope`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-ember-testing-in-module-scope.md)
 - [`ember/no-empty-glimmer-component-classes`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-empty-glimmer-component-classes.md)
 - [`ember/no-get`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-get.md)
-- [`ember/no-global-jquery`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-global-jquery.md)
 - [`ember/no-incorrect-calls-with-inline-anonymous-functions`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-incorrect-calls-with-inline-anonymous-functions.md)
 - [`ember/no-incorrect-computed-macros`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-incorrect-computed-macros.md)
 - [`ember/no-invalid-debug-function-arguments`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-invalid-debug-function-arguments.md)
 - [`ember/no-invalid-dependent-keys`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-invalid-dependent-keys.md)
 - [`ember/no-invalid-test-waiters`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-invalid-test-waiters.md)
-- [`ember/no-jquery`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-jquery.md)
 - [`ember/no-legacy-test-waiters`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-legacy-test-waiters.md)
 - [`ember/no-mixins`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-mixins.md)
 - [`ember/no-modifier-without-element-usage`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-modifier-without-element-usage.md) (new in v14)
@@ -374,7 +383,7 @@ Both new rules are in the plugin today as opt-in.
 
 ## Appendix D: rules removed from `recommended`
 
-The plugin keeps each of these rules. They only come out of `recommended`.
+The plugin keeps each of these rules, in the `Legacy` category. They only come out of `recommended`. `recommended-v13` still has all of them except `ember/require-fetch-import`, which v13 did not enable.
 
 | Rule | Why it is no longer necessary |
 | ---- | ----------------------------- |
@@ -391,6 +400,9 @@ The plugin keeps each of these rules. They only come out of `recommended`.
 | `ember/no-get-with-default` | 4.0 removed `getWithDefault` |
 | `ember/no-try-invoke` | 4.0 removed `tryInvoke` |
 | `ember/no-test-module-for` | ember-qunit removed `moduleFor*` long ago |
+| `ember/jquery-ember-run` | 4.0 removed the jQuery integration ([RFC #0294](https://github.com/emberjs/rfcs/blob/master/text/0294-optional-jquery.md)). The rule also requires the run loop, which `ember/no-runloop` forbids |
+| `ember/no-global-jquery` | 4.0 removed the jQuery integration. jQuery use is no longer an Ember concern |
+| `ember/no-jquery` | 4.0 removed the jQuery integration. jQuery use is no longer an Ember concern |
 | `ember/require-fetch-import` | the blueprint no longer has `ember-fetch` ([RFC #1065](https://github.com/emberjs/rfcs/blob/master/text/1065-remove-ember-fetch.md)). See [#1224][issue-1224] |
 
 [issue-1950]: https://github.com/ember-cli/eslint-plugin-ember/issues/1950
