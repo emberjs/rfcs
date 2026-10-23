@@ -43,7 +43,7 @@ This major has three motivations.
 
 2. The current `recommended` set spends lint time on patterns that cannot exist in an app on `ember-source` 4+. Some of those rules are also the most expensive rules in the set. Profiling in [eslint-plugin-ember#2060][issue-2060] measured the two most expensive at about 6.2 seconds _each_ on a large app. Each of the two is 5.9% of the total lint time. Both check for API that ember-source removed years ago.
 
-3. A major release is the only place where `recommended` can gain a rule that reports on existing code. Two such rules are ready, and only the semver cost holds them back. Both catch patterns that an app on the latest `ember-source` can still reach. That is the opposite of the rules that motivation 2 removes.
+3. A major release is the only place where `recommended` can gain a rule that reports on existing code. Three such rules are ready, and only the semver cost holds them back. All three catch patterns that an app on the latest `ember-source` can still reach. That is the opposite of the rules that motivation 2 removes.
 
 [^no-partial]: every rule except the one for `{{partial}}`. ember-source removed `{{partial}}` in 4.0, so no code is left to lint.
 
@@ -65,9 +65,15 @@ Two groups of rules do not apply to strict-mode templates. Both stay in the hbs 
 > [!NOTE]
 > The recommended preset of `ember-template-lint` had to disable its builtin-component rules for gjs/gts, because it has no knowledge of imports. The eslint versions see the whole module. They can tell whether `<Input>` is the one from `@ember/component`, or a local component with the same name. Those rules _do_ move to `recommended`. This is one of the motivations of [RFC #1214][rfc-1214].
 
-### Add two JS rules to `recommended`
+### Add three JS rules to `recommended`
 
-Two JS rules go into `recommended`. Both are already in the plugin as opt-in. Neither one is a template rule, so `recommended` scopes both the way it scopes its other JS rules, not to `**/*.{gjs,gts}`. [Appendix C](#appendix-c-js-rules-in-recommended) lists every JS rule in the set, and gives the reason for each new one.
+Three JS rules go into `recommended`. All three are already in the plugin as opt-in. None of them is a template rule, so `recommended` scopes them the way it scopes its other JS rules, not to `**/*.{gjs,gts}`. [Appendix C](#appendix-c-js-rules-in-recommended) lists every JS rule in the set, and gives the reason for each new one.
+
+### Add two template tag layout rules to `recommended`
+
+[`ember/template-tag-position`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/template-tag-position.md) and [`ember/template-tag-spacing`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/template-tag-spacing.md) go into `recommended`, scoped to `**/*.{gjs,gts}`. The first keeps `<template>` after the other members of a class. The second requires a blank line between `<template>` and the code next to it. Both rules apply only to template tags, and `eslint --fix` fixes both.
+
+`ember-template-lint` has no equivalent rules, because it never saw the JS around a template. A consistent place for `<template>` makes a component class easier to scan.
 
 ### Remove the `recommended-gjs` and `recommended-gts` configs
 
@@ -189,9 +195,9 @@ This keeps the A11y commitment and creates fewer new errors. It also breaks pari
 
 [#1950][issue-1950] proposed this. A config that holds only the removed rules is one more set to maintain, and an app still has to combine it with `recommended`. `recommended-v13` covers the same need in one config: it is the full v13 set, so an app that wants the old behavior gets all of it. The `Legacy` category makes the removed rules easy to find for an app that wants only some of them.
 
-### Keep the two new JS rules opt-in
+### Keep the new JS rules opt-in
 
-A rule that is already in `recommended` bans one import for the same pattern as one of the two new rules. That ban is not enough, because hand-written code reaches the same pattern without that import. [Appendix C](#appendix-c-js-rules-in-recommended) has the detail.
+A rule that is already in `recommended` bans one import for the same pattern as one of the new rules. That ban is not enough, because hand-written code reaches the same pattern without that import. [Appendix C](#appendix-c-js-rules-in-recommended) has the detail.
 
 ### Merge the template rules into `recommended` unscoped (including `.hbs`)
 
@@ -205,7 +211,7 @@ A rule that is already in `recommended` bans one import for the same pattern as 
 
 87 rules, at `error`, scoped to `**/*.{gjs,gts}`. This is the `template-lint-migration` rule set without the loose-mode-only rules of Appendix B. That set is the recommended preset of `ember-template-lint`, minus `no-partial`, plus `template-no-template-lint-directives`. `no-partial` has no equivalent, because `{{partial}}` no longer exists.
 
-`recommended` also enables [`ember/template-no-let-reference`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/template-no-let-reference.md) for gjs/gts today, and that does not change. `ember-template-lint` has no equivalent rule. The gjs/gts set is 88 rules in total.
+`recommended` also enables [`ember/template-no-let-reference`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/template-no-let-reference.md) for gjs/gts today, and that does not change. `ember-template-lint` has no equivalent rule. The two template tag layout rules are also new for gjs/gts. The gjs/gts set is 90 rules in total.
 
 - [`ember/template-builtin-component-arguments`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-builtin-component-arguments.md)
 - [`ember/template-link-href-attributes`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-link-href-attributes.md)
@@ -313,7 +319,7 @@ These 9 rules stay in the `hbs` config. They keep full `ember-template-lint` par
 
 ## Appendix C: JS rules in `recommended`
 
-56 rules, at `error`, for js/ts and gjs/gts. Two of them are new in v14.
+57 rules, at `error`, for js/ts and gjs/gts. Three of them are new in v14.
 
 - [`ember/avoid-leaking-state-in-ember-objects`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/avoid-leaking-state-in-ember-objects.md)
 - [`ember/classic-decorator-hooks`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/classic-decorator-hooks.md)
@@ -332,6 +338,7 @@ These 9 rules stay in the `hbs` config. They keep full `ember-template-lint` par
 - [`ember/no-component-lifecycle-hooks`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-component-lifecycle-hooks.md)
 - [`ember/no-computed-properties-in-native-classes`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-computed-properties-in-native-classes.md)
 - [`ember/no-controller-access-in-routes`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-controller-access-in-routes.md)
+- [`ember/no-deprecated-imports`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-deprecated-imports.md) (new in v14)
 - [`ember/no-duplicate-dependent-keys`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-duplicate-dependent-keys.md)
 - [`ember/no-ember-super-in-es-classes`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-ember-super-in-es-classes.md)
 - [`ember/no-ember-testing-in-module-scope`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-ember-testing-in-module-scope.md)
@@ -372,14 +379,16 @@ These 9 rules stay in the `hbs` config. They keep full `ember-template-lint` par
 - [`ember/use-brace-expansion`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/use-brace-expansion.md)
 - [`ember/use-ember-data-rfc-395-imports`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/use-ember-data-rfc-395-imports.md)
 
-Both new rules are in the plugin today as opt-in.
+All three new rules are in the plugin today as opt-in.
 
 | New rule | Why it belongs in `recommended` |
 | ---- | ------------------------------- |
 | [`ember/no-builtin-form-components`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-builtin-form-components.md) | A native `<input>` or `<textarea>` is better than the classic-component `<Input>` or `<Textarea>` wrapper. Named for the next major in [#2060][issue-2060], and implemented in [#2282][pr-2282] |
+| [`ember/no-deprecated-imports`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-deprecated-imports.md) | It reports imports of APIs that ember-source deprecated, or that an accepted RFC deprecates. Each of those APIs has a replacement, so new code has no reason to use them. Implemented in [#2855][pr-2855] |
 | [`ember/no-modifier-without-element-usage`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-modifier-without-element-usage.md) | A modifier that never reads its element is an effect that render schedules. `ember/template-no-at-ember-render-modifiers` already rejects that data flow in a template, and it is in `recommended` today. That rule bans one import, and `ember-modifier` reaches the same pattern in three lines |
 
 [pr-2282]: https://github.com/ember-cli/eslint-plugin-ember/pull/2282
+[pr-2855]: https://github.com/ember-cli/eslint-plugin-ember/pull/2855
 
 ## Appendix D: rules removed from `recommended`
 
