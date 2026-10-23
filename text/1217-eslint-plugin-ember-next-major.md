@@ -211,7 +211,7 @@ A rule that is already in `recommended` bans one import for the same pattern as 
 
 87 rules, at `error`, scoped to `**/*.{gjs,gts}`. This is the `template-lint-migration` rule set without the loose-mode-only rules of Appendix B. That set is the recommended preset of `ember-template-lint`, minus `no-partial`, plus `template-no-template-lint-directives`. `no-partial` has no equivalent, because `{{partial}}` no longer exists.
 
-`recommended` also enables [`ember/template-no-let-reference`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/template-no-let-reference.md) for gjs/gts today, and that does not change. `ember-template-lint` has no equivalent rule. The two template tag layout rules are also new for gjs/gts. The gjs/gts set is 90 rules in total.
+`recommended` also enables [`ember/template-no-let-reference`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/template-no-let-reference.md) for gjs/gts today, and that does not change. `ember-template-lint` has no equivalent rule. The two template tag layout rules at the end of this appendix are also new for gjs/gts. The gjs/gts set is 90 rules in total.
 
 - [`ember/template-builtin-component-arguments`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-builtin-component-arguments.md)
 - [`ember/template-link-href-attributes`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-link-href-attributes.md)
@@ -300,6 +300,13 @@ A rule that is already in `recommended` bans one import for the same pattern as 
 - [`ember/template-splat-attributes-only`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-splat-attributes-only.md)
 - [`ember/template-style-concatenation`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-style-concatenation.md)
 - [`ember/template-table-groups`](https://github.com/ember-cli/eslint-plugin-ember/blob/6f89075805fdf4487d3f3631fbed58f5e1b8bdab/docs/rules/template-table-groups.md)
+
+### Template tag layout rules
+
+2 rules, at `error`, scoped to `**/*.{gjs,gts}`. They are new in v14, and `ember-template-lint` has no equivalent rules.
+
+- [`ember/template-tag-position`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/template-tag-position.md)
+- [`ember/template-tag-spacing`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/template-tag-spacing.md)
 
 ## Appendix B: loose-mode-only rules, not added to `recommended`
 
