@@ -17,94 +17,43 @@ project-link:
 
 ## Summary
 
-Deprecate the `Observable` Mixin, `observer` helper, and public observer
-functionality, including:
-
-- The `Observable` mixin (`@ember/object/observable`) and the methods it adds
-  to `EmberObject` and its descendants:
-  - `get`, `set`, `getProperties`, `setProperties`
-  - `notifyPropertyChange`
-  - `addObserver`, `removeObserver`
-  - `incrementProperty`, `decrementProperty`, `toggleProperty`
-  - `cacheFor`
-- The `observer` helper from `@ember/object`
-- The standalone `addObserver` and `removeObserver` functions from
-  `@ember/object/observers`
-
-The standalone `get`, `set`, `getProperties`, `setProperties`, and
-`notifyPropertyChange` functions from `@ember/object` are not deprecated by
-this RFC.
+Deprecate observers and the `Observable` mixin:
+the `observer` helper, the `addObserver` and `removeObserver` functions,
+and the methods that `Observable` adds to `EmberObject` and its descendants.
+The standalone `get`, `set`, `getProperties`, `setProperties`,
+and `notifyPropertyChange` functions from `@ember/object` are not deprecated
+by this RFC.
 
 ## Motivation
 
-Using observers has been soft-deprecated ever since the introduction of
-tracking. The guides do not teach them, and eslint-plugin-ember's
+Observers have been informally discouraged
+since the introduction of autotracking.
+The guides do not teach them, and eslint-plugin-ember's
 [`no-observers`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-observers.md)
-rule has recommended against them for years. Removing support for them will
-significantly clean up the code base. (Note that for us to entirely remove
-observer support internally, we will likely need to deprecate other
-functionality in addition to what is included here.)
+rule has recommended against them for years.
+Removing support for them will simplify Ember's internals.
+(To remove observer support from Ember's internals completely,
+we will need to deprecate other functionality
+in addition to what is included here.)
 
-Additionally, Ember has also not recommended the use of Mixins for a while.
-Since `Observable` uses the Mixin architecture, it will also need to be
-deprecated for us to fully remove Mixins.
+Additionally, Ember has not recommended mixins for several years.
+Because `Observable` is a mixin,
+it must be deprecated before we can remove mixins entirely.
+
+The replacement is autotracking:
+`@tracked` properties, native getters,
+and modifiers for work that is tied to an element.
 
 ## Transition Path
 
-A full deprecation guide is PR'd here: https://github.com/ember-learn/deprecation-app/pull/1407
+Each deprecated API logs a deprecation when it is called.
+The deprecations target `until: '8.0.0'`.
 
-The deprecations will target `until: '8.0.0'`.
-
-### Observable Mixin
-
-Some of the methods provided by `Observable` are available as standalone methods,
-for these the transition path is straight-forward:
-
-* `get` -> Import from `@ember/object`
-* `getProperties` -> Import from `@ember/object`
-* `set` -> Import from `@ember/object`
-* `setProperties` -> Import from `@ember/object`
-* `notifyPropertyChange` -> Import from `@ember/object`
-
-The standalone functions are only needed when interoperating with legacy
-computed properties and Ember's proxies. Rather than adopting them long-term,
-most code should refactor `@computed` properties to native getters over
-`@tracked` state, at which point plain property access and assignment work.
-
-For sugar helpers they can easily be replaced with a bit more verbosity:
-
-* `incrementProperty`
-    ```js
-    this.count += 1; // Tracking
-    set(this, 'count', get(this, 'count') + 1); // Legacy 
-    ```
-* `decrementProperty`
-    ```js
-    this.count -= 1; // Tracking
-    set(this, 'count', get(this, 'count') - 1); // Legacy 
-    ```
-* `toggleProperty`
-    ```js
-    this.flag = !this.flag; // Tracking
-    set(this, 'flag', !get(this, 'flag')); // Legacy
-    ```
-
-For others, there will be no replacement and code that depends on them
-will have to be refactored:
-
-* `addObserver` (see below)
-* `removeObserver` (see below)
-* `cacheFor` — for memoization, use native getters with
-  [`@cached`](https://api.emberjs.com/ember/release/functions/@glimmer%2Ftracking/cached)
-  from `@glimmer/tracking`. There is no replacement for peeking at a cached
-  value without computing it.
-
-### Observers
-
-The `observer` helper does not work with native class syntax and as such,
-shouldn't be relied upon. It will not be replaced, and neither will the
-standalone `addObserver` and `removeObserver` functions. The transition path
-depends on what the observer was doing.
+The `observer` helper does not work with native class syntax
+and, as such, should not be relied upon.
+It will not be replaced,
+and neither will the standalone `addObserver` and `removeObserver` functions.
+The transition path depends on what the observer was doing.
 
 Observers that derive state from other state should become native getters over
 `@tracked` properties. The derivation then happens lazily when the value is
@@ -120,64 +69,393 @@ drive a third-party library, should become
 which re-run when their arguments change and are tied to an element's
 lifecycle.
 
-Some libraries use observers to find out when tracked state has changed
-outside of rendering, for example ember-concurrency's `waitFor`, and patterns
-in ember-animated, ember-data, and ember-power-select. Today the only
-workarounds are polling via `requestAnimationFrame` or timers. Ember should
-expose a deliberately low-level API for consuming tracked state outside the
-renderer, likely building on
-`createCache` / `getValue` with a way to be notified of invalidation.
-Designing that API is left to a follow-up RFC, but the observer APIs
-deprecated here should not be removed until it exists.
+The `Observable` methods either have a standalone equivalent in `@ember/object`
+or a short replacement with `@tracked`.
+The deprecation guide below covers each one.
 
-### Ecosystem impact
+### Integration Outside Rendering
 
-- eslint-plugin-ember already ships `no-observers`, so no new lint rules are
-  needed. Its docs can link to the deprecation guide once it ships.
-- Addons that use observers (ember-concurrency, ember-animated,
-  ember-power-select, parts of ember-data) will need to migrate. The
-  `until: '8.0.0'` window is intended to give them time.
+Some libraries use observers to learn when state changes outside rendering.
+ember-concurrency's [`waitForProperty`](https://github.com/machty/ember-concurrency/blob/0ffd122ed65f68970e0535ca2e54779c0140cac7/packages/ember-concurrency/src/-private/wait-for.js#L97-L119)
+re-checks its predicate each time the observed property changes.
+ember-animated uses observers in its task
+[`.observes()`](https://github.com/ember-animation/ember-animated/blob/f0a53fb6c947f9018129dc1b97e21339397612ed/addon/src/-private/ember-scheduler.ts#L76-L85) modifier
+and in [`<AnimatedEach>`](https://github.com/ember-animation/ember-animated/blob/f0a53fb6c947f9018129dc1b97e21339397612ed/addon/src/components/animated-each.gts#L222-L241),
+and EmberData's [Inspector data adapter](https://github.com/emberjs/data/blob/a8ac10f9b2f8e2280b44fed40dedf5fb872cd5f4/packages/debug/src/data-adapter.ts#L739-L758)
+observes records to push updates to the Ember Inspector.
+Today the only workarounds are polling with `requestAnimationFrame` or timers.
+
+Ember should expose a deliberately low-level API
+for consuming tracked state outside the renderer,
+probably building on `createCache` / `getValue`
+with a way to be notified of invalidation.
+Designing that API is left to a follow-up RFC.
+
+### Ecosystem Impact
+
+- eslint-plugin-ember already ships `no-observers`,
+  so no new lint rules are needed.
+  The rule's docs can link to the deprecation guide.
+- Addons that use observers will need to migrate,
+  including ember-concurrency, ember-animated,
+  and EmberData's Inspector adapter and legacy compatibility layer.
+  The `until: '8.0.0'` window gives them time to do so.
 - The published types for `@ember/object/observable`,
-  `@ember/object/observers`, and `observer` will be marked `@deprecated` and
-  removed along with the APIs.
+  `@ember/object/observers`, and the `observer` export from `@ember/object`
+  will be marked `@deprecated` and removed along with the APIs.
 
 ## Exploration
 
-To validate this deprecation, I've tried removing this functionality in the following PRs:
-* Inline Observable Mixin: https://github.com/emberjs/ember.js/pull/20928
-* Remove `observer` helper and inlined Observable methods: https://github.com/emberjs/ember.js/pull/20937
+To validate this deprecation, we removed this functionality on Ember's `next`
+branch in the following merged PRs:
+
+- Inline the `Observable` mixin:
+  [emberjs/ember.js#20928](https://github.com/emberjs/ember.js/pull/20928)
+- Remove the `observer` helper and the inlined `Observable` methods:
+  [emberjs/ember.js#20937](https://github.com/emberjs/ember.js/pull/20937)
 
 ## How We Teach This
 
-We should remove all references to this functionality from the guides and mark
-the relevant API docs as deprecated. Observers are not part of the modern
-learning path, so no re-organization is needed.
+The current guides do not cover observers, so they need no changes.
+The work is:
 
-The deprecation guide (PR'd above) covers each use case, showing both the
-incremental migration for legacy `EmberObject` / `@computed` code and the
-final native-class form. The deprecation should also be mentioned in the
-release blog post.
+- publish the deprecation guide below
+  at [deprecations.emberjs.com](https://deprecations.emberjs.com)
+- mark the deprecated APIs as deprecated in the API docs, linking to the guide
+- mention the deprecation in the release blog post
+
+### Deprecation Guide
+
+```js
+deprecate(message, false, {
+  id: 'deprecate-ember-object-observable',
+  until: '8.0.0',
+  for: 'ember-source',
+  url: 'https://deprecations.emberjs.com/id/deprecate-ember-object-observable',
+  since: { available: '7.x', enabled: '7.x' },
+});
+
+deprecate(message, false, {
+  id: 'deprecate-ember-object-observers',
+  until: '8.0.0',
+  for: 'ember-source',
+  url: 'https://deprecations.emberjs.com/id/deprecate-ember-object-observers',
+  since: { available: '7.x', enabled: '7.x' },
+});
+```
+
+#### What is deprecated
+
+|   | API | status |
+| - | --- | ------ |
+| 🌐 | the `Observable` mixin (`@ember/object/observable`) | **deprecated** |
+| 🌐 | `get` / `set` / `getProperties` / `setProperties` / `notifyPropertyChange` as methods on `EmberObject` and its descendants | **deprecated** |
+| 🌐 | `incrementProperty` / `decrementProperty` / `toggleProperty` / `cacheFor` as methods on `EmberObject` and its descendants | **deprecated** |
+| 🌐 | `addObserver` / `removeObserver` as methods on `EmberObject` and its descendants | **deprecated** |
+| 🌐 | `observer` from `@ember/object` | **deprecated** |
+| 🌐 | `addObserver` / `removeObserver` from `@ember/object/observers` | **deprecated** |
+| 🌐 | `get` / `set` / `getProperties` / `setProperties` / `notifyPropertyChange` from `@ember/object` | stays |
+
+Related deprecations with their own guides:
+
+- [`EmberObject`](https://rfcs.emberjs.com/id/1234-deprecate-ember-object)
+- [Mixins](https://rfcs.emberjs.com/id/1116-deprecate-mixins)
+- [`.extend()` / `.create()`](https://rfcs.emberjs.com/id/1117-deprecate-classic-classes)
+- [`ObjectProxy` / `ArrayProxy`](https://rfcs.emberjs.com/id/1112-deprecate-proxy)
+
+#### Migration
+
+<details><summary><code>this.get</code> / <code>this.set</code> and the other property methods</summary>
+
+```js
+// before
+person.set('firstName', 'John');
+let name = person.get('firstName');
+person.setProperties({ firstName: 'John', lastName: 'Doe' });
+let { firstName, lastName } = person.getProperties('firstName', 'lastName');
+person.notifyPropertyChange('firstName');
+```
+
+Code that still uses `@computed` or Ember's proxies
+can switch to the standalone functions:
+
+```js
+// after: @computed or proxies
+import { get, set, getProperties, setProperties, notifyPropertyChange } from '@ember/object';
+
+set(person, 'firstName', 'John');
+let name = get(person, 'firstName');
+setProperties(person, { firstName: 'John', lastName: 'Doe' });
+let { firstName, lastName } = getProperties(person, 'firstName', 'lastName');
+notifyPropertyChange(person, 'firstName');
+```
+
+Once the properties are `@tracked`,
+plain property access and assignment work:
+
+```js
+// after: @tracked
+import { tracked } from '@glimmer/tracking';
+
+class Person {
+  @tracked firstName;
+  @tracked lastName;
+}
+
+person.firstName = 'John';
+let name = person.firstName;
+Object.assign(person, { firstName: 'John', lastName: 'Doe' });
+let { firstName, lastName } = person;
+```
+
+`notifyPropertyChange` has no equivalent with `@tracked`.
+The write is the notification.
+
+</details>
+
+<details><summary><code>incrementProperty</code> / <code>decrementProperty</code> / <code>toggleProperty</code></summary>
+
+```js
+// before
+this.incrementProperty('count');
+this.decrementProperty('count');
+this.toggleProperty('flag');
+```
+
+```js
+// after: @computed or proxies
+import { get, set } from '@ember/object';
+
+set(this, 'count', get(this, 'count') + 1);
+set(this, 'count', get(this, 'count') - 1);
+set(this, 'flag', !get(this, 'flag'));
+```
+
+```js
+// after: @tracked
+this.count += 1;
+this.count -= 1;
+this.flag = !this.flag;
+```
+
+</details>
+
+<details><summary><code>cacheFor</code></summary>
+
+```js
+// before
+import { computed } from '@ember/object';
+
+class Cart extends EmberObject {
+  @computed('items.@each.price')
+  get total() {
+    return this.items.reduce((sum, item) => sum + item.price, 0);
+  }
+}
+
+let total = cart.cacheFor('total');
+```
+
+```js
+// after
+import { cached } from '@glimmer/tracking';
+
+class Cart {
+  @cached
+  get total() {
+    return this.items.reduce((sum, item) => sum + item.price, 0);
+  }
+}
+
+let total = cart.total;
+```
+
+`@cached` memoizes the getter until a `@tracked` value it read changes.
+There is no replacement for peeking at a cached value without computing it.
+
+</details>
+
+<details><summary>Observers that derive state</summary>
+
+```js
+// before
+import EmberObject, { observer } from '@ember/object';
+
+const Person = EmberObject.extend({
+  firstName: null,
+  lastName: null,
+  fullName: null,
+
+  fullNameDidChange: observer('firstName', 'lastName', function () {
+    this.set('fullName', `${this.firstName} ${this.lastName}`);
+  }),
+});
+```
+
+```js
+// after
+import { tracked } from '@glimmer/tracking';
+
+class Person {
+  @tracked firstName;
+  @tracked lastName;
+
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+```
+
+The getter computes `fullName` when it is read,
+instead of storing a copy each time a dependency changes.
+
+</details>
+
+<details><summary>Observers that perform side effects</summary>
+
+```js
+// before
+import EmberObject, { observer } from '@ember/object';
+
+const User = EmberObject.extend({
+  lastLogin: null,
+
+  lastLoginDidChange: observer('lastLogin', function () {
+    this.analytics.track('login', this.lastLogin);
+  }),
+});
+
+user.set('lastLogin', new Date());
+```
+
+```js
+// after
+import { tracked } from '@glimmer/tracking';
+
+class User {
+  @tracked lastLogin;
+
+  login() {
+    this.lastLogin = new Date();
+    this.analytics.track('login', this.lastLogin);
+  }
+}
+
+user.login();
+```
+
+Run the side effect where the change happens,
+not in a callback that watches for it.
+
+</details>
+
+<details><summary>Observers on component arguments</summary>
+
+```js
+// before
+import Component from '@ember/component';
+import { observer } from '@ember/object';
+import Chart from 'chart.js';
+
+export default Component.extend({
+  tagName: 'canvas',
+
+  didInsertElement() {
+    this._super(...arguments);
+    this.chart = new Chart(this.element, { type: 'bar', data: this.data });
+  },
+
+  dataDidChange: observer('data', function () {
+    this.chart.data = this.data;
+    this.chart.update();
+  }),
+
+  willDestroyElement() {
+    this._super(...arguments);
+    this.chart.destroy();
+  },
+});
+```
+
+```gjs
+// after
+import { modifier } from 'ember-modifier';
+import Chart from 'chart.js';
+
+const chart = modifier((element, [data]) => {
+  let instance = new Chart(element, { type: 'bar', data });
+
+  return () => instance.destroy();
+});
+
+<template>
+  <canvas {{chart @data}}></canvas>
+</template>
+```
+
+The modifier re-runs when `@data` changes,
+and its returned function runs before each re-run and on teardown.
+
+</details>
+
+<details><summary><code>addObserver</code> / <code>removeObserver</code></summary>
+
+```js
+// before
+import { addObserver, removeObserver } from '@ember/object/observers';
+
+addObserver(session, 'user', this, 'userDidChange');
+removeObserver(session, 'user', this, 'userDidChange');
+```
+
+If the observer updates the UI, make `user` a `@tracked` property
+and read it in the template or in a getter.
+The template re-renders when it changes, with no observer:
+
+```gjs
+<template>
+  {{#if @session.user}}
+    <Dashboard @user={{@session.user}} />
+  {{else}}
+    <Login />
+  {{/if}}
+</template>
+```
+
+If the observer runs code outside rendering,
+such as waiting until a value is set,
+there is no efficient replacement yet.
+Poll with `requestAnimationFrame` or a timer,
+or move the code to the place where the value is set.
+
+</details>
 
 ## Drawbacks
 
-Many users probably rely on this functionality. However, it's almost certainly
-something that we don't want to support long-term.
+Classic code calls `this.get` and `this.set` on `EmberObject` subclasses
+(components, controllers, routes, and services) very often, so many apps will
+see a large number of deprecation warnings. Each call has a mechanical
+replacement, but the churn is real. We do not want to support these APIs
+long-term, so we accept that cost.
 
 Non-rendering integration with the reactivity system has no efficient
-replacement until the low-level API described above exists. The deprecation
-can ship first, but removal must wait for that API.
+replacement until the low-level API described above exists.
 
 ## Alternatives
 
-* Just inline this functionality so that we can at least get rid of Mixins.
-* Keep the standalone `addObserver`/`removeObserver` functions as the
+- Inline this functionality into `EmberObject` so that we can remove mixins,
+  but keep the APIs.
+  Rejected because it leaves two reactivity systems in place.
+- Keep the standalone `addObserver`/`removeObserver` functions as the
   low-level integration API. Rejected because they expose the legacy eager
   notification model rather than an autotracking primitive.
-* Do nothing, which blocks removing Mixins and means maintaining two
-  reactivity systems indefinitely.
+- Do nothing. Rejected because it blocks removing mixins and means
+  maintaining two reactivity systems indefinitely.
 
 ## Unresolved questions
 
 The design of the low-level API for consuming tracked state outside the
-renderer is left to a follow-up RFC. This RFC takes the position that the
-deprecated APIs are not removed until that API ships.
+renderer is left to a follow-up RFC.
+
+We have not decided whether to ship a codemod that rewrites `this.get(...)`
+and `this.set(...)` to the standalone `get(this, ...)` and `set(this, ...)`.
