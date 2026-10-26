@@ -7,7 +7,7 @@ teams:
   - framework
   - learning
 prs:
-  accepted:
+  accepted: https://github.com/emberjs/rfcs/pull/1253
 project-link:
 ---
 
@@ -95,7 +95,7 @@ The guide goes in `content/ember/v7/deprecate-mut-helper.md`. The folder follows
 title: The `mut` template helper
 until: 8.0.0
 since: TBD
-rfc: https://rfcs.emberjs.com/id/0000-deprecate-mut-helper
+rfc: https://rfcs.emberjs.com/id/1253-deprecate-mut-helper
 ---
 ```
 
