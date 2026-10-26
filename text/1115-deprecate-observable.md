@@ -17,49 +17,42 @@ project-link:
 
 ## Summary
 
-Deprecate observers and the `Observable` mixin:
-the `observer` helper, the `addObserver` and `removeObserver` functions,
-and the methods that `Observable` adds to `EmberObject` and its descendants.
-The standalone `get`, `set`, `getProperties`, `setProperties`,
-and `notifyPropertyChange` functions from `@ember/object` are not deprecated
-by this RFC.
+Deprecate the observer APIs:
+the `observer` helper, `addObserver` and `removeObserver`
+(both the `@ember/object/observers` functions and the `EmberObject` methods),
+and the `Observable` mixin.
+The other methods that `Observable` adds to `EmberObject`, such as `get` and `set`,
+are deprecated along with `EmberObject`
+by [RFC 1234](https://rfcs.emberjs.com/id/1234-deprecate-ember-object).
 
 ## Motivation
 
-Observers have not been recommended since Octane.
-The guides do not teach them, and eslint-plugin-ember's
+Observers have not been recommended since Octane replaced them with autotracking,
+and eslint-plugin-ember's
 [`no-observers`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-observers.md)
-rule has recommended against them for years.
-Removing them shrinks Ember's internals:
-[emberjs/ember.js#20937](https://github.com/emberjs/ember.js/pull/20937) alone
-deletes 3,096 lines across 122 files.
+rule has flagged them for years.
+Removing them shrinks Ember's internals (see [Exploration](#exploration)).
 
 `Observable` is a mixin, so
 [RFC 1116](https://rfcs.emberjs.com/id/1116-deprecate-mixins)
 cannot remove mixins until `Observable` is deprecated.
 
-The replacement is autotracking:
-`@tracked` properties, native getters,
-and modifiers for work that is tied to an element.
-
 ## Transition Path
 
-Each deprecated API logs a deprecation when it is called.
+Each deprecated API logs a deprecation when it is called,
+or, for `Observable`, when the mixin is applied.
 The deprecations target `until: '8.0.0'`.
 
-The observer APIs have no direct replacement.
-The fix depends on what the observer does:
+No API directly replaces observers.
+The fix depends on what the observer does,
+and the [deprecation guide](#deprecation-guide) has an example of each:
 
 | Observer used to… | Replace with |
 | ----------------- | ------------ |
 | derive state from other state | a native getter over `@tracked` properties |
 | perform a side effect | an explicit call where the change happens |
 | react to classic component arguments | a [modifier](https://guides.emberjs.com/release/components/template-lifecycle-dom-and-modifiers/) |
-| watch state outside rendering | no efficient replacement yet (see below) |
-
-Each `Observable` method has a standalone equivalent in `@ember/object`
-or a short replacement with `@tracked`.
-The [deprecation guide](#deprecation-guide) covers every case.
+| watch state outside rendering | nothing yet (see below) |
 
 ### Integration Outside Rendering
 
@@ -71,12 +64,15 @@ ember-animated uses observers in its task
 and in [`<AnimatedEach>`](https://github.com/ember-animation/ember-animated/blob/f0a53fb6c947f9018129dc1b97e21339397612ed/addon/src/components/animated-each.gts#L222-L241),
 and EmberData's [Inspector data adapter](https://github.com/emberjs/data/blob/a8ac10f9b2f8e2280b44fed40dedf5fb872cd5f4/packages/debug/src/data-adapter.ts#L739-L758)
 observes records to push updates to the Ember Inspector.
-Today the only workarounds are polling with `requestAnimationFrame` or timers.
 
-Ember should expose a deliberately low-level API
-for consuming tracked state outside the renderer,
-probably building on `createCache` / `getValue`
-with a way to be notified of invalidation.
+Autotracking has no public way to do this.
+`createCache` and `getValue` from `@glimmer/tracking/primitives/cache`
+memoize a function over tracked state,
+but nothing tells the caller when that result becomes stale;
+only the renderer gets that signal.
+A follow-up RFC should add a low-level API for that notification,
+so that, for example, ember-concurrency can resume a waiting task
+when the value changes.
 
 ### Ecosystem Impact
 
@@ -87,16 +83,16 @@ with a way to be notified of invalidation.
   which forwards `addObserver`/`removeObserver` on records.
 - The published types for `@ember/object/observable`,
   `@ember/object/observers`, and the `observer` export from `@ember/object`
-  will be marked `@deprecated` and removed along with the APIs.
+  are marked `@deprecated`.
 
 ## Exploration
 
-To validate this deprecation, we removed this functionality on Ember's `next`
-branch in the following merged PRs:
+Both changes are already merged on Ember's `next` branch:
 
 - Inline the `Observable` mixin:
   [emberjs/ember.js#20928](https://github.com/emberjs/ember.js/pull/20928)
-- Remove the `observer` helper and the inlined `Observable` methods:
+- Remove the `observer` helper and the inlined `Observable` methods,
+  deleting 3,096 lines across 122 files:
   [emberjs/ember.js#20937](https://github.com/emberjs/ember.js/pull/20937)
 
 ## How We Teach This
@@ -106,7 +102,7 @@ The work is:
 
 - publish the deprecation guide below
   at [deprecations.emberjs.com](https://deprecations.emberjs.com)
-- mark the deprecated APIs as deprecated in the API docs, linking to the guide
+- mark these APIs deprecated in the API docs, linking to the guide
 - mention the deprecation in the release blog post
 
 ### Deprecation Guide
@@ -134,131 +130,14 @@ deprecate(message, false, {
 |   | API | status |
 | - | --- | ------ |
 | 🌐 | the `Observable` mixin (`@ember/object/observable`) | **deprecated** |
-| 🌐 | `get` / `set` / `getProperties` / `setProperties` / `notifyPropertyChange` as methods on `EmberObject` and its descendants | **deprecated** |
-| 🌐 | `incrementProperty` / `decrementProperty` / `toggleProperty` / `cacheFor` as methods on `EmberObject` and its descendants | **deprecated** |
-| 🌐 | `addObserver` / `removeObserver` as methods on `EmberObject` and its descendants | **deprecated** |
 | 🌐 | `observer` from `@ember/object` | **deprecated** |
 | 🌐 | `addObserver` / `removeObserver` from `@ember/object/observers` | **deprecated** |
-| 🌐 | `get` / `set` / `getProperties` / `setProperties` / `notifyPropertyChange` from `@ember/object` | stays |
+| 🌐 | `addObserver` / `removeObserver` as methods on `EmberObject` and its descendants | **deprecated** |
 
-Related deprecations with their own guides:
-
-- [`EmberObject`](https://rfcs.emberjs.com/id/1234-deprecate-ember-object)
-- [Mixins](https://rfcs.emberjs.com/id/1116-deprecate-mixins)
-- [`.extend()` / `.create()`](https://rfcs.emberjs.com/id/1117-deprecate-classic-classes)
-- [`ObjectProxy` / `ArrayProxy`](https://rfcs.emberjs.com/id/1112-deprecate-proxy)
+The other `Observable` methods (`get`, `set`, `incrementProperty`, and so on)
+are covered by the [`EmberObject` deprecation](https://rfcs.emberjs.com/id/1234-deprecate-ember-object).
 
 #### Migration
-
-<details><summary><code>this.get</code> / <code>this.set</code> and the other property methods</summary>
-
-```js
-// before
-person.set('firstName', 'John');
-let name = person.get('firstName');
-person.setProperties({ firstName: 'John', lastName: 'Doe' });
-let { firstName, lastName } = person.getProperties('firstName', 'lastName');
-person.notifyPropertyChange('firstName');
-```
-
-Code that still uses `@computed` or Ember's proxies
-can switch to the standalone functions:
-
-```js
-// after: @computed or proxies
-import { get, set, getProperties, setProperties, notifyPropertyChange } from '@ember/object';
-
-set(person, 'firstName', 'John');
-let name = get(person, 'firstName');
-setProperties(person, { firstName: 'John', lastName: 'Doe' });
-let { firstName, lastName } = getProperties(person, 'firstName', 'lastName');
-notifyPropertyChange(person, 'firstName');
-```
-
-Once the properties are `@tracked`,
-plain property access and assignment work:
-
-```js
-// after: @tracked
-import { tracked } from '@glimmer/tracking';
-
-class Person {
-  @tracked firstName;
-  @tracked lastName;
-}
-
-person.firstName = 'John';
-let name = person.firstName;
-Object.assign(person, { firstName: 'John', lastName: 'Doe' });
-let { firstName, lastName } = person;
-```
-
-`notifyPropertyChange` has no equivalent with `@tracked`.
-The write is the notification.
-
-</details>
-
-<details><summary><code>incrementProperty</code> / <code>decrementProperty</code> / <code>toggleProperty</code></summary>
-
-```js
-// before
-this.incrementProperty('count');
-this.decrementProperty('count');
-this.toggleProperty('flag');
-```
-
-```js
-// after: @computed or proxies
-import { get, set } from '@ember/object';
-
-set(this, 'count', get(this, 'count') + 1);
-set(this, 'count', get(this, 'count') - 1);
-set(this, 'flag', !get(this, 'flag'));
-```
-
-```js
-// after: @tracked
-this.count += 1;
-this.count -= 1;
-this.flag = !this.flag;
-```
-
-</details>
-
-<details><summary><code>cacheFor</code></summary>
-
-```js
-// before
-import { computed } from '@ember/object';
-
-class Cart extends EmberObject {
-  @computed('items.@each.price')
-  get total() {
-    return this.items.reduce((sum, item) => sum + item.price, 0);
-  }
-}
-
-let total = cart.cacheFor('total');
-```
-
-```js
-// after
-import { cached } from '@glimmer/tracking';
-
-class Cart {
-  @cached
-  get total() {
-    return this.items.reduce((sum, item) => sum + item.price, 0);
-  }
-}
-
-let total = cart.total;
-```
-
-`@cached` memoizes the getter until a `@tracked` value it read changes.
-There is no replacement for peeking at a cached value without computing it.
-
-</details>
 
 <details><summary>Observers that derive state</summary>
 
@@ -417,13 +296,9 @@ or move the code to the place where the value is set.
 
 ## Drawbacks
 
-Every `this.get` and `this.set` call
-on a classic component, controller, route, or service
-triggers the deprecation.
-Each call has a mechanical replacement (see the guide).
-
-Libraries that watch state outside rendering must poll
-until the follow-up API ships.
+Until the follow-up API exists,
+libraries that watch state outside rendering
+can only poll with `requestAnimationFrame` or timers.
 
 ## Alternatives
 
@@ -441,7 +316,3 @@ until the follow-up API ships.
 The design of the low-level API
 for consuming tracked state outside the renderer
 is left to a follow-up RFC.
-
-Reads are covered: the `ember/no-get` lint rule autofixes `this.get(...)`.
-We have not decided whether to ship a codemod for writes,
-rewriting `this.set(...)` to `set(this, ...)`.
