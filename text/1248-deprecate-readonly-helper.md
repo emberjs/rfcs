@@ -52,12 +52,12 @@ Glimmer components (`@glimmer/component`) and template-only components cannot se
 Any use of the `readonly` helper in a template, in both loose mode (`.hbs`) and strict mode (`<template>`). The deprecation fires at runtime the first time the helper is invoked, with:
 
 ```js
-deprecate('The `readonly` template helper is deprecated.', false, {
-  id: 'deprecate-readonly-helper',
-  for: 'ember-source',
-  since: { available: 'TBD', enabled: 'TBD' },
-  until: 'TBD',
-  url: 'https://deprecations.emberjs.com/id/deprecate-readonly-helper',
+deprecate("The `readonly` template helper is deprecated.", false, {
+  id: "deprecate-readonly-helper",
+  for: "ember-source",
+  since: { available: "TBD", enabled: "TBD" },
+  until: "TBD",
+  url: "https://deprecations.emberjs.com/id/deprecate-readonly-helper",
 });
 ```
 
@@ -82,7 +82,7 @@ The [deprecation guide](#deprecation-guide) covers each use case.
 
 ### Deprecation guide
 
-The guide goes in `content/ember/v7/deprecate-readonly-helper.md`. The folder follows the major version of `until`. The frontmatter is:
+Example frontmatter:
 
 ```yaml
 ---
