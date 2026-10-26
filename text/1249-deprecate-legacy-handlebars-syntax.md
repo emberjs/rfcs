@@ -1,5 +1,5 @@
 ---
-stage: accepted
+stage: ready-for-release
 start-date: 2026-10-14T00:00:00.000Z
 release-date:
 release-versions:
@@ -7,7 +7,7 @@ teams:
   - framework
   - learning
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1249
+  accepted: 'https://github.com/emberjs/rfcs/pull/1249'
 project-link:
 ---
 
