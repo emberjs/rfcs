@@ -1,7 +1,7 @@
 ---
 stage: discontinued
 start-date: 2022-01-29T00:00:00.000Z
-release-date: Unreleased
+release-date: 
 release_versions:
 teams:
   - data

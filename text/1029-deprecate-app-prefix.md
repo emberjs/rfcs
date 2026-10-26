@@ -1,13 +1,17 @@
 ---
-stage: accepted
+stage: recommended
 start-date: 2024-05-20T00:00:00.000Z
 release-date:
 release-versions:
-teams: # delete teams that aren't relevant
+  ember-cli: 6.3.0
+teams:
   - cli
   - learning
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1029
+  accepted: 'https://github.com/emberjs/rfcs/pull/1029'
+  ready-for-release: 'https://github.com/emberjs/rfcs/pull/1044'
+  released: 'https://github.com/emberjs/rfcs/pull/1072'
+  recommended: 'https://github.com/emberjs/rfcs/pull/1094'
 project-link:
 ---
 

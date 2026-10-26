@@ -30,7 +30,8 @@ project-link: Leave as is
 suite: Leave as is
 -->
 
-<-- Replace "RFC title" with the title of your RFC -->
+<!-- Replace "RFC title" with the title of your RFC -->
+
 # RFC title
 
 ## Summary

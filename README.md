@@ -119,6 +119,8 @@ Read more about the RFC [Stages].
 ## Stages
 [Stages]: #stages
 
+Here are all the stages that an RFC can be in:
+
 | Stage| Description| Requires FCP to enter? |
 | -----| -----------|----- |
 | [0 - Proposed](#Proposed) | A proposal for a change to Ember or its processes that is offered for community and team evaluation. | no |
@@ -132,6 +134,24 @@ There are two additional statuses for RFCs that will not move forward:
 
 - **[Discontinued](#Discontinued)** - a previously [Accepted] RFC that is either in conflict with Ember's evolving programming model or is superseded by another active RFC.
 - **[Closed](#Closed)** - Proposed RFCs that will not be moved into the next stage.
+
+### Flowchart of Stages
+
+```mermaid
+flowchart TD
+    A("0 - Proposed") -- Discussion, revision --> B("1 - Exploring")
+    B -- Discussion, exploration, full specification --> C("3 - Accepted")
+    C -- Implementation, Commitment to Stability --> D("4 - Ready for Release")
+    D -- Release in Stable versions --> E("5 - Released")
+    E -- Polish, make default, document, ensure ecosystem support --> F("Recommended")
+    
+    style A stroke:#E1BEE7
+    style B stroke:#E1BEE7
+    style C stroke:#AA00FF
+    style D stroke:#AA00FF
+    style E stroke:#AA00FF,stroke:#AA00FF
+    style F color:#FFFFFF, fill:#AA00FF, stroke:#AA00FF
+```
 
 ### Proposed
 [Proposed]: #proposed

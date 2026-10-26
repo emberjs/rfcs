@@ -20,8 +20,9 @@ jobs:
         run: |
           node rfcs-tooling/scripts/list-frontmatter.mjs text/*.md > rfc-data.json
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: rfc-data
           path: rfc-data.json
           if-no-files-found: error
+          overwrite: true
