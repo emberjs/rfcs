@@ -17,20 +17,17 @@ project-link:
 
 ## Summary
 
-Deprecate the observer APIs: the `observer` helper, `addObserver` and `removeObserver` (both the `@ember/object/observers` functions and the `EmberObject` methods), and the `Observable` mixin.
-The other methods that `Observable` adds to `EmberObject`, such as `get` and `set`, are deprecated along with `EmberObject` by [RFC 1234](https://rfcs.emberjs.com/id/1234-deprecate-ember-object).
+Deprecate the `observer` helper from `@ember/object` and the `addObserver` and `removeObserver` functions from `@ember/object/observers`.
+The `Observable` mixin and the methods it adds to `EmberObject` are already deprecated by [RFC 1116](https://rfcs.emberjs.com/id/1116-deprecate-mixins) and [RFC 1234](https://rfcs.emberjs.com/id/1234-deprecate-ember-object).
 
 ## Motivation
 
 Observers have not been recommended since Octane replaced them with autotracking, and eslint-plugin-ember's [`no-observers`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-observers.md) rule has flagged them for years.
 Removing them shrinks Ember's internals (see [Exploration](#exploration)).
 
-`Observable` is a mixin, so [RFC 1116](https://rfcs.emberjs.com/id/1116-deprecate-mixins) cannot remove mixins until `Observable` is deprecated.
-
 ## Transition Path
 
-Each deprecated API logs a deprecation when it is called, or, for `Observable`, when the mixin is applied.
-The deprecations target `until: '8.0.0'`.
+Calling a deprecated API logs a deprecation that targets `until: '8.0.0'`.
 
 No API directly replaces observers.
 The fix depends on what the observer does, and the [deprecation guide](#deprecation-guide) has an example of each:
@@ -44,18 +41,8 @@ The fix depends on what the observer does, and the [deprecation guide](#deprecat
 ### Ecosystem Impact
 
 - eslint-plugin-ember already ships `no-observers`, so no new lint rules are needed.
-- These libraries use observers and need to migrate:
-  - ember-concurrency's [`waitForProperty`](https://github.com/machty/ember-concurrency/blob/0ffd122ed65f68970e0535ca2e54779c0140cac7/packages/ember-concurrency/src/-private/wait-for.js#L97-L119)
-  - ember-animated's task [`.observes()`](https://github.com/ember-animation/ember-animated/blob/f0a53fb6c947f9018129dc1b97e21339397612ed/addon/src/-private/ember-scheduler.ts#L76-L85) modifier and [`<AnimatedEach>`](https://github.com/ember-animation/ember-animated/blob/f0a53fb6c947f9018129dc1b97e21339397612ed/addon/src/components/animated-each.gts#L222-L241)
-  - EmberData's [Inspector data adapter](https://github.com/emberjs/data/blob/a8ac10f9b2f8e2280b44fed40dedf5fb872cd5f4/packages/debug/src/data-adapter.ts#L739-L758) and its legacy compatibility layer, which forwards `addObserver`/`removeObserver` on records
-- The published types for `@ember/object/observable`, `@ember/object/observers`, and the `observer` export from `@ember/object` are marked `@deprecated`.
-
-## Exploration
-
-Both changes are already merged on Ember's `next` branch:
-
-- Inline the `Observable` mixin: [emberjs/ember.js#20928](https://github.com/emberjs/ember.js/pull/20928)
-- Remove the `observer` helper and the inlined `Observable` methods, deleting 3,096 lines across 122 files: [emberjs/ember.js#20937](https://github.com/emberjs/ember.js/pull/20937)
+- Several libraries use observers and need to migrate (see [Library Usage](#library-usage)).
+- The published types for `@ember/object/observers` and the `observer` export from `@ember/object` are marked `@deprecated`.
 
 ## How We Teach This
 
@@ -70,14 +57,6 @@ The work is:
 
 ```js
 deprecate(message, false, {
-  id: 'deprecate-ember-object-observable',
-  until: '8.0.0',
-  for: 'ember-source',
-  url: 'https://deprecations.emberjs.com/id/deprecate-ember-object-observable',
-  since: { available: '7.x', enabled: '7.x' },
-});
-
-deprecate(message, false, {
   id: 'deprecate-ember-object-observers',
   until: '8.0.0',
   for: 'ember-source',
@@ -90,12 +69,10 @@ deprecate(message, false, {
 
 |   | API | status |
 | - | --- | ------ |
-| 🌐 | the `Observable` mixin (`@ember/object/observable`) | **deprecated** |
 | 🌐 | `observer` from `@ember/object` | **deprecated** |
 | 🌐 | `addObserver` / `removeObserver` from `@ember/object/observers` | **deprecated** |
-| 🌐 | `addObserver` / `removeObserver` as methods on `EmberObject` and its descendants | **deprecated** |
 
-The other `Observable` methods (`get`, `set`, `incrementProperty`, and so on) are covered by the [`EmberObject` deprecation](https://rfcs.emberjs.com/id/1234-deprecate-ember-object).
+The `Observable` mixin and its methods, including `this.addObserver`, are covered by the [Mixins](https://rfcs.emberjs.com/id/1116-deprecate-mixins) and [`EmberObject`](https://rfcs.emberjs.com/id/1234-deprecate-ember-object) deprecations.
 
 #### Migration
 
@@ -232,13 +209,27 @@ You can also call it from the template that reads the value, as in the previous 
 ## Drawbacks
 
 Code that reacted to a change from anywhere must now run either where the change happens or from a template that reads the value.
-Libraries that relied on observers for this, such as ember-concurrency's `waitForProperty`, need a new design.
+Libraries that relied on observers for this need a new design.
 
 ## Alternatives
 
-- Keep the APIs, either by inlining them into `EmberObject` so that mixins can be removed, or by doing nothing.
-  Rejected because both leave two reactivity systems in place indefinitely, and doing nothing also blocks removing mixins.
+- Do nothing.
+  This keeps two reactivity systems in place indefinitely.
 
 ## Unresolved questions
 
 None.
+
+## Appendix
+
+### Exploration
+
+[emberjs/ember.js#20937](https://github.com/emberjs/ember.js/pull/20937), merged on Ember's `next` branch, removes the `observer` helper along with the inlined `Observable` methods, deleting 3,096 lines across 122 files.
+
+### Library Usage
+
+These libraries use observers and need to migrate:
+
+- ember-concurrency's [`waitForProperty`](https://github.com/machty/ember-concurrency/blob/0ffd122ed65f68970e0535ca2e54779c0140cac7/packages/ember-concurrency/src/-private/wait-for.js#L97-L119)
+- ember-animated's task [`.observes()`](https://github.com/ember-animation/ember-animated/blob/f0a53fb6c947f9018129dc1b97e21339397612ed/addon/src/-private/ember-scheduler.ts#L76-L85) modifier and [`<AnimatedEach>`](https://github.com/ember-animation/ember-animated/blob/f0a53fb6c947f9018129dc1b97e21339397612ed/addon/src/components/animated-each.gts#L222-L241)
+- EmberData's [Inspector data adapter](https://github.com/emberjs/data/blob/a8ac10f9b2f8e2280b44fed40dedf5fb872cd5f4/packages/debug/src/data-adapter.ts#L739-L758) and its legacy compatibility layer, which forwards `addObserver`/`removeObserver` on records
