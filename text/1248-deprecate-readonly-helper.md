@@ -170,5 +170,4 @@ export default function oneWay(value) {
 
 ## Unresolved questions
 
-- Which version number goes in `until`? This RFC proposes the first LTS after the deprecation is enabled.
-- Should `mut` get the same treatment in a companion RFC? `mut` is the write side of the same system, but it also works as a setter with `fn` (`{{fn (mut this.value)}}`) in any component, so it needs its own migration path.
+n/a
