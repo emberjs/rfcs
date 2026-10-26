@@ -26,9 +26,8 @@ instead.
 These components date from a time when templates could not bind attributes to elements
 and two-way binding was how Ember worked. Neither is true anymore.
 `<input value={{this.name}}>` has worked since HTMLBars, and Glimmer components removed
-two-way binding on purpose. `<Input>` still installs one on `@value` and `@checked`.
-When the user types, it writes the new value back to whatever you passed in, and
-nothing in your code shows that write.
+two-way binding on purpose. `<Input>` still installs one on `@value` and `@checked`:
+when the user types, it assigns the new value to whatever you passed in.
 
 The APIs these components were designed to pair with, `{{action}}`
 ([RFC #1006](./1006-deprecate-action-template-helper.md)) and `TargetActionSupport`
@@ -50,15 +49,16 @@ exists only to throw an assertion pointing you at `@checked`.
 [emberjs/rfcs#498](https://github.com/emberjs/rfcs/issues/498), "Deprecate builtin input
 and textarea components", was opened by `@mehulkar` in 2019 to gather community feedback.
 It was closed for inactivity in 2022 with a note that the idea was still valid and needed
-someone to pick it up.
+someone to pick it up. Other threads are linked in the
+[appendix](#appendix-community-discussion).
 
 > They do not bring a lot of value and they are one more Ember thing. Should you use the
 > built in `<Input />` or the `<input type="text" />`? And why there is a component for
 > the `textarea` and `input`, but not for `select`?
 >
-> — `@mupkoo`
+> -- `@mupkoo`
 
-`@rwjblue` objected, with `@locks` agreeing, that the replacement was worse:
+`@rwjblue` objected that the replacement was worse, and `@locks` agreed:
 
 > In general, what I've seen folks suggest is something like:
 >
@@ -72,21 +72,17 @@ someone to pick it up.
 > <Input @value={{this.myValue}} />
 > ```
 >
-> — `@rwjblue`
+> -- `@rwjblue`
 
-That was fair in 2019. `{{action}}` has since been deprecated, and the comparison today
-is:
+That was fair in 2019. `{{action}}` has since been deprecated, so the comparison is now:
 
 ```hbs
 <input value={{this.myValue}} {{on "input" this.updateValue}}>
-```
-
-```hbs
 <Input @value={{this.myValue}} />
 ```
 
-The native version is still longer, and it needs an `updateValue` handler. In exchange,
-every write to `myValue` happens in code the author wrote and can read.
+The native version is still longer and needs an `updateValue` handler, but the write to
+`myValue` is in the app's own code.
 
 ## Transition Path
 
@@ -112,7 +108,7 @@ The ids follow the earlier `ember.built-in-components.import` and
 
 The message must include the template location:
 
-```
+```text
 The built-in `<Input>` component is deprecated. Use a native `<input>` element with
 the `{{on}}` modifier instead. ('my-app/components/search.gjs' @ L12:C4) See
 https://deprecations.emberjs.com/id/ember-built-in-components-input
@@ -123,9 +119,8 @@ https://deprecations.emberjs.com/id/ember-built-in-components-input
 Replace each component with its native element, bind `value` or `checked`, and update
 state from an `{{on}}` handler.
 
-Glimmer sets `value` and `checked` on `<input>` and `<textarea>` as properties, not
-attributes. So `value={{this.term}}` keeps the live value in sync like `@value` did,
-without the write-back.
+Glimmer sets `value` and `checked` on `<input>` and `<textarea>` as properties, so
+`value={{this.term}}` stays in sync the way `@value` did, minus the write-back.
 
 The [deprecation guides](#deprecation-guides) below cover each case in full.
 
@@ -190,7 +185,7 @@ The built-in `<Input>` component is deprecated in all its forms: `<Input>`, `{{i
 `<input>` element with the `{{on}}` modifier instead.
 
 `<Input>` writes the new value back to whatever you pass to `@value` or `@checked`. A
-native `<input>` does not. Read the value from the event and set it yourself.
+native `<input>` doesn't, so read the value from the event and set it yourself.
 
 If the deprecation points at a template inside an addon, update that addon or report
 the usage to its maintainers.
@@ -356,7 +351,7 @@ The built-in `<Textarea>` component is deprecated in all its forms: `<Textarea>`
 instead.
 
 `<Textarea>` writes the new value back to whatever you pass to `@value`. A native
-`<textarea>` does not. Read the value from the event and set it yourself.
+`<textarea>` doesn't, so read the value from the event and set it yourself.
 
 If the deprecation points at a template inside an addon, update that addon or report
 the usage to its maintainers.
@@ -415,20 +410,49 @@ See the [`<Input>` guide](/id/ember-built-in-components-input) for an example.
 ## Alternatives
 
 - Do nothing. The components keep working and keep costing maintenance and bundle size.
-- Ship a build-time transform that rewrites `<Input>` and `<Textarea>` to native elements.
-  A transform changes the output, but it keeps the implicit write-back of `@value` in the
-  code people write and read.
-- Move them to an addon and keep recommending them. An addon removes the maintenance
-  cost from `ember-source`, but people keep learning and writing the two-way binding.
+- Ship a build-time transform that rewrites them to native elements. Authors would still
+  write `@value` and get its implicit write-back.
+- Move them to an addon. This only moves the maintenance out of `ember-source`.
 
 ### Prior art
 
-No other major framework ships an input component. React, Angular, Svelte, Vue, and Solid
-all use the native element. Where they add sugar, it is a binding attached to that
-element (Svelte's `bind:value`, Vue's `v-model`, Angular's `[(ngModel)]`), not a
-replacement element. React and Solid have no such sugar.
+No other major framework ships an input component. Svelte (`bind:value`), Vue
+(`v-model`), and Angular (`[(ngModel)]`) add binding syntax to the native element. React
+and Solid use the native element as is.
 
 ## Unresolved questions
 
 - Should Ember add a template-level way to set a value from an event (see Drawbacks)?
   This RFC does not depend on the answer.
+
+## Appendix: community discussion
+
+### Issues and RFCs
+
+- [emberjs/rfcs#498](https://github.com/emberjs/rfcs/issues/498): the 2019 proposal to
+  deprecate these components, closed for inactivity in 2022.
+- [`@stefanpenner` on Twitter](https://twitter.com/stefanpenner/status/1136332615923847168):
+  the 2019 thread that prompted #498.
+- [ember.js#19222](https://github.com/emberjs/ember.js/issues/19222): `{{on "input"}}`
+  fires before `<Input>` updates its binding.
+- [ember.js#18249](https://github.com/emberjs/ember.js/issues/18249): adding a `change`
+  action breaks the two-way binding on `checked`.
+- [ember.js#19763](https://github.com/emberjs/ember.js/issues/19763): a checkbox `change`
+  handler behaves differently from 3.27 on.
+
+### Forum threads
+
+- [Ember Octane and 2-Way-Binding. What are you recommend?](https://discuss.emberjs.com/t/ember-octane-and-2-way-binding-what-are-you-recommend/18092)
+  (2020): whether new Octane apps should use `<Input>` or a native input.
+- [Correct way to pass arguments to built-in components with angle-bracket syntax](https://discuss.emberjs.com/t/correct-way-to-pass-arguments-to-built-in-components-with-angle-bracket-syntax/16635)
+  (2019): confusion over which `<Input>` options are arguments and which are attributes.
+- [Input Helper fires action before binding value](https://discuss.emberjs.com/t/input-helper-fires-action-before-binding-value/19310)
+  (2021) and
+  [Input component value lagging one change behind](https://discuss.emberjs.com/t/input-component-value-laging-one-change-behind/19633)
+  (2022): users hitting ember.js#19222.
+
+### Posts
+
+- Jen Weber, ["Building an Octane-style input"](https://www.jenweber.dev/building-an-octane-style-input/):
+  building a text input on the native element. It covers where `<Input>` falls short on
+  data flow, validation, and accessibility, though the author still likes its two-way binding.
