@@ -26,19 +26,17 @@ by this RFC.
 
 ## Motivation
 
-Observers have been informally discouraged
-since the introduction of autotracking.
+Observers have not been recommended since Octane.
 The guides do not teach them, and eslint-plugin-ember's
 [`no-observers`](https://github.com/ember-cli/eslint-plugin-ember/blob/master/docs/rules/no-observers.md)
 rule has recommended against them for years.
-Removing support for them will simplify Ember's internals.
-(To remove observer support from Ember's internals completely,
-we will need to deprecate other functionality
-in addition to what is included here.)
+Removing them shrinks Ember's internals:
+[emberjs/ember.js#20937](https://github.com/emberjs/ember.js/pull/20937) alone
+deletes 3,096 lines across 122 files.
 
-Additionally, Ember has not recommended mixins for several years.
-Because `Observable` is a mixin,
-it must be deprecated before we can remove mixins entirely.
+`Observable` is a mixin, so
+[RFC 1116](https://rfcs.emberjs.com/id/1116-deprecate-mixins)
+cannot remove mixins until `Observable` is deprecated.
 
 The replacement is autotracking:
 `@tracked` properties, native getters,
@@ -49,29 +47,19 @@ and modifiers for work that is tied to an element.
 Each deprecated API logs a deprecation when it is called.
 The deprecations target `until: '8.0.0'`.
 
-The `observer` helper does not work with native class syntax
-and, as such, should not be relied upon.
-It will not be replaced,
-and neither will the standalone `addObserver` and `removeObserver` functions.
-The transition path depends on what the observer was doing.
+The observer APIs have no direct replacement.
+The fix depends on what the observer does:
 
-Observers that derive state from other state should become native getters over
-`@tracked` properties. The derivation then happens lazily when the value is
-read instead of eagerly when a dependency changes.
+| Observer used to… | Replace with |
+| ----------------- | ------------ |
+| derive state from other state | a native getter over `@tracked` properties |
+| perform a side effect | an explicit call where the change happens |
+| react to classic component arguments | a [modifier](https://guides.emberjs.com/release/components/template-lifecycle-dom-and-modifiers/) |
+| watch state outside rendering | no efficient replacement yet (see below) |
 
-Observers that perform side effects should be refactored so the side effect
-happens explicitly at the site of the mutation, for example in the action that
-performs the change.
-
-Observers used in classic components to react to argument changes, often to
-drive a third-party library, should become
-[modifiers](https://guides.emberjs.com/release/components/template-lifecycle-dom-and-modifiers/),
-which re-run when their arguments change and are tied to an element's
-lifecycle.
-
-The `Observable` methods either have a standalone equivalent in `@ember/object`
+Each `Observable` method has a standalone equivalent in `@ember/object`
 or a short replacement with `@tracked`.
-The deprecation guide below covers each one.
+The [deprecation guide](#deprecation-guide) covers every case.
 
 ### Integration Outside Rendering
 
@@ -89,17 +77,14 @@ Ember should expose a deliberately low-level API
 for consuming tracked state outside the renderer,
 probably building on `createCache` / `getValue`
 with a way to be notified of invalidation.
-Designing that API is left to a follow-up RFC.
 
 ### Ecosystem Impact
 
 - eslint-plugin-ember already ships `no-observers`,
   so no new lint rules are needed.
-  The rule's docs can link to the deprecation guide.
-- Addons that use observers will need to migrate,
-  including ember-concurrency, ember-animated,
-  and EmberData's Inspector adapter and legacy compatibility layer.
-  The `until: '8.0.0'` window gives them time to do so.
+- The libraries above need to migrate,
+  as does EmberData's legacy compatibility layer,
+  which forwards `addObserver`/`removeObserver` on records.
 - The published types for `@ember/object/observable`,
   `@ember/object/observers`, and the `observer` export from `@ember/object`
   will be marked `@deprecated` and removed along with the APIs.
@@ -432,30 +417,31 @@ or move the code to the place where the value is set.
 
 ## Drawbacks
 
-Classic code calls `this.get` and `this.set` on `EmberObject` subclasses
-(components, controllers, routes, and services) very often, so many apps will
-see a large number of deprecation warnings. Each call has a mechanical
-replacement, but the churn is real. We do not want to support these APIs
-long-term, so we accept that cost.
+Every `this.get` and `this.set` call
+on a classic component, controller, route, or service
+triggers the deprecation.
+Each call has a mechanical replacement (see the guide).
 
-Non-rendering integration with the reactivity system has no efficient
-replacement until the low-level API described above exists.
+Libraries that watch state outside rendering must poll
+until the follow-up API ships.
 
 ## Alternatives
 
-- Inline this functionality into `EmberObject` so that we can remove mixins,
-  but keep the APIs.
-  Rejected because it leaves two reactivity systems in place.
-- Keep the standalone `addObserver`/`removeObserver` functions as the
-  low-level integration API. Rejected because they expose the legacy eager
-  notification model rather than an autotracking primitive.
-- Do nothing. Rejected because it blocks removing mixins and means
-  maintaining two reactivity systems indefinitely.
+- Keep the APIs, either by inlining them into `EmberObject`
+  so that mixins can be removed, or by doing nothing.
+  Rejected because both leave two reactivity systems in place indefinitely,
+  and doing nothing also blocks removing mixins.
+- Keep the standalone `addObserver`/`removeObserver` functions
+  as the low-level integration API.
+  Rejected because they expose the legacy eager notification model
+  rather than an autotracking primitive.
 
 ## Unresolved questions
 
-The design of the low-level API for consuming tracked state outside the
-renderer is left to a follow-up RFC.
+The design of the low-level API
+for consuming tracked state outside the renderer
+is left to a follow-up RFC.
 
-We have not decided whether to ship a codemod that rewrites `this.get(...)`
-and `this.set(...)` to the standalone `get(this, ...)` and `set(this, ...)`.
+Reads are covered: the `ember/no-get` lint rule autofixes `this.get(...)`.
+We have not decided whether to ship a codemod for writes,
+rewriting `this.set(...)` to `set(this, ...)`.
