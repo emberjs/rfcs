@@ -43,10 +43,7 @@ Without `readonly`, a classic component that calls `this.set('count', ...)` writ
 
 Glimmer components (`@glimmer/component`) and template-only components cannot set their arguments, so `readonly` does nothing for them.
 
-`readonly` still has a cost:
-
-- It is one of three public names that strict mode still treats as a keyword (`STRICT_MODE_KEYWORDS` in `@ember/template-compiler`), alongside `mut` and `unbound`.
-- It is undocumented but still appears in older apps and addons, so developers who find it have no guidance ([emberjs/ember.js#21549](https://github.com/emberjs/ember.js/issues/21549)).
+`readonly` still costs something. Strict mode reserves it as a keyword (`STRICT_MODE_KEYWORDS` in `@ember/template-compiler`), one of three public names along with `mut` and `unbound`. It is also undocumented but still shows up in older apps and addons, and developers who find it have no guidance ([emberjs/ember.js#21549](https://github.com/emberjs/ember.js/issues/21549)).
 
 ## Transition Path
 
@@ -58,23 +55,23 @@ Any use of the `readonly` helper in a template, in both loose mode (`.hbs`) and 
 deprecate('The `readonly` template helper is deprecated.', false, {
   id: 'deprecate-readonly-helper',
   for: 'ember-source',
-  since: { available: '<the release that ships it>', enabled: '<the same release>' },
-  until: '<the first LTS after it is enabled>',
+  since: { available: 'TBD', enabled: 'TBD' },
+  until: 'TBD',
   url: 'https://deprecations.emberjs.com/id/deprecate-readonly-helper',
 });
 ```
 
-Because the API is intimate, `available` and `enabled` match, and `until` is the next LTS instead of the next major.
+Because the API is intimate, `available` and `enabled` are the same release, and `until` is the next LTS instead of the next major.
 
 The [deprecation guide](#deprecation-guide) covers each use case.
 
 ### Ecosystem
 
-- **ember-template-lint**: add a `no-readonly` rule with an autofix that removes it when the invoked component is resolvable and is not a classic component. A codemod can apply the same fix across a codebase.
-- **Strict mode**: once removed, `readonly` is dropped from `STRICT_MODE_KEYWORDS`, freeing the name for user locals.
-- **Addons**: same migration as apps.
-- **Glint**: if Glint declares `readonly` as a template global, remove that declaration when Ember removes the helper.
-- **No impact**: blueprints (none generate `readonly`), Ember Inspector, SSR / FastBoot, Engines.
+- ember-template-lint gets a `no-readonly` rule. Its autofix removes `readonly` when the invoked component resolves to something other than a classic component. A codemod can run the same fix across a codebase.
+- After removal, `readonly` leaves `STRICT_MODE_KEYWORDS`, so strict-mode templates can use the name for their own locals.
+- Addons migrate the same way apps do.
+- If Glint declares `readonly` as a template global, that declaration goes away when the helper does.
+- Blueprints (none generate `readonly`), Ember Inspector, SSR / FastBoot, and Engines are not affected.
 
 ## How We Teach This
 
@@ -83,15 +80,15 @@ The [deprecation guide](#deprecation-guide) covers each use case.
 - Open a PR to [ember-learn/deprecation-app](https://github.com/ember-learn/deprecation-app) with the guide below.
 - Keep the existing API doc entry `@private`, and add a `@deprecated` note that points to the guide.
 
-### Deprecation Guide
+### Deprecation guide
 
 The guide goes in `content/ember/v7/deprecate-readonly-helper.md`. The folder follows the major version of `until`. The frontmatter is:
 
 ```yaml
 ---
 title: The `readonly` template helper
-until: <the first LTS after it is enabled>
-since: <the release that ships it>
+until: TBD
+since: TBD
 rfc: https://rfcs.emberjs.com/id/1248-deprecate-readonly-helper
 ---
 ```
@@ -100,7 +97,7 @@ The body is below, between the horizontal rules.
 
 ---
 
-The `readonly` template helper is deprecated. It has an effect only when you pass a value to a classic component (`@ember/component`). There, it stops the child from writing changes back to the caller through a two-way binding.
+The `readonly` template helper is deprecated. It only matters when you pass a value to a classic component (`@ember/component`), where it stops the child from writing changes back to the caller.
 
 #### Glimmer components and template-only components
 
@@ -162,14 +159,14 @@ export default function oneWay(value) {
 
 ## Drawbacks
 
-- Apps with many classic components get more deprecations on top of RFC #1216's.
+- Apps with many classic components get these deprecations in addition to the ones from RFC #1216.
 - Deleting `readonly` from a classic component invocation without checking the child can silently turn a one-way binding back into a two-way one. The guide and the lint autofix both account for this.
 
 ## Alternatives
 
-- **Restore the API docs to public** and keep the helper. This documents a feature whose only use RFC #1216 removes.
-- **Fold it into the classic component deprecation** ([RFC #1216](https://github.com/emberjs/rfcs/pull/1216)) and remove it at the next major. This waits longer than needed and buries the migration in a much larger guide.
-- **Do nothing.** `readonly` outlives the classic components it serves, as an undocumented reserved keyword.
+- Make the API docs public again and keep the helper. That documents a feature for classic components only, which RFC #1216 already deprecates.
+- Fold this into the classic component deprecation ([RFC #1216](https://github.com/emberjs/rfcs/pull/1216)) and remove it at the next major. That waits longer than the intimate API policy requires, and the migration steps become a small part of a much larger guide.
+- Do nothing. `readonly` stays an undocumented reserved keyword after classic components are gone.
 
 ## Unresolved questions
 
