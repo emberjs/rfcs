@@ -174,7 +174,10 @@ function setTitle(title) {
 ```
 
 The template calls `setTitle` again whenever `@title` changes.
-If the function sets tracked state, wrap it in [`effect`](https://github.com/universal-ember/reactiveweb/blob/main/reactiveweb/src/effect.ts) from reactiveweb so that it runs after rendering.
+Alternatively, wrap it in [`effect`](https://github.com/universal-ember/reactiveweb/blob/main/reactiveweb/src/effect.ts) from reactiveweb so that it runs after rendering. 
+
+> [!NOTE]
+> Setting tracked state at all in an effect-like primitive is dangerous and can cause an infinite loop -- even if it's a slower infinite loop.
 
 </details>
 
