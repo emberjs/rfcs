@@ -36,44 +36,6 @@ In [ember.js#19222](https://github.com/emberjs/ember.js/issues/19222), `<Input @
 `<Input @type="checkbox" @value={{x}} />` exists only to throw an assertion pointing you at `@checked`.
 Adding a `change` handler to a checkbox `<Input>` broke its `@checked` binding ([ember.js#18249](https://github.com/emberjs/ember.js/issues/18249)), and that interaction changed again in 3.27 ([ember.js#19763](https://github.com/emberjs/ember.js/issues/19763)).
 
-### Prior discussion
-
-[emberjs/rfcs#498](https://github.com/emberjs/rfcs/issues/498), "Deprecate builtin input and textarea components", was opened by `@mehulkar` in 2019 to gather community feedback.
-It was closed for inactivity in 2022 with a note that the idea was still valid and needed someone to pick it up.
-Discussion outside this repository is linked in the [appendix](#appendix-community-discussion).
-
-> They do not bring a lot of value and they are one more Ember thing.
-> Should you use the built in `<Input />` or the `<input type="text" />`?
-> And why there is a component for the `textarea` and `input`, but not for `select`?
->
-> -- `@mupkoo`
-
-`@rwjblue` objected that the replacement was worse, and `@locks` agreed:
-
-> In general, what I've seen folks suggest is something like:
->
-> ```hbs
-> <input value={{this.myValue}} oninput={{action (mut this.myValue) value="target.value"}}>
-> ```
->
-> I'm not convinced that this is better than using:
->
-> ```hbs
-> <Input @value={{this.myValue}} />
-> ```
->
-> -- `@rwjblue`
-
-That was fair in 2019.
-`{{action}}` has since been deprecated, so the comparison is now:
-
-```hbs
-<input value={{this.myValue}} {{on "input" this.updateValue}}>
-<Input @value={{this.myValue}} />
-```
-
-The native version is still longer and needs an `updateValue` handler, but the write to `myValue` is in the app's own code.
-
 ## Transition Path
 
 Deprecate:
@@ -400,6 +362,43 @@ React and Solid use the native element as is.
   This RFC does not depend on the answer.
 
 ## Appendix: community discussion
+
+### Prior discussion
+
+[emberjs/rfcs#498](https://github.com/emberjs/rfcs/issues/498), "Deprecate builtin input and textarea components", was opened by `@mehulkar` in 2019 to gather community feedback.
+It was closed for inactivity in 2022 with a note that the idea was still valid and needed someone to pick it up.
+
+> They do not bring a lot of value and they are one more Ember thing.
+> Should you use the built in `<Input />` or the `<input type="text" />`?
+> And why there is a component for the `textarea` and `input`, but not for `select`?
+>
+> -- `@mupkoo`
+
+`@rwjblue` objected that the replacement was worse, and `@locks` agreed:
+
+> In general, what I've seen folks suggest is something like:
+>
+> ```hbs
+> <input value={{this.myValue}} oninput={{action (mut this.myValue) value="target.value"}}>
+> ```
+>
+> I'm not convinced that this is better than using:
+>
+> ```hbs
+> <Input @value={{this.myValue}} />
+> ```
+>
+> -- `@rwjblue`
+
+That was fair in 2019.
+`{{action}}` has since been deprecated, so the comparison is now:
+
+```hbs
+<input value={{this.myValue}} {{on "input" this.updateValue}}>
+<Input @value={{this.myValue}} />
+```
+
+The native version is still longer and needs an `updateValue` handler, but the write to `myValue` is in the app's own code.
 
 ### Forum threads
 
