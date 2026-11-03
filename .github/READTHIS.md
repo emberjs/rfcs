@@ -97,6 +97,9 @@ This workflow is used by the advance-rfc.yml workflow to open a pull request to
 advance to the next stage. It is also used by the trigger-opening-advancement-pr.yml
 workflow.
 
+The pull request gets the labels `RFC Advancement` and `S-<Stage>`. If the new stage
+requires an FCP (Ready for Release and Recommended), it also gets `Needs FCP`.
+
 This also generates an artifact named `advancement-prs` with files named `advance-rfc-XYX.json`.
 There should be at most one file per RFC. The file contains the latest PR to
 advance that RFC, along with other metadata.
