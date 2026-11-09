@@ -3,6 +3,7 @@ stage: released
 start-date: 2025-06-20T00:00:00.000Z
 release-date:
 release-versions:
+  ember-source: 7.5.0
 teams:
   - cli
   - framework
