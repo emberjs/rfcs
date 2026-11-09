@@ -1,8 +1,9 @@
 ---
-stage: ready-for-release
+stage: released
 start-date: 2025-06-20T00:00:00.000Z
 release-date:
 release-versions:
+  ember-source: 7.5.0
 teams:
   - cli
   - framework
@@ -11,6 +12,7 @@ teams:
 prs:
   accepted: 'https://github.com/emberjs/rfcs/pull/1116'
   ready-for-release: 'https://github.com/emberjs/rfcs/pull/1143'
+  released: 'https://github.com/emberjs/rfcs/pull/1256'
 project-link:
 ---
 
