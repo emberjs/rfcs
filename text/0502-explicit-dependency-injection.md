@@ -360,11 +360,12 @@ export default class Counter {
 `typeof this.class.create === 'function'`, so only `EmberObject` descendants can be
 registered (or those simulating the create method from `EmberObject`). Class-keyed lookup needs both paths:
 
-- static `create` (an `EmberObject` descendant): instantiate through it, with the
-  owner set on the props object, as today
+- static `create` (an `EmberObject` descendant or a subclass of `Service`): instantiate
+  through it, with the owner set on the props object, as today
 - otherwise: `new Impl(owner)`, then `setOwner(instance, owner)`
 
 Extending `Service` stays supported; it stops being mandatory.
+A service extends it when its fields need the owner.
 
 #### the owner is not available in a plain class's field initializers
 
@@ -386,8 +387,28 @@ class Works {
 }
 ```
 
-`EmberObject`-based services do not hit this, because `create(props)` sets the owner
-before `init` runs.
+A subclass of `Service` does not hit this. The constructor of `Service` sets the owner,
+and JavaScript runs the fields of a subclass after `super()` returns:
+
+```ts
+import Service, { service } from '@ember/service';
+
+class AlsoWorks extends Service {
+  log = service(this, Logger);  // the owner is already set
+}
+```
+
+A class-keyed service uses only two things from `Service`:
+
+- a static `create(props)`. Lookup by string requires it, and it gets the owner on `props`.
+- a constructor that calls `setOwner(this, owner)` before the fields of the subclass run.
+  A subclass with its own constructor calls `super(owner)` first.
+
+It does not need the rest of the `EmberObject` hierarchy: `init`, `willDestroy`,
+`set`/`get`, computed properties, and mixins.
+[ember-rfc-502-explicit-services-polyfill](https://github.com/NullVoxPopuli/ember-rfc-502-explicit-services-polyfill)
+implements `Service` as only these two things. Its babel plugin reports `init`,
+`willDestroy`, and `Service.extend()` in a class that injects by class key.
 
 ### out of scope: interface / shape matching
 
