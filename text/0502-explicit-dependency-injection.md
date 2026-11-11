@@ -18,9 +18,7 @@ suite:
 
 ## Summary
 
-When learning Ember and/or Dependency Injection, the question comes about how magic the injection strings are. The goal of this RFC is to propose an alternate default for injections that allow ctrl+clickability / "go to definition" from the injection to the class that defines the type of the injected instance.
-
-Note: while this RFC mainly talks in terms in services, this applies to all injections.
+This RFC proposes on additive behavior via overloads for the `service` decorator (formally `inject`) -- enabling better editor support and additional ways to manage state tied to the lifetime of an application.
 
 ## Motivation
 
