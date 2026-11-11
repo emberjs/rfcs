@@ -406,9 +406,16 @@ A class-keyed service uses only two things from `Service`:
 
 It does not need the rest of the `EmberObject` hierarchy: `init`, `willDestroy`,
 `set`/`get`, computed properties, and mixins.
+
 [ember-rfc-502-explicit-services-polyfill](https://github.com/NullVoxPopuli/ember-rfc-502-explicit-services-polyfill)
 implements `Service` as only these two things. Its babel plugin reports `init`,
 `willDestroy`, and `Service.extend()` in a class that injects by class key.
+
+`willDestroy` is left out because `registerDestructor` already does the same thing.
+In `EmberObject`, `willDestroy` is a destructor too: the constructor calls
+`registerDestructor(this, () => this.willDestroy())`, without the eager flag.
+When the instance is destroyed, both are scheduled in the same queue and run at the same time,
+so `willDestroy` would only be a second name for `registerDestructor`.
 
 ### out of scope: interface / shape matching
 
@@ -684,6 +691,11 @@ registration.
     the owner, and are destroyed with the owner via `associateDestroyableChild`.
     About 140 lines, including the decorator.
 
+    [ember-rfc-502-explicit-services-polyfill](https://github.com/NullVoxPopuli/ember-rfc-502-explicit-services-polyfill)
+    implements the same design for ember-source 3.28 and newer. Its babel plugin rewrites
+    `@ember/service` imports and owner calls. It is tested in an ember-cli Vite app,
+    a classic broccoli app, an ember.nvp app, and a broccoli app on ember-source 3.28.
+
 
 
 - A class key needs no name
@@ -694,6 +706,18 @@ registration.
     const INSTANCES = new WeakMap<Owner, Map<Key, object>>();
     const BINDINGS = new WeakMap<Owner, Map<Key, Key>>();
     ```
+
+    - `INSTANCES` holds the singleton that the first lookup of a key built on an owner.
+      The "registered after it was resolved" assertion reads it,
+      and so does the "has this key been resolved" predicate.
+    - `BINDINGS` holds the class to build for a key on an owner. Only `register(Key, Impl)`
+      writes to it. A lookup reads it only when the key has no instance yet,
+      and falls back to the key itself, so a plain class needs no registration.
+      The "is an override bound" predicate reads it. `unregister` deletes from both maps.
+
+    The two maps are separate because a binding is made before its instance exists.
+    After `register(Plain, Plain)`, an override is bound, but `Plain` is not resolved
+    until the first lookup.
 
     `Registry` and the string path are then untouched, which is also what keeps the two
     namespaces separate by construction rather than by convention. This is the same strategy
