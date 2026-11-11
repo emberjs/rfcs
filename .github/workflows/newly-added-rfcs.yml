@@ -5,8 +5,6 @@ name: Newly Added RFC
 on:
   pull_request:
     types: [opened, labeled, unlabeled, synchronize, reopened, ready_for_review]
-    paths:
-      - 'text/*.md'
 
 jobs:
   check-rfcs:
@@ -30,10 +28,10 @@ jobs:
           echo "RFC Added count: ${{ steps.rfcs.outputs.added-rfcs-count }}"
           echo "RFC Changed count: ${{ steps.rfcs.outputs.modified-rfcs-count }}"
           echo "RFC: ${{ steps.rfcs.outputs.modified-rfc }}"
-          if [[ ${{ steps.rfcs.outputs.added-rfcs-count }} == 1 ]]; then 
+          if [[ ${{ steps.rfcs.outputs.added-rfcs-count }} == 1 ]]; then
             echo "## RFC Added in this PR!!!" >> $GITHUB_STEP_SUMMARY
           elif [[ ${{steps.rfcs.outputs.added-rfcs-count}} == 0 ]]; then
-            echo "## No RFCs added in this PR" >> $GITHUB_STEP_SUMMARY        
+            echo "## No RFCs added in this PR" >> $GITHUB_STEP_SUMMARY
           fi
 
   check-in-exploring:
