@@ -89,7 +89,7 @@ In each case, the instance has the owner.
 Any other value is not a key. Strings stay in the string namespace. Symbols and plain objects without `create` are not keys.
 
 
-An override must be the key, or inherit from the key; see "the hierarchy check".
+An override of a class key must be the key, or inherit from the key; see "the hierarchy check". A key that is not a class has no such check.
 
 
 Libraries using services they are not the owners of are not solved by this RFC; see "out of scope: interface / shape matching". Such a library keeps using a string key.
@@ -313,16 +313,18 @@ Examples:
 
 #### the hierarchy check
 
-`overrideService` makes sure that the override either is the key or inherits from the key. This will prevent the ability to register unrelated classes that would break the implied class hierarchy that is assumed with dependency injection. 
+When the key is a class, `overrideService` makes sure that the override either is the key or inherits from the key. This will prevent the ability to register unrelated classes that would break the implied class hierarchy that is assumed with dependency injection.
 
 ```ts
 overrideService(appInstance, CookieService, SomethingUnrelated);
 // Error: SomethingUnrelated is neither CookieService nor a subclass of it.
 ```
 
-A subclass inherits from its class. A factory object inherits from a key through its prototype chain, for example `{ __proto__: key, create() {} }`.
+A subclass inherits from its class. A factory object inherits from a class key through its prototype chain, for example `{ __proto__: Key, create() {} }`, and its `create` must return an instance of the key.
 
-Note that this makes inheritance the only way to substitute an implementation, which is the constraint an interface-matching followup would relax.
+When the key is not a class, such as a plain object with `create`, there is no hierarchy check. Any key can override it. A plain object has no class hierarchy to protect, and code that uses one already opts out of the checks that a class gives, such as `instanceof`. TypeScript still checks that the override returns the same type.
+
+Note that, for a class key, this makes inheritance the only way to substitute an implementation, which is the constraint an interface-matching followup would relax.
 
 #### overriding after a key has been resolved
 
