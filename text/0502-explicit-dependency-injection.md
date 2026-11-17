@@ -82,7 +82,7 @@ Keys and implementations follow the same protocol. `service` checks a value in t
 2. check for if it is a newable 
    (class, anything with a prototype, etc), the instance is made with `new`, and the constructor receives the owner. The class can be abstract, because a key can be only a contract.
 3. Otherwise, (e.g.: if it is an arrow function)
-   it is a thunk (see "overloading service in js/ts"), and its return value is the key (or we recurse, looking for a create function or newable).
+   it is a thunk (see "overloading service in js/ts"), and its return value is the key (or we recurse (limit not defined by this RFC, but there will be a limit in implementation), looking for a create function or newable).
 
 In each case, the instance has the owner.
 
