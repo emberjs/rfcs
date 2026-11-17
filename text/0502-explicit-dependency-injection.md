@@ -78,8 +78,8 @@ A class-keyed service has two parts: the key, and the implementation that the ow
 Keys and implementations follow the same protocol. `service` checks a value in this order:
 
 1. If it has a `create` method, it is a factory, and `create` makes the instance. This covers `EmberObject` and `Service` subclasses, a plain object such as `{ create }`, and a function with a static `create`. It is the same factory protocol that `owner.register('service:x', factory)` accepts today.
-2. Otherwise, if it is a class, the instance is made with `new`, and the constructor receives the owner. The class can be abstract, because a key can be only a contract.
-3. Otherwise, if it is an arrow function, it is a thunk (see "overloading service in js/ts"), and its return value is the key.
+2. Otherwise, if it is a newable (class, anything with a prototype, etc), the instance is made with `new`, and the constructor receives the owner. The class can be abstract, because a key can be only a contract.
+3. Otherwise, (e.g.: if it is an arrow function), it is a thunk (see "overloading service in js/ts"), and its return value is the key (or we recurse, looking for a create function or newable).
 
 In each case, the instance has the owner.
 
