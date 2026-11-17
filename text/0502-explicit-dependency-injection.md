@@ -55,27 +55,38 @@ dispatcher = service(this, MessageDispatcher);
 
 This means that the shorthand syntax of using `@service` without a parameter should be discouraged, and the use of the service class should be used in its place.
 
-At present, the service decorator wraps around the `ApplicationInstance#lookup` method -- something like this (roughly / hand-waving the implementation details of decorators and getting access to the app instance):
+Two exports from `@ember/service` replace the owner methods for class keys:
 
 ```ts
-function service(name) {
-  return appInstance.lookup(`service:${name}`);
-}
+import { service, overrideService } from '@ember/service';
+
+// lookup: the first argument is an owner, or an object that has an owner
+const notifications = service(owner, Notifications);
+
+// override: before the first lookup of the key on this owner
+overrideService(owner, Notifications, TestNotifications);
 ```
 
-Instead, with this RFC, the service pseudo-function should check for the type of the parameter, and:
+`owner.lookup`, `owner.register`, and the application instance do not change. They keep their string-key behavior, and they do not accept class keys.
 
-```ts
-function service(nameOrClass) {
-  if (typeof nameOrClass === 'string') {
-    return appInstance.lookup(`service:${nameOrClass}`);
-  }
+A string keeps today's behavior. A class key resolves to one instance per owner, and needs no registration step.
 
-  return appInstance.lookup(nameOrClass);
-}
-```
+### what can be a service
 
-For `lookup` to take a class as an argument, there needs to be a way to _lookup_ service instances by class. When a class is used for lookup and no registration exists, lookup _will register the class and instantiate it for you_.
+A class-keyed service has two parts: the key, and the implementation that the owner instantiates for that key. Without an override, the key is also the implementation.
+
+Keys and implementations follow the same protocol. `service` checks a value in this order:
+
+1. If it has a `create` method, it is a factory, and `create` makes the instance. This covers `EmberObject` and `Service` subclasses, a plain object such as `{ create }`, and a function with a static `create`. It is the same factory protocol that `owner.register('service:x', factory)` accepts today.
+2. Otherwise, if it is a class, the instance is made with `new`, and the constructor receives the owner. The class can be abstract, because a key can be only a contract.
+3. Otherwise, if it is an arrow function, it is a thunk (see "overloading service in js/ts"), and its return value is the key.
+
+In each case, the instance has the owner.
+
+Any other value is not a key. Strings stay in the string namespace. Symbols and plain objects without `create` are not keys.
+
+
+An override must be the key, or inherit from the key; see "the hierarchy check".
 
 
 Libraries using services they are not the owners of are not solved by this RFC; see "out of scope: interface / shape matching". Such a library keeps using a string key.
@@ -139,7 +150,7 @@ class Demo {
 **This form does not retain lazy instantiation.** A field initializer must evaluate to something, so deferring means returning a stand-in. The only candidate (which is not being proposed) is a `Proxy`, which:
 
 - throws on private fields: `this.#state` is a `TypeError` when the receiver is a Proxy, and `#privateField` is listed above as a benefit of this form
-- breaks identity: `this.myService === owner.lookup(Service)` is `false`
+- breaks identity: `this.myService === service(owner, Service)` is `false`
 - shows as a Proxy in the debugger
 
 A `tracked()` read as `this.myService.value` is lazy and correct, but makes the return value more verbose at every call site. The lazy non-decorator form is a getter:
@@ -163,30 +174,21 @@ One export serves every form:
 | `service('name')` | today's behavior, unchanged |
 | `service(Key)` | lazy decorator |
 | `service(() => Key)` | lazy decorator, cycle-tolerant |
-| `service(this, Key)` | resolve now |
+| `service(this, Key)` | resolve now. `this` is an owner, or an object that has an owner. |
 
-A class is also a function, so a thunk and a class key are told apart by `prototype`:
-an arrow function has none. A thunk must be an arrow function.
+A thunk must be an arrow function, so that it can be told apart from a class.
 
 ### lookup by exact class
 
-Consider:
-
-```ts
-appInstance.register(MyClass, MyClass);
-appInstance.lookup(MyClass);
-```
-
-is the same as 
 ```ts
 // no registration needed, because MyClass could be in a dynamic bundle
-appInstance.lookup(MyClass);
+service(appInstance, MyClass);
 ```
 
 
 Examples: 
 
- - **service registration and override**
+ - **service override**
     ```ts
     class MyFooService {
       @tracked foo = 0;
@@ -195,8 +197,6 @@ Examples:
         this.foo++;
       }
     }
-
-    appInstance.register(MyFooService, MyFooService);
     ```
     Now, where this _IS_ Dependency Injection, and how we aren't just using the concrete class all the time is where you can do things like this
 
@@ -208,15 +208,15 @@ Examples:
     }
 
     // both stubbing (in a test), or clobbering, would look the same
-    appInstance.register(MyFooService, MyFooOverrideService);
+    overrideService(appInstance, MyFooService, MyFooOverrideService);
 
-    const service = appInstance.lookup(MyFooService);
+    const foo = service(appInstance, MyFooService);
 
-    service instanceof MyFooOverrideService // true
-    service instanceof MyFooService // true
+    foo instanceof MyFooOverrideService // true
+    foo instanceof MyFooService // true
     ```
 
- - **less typing for lazy registration**
+ - **no registration**
     ```ts
     class MyFooService {
       @tracked foo = 0;
@@ -226,9 +226,8 @@ Examples:
       }
     }
 
-    // the above service has not been registered yet
-    const myFooService = appInstance.lookup(MyFooService);
-    // first time lookup without registration will register for you.
+    // the above service has no registration and no override
+    const myFooService = service(appInstance, MyFooService);
 
     myFooService instanceof MyFooService // true
     ```
@@ -289,6 +288,7 @@ Examples:
     `app/instance-initializers/register-cookie-service.ts`:
 
     ```ts
+    import { overrideService } from '@ember/service';
     import { CookieService } from 'app-name/services/cookies/cookie-service';
     import { FastbootCookieService } from 'app-name/services/cookies/fastboot-service';
     import { BrowserCookieService } from 'app-name/services/cookies/browser-service';
@@ -297,9 +297,9 @@ Examples:
       const fastboot = appInstance.lookup('service:fastboot');
 
       if (fastboot?.isFastBoot) {
-        appInstance.register(CookieService, FastbootCookieService);
+        overrideService(appInstance, CookieService, FastbootCookieService);
       } else {
-        appInstance.register(CookieService, BrowserCookieService);
+        overrideService(appInstance, CookieService, BrowserCookieService);
       }
     }
 
@@ -310,36 +310,31 @@ Examples:
 
 #### the hierarchy check
 
-Logic will be added to the register method to ensure that the lookup type either is the same as the service instance's type or is an ancestor type. This will prevent the ability to register unrelated classes that would break the implied class hierarchy that is assumed with dependency injection. 
+`overrideService` makes sure that the override either is the key or inherits from the key. This will prevent the ability to register unrelated classes that would break the implied class hierarchy that is assumed with dependency injection. 
 
 ```ts
-appInstance.register(CookieService, SomethingUnrelated);
+overrideService(appInstance, CookieService, SomethingUnrelated);
 // Error: SomethingUnrelated is neither CookieService nor a subclass of it.
 ```
 
-Note that this makes subclassing the only way to substitute an implementation, which is the constraint an interface-matching followup would relax.
+A subclass inherits from its class. A factory object inherits from a key through its prototype chain, for example `{ __proto__: key, create() {} }`.
 
-#### registering after a key has been resolved
+Note that this makes inheritance the only way to substitute an implementation, which is the constraint an interface-matching followup would relax.
 
-Today this silently does nothing: the container has cached the instance and never consults the new registration. The usual way to hit it is stubbing after `render`, and the result is a test that passes for the wrong reason. Class-keyed registration should assert instead:
+#### overriding after a key has been resolved
+
+Today, `owner.register` after a lookup silently does nothing: the container has cached the instance and never consults the new registration. The usual way to hit it is stubbing after `render`, and the result is a test that passes for the wrong reason. `overrideService` asserts instead:
 
 ```ts
-owner.lookup(Counter);
-owner.register(Counter, StubCounter);
-// Error: Counter has already been resolved on this owner. Register before the
+service(owner, Counter);
+overrideService(owner, Counter, StubCounter);
+// Error: Counter has already been resolved on this owner. Override before the
 // first lookup -- in a test, before render or visit.
 ```
 
-#### `hasRegistration` does not survive the move to class keys
+#### `hasRegistration` does not change
 
-`hasRegistration('service:foo')` answers "can the resolver find this name", and the answer can be no. For a class key it is trivially yes for every key -- worst case the key instantiates itself -- so the method becomes useless rather than different.
-
-For class keys, two separate predicates replace it:
-
-- is an explicit override bound for this key on this owner?
-- has this key been resolved on this owner yet?
-
-The second is what the assertion above needs.
+`hasRegistration('service:foo')` answers "can the resolver find this name", and the answer can be no. For a class key the answer is always yes, because the key can instantiate itself. Thus `hasRegistration` stays string-only.
 
 ### services no longer need a base class
 
@@ -360,11 +355,6 @@ export default class Counter {
   }
 }
 ```
-
-`InternalFactoryManager#create` currently asserts `typeof this.class.create === 'function'`, so only `EmberObject` descendants can be registered (or those simulating the create method from `EmberObject`). Class-keyed lookup needs both paths:
-
-- static `create` (an `EmberObject` descendant or a subclass of `Service`): instantiate through it, with the owner set on the props object, as today
-- otherwise: `new Impl(owner)`, then `setOwner(instance, owner)`
 
 Extending `Service` stays supported; it stops being mandatory. A service extends it when its fields need the owner.
 
@@ -398,17 +388,6 @@ class AlsoWorks extends Service {
 }
 ```
 
-A class-keyed service uses only two things from `Service`:
-
-- a static `create(props)`. Lookup by string requires it, and it gets the owner on `props`.
-- a constructor that calls `setOwner(this, owner)` before the fields of the subclass run. A subclass with its own constructor calls `super(owner)` first.
-
-It does not need the rest of the `EmberObject` hierarchy: `init`, `willDestroy`, `set`/`get`, computed properties, and mixins.
-
-[ember-rfc-502-explicit-services-polyfill](https://github.com/NullVoxPopuli/ember-rfc-502-explicit-services-polyfill) implements `Service` as only these two things. Its babel plugin reports `init`, `willDestroy`, and `Service.extend()` in a class that injects by class key.
-
-`willDestroy` is left out because `registerDestructor` already runs code when the instance is destroyed. In `EmberObject`, `willDestroy` is a destructor too: the constructor calls `registerDestructor(this, () => this.willDestroy())`, without the eager flag. When the instance is destroyed, both are scheduled in the same queue and run at the same time, so `willDestroy` would only be a second name for `registerDestructor`.
-
 ### out of scope: interface / shape matching
 
 - javascript does not have interfaces
@@ -416,7 +395,7 @@ It does not need the rest of the `EmberObject` hierarchy: `init`, `willDestroy`,
 A library cannot name a key the *app* owns, which is [ember-polaris-service#19](https://github.com/chancancode/ember-polaris-service/issues/19). The library declares a dependency, the app supplies the implementation, and there is no class both sides can import.
 
 > [!NOTE]
-> The ember-intl case still works with class keys. A library that depends on ember-intl uses its class as the key. The app subclasses that class, as the hierarchy check requires, and registers the subclass with `register(IntlService, AppIntlService)` in an instance initializer, before the first lookup of `IntlService`. Lookup does not search for subclasses, and a registration after the first lookup asserts; see "registering after a key has been resolved".
+> The ember-intl case still works with class keys. A library that depends on ember-intl uses its class as the key. The app subclasses that class, as the hierarchy check requires, and overrides it with `overrideService(appInstance, IntlService, AppIntlService)` in an instance initializer, before the first lookup of `IntlService`. Lookup does not search for subclasses, and an override after the first lookup asserts; see "overriding after a key has been resolved".
 
 Matching a key structurally -- "any registered class with these members" -- would close that gap. Class keys do not need it, and it has its own hazards:
 
@@ -427,7 +406,7 @@ Matching a key structurally -- "any registered class with these members" -- woul
 **Use a string key for this case.** `@service('transport')` keeps working as it does now, so nothing is lost relative to the status quo. A library whose dependency is app-supplied keeps the string, and converts if and when a followup RFC gives it something better.
 
 One constraint that does belong here, because it constrains the implementation:
-class lookup must not fall back to *name* resolution. `lookup(FeatureFlags)` must not resolve `app/services/feature-flags.ts` because the dasherized name happens to match, or "go to definition" stops being trustworthy -- which is the motivation for the RFC. Class keys and string names are separate namespaces that coexist.
+class lookup must not fall back to *name* resolution. `service(owner, FeatureFlags)` must not resolve `app/services/feature-flags.ts` because the dasherized name happens to match, or "go to definition" stops being trustworthy -- which is the motivation for the RFC. Class keys and string names are separate namespaces that coexist.
 
 ### module cycles
 
@@ -474,10 +453,20 @@ flags = service(this, FeatureFlags);                     // inferred as FeatureF
 @service(FeatureFlags) declare otherFlags: FeatureFlags;  // annotation still required
 ```
 
-Two signature notes:
+`Key` must allow abstract constructors, because a key that is only a contract is the most useful kind of key:
 
-- `Key` must allow abstract constructors (`abstract new (owner: Owner) => T`); a token that is only a contract is the most useful kind of key
-- `hasRegistration` and `unregister` are not on the public `Owner` type. They live on the private `RegistryProxy`. This RFC needs to say whether they become public, along with the predicates that replace `hasRegistration`.
+```ts
+interface Factory<T> {
+  create(props: object): T;
+}
+
+type Key<T> = (abstract new (owner: Owner) => T) | Factory<T>;
+
+function service<T>(context: Owner | object, key: Key<T>): T;
+function overrideService<T>(owner: Owner, key: Key<T>, impl: Key<T>): void;
+```
+
+The public `Owner` type does not change.
 
 ### Usage in testing
 
@@ -509,6 +498,7 @@ During an acceptance test, it can be overridden by doing the following:
 ```ts
 import { module } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
+import { overrideService } from '@ember/service';
 
 import ServiceToOverride from 'app-name/services/my-service';
 
@@ -522,13 +512,13 @@ module('Acceptance | test a thing', function(hooks) {
       }
     }
 
-    // register under the same 'key', ServiceToOverride
-    this.owner.register(ServiceToOverride, MockService);
+    // override under the same 'key', ServiceToOverride
+    overrideService(this.owner, ServiceToOverride, MockService);
   });
 });
 ```
 
-Registering under the key is the whole of it. There is no second `inject` step, because the injection resolves through the owner on access rather than being assigned at instantiation. The registration does have to happen before `visit`; see "registering after a key has been resolved".
+The override under the key is the whole of it. There is no second `inject` step, because the injection resolves through the owner on access rather than being assigned at instantiation. The override does have to happen before `visit`; see "overriding after a key has been resolved".
 
 #### Integration Tests
 
@@ -536,6 +526,7 @@ Registering under the key is the whole of it. There is no second `inject` step, 
 import { module } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render } from '@ember/test-helpers';
+import { overrideService } from '@ember/service';
 
 import LocationService from 'app-name/services/location';
 
@@ -553,7 +544,7 @@ module('Integration | Component | location-indicator', function(hooks) {
   setupRenderingTest(hooks);
 
   hooks.beforeEach(function() {
-    this.owner.register(LocationService, LocationStub);
+    overrideService(this.owner, LocationService, LocationStub);
   });
 });
 ```
@@ -582,6 +573,8 @@ Instead of using strings or inferred injections, the guides should be updated to
 
 The guides already cover usage of services, as well as techniques for setting up [any class for injection](https://guides.emberjs.com/release/in-depth-topics/native-classes-in-depth/#toc_using-injection) (under "in depth topics").
 
+The "Application State" guide in [guides-source#2237](https://github.com/ember-learn/guides-source/pull/2237) teaches state tied to the lifetime of the owner. Class-keyed services can use that guide as their starting point.
+
 Migration instructions from string keys to class keys can come with a future RFC that deprecates string-based services, once a compat library proxies the string-instantiated service to the real one.
 
 Things the guides must cover, because each is a place reasonable code fails:
@@ -589,7 +582,7 @@ Things the guides must cover, because each is a place reasonable code fails:
 - We should default to lazily-initialized forms
 - `@service(Key)` is the default form (shortest, nicest for javascript). 
 - plain-class services cannot inject in field initializers -- teach the getter
-- register before first lookup, which in a test means before `render`/`visit`. The testing guides do not cover this yet.
+- override before first lookup, which in a test means before `render`/`visit`. The testing guides do not cover this yet.
 - a dependency the app supplies, rather than the library, still uses a string key
 
 The service directory only matters for services still reached by a string key. A class-keyed service can live next to its consumers, since the import is the registration.
@@ -598,7 +591,7 @@ The service directory only matters for services still reached by a string key. A
 
 - more verbose
 - disruptive for libraries providing services
-- the non-decorator form loses lazy instantiation 
+- the non-decorator form loses lazy instantiation. A getter gets it back with no new API. A future RFC can add a `lazy()` utility, for example `prop = lazy(service(this, Key))`, which wraps the service in a proxy. That utility is not part of this RFC.
 - class keys create module edges string keys did not, so cycles become possible where they could not exist before. The thunk is easy to forget, and forgetting it fails at boot.
 - class names are minified in production, so the container cache and the Ember Inspector lose the readable names string keys give them
 - both styles coexist 
@@ -616,15 +609,15 @@ The service directory only matters for services still reached by a string key. A
 
    a goal of the RFC is to signal to the community which approach will be supported and is safest. ember-polaris-service did a lot of the exploration early. ember-primitives' createService demonstrates that, if you really want, you don't need a service abstraction at all (leaning in to "don't mock", and "WeakMap on the owner is good")
 
- - symbol tokens instead of classes: `owner.lookup(TRANSPORT)`. Solves the same coupling problem and avoids module cycles entirely, since a symbol has no dependencies. Loses the thing the RFC is named for -- a symbol is not ctrl+clickable to an implementation, only to its own declaration.
+ - symbol tokens instead of classes: `service(owner, TRANSPORT)`. Solves the same coupling problem and avoids module cycles entirely, since a symbol has no dependencies. Loses the thing the RFC is named for -- a symbol is not ctrl+clickable to an implementation, only to its own declaration.
 
  - shape matching in this RFC rather than a followup. Solves polaris-service#19 now, at the cost of a much larger surface and a fuzzier one; see "out of scope".
 
  ## Unresolved Questions
 
- - Should `hasRegistration` accept a class at all? It may be string-only forever, with two new predicates added alongside.
+ - Does `@ember/service` export a way to ask whether a key has an override, or whether a key was already resolved on an owner?
 
- - Should looking up an abstract key with no registration throw? At runtime it builds an instance of the abstract class, which has none of the abstract members.
+ - Should looking up an abstract key with no override throw? At runtime it builds an instance of the abstract class, which has none of the abstract members.
 
  - What does the Ember Inspector show for a class-keyed instance in a production build, where `Klass.name` is minified?
 
@@ -632,42 +625,10 @@ The service directory only matters for services still reached by a string key. A
 
 ## Appendix
 
-- Previous Alternative: Convert the dependency injection lookup to a `WeakMap<Klass, instanceof Klass>`
+- Implementation
 
-    This would likely result in faster lookup, but would require more upfront work to change how the lookup method works on the `ApplicationInstance` / "owner". This _could_ be a separate RFC, but without benchmarking it's hard to say if a change this large would be worth it.
-
-    At first this was moved out of `Alternatives`, because this RFC should not recommend specific implementation styles.
-
-    **Update:** this turned out to be *less* upfront work rather than more, because it leaves `Registry` and the string path untouched instead of extending them. It is now the recommended direction rather than a rejected alternative; see "A class key needs no name" below.
+    This RFC does not prescribe how class-keyed instances are stored. One approach keeps them in a `WeakMap` keyed on the owner, as [`createService`](https://ember-primitives.pages.dev/6-utils/createService) does. That approach leaves `Registry`, the container, and the string path untouched.
 
 - Where this has been validated
 
-    "Detailed design" has been implemented and tested against `ember-source` 7 in a playground app.
-
-    The owner already *is* the container, so no parallel container is needed. The mechanism is a `WeakMap` keyed on the owner, using only `getOwner` and `setOwner` from `@ember/owner`. Instances are per-owner singletons because the outer key is the owner, and are destroyed with the owner via `associateDestroyableChild`. About 140 lines, including the decorator.
-
-    [ember-rfc-502-explicit-services-polyfill](https://github.com/NullVoxPopuli/ember-rfc-502-explicit-services-polyfill) implements the same design for ember-source 3.28 and newer. Its babel plugin rewrites `@ember/service` imports and owner calls. It is tested in an ember-cli Vite app, a classic broccoli app, an ember.nvp app, and a broccoli app on ember-source 3.28.
-
-
-
-- A class key needs no name
-
-    And also, no resolution, and no resolver, so everything class-keyed can live in a `WeakMap` keyed on the owner:
-
-    ```ts
-    const INSTANCES = new WeakMap<Owner, Map<Key, object>>();
-    const BINDINGS = new WeakMap<Owner, Map<Key, Key>>();
-    ```
-
-    - `INSTANCES` holds the singleton that the first lookup of a key built on an owner. The "registered after it was resolved" assertion reads it, and so does the "has this key been resolved" predicate.
-    - `BINDINGS` holds the class to build for a key on an owner. Only `register(Key, Impl)` writes to it. A lookup reads it only when the key has no instance yet, and falls back to the key itself, so a plain class needs no registration. The "is an override bound" predicate reads it. `unregister` deletes from both maps.
-
-    The two maps are separate because a binding is made before its instance exists. After `register(Plain, Plain)`, an override is bound, but `Plain` is not resolved until the first lookup.
-
-    `Registry` and the string path are then untouched, which is also what keeps the two namespaces separate by construction rather than by convention. This is the same strategy [`createService`](https://ember-primitives.pages.dev/6-utils/createService) uses.
-
-    What does need to change inside `container`:
-
-    - `InternalFactoryManager#create` must not require a static `create`
-    - destruction has to cover class-keyed instances. `destroyDestroyables` calls `value.destroy()` if it happens to exist, which is not enough for plain classes; `associateDestroyableChild(owner, instance)` at instantiation handles it, and makes `registerDestructor` work with no base class.
-
+    [ember-rfc-502-explicit-services-polyfill](https://github.com/NullVoxPopuli/ember-rfc-502-explicit-services-polyfill) implements this RFC for ember-source 3.28 and newer. It is tested in an ember-cli Vite app, a classic broccoli app, an ember.nvp app, and a broccoli app on ember-source 3.28.
