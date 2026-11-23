@@ -94,6 +94,77 @@ An override of a class key must be the key, or inherit from the key; see "the hi
 
 Libraries using services they are not the owners of are not solved by this RFC; see "out of scope: interface / shape matching". Such a library keeps using a string key.
 
+
+Examples:
+
+all of these can be consumed by any of the methods described under "lookup forms" by using the exported value as the _key_.
+
+- **today's existing Service subclassing**
+    ```ts
+    import Service from '@ember/service';
+
+    export class MyService extends Service {
+        /* ... */
+    }
+    ```
+
+- **a newable**
+    ```ts
+    export class MyService {
+        constructor(owner) { /* ... */ }
+    }
+    ```
+
+- **a function newable**
+    ```ts
+    export function MyService(owner) {
+        return {
+            /* some object you build */
+        };
+    }
+    ```
+
+- **custom static create factory**
+    ```ts
+    export class MyService {
+      static create(props) {
+        let owner = getOwner(props);
+
+        return new MyService(owner, foo, bar);
+      }
+
+      constructor(owner, foo, bar) { /* ... */ }
+    } 
+    ```
+
+- **exposing a library as a service**
+    ```ts
+    export const LibraryService = {
+        create: () => new Library(a, b, c);
+    };
+    ```
+
+- **not using a class at all**
+    ```ts
+    export const MyService = {
+        create: () => {
+            return {
+              /* Some object you build */
+            };
+        };
+    };
+    ```
+
+- **an existing module-scoped-available instance**
+    ```ts
+    import { intl } from 'some-intl-library';
+
+    export const IntlService = {
+        create: () => intl;
+    };
+    ```
+
+
 ### lookup forms
 
 #### decorators
@@ -165,6 +236,22 @@ class Demo {
     // resolves on first access.
     // repeat service() calls are idempotent.
     get lazy() { return service(this, Service); }  
+}
+```
+
+Another way this non-decorator form can be used is via `await import(...)` to pull in a service after some user behavior:
+```ts
+class SomeComponent /* extends Component */ {
+    /* ... */
+    someSpecificUserInteraciton = async () => {
+        const { MyService } = await import('./the-big-service.ts');
+        // still a singleton
+        const myService = service(this, MyService);
+
+        // do something with myService
+        // myService instanceof MyService // true
+    }
+    /* ... */
 }
 ```
 
