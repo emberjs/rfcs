@@ -620,13 +620,7 @@ The service directory only matters for services still reached by a string key. A
 
  ## Unresolved Questions
 
- - Does `@ember/service` export a way to ask whether a key has an override, or whether a key was already resolved on an owner?
-
- - Should looking up an abstract key with no override throw? At runtime it builds an instance of the abstract class, which has none of the abstract members.
-
- - What does the Ember Inspector show for a class-keyed instance in a production build, where `Klass.name` is minified?
-
- - Does the `@service` decorator need to keep supporting assignment (`this.myService = stub`)?
+none remaining
 
 ## Appendix
 
