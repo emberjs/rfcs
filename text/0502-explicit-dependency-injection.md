@@ -462,6 +462,7 @@ flags = service(this, FeatureFlags);                     // inferred as FeatureF
 
 ```ts
 interface Factory<T> {
+  // same as today, props can be the owner, or an object that has the owner set on it via setOwner()
   create(props: object): T;
 }
 
