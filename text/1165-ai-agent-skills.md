@@ -1,15 +1,16 @@
 ---
-stage: accepted
+stage: discontinued
 start-date: 2026-01-26T00:00:00.000Z
-release-date: # In format YYYY-MM-DDT00:00:00.000Z
+release-date:
 release-versions:
 teams:
   - learning
   - cli
 prs:
-  accepted: https://github.com/emberjs/rfcs/pull/1165
-project-link: 
-suite: 
+  accepted: 'https://github.com/emberjs/rfcs/pull/1165'
+  discontinued: 'https://github.com/emberjs/rfcs/pull/1171'
+project-link:
+suite:
 ---
 
 <!--- 
