@@ -139,18 +139,39 @@ There are two additional statuses for RFCs that will not move forward:
 
 ```mermaid
 flowchart TD
-    A("0 - Proposed") -- Discussion, revision --> B("1 - Exploring")
-    B -- Discussion, exploration, full specification --> C("3 - Accepted")
-    C -- Implementation, Commitment to Stability --> D("4 - Ready for Release")
-    D -- Release in Stable versions --> E("5 - Released")
-    E -- Polish, make default, document, ensure ecosystem support --> F("Recommended")
-    
+    A("0 - Proposed") -- "Discussion, revision, team consensus (no FCP)" --> B("1 - Exploring")
+    B -- "Discussion, exploration, full specification, champion found" --> FCP1{{"FCP to Accept (7 days)"}}
+    FCP1 -- "No new unaddressed concerns, RFC PR merged" --> C("2 - Accepted")
+    FCP1 -. "New concerns or significant changes" .-> B
+
+    C -- "Advancement PR opened automatically. Implementation, learning materials, commitment to stability" --> FCP2{{"FCP to Ready for Release (7 days), review by each core team"}}
+    FCP2 -- "Advancement PR merged" --> D("3 - Ready for Release")
+
+    D -- "Advancement PR opened automatically. Release in stable versions, team consensus (no FCP)" --> E("4 - Released")
+
+    E -- "Advancement PR opened automatically. Polish, make default, document, ensure ecosystem support" --> FCP3{{"FCP to Recommended (7 days)"}}
+    FCP3 -- "Advancement PR merged" --> F("5 - Recommended")
+
+    A -- "No consensus" --> FCPC{{"FCP to Close (7 days)"}}
+    B -- "No consensus" --> FCPC
+    FCPC -- "PR closed" --> X("Closed")
+    A -. "Author withdraws" .-> X
+    B -. "Author withdraws" .-> X
+
+    C & D & E & F -.-> Z("Discontinued, via PR at any time: superseded, out of date, or no longer fits Ember")
+
     style A stroke:#E1BEE7
     style B stroke:#E1BEE7
     style C stroke:#AA00FF
     style D stroke:#AA00FF
-    style E stroke:#AA00FF,stroke:#AA00FF
+    style E stroke:#AA00FF
     style F color:#FFFFFF, fill:#AA00FF, stroke:#AA00FF
+    style FCP1 stroke:#FFA000, stroke-dasharray: 5 5
+    style FCP2 stroke:#FFA000, stroke-dasharray: 5 5
+    style FCP3 stroke:#FFA000, stroke-dasharray: 5 5
+    style FCPC stroke:#FFA000, stroke-dasharray: 5 5
+    style X stroke:#9E9E9E
+    style Z stroke:#9E9E9E
 ```
 
 ### Proposed
